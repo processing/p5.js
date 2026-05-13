@@ -49,6 +49,7 @@ function strands(p5, fn) {
     ctx.windowOverrides = {};
     ctx.fnOverrides = {};
     ctx.graphicsOverrides = {};
+    ctx._randomSeed = null;
     if (active) {
       p5.disableFriendlyErrors = true;
     }
@@ -64,6 +65,7 @@ function strands(p5, fn) {
     ctx.computeDeclarations = new Set();
     ctx.hooks = [];
     ctx.active = false;
+    ctx._randomSeed = null;
     p5.disableFriendlyErrors = ctx.previousFES;
     for (const key in ctx.windowOverrides) {
       window[key] = ctx.windowOverrides[key];
@@ -213,7 +215,17 @@ if (typeof p5 !== "undefined") {
 
 /* ------------------------------------------------------------- */
 /**
- * @property {Object} worldInputs
+ * @typedef {Object} WorldInputsHook
+ * @property {any} position
+ * @property {any} normal
+ * @property {any} texCoord
+ * @property {any} color
+ * @property {function(): undefined} begin
+ * @property {function(): undefined} end
+ */
+
+/**
+ * @property {WorldInputsHook} worldInputs
  * @beta
  * @description
  * A shader hook block that modifies the world-space properties of each vertex in a shader. This hook can be used inside <a href="#/p5/buildColorShader">`buildColorShader()`</a> and similar shader <a href="#/p5.Shader/modify">`modify()`</a> calls to customize vertex positions, normals, texture coordinates, and colors before rendering. Modifications happen between the `.begin()` and `.end()` methods of the hook. "World space" refers to the coordinate system of the 3D scene, before any camera or projection transformations are applied.
@@ -258,7 +270,22 @@ if (typeof p5 !== "undefined") {
  */
 
 /**
- * @property {Object} combineColors
+ * @typedef {Object} CombineColorsHook
+ * @property {any} baseColor
+ * @property {any} diffuse
+ * @property {any} ambientColor
+ * @property {any} ambient
+ * @property {any} specularColor
+ * @property {any} specular
+ * @property {any} emissive
+ * @property {any} opacity
+ * @property {function(): undefined} begin
+ * @property {function(): undefined} end
+ * @property {function(color: any): void} set
+ */
+
+/**
+ * @property {CombineColorsHook} combineColors
  * @beta
  * @description
  * A shader hook block that modifies how color components are combined in the fragment shader. This hook can be used inside <a href="#/p5/buildMaterialShader">`buildMaterialShader()`</a> and similar shader <a href="#/p5.Shader/modify">`modify()`</a> calls to control the final color output of a material. Modifications happen between the `.begin()` and `.end()` methods of the hook.
@@ -591,7 +618,26 @@ if (typeof p5 !== "undefined") {
  */
 
 /**
- * @property {Object} pixelInputs
+ * @typedef {Object} PixelInputsHook
+ * @property {any} normal
+ * @property {any} texCoord
+ * @property {any} ambientLight
+ * @property {any} ambientMaterial
+ * @property {any} specularMaterial
+ * @property {any} emissiveMaterial
+ * @property {any} color
+ * @property {any} shininess
+ * @property {any} metalness
+ * @property {any} tangent
+ * @property {any} center
+ * @property {any} position
+ * @property {any} strokeWeight
+ * @property {function(): undefined} begin
+ * @property {function(): undefined} end
+ */
+
+/**
+ * @property {PixelInputsHook} pixelInputs
  * @beta
  * @description
  * A shader hook block that modifies the properties of each pixel before the final color is calculated. This hook can be used inside <a href="#/p5/buildMaterialShader">`buildMaterialShader()`</a> and similar shader <a href="#/p5.Shader/modify">`modify()`</a> calls to adjust per-pixel data before lighting is applied. Modifications happen between the `.begin()` and `.end()` methods of the hook.
@@ -679,13 +725,23 @@ if (typeof p5 !== "undefined") {
  */
 
 /**
- * @property finalColor
+ * @typedef {Object} FinalColorHook
+ * @property {any} color
+ * @property {any} texCoord
+ * @property {function(): undefined} begin
+ * @property {function(): undefined} end
+ * @property {function(color: any): void} set
+ */
+
+/**
+ * @property {FinalColorHook} finalColor
  * @beta
  * @description
  * A shader hook block that modifies the final color of each pixel after all lighting is applied. This hook can be used inside <a href="#/p5/buildMaterialShader">`buildMaterialShader()`</a> and similar shader <a href="#/p5.Shader/modify">`modify()`</a> calls to adjust the color before it appears on the screen. Modifications happen between the `.begin()` and `.end()` methods of the hook.
  *
  * `finalColor` has the following properties:
  * - `color`: a four-component vector representing the pixel color (red, green, blue, alpha).
+ * - `texCoord`: a two-component vector representing the texture coordinates (u, v)
  *
  * Call `.set()` on the hook with a vector with four components (red, green, blue, alpha) to update the final color.
  *
@@ -762,8 +818,18 @@ if (typeof p5 !== "undefined") {
  */
 
 /**
- * @property {Object} filterColor
- * @beta
+ * @typedef {Object} FilterColorHook
+ * @property {any} texCoord
+ * @property {any} canvasSize
+ * @property {any} texelSize
+ * @property {any} canvasContent
+ * @property {function(): undefined} begin
+ * @property {function(): undefined} end
+ * @property {function(color: any): void} set
+ */
+
+/**
+ * @property {FilterColorHook} filterColor
  * @description
  * A shader hook block that sets the color for each pixel in a filter shader. This hook can be used inside <a href="#/p5/buildFilterShader">`buildFilterShader()`</a> to control the output color for each pixel.
  *
@@ -807,7 +873,17 @@ if (typeof p5 !== "undefined") {
  */
 
 /**
- * @property {Object} objectInputs
+ * @typedef {Object} ObjectInputsHook
+ * @property {any} position
+ * @property {any} normal
+ * @property {any} texCoord
+ * @property {any} color
+ * @property {function(): undefined} begin
+ * @property {function(): undefined} end
+ */
+
+/**
+ * @property {ObjectInputsHook} objectInputs
  * @beta
  * @description
  * A shader hook block to modify the properties of each vertex before any transformations are applied. This hook can be used inside <a href="#/p5/buildMaterialShader">`buildMaterialShader()`</a> and similar shader <a href="#/p5.Shader/modify">`modify()`</a> calls to customize vertex positions, normals, texture coordinates, and colors before rendering. Modifications happen between the `.begin()` and `.end()` methods of the hook. "Object space" refers to the coordinate system of the 3D scene before any transformations, cameras, or projection transformations are applied.
@@ -849,7 +925,17 @@ if (typeof p5 !== "undefined") {
  */
 
 /**
- * @property {Object} cameraInputs
+ * @typedef {Object} CameraInputsHook
+ * @property {any} position
+ * @property {any} normal
+ * @property {any} texCoord
+ * @property {any} color
+ * @property {function(): undefined} begin
+ * @property {function(): undefined} end
+ */
+
+/**
+ * @property {CameraInputsHook} cameraInputs
  * @beta
  * @description
  * A shader hook block that adjusts vertex properties from the perspective of the camera. This hook can be used inside <a href="#/p5/buildMaterialShader">`buildMaterialShader()`</a> and similar shader <a href="#/p5.Shader/modify">`modify()`</a> calls to customize vertex positions, normals, texture coordinates, and colors before rendering. "Camera space" refers to the coordinate system of the 3D scene after transformations have been applied, seen relative to the camera.

@@ -1269,5 +1269,98 @@ suite('WebGPU p5.Shader', function() {
         }).not.toThrow();
       });
     });
+
+    suite('array indexing on non-storage vectors (#8756)', () => {
+      test('indexing into array returned from helper function does not throw', async () => {
+        await myp5.createCanvas(5, 5, myp5.WEBGPU);
+        const storage = myp5.createStorage(new Float32Array(4));
+
+        const computeShader = myp5.buildComputeShader(() => {
+          const data = myp5.uniformStorage();
+          function getArray() {
+            return [1, 2];
+          }
+          const arr = getArray();
+          data[myp5.index.x] = arr[0] + arr[1] + myp5.index.x;
+        }, { myp5 });
+
+        computeShader.setUniform('data', storage);
+
+        expect(() => {
+          myp5.compute(computeShader, 4);
+        }).not.toThrow();
+      });
+
+      test('inline literal indexing [1, 2][0] works end-to-end', async () => {
+        await myp5.createCanvas(5, 5, myp5.WEBGPU);
+        const storage = myp5.createStorage(new Float32Array(4));
+
+        const computeShader = myp5.buildComputeShader(() => {
+          const data = myp5.uniformStorage();
+          data[myp5.index.x] = [1, 2][0];
+        }, { myp5 });
+
+        computeShader.setUniform('data', storage);
+
+        expect(() => {
+          myp5.compute(computeShader, 4);
+        }).not.toThrow();
+      });
+
+      test('array literal with 1 element throws descriptive error', async () => {
+        await myp5.createCanvas(5, 5, myp5.WEBGPU);
+
+        expect(() => {
+          myp5.buildComputeShader(() => {
+            const data = myp5.uniformStorage();
+            const arr = [1];
+            data[myp5.index.x] = arr[0];
+          }, { myp5 });
+        }).toThrow('and must have 2-4 elements (got 1)');
+      });
+
+      test('array literal with 5 elements throws descriptive error', async () => {
+        await myp5.createCanvas(5, 5, myp5.WEBGPU);
+
+        expect(() => {
+          myp5.buildComputeShader(() => {
+            const data = myp5.uniformStorage();
+            const arr = [1, 2, 3, 4, 5];
+            data[myp5.index.x] = arr[0];
+          }, { myp5 });
+        }).toThrow('and must have 2-4 elements (got 5)');
+      });
+
+      test('valid array lengths 2, 3, 4 do not throw', async () => {
+        await myp5.createCanvas(5, 5, myp5.WEBGPU);
+        const storage = myp5.createStorage(new Float32Array(4));
+
+        expect(() => {
+          const s2 = myp5.buildComputeShader(() => {
+            const data = myp5.uniformStorage();
+            const arr = [1, 2];
+            data[myp5.index.x] = arr[0];
+          }, { myp5 });
+          s2.setUniform('data', storage);
+          myp5.compute(s2, 4);
+
+          const s3 = myp5.buildComputeShader(() => {
+            const data = myp5.uniformStorage();
+            const arr = [1, 2, 3];
+            data[myp5.index.x] = arr[0];
+          }, { myp5 });
+          s3.setUniform('data', storage);
+          myp5.compute(s3, 4);
+
+          const s4 = myp5.buildComputeShader(() => {
+            const data = myp5.uniformStorage();
+            const arr = [1, 2, 3, 4];
+            data[myp5.index.x] = arr[0];
+          }, { myp5 });
+          s4.setUniform('data', storage);
+          myp5.compute(s4, 4);
+        }).not.toThrow();
+      });
+    });
   });
 });
