@@ -89,6 +89,33 @@ suite('p5.RendererGL', function() {
     });
   });
 
+  suite('p5.strands', function() {
+    test('a uniform whose name matches a hook parameter name does not break', function() {
+      myp5.createCanvas(10, 10, myp5.WEBGL);
+      myp5.pixelDensity(1);
+
+      // 'color' is the GLSL parameter name of the getFinalColor hook's first argument.
+      // Creating a uniform with the same name used to cause a GLSL name clash.
+      const myShader = myp5.baseColorShader().modify(() => {
+        const color = myp5.uniformFloat('color', 0.5);
+        myp5.finalColor.begin();
+        myp5.finalColor.set([color, color, color, 1]);
+        myp5.finalColor.end();
+      }, { myp5 });
+
+      myp5.background(0);
+      myp5.noStroke();
+      myp5.shader(myShader);
+      myp5.plane(myp5.width, myp5.height);
+
+      const pixel = myp5.get(5, 5);
+      assert.approximately(pixel[0], 128, 1);
+      assert.equal(pixel[0], pixel[1]);
+      assert.equal(pixel[1], pixel[2]);
+      assert.equal(pixel[3], 255);
+    });
+  });
+
   suite('texture binding', function() {
     test('setting a custom texture works', function() {
       myp5.createCanvas(10, 10, myp5.WEBGL);
