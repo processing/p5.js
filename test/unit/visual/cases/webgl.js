@@ -272,6 +272,37 @@ visualSuite('WebGL', function() {
 
       screenshot();
     });
+
+    for (const mode of ['webgl', '2d']) {
+      visualTest(`Transparent background colors are correct in ${mode} mode`, function(p5, screenshot) {
+        p5.createCanvas(50, 50, p5.WEBGL);
+        const g = p5.createGraphics(50, 50, mode === 'webgl' ? p5.WEBGL : p5.P2D);
+        if (mode === 'webgl') g.translate(-p5.width/2, -p5.height/2);
+        g.noStroke();
+        g.fill(255, 0, 0, 100);
+        g.rect(10, 10, 30, 30);
+        g.filter(p5.BLUR, 4);
+        p5.imageMode(p5.CENTER);
+        p5.image(g, 0, 0);
+        screenshot();
+      });
+
+      visualTest(`Multiple filter passes work correctly on a p5.Graphics in ${mode} mode`, function(p5, screenshot) {
+        p5.createCanvas(50, 50, p5.WEBGL);
+        const g = p5.createGraphics(50, 50, mode === 'webgl' ? p5.WEBGL : p5.P2D);
+        if (mode === 'webgl') g.translate(-g.width/2, -g.height/2);
+        g.background(255);
+        g.noStroke();
+        g.fill(0);
+        g.rect(10, 10, 6, 6);
+        g.filter(p5.BLUR, 2);
+        g.rect(30, 30, 6, 6);
+        g.filter(p5.BLUR, 2);
+        p5.imageMode(p5.CENTER);
+        p5.image(g, 0, 0);
+        screenshot();
+      });
+    }
   });
 
   visualSuite('Lights', function() {
@@ -1034,6 +1065,33 @@ visualSuite('WebGL', function() {
       p5.model(obj, 25);
       screenshot();
     });
+    visualTest('instanceID in fragment hook colors instances', (p5, screenshot) => {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      const numInstances = 4;
+      const shader = p5.baseMaterialShader().modify(() => {
+        // Vertex hook: position instances in a horizontal row
+        p5.getWorldInputs((inputs) => {
+          const id = p5.instanceID();
+          const spacing = 12;
+          const offset = (id - (numInstances - 1) / 2.0) * spacing;
+          inputs.position.x += offset;
+          return inputs;
+        });
+        // Fragment hook: color each instance based on instanceID
+        p5.getFinalColor((color) => {
+          const id = p5.instanceID();
+          const t = id / (numInstances - 1.0);
+          color = [t, t, t, 1];
+          return color;
+        });
+      }, { p5, numInstances });
+      p5.background(128);
+      p5.noStroke();
+      p5.shader(shader);
+      const obj = p5.buildGeometry(() => p5.circle(0, 0, 10));
+      p5.model(obj, numInstances);
+      screenshot();
+    });
   });
 
   visualSuite('p5.strands', () => {
@@ -1046,6 +1104,23 @@ visualSuite('WebGL', function() {
       } catch (e) {}
       p5.background('red');
       p5.circle(p5.noise(0), p5.noise(0), 20);
+      screenshot();
+    });
+
+    visualTest('random() colors a basic shader', (p5, screenshot) => {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      const shader = p5.baseColorShader().modify(() => {
+        p5.randomSeed(12);
+        p5.getFinalColor((color) => {
+          const value = p5.random(0.2, 0.9);
+          color = [value, value, value, 1];
+          return color;
+        });
+      }, { p5 });
+      p5.background(0);
+      p5.noStroke();
+      p5.shader(shader);
+      p5.plane(50, 50);
       screenshot();
     });
 
@@ -1064,6 +1139,60 @@ visualSuite('WebGL', function() {
       p5.shader(firstShader);
       p5.noStroke();
       p5.plane(20, 20);
+      screenshot();
+    });
+
+    visualTest('lerp maps to mix in strands context', (p5, screenshot) => {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      // lerp should behave identically to mix inside strands
+      const shader = p5.baseColorShader().modify(() => {
+        p5.getFinalColor((color) => {
+          color = p5.lerp(
+            [1, 0, 0, 1],
+            [0, 0, 1, 1],
+            0.5
+          );
+          return color;
+        });
+      }, { p5 });
+      p5.background(0);
+      p5.shader(shader);
+      p5.noStroke();
+      p5.plane(50, 50);
+      screenshot();
+    });
+
+    visualTest('mix produces same result as lerp in strands', (p5, screenshot) => {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      // mix directly, should produce identical output to lerp test above
+      const shader = p5.baseColorShader().modify(() => {
+        p5.getFinalColor((color) => {
+          color = p5.mix(
+            [1, 0, 0, 1],
+            [0, 0, 1, 1],
+            0.5
+          );
+          return color;
+        });
+      }, { p5 });
+      p5.background(0);
+      p5.shader(shader);
+      p5.noStroke();
+      p5.plane(50, 50);
+      screenshot();
+    });
+
+    visualTest('texCoord is available in getFinalColor', (p5, screenshot) => {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      const shader = p5.baseColorShader().modify(() => {
+        p5.finalColor.begin();
+        p5.finalColor.set([p5.finalColor.texCoord, 0, 1]);
+        p5.finalColor.end();
+      }, { p5 });
+      p5.background(0);
+      p5.shader(shader);
+      p5.noStroke();
+      p5.plane(50, 50);
       screenshot();
     });
 
@@ -1293,6 +1422,39 @@ visualSuite('WebGL', function() {
 
       screenshot();
     });
+
+    visualTest('setUniform with p5.Vector offsets position', (p5, screenshot) => {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      const myShader = p5.baseMaterialShader().modify(() => {
+        const uOffset = p5.uniformVec2('uOffset');
+        p5.worldInputs.begin();
+        p5.worldInputs.position.xy += uOffset;
+        p5.worldInputs.end();
+      }, { p5 });
+      p5.background(200);
+      p5.shader(myShader);
+      myShader.setUniform('uOffset', p5.createVector(10, -10));
+      p5.noStroke();
+      p5.fill('red');
+      p5.circle(0, 0, 20);
+      screenshot();
+    });
+
+    visualTest('setUniform with p5.Color sets final color', (p5, screenshot) => {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      const myShader = p5.baseMaterialShader().modify(() => {
+        const uColor = p5.uniformVec4('uColor');
+        p5.finalColor.begin();
+        p5.finalColor.set(uColor);
+        p5.finalColor.end();
+      }, { p5 });
+      p5.background(200);
+      p5.shader(myShader);
+      myShader.setUniform('uColor', p5.color(0, 100, 200));
+      p5.noStroke();
+      p5.circle(0, 0, 30);
+      screenshot();
+    });
   });
 
   visualSuite('background()', function () {
@@ -1388,6 +1550,17 @@ visualSuite('WebGL', function() {
       // Simulate waiting for successive draw calls
       p5._lastRealFrameTime += 300;
       p5.image(gif, 0, 0);
+      screenshot();
+    });
+  });
+
+  visualSuite('2D Shapes', function() {
+    visualTest('rect() rounded into a circle', function(p5, screenshot) {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      p5.background(255);
+      p5.noStroke();
+      p5.fill('red');
+      p5.rect(-20, -20, 40, 40, 20);
       screenshot();
     });
   });

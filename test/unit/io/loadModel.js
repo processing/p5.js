@@ -79,11 +79,27 @@ suite('loadModel', function() {
     assert.deepEqual(model.vertexColors, expectedColors);
   });
 
-  test('inconsistent vertex coloring throws error', async function() {
-    // Attempt to load the model and catch the error
-    await expect(mockP5Prototype.loadModel(inconsistentColorObjFile))
-      .rejects
-      .toThrow('Model coloring is inconsistent. Either all vertices should have colors or none should.');
+  test('mixed material coloring loads model with sentinel colors for uncolored vertices', async function() {
+    const model = await mockP5Prototype.loadModel(inconsistentColorObjFile);
+    assert.instanceOf(model, Geometry);
+    assert.equal(
+      model.vertexColors.length,
+      model.vertices.length * 4,
+      'vertexColors should have four entries per vertex'
+    );
+    const hasSentinel = model.vertexColors.some(
+      (_, i) =>
+        i % 4 === 0 &&
+        model.vertexColors[i] === -1 &&
+        model.vertexColors[i + 1] === -1 &&
+        model.vertexColors[i + 2] === -1 &&
+        model.vertexColors[i + 3] === -1
+    );
+    const hasRealColor = model.vertexColors.some(
+      (_, i) => i % 4 === 0 && model.vertexColors[i] !== -1
+    );
+    assert.isTrue(hasSentinel, 'Uncolored vertices should have sentinel color');
+    assert.isTrue(hasRealColor, 'Colored vertices should retain their color');
   });
 
   test('missing MTL file shows OBJ model without vertexColors', async function() {

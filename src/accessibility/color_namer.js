@@ -2,7 +2,6 @@
  * @module Environment
  * @submodule Environment
  * @for p5
- * @requires core
  */
 
 import color_conversion from '../color/color_conversion';

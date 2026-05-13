@@ -4,6 +4,7 @@ import random from './random.js';
 import trigonometry from './trigonometry.js';
 import math from './math.js';
 import vector from './p5.Vector.js';
+import vectorValidation from './patch-vector.js';
 
 export default function(p5){
   p5.registerAddon(calculation);
@@ -12,4 +13,5 @@ export default function(p5){
   p5.registerAddon(trigonometry);
   p5.registerAddon(math);
   p5.registerAddon(vector);
+  p5.registerAddon(vectorValidation);
 }

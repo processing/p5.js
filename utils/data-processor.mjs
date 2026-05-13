@@ -152,6 +152,8 @@ export function processData(rawData, strategy) {
         submodule,
         class: forEntry || 'p5',
         beta: entry.tags?.some(t => t.title === 'beta') || undefined,
+        webgpu: entry.tags?.some(t => t.title === 'webgpu') || undefined,
+        webgpuOnly: entry.tags?.some(t => t.title === 'webgpuOnly') || undefined,
       };
 
       processed.classitems.push(item);
@@ -188,7 +190,10 @@ export function processData(rawData, strategy) {
         },
         is_constructor: 1,
         module,
-        submodule
+        submodule,
+        beta: entry.tags?.some(t => t.title === 'beta') || undefined,
+        webgpu: entry.tags?.some(t => t.title === 'webgpu') || undefined,
+        webgpuOnly: entry.tags?.some(t => t.title === 'webgpuOnly') || undefined,
       };
 
       // The @private tag doesn't seem to end up in the Documentation.js output.
@@ -269,6 +274,8 @@ export function processData(rawData, strategy) {
         module: prevItem?.module ?? module,
         submodule: prevItem?.submodule ?? submodule,
         beta: prevItem?.beta || entry.tags?.some(t => t.title === 'beta') || undefined,
+        webgpu: prevItem?.webgpu || entry.tags?.some(t => t.title === 'webgpu') || undefined,
+        webgpuOnly: prevItem?.webgpuOnly || entry.tags?.some(t => t.title === 'webgpuOnly') || undefined,
       };
 
       processed.classMethods[className] = processed.classMethods[className] || {};

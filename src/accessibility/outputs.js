@@ -2,7 +2,6 @@
  * @module Environment
  * @submodule Environment
  * @for p5
- * @requires core
  */
 
 function outputs(p5, fn){

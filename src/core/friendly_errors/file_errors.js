@@ -1,6 +1,5 @@
 /**
  * @for p5
- * @requires core
  */
 import { translator } from '../internationalization';
 

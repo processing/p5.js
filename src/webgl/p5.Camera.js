@@ -1,7 +1,6 @@
 /**
  * @module 3D
  * @submodule Camera
- * @requires core
  */
 
 import { Matrix } from '../math/p5.Matrix';
@@ -1601,10 +1600,10 @@ class Camera {
     const up1 = rotMat1.row(1);
 
     // prepare new vectors.
-    const newFront = new Vector();
-    const newUp = new Vector();
-    const newEye = new Vector();
-    const newCenter = new Vector();
+    const newFront = new Vector(0, 0, 0);
+    const newUp = new Vector(0, 0, 0);
+    const newEye = new Vector(0, 0, 0);
+    const newCenter = new Vector(0, 0, 0);
 
     // Create the inverse matrix of mat0 by transposing mat0,
     // and multiply it to mat1 from the right.

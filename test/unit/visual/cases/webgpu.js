@@ -272,7 +272,100 @@ visualSuite("WebGPU", function () {
       p5.filter(invert);
       await screenshot();
     });
+
+    visualTest('filter shaders can sample a texture inside a conditional branch', async function(p5, screenshot) {
+      await p5.createCanvas(50, 50, p5.WEBGPU);
+      p5.background(255);
+      p5.noStroke();
+      p5.fill(0);
+      p5.circle(0, 0, 20);
+      // This shader only samples the texture for pixels in the left half of the
+      // canvas, exercising getTexture() inside a non-uniform conditional
+      const conditionalInvert = p5.buildFilterShader(({ p5 }) => {
+        p5.filterColor.begin();
+        if (p5.filterColor.texCoord.x < 0.5) {
+          const col = p5.getTexture(
+            p5.filterColor.canvasContent,
+            p5.filterColor.texCoord
+          );
+          p5.filterColor.set([1 - col.rgb, col.a]);
+        } else {
+          p5.filterColor.set([0, 0, 1, 1]);
+        }
+        p5.filterColor.end();
+      }, { p5 });
+      p5.filter(conditionalInvert);
+      await screenshot();
+    });
+
+    visualTest('instanceID in fragment hook colors instances (WebGPU)', async function(p5, screenshot) {
+      await p5.createCanvas(50, 50, p5.WEBGPU);
+      const numInstances = 4;
+      const shader = p5.baseMaterialShader().modify(() => {
+        // Vertex hook: position instances in a horizontal row
+        p5.getWorldInputs((inputs) => {
+          const id = p5.instanceID();
+          const spacing = 12;
+          const offset = (id - (numInstances - 1) / 2.0) * spacing;
+          inputs.position.x += offset;
+          return inputs;
+        });
+        // Fragment hook: color each instance based on instanceID
+        p5.getFinalColor((color) => {
+          const id = p5.instanceID();
+          const t = id / (numInstances - 1.0);
+          color = [t, t, t, 1];
+          return color;
+        });
+      }, { p5, numInstances });
+      p5.background(128);
+      p5.noStroke();
+      p5.shader(shader);
+      const obj = p5.buildGeometry(() => p5.circle(0, 0, 10));
+      p5.model(obj, numInstances);
+      await screenshot();
+    });
+
+    visualTest('random() colors a basic shader (WebGPU)', async function(p5, screenshot) {
+      await p5.createCanvas(50, 50, p5.WEBGPU);
+      const shader = p5.baseColorShader().modify(() => {
+        p5.randomSeed(12);
+        p5.getFinalColor((color) => {
+          const value = p5.random(0.2, 0.9);
+          color = [value, value, value, 1];
+          return color;
+        });
+      }, { p5 });
+      p5.background(0);
+      p5.noStroke();
+      p5.shader(shader);
+      p5.plane(50, 50);
+      await screenshot();
+    });
+
+    visualTest('random() in a fragment loop averages to gray (WebGPU)', async function(p5, screenshot) {
+      await p5.createCanvas(50, 50, p5.WEBGPU);
+      const shader = p5.baseMaterialShader().modify(() => {
+        p5.randomSeed(7);
+        p5.getPixelInputs(inputs => {
+          let sum = p5.float(0.0);
+          for (let i = 0; i < 20; i++) {
+            sum = sum + p5.random();
+          }
+          const avg = sum / 20;
+          inputs.color = [avg, avg, avg, 1.0];
+          return inputs;
+        });
+      }, { p5 });
+
+      p5.background(0);
+      p5.noStroke();
+      p5.shader(shader);
+      p5.plane(50, 50);
+      await screenshot();
+    });
   });
+
 
   visualSuite('filters', function() {
     const setupSketch = async (p5) => {
@@ -495,6 +588,28 @@ visualSuite("WebGPU", function () {
     );
 
     visualTest(
+      "Framebuffer with depth disabled",
+      async function (p5, screenshot) {
+        await p5.createCanvas(50, 50, p5.WEBGPU);
+        const fbo = p5.createFramebuffer({ width: 50, height: 50, depth: false });
+
+        fbo.draw(() => {
+          p5.background(0, 0, 200);
+          p5.fill(255, 200, 0);
+          p5.noStroke();
+          p5.circle(0, 0, 30);
+        });
+
+        p5.background(50);
+        p5.texture(fbo);
+        p5.noStroke();
+        p5.plane(50, 50);
+
+        await screenshot();
+      },
+    );
+
+    visualTest(
       "Fixed-size framebuffer after manual resize",
       async function (p5, screenshot) {
         await p5.createCanvas(50, 50, p5.WEBGPU);
@@ -530,6 +645,21 @@ visualSuite("WebGPU", function () {
         p5.noStroke();
         p5.plane(35, 25);
 
+        await screenshot();
+      },
+    );
+  });
+
+  visualSuite("Rendering attributes", function () {
+    visualTest(
+      "noSmooth() does not crash and disables antialiasing",
+      async function (p5, screenshot) {
+        await p5.createCanvas(50, 50, p5.WEBGPU);
+        await p5.noSmooth();
+        p5.background(0);
+        p5.fill(255);
+        p5.noStroke();
+        p5.circle(0, 0, 30);
         await screenshot();
       },
     );
@@ -995,5 +1125,514 @@ visualSuite("WebGPU", function () {
       p5.box(30);
       await screenshot();
     });
+  });
+
+  visualSuite('Compute shaders', function() {
+    visualTest(
+      'Storage buffer (float array) can be read in a vertex shader for instanced rendering',
+      async function(p5, screenshot) {
+        await p5.createCanvas(50, 50, p5.WEBGPU);
+
+        // Positions for 3 spheres: (-15,0), (0,0), (15,0)
+        const positions = p5.createStorage([-15, 0, 0, 0, 15, 0]);
+
+        const sphereShader = p5.baseMaterialShader().modify(() => {
+          const posData = p5.uniformStorage();
+          p5.getWorldInputs((inputs) => {
+            const idx = p5.instanceID();
+            inputs.position.x += posData[idx * 2];
+            inputs.position.y += posData[idx * 2 + 1];
+            return inputs;
+          });
+        }, { p5 });
+        sphereShader.setUniform('posData', positions);
+
+        const geo = p5.buildGeometry(() => p5.sphere(5));
+        p5.background(200);
+        p5.noStroke();
+        p5.fill(255, 0, 0);
+        p5.shader(sphereShader);
+        p5.model(geo, 3);
+
+        await screenshot();
+      }
+    );
+
+    visualTest(
+      'Compute shader writes float values to storage buffer, vertex shader reads them',
+      async function(p5, screenshot) {
+        await p5.createCanvas(50, 50, p5.WEBGPU);
+
+        // Start with zeros; compute shader will write [20, -10]
+        const offset = p5.createStorage(2);
+
+        const computeShader = p5.buildComputeShader(() => {
+          const buf = p5.uniformStorage();
+          buf[0] = 20;
+          buf[1] = -10;
+        }, { p5 });
+        computeShader.setUniform('buf', offset);
+        p5.compute(computeShader, 1);
+
+        const sphereShader = p5.baseMaterialShader().modify(() => {
+          const buf = p5.uniformStorage();
+          p5.getWorldInputs((inputs) => {
+            inputs.position.x += buf[0];
+            inputs.position.y += buf[1];
+            return inputs;
+          });
+        }, { p5 });
+        sphereShader.setUniform('buf', offset);
+
+        const geo = p5.buildGeometry(() => p5.sphere(5));
+        p5.background(200);
+        p5.noStroke();
+        p5.fill(255, 0, 0);
+        p5.shader(sphereShader);
+        p5.model(geo, 1);
+
+        await screenshot();
+      }
+    );
+
+    visualTest(
+      'Compute shader reads and transforms float array values',
+      async function(p5, screenshot) {
+        await p5.createCanvas(50, 50, p5.WEBGPU);
+
+        // Initialize with [10, 0] - compute will double x to get [20, 0]
+        const buf = p5.createStorage([10, 0]);
+
+        const computeShader = p5.buildComputeShader(() => {
+          const data = p5.uniformStorage();
+          data[0] = data[0] * 2;
+        }, { p5 });
+        computeShader.setUniform('data', buf);
+        p5.compute(computeShader, 1);
+
+        const sphereShader = p5.baseMaterialShader().modify(() => {
+          const data = p5.uniformStorage();
+          p5.getWorldInputs((inputs) => {
+            inputs.position.x += data[0];
+            inputs.position.y += data[1];
+            return inputs;
+          });
+        }, { p5 });
+        sphereShader.setUniform('data', buf);
+
+        const geo = p5.buildGeometry(() => p5.sphere(5));
+        p5.background(200);
+        p5.noStroke();
+        p5.fill(255, 0, 0);
+        p5.shader(sphereShader);
+        p5.model(geo, 1);
+
+        await screenshot();
+      }
+    );
+
+
+    visualTest(
+      'Struct storage buffer fields can be read in a vertex shader for instanced rendering',
+      async function(p5, screenshot) {
+        await p5.createCanvas(50, 50, p5.WEBGPU);
+
+        // Three particles at known positions: left, center, right
+        const particles = p5.createStorage([
+          { position: [-15, 0] },
+          { position: [0,   0] },
+          { position: [15,  0] },
+        ]);
+
+        const sphereShader = p5.baseMaterialShader().modify(() => {
+          const buf = p5.uniformStorage('buf', particles);
+          p5.getWorldInputs((inputs) => {
+            const p = buf[p5.instanceID()].position;
+            inputs.position.x += p.x;
+            inputs.position.y += p.y;
+            return inputs;
+          });
+        }, { p5, particles });
+
+        const geo = p5.buildGeometry(() => p5.sphere(5));
+        p5.background(200);
+        p5.noStroke();
+        p5.fill(255, 0, 0);
+        p5.shader(sphereShader);
+        p5.model(geo, 3);
+
+        await screenshot();
+      }
+    );
+
+    visualTest(
+      'Struct storage buffer fields can use p5.Vector values',
+      async function(p5, screenshot) {
+        await p5.createCanvas(50, 50, p5.WEBGPU);
+
+        // Three particles at known positions: left, center, right
+        const particles = p5.createStorage([
+          { position: p5.createVector(-15, 0) },
+          { position: p5.createVector(0,   0) },
+          { position: p5.createVector(15,  0) },
+        ]);
+
+        const sphereShader = p5.baseMaterialShader().modify(() => {
+          const buf = p5.uniformStorage('buf', particles);
+          p5.getWorldInputs((inputs) => {
+            const p = buf[p5.instanceID()].position;
+            inputs.position.x += p.x;
+            inputs.position.y += p.y;
+            return inputs;
+          });
+        }, { p5, particles });
+
+        const geo = p5.buildGeometry(() => p5.sphere(5));
+        p5.background(200);
+        p5.noStroke();
+        p5.fill(255, 0, 0);
+        p5.shader(sphereShader);
+        p5.model(geo, 3);
+
+        await screenshot();
+      }
+    );
+
+    visualTest(
+      'Struct storage buffer fields can be read using an inline schema template',
+      async function(p5, screenshot) {
+        await p5.createCanvas(50, 50, p5.WEBGPU);
+
+        // Same layout as above but schema is declared inline rather than via the buffer
+        const particles = p5.createStorage([
+          { position: [-15, 0] },
+          { position: [0,   0] },
+          { position: [15,  0] },
+        ]);
+
+        const sphereShader = p5.baseMaterialShader().modify(() => {
+          const buf = p5.uniformStorage('buf', { position: [0, 0] });
+          p5.getWorldInputs((inputs) => {
+            const p = buf[p5.instanceID()].position;
+            inputs.position.x += p.x;
+            inputs.position.y += p.y;
+            return inputs;
+          });
+        }, { p5 });
+        sphereShader.setUniform('buf', particles);
+
+        const geo = p5.buildGeometry(() => p5.sphere(5));
+        p5.background(200);
+        p5.noStroke();
+        p5.fill(255, 0, 0);
+        p5.shader(sphereShader);
+        p5.model(geo, 3);
+
+        await screenshot();
+      }
+    );
+
+    visualTest(
+      'Compute shader writes to struct storage fields, vertex shader reads them',
+      async function(p5, screenshot) {
+        await p5.createCanvas(50, 50, p5.WEBGPU);
+
+        const particles = p5.createStorage([
+          { position: [0, 0] },
+        ]);
+
+        const computeShader = p5.buildComputeShader(() => {
+          const buf = p5.uniformStorage('buf', particles);
+          buf[p5.index.x].position = [15, -10];
+        }, { p5, particles });
+        p5.compute(computeShader, 1);
+
+        const sphereShader = p5.baseMaterialShader().modify(() => {
+          const buf = p5.uniformStorage('buf', particles);
+          p5.getWorldInputs((inputs) => {
+            const pos = buf[0].position;
+            inputs.position.x += pos.x;
+            inputs.position.y += pos.y;
+            return inputs;
+          });
+        }, { p5, particles });
+
+        const geo = p5.buildGeometry(() => p5.sphere(5));
+        p5.background(200);
+        p5.noStroke();
+        p5.fill(255, 0, 0);
+        p5.shader(sphereShader);
+        p5.model(geo, 1);
+
+        await screenshot();
+      }
+    );
+
+    visualTest(
+      'Compute shader reads and updates struct fields (position += velocity)',
+      async function(p5, screenshot) {
+        await p5.createCanvas(50, 50, p5.WEBGPU);
+
+        const particles = p5.createStorage([
+          { position: [0, 0], velocity: [15, -10] },
+        ]);
+
+        const computeShader = p5.buildComputeShader(() => {
+          const buf = p5.uniformStorage('buf', particles);
+          const idx = p5.index.x;
+          buf[idx].position = buf[idx].position + buf[idx].velocity;
+        }, { p5, particles });
+        p5.compute(computeShader, 1);
+
+        const sphereShader = p5.baseMaterialShader().modify(() => {
+          const buf = p5.uniformStorage('buf', particles);
+          p5.getWorldInputs((inputs) => {
+            const pos = buf[0].position;
+            inputs.position.x += pos.x;
+            inputs.position.y += pos.y;
+            return inputs;
+          });
+        }, { p5, particles });
+
+        const geo = p5.buildGeometry(() => p5.sphere(5));
+        p5.background(200);
+        p5.noStroke();
+        p5.fill(255, 0, 0);
+        p5.shader(sphereShader);
+        p5.model(geo, 1);
+
+        await screenshot();
+      }
+    );
+
+    visualTest(
+      'Compute shader updates struct fields via intermediate struct variable',
+      async function(p5, screenshot) {
+        await p5.createCanvas(50, 50, p5.WEBGPU);
+
+        const particles = p5.createStorage([
+          { position: [0, 0], velocity: [15, -10] },
+        ]);
+
+        // Store the struct element proxy in a variable and assign through it
+        const computeShader = p5.buildComputeShader(() => {
+          const buf = p5.uniformStorage('buf', particles);
+          const idx = p5.index.x;
+          const entry = buf[idx];
+          entry.position = entry.position + entry.velocity;
+        }, { p5, particles });
+        p5.compute(computeShader, 1);
+
+        const sphereShader = p5.baseMaterialShader().modify(() => {
+          const buf = p5.uniformStorage('buf', particles);
+          p5.getWorldInputs((inputs) => {
+            const pos = buf[0].position;
+            inputs.position.x += pos.x;
+            inputs.position.y += pos.y;
+            return inputs;
+          });
+        }, { p5, particles });
+
+        const geo = p5.buildGeometry(() => p5.sphere(5));
+        p5.background(200);
+        p5.noStroke();
+        p5.fill(255, 0, 0);
+        p5.shader(sphereShader);
+        p5.model(geo, 1);
+
+        await screenshot();
+      }
+    );
+
+    visualTest(
+      'Compute shader updates struct fields via intermediate field variable',
+      async function(p5, screenshot) {
+        await p5.createCanvas(50, 50, p5.WEBGPU);
+
+        const particles = p5.createStorage([
+          { position: [0, 0], velocity: [15, -10] },
+        ]);
+
+        // Store a field value in an intermediate variable, update it, write it back
+        const computeShader = p5.buildComputeShader(() => {
+          const buf = p5.uniformStorage('buf', particles);
+          const idx = p5.index.x;
+          let pos = buf[idx].position;
+          pos = pos + buf[idx].velocity;
+          buf[idx].position = pos;
+        }, { p5, particles });
+        p5.compute(computeShader, 1);
+
+        const sphereShader = p5.baseMaterialShader().modify(() => {
+          const buf = p5.uniformStorage('buf', particles);
+          p5.getWorldInputs((inputs) => {
+            const pos = buf[0].position;
+            inputs.position.x += pos.x;
+            inputs.position.y += pos.y;
+            return inputs;
+          });
+        }, { p5, particles });
+
+        const geo = p5.buildGeometry(() => p5.sphere(5));
+        p5.background(200);
+        p5.noStroke();
+        p5.fill(255, 0, 0);
+        p5.shader(sphereShader);
+        p5.model(geo, 1);
+
+        await screenshot();
+      }
+    );
+
+    visualTest(
+      'Compute shader writes a whole struct element as an object literal',
+      async function(p5, screenshot) {
+        await p5.createCanvas(50, 50, p5.WEBGPU);
+
+        const particles = p5.createStorage([
+          { position: [0, 0], velocity: [15, -10] },
+        ]);
+
+        const computeShader = p5.buildComputeShader(() => {
+          const buf = p5.uniformStorage('buf', particles);
+          const idx = p5.index.x;
+          let pos = buf[idx].position;
+          let vel = buf[idx].velocity;
+          pos = pos + vel;
+          buf[idx] = { position: pos, velocity: vel };
+        }, { p5, particles });
+        p5.compute(computeShader, 1);
+
+        const sphereShader = p5.baseMaterialShader().modify(() => {
+          const buf = p5.uniformStorage('buf', particles);
+          p5.getWorldInputs((inputs) => {
+            const pos = buf[0].position;
+            inputs.position.x += pos.x;
+            inputs.position.y += pos.y;
+            return inputs;
+          });
+        }, { p5, particles });
+
+        const geo = p5.buildGeometry(() => p5.sphere(5));
+        p5.background(200);
+        p5.noStroke();
+        p5.fill(255, 0, 0);
+        p5.shader(sphereShader);
+        p5.model(geo, 1);
+
+        await screenshot();
+      }
+    );
+
+    visualTest(
+      'Compute shader assigns to a swizzle of a struct vector field',
+      async function(p5, screenshot) {
+        await p5.createCanvas(50, 50, p5.WEBGPU);
+
+        const particles = p5.createStorage([
+          { position: [15, 10] },
+        ]);
+
+        // Negate position.y via swizzle assignment
+        const computeShader = p5.buildComputeShader(() => {
+          const buf = p5.uniformStorage('buf', particles);
+          const idx = p5.index.x;
+          buf[idx].position.y *= -1;
+        }, { p5, particles });
+        p5.compute(computeShader, 1);
+
+        const sphereShader = p5.baseMaterialShader().modify(() => {
+          const buf = p5.uniformStorage('buf', particles);
+          p5.getWorldInputs((inputs) => {
+            const pos = buf[0].position;
+            inputs.position.x += pos.x;
+            inputs.position.y += pos.y;
+            return inputs;
+          });
+        }, { p5, particles });
+
+        const geo = p5.buildGeometry(() => p5.sphere(5));
+        p5.background(200);
+        p5.noStroke();
+        p5.fill(255, 0, 0);
+        p5.shader(sphereShader);
+        p5.model(geo, 1);
+
+        await screenshot();
+      }
+    );
+
+    visualTest(
+      'Compute shader assigns to a swizzle of a struct vector field inside an if statement',
+      async function(p5, screenshot) {
+        await p5.createCanvas(50, 50, p5.WEBGPU);
+
+        const particles = p5.createStorage([
+          { position: [0, 0], velocity: [5, 5] },
+        ]);
+
+        // Move by velocity, then negate velocity.y if position.y > 0.
+        // After 1st run: position=[5,5], velocity=[5,-5].
+        // After 2nd run: position=[10,0], velocity=[5,-5].
+        const computeShader = p5.buildComputeShader(() => {
+          const buf = p5.uniformStorage('buf', particles);
+          const idx = p5.index.x;
+          buf[idx].position += buf[idx].velocity;
+          if (buf[idx].position.y > 0) {
+            buf[idx].velocity.y *= -1;
+          }
+        }, { p5, particles });
+        p5.compute(computeShader, 1);
+        p5.compute(computeShader, 1);
+
+        const sphereShader = p5.baseMaterialShader().modify(() => {
+          const buf = p5.uniformStorage('buf', particles);
+          p5.getWorldInputs((inputs) => {
+            const pos = buf[0].position;
+            inputs.position.x += pos.x;
+            inputs.position.y += pos.y;
+            return inputs;
+          });
+        }, { p5, particles });
+
+        const geo = p5.buildGeometry(() => p5.sphere(5));
+        p5.background(200);
+        p5.noStroke();
+        p5.fill(255, 0, 0);
+        p5.shader(sphereShader);
+        p5.model(geo, 1);
+
+        await screenshot();
+      }
+    );
+  });
+
+  visualSuite('Feedback', function() {
+    visualTest(
+      'Drawing accumulates across frames when background is set in setup',
+      async function(p5, screenshot) {
+        await p5.createCanvas(50, 50, p5.WEBGPU);
+
+        // Set an initial background before the draw loop starts.
+        // This should persist into the first draw frame.
+        p5.background('red');
+
+        return new Promise(resolve => {
+          let frame = 0;
+          p5.draw = function() {
+            // Draw circles without clearing, so they accumulate
+            p5.noStroke();
+            p5.fill('blue');
+            p5.circle(-15 + frame * 15, 0, 10);
+            frame++;
+            if (frame >= 3) {
+              p5.noLoop();
+              screenshot().then(resolve);
+            }
+          };
+          p5.loop();
+        });
+      }
+    );
   });
 });

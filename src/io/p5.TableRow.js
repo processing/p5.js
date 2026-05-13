@@ -1,7 +1,6 @@
 /**
  * @module IO
  * @submodule Table
- * @requires core
  */
 
 class TableRow {

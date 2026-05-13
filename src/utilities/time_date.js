@@ -2,7 +2,6 @@
  * @module IO
  * @submodule Time & Date
  * @for p5
- * @requires core
  */
 
 function timeDate(p5, fn){

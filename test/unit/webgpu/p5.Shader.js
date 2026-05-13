@@ -490,7 +490,6 @@ suite('WebGPU p5.Shader', function() {
             return [0.4, 0, 0, 1];
           });
         }, { myp5 });
-        console.log(testShader.fragSrc())
 
         myp5.background(255, 255, 255);
         myp5.filter(testShader);
@@ -499,6 +498,55 @@ suite('WebGPU p5.Shader', function() {
         assert.approximately(pixelColor[0], 102, 5);
         assert.approximately(pixelColor[1], 0, 5);
         assert.approximately(pixelColor[2], 0, 5);
+      });
+    });
+
+    suite('ternary expressions', () => {
+      test('ternary changes color based on left/right side of canvas', async () => {
+        await myp5.createCanvas(50, 25, myp5.WEBGPU);
+        const testShader = myp5.baseMaterialShader().modify(() => {
+          myp5.getPixelInputs(inputs => {
+            inputs.color = inputs.texCoord.x > 0.5 ? [1, 0, 0, 1] : [0, 0, 1, 1];
+            return inputs;
+          });
+        }, { myp5 });
+        myp5.noStroke();
+        myp5.shader(testShader);
+        myp5.plane(myp5.width, myp5.height);
+
+        const leftPixel = await myp5.get(12, 12);
+        assert.approximately(leftPixel[0], 0, 5);
+        assert.approximately(leftPixel[1], 0, 5);
+        assert.approximately(leftPixel[2], 255, 5);
+
+        const rightPixel = await myp5.get(37, 12);
+        assert.approximately(rightPixel[0], 255, 5);
+        assert.approximately(rightPixel[1], 0, 5);
+        assert.approximately(rightPixel[2], 0, 5);
+      });
+
+      test('ternary with scalar values', async () => {
+        await myp5.createCanvas(50, 25, myp5.WEBGPU);
+        const testShader = myp5.baseMaterialShader().modify(() => {
+          myp5.getPixelInputs(inputs => {
+            const brightness = inputs.texCoord.x > 0.5 ? 1.0 : 0.0;
+            inputs.color = [brightness, brightness, brightness, 1];
+            return inputs;
+          });
+        }, { myp5 });
+        myp5.noStroke();
+        myp5.shader(testShader);
+        myp5.plane(myp5.width, myp5.height);
+
+        const leftPixel = await myp5.get(12, 12);
+        assert.approximately(leftPixel[0], 0, 5);
+        assert.approximately(leftPixel[1], 0, 5);
+        assert.approximately(leftPixel[2], 0, 5);
+
+        const rightPixel = await myp5.get(37, 12);
+        assert.approximately(rightPixel[0], 255, 5);
+        assert.approximately(rightPixel[1], 255, 5);
+        assert.approximately(rightPixel[2], 255, 5);
       });
     });
 
@@ -1179,6 +1227,140 @@ suite('WebGPU p5.Shader', function() {
           })()).rejects.toThrowError();
         });
       }
+    });
+
+    suite('compute shaders', () => {
+      test('handle early return in void compute hook', async () => {
+        await myp5.createCanvas(5, 5, myp5.WEBGPU);
+
+        // This test verifies that buildComputeShader and p5.compute
+        // correctly handle void hooks with early returns without crashing
+        // the strands compiler or hitting type errors.
+        expect(() => {
+          const computeShader = myp5.buildComputeShader(() => {
+            const id = myp5.index.x;
+            if (id > 10) {
+              return; // Early return in void hook
+            }
+          }, { myp5 });
+
+          myp5.compute(computeShader, 1);
+        }).not.toThrow();
+      });
+
+      test('early return in void compute hook stops execution', async () => {
+        await myp5.createCanvas(5, 5, myp5.WEBGPU);
+        const data = myp5.createStorage([0]);
+
+        const computeShader = myp5.buildComputeShader(() => {
+          const buf = myp5.uniformStorage();
+          const id = myp5.index.x;
+          if (id == 0) {
+            buf[0] = 1.0;
+            return;
+            buf[0] = 2.0; // Should not execute
+          }
+        }, { myp5 });
+
+        computeShader.setUniform('buf', data);
+
+        expect(() => {
+          myp5.compute(computeShader, 1);
+        }).not.toThrow();
+      });
+    });
+
+    suite('array indexing on non-storage vectors (#8756)', () => {
+      test('indexing into array returned from helper function does not throw', async () => {
+        await myp5.createCanvas(5, 5, myp5.WEBGPU);
+        const storage = myp5.createStorage(new Float32Array(4));
+
+        const computeShader = myp5.buildComputeShader(() => {
+          const data = myp5.uniformStorage();
+          function getArray() {
+            return [1, 2];
+          }
+          const arr = getArray();
+          data[myp5.index.x] = arr[0] + arr[1] + myp5.index.x;
+        }, { myp5 });
+
+        computeShader.setUniform('data', storage);
+
+        expect(() => {
+          myp5.compute(computeShader, 4);
+        }).not.toThrow();
+      });
+
+      test('inline literal indexing [1, 2][0] works end-to-end', async () => {
+        await myp5.createCanvas(5, 5, myp5.WEBGPU);
+        const storage = myp5.createStorage(new Float32Array(4));
+
+        const computeShader = myp5.buildComputeShader(() => {
+          const data = myp5.uniformStorage();
+          data[myp5.index.x] = [1, 2][0];
+        }, { myp5 });
+
+        computeShader.setUniform('data', storage);
+
+        expect(() => {
+          myp5.compute(computeShader, 4);
+        }).not.toThrow();
+      });
+
+      test('array literal with 1 element throws descriptive error', async () => {
+        await myp5.createCanvas(5, 5, myp5.WEBGPU);
+
+        expect(() => {
+          myp5.buildComputeShader(() => {
+            const data = myp5.uniformStorage();
+            const arr = [1];
+            data[myp5.index.x] = arr[0];
+          }, { myp5 });
+        }).toThrow('and must have 2-4 elements (got 1)');
+      });
+
+      test('array literal with 5 elements throws descriptive error', async () => {
+        await myp5.createCanvas(5, 5, myp5.WEBGPU);
+
+        expect(() => {
+          myp5.buildComputeShader(() => {
+            const data = myp5.uniformStorage();
+            const arr = [1, 2, 3, 4, 5];
+            data[myp5.index.x] = arr[0];
+          }, { myp5 });
+        }).toThrow('and must have 2-4 elements (got 5)');
+      });
+
+      test('valid array lengths 2, 3, 4 do not throw', async () => {
+        await myp5.createCanvas(5, 5, myp5.WEBGPU);
+        const storage = myp5.createStorage(new Float32Array(4));
+
+        expect(() => {
+          const s2 = myp5.buildComputeShader(() => {
+            const data = myp5.uniformStorage();
+            const arr = [1, 2];
+            data[myp5.index.x] = arr[0];
+          }, { myp5 });
+          s2.setUniform('data', storage);
+          myp5.compute(s2, 4);
+
+          const s3 = myp5.buildComputeShader(() => {
+            const data = myp5.uniformStorage();
+            const arr = [1, 2, 3];
+            data[myp5.index.x] = arr[0];
+          }, { myp5 });
+          s3.setUniform('data', storage);
+          myp5.compute(s3, 4);
+
+          const s4 = myp5.buildComputeShader(() => {
+            const data = myp5.uniformStorage();
+            const arr = [1, 2, 3, 4];
+            data[myp5.index.x] = arr[0];
+          }, { myp5 });
+          s4.setUniform('data', storage);
+          myp5.compute(s4, 4);
+        }).not.toThrow();
+      });
     });
   });
 });

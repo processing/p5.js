@@ -88,7 +88,7 @@ To remain a steward, you must contribute as a steward to at least 1 of the 2 mos
 
 1. Keep this guideline handy as a reference - how to help with new issues, bugs, and features. For example, the "Feature request" section includes tips on how to use the p5.js [access statement](access.md) as a steward.
 2. When helping to answer technical questions or review, try to apply the Processing Foundation [guideline on answering questions](https://discourse.processing.org/t/guidelines-answering-questions/2145) - these can be especially helpful for giving constructive technical feedback.
-3. Join the [p5.js Discord](https://discord.com/invite/SHQ8dH25r9)  - in the `#contribute-to-p5` you're welcome to ask any questions you have about this process - or suggest how it can be improved!
+3. Join the [p5.js Discord](https://discord.p5js.org)  - in the `#contribute-to-p5` you're welcome to ask any questions you have about this process - or suggest how it can be improved!
 
 ## Issues
 
@@ -121,7 +121,7 @@ Bug report issues should use the "Found a bug" issue template. The following wor
    - If replication is possible later, go back to step 2.
 4. If the bug stems from the code the user provided in the bug report and not p5.js' behavior:
    - Determine if p5.js' documentation, code implementation, or friendly error system can be improved to prevent the same mistake from being made.
-   - Kindly redirect any further questions to the [forum](https://discourse.processing.org/) or [Discord](https://discord.com/invite/SHQ8dH25r9) and close the issue if no further changes are to be made to p5.js.
+   - Kindly redirect any further questions to the [forum](https://discourse.processing.org/) or [Discord](https://discord.p5js.org) and close the issue if no further changes are to be made to p5.js.
 
 
 ### Feature request
