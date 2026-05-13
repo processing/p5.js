@@ -44,6 +44,7 @@ class FilterRenderer2D {
       console.error('WebGL not supported, cannot apply filter.');
       return;
     }
+    gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
 
     this.textures = new Map();
 
