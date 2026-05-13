@@ -321,4 +321,30 @@ suite('WebGPU p5.RendererWebGPU', function() {
       expect(() => buf.set(0, 42)).to.throw();
     });
   });
+
+  suite('p5.strands', function() {
+    test('a uniform whose name matches a hook parameter name does not break', async function() {
+      myp5.pixelDensity(1);
+
+      // 'color' is the WGSL parameter name of the getFinalColor hook's first argument.
+      // Creating a uniform with the same name used to cause a WGSL name clash.
+      const myShader = myp5.baseColorShader().modify(() => {
+        const color = myp5.uniformFloat('color', 0.5);
+        myp5.finalColor.begin();
+        myp5.finalColor.set([color, color, color, 1]);
+        myp5.finalColor.end();
+      }, { myp5 });
+
+      myp5.background(0);
+      myp5.noStroke();
+      myp5.shader(myShader);
+      myp5.plane(myp5.width, myp5.height);
+
+      const pixel = await myp5.get(5, 5);
+      expect(pixel[0]).to.be.closeTo(128, 1);
+      expect(pixel[0]).to.equal(pixel[1]);
+      expect(pixel[1]).to.equal(pixel[2]);
+      expect(pixel[3]).to.equal(255);
+    });
+  });
 });

@@ -2,7 +2,7 @@ import noiseWGSL from './shaders/functions/noise3DWGSL.js';
 import randomWGSL from './shaders/functions/randomWGSL';
 import randomVertWGSL from './shaders/functions/randomVertWGSL';
 import randomComputeWGSL from './shaders/functions/randomComputeWGSL';
-import { NodeType, OpCodeToSymbol, BlockType, OpCode, NodeTypeToName, isStructType, BaseType, StatementType, DataType, INSTANCE_ID_VARYING_NAME } from "../strands/ir_types";
+import { NodeType, OpCodeToSymbol, BlockType, OpCode, NodeTypeToName, isStructType, BaseType, StatementType, DataType, INSTANCE_ID_VARYING_NAME, HOOK_PARAM_PREFIX } from "../strands/ir_types";
 import { getNodeDataFromID, extractNodeTypeInfo } from "../strands/ir_dag";
 import * as FES from '../strands/strands_FES';
 import * as build from '../strands/ir_builders';
@@ -190,16 +190,16 @@ export const wgslBackend = {
   hookEntry(hookType) {
     const params = hookType.parameters.map((param) => {
       // For struct types, use a raw prefix since we'll create a mutable copy
-      const paramName = param.type.properties ? `_p5_strands_raw_${param.name}` : param.name;
+      const paramName = param.type.properties ? `_p5_strands_raw_${param.name}` : `${HOOK_PARAM_PREFIX}${param.name}`;
       return `${paramName}: ${param.type.typeName}`;
     }).join(', ');
 
     const firstLine = `(${params}) {`;
 
-    // Generate mutable copies for struct parameters with original names
+    // Generate mutable copies for struct parameters
     const mutableCopies = hookType.parameters
       .filter(param => param.type.properties) // Only struct types
-      .map(param => `  var ${param.name} = _p5_strands_raw_${param.name};`)
+      .map(param => `  var ${HOOK_PARAM_PREFIX}${param.name} = _p5_strands_raw_${param.name};`)
       .join('\n');
 
     return mutableCopies ? firstLine + '\n' + mutableCopies : firstLine;
