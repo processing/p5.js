@@ -498,6 +498,11 @@ function light(p5, fn){
    *   sphere(30);
    * }
    *
+   * function doubleClicked() {
+   *   isLit = !isLit;
+   *   return false;
+   * }
+   *
    * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
