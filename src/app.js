@@ -60,7 +60,7 @@ p5.registerAddon(shader);
 import strands from './strands/p5.strands';
 p5.registerAddon(strands);
 
-import { waitForDocumentReady, waitingForTranslator, _globalInit } from './core/init';
-Promise.all([waitForDocumentReady(), waitingForTranslator]).then(_globalInit);
+import { waitForDocumentReady, _globalInit } from './core/init';
+waitForDocumentReady().then(_globalInit);
 
 export default p5;
