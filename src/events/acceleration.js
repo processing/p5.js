@@ -2,7 +2,6 @@
  * @module Events
  * @submodule Acceleration
  * @for p5
- * @requires core
  * @main Events
  */
 
@@ -19,6 +18,10 @@ function acceleration(p5, fn, lifecycles){
         signal: this._removeSignal
       });
     }
+
+    // Initialize device orientation value
+    this.deviceOrientation = typeof window !== 'undefined' &&
+			window.innerWidth / window.innerHeight > 1.0 ? 'landscape' : 'portrait';
   };
 
   /**
@@ -30,8 +33,7 @@ function acceleration(p5, fn, lifecycles){
    * @property {(LANDSCAPE|PORTRAIT)} deviceOrientation
    * @readOnly
    */
-  fn.deviceOrientation =
-    window.innerWidth / window.innerHeight > 1.0 ? 'landscape' : 'portrait';
+  fn.deviceOrientation = 'landscape';
 
   /**
    * The system variable accelerationX always contains the acceleration of the
@@ -40,8 +42,6 @@ function acceleration(p5, fn, lifecycles){
    * @property {Number} accelerationX
    * @readOnly
    * @example
-   * <div>
-   * <code>
    * // Move a touchscreen device to register
    * // acceleration changes.
    * function draw() {
@@ -50,8 +50,6 @@ function acceleration(p5, fn, lifecycles){
    *   ellipse(width / 2, height / 2, accelerationX);
    *   describe('Magnitude of device acceleration is displayed as ellipse size.');
    * }
-   * </code>
-   * </div>
    */
   fn.accelerationX = 0;
 
@@ -62,8 +60,6 @@ function acceleration(p5, fn, lifecycles){
    * @property {Number} accelerationY
    * @readOnly
    * @example
-   * <div>
-   * <code>
    * // Move a touchscreen device to register
    * // acceleration changes.
    * function draw() {
@@ -72,8 +68,6 @@ function acceleration(p5, fn, lifecycles){
    *   ellipse(width / 2, height / 2, accelerationY);
    *   describe('Magnitude of device acceleration is displayed as ellipse size');
    * }
-   * </code>
-   * </div>
    */
   fn.accelerationY = 0;
 
@@ -85,8 +79,6 @@ function acceleration(p5, fn, lifecycles){
    * @readOnly
    *
    * @example
-   * <div>
-   * <code>
    * // Move a touchscreen device to register
    * // acceleration changes.
    * function draw() {
@@ -95,8 +87,6 @@ function acceleration(p5, fn, lifecycles){
    *   ellipse(width / 2, height / 2, accelerationZ);
    *   describe('Magnitude of device acceleration is displayed as ellipse size');
    * }
-   * </code>
-   * </div>
    */
   fn.accelerationZ = 0;
 
@@ -154,8 +144,6 @@ function acceleration(p5, fn, lifecycles){
    * @property {Number} rotationX
    * @readOnly
    * @example
-   * <div>
-   * <code>
    * let rotationX = 0;            // Angle in degrees
    *
    * function setup() {
@@ -169,8 +157,6 @@ function acceleration(p5, fn, lifecycles){
    *   box(60);                         // Draw 3D cube (60 units wide)
    *   rotationX = (rotationX + 2) % 360; // Increment rotation (2° per frame)
    * }
-   * </code>
-   * </div>
    */
   fn.rotationX = 0;
 
@@ -187,8 +173,6 @@ function acceleration(p5, fn, lifecycles){
    * @property {Number} rotationY
    * @readOnly
    * @example
-   * <div>
-   * <code>
    * let rotationY = 0;            // Angle in degrees
    *
    * function setup() {
@@ -202,8 +186,6 @@ function acceleration(p5, fn, lifecycles){
    *   box(60);                         // Draw 3D cube (60 units wide)
    *   rotationY = (rotationY + 2) % 360; // Increment rotation (2° per frame)
    * }
-   * </code>
-   * </div>
    */
   fn.rotationY = 0;
 
@@ -221,8 +203,6 @@ function acceleration(p5, fn, lifecycles){
    * unexpected behaviour.
    *
    * @example
-   * <div>
-   * <code>
    * let rotationZ = 0;          // Angle in degrees
    *
    * function setup() {
@@ -236,8 +216,6 @@ function acceleration(p5, fn, lifecycles){
    *   box(60);                         // Draw 3D cube
    *   rotationZ = (rotationZ + 2) % 360; // Increment rotation angle
    * }
-   * </code>
-   * </div>
    *
    * @property {Number} rotationZ
    * @readOnly
@@ -254,8 +232,7 @@ function acceleration(p5, fn, lifecycles){
    * pRotationX can also be used with rotationX to determine the rotate
    * direction of the device along the X-axis.
    * @example
-   * <div class='norender'>
-   * <code>
+   * // META:norender
    * // A simple if statement looking at whether
    * // rotationX - pRotationX < 0 is true or not will be
    * // sufficient for determining the rotate direction
@@ -280,8 +257,6 @@ function acceleration(p5, fn, lifecycles){
    *
    * print(rotateDirection);
    * describe('no image to display.');
-   * </code>
-   * </div>
    *
    * @property {Number} pRotationX
    * @readOnly
@@ -298,8 +273,7 @@ function acceleration(p5, fn, lifecycles){
    * pRotationY can also be used with rotationY to determine the rotate
    * direction of the device along the Y-axis.
    * @example
-   * <div class='norender'>
-   * <code>
+   * // META:norender
    * // A simple if statement looking at whether
    * // rotationY - pRotationY < 0 is true or not will be
    * // sufficient for determining the rotate direction
@@ -323,8 +297,6 @@ function acceleration(p5, fn, lifecycles){
    * }
    * print(rotateDirection);
    * describe('no image to display.');
-   * </code>
-   * </div>
    *
    * @property {Number} pRotationY
    * @readOnly
@@ -341,8 +313,7 @@ function acceleration(p5, fn, lifecycles){
    * pRotationZ can also be used with rotationZ to determine the rotate
    * direction of the device along the Z-axis.
    * @example
-   * <div class='norender'>
-   * <code>
+   * // META:norender
    * // A simple if statement looking at whether
    * // rotationZ - pRotationZ < 0 is true or not will be
    * // sufficient for determining the rotate direction
@@ -362,8 +333,6 @@ function acceleration(p5, fn, lifecycles){
    * }
    * print(rotateDirection);
    * describe('no image to display.');
-   * </code>
-   * </div>
    *
    * @property {Number} pRotationZ
    * @readOnly
@@ -395,8 +364,6 @@ function acceleration(p5, fn, lifecycles){
    * @property {String} turnAxis
    * @readOnly
    * @example
-   * <div>
-   * <code>
    * // Run this example on a mobile device
    * // Rotate the device by 90 degrees in the
    * // X-axis to change the value.
@@ -419,8 +386,6 @@ function acceleration(p5, fn, lifecycles){
    *     }
    *   }
    * }
-   * </code>
-   * </div>
    */
   fn.turnAxis = undefined;
 
@@ -434,8 +399,7 @@ function acceleration(p5, fn, lifecycles){
    * @method setMoveThreshold
    * @param {Number} value The threshold value
    * @example
-   * <div class="norender">
-   * <code>
+   * // META:norender
    * // Run this example on a mobile device
    * // You will need to move the device incrementally further
    * // the closer the square's color gets to white in order to change the value.
@@ -460,8 +424,6 @@ function acceleration(p5, fn, lifecycles){
    *   }
    *   setMoveThreshold(threshold);
    * }
-   * </code>
-   * </div>
    */
   fn.setMoveThreshold = function (val) {
     move_threshold = val;
@@ -474,8 +436,7 @@ function acceleration(p5, fn, lifecycles){
    * @method setShakeThreshold
    * @param {Number} value The threshold value
    * @example
-   * <div class="norender">
-   * <code>
+   * // META:norender
    * // Run this example on a mobile device
    * // You will need to shake the device more firmly
    * // the closer the box's fill gets to white in order to change the value.
@@ -500,8 +461,6 @@ function acceleration(p5, fn, lifecycles){
    *   }
    *   setShakeThreshold(threshold);
    * }
-   * </code>
-   * </div>
    */
   fn.setShakeThreshold = function (val) {
     shake_threshold = val;
@@ -514,8 +473,7 @@ function acceleration(p5, fn, lifecycles){
    *
    * @method deviceMoved
    * @example
-   * <div class="norender">
-   * <code>
+   * // META:norender
    * // Run this example on a mobile device
    * // Move the device around
    * // to change the value.
@@ -533,8 +491,6 @@ function acceleration(p5, fn, lifecycles){
    *     value = 0;
    *   }
    * }
-   * </code>
-   * </div>
    */
 
   /**
@@ -547,8 +503,7 @@ function acceleration(p5, fn, lifecycles){
    *
    * @method deviceTurned
    * @example
-   * <div class="norender">
-   * <code>
+   * // META:norender
    * // Run this example on a mobile device
    * // Rotate the device by 90 degrees
    * // to change the value.
@@ -567,10 +522,8 @@ function acceleration(p5, fn, lifecycles){
    *     value = 0;
    *   }
    * }
-   * </code>
-   * </div>
-   * <div>
-   * <code>
+   *
+   * @example
    * // Run this example on a mobile device
    * // Rotate the device by 90 degrees in the
    * // X-axis to change the value.
@@ -591,8 +544,6 @@ function acceleration(p5, fn, lifecycles){
    *     }
    *   }
    * }
-   * </code>
-   * </div>
    */
 
   /**
@@ -603,8 +554,7 @@ function acceleration(p5, fn, lifecycles){
    *
    * @method deviceShaken
    * @example
-   * <div class="norender">
-   * <code>
+   * // META:norender
    * // Run this example on a mobile device
    * // Shake the device to change the value.
    *
@@ -615,14 +565,13 @@ function acceleration(p5, fn, lifecycles){
    *   describe(`50-by-50 black rect in center of canvas.
    *     turns white on mobile when device shakes`);
    * }
+   *
    * function deviceShaken() {
    *   value = value + 5;
    *   if (value > 255) {
    *     value = 0;
    *   }
    * }
-   * </code>
-   * </div>
    */
   fn._ondeviceorientation = function (e) {
     this._updatePRotations();

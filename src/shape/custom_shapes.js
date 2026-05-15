@@ -2,8 +2,6 @@
  * @module Shape
  * @submodule Custom Shapes
  * @for p5
- * @requires core
- * @requires constants
  */
 
 // REMINDER: remove .js extension (currently using it to run file locally)
@@ -466,6 +464,85 @@ class Quad extends ShapePrimitive {
   }
 }
 
+/*
+ * TODO: Future enhancement — align with arcVertex proposal (#6459)
+ * Currently stores start/stop angles and mode (OPEN/CHORD/PIE).
+ * For full SVG compatibility and arcs inside beginShape/endShape,
+ * we may want to add an arc-to-vertex variant that matches the
+ * arcVertex() API discussed in #6459.
+ */
+
+class ArcPrimitive extends ShapePrimitive {
+  #x;
+  #y;
+  #w;
+  #h;
+  #start;
+  #stop;
+  #mode;
+  #vertexCapacity = 2;
+
+  constructor(startVertex, endVertex, x, y, w, h, start, stop, mode) {
+    // ShapePrimitive requires at least one vertex; pass a placeholder
+    super(startVertex, endVertex);
+    this.#x = x;
+    this.#y = y;
+    this.#w = w;
+    this.#h = h;
+    this.#start = start;
+    this.#stop = stop;
+    this.#mode = mode;
+  }
+
+  get x() { return this.#x; }
+  get y() { return this.#y; }
+  get w() { return this.#w; }
+  get h() { return this.#h; }
+  get start() { return this.#start; }
+  get stop() { return this.#stop; }
+  get mode() { return this.#mode; }
+  get startVertex() { return this.vertices[0]; }
+  get endVertex() { return this.vertices[1]; }
+
+  get vertexCapacity() {
+    return this.#vertexCapacity;
+  }
+
+  accept(visitor) {
+    visitor.visitArcPrimitive(this);
+  }
+}
+
+class EllipsePrimitive extends ShapePrimitive {
+  #x;
+  #y;
+  #w;
+  #h;
+  #vertexCapacity = 1;
+
+  constructor(centerVertex, x, y, w, h) {
+
+    super(centerVertex);
+    this.#x = x;
+    this.#y = y;
+    this.#w = w;
+    this.#h = h;
+  }
+
+  get x() { return this.#x; }
+  get y() { return this.#y; }
+  get w() { return this.#w; }
+  get h() { return this.#h; }
+
+  get vertexCapacity() {
+    return this.#vertexCapacity;
+  }
+
+  accept(visitor) {
+    visitor.visitEllipsePrimitive(this);
+  }
+}
+
 // ---- TESSELLATION PRIMITIVES ----
 
 class TriangleFan extends ShapePrimitive {
@@ -905,6 +982,49 @@ class Shape {
     this.#generalVertex('arcVertex', position, textureCoordinates);
   }
 
+
+  arcPrimitive(x,y,w,h,start,stop,mode){
+    this.beginShape();
+    const centerX = x+w/2;
+    const centerY = y+h/2;
+    const radiusX = w / 2;
+    const radiusY = h / 2;
+
+    const startVertex = this.#createVertex(
+      new Vector(
+        centerX + radiusX * Math.cos(start),
+        centerY + radiusY * Math.sin(start)
+      )
+    );
+
+    const endVertex = this.#createVertex(
+      new Vector(
+        centerX + radiusX * Math.cos(stop),
+        centerY + radiusY * Math.sin(stop)
+      )
+    );
+
+    const primitive = new ArcPrimitive(
+      startVertex,
+      endVertex,
+      x, y, w, h,
+      start,
+      stop,
+      mode
+    );
+    primitive.addToShape(this);
+    this.endShape();
+    return this;
+
+  }
+
+  ellipsePrimitive(x,y,w,h){
+    const centerVertex = this.#createVertex(new Vector(x+w/2,y+h/2));
+
+    const primitive = new EllipsePrimitive(centerVertex, x, y, w, h);
+    return primitive.addToShape(this);
+  }
+
   beginContour(shapeKind = constants.PATH) {
     if (this.at(-1)?.kind === constants.EMPTY_PATH) {
       this.contours.pop();
@@ -1003,6 +1123,12 @@ class PrimitiveVisitor {
   visitArcSegment(arcSegment) {
     throw new Error('Method visitArcSegment() has not been implemented.');
   }
+  visitArcPrimitive(arc) {
+    throw new Error('Method visitArcPrimitive() has not been implemented.');
+  }
+  visitEllipsePrimitive(ellipse) {
+    throw new Error('Method visitEllipsePrimitive() has not been implemented.');
+  }
 
   // isolated primitives
   visitPoint(point) {
@@ -1033,6 +1159,8 @@ class PrimitiveVisitor {
 // requires testing
 class PrimitiveToPath2DConverter extends PrimitiveVisitor {
   path = new Path2D();
+  strokePath = null;
+  fillPath = null;
   strokeWeight;
 
   constructor({ strokeWeight }) {
@@ -1150,6 +1278,59 @@ class PrimitiveToPath2DConverter extends PrimitiveVisitor {
       this.path.lineTo(v2.position.x, v2.position.y);
       this.path.closePath();
     }
+  }
+  visitArcPrimitive(arc) {
+    const centerX = arc.x + arc.w / 2;
+    const centerY = arc.y + arc.h / 2;
+    const radiusX = arc.w / 2;
+    const radiusY = arc.h / 2;
+    const startX = centerX + radiusX * Math.cos(arc.start);
+    const startY = centerY + radiusY * Math.sin(arc.start);
+
+    const delta = arc.stop - arc.start;
+    const isFullCircle = Math.abs(delta % (2 * Math.PI)) < 0.00001 &&
+      Math.abs(delta) > 0.00001;
+
+    const createPieSlice = ! (
+      arc.mode === constants.CHORD ||
+      arc.mode === constants.OPEN ||
+      isFullCircle
+    );
+
+    if (!this.fillPath) this.fillPath = new Path2D(this.path);
+    if (!this.strokePath) this.strokePath = new Path2D(this.path);
+
+    this.fillPath.moveTo(startX, startY);
+    this.fillPath.ellipse(centerX, centerY, radiusX, radiusY,
+      0, arc.start, arc.stop);
+    if (createPieSlice) {
+      this.fillPath.lineTo(centerX, centerY);
+    }
+    this.fillPath.closePath();
+
+    this.strokePath.moveTo(startX, startY);
+    this.strokePath.ellipse(centerX, centerY, radiusX, radiusY,
+      0, arc.start, arc.stop);
+    if (arc.mode === constants.PIE && createPieSlice) {
+      this.strokePath.lineTo(centerX, centerY);
+    }
+    if (arc.mode === constants.PIE || arc.mode === constants.CHORD) {
+      this.strokePath.closePath();
+    }
+
+    // Still maintain base path just in case
+    this.path.moveTo(startX, startY);
+    this.path.ellipse(centerX, centerY, radiusX, radiusY,
+      0, arc.start, arc.stop);
+  }
+  visitEllipsePrimitive(ellipse) {
+    const centerX = ellipse.x + ellipse.w / 2;
+    const centerY = ellipse.y + ellipse.h / 2;
+    const radiusX = ellipse.w / 2;
+    const radiusY = ellipse.h / 2;
+
+    this.path.moveTo(centerX + radiusX, centerY);
+    this.path.ellipse(centerX, centerY, radiusX, radiusY, 0, 0, 2 * Math.PI);
   }
   visitQuadStrip(quadStrip) {
     for (let i = 0; i < quadStrip.vertices.length - 3; i += 2) {
@@ -1276,6 +1457,78 @@ class PrimitiveToVerticesConverter extends PrimitiveVisitor {
   visitQuadStrip(quadStrip) {
     // WebGL itself interprets the vertices as a strip, no reformatting needed
     this.contours.push(quadStrip.vertices.slice());
+  }
+  visitArcPrimitive(arc) {
+    const startVertex = arc.startVertex;
+    const endVertex = arc.endVertex;
+    const centerX = arc.x + arc.w / 2;
+    const centerY = arc.y + arc.h / 2;
+    const radiusX = arc.w / 2;
+    const radiusY = arc.h / 2;
+    const avgRadius = (radiusX + radiusY) / 2;
+
+    const arcLength = avgRadius * Math.abs(arc.stop - arc.start);
+
+    const numPoints = Math.max(3, Math.ceil(this.curveDetail * arcLength));
+    const verts = [];
+    const interpolateVertexProps = (v1, v2, t) => {
+    const props = {};
+    for (const [key, value] of Object.entries(v1)) {
+      if (key === 'position') continue;
+      if (typeof value === 'number' && typeof v2[key] === 'number') {
+        props[key] = value * (1 - t) + v2[key] * t;
+      } else {
+        props[key] = value;
+      }
+    }
+    return props;
+  };
+    if (arc.mode === constants.PIE) {
+      const centerProps = interpolateVertexProps(startVertex, endVertex, 0.5);
+      centerProps.position = new Vector(centerX, centerY);
+      verts.push(new Vertex(centerProps));
+    }
+
+    for (let i = 0; i <= numPoints; i++) {
+      const t = i / numPoints;
+      const angle = arc.start + (arc.stop - arc.start) * t;
+      const vertexProps = interpolateVertexProps(startVertex, endVertex, t);
+
+      vertexProps.position = new Vector(
+        centerX + radiusX * Math.cos(angle),
+        centerY + radiusY * Math.sin(angle)
+      );
+
+      verts.push(new Vertex(vertexProps));
+    }
+
+    this.contours.push(verts);
+  }
+  visitEllipsePrimitive(ellipse) {
+    const centerX = ellipse.x + ellipse.w / 2;
+    const centerY = ellipse.y + ellipse.h / 2;
+    const radiusX = ellipse.w / 2;
+    const radiusY = ellipse.h / 2;
+    const avgRadius = (radiusX + radiusY) / 2;
+    const perimeter = 2 * Math.PI * avgRadius;
+    const numPoints = Math.max(3, Math.ceil(this.curveDetail * perimeter));
+    const verts = [];
+    const centerVertex = ellipse.vertices[0];
+    for (let i = 0; i <= numPoints; i++) {
+      const angle = (2 * Math.PI * i) / numPoints;
+      const vertexProps = {};
+      for (const [key, value] of Object.entries(centerVertex)) {
+        if (key === 'position') continue;
+        vertexProps[key] = value;
+      }
+      vertexProps.position = new Vector(
+        centerX + radiusX * Math.cos(angle),
+        centerY + radiusY * Math.sin(angle)
+      );
+      verts.push(new Vertex(vertexProps));
+    }
+
+    this.contours.push(verts);
   }
 }
 
@@ -1611,12 +1864,12 @@ function customShapes(p5, fn) {
    * Note: `bezierVertex()` won’t work when an argument is passed to
    * <a href="#/p5/beginShape">beginShape()</a>.
    *
+   * Calling `bezierOrder()` without an argument returns the current Bézier order.
+   *
    * @method bezierOrder
    * @param {Number} order The new order to set. Can be either 2 or 3, by default 3
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1643,8 +1896,6 @@ function customShapes(p5, fn) {
    *
    *   describe('A black curve drawn on a gray square. The curve starts at the top-left corner and ends at the center.');
    * }
-   * </code>
-   * </div>
    */
   /**
    * @method bezierOrder
@@ -1735,8 +1986,6 @@ function customShapes(p5, fn) {
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1762,11 +2011,7 @@ function customShapes(p5, fn) {
    *   );
    * }
    *
-   * </code>
-   * </div>
-   *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *   background(220);
@@ -1782,11 +2027,7 @@ function customShapes(p5, fn) {
    *   );
    * }
    *
-   * </code>
-   * </div>
-   *
-   * <div>
-   * <code>
+   * @example
    * let ringInnerRadius, ringWidth;
    * let radius, dRadius;
    * let theta, dTheta;
@@ -1827,12 +2068,8 @@ function customShapes(p5, fn) {
    *   }
    *   endShape(CLOSE);
    * }
-   * </code>
-   * </div>
    *
    * @example
-   * <div>
-   * <code>
    * let vertexA;
    * let vertexB;
    * let vertexC;
@@ -1914,10 +2151,7 @@ function customShapes(p5, fn) {
    *
    *   describe('On a gray background, a black spline passes through vertices A, B, C, D, E, and F, shown as white circles. A red line segment joining vertices A and C has the same slope as the red tangent segment at B. Similarly, the blue line segment joining vertices D and F has the same slope as the blue tangent at E.');
    * }
-   * </code>
-   * </div>
    */
-
   /**
    * @method splineVertex
    * @param {Number} x
@@ -1926,8 +2160,6 @@ function customShapes(p5, fn) {
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
    * // Click and drag the mouse to view the scene from different angles.
    *
    * function setup() {
@@ -1968,8 +2200,6 @@ function customShapes(p5, fn) {
    *   splineVertex(34, 41, -20);
    *   endShape();
    * }
-   * </code>
-   * </div>
    */
   /**
    * @method splineVertex
@@ -2085,8 +2315,6 @@ function customShapes(p5, fn) {
    * @param value Value to set the given property to.
    *
    * @example
-   * <div>
-   * <code>
    * // Move the mouse left and right to see the curve change.
    *
    * let t;
@@ -2127,74 +2355,65 @@ function customShapes(p5, fn) {
    *   text(`tightness: ${round(t, 1)}`, 15, 90);
    *   describe('A black spline forms a sideways U shape through four points. The spline passes through the points more loosely as the mouse moves left of center (negative tightness), and more tightly as it moves right of center (positive tightness). The tightness is displayed at the bottom.');
    * }
-   * </code>
-   * </div>
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
-   * createCanvas(360, 140);
-   * background(240);
-   * noFill();
+   *   createCanvas(360, 140);
+   *   background(240);
+   *   noFill();
    *
-   * // Right panel: ends = INCLUDE (all spans).
-   * push();
-   * translate(10, 10);
-   * stroke(220);
-   * rect(0, 0, 160, 120);
-   * fill(30);
-   * textSize(11);
-   * text('ends: INCLUDE (all spans)', 8, 16);
-   * noFill();
+   *   // Right panel: ends = INCLUDE (all spans).
+   *   push();
+   *   translate(10, 10);
+   *   stroke(220);
+   *   rect(0, 0, 160, 120);
+   *   fill(30);
+   *   textSize(11);
+   *   text('ends: INCLUDE (all spans)', 8, 16);
+   *   noFill();
    *
-   * splineProperty('ends', INCLUDE);
-   * stroke(0);
-   * strokeWeight(2);
-   * spline(25, 46, 93, 44, 93, 81, 35, 85);
+   *   splineProperty('ends', INCLUDE);
+   *   stroke(0);
+   *   strokeWeight(2);
+   *   spline(25, 46, 93, 44, 93, 81, 35, 85);
    *
-   * // vertices
-   * strokeWeight(5);
-   * stroke(0);
-   * point(25, 46);
-   * point(93, 44);
-   * point(93, 81);
-   * point(35, 85);
-   * pop();
+   *   // vertices
+   *   strokeWeight(5);
+   *   stroke(0);
+   *   point(25, 46);
+   *   point(93, 44);
+   *   point(93, 81);
+   *   point(35, 85);
+   *   pop();
    *
-   * // Right panel: ends = EXCLUDE (middle only).
-   * push();
-   * translate(190, 10);
-   * stroke(220);
-   * rect(0, 0, 160, 120);
-   * noStroke();
-   * fill(30);
-   * text('ends: EXCLUDE ', 18, 16);
-   * noFill();
+   *   // Right panel: ends = EXCLUDE (middle only).
+   *   push();
+   *   translate(190, 10);
+   *   stroke(220);
+   *   rect(0, 0, 160, 120);
+   *   noStroke();
+   *   fill(30);
+   *   text('ends: EXCLUDE ', 18, 16);
+   *   noFill();
    *
-   * splineProperty('ends', EXCLUDE);
-   * stroke(0);
-   * strokeWeight(2);
-   * spline(25, 46, 93, 44, 93, 81, 35, 85);
+   *   splineProperty('ends', EXCLUDE);
+   *   stroke(0);
+   *   strokeWeight(2);
+   *   spline(25, 46, 93, 44, 93, 81, 35, 85);
    *
-   * // vertices
-   * strokeWeight(5);
-   * stroke(0);
-   * point(25, 46);
-   * point(93, 44);
-   * point(93, 81);
-   * point(35, 85);
-   *  pop();
+   *   // vertices
+   *   strokeWeight(5);
+   *   stroke(0);
+   *   point(25, 46);
+   *   point(93, 44);
+   *   point(93, 81);
+   *   point(35, 85);
+   *   pop();
    *
-   * describe('Left panel shows spline with ends INCLUDE (three spans). Right panel shows EXCLUDE (only the middle span). Four black points mark the vertices.');
+   *   describe('Left panel shows spline with ends INCLUDE (three spans). Right panel shows EXCLUDE (only the middle span). Four black points mark the vertices.');
    * }
-   * </code>
-   * </div>
    *
    * @example
-   *
-   * <div>
-   * <code>
    * let vertexA;
    * let vertexB;
    * let vertexC;
@@ -2276,11 +2495,7 @@ function customShapes(p5, fn) {
    *
    *   describe('On a gray background, a black spline passes through vertices A, B, C, D, E, and F, shown as white circles. A red line segment joining vertices A and C has the same slope as the red tangent segment at B. Similarly, the blue line segment joining vertices D and F has the same slope as the blue tangent at E.');
    * }
-   * </code>
-   * </div>
-   *
    */
-
   /**
    * @method splineProperty
    * @param {String} property
@@ -2321,8 +2536,6 @@ function customShapes(p5, fn) {
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *   background(220);
@@ -2336,7 +2549,7 @@ function customShapes(p5, fn) {
    *   noFill();
    *   stroke(0);
    *   strokeWeight(2);
-   *   
+   *
    *   beginShape();
    *   splineVertex(20, 80);
    *   splineVertex(30, 30);
@@ -2354,12 +2567,8 @@ function customShapes(p5, fn) {
    *
    *   describe('A smooth curved line with tightness 0.5 connecting four red points.');
    * }
-   * </code>
-   * </div>
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *   background(220);
@@ -2374,7 +2583,7 @@ function customShapes(p5, fn) {
    *   noFill();
    *   stroke(0);
    *   strokeWeight(2);
-   *   
+   *
    *   beginShape();
    *   splineVertex(10, 50);  // Control point (affects curve but not drawn to)
    *   splineVertex(30, 20);  // Start of visible curve
@@ -2387,15 +2596,13 @@ function customShapes(p5, fn) {
    *   noStroke();
    *   circle(10, 50, 6);  // Control point
    *   circle(90, 50, 6);  // Control point
-   *   
+   *
    *   fill(0, 0, 255);
    *   circle(30, 20, 6);  // Visible curve point
    *   circle(70, 80, 6);  // Visible curve point
    *
    *   describe('A curved line between two blue points, with red control points at the ends.');
    * }
-   * </code>
-   * </div>
    *
    * @method splineProperties
    * @return {Object}
@@ -2426,8 +2633,6 @@ function customShapes(p5, fn) {
    * @param  {Number} y y-coordinate of the vertex.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -2451,11 +2656,8 @@ function customShapes(p5, fn) {
    *
    *   describe('Four black dots that form a square are drawn on a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -2475,11 +2677,8 @@ function customShapes(p5, fn) {
    *
    *   describe('A white square on a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
@@ -2499,11 +2698,8 @@ function customShapes(p5, fn) {
    *
    *   describe('A white square on a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
@@ -2528,11 +2724,8 @@ function customShapes(p5, fn) {
    *   // Stop drawing the shape.
    *   endShape(CLOSE);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let img;
    *
    * async function setup() {
@@ -2569,11 +2762,8 @@ function customShapes(p5, fn) {
    *   // Stop drawing the shape.
    *   endShape();
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let vid;
    * function setup() {
    *   // Load a video and create a p5.MediaElement object.
@@ -2609,8 +2799,6 @@ function customShapes(p5, fn) {
    *   vertex(-40, 40, 0, 1);
    *   endShape();
    * }
-   * </code>
-   * </div>
    */
   /**
    * @method vertex
@@ -2677,8 +2865,6 @@ function customShapes(p5, fn) {
    * @method beginContour
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -2706,11 +2892,8 @@ function customShapes(p5, fn) {
    *
    *   describe('A white square with a square hole in its center drawn on a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * function setup() {
@@ -2745,8 +2928,6 @@ function customShapes(p5, fn) {
    *   // Stop drawing the shape.
    *   endShape(CLOSE);
    * }
-   * </code>
-   * </div>
    */
   fn.beginContour = function(kind) {
     this._renderer.beginContour(kind);
@@ -2783,8 +2964,6 @@ function customShapes(p5, fn) {
    * @param {OPEN|CLOSE} [mode=OPEN] By default, the value is OPEN
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -2812,11 +2991,8 @@ function customShapes(p5, fn) {
    *
    *   describe('A white square with a square hole in its center drawn on a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * function setup() {
@@ -2851,8 +3027,6 @@ function customShapes(p5, fn) {
    *   // Stop drawing the shape.
    *   endShape(CLOSE);
    * }
-   * </code>
-   * </div>
    */
   fn.endContour = function(mode = constants.OPEN) {
     this._renderer.endContour(mode);
@@ -2874,6 +3048,8 @@ export {
   Line,
   Triangle,
   Quad,
+  ArcPrimitive,
+  EllipsePrimitive,
   TriangleFan,
   TriangleStrip,
   QuadStrip,

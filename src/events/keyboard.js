@@ -2,7 +2,6 @@
  * @module Events
  * @submodule Keyboard
  * @for p5
- * @requires core
  */
 export function isCode(input) {
   const leftRightKeys = [
@@ -45,8 +44,6 @@ function keyboard(p5, fn, lifecycles){
    * @readOnly
    *
    * @example
-   * <div>
-   * <code>
    * // Click on the canvas to begin detecting key presses.
    *
    * function setup() {
@@ -70,11 +67,8 @@ function keyboard(p5, fn, lifecycles){
    *   // Draw the square.
    *   square(25, 25, 50);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click on the canvas to begin detecting key presses.
    *
    * function setup() {
@@ -98,11 +92,8 @@ function keyboard(p5, fn, lifecycles){
    *   // Draw the square.
    *   square(25, 25, 50);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click on the canvas to begin detecting key presses.
    *
    * function setup() {
@@ -123,8 +114,6 @@ function keyboard(p5, fn, lifecycles){
    *   // Display the value of keyIsPressed.
    *   text(keyIsPressed, 50, 50);
    * }
-   * </code>
-   * </div>
    */
   fn.keyIsPressed = false;
 
@@ -143,8 +132,6 @@ function keyboard(p5, fn, lifecycles){
    * @readOnly
    *
    * @example
-   * <div>
-   * <code>
    * // Click on the canvas to begin detecting key presses.
    *
    * function setup() {
@@ -165,11 +152,8 @@ function keyboard(p5, fn, lifecycles){
    *   // Display the last key pressed.
    *   text(key, 50, 50);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click on the canvas to begin detecting key presses.
    *
    * let x = 50;
@@ -205,8 +189,6 @@ function keyboard(p5, fn, lifecycles){
    *   // Draw the circle at (x, y).
    *   circle(x, y, 5);
    * }
-   * </code>
-   * </div>
    */
   fn.key = '';
 
@@ -295,8 +277,6 @@ function keyboard(p5, fn, lifecycles){
    * @readOnly
    *
    * @example
-   * <div>
-   * <code>
    * // Click on the canvas to begin detecting key presses.
    *
    * function setup() {
@@ -317,11 +297,8 @@ function keyboard(p5, fn, lifecycles){
    *   // Display the last key pressed.
    *   text(code, 50, 50);
    * }
-   * </code>
-   * </div>
-   * <div>
-   * <code>
    *
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    * }
@@ -344,10 +321,8 @@ function keyboard(p5, fn, lifecycles){
    *   text(keyCode, 7, 25);
    *   text(code || " ", 30, 50);
    * }
-   * </div>
-   * </code>
-   * <div>
-   * <code>
+   *
+   * @example
    * // Click on the canvas to begin detecting key presses.
    *
    * let x = 50;
@@ -389,9 +364,6 @@ function keyboard(p5, fn, lifecycles){
    *   // Draw the circle.
    *   circle(x, y, 5);
    * }
-   *
-   * </code>
-   * </div>
    */
   fn.code = '';
 
@@ -432,8 +404,6 @@ function keyboard(p5, fn, lifecycles){
    * @readOnly
    *
    * @example
-   * <div>
-   * <code>
    * // Click on the canvas to begin detecting key presses.
    *
    * function setup() {
@@ -454,11 +424,8 @@ function keyboard(p5, fn, lifecycles){
    *   // Display the last key pressed and its code.
    *   text(`${key} : ${keyCode}`, 50, 50);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click on the canvas to begin detecting key presses.
    *
    * let x = 50;
@@ -494,8 +461,6 @@ function keyboard(p5, fn, lifecycles){
    *   // Draw the circle at (x, y).
    *   circle(x, y, 5);
    * }
-   * </code>
-   * </div>
    */
   fn.keyCode = 0;
 
@@ -547,8 +512,6 @@ function keyboard(p5, fn, lifecycles){
    * @param  {KeyboardEvent} [event] optional `KeyboardEvent` callback argument.
    *
    * @example
-   * <div>
-   * <code>
    * // Click on the canvas to begin detecting key presses.
    *
    * let value = 0;
@@ -581,11 +544,8 @@ function keyboard(p5, fn, lifecycles){
    *   // Uncomment to prevent any default behavior.
    *   // return false;
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click on the canvas to begin detecting key presses.
    *
    * let value = 0;
@@ -618,11 +578,8 @@ function keyboard(p5, fn, lifecycles){
    *   // Uncomment to prevent any default behavior.
    *   // return false;
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click on the canvas to begin detecting key presses.
    *
    * let value = 0;
@@ -655,8 +612,6 @@ function keyboard(p5, fn, lifecycles){
    *   // Uncomment to prevent any default behavior.
    *   // return false;
    * }
-   * </code>
-   * </div>
    */
   fn._onkeydown = function(e) {
     if (this._downKeys[e.code]) {
@@ -725,8 +680,6 @@ function keyboard(p5, fn, lifecycles){
    * @param  {KeyboardEvent} [event] optional `KeyboardEvent` callback argument.
    *
    * @example
-   * <div>
-   * <code>
    * // Click on the canvas to begin detecting key presses.
    *
    * let value = 0;
@@ -759,11 +712,8 @@ function keyboard(p5, fn, lifecycles){
    *   // Uncomment to prevent any default behavior.
    *   // return false;
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click on the canvas to begin detecting key presses.
    *
    * let value = 0;
@@ -794,11 +744,8 @@ function keyboard(p5, fn, lifecycles){
    *   // Uncomment to prevent any default behavior.
    *   // return false;
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click on the canvas to begin detecting key presses.
    *
    * let value = 0;
@@ -831,8 +778,6 @@ function keyboard(p5, fn, lifecycles){
    *   // Uncomment to prevent any default behavior.
    *   // return false;
    * }
-   * </code>
-   * </div>
    */
   fn._onkeyup = function(e) {
     if (typeof this._customActions.keyReleased === 'function') {
@@ -915,8 +860,6 @@ function keyboard(p5, fn, lifecycles){
    * @param  {KeyboardEvent} [event] optional `KeyboardEvent` callback argument.
    *
    * @example
-   * <div>
-   * <code>
    * // Click on the canvas to begin detecting key presses.
    * // Note: Pressing special keys such as SPACE have no effect.
    *
@@ -950,11 +893,8 @@ function keyboard(p5, fn, lifecycles){
    *   // Uncomment to prevent any default behavior.
    *   // return false;
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click on the canvas to begin detecting key presses.
    *
    * let value = 0;
@@ -987,8 +927,6 @@ function keyboard(p5, fn, lifecycles){
    *   // Uncomment to prevent any default behavior.
    *   // return false;
    * }
-   * </code>
-   * </div>
    */
   fn._onkeypress = function(e) {
     if (e.which === this._lastKeyCodeTyped && e.repeat) {
@@ -1045,8 +983,6 @@ function keyboard(p5, fn, lifecycles){
    * @return {Boolean}        whether the key is down or not.
    *
    * @example
-   * <div>
-   * <code>
    * // Click on the canvas to begin detecting key presses.
    *
    * let x = 50;
@@ -1086,11 +1022,8 @@ function keyboard(p5, fn, lifecycles){
    *   // Draw the circle.
    *   circle(x, y, 5);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click on the canvas to begin detecting key presses.
    *
    * let x = 50;
@@ -1130,8 +1063,6 @@ function keyboard(p5, fn, lifecycles){
    *   // Draw the circle.
    *   circle(x, y, 5);
    * }
-   * </code>
-   * </div>
    */
   fn.keyIsDown = function(input) {
     if (isCode(input)) {

@@ -80,7 +80,7 @@ export const verifierUtils = {
 
     try {
       const ast = parse(code, {
-        ecmaVersion: 2021,
+        ecmaVersion: 'latest',
         sourceType: 'module',
         locations: true  // This helps us get the line number.
       });

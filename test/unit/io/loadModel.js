@@ -10,6 +10,8 @@ suite('loadModel', function() {
   const inconsistentColorObjFile = '/test/unit/assets/eg1.obj';
   const objMtlMissing = '/test/unit/assets/objMtlMissing.obj';
   const validSTLfileWithoutExtension = '/test/unit/assets/ascii';
+  const validCubeFile = '/test/unit/assets/cube.obj';
+  const negativeIndexCubeFile = '/test/unit/assets/cube-negative-indices.obj';
 
   beforeAll(async () => {
     loading(mockP5, mockP5Prototype);
@@ -77,11 +79,27 @@ suite('loadModel', function() {
     assert.deepEqual(model.vertexColors, expectedColors);
   });
 
-  test('inconsistent vertex coloring throws error', async function() {
-    // Attempt to load the model and catch the error
-    await expect(mockP5Prototype.loadModel(inconsistentColorObjFile))
-      .rejects
-      .toThrow('Model coloring is inconsistent. Either all vertices should have colors or none should.');
+  test('mixed material coloring loads model with sentinel colors for uncolored vertices', async function() {
+    const model = await mockP5Prototype.loadModel(inconsistentColorObjFile);
+    assert.instanceOf(model, Geometry);
+    assert.equal(
+      model.vertexColors.length,
+      model.vertices.length * 4,
+      'vertexColors should have four entries per vertex'
+    );
+    const hasSentinel = model.vertexColors.some(
+      (_, i) =>
+        i % 4 === 0 &&
+        model.vertexColors[i] === -1 &&
+        model.vertexColors[i + 1] === -1 &&
+        model.vertexColors[i + 2] === -1 &&
+        model.vertexColors[i + 3] === -1
+    );
+    const hasRealColor = model.vertexColors.some(
+      (_, i) => i % 4 === 0 && model.vertexColors[i] !== -1
+    );
+    assert.isTrue(hasSentinel, 'Uncolored vertices should have sentinel color');
+    assert.isTrue(hasRealColor, 'Colored vertices should retain their color');
   });
 
   test('missing MTL file shows OBJ model without vertexColors', async function() {
@@ -114,5 +132,21 @@ suite('loadModel', function() {
   test('resolves STL file correctly with case insensitive extension', async function() {
     const model = await mockP5Prototype.loadModel(validSTLfileWithoutExtension, '.STL');
     assert.instanceOf(model, Geometry);
+  });
+
+  test('OBJ with negative vertex indices loads correctly', async function() {
+    const model = await mockP5Prototype.loadModel(negativeIndexCubeFile);
+    assert.instanceOf(model, Geometry);
+    assert.isAbove(model.vertices.length, 0, 'Model should have vertices');
+    assert.isAbove(model.faces.length, 0, 'Model should have faces');
+  });
+
+  test('OBJ negative indices produce same geometry as positive', async function() {
+    const positiveModel = await mockP5Prototype.loadModel(validCubeFile);
+    const negativeModel = await mockP5Prototype.loadModel(negativeIndexCubeFile);
+    assert.equal(positiveModel.vertices.length, negativeModel.vertices.length,
+      'Vertex count should match');
+    assert.equal(positiveModel.faces.length, negativeModel.faces.length,
+      'Face count should match');
   });
 });

@@ -19,8 +19,8 @@ suite('p5.Texture', function() {
           canvas = p.createCanvas(100, 100, p.WEBGL);
           p.pixelDensity(1);
           texImg1 = p.createGraphics(2, 2, p.WEBGL);
-          texImg2 = await p.loadImage('/unit/assets/target.gif');
-          texImg3 = await p.loadImage('/unit/assets/nyan_cat.gif');
+          texImg2 = await p.loadImage('test/unit/assets/target.gif');
+          texImg3 = await p.loadImage('test/unit/assets/nyan_cat.gif');
           new Promise(resolve => {
             p.createImg(texImg2.canvas.toDataURL(), '', 'anonymous', el => {
               el.size(50, 50);

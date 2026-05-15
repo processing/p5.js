@@ -21,7 +21,7 @@ Large language models (LLMs) make mistakes and cannot be held accountable for th
 
 **We understand that asking questions can feel intimidating.** You might worry about looking inexperienced or bothering maintainers with "basic" questions. AI tools can feel like a safer and less judgmental first step. However, LLMs often provide incorrect or incomplete answers, and they may create a false sense of understanding.
 
-Before asking AI, we encourage you to talk to us in the [Discord #contribute-to-p5 channel](https://discord.gg/x7kU7k5HM3) or in the relevant issue thread.
+Before asking AI, we encourage you to talk to us in the [Discord #contribute-to-p5 channel](https://discord.p5js.org) or in the relevant issue thread.
 
 Please know: **there are no silly questions, and we genuinely want to help you.** You won't be judged for not knowing something. In fact, we are grateful for your questions as they help us improve our documentation and make the project more welcoming for everyone who comes after you.
 
@@ -83,7 +83,7 @@ We are continuously looking for ways to improve our approach and may have to cha
 
 ## Questions?
 
-If you're unsure whether your use of AI tools complies with this policy, ask in the [Discord #contribute-to-p5 channel](https://discord.gg/x7kU7k5HM3) or in the relevant issue thread. We're here to help!
+If you're unsure whether your use of AI tools complies with this policy, ask in the [Discord #contribute-to-p5 channel](https://discord.p5js.org) or in the relevant issue thread. We're here to help!
 
 ## AI Disclosure
 

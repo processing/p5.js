@@ -45,6 +45,11 @@ class Renderer {
     rectMode: constants.CORNER,
     ellipseMode: constants.CENTER,
     strokeWeight: 1,
+    bezierOrder: 3,
+    splineProperties: new ClonableObject({
+      ends: constants.INCLUDE,
+      tightness: 0
+    }),
 
     textFont: { family: 'sans-serif' },
     textLeading: 15,
@@ -52,15 +57,8 @@ class Renderer {
     textSize: 12,
     textAlign: constants.LEFT,
     textBaseline: constants.BASELINE,
-    bezierOrder: 3,
-    splineProperties: new ClonableObject({
-      ends: constants.INCLUDE,
-      tightness: 0
-    }),
     textWrap: constants.WORD,
-
-    // added v2.0
-    fontStyle: constants.NORMAL, // v1: textStyle
+    fontStyle: constants.NORMAL, // v1: was textStyle
     fontStretch: constants.NORMAL,
     fontWeight: constants.NORMAL,
     lineHeight: constants.NORMAL,
@@ -72,7 +70,16 @@ class Renderer {
     this._pInst = pInst;
     this._isMainCanvas = isMainCanvas;
     this.pixels = [];
-    this._pixelDensity = Math.ceil(window.devicePixelRatio) || 1;
+
+    const defaultRatio = typeof window !== 'undefined' ?
+      Math.ceil(window.devicePixelRatio) :
+      1;
+    if (isMainCanvas) {
+      this._pixelDensity = defaultRatio;
+    } else {
+      const parentDensity = pInst._pInst?._renderer?._pixelDensity;
+      this._pixelDensity = parentDensity || defaultRatio;
+    }
 
     this.width = w;
     this.height = h;
@@ -128,7 +135,7 @@ class Renderer {
   // and push it into the push pop stack
   push() {
     this._pushPopDepth++;
-    this._pushPopStack.push(this.states.getDiff());
+    this._pushPopStack.push(this.states.takeDiff());
   }
 
   // Pop the previous states out of the push pop stack and
@@ -323,9 +330,12 @@ class Renderer {
   }
 
   fill(...args) {
-    this.states.setValue('fillSet', true);
-    this.states.setValue('fillColor', this._pInst.color(...args));
-    this.updateShapeVertexProperties();
+    if (args.length > 0) {
+      this.states.setValue('fillSet', true);
+      this.states.setValue('fillColor', this._pInst.color(...args));
+      this.updateShapeVertexProperties();
+    }
+    return this.states.fillColor;
   }
 
   noFill() {
@@ -333,14 +343,16 @@ class Renderer {
   }
 
   strokeWeight(w) {
-    if (w === undefined) {
+    if (typeof w === 'undefined') {
       return this.states.strokeWeight;
-    } else {
-      this.states.setValue('strokeWeight', w);
     }
+    this.states.setValue('strokeWeight', w);
   }
 
   stroke(...args) {
+    if (args.length === 0) {
+      return this.states.strokeColor;
+    }
     this.states.setValue('strokeSet', true);
     this.states.setValue('strokeColor', this._pInst.color(...args));
     this.updateShapeVertexProperties();

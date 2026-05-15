@@ -19,7 +19,6 @@ import { Image } from '../image/p5.Image';
 import { glslBackend } from './strands_glslBackend';
 import { TypeInfoFromGLSLName } from '../strands/ir_types.js';
 import { getShaderHookTypes } from './shaderHookUtils';
-import noiseGLSL from './shaders/functions/noise3DGLSL.glsl';
 
 import filterBaseVert from "./shaders/filters/base.vert";
 import lightingShader from "./shaders/lighting.glsl";
@@ -530,7 +529,7 @@ class RendererGL extends Renderer3D {
 
   /**
    * Loads the pixels data for this canvas into the pixels[] attribute.
-   * Note that updatePixels() and set() do not work.
+   * Note that set() does not work.
    * Any pixel manipulation must be done directly to the pixels[] array.
    *
    * @private
@@ -723,7 +722,7 @@ class RendererGL extends Renderer3D {
                 color.a = components.opacity;
                 return color;
               }`,
-              "vec4 getFinalColor": "(vec4 color) { return color; }",
+              "vec4 getFinalColor": "(vec4 color, vec2 texCoord) { return color; }",
               "void afterFragment": "() {}",
             },
           }
@@ -760,7 +759,7 @@ class RendererGL extends Renderer3D {
           },
           fragment: {
             "void beforeFragment": "() {}",
-            "vec4 getFinalColor": "(vec4 color) { return color; }",
+            "vec4 getFinalColor": "(vec4 color, vec2 texCoord) { return color; }",
             "void afterFragment": "() {}",
           },
         }
@@ -788,7 +787,7 @@ class RendererGL extends Renderer3D {
           },
           fragment: {
             "void beforeFragment": "() {}",
-            "vec4 getFinalColor": "(vec4 color) { return color; }",
+            "vec4 getFinalColor": "(vec4 color, vec2 texCoord) { return color; }",
             "void afterFragment": "() {}",
           },
         }
@@ -820,7 +819,7 @@ class RendererGL extends Renderer3D {
           fragment: {
             "void beforeFragment": "() {}",
             "Inputs getPixelInputs": "(Inputs inputs) { return inputs; }",
-            "vec4 getFinalColor": "(vec4 color) { return color; }",
+            "vec4 getFinalColor": "(vec4 color, vec2 texCoord) { return color; }",
             "bool shouldDiscard": "(bool outside) { return outside; }",
             "void afterFragment": "() {}",
           },
@@ -1129,6 +1128,7 @@ class RendererGL extends Renderer3D {
       );
     }
 
+    shader._compiled = true;
     shader._glProgram = program;
     shader._vertShader = vertShader;
     shader._fragShader = fragShader;
@@ -1904,10 +1904,6 @@ class RendererGL extends Renderer3D {
     }
   }
 
-  getNoiseShaderSnippet() {
-    return noiseGLSL;
-  }
-
 }
 
 function rendererGL(p5, fn) {
@@ -1966,8 +1962,6 @@ function rendererGL(p5, fn) {
    * @param  {String}  key Name of attribute
    * @param  {Boolean}        value New value of named attribute
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100, WEBGL);
    * }
@@ -1982,11 +1976,8 @@ function rendererGL(p5, fn) {
    *   box(50);
    *   pop();
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    *  // Now with the antialias attribute set to true.
    * function setup() {
    *   setAttributes('antialias', true);
@@ -2003,11 +1994,8 @@ function rendererGL(p5, fn) {
    *   box(50);
    *   pop();
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // press the mouse button to disable perPixelLighting
    * function setup() {
    *   createCanvas(100, 100, WEBGL);
@@ -2056,8 +2044,6 @@ function rendererGL(p5, fn) {
    *   noStroke();
    *   fill(255);
    * }
-   * </code>
-   * </div>
    *
    * @alt a rotating cube with smoother edges
    */

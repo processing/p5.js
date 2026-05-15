@@ -2,7 +2,6 @@
  * @module Data
  * @submodule Conversion
  * @for p5
- * @requires core
  */
 
 function conversion(p5, fn){
@@ -25,8 +24,6 @@ function conversion(p5, fn){
    * @return {Number} converted number.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -50,11 +47,8 @@ function conversion(p5, fn){
    *
    *   describe('The text "12.3 × 2 = 24.6" written in black on a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -73,8 +67,6 @@ function conversion(p5, fn){
    *
    *   describe('Three white, concentric circles on a gray background.');
    * }
-   * </code>
-   * </div>
    */
   /**
    * @method float
@@ -109,8 +101,6 @@ function conversion(p5, fn){
    * @return {Number} converted number.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -131,11 +121,8 @@ function conversion(p5, fn){
    *
    *   describe('The text "false : 0" written in black on a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -156,11 +143,8 @@ function conversion(p5, fn){
    *
    *   describe('The text "12.34 ≈ 12" written in black on a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -181,11 +165,8 @@ function conversion(p5, fn){
    *
    *   describe('The text "12.34 ≈ 12" written in black on a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -204,8 +185,6 @@ function conversion(p5, fn){
    *
    *   describe('Three white, concentric circles on a gray background.');
    * }
-   * </code>
-   * </div>
    */
   /**
    * @method int
@@ -246,8 +225,6 @@ function conversion(p5, fn){
    * @return {String} converted string.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -268,11 +245,8 @@ function conversion(p5, fn){
    *
    *   describe('The text "false : false" written in black on a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -293,11 +267,8 @@ function conversion(p5, fn){
    *
    *   describe('The text "123 = 123" written in black on a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -326,8 +297,6 @@ function conversion(p5, fn){
    *
    *   describe('The text "123456" written in black on a gray background.');
    * }
-   * </code>
-   * </div>
    */
   fn.str = function(n) {
     if (n instanceof Array) {
@@ -354,8 +323,6 @@ function conversion(p5, fn){
    * @return {Boolean} converted Boolean value.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -379,11 +346,8 @@ function conversion(p5, fn){
    *
    *   describe('A red circle on a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -407,11 +371,8 @@ function conversion(p5, fn){
    *
    *   describe('A blue circle on a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -444,8 +405,6 @@ function conversion(p5, fn){
    *     'A row of circles on a gray background. The two circles on the left are red and the two on the right are blue.'
    *   );
    * }
-   * </code>
-   * </div>
    */
   /**
    * @method boolean
@@ -486,8 +445,6 @@ function conversion(p5, fn){
    * @return {Number} converted byte value.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -508,11 +465,8 @@ function conversion(p5, fn){
    *
    *   describe('The text "true : 1" written in black on a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -533,11 +487,8 @@ function conversion(p5, fn){
    *
    *   describe('The text "256 : 0" written in black on a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -558,11 +509,8 @@ function conversion(p5, fn){
    *
    *   describe('The text "256 : 0" written in black on a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -591,8 +539,6 @@ function conversion(p5, fn){
    *     'Three gray circles on a gray background. The circles get lighter from left to right.'
    *   );
    * }
-   * </code>
-   * </div>
    */
   /**
    * @method byte
@@ -628,8 +574,6 @@ function conversion(p5, fn){
    * @return {String} converted single-character string.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -650,11 +594,8 @@ function conversion(p5, fn){
    *
    *   describe('The text "65 : A" written in black on a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -675,11 +616,8 @@ function conversion(p5, fn){
    *
    *   describe('The text "65 : A" written in black on a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -709,8 +647,6 @@ function conversion(p5, fn){
    *     'The text "65 : A", "66 : B", and "67 : C" written on three separate lines. The text is in black on a gray background.'
    *   );
    * }
-   * </code>
-   * </div>
    */
   /**
    * @method char
@@ -742,8 +678,6 @@ function conversion(p5, fn){
    * @return {Number} converted number.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -764,11 +698,8 @@ function conversion(p5, fn){
    *
    *   describe('The text "A : 65" written in black on a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -798,8 +729,6 @@ function conversion(p5, fn){
    *     'The text "A : 65", "B : 66", and "C :67" written on three separate lines. The text is in black on a gray background.'
    *   );
    * }
-   * </code>
-   * </div>
    */
   /**
    * @method unchar
@@ -836,8 +765,6 @@ function conversion(p5, fn){
    * @return {String} converted hexadecimal value.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -858,11 +785,8 @@ function conversion(p5, fn){
    *
    *   describe('The text "20 = 00000014" written in black on a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -884,11 +808,8 @@ function conversion(p5, fn){
    *
    *   describe('The text "20 = 14" written in black on a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -919,8 +840,6 @@ function conversion(p5, fn){
    *     'The text "1 = 01", "10 = 0A", and "100 = 64" written on three separate lines. The text is in black on a gray background.'
    *   );
    * }
-   * </code>
-   * </div>
    */
   /**
    * @method hex
@@ -969,8 +888,6 @@ function conversion(p5, fn){
    * @return {Number} converted number.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -991,11 +908,8 @@ function conversion(p5, fn){
    *
    *   describe('The text "FF = 255" written in black on a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1026,8 +940,6 @@ function conversion(p5, fn){
    *     'The text "00 = 0", "80 = 128", and "FF = 255" written on three separate lines. The text is in black on a gray background.'
    *   );
    * }
-   * </code>
-   * </div>
    */
   /**
    * @method unhex

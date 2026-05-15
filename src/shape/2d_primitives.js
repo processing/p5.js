@@ -2,8 +2,6 @@
  * @module Shape
  * @submodule 2D Primitives
  * @for p5
- * @requires core
- * @requires constants
  */
 
 import * as constants from '../core/constants';
@@ -132,8 +130,6 @@ function primitives(p5, fn){
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -143,12 +139,8 @@ function primitives(p5, fn){
    *
    *   describe('A white circle on a gray canvas. The top-right quarter of the circle is missing.');
    * }
-   * </code>
-   * </div>
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -158,12 +150,8 @@ function primitives(p5, fn){
    *
    *   describe('A white ellipse on a gray canvas. The top-right quarter of the ellipse is missing.');
    * }
-   * </code>
-   * </div>
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -187,11 +175,8 @@ function primitives(p5, fn){
    *     'A shattered outline of an circle with a quarter of a white circle at the bottom-right.'
    *   );
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -202,11 +187,8 @@ function primitives(p5, fn){
    *
    *   describe('A white circle with the top-right third missing. The bottom is outlined in black.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -219,11 +201,8 @@ function primitives(p5, fn){
    *     'A white circle missing a section from the top-right. The bottom is outlined in black.'
    *   );
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -234,11 +213,8 @@ function primitives(p5, fn){
    *
    *   describe('A white circle with a black outline missing a section from the top-right.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -249,11 +225,8 @@ function primitives(p5, fn){
    *
    *   describe('A white circle with a black outline. The top-right third is missing.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
@@ -264,11 +237,8 @@ function primitives(p5, fn){
    *
    *   describe('A white circle with a black outline. The top-right third is missing.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
@@ -279,11 +249,8 @@ function primitives(p5, fn){
    *
    *   describe('A white circle with a black outline. The top-right third is missing.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -305,8 +272,6 @@ function primitives(p5, fn){
    *   // Draw the arc.
    *   arc(50, 50, 80, 80, startAngle, endAngle, PIE);
    * }
-   * </code>
-   * </div>
    */
   fn.arc = function(x, y, w, h, start, stop, mode, detail) {
     // this.validate("p5.arc", arguments);
@@ -396,8 +361,6 @@ function primitives(p5, fn){
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -407,12 +370,8 @@ function primitives(p5, fn){
    *
    *   describe('A white circle on a gray canvas.');
    * }
-   * </code>
-   * </div>
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -422,12 +381,8 @@ function primitives(p5, fn){
    *
    *   describe('A white circle on a gray canvas.');
    * }
-   * </code>
-   * </div>
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -437,12 +392,8 @@ function primitives(p5, fn){
    *
    *   describe('A white ellipse on a gray canvas.');
    * }
-   * </code>
-   * </div>
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
@@ -452,12 +403,8 @@ function primitives(p5, fn){
    *
    *   describe('A white ellipse on a gray canvas.');
    * }
-   * </code>
-   * </div>
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
@@ -468,10 +415,7 @@ function primitives(p5, fn){
    *
    *   describe('A white hexagon on a gray canvas.');
    * }
-   * </code>
-   * </div>
    */
-
   /**
    * @method ellipse
    * @param  {Number} x
@@ -504,8 +448,6 @@ function primitives(p5, fn){
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -515,12 +457,8 @@ function primitives(p5, fn){
    *
    *   describe('A white circle with black outline in the middle of a gray canvas.');
    * }
-   * </code>
-   * </div>
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
@@ -530,8 +468,6 @@ function primitives(p5, fn){
    *
    *   describe('A white circle with black outline in the middle of a gray canvas.');
    * }
-   * </code>
-   * </div>
    */
   fn.circle = function(...args) {
     // p5._validateParameters('circle', args);
@@ -593,8 +529,6 @@ function primitives(p5, fn){
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -606,12 +540,8 @@ function primitives(p5, fn){
    *     'A black line on a gray canvas running from top-center to bottom-right.'
    *   );
    * }
-   * </code>
-   * </div>
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -627,11 +557,8 @@ function primitives(p5, fn){
    *     'A thick, magenta line on a gray canvas running from top-center to bottom-right.'
    *   );
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -652,12 +579,8 @@ function primitives(p5, fn){
    *     'Three lines drawn in grayscale on a gray canvas. They form the top, right, and bottom sides of a square.'
    *   );
    * }
-   * </code>
-   * </div>
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
@@ -669,11 +592,8 @@ function primitives(p5, fn){
    *     'A black line on a gray canvas running from top-center to bottom-right.'
    *   );
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
@@ -698,9 +618,6 @@ function primitives(p5, fn){
    *   // Draw the bottom-right sphere.
    *   sphere(10);
    * }
-   * </code>
-   * </div>
-   *
    */
 
   /**
@@ -754,16 +671,14 @@ function primitives(p5, fn){
    * @param  {Number} [z] the z-coordinate (for WebGL mode).
    * @chainable
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
    *   background(200);
-   *   
+   *
    *   // Making point to 5 pixels
    *   strokeWeight(5);
-   * 
+   *
    *   // Top-left.
    *   point(30, 20);
    *
@@ -780,16 +695,13 @@ function primitives(p5, fn){
    *     'Four small, black points drawn on a gray canvas. The points form the corners of a square.'
    *   );
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
    *   background(200);
-   * 
+   *
    *   // Making point to 5 pixels.
    *   strokeWeight(5);
    *
@@ -813,11 +725,8 @@ function primitives(p5, fn){
    *     'Four points drawn on a gray canvas. Two are black and two are purple. The points form the corners of a square.'
    *   );
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -846,11 +755,8 @@ function primitives(p5, fn){
    *     'Four small, black points drawn on a gray canvas. The points form the corners of a square.'
    *   );
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
@@ -870,11 +776,8 @@ function primitives(p5, fn){
    *   // Bottom-right.
    *   point(20, 30);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
@@ -897,8 +800,6 @@ function primitives(p5, fn){
    *   // Bottom-right.
    *   point(20, 30, -50);
    * }
-   * </code>
-   * </div>
    */
 
   /**
@@ -959,8 +860,6 @@ function primitives(p5, fn){
    * @param {Integer} [detailY] number of segments in the y-direction.
    * @chainable
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -970,11 +869,8 @@ function primitives(p5, fn){
    *
    *   describe('A white square with a black outline drawn on a gray canvas.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -984,11 +880,8 @@ function primitives(p5, fn){
    *
    *   describe('A white rectangle with a black outline drawn on a gray canvas.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -998,11 +891,8 @@ function primitives(p5, fn){
    *
    *   describe('A white rhombus with a black outline drawn on a gray canvas.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1012,11 +902,8 @@ function primitives(p5, fn){
    *
    *   describe('A white trapezoid with a black outline drawn on a gray canvas.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
@@ -1026,11 +913,8 @@ function primitives(p5, fn){
    *
    *   describe('A white square with a black outline drawn on a gray canvas.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
@@ -1046,8 +930,6 @@ function primitives(p5, fn){
    *   // Draw the quad.
    *   quad(-30, -30, 0, 30, -30, 0, 30, 30, 20, -30, 30, -20);
    * }
-   * </code>
-   * </div>
    */
   /**
    * @method quad
@@ -1122,8 +1004,6 @@ function primitives(p5, fn){
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1133,11 +1013,8 @@ function primitives(p5, fn){
    *
    *   describe('A white square with a black outline on a gray canvas.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1147,11 +1024,8 @@ function primitives(p5, fn){
    *
    *   describe('A white rectangle with a black outline on a gray canvas.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1162,11 +1036,8 @@ function primitives(p5, fn){
    *
    *   describe('A white rectangle with a black outline and round edges on a gray canvas.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1177,11 +1048,8 @@ function primitives(p5, fn){
    *
    *   describe('A white rectangle with a black outline and round edges of different radii.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
@@ -1191,11 +1059,8 @@ function primitives(p5, fn){
    *
    *   describe('A white square with a black outline on a gray canvas.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
@@ -1211,10 +1076,7 @@ function primitives(p5, fn){
    *   // Draw the rectangle.
    *   rect(-20, -30, 55, 55);
    * }
-   * </code>
-   * </div>
    */
-
   /**
    * @method rect
    * @param  {Number} x
@@ -1259,8 +1121,6 @@ function primitives(p5, fn){
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1270,11 +1130,8 @@ function primitives(p5, fn){
    *
    *   describe('A white square with a black outline in on a gray canvas.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1287,11 +1144,8 @@ function primitives(p5, fn){
    *     'A white square with a black outline and round edges on a gray canvas.'
    *   );
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1302,11 +1156,8 @@ function primitives(p5, fn){
    *
    *   describe('A white square with a black outline and round edges of different radii.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
@@ -1316,11 +1167,8 @@ function primitives(p5, fn){
    *
    *   describe('A white square with a black outline in on a gray canvas.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
@@ -1336,8 +1184,6 @@ function primitives(p5, fn){
    *   // Draw the square.
    *   square(-20, -30, 55);
    * }
-   * </code>
-   * </div>
    */
   fn.square = function(x, y, s, tl, tr, br, bl) {
     // p5._validateParameters('square', arguments);
@@ -1404,8 +1250,6 @@ function primitives(p5, fn){
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1415,11 +1259,8 @@ function primitives(p5, fn){
    *
    *   describe('A white triangle with a black outline on a gray canvas.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
@@ -1429,11 +1270,8 @@ function primitives(p5, fn){
    *
    *   describe('A white triangle with a black outline on a gray canvas.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
@@ -1449,8 +1287,6 @@ function primitives(p5, fn){
    *   // Draw the triangle.
    *   triangle(-20, 25, 8, -30, 36, 25);
    * }
-   * </code>
-   * </div>
    */
   fn.triangle = function(...args) {
     // p5._validateParameters('triangle', args);

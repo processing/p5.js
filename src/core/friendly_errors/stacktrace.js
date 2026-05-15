@@ -1,6 +1,5 @@
 /**
  * @for p5
- * @requires core
  */
 // Borrow from stacktracejs https://github.com/stacktracejs/stacktrace.js with
 // minor modifications. The license for the same and the code is included below

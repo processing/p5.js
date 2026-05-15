@@ -1,6 +1,5 @@
 // Modified from https://openprocessing.org/sketch/2500100
-
-import '../../types/global'
+import p5 from '../../types/global'
 
 p5.disableFriendlyErrors = true
 

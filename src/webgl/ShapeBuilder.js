@@ -45,6 +45,10 @@ export class ShapeBuilder {
     this.bufferStrides = { ...INITIAL_BUFFER_STRIDES };
   }
 
+  friendlyErrorsDisabled() {
+    return false;
+  }
+
   constructFromContours(shape, contours) {
     if (this._useUserVertexProperties){
       this._resetUserVertexProperties();
@@ -148,6 +152,27 @@ export class ShapeBuilder {
     }
 
     if (this.shapeMode === constants.PATH) {
+      const vertexCount = this.geometry.vertices.length;
+      const MAX_SAFE_TESSELLATION_VERTICES = 50000;
+
+      if (
+        vertexCount > MAX_SAFE_TESSELLATION_VERTICES &&
+        !this.friendlyErrorsDisabled() &&
+        !this.renderer._largeTessellationAcknowledged
+      ) {
+        const proceed = window.confirm(
+          '🌸 p5.js says:\n\n' +
+          `This shape has ${vertexCount} vertices. Tessellating shapes with this ` +
+          'many vertices can be very slow and may cause your browser to become ' +
+          'unresponsive.\n\n' +
+          'Do you want to continue tessellating this shape?'
+        );
+        if (!proceed) {
+          return;
+        }
+        this.renderer._largeTessellationAcknowledged = true;
+      }
+
       this.isProcessingVertices = true;
       this._tesselateShape();
       this.isProcessingVertices = false;
@@ -310,6 +335,27 @@ export class ShapeBuilder {
         const end = start + prop.getDataSize();
         const vals = prop.getSrcArray().slice(start, end);
         contours[contours.length-1].push(...vals);
+      }
+    }
+
+    // Normalize nearly identical consecutive vertices to prevent tessellation artifacts
+    // This addresses numerical precision issues in libtess when consecutive vertices
+    // have coordinates that are almost (but not exactly) equal (e.g., differing by ~1e-8)
+    const epsilon = 1e-6;
+    for (const contour of contours) {
+      const stride = this.tessyVertexSize;
+      for (let i = stride; i < contour.length; i += stride) {
+        const prevX = contour[i - stride];
+        const prevY = contour[i - stride + 1];
+        const currX = contour[i];
+        const currY = contour[i + 1];
+
+        if (Math.abs(currX - prevX) < epsilon) {
+          contour[i] = prevX;
+        }
+        if (Math.abs(currY - prevY) < epsilon) {
+          contour[i + 1] = prevY;
+        }
       }
     }
 

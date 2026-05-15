@@ -16,7 +16,7 @@ suite('p5.Font', function () {
   });
 
   // tests ////////////////////////////////////////////////
-  const fontFile = '/unit/assets/acmesa.ttf';
+  const fontFile = 'test/unit/assets/acmesa.ttf';
   const textString = 'Lorem ipsum dolor sit amet.';
 
   test('textBounds', async () => {

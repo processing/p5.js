@@ -34,7 +34,7 @@ visualSuite('Typography', function () {
     visualTest('with a font file', async function (p5, screenshot) {
       p5.createCanvas(100, 100);
       const font = await p5.loadFont(
-        '/unit/assets/Inconsolata-Bold.ttf'
+        'test/unit/assets/Inconsolata-Bold.ttf'
       );
       p5.textFont(font);
       p5.textAlign(p5.LEFT, p5.TOP);
@@ -46,7 +46,7 @@ visualSuite('Typography', function () {
     visualTest('with a font file and special chars', async function (p5, screenshot) {
       p5.createCanvas(100, 100, p5.WEBGL);
       const font = await p5.loadFont(
-        '/unit/assets/Inconsolata-Bold.ttf',
+        'test/unit/assets/Inconsolata-Bold.ttf',
         'Incönsolata'
       );
       p5.textFont(font);
@@ -62,7 +62,7 @@ visualSuite('Typography', function () {
     visualTest('with a woff font file', async function (p5, screenshot) {
       p5.createCanvas(100, 100);
       const font = await p5.loadFont(
-        '/unit/assets/Lato-Regular.woff'
+        'test/unit/assets/Lato-Regular.woff'
       );
       p5.textFont(font);
       p5.textAlign(p5.LEFT, p5.TOP);
@@ -81,7 +81,7 @@ visualSuite('Typography', function () {
     visualTest('with a font file in WebGL', async function (p5, screenshot) {
       p5.createCanvas(100, 100, p5.WEBGL);
       const font = await p5.loadFont(
-        '/unit/assets/Inconsolata-Bold.ttf'
+        'test/unit/assets/Inconsolata-Bold.ttf'
       );
       p5.textFont(font);
       p5.textAlign(p5.LEFT, p5.TOP);
@@ -128,7 +128,7 @@ visualSuite('Typography', function () {
     visualTest('can control variable fonts from files', async function (p5, screenshot) {
       p5.createCanvas(100, 100);
       const font = await p5.loadFont(
-        '/unit/assets/BricolageGrotesque-Variable.ttf'
+        'test/unit/assets/BricolageGrotesque-Variable.ttf'
       );
       for (let weight = 400; weight <= 800; weight += 100) {
         p5.background(255);
@@ -144,7 +144,7 @@ visualSuite('Typography', function () {
     visualTest('can control variable fonts from files in WebGL', async function (p5, screenshot) {
       p5.createCanvas(100, 100, p5.WEBGL);
       const font = await p5.loadFont(
-        '/unit/assets/BricolageGrotesque-Variable.ttf'
+        'test/unit/assets/BricolageGrotesque-Variable.ttf'
       );
       for (let weight = 400; weight <= 800; weight += 100) {
         p5.push();
@@ -211,7 +211,7 @@ visualSuite('Typography', function () {
           if (mode === 'webgl') p5.translate(-p5.width/2, -p5.height/2);
           p5.textSize(60);
           const font = await p5.loadFont(
-            '/unit/assets/Inconsolata-Bold.ttf'
+            'test/unit/assets/Inconsolata-Bold.ttf'
           );
           p5.textFont(font);
           alignments.forEach(alignment => {
@@ -245,7 +245,7 @@ visualSuite('Typography', function () {
           if (mode === 'webgl') p5.translate(-p5.width/2, -p5.height/2);
           p5.textSize(45);
           const font = await p5.loadFont(
-            '/unit/assets/Inconsolata-Bold.ttf'
+            'test/unit/assets/Inconsolata-Bold.ttf'
           );
           p5.textFont(font);
           alignments.forEach(alignment => {
@@ -281,7 +281,7 @@ visualSuite('Typography', function () {
             p5.textSize(20);
             p5.textWrap(p5.WORD);
             const font = await p5.loadFont(
-              '/unit/assets/Inconsolata-Bold.ttf'
+              'test/unit/assets/Inconsolata-Bold.ttf'
             );
             p5.textFont(font);
 
@@ -346,7 +346,7 @@ visualSuite('Typography', function () {
             p5.textSize(19);
             p5.textWrap(p5.CHAR);
             const font = await p5.loadFont(
-              '/unit/assets/Inconsolata-Bold.ttf'
+              'test/unit/assets/Inconsolata-Bold.ttf'
             );
             p5.textFont(font);
 
@@ -411,7 +411,7 @@ visualSuite('Typography', function () {
             p5.textSize(20);
 
             const font = await p5.loadFont(
-              '/unit/assets/Inconsolata-Bold.ttf'
+              'test/unit/assets/Inconsolata-Bold.ttf'
             );
             p5.textFont(font);
 
@@ -470,7 +470,7 @@ visualSuite('Typography', function () {
             p5.textSize(20);
 
             const font = await p5.loadFont(
-              '/unit/assets/Inconsolata-Bold.ttf'
+              'test/unit/assets/Inconsolata-Bold.ttf'
             );
             p5.textFont(font);
 
@@ -582,7 +582,7 @@ visualSuite('Typography', function () {
     visualTest('Fonts can be converted to points', async function (p5, screenshot) {
       p5.createCanvas(100, 100);
       const font = await p5.loadFont(
-        '/unit/assets/Inconsolata-Bold.ttf'
+        'test/unit/assets/Inconsolata-Bold.ttf'
       );
       p5.background(255);
       p5.strokeWeight(2);
@@ -597,7 +597,7 @@ visualSuite('Typography', function () {
     visualTest('Sampling density can be changed', async function (p5, screenshot) {
       p5.createCanvas(100, 100);
       const font = await p5.loadFont(
-        '/unit/assets/Inconsolata-Bold.ttf'
+        'test/unit/assets/Inconsolata-Bold.ttf'
       );
       p5.background(255);
       p5.strokeWeight(2);
@@ -613,7 +613,7 @@ visualSuite('Typography', function () {
       visualTest(`Fonts point angles work in ${mode} mode`, async function (p5, screenshot) {
         p5.createCanvas(100, 100);
         const font = await p5.loadFont(
-          '/unit/assets/Inconsolata-Bold.ttf'
+          'test/unit/assets/Inconsolata-Bold.ttf'
         );
         p5.background(255);
         p5.strokeWeight(2);
@@ -641,7 +641,7 @@ visualSuite('Typography', function () {
     visualTest('Fonts can be converted to points grouped by contour', async function (p5, screenshot) {
       p5.createCanvas(100, 100);
       const font = await p5.loadFont(
-        '/unit/assets/Inconsolata-Bold.ttf'
+        'test/unit/assets/Inconsolata-Bold.ttf'
       );
       p5.background(200);
       p5.strokeWeight(2);
@@ -662,7 +662,7 @@ visualSuite('Typography', function () {
     visualTest('Fonts can be converted to drawing context commands', async function (p5, screenshot) {
       p5.createCanvas(100, 100);
       const font = await p5.loadFont(
-        '/unit/assets/Inconsolata-Bold.ttf'
+        'test/unit/assets/Inconsolata-Bold.ttf'
       );
       p5.background(200);
       p5.strokeWeight(2);

@@ -2,8 +2,6 @@
  * @module Color
  * @submodule Creating & Reading
  * @for p5
- * @requires core
- * @requires color_conversion
  */
 
 import { RGB, RGBHDR, HSL, HSB, HWB, LAB, LCH, OKLAB, OKLCH } from './creating_reading';
@@ -60,6 +58,13 @@ class Color {
   static colorMap = {};
   static #colorjsMaxes = {};
   static #grayscaleMap = {};
+
+  // This property is here where duck typing (checking if obj.isColor) needs
+  // to be used over more standard type checking (obj instanceof Color). This
+  // needs to happen where we are building multiple files, such as in p5.webgpu.js,
+  // where if we `import { Color }` directly, it will be a separate copy of the
+  // Color class from the one imported in the main p5.js bundle.
+  isColor = true;
 
   // Used to add additional color modes to p5.js
   // Uses underlying library's definition
@@ -342,8 +347,6 @@ class Color {
    * @return {String} the formatted string.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -361,14 +364,12 @@ class Color {
    *
    *   describe('The text "#9932cc" written in purple on a gray background.');
    * }
-   * </code>
-   * </div>
    */
  toString(format) {
    if (format === undefined && this._defaultStringValue !== undefined) {
       return this._defaultStringValue;
    }
-   
+
     let outputFormat = format;
     if (format === '#rrggbb') {
       outputFormat = 'hex';
@@ -381,10 +382,10 @@ class Color {
       colorString = serialize(this._color, {
         format: outputFormat
       });
-      
+
       if (format === '#rrggbb') {
         colorString = String(colorString);
-        if (colorString.length === 4) { 
+        if (colorString.length === 4) {
             const r = colorString[1];
             const g = colorString[2];
             const b = colorString[3];
@@ -423,8 +424,6 @@ class Color {
    * @param {Color} other
    * @returns {boolean|object}
    * @example
-   * <div>
-   * <code>
    * let bgColor, fg1Color, fg2Color, msg1, msg2;
    * function setup() {
    *   createCanvas(100, 100);
@@ -458,11 +457,8 @@ class Color {
    *   fill(fg2Color);
    *   text(msg2, 10, 60);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let bgColor, fgColor, contrast;
    * function setup() {
    *   createCanvas(100, 100);
@@ -485,8 +481,6 @@ class Color {
    *   text('APCA', 10, 70);
    *   text(nf(contrast.APCA.value, 0, 2), 10, 85);
    * }
-   * </code>
-   * </div>
    */
   contrast(other_color, options='WCAG21') {
     if(options !== 'all'){
@@ -531,8 +525,6 @@ class Color {
    * @param {Number} red the new red value.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -555,8 +547,6 @@ class Color {
    *
    *   describe('Two rectangles. The left one is salmon pink and the right one is teal.');
    * }
-   * </code>
-   * </div>
    */
   setRed(new_red, max=[0, 1]) {
     this._defaultStringValue = undefined;
@@ -587,8 +577,6 @@ class Color {
    * @param {Number} green the new green value.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -611,8 +599,6 @@ class Color {
    *
    *   describe('Two rectangles. The left one is salmon pink and the right one is yellow.');
    * }
-   * </code>
-   * </div>
    */
   setGreen(new_green, max=[0, 1]) {
     this._defaultStringValue = undefined;
@@ -643,8 +629,6 @@ class Color {
    * @param {Number} blue the new blue value.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -667,8 +651,6 @@ class Color {
    *
    *   describe('Two rectangles. The left one is salmon pink and the right one is pale fuchsia.');
    * }
-   * </code>
-   * </div>
    */
   setBlue(new_blue, max=[0, 1]) {
     this._defaultStringValue = undefined;
@@ -700,8 +682,6 @@ class Color {
    * @param {Number} alpha the new alpha value.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -724,8 +704,6 @@ class Color {
    *
    *   describe('Two rectangles. The left one is salmon pink and the right one is faded pink.');
    * }
-   * </code>
-   * </div>
    */
   setAlpha(new_alpha, max=[0, 1]) {
     this._defaultStringValue = undefined;
@@ -751,7 +729,7 @@ class Color {
       if(!Array.isArray(v)){
         return [0, v];
       }else{
-        return v
+        return v;
       }
     });
 

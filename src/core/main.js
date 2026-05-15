@@ -2,7 +2,6 @@
  * @module Structure
  * @submodule Structure
  * @for p5
- * @requires constants
  */
 
 import * as constants from './constants';
@@ -35,6 +34,7 @@ class p5 {
   // This is a pointer to our global mode p5 instance, if we're in
   // global mode.
   static instance = null;
+  static sketchCount = 0;
   static lifecycleHooks = {
     presetup: [],
     postsetup: [],
@@ -50,30 +50,7 @@ class p5 {
   constructor(sketch, node) {
     // Apply addon defined decorations
     if(p5.decorations.size > 0){
-      for (const [patternArray, decoration] of p5.decorations) {
-        for(const member in p5.prototype) {
-          // Member must be a function
-          if (typeof p5.prototype[member] !== 'function') continue;
-
-          if (!patternArray.some(pattern => {
-            if (typeof pattern === 'string') {
-              return pattern === member;
-            } else if (pattern instanceof RegExp) {
-              return pattern.test(member);
-            }
-          })) continue;
-
-          p5.prototype[member] = decoration(p5.prototype[member], {
-            kind: 'method',
-            name: member,
-            access: {},
-            static: false,
-            private: false,
-            addInitializer(initializer){}
-          });
-        }
-      }
-
+      decorateClass(p5, p5.decorations, 'p5');
       p5.decorations.clear();
     }
 
@@ -148,28 +125,33 @@ class p5 {
     const blurHandler = () => {
       this.focused = false;
     };
-    window.addEventListener('focus', focusHandler);
-    window.addEventListener('blur', blurHandler);
-    p5.lifecycleHooks.remove.push(function() {
-      window.removeEventListener('focus', focusHandler);
-      window.removeEventListener('blur', blurHandler);
-    });
 
-    // Initialization complete, start runtime
-    if (document.readyState === 'complete') {
+    if(typeof window !== 'undefined'){
+      window.addEventListener('focus', focusHandler);
+      window.addEventListener('blur', blurHandler);
+      p5.lifecycleHooks.remove.push(function() {
+        window.removeEventListener('focus', focusHandler);
+        window.removeEventListener('blur', blurHandler);
+      });
+
+      // Initialization complete, start runtime
+      if (document.readyState === 'complete') {
+        this.#_start();
+      } else {
+        this._startListener = this.#_start.bind(this);
+        window.addEventListener('load', this._startListener, false);
+      }
+    }else{
       this.#_start();
-    } else {
-      this._startListener = this.#_start.bind(this);
-      window.addEventListener('load', this._startListener, false);
     }
   }
 
   get pixels(){
-    return this._renderer.pixels;
+    return this._renderer?.pixels;
   }
 
   get drawingContext(){
-    return this._renderer.drawingContext;
+    return this._renderer?.drawingContext;
   }
 
   static _registeredAddons = new Set();
@@ -193,10 +175,20 @@ class p5 {
   }
 
   static decorations = new Map();
-  static decorateHelper(pattern, decoration){
-    let patternArray = pattern;
-    if (!Array.isArray(pattern)) patternArray = [pattern];
-    p5.decorations.set(patternArray, decoration);
+  static registerDecorator(pattern, decoration){
+    if(typeof pattern === 'string'){
+      const patternStr = pattern;
+      pattern = ({ path }) => patternStr === path;
+    }else if(
+      Array.isArray(pattern) &&
+      pattern.every(value => typeof value === 'string')
+    ){
+      const patternArray = pattern;
+      pattern = ({ path }) => patternArray.includes(path);
+    }else if(typeof pattern !== 'function'){
+      throw new Error('Decorator matching pattern must be a function, a string, or an array of strings');
+    }
+    p5.decorations.set(pattern, decoration);
   }
 
   #customActions = {};
@@ -237,15 +229,17 @@ class p5 {
     // Always create a default canvas.
     // Later on if the user calls createCanvas, this default one
     // will be replaced
-    this.createCanvas(
-      100,
-      100,
-      constants.P2D
-    );
+    if(typeof window !== 'undefined'){
+      this.createCanvas(
+        100,
+        100,
+        constants.P2D
+      );
+    }
 
     // Record the time when setup starts. millis() will start at 0 within
     // setup, but this isn't documented, locked-in behavior yet.
-    this._millisStart = window.performance.now();
+    this._millisStart = globalThis.performance.now();
 
     const context = this._isGlobal ? window : this;
     if (typeof context.setup === 'function') {
@@ -253,21 +247,23 @@ class p5 {
     }
     if (this.hitCriticalError) return;
 
-    const canvases = document.getElementsByTagName('canvas');
-    for (const k of canvases) {
-      // Apply touchAction = 'none' to canvases to prevent scrolling
-      // when dragging on canvas elements
-      k.style.touchAction = 'none';
+    if(typeof document !== 'undefined'){
+      const canvases = document.getElementsByTagName('canvas');
+      for (const k of canvases) {
+        // Apply touchAction = 'none' to canvases to prevent scrolling
+        // when dragging on canvas elements
+        k.style.touchAction = 'none';
 
-      // unhide any hidden canvases that were created
-      if (k.dataset.hidden === 'true') {
-        k.style.visibility = '';
-        delete k.dataset.hidden;
+        // unhide any hidden canvases that were created
+        if (k.dataset.hidden === 'true') {
+          k.style.visibility = '';
+          delete k.dataset.hidden;
+        }
       }
     }
 
-    this._lastTargetFrameTime = window.performance.now();
-    this._lastRealFrameTime = window.performance.now();
+    this._lastTargetFrameTime = globalThis.performance.now();
+    this._lastRealFrameTime = globalThis.performance.now();
     this._setupDone = true;
     if (this._accessibleOutputs.grid || this._accessibleOutputs.text) {
       this._updateAccsOutput();
@@ -278,7 +274,7 @@ class p5 {
 
     // Record the time when the draw loop starts so that millis() starts at 0
     // when the draw loop begins.
-    this._millisStart = window.performance.now();
+    this._millisStart = globalThis.performance.now();
   }
 
   // While '#_draw' here is async, it is not awaited as 'requestAnimationFrame'
@@ -288,7 +284,7 @@ class p5 {
   // and 'postdraw'.
   async _draw(requestAnimationFrameTimestamp) {
     if (this.hitCriticalError) return;
-    const now = requestAnimationFrameTimestamp || window.performance.now();
+    const now = requestAnimationFrameTimestamp || globalThis.performance.now();
     const timeSinceLastFrame = now - this._lastTargetFrameTime;
     const targetTimeBetweenFrames = 1000 / this._targetFrameRate;
 
@@ -330,9 +326,10 @@ class p5 {
     // get notified the next time the browser gives us
     // an opportunity to draw.
     if (this._loop) {
-      this._requestAnimId = window.requestAnimationFrame(
-        this._draw.bind(this)
-      );
+      const boundDraw = this._draw.bind(this);
+      this._requestAnimId = typeof window !== 'undefined' ?
+        window.requestAnimationFrame(boundDraw) :
+        setImmediate(boundDraw);
     }
   }
 
@@ -345,8 +342,6 @@ class p5 {
    * `new p5()`.
    *
    * @example
-   * <div>
-   * <code>
    * // Double-click to remove the canvas.
    *
    * function setup() {
@@ -369,8 +364,6 @@ class p5 {
    * function doubleClicked() {
    *   remove();
    * }
-   * </code>
-   * </div>
    */
   async remove() {
     // Remove start listener to prevent orphan canvas being created
@@ -439,6 +432,11 @@ class p5 {
     this._downKeys = {}; //Holds the key codes of currently pressed keys
     this._downKeyCodes = {};
   }
+}
+
+// Attach constants to p5 prototype
+for (const k in constants) {
+  p5.prototype[k] = constants[k];
 }
 
 // Global helper function for binding properties to window in global mode
@@ -531,9 +529,106 @@ function createBindGlobal(instance) {
   };
 }
 
-// Attach constants to p5 prototype
-for (const k in constants) {
-  p5.prototype[k] = constants[k];
+// Generic function to decorate classes
+function decorateClass(Target, decorations, path){
+  // Static properties
+  for(const key in Target){
+    if(!key.startsWith('_')){
+      for (const [pattern, decorator] of decorations) {
+        if(pattern({ path: `${path}.${key}` })){
+          // Check if method or accessor
+          if(typeof Target[key] === 'function'){
+            const result = decorator(Target[key], {
+              kind: 'method',
+              name: key,
+              static: true
+            });
+            if(result){
+              Object.defineProperty(Target, key, {
+                enumerable: true,
+                writable: true,
+                value: result
+              });
+            }
+          }else{
+            const result = decorator(undefined, {
+              kind: 'field',
+              name: key,
+              static: true
+            });
+            if(result && typeof result === 'function'){
+              Target[key] = result(Target[key]);
+            }
+          }
+        }
+      }
+
+      if(typeof Target[key] === 'function' && Target[key].prototype){
+        decorateClass(Target[key], decorations, `${path}.${key}`);
+      }
+    }
+  }
+
+  // Member properties
+  for(const member of Object.getOwnPropertyNames(Target.prototype)){
+    if(member !== 'constructor' && !member.startsWith('_')){
+      for (const [pattern, decorator] of decorations) {
+        if(pattern({ path: `${path}.prototype.${member}` })){
+          // Check if method or accessor
+          if(typeof Target.prototype[member] === 'function'){
+            const result = decorator(Target.prototype[member], {
+              kind: 'method',
+              name: member,
+              static: false
+            });
+            if(result) {
+              Object.defineProperty(Target.prototype, member, {
+                enumerable: true,
+                writable: true,
+                value: result
+              });
+            }
+          }else{
+            const descriptor = Object.getOwnPropertyDescriptor(
+              Target.prototype,
+              member
+            );
+            if(descriptor.hasOwnProperty('value')){
+              const result = decorator(undefined, {
+                kind: 'field',
+                name: member,
+                static: false
+              });
+              Object.defineProperty(Target.prototype, member, {
+                enumerable: true,
+                writable: true,
+                value: result && typeof result === 'function' ?
+                  result(Target.prototype[member]) :
+                  Target.prototype[member]
+              });
+            }else{
+              const { get, set } = descriptor;
+              const getterResult = decorator(get, {
+                kind: 'getter',
+                name: member,
+                static: false
+              });
+              const setterResult = decorator(set, {
+                kind: 'setter',
+                name: member,
+                static: false
+              });
+              Object.defineProperty(Target.prototype, member, {
+                enumerable: true,
+                get: getterResult ?? get,
+                set: setterResult ?? set
+              });
+            }
+          }
+        }
+      }
+    }
+  }
 }
 
 import transform from './transform';
@@ -587,10 +682,9 @@ export default p5;
  *
  * @method setup
  * @for p5
+ * @return {void|Promise<void>}
  *
  * @example
- * <div>
- * <code>
  * function setup() {
  *   createCanvas(100, 100);
  *
@@ -601,11 +695,8 @@ export default p5;
  *
  *   describe('A white circle on a gray background.');
  * }
- * </code>
- * </div>
  *
- * <div>
- * <code>
+ * @example
  * function setup() {
  *   createCanvas(100, 100);
  *
@@ -621,11 +712,8 @@ export default p5;
  *   // Draw circles repeatedly.
  *   circle(mouseX, mouseY, 40);
  * }
- * </code>
- * </div>
  *
- * <div>
- * <code>
+ * @example
  * let img;
  *
  * async function setup() {
@@ -648,8 +736,6 @@ export default p5;
  *   // Draw the circle.
  *   circle(mouseX, mouseY, 10);
  * }
- * </code>
- * </div>
  */
 /**
  * A function that's called repeatedly while the sketch runs.
@@ -682,8 +768,6 @@ export default p5;
  * @for p5
  *
  * @example
- * <div>
- * <code>
  * function setup() {
  *   createCanvas(100, 100);
  *
@@ -699,11 +783,8 @@ export default p5;
  *   // Draw circles repeatedly.
  *   circle(mouseX, mouseY, 40);
  * }
- * </code>
- * </div>
  *
- * <div>
- * <code>
+ * @example
  * function setup() {
  *   createCanvas(100, 100);
  *
@@ -719,11 +800,8 @@ export default p5;
  *   // Draw circles repeatedly.
  *   circle(mouseX, mouseY, 40);
  * }
- * </code>
- * </div>
  *
- * <div>
- * <code>
+ * @example
  * // Double-click the canvas to change the circle's color.
  *
  * function setup() {
@@ -746,8 +824,6 @@ export default p5;
  * function doubleClicked() {
  *   fill('deeppink');
  * }
- * </code>
- * </div>
  */
 
 /**
@@ -763,8 +839,6 @@ export default p5;
  * @property {Boolean} disableFriendlyErrors
  *
  * @example
- * <div>
- * <code>
  * // Disable the FES.
  * p5.disableFriendlyErrors = true;
  *
@@ -781,8 +855,6 @@ export default p5;
  *
  *   describe('A gray square.');
  * }
- * </code>
- * </div>
  */
 
 /**
@@ -799,8 +871,6 @@ export default p5;
  * @param {Function} library The library function to register
  *
  * @example
- * <div>
- * <code>
  * function myAddon(p5, fn, lifecycles) {
  *   fn.sayHello = function() {
  *     this.textAlign(this.CENTER, this.CENTER);
@@ -817,6 +887,4 @@ export default p5;
  *
  *   describe('The text "Hello!"');
  * }
- * </code>
- * </div>
  */

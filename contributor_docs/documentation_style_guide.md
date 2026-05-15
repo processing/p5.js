@@ -15,7 +15,7 @@ Our community is large and diverse. Many people learn to code using p5.js, and a
 ## Table of Contents
 
 ### Writing
-- [YUIDoc](#yuidoc)
+- [documentation.js and JSDoc](#documentationjs-and-jsdoc)
 - [English](#english)
 - [Oxford Comma](#oxford-comma)
 - [Wording](#wording)
@@ -26,6 +26,7 @@ Our community is large and diverse. Many people learn to code using p5.js, and a
 - [Code Samples](#code-samples)
 - [Comments](#comments)
 - [Accessible Canvas Labels](#accessible-canvas-labels)
+- [Accessible Iframe Names](#accessible-iframe-names)
 - [Whitespace](#whitespace)
 - [Semicolons](#semicolons)
 - [Naming Conventions](#naming-conventions)
@@ -42,15 +43,13 @@ Our community is large and diverse. Many people learn to code using p5.js, and a
 - [Classes](#classes)
 - [Assets](#assets)
 
-## YUIDoc
+## documentation.js and JSDoc
 
-We use YUIDoc to generate the p5.js API documentation. To generate the docs, navigate to the p5.js root directory, run `npm install`, and execute:
+We use [documentation.js](https://documentation.js.org/) to generate the p5.js API documentation from [JSDoc](https://jsdoc.app/) comments in the p5.js source code.
 
-```
-$ npm run grunt yui:dev
-```
+Refer to the [inline documentation guide](./contributing_to_the_p5js_reference.md) for more information on how to structure the documentation comments and what tags to use.
 
-The output will appear in docs/reference. Refer to the [inline documentation guide](./contributing_to_the_p5js_reference.md) for more information.
+It also discusses how to [generate and preview the reference documentation](./contributing_to_the_p5js_reference/#generating-and-previewing-the-reference) to see your changes.
 
 **[⬆ back to top](#table-of-contents)**
 
@@ -141,7 +140,7 @@ Always use `let` to declare variables.
 
 **Accessibility terminology**
 
-The following terminology is adapted from the WordPress documentation guidelines for [Writing inclusive documentation](https://make.wordpress.org/docs/style-guide/general-guidelines/inclusivity/#accessibility-terminology). For more background on people-first language, see the CDC's guide on [Communicating With and About People with Disabilities](https://www.cdc.gov/ncbddd/disabilityandhealth/materials/factsheets/fs-communicating-with-people.html).
+The following terminology is adapted from the WordPress documentation guidelines for [Writing inclusive documentation](https://make.wordpress.org/docs/style-guide/general-guidelines/inclusivity/#accessibility-terminology). For more background on people-first language, see the CDC's guide on [Communicating With and About People with Disabilities](https://www.cdc.gov/disability-and-health/articles-documents/communicating-with-and-about-people-with-disabilities.html).
 
 | Recommended | Not Recommended |
 | -- | -- |
@@ -236,7 +235,7 @@ let magicWord = 'Please';
 
 ## Accessible Canvas Labels
 
-- Use `describe()` to in p5.js example code, to add labels to your canvas so that it’s readable for screen readers.
+- Use `describe()` in p5.js example code to add labels to your canvas so that it’s readable for screen readers.
 
 > Why? It makes examples accessible to screen readers, and models how to write good canvas labels. 
 
@@ -273,6 +272,27 @@ function draw() {
 The above examples and suggestions are based on the [Writing Accessible Canvas Descriptions tutorial](https://p5js.org/tutorials/writing-accessible-canvas-descriptions/). This tutorial gives more detailed guidance, and includes other ways to label your canvas, in addition to  `describe()`: `describeElement()`, `textOutput()`, and `gridOutput()`.
 
 To understand the structure of p5.js’ web accessibility features for contributors, see the [Web Accessibility Contributor Doc](./web_accessibility.md#user-generated-accessible-canvas-descriptions).
+
+
+**[⬆ back to top](#table-of-contents)**
+
+## Accessible Iframe Names
+
+- When embedding content with `<iframe>`, always include a `title` attribute that describes the embedded content.
+
+> Why? Screen reader users rely on frame titles to identify and navigate between embedded content. A missing title violates [WCAG 4.1.2 (Name, Role, Value)](https://www.w3.org/WAI/WCAG21/Understanding/name-role-value.html), which requires all interface components to have a programmatically determined name.
+
+```html
+<!-- Bad. -->
+<iframe src="https://www.youtube.com/embed/example"></iframe>
+
+<!-- Good. -->
+<iframe src="https://www.youtube.com/embed/example" title="Video: Getting Started with p5.js"></iframe>
+```
+
+- Use a `title` that describes what the iframe contains, not just "iframe" or "embedded content."
+
+- If the iframe is purely decorative and carries no meaningful content, use `aria-hidden="true"` instead.
 
 
 **[⬆ back to top](#table-of-contents)**
@@ -1267,25 +1287,30 @@ class Mover {
 
 ## Assets
 
-- Always load assets from a folder called "assets".
+Whether assets (such as images, fonts, sound files, etc) are being used in the descriptions or code examples of the reference documentation, or in tutorials, the same rules apply:
 
-> Why? It models good project organization. It's also required for assets to load on the p5.js website. Place assets in the following folders to include them in our online documentation:
-- Examples: [src/data/examples/assets](https://github.com/processing/p5.js-website/tree/main/src/data/examples)
-- Reference Pages: [src/templates/pages/reference/assets](https://github.com/processing/p5.js-website/tree/main/src/templates/pages/reference/assets)
-- Learn Pages: [src/assets/learn](https://github.com/processing/p5.js-website/tree/main/src/assets/learn)
+- Always load assets from a folder called `assets`.
+- Store the assets in the `public/assets` folder of the p5.js-website repository.
+
+> Why? It models good project organization. It's also required for assets to load on the p5.js website. 
 
 ```javascript
 let img;
 
 // Bad.
-function preload() {
-  img = loadImage('moonwalk.jpg');
+async function setup() {
+  img = await loadImage('moonwalk.jpg');
+  //...
 }
 
 // Good.
-function preload() {
-  img = loadImage('assets/moonwalk.jpg');
+async function setup() {
+  img = await loadImage('assets/moonwalk.jpg');
+  //...
 }
 ```
+
+There is more on working with assets in the guide: [Contributing to the p5.js reference](./contributing_to_the_p5js_reference/#using-assets).
+
 
 **[⬆ back to top](#table-of-contents)**

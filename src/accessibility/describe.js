@@ -2,7 +2,6 @@
  * @module Environment
  * @submodule Environment
  * @for p5
- * @requires core
  */
 
 function describe(p5, fn){
@@ -36,8 +35,6 @@ function describe(p5, fn){
    * @param  {(FALLBACK|LABEL)} [display] either LABEL or FALLBACK.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   background('pink');
    *
@@ -51,11 +48,8 @@ function describe(p5, fn){
    *   // Add a general description of the canvas.
    *   describe('A pink square with a red heart in the bottom-right corner.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   background('pink');
    *
@@ -70,12 +64,8 @@ function describe(p5, fn){
    *   // and display it for debugging.
    *   describe('A pink square with a red heart in the bottom-right corner.', LABEL);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
-   *
+   * @example
    * function setup(){
    *  createCanvas(100, 100);
    * };
@@ -96,12 +86,8 @@ function describe(p5, fn){
    *   // Add a general description of the canvas.
    *   describe(`A green circle at (${x}, 50) moves from left to right on a gray square.`);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
-   *
+   * @example
    * function setup(){
    * createCanvas(100, 100);
    * }
@@ -123,8 +109,6 @@ function describe(p5, fn){
    *   // and display it for debugging.
    *   describe(`A green circle at (${x}, 50) moves from left to right on a gray square.`, LABEL);
    * }
-   * </code>
-   * </div>
    */
   fn.describe = function(text, display) {
     // p5._validateParameters('describe', arguments);
@@ -197,8 +181,6 @@ function describe(p5, fn){
    * @param  {(FALLBACK|LABEL)} [display] either LABEL or FALLBACK.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   background('pink');
    *
@@ -220,11 +202,8 @@ function describe(p5, fn){
    *   // Add a general description of the canvas.
    *   describe('A red heart and yellow circle over a pink background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   background('pink');
    *
@@ -248,8 +227,6 @@ function describe(p5, fn){
    *   // Add a general description of the canvas.
    *   describe('A red heart and yellow circle over a pink background.');
    * }
-   * </code>
-   * </div>
    */
 
   fn.describeElement = function(name, text, display) {

@@ -1,4 +1,4 @@
-import { NodeTypeRequiredFields, NodeTypeToName, BasePriority, StatementType } from './ir_types';
+import { NodeTypeRequiredFields, NodeTypeToName, BasePriority, StatementType, BaseType } from './ir_types';
 import * as FES from './strands_FES';
 
 /////////////////////////////////
@@ -79,6 +79,36 @@ export function extractNodeTypeInfo(dag, nodeID) {
     dimension: dag.dimensions[nodeID],
     priority: BasePriority[dag.baseTypes[nodeID]],
   };
+}
+
+// Propagate a known type to an ASSIGN_ON_USE node and all its ASSIGN_ON_USE dependencies
+export function propagateTypeToAssignOnUse(dag, nodeId, baseType, dimension, visited = new Set()) {
+  // Avoid infinite loops
+  if (visited.has(nodeId)) {
+    return;
+  }
+  visited.add(nodeId);
+
+  const node = getNodeDataFromID(dag, nodeId);
+
+  // Only update if this node is ASSIGN_ON_USE
+  if (node.baseType !== BaseType.ASSIGN_ON_USE) {
+    return;
+  }
+
+  // Update this node's type
+  dag.baseTypes[nodeId] = baseType;
+  dag.dimensions[nodeId] = dimension;
+
+  // Recursively propagate to any ASSIGN_ON_USE dependencies
+  if (node.dependsOn && node.dependsOn.length > 0) {
+    for (const depId of node.dependsOn) {
+      const dep = getNodeDataFromID(dag, depId);
+      if (dep.baseType === BaseType.ASSIGN_ON_USE) {
+        propagateTypeToAssignOnUse(dag, depId, baseType, dimension, visited);
+      }
+    }
+  }
 }
 
 /////////////////////////////////

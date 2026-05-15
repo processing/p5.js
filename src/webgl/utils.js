@@ -1,4 +1,5 @@
 import * as constants from "../core/constants";
+import { INSTANCE_ID_VARYING_NAME } from "../strands/ir_types";
 import { Texture } from "./p5.Texture";
 
 /**
@@ -6,8 +7,8 @@ import { Texture } from "./p5.Texture";
  * @param {Uint8Array|Float32Array|undefined} pixels An existing pixels array to reuse if the size is the same
  * @param {WebGLRenderingContext} gl The WebGL context
  * @param {WebGLFramebuffer|null} framebuffer The Framebuffer to read
- * @param {Number} x The x coordiante to read, premultiplied by pixel density
- * @param {Number} y The y coordiante to read, premultiplied by pixel density
+ * @param {Number} x The x coordinate to read, premultiplied by pixel density
+ * @param {Number} y The y coordinate to read, premultiplied by pixel density
  * @param {Number} width The width in pixels to be read (factoring in pixel density)
  * @param {Number} height The height in pixels to be read (factoring in pixel density)
  * @param {GLEnum} format Either RGB or RGBA depending on how many channels to read
@@ -281,7 +282,7 @@ export function setWebGLUniformValue(shader, uniform, data, getTexture, gl) {
               "You're trying to use a number as the data for a texture." +
               "Please use a texture.",
           );
-          return this;
+          return;
         }
         gl.activeTexture(data);
         gl.uniform1i(location, data);
@@ -289,9 +290,6 @@ export function setWebGLUniformValue(shader, uniform, data, getTexture, gl) {
         gl.activeTexture(gl.TEXTURE0 + uniform.samplerIndex);
         uniform.texture = data instanceof Texture ? data : getTexture(data);
         gl.uniform1i(location, uniform.samplerIndex);
-        if (uniform.texture.src.gifProperties) {
-          uniform.texture.src._animateGif(this._pInst);
-        }
       }
       break;
     case gl.SAMPLER_CUBE:
@@ -432,6 +430,20 @@ export function populateGLSLHooks(shader, src, shaderType) {
       }
     }
   }
+
+  // Handle instanceID varying for fragment access
+  if (shader.hooks.instanceIDVarying) {
+    const { declaration, source, interpolation } = shader.hooks.instanceIDVarying;
+    const qualifier = interpolation ? `${interpolation} ` : '';
+    if (shaderType === "vertex") {
+      // Emit flat out declaration and inject assignment into main() body
+      hooks += `${qualifier}OUT ${declaration};\n`;
+      postMain = postMain.replace(/\{/, `{\n  ${declaration.split(' ').pop()} = ${source};`);
+    } else if (shaderType === "fragment") {
+      hooks += `${qualifier}IN ${declaration};\n`;
+    }
+  }
+
   for (const hookDef in shader.hooks.helpers) {
     hooks += `${hookDef}${shader.hooks.helpers[hookDef]}\n`;
   }

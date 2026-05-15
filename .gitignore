@@ -2,6 +2,9 @@
 
 .nyc_output/*
 # .vscode/settings.json
+# optional local preferences for vscode
+local.code-workspace
+
 node_modules/*
 
 analyzer/

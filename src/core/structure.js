@@ -2,7 +2,6 @@
  * @module Structure
  * @submodule Structure
  * @for p5
- * @requires core
  */
 
 function structure(p5, fn){
@@ -21,8 +20,6 @@ function structure(p5, fn){
    * @method noLoop
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -42,11 +39,8 @@ function structure(p5, fn){
    *   // Normally, the circle would move from left to right.
    *   circle(x, 50, 20);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Double-click to stop the draw loop.
    *
    * function setup() {
@@ -74,11 +68,8 @@ function structure(p5, fn){
    * function doubleClicked() {
    *   noLoop();
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let startButton;
    * let stopButton;
    *
@@ -117,8 +108,6 @@ function structure(p5, fn){
    *   // Normally, the circle would move from left to right.
    *   circle(x, y, 20);
    * }
-   * </code>
-   * </div>
    */
   fn.noLoop = function() {
     this._loop = false;
@@ -139,8 +128,6 @@ function structure(p5, fn){
    * @method loop
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -166,11 +153,8 @@ function structure(p5, fn){
    * function doubleClicked() {
    *   loop();
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let startButton;
    * let stopButton;
    *
@@ -209,8 +193,6 @@ function structure(p5, fn){
    *   // Normally, the circle would move from left to right.
    *   circle(x, y, 20);
    * }
-   * </code>
-   * </div>
    */
   fn.loop = function() {
     if (!this._loop) {
@@ -236,8 +218,6 @@ function structure(p5, fn){
    * @returns {boolean}
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -259,8 +239,6 @@ function structure(p5, fn){
    *     loop();
    *   }
    * }
-   * </code>
-   * </div>
    */
   fn.isLooping = function() {
     return this._loop;
@@ -284,8 +262,6 @@ function structure(p5, fn){
    * @returns {Promise<void>}
    *
    * @example
-   * <div>
-   * <code>
    * // Double-click the canvas to move the circle.
    *
    * let x = 0;
@@ -315,11 +291,8 @@ function structure(p5, fn){
    * async function doubleClicked() {
    *   await redraw();
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Double-click the canvas to move the circle.
    *
    * let x = 0;
@@ -349,8 +322,6 @@ function structure(p5, fn){
    * async function doubleClicked() {
    *   await redraw(3);
    * }
-   * </code>
-   * </div>
    */
   fn.redraw = async function(n) {
     if (this._inUserDraw || !this._setupDone) {
@@ -430,8 +401,7 @@ function structure(p5, fn){
    * @param {String|HTMLElement} node ID or reference to the HTML element that will contain the sketch.
    *
    * @example
-   * <div class='norender notest'>
-   * <code>
+   * // META:norender
    * // Declare the function containing the sketch.
    * function sketch(p) {
    *
@@ -453,11 +423,9 @@ function structure(p5, fn){
    *
    * // Initialize the sketch.
    * new p5(sketch);
-   * </code>
-   * </div>
    *
-   * <div class='norender notest'>
-   * <code>
+   * @example
+   * // META:norender
    * // Declare the function containing the sketch.
    * function sketch(p) {
    *   // Create the sketch's variables within its scope.
@@ -486,11 +454,9 @@ function structure(p5, fn){
    *
    * // Initialize the sketch.
    * new p5(sketch);
-   * </code>
-   * </div>
    *
-   * <div class='norender notest'>
-   * <code>
+   * @example
+   * // META:norender
    * // Declare the function containing the sketch.
    * function sketch(p) {
    *
@@ -515,11 +481,9 @@ function structure(p5, fn){
    *
    * // Initialize the sketch and attach it to the web page's body.
    * new p5(sketch, body);
-   * </code>
-   * </div>
    *
-   * <div class='norender notest'>
-   * <code>
+   * @example
+   * // META:norender
    * // Declare the function containing the sketch.
    * function sketch(p) {
    *
@@ -543,11 +507,9 @@ function structure(p5, fn){
    *
    * // Initialize the sketch.
    * new p5(sketch);
-   * </code>
-   * </div>
    *
-   * <div class='norender notest'>
-   * <code>
+   * @example
+   * // META:norender
    * // Declare the function containing the sketch.
    * function sketch(p) {
    *
@@ -577,8 +539,6 @@ function structure(p5, fn){
    *
    * // Initialize the sketch.
    * new p5(sketch);
-   * </code>
-   * </div>
    */
 }
 

@@ -1,5 +1,3 @@
-import * as fileSaver from 'file-saver';
-
 function downloadFile(data, fName, extension) {
   const fx = _checkFileExtension(fName, extension);
   const filename = fx[0];
@@ -9,7 +7,14 @@ function downloadFile(data, fName, extension) {
     saveData = new Blob([data]);
   }
 
-  fileSaver.saveAs(saveData, filename);
+  if(document){
+    const url = URL.createObjectURL(saveData);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+    link.click();
+    URL.revokeObjectURL(url);
+  }
 }
 
 function _checkFileExtension(filename, extension) {

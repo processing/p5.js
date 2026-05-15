@@ -2,8 +2,6 @@
  * @module Shape
  * @submodule Attributes
  * @for p5
- * @requires core
- * @requires constants
  */
 
 import * as constants from '../core/constants';
@@ -35,13 +33,13 @@ function attributes(p5, fn){
    * the constants `CENTER`, `RADIUS`, `CORNER`, and `CORNERS` are defined this
    * way. JavaScript is a case-sensitive language.
    *
+   * Calling `ellipseMode()` without an argument returns the current ellipseMode, either `CENTER`, `RADIUS`, `CORNER`, or `CORNERS`.
+   * 
    * @method ellipseMode
    * @param  {(CENTER|RADIUS|CORNER|CORNERS)} mode either CENTER, RADIUS, CORNER, or CORNERS
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -59,11 +57,8 @@ function attributes(p5, fn){
    *
    *   describe('A white circle with a gray circle at its center. Both circles have black outlines.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -81,11 +76,16 @@ function attributes(p5, fn){
    *
    *   describe('A white circle with a gray circle at its top-left corner. Both circles have black outlines.');
    * }
-   * </code>
-   * </div>
+   */
+  /**
+   * @method ellipseMode
+   * @return {(CENTER|RADIUS|CORNER|CORNERS)}      the current ellipseMode.
    */
   fn.ellipseMode = function(m) {
     // p5._validateParameters('ellipseMode', arguments);
+    if (typeof m === 'undefined') { // getter
+      return this._renderer?.states.ellipseMode;
+    }
     if (
       m === constants.CORNER ||
       m === constants.CORNERS ||
@@ -107,12 +107,12 @@ function attributes(p5, fn){
    * In WebGL mode, `noSmooth()` causes all shapes to be drawn with jagged
    * (aliased) edges. The functions don't affect images or fonts.
    *
+   * Note: In WebGPU mode, you must `await` this function.
+   *
    * @method noSmooth
-   * @chainable
+   * @return {void|Promise<void>}
    *
    * @example
-   * <div>
-   * <code>
    * let heart;
    *
    * async function setup() {
@@ -133,11 +133,8 @@ function attributes(p5, fn){
    *   image(heart, 20, 60, 16, 16);
    *   image(heart, 40, 60, 32, 32);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
@@ -147,11 +144,8 @@ function attributes(p5, fn){
    *
    *   describe('A white circle on a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
@@ -164,18 +158,16 @@ function attributes(p5, fn){
    *
    *   describe('A pixelated white circle on a gray background.');
    * }
-   * </code>
-   * </div>
    */
   fn.noSmooth = function() {
     if (!this._renderer.isP3D) {
       if ('imageSmoothingEnabled' in this.drawingContext) {
         this.drawingContext.imageSmoothingEnabled = false;
       }
+      return this;
     } else {
-      this.setAttributes('antialias', false);
+      return this.setAttributes('antialias', false);
     }
-    return this;
   };
 
   /**
@@ -203,13 +195,13 @@ function attributes(p5, fn){
    * constants `CENTER`, `RADIUS`, `CORNER`, and `CORNERS` are defined this way.
    * JavaScript is a case-sensitive language.
    *
+   * Calling `rectMode()` without an argument returns the current rectMode, either `CORNER`, `CORNERS`, `CENTER`, or `RADIUS`.
+   *
    * @method rectMode
    * @param  {(CENTER|RADIUS|CORNER|CORNERS)} mode either CORNER, CORNERS, CENTER, or RADIUS
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -225,11 +217,8 @@ function attributes(p5, fn){
    *
    *   describe('A small gray square drawn at the top-left corner of a white square.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -245,11 +234,8 @@ function attributes(p5, fn){
    *
    *   describe('A small gray square drawn at the center of a white square.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -261,11 +247,8 @@ function attributes(p5, fn){
    *
    *   describe('A white square.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -281,11 +264,16 @@ function attributes(p5, fn){
    *
    *   describe('A small gray square drawn at the center of a white square.');
    * }
-   * </code>
-   * </div>
+   */
+  /**
+   * @method rectMode
+   * @return {(CENTER|RADIUS|CORNER|CORNERS)}      the current rectMode.
    */
   fn.rectMode = function(m) {
     // p5._validateParameters('rectMode', arguments);
+    if (typeof m === 'undefined') { // getter
+      return this._renderer?.states.rectMode;
+    }
     if (
       m === constants.CORNER ||
       m === constants.CORNERS ||
@@ -312,8 +300,6 @@ function attributes(p5, fn){
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
    * let heart;
    *
    * async function setup() {
@@ -335,11 +321,8 @@ function attributes(p5, fn){
    *   image(heart, 20, 60, 16, 16);
    *   image(heart, 40, 60, 32, 32);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
@@ -349,11 +332,8 @@ function attributes(p5, fn){
    *
    *   describe('A white circle on a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
@@ -366,8 +346,6 @@ function attributes(p5, fn){
    *
    *   describe('A pixelated white circle on a gray background.');
    * }
-   * </code>
-   * </div>
    */
   fn.smooth = function() {
     if (!this._renderer.isP3D) {
@@ -394,8 +372,6 @@ function attributes(p5, fn){
    * @param  {(ROUND|SQUARE|PROJECT)} cap either ROUND, SQUARE, or PROJECT
    * @chainable
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -419,11 +395,12 @@ function attributes(p5, fn){
    *     'Three horizontal lines. The top line has rounded ends, the middle line has squared ends, and the bottom line has longer, squared ends.'
    *   );
    * }
-   * </code>
-   * </div>
    */
   fn.strokeCap = function(cap) {
     // p5._validateParameters('strokeCap', arguments);
+    if (typeof cap === 'undefined') { // getter
+      return this._renderer.strokeCap();
+    }
     if (
       cap === constants.ROUND ||
       cap === constants.SQUARE ||
@@ -445,12 +422,12 @@ function attributes(p5, fn){
    * the constants `MITER`, `BEVEL`, and `ROUND` are defined this way.
    * JavaScript is a case-sensitive language.
    *
+   * Calling `strokeJoin()` without an argument returns the current stroke join style, either `MITER`, `BEVEL`, or `ROUND`.
+   *
    * @method strokeJoin
    * @param  {(MITER|BEVEL|ROUND)} join either MITER, BEVEL, or ROUND
    * @chainable
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -470,11 +447,8 @@ function attributes(p5, fn){
    *
    *   describe('A right-facing arrowhead shape with a pointed tip in center of canvas.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -494,11 +468,8 @@ function attributes(p5, fn){
    *
    *   describe('A right-facing arrowhead shape with a flat tip in center of canvas.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -518,11 +489,16 @@ function attributes(p5, fn){
    *
    *   describe('A right-facing arrowhead shape with a rounded tip in center of canvas.');
    * }
-   * </code>
-   * </div>
+   */
+  /**
+   * @method strokeJoin
+   * @return {(MITER|BEVEL|ROUND)}      the current stroke join style.
    */
   fn.strokeJoin = function(join) {
     // p5._validateParameters('strokeJoin', arguments);
+    if (typeof join === 'undefined') { // getter
+      return this._renderer.strokeJoin();
+    }
     if (
       join === constants.ROUND ||
       join === constants.BEVEL ||
@@ -539,13 +515,13 @@ function attributes(p5, fn){
    *
    * Note: `strokeWeight()` is affected by transformations, especially calls to
    * <a href="#/p5/scale">scale()</a>.
+   * 
+   * Calling `strokeWeight()` without an argument returns the current stroke weight as a number.
    *
    * @method strokeWeight
    * @param  {Number} weight the weight of the stroke (in pixels).
    * @chainable
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -564,11 +540,8 @@ function attributes(p5, fn){
    *
    *   describe('Three horizontal black lines. The top line is thin, the middle is medium, and the bottom is thick.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -585,13 +558,14 @@ function attributes(p5, fn){
    *
    *   describe('Two horizontal black lines. The top line is thin and the bottom is five times thicker than the top.');
    * }
-   * </code>
-   * </div>
+   */
+  /**
+   * @method strokeWeight
+   * @return {Number} the current stroke weight.
    */
   fn.strokeWeight = function(w) {
     // p5._validateParameters('strokeWeight', arguments);
-    this._renderer.strokeWeight(w);
-    return this;
+    return this._renderer.strokeWeight(w);
   };
 }
 

@@ -2,7 +2,6 @@
  * @module 3D
  * @submodule Interaction
  * @for p5
- * @requires core
  */
 
 import * as constants from '../core/constants';
@@ -75,8 +74,6 @@ function interaction(p5, fn){
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
    * // Click and drag the mouse to view the scene from different angles.
    *
    * function setup() {
@@ -97,11 +94,8 @@ function interaction(p5, fn){
    *   // Draw the box.
    *   box(30, 50);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * function setup() {
@@ -123,11 +117,8 @@ function interaction(p5, fn){
    *   // Draw the box.
    *   box(30, 50);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * function setup() {
@@ -156,8 +147,6 @@ function interaction(p5, fn){
    *   // Draw the box.
    *   box(30, 50);
    * }
-   * </code>
-   * </div>
    */
 
   // implementation based on three.js 'orbitControls':
@@ -380,8 +369,11 @@ function interaction(p5, fn){
       // accelerate rotate velocity
       this._renderer.rotateVelocity.add(
         deltaTheta * rotateAccelerationFactor,
-        deltaPhi * rotateAccelerationFactor
+        deltaPhi * rotateAccelerationFactor,
+        0
       );
+
+      //console.log("added");
     }
     if (this._renderer.rotateVelocity.magSq() > 0.000001) {
       // if freeRotation is true, the camera always rotates freely in the direction the pointer moves
@@ -400,8 +392,10 @@ function interaction(p5, fn){
       }
       // damping
       this._renderer.rotateVelocity.mult(damping);
+      //console.log("multiplied", damping,  this._renderer.rotateVelocity);
+
     } else {
-      this._renderer.rotateVelocity.set(0, 0);
+      this._renderer.rotateVelocity.set(0, 0, 0);
     }
 
     // move process
@@ -521,8 +515,6 @@ function interaction(p5, fn){
    * @method debugMode
    *
    * @example
-   * <div>
-   * <code>
    * // Click and drag the mouse to view the scene from different angles.
    *
    * function setup() {
@@ -546,11 +538,8 @@ function interaction(p5, fn){
    *   // Draw the box.
    *   box(20, 40);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * function setup() {
@@ -575,11 +564,8 @@ function interaction(p5, fn){
    *   // Draw the box.
    *   box(20, 40);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * function setup() {
@@ -607,11 +593,8 @@ function interaction(p5, fn){
    *   // Draw the box.
    *   box(20, 40);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * function setup() {
@@ -645,8 +628,6 @@ function interaction(p5, fn){
    *   // Draw the box.
    *   box(20, 40);
    * }
-   * </code>
-   * </div>
    */
 
   /**
@@ -726,8 +707,6 @@ function interaction(p5, fn){
    * @method noDebugMode
    *
    * @example
-   * <div>
-   * <code>
    * // Click and drag the mouse to view the scene from different angles.
    *
    * function setup() {
@@ -755,8 +734,6 @@ function interaction(p5, fn){
    * function doubleClicked() {
    *   noDebugMode();
    * }
-   * </code>
-   * </div>
    */
   fn.noDebugMode = function() {
     this._assert3d('noDebugMode');

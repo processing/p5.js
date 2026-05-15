@@ -2,8 +2,6 @@
  * @module Shape
  * @submodule Custom Shapes
  * @for p5
- * @requires core
- * @requires constants
  */
 
 function vertex(p5, fn){
@@ -48,8 +46,6 @@ function vertex(p5, fn){
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -69,11 +65,8 @@ function vertex(p5, fn){
    *
    *   describe('A white square on a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -94,11 +87,8 @@ function vertex(p5, fn){
    *
    *   describe('Four black dots that form a square are drawn on a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -119,11 +109,8 @@ function vertex(p5, fn){
    *
    *   describe('Two horizontal black lines on a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -146,11 +133,8 @@ function vertex(p5, fn){
    *
    *   describe('Three black lines form a sideways U shape on a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -174,11 +158,8 @@ function vertex(p5, fn){
    *
    *   describe('A black outline of a square drawn on a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -203,11 +184,8 @@ function vertex(p5, fn){
    *
    *   describe('Two white triangles drawn on a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -231,11 +209,8 @@ function vertex(p5, fn){
    *
    *   describe('Five white triangles that are interleaved drawn on a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -258,11 +233,8 @@ function vertex(p5, fn){
    *
    *   describe('Four white triangles form a square are drawn on a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -289,11 +261,8 @@ function vertex(p5, fn){
    *
    *   describe('Two white rectangles drawn on a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -318,11 +287,8 @@ function vertex(p5, fn){
    *
    *   describe('Three white rectangles that share edges are drawn on a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
@@ -348,11 +314,8 @@ function vertex(p5, fn){
    *
    *   describe('A blocky C shape drawn in white on a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag with the mouse to view the scene from different angles.
    *
    * function setup() {
@@ -391,8 +354,6 @@ function vertex(p5, fn){
    *   // Connect the first and last vertices.
    *   endShape(CLOSE);
    * }
-   * </code>
-   * </div>
    */
   fn.beginShape = function(kind) {
     // p5._validateParameters('beginShape', arguments);
@@ -435,8 +396,6 @@ function vertex(p5, fn){
    * @param  {Number} [v]
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -461,11 +420,8 @@ function vertex(p5, fn){
    *
    *   describe('A black C curve on a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -510,11 +466,8 @@ function vertex(p5, fn){
    *     'A gray square with three curves. A black curve has two straight, red lines that extend from its ends. The endpoints of all the curves are marked with dots.'
    *   );
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click the mouse near the red dot in the top-right corner
    * // and drag to change the curve's shape.
    *
@@ -588,11 +541,8 @@ function vertex(p5, fn){
    *     y2 = mouseY;
    *   }
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -618,11 +568,8 @@ function vertex(p5, fn){
    *
    *   describe('A crescent moon shape drawn in white on a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * function setup() {
@@ -669,10 +616,7 @@ function vertex(p5, fn){
    *
    *   endShape();
    * }
-   * </code>
-   * </div>
    */
-
   /**
    * @method bezierVertex
    * @param  {Number} x
@@ -729,8 +673,6 @@ function vertex(p5, fn){
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -757,11 +699,8 @@ function vertex(p5, fn){
    *     'Two sets of black lines drawn on a gray background. The three lines on the left form a right triangle. The two lines on the right form a right angle.'
    *   );
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(200, 100);
    *
@@ -788,11 +727,8 @@ function vertex(p5, fn){
    *     'Two right-angled shapes on a light gray background. The left shape is open with three lines. The right shape is closed, forming a triangle.'
    *   );
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *   background(200);
@@ -810,11 +746,8 @@ function vertex(p5, fn){
    *     'A curvy four-sided slightly lopsided blob.'
    *   );
    * }
-   * </div>
-   * </code>
    *
-   * <div>
-   * <code>
+   * @example
    * // Note: A "uniform" is a global variable within a shader program.
    *
    * // Create a string with the vertex shader program.
@@ -899,8 +832,6 @@ function vertex(p5, fn){
    *
    *   describe('A row of four squares. Their colors transition from purple on the left to red on the right');
    * }
-   * </code>
-   * </div>
    */
   fn.endShape = function(mode, count = 1) {
     // p5._validateParameters('endShape', arguments);
@@ -970,8 +901,6 @@ function vertex(p5, fn){
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
    * // Click the and drag the mouse to view the scene from a different angle.
    *
    * function setup() {
@@ -1000,11 +929,8 @@ function vertex(p5, fn){
    *   vertex(-30, 30, 0);
    *   endShape();
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click the and drag the mouse to view the scene from a different angle.
    *
    * function setup() {
@@ -1039,11 +965,8 @@ function vertex(p5, fn){
    *   vertex(-30, 30, 0);
    *   endShape();
    * }
-   * </code>
-   * </div>
    *
-   * <div class='notest'>
-   * <code>
+   * @example
    * // Click the and drag the mouse to view the scene from a different angle.
    *
    * function setup() {
@@ -1083,10 +1006,7 @@ function vertex(p5, fn){
    *   vertex(-30, 30, 0);
    *   endShape();
    * }
-   * </code>
-   * </div>
    */
-
   /**
    * @method normal
    * @param  {Number} x x-component of the vertex normal.
@@ -1131,8 +1051,6 @@ function vertex(p5, fn){
    * @param {Number|Number[]} data the data tied to the vertex attribute.
    *
    * @example
-   * <div>
-   * <code>
    * const vertSrc = `#version 300 es
    *  precision mediump float;
    *  uniform mat4 uModelViewMatrix;
@@ -1187,11 +1105,8 @@ function vertex(p5, fn){
    *   }
    *   endShape(CLOSE);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let myShader;
    * const cols = 10;
    * const rows = 10;
@@ -1267,8 +1182,6 @@ function vertex(p5, fn){
    *   }
    *   endShape();
    * }
-   * </code>
-   * </div>
    */
   fn.vertexProperty = function(attributeName, data){
     // this._assert3d('vertexProperty');

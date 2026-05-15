@@ -1,5 +1,5 @@
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
 const SLASH_REGEX = /\//g;
 
 async function generateVisualReport() {
@@ -418,11 +418,11 @@ async function generateVisualReport() {
 }
 
 // Run the function if this script is executed directly
-if (require.main === module) {
+if (import.meta.main === true) {
   generateVisualReport().catch(error => {
     console.error('Failed to generate report:', error);
     process.exit(1);
   });
 }
 
-module.exports = { generateVisualReport };
+export { generateVisualReport };

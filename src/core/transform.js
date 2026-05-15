@@ -2,8 +2,6 @@
  * @module Transform
  * @submodule Transform
  * @for p5
- * @requires core
- * @requires constants
  */
 
 function transform(p5, fn){
@@ -60,8 +58,6 @@ function transform(p5, fn){
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -77,11 +73,8 @@ function transform(p5, fn){
    *   // Draw the circle at coordinates (0, 0).
    *   circle(0, 0, 40);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -98,11 +91,8 @@ function transform(p5, fn){
    *   // Draw the circle at coordinates (0, 0).
    *   circle(0, 0, 40);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -121,11 +111,8 @@ function transform(p5, fn){
    *   // Draw a rectangle at coordinates (50, 0).
    *   rect(50, 0, 40, 20);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -147,11 +134,8 @@ function transform(p5, fn){
    *   // It appears at (15, 10) after scaling.
    *   square(30, 20, 40);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -171,11 +155,8 @@ function transform(p5, fn){
    *   // Draw the square.
    *   square(0, 0, 50);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * function setup() {
@@ -199,8 +180,6 @@ function transform(p5, fn){
    *   // Draw a box.
    *   box();
    * }
-   * </code>
-   * </div>
    */
   /**
    * @method applyMatrix
@@ -249,8 +228,6 @@ function transform(p5, fn){
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -277,8 +254,6 @@ function transform(p5, fn){
    *   fill('red');
    *   circle(25, 25, 20);
    * }
-   * </code>
-   * </div>
    */
   fn.resetMatrix = function() {
     this._renderer.resetMatrix();
@@ -321,8 +296,6 @@ function transform(p5, fn){
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -340,11 +313,8 @@ function transform(p5, fn){
    *   // Draw a rectangle at coordinates (50, 0).
    *   rect(50, 0, 40, 20);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -365,11 +335,8 @@ function transform(p5, fn){
    *   // Draw a rectangle at coordinates (50, 0).
    *   rect(50, 0, 40, 20);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -390,11 +357,8 @@ function transform(p5, fn){
    *   // Draw a rectangle at coordinates (50, 0).
    *   rect(50, 0, 40, 20);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -413,11 +377,8 @@ function transform(p5, fn){
    *   // Draw a rectangle at coordinates (50, 0).
    *   rect(50, 0, 40, 20);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
@@ -435,11 +396,8 @@ function transform(p5, fn){
    *   // Draw a box.
    *   box();
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
@@ -457,13 +415,10 @@ function transform(p5, fn){
    *   // Draw a box.
    *   box();
    * }
-   * </code>
-   * </div>
    */
   fn.rotate = function(angle, axis) {
     // p5._validateParameters('rotate', arguments);
-    this._renderer.rotate(this._toRadians(angle), axis);
-    return this;
+    return this._renderer.rotate(this._toRadians(angle), axis);
   };
 
   /**
@@ -488,8 +443,6 @@ function transform(p5, fn){
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
    * // Click and drag the mouse to view the scene from different angles.
    *
    * function setup() {
@@ -510,11 +463,8 @@ function transform(p5, fn){
    *   // Draw a box.
    *   box();
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * function setup() {
@@ -538,11 +488,8 @@ function transform(p5, fn){
    *   // Draw a box.
    *   box();
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * function setup() {
@@ -566,11 +513,8 @@ function transform(p5, fn){
    *   // Draw a box.
    *   box();
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * function setup() {
@@ -592,14 +536,11 @@ function transform(p5, fn){
    *   // Draw a box.
    *   box();
    * }
-   * </code>
-   * </div>
    */
   fn.rotateX = function(angle) {
     this._assert3d('rotateX');
     // p5._validateParameters('rotateX', arguments);
-    this._renderer.rotateX(this._toRadians(angle));
-    return this;
+    return this._renderer.rotateX(this._toRadians(angle));
   };
 
   /**
@@ -624,8 +565,6 @@ function transform(p5, fn){
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
    * // Click and drag the mouse to view the scene from different angles.
    *
    * function setup() {
@@ -646,11 +585,8 @@ function transform(p5, fn){
    *   // Draw a box.
    *   box();
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * function setup() {
@@ -674,11 +610,8 @@ function transform(p5, fn){
    *   // Draw a box.
    *   box();
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * function setup() {
@@ -702,11 +635,8 @@ function transform(p5, fn){
    *   // Draw a box.
    *   box();
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * function setup() {
@@ -728,14 +658,11 @@ function transform(p5, fn){
    *   // Draw a box.
    *   box();
    * }
-   * </code>
-   * </div>
    */
   fn.rotateY = function(angle) {
     this._assert3d('rotateY');
     // p5._validateParameters('rotateY', arguments);
-    this._renderer.rotateY(this._toRadians(angle));
-    return this;
+    return this._renderer.rotateY(this._toRadians(angle));
   };
 
   /**
@@ -760,8 +687,6 @@ function transform(p5, fn){
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
    * // Click and drag the mouse to view the scene from different angles.
    *
    * function setup() {
@@ -782,11 +707,8 @@ function transform(p5, fn){
    *   // Draw a box.
    *   box();
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * function setup() {
@@ -810,11 +732,8 @@ function transform(p5, fn){
    *   // Draw a box.
    *   box();
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * function setup() {
@@ -838,11 +757,8 @@ function transform(p5, fn){
    *   // Draw a box.
    *   box();
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * function setup() {
@@ -864,14 +780,11 @@ function transform(p5, fn){
    *   // Draw a box.
    *   box();
    * }
-   * </code>
-   * </div>
    */
   fn.rotateZ = function(angle) {
     this._assert3d('rotateZ');
     // p5._validateParameters('rotateZ', arguments);
-    this._renderer.rotateZ(this._toRadians(angle));
-    return this;
+    return this._renderer.rotateZ(this._toRadians(angle));
   };
 
   /**
@@ -913,8 +826,6 @@ function transform(p5, fn){
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -936,11 +847,8 @@ function transform(p5, fn){
    *   // It appears at (15, 10) after scaling.
    *   square(30, 20, 40);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -962,11 +870,8 @@ function transform(p5, fn){
    *   // It appears as a rectangle at (15, 26) after scaling.
    *   square(30, 20, 40);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -991,11 +896,8 @@ function transform(p5, fn){
    *   // It appears as a rectangle at (15, 26) after scaling.
    *   square(30, 20, 40);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * function setup() {
@@ -1032,8 +934,6 @@ function transform(p5, fn){
    *   fill('blue');
    *   box();
    * }
-   * </code>
-   * </div>
    */
   /**
    * @method scale
@@ -1060,9 +960,7 @@ function transform(p5, fn){
       z = 1;
     }
 
-    this._renderer.scale(x, y, z);
-
-    return this;
+    return this._renderer.scale(x, y, z);
   };
 
   /**
@@ -1092,8 +990,6 @@ function transform(p5, fn){
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1109,11 +1005,8 @@ function transform(p5, fn){
    *   // Draw the square.
    *   square(0, 0, 50);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1132,8 +1025,6 @@ function transform(p5, fn){
    *   // Draw the square.
    *   square(0, 0, 50);
    * }
-   * </code>
-   * </div>
    */
   fn.shearX = function(angle) {
     // p5._validateParameters('shearX', arguments);
@@ -1169,8 +1060,6 @@ function transform(p5, fn){
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1186,11 +1075,8 @@ function transform(p5, fn){
    *   // Draw the square.
    *   square(0, 0, 50);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1209,8 +1095,6 @@ function transform(p5, fn){
    *   // Draw the square.
    *   square(0, 0, 50);
    * }
-   * </code>
-   * </div>
    */
   fn.shearY = function(angle) {
     // p5._validateParameters('shearY', arguments);
@@ -1261,8 +1145,6 @@ function transform(p5, fn){
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1278,11 +1160,8 @@ function transform(p5, fn){
    *   // Draw a circle at coordinates (0, 0).
    *   circle(0, 0, 40);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1308,11 +1187,8 @@ function transform(p5, fn){
    *   fill('blue');
    *   circle(0, 0, 40);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1331,11 +1207,8 @@ function transform(p5, fn){
    *   // Draw a circle at coordinates (0, 0).
    *   circle(0, 0, 40);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1354,11 +1227,8 @@ function transform(p5, fn){
    *   // Draw a circle at coordinates (0, 0).
    *   circle(0, 0, 40);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
@@ -1387,8 +1257,6 @@ function transform(p5, fn){
    *   fill('blue');
    *   sphere(10);
    * }
-   * </code>
-   * </div>
    */
   /**
    * @method translate
@@ -1398,11 +1266,10 @@ function transform(p5, fn){
   fn.translate = function(x, y, z) {
     // p5._validateParameters('translate', arguments);
     if (this._renderer.isP3D) {
-      this._renderer.translate(x, y, z);
+      return this._renderer.translate(x, y, z);
     } else {
-      this._renderer.translate(x, y);
+      return this._renderer.translate(x, y);
     }
-    return this;
   };
 
   /**
@@ -1548,8 +1415,6 @@ function transform(p5, fn){
    * @method push
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1582,11 +1447,8 @@ function transform(p5, fn){
    *     'Three circles drawn in a row on a gray background. The left and right circles are white with thin, black borders. The middle circle is orange with a thick, blue border.'
    *   );
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1639,11 +1501,8 @@ function transform(p5, fn){
    *   let y = random(0, 100);
    *   text('🦟', x, y);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * function setup() {
@@ -1677,8 +1536,6 @@ function transform(p5, fn){
    *   sphere(20);
    *   pop();
    * }
-   * </code>
-   * </div>
    */
   fn.push = function() {
     this._renderer.push();
@@ -1827,8 +1684,6 @@ function transform(p5, fn){
    * @method pop
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1861,11 +1716,8 @@ function transform(p5, fn){
    *     'Three circles drawn in a row on a gray background. The left and right circles are white with thin, black borders. The middle circle is orange with a thick, blue border.'
    *   );
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1918,11 +1770,8 @@ function transform(p5, fn){
    *   let y = random(0, 100);
    *   text('🦟', x, y);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * function setup() {
@@ -1956,8 +1805,6 @@ function transform(p5, fn){
    *   sphere(20);
    *   pop();
    * }
-   * </code>
-   * </div>
    */
   fn.pop = function() {
     this._renderer.pop();

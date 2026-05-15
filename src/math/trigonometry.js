@@ -2,8 +2,6 @@
  * @module Math
  * @submodule Trigonometry
  * @for p5
- * @requires core
- * @requires constants
  */
 
 import * as constants from '../core/constants';
@@ -25,8 +23,6 @@ function trigonometry(p5, fn){
    * @final
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -45,8 +41,6 @@ function trigonometry(p5, fn){
    *
    *   describe('The bottom half of a circle drawn on a gray background. The bottom-right quarter is red. The bottom-left quarter is blue.');
    * }
-   * </code>
-   * </div>
    */
   const DEGREES = fn.DEGREES = 'degrees';
 
@@ -68,8 +62,6 @@ function trigonometry(p5, fn){
    * @final
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -91,8 +83,6 @@ function trigonometry(p5, fn){
    *
    *   describe('The bottom half of a circle drawn on a gray background. The bottom-right quarter is red. The bottom-left quarter is blue.');
    * }
-   * </code>
-   * </div>
    */
   const RADIANS = fn.RADIANS = 'radians';
 
@@ -116,8 +106,6 @@ function trigonometry(p5, fn){
    * @return {Number}       arc cosine of the given value.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -135,11 +123,8 @@ function trigonometry(p5, fn){
    *
    *   describe('The numbers 3.142, -1, and 3.142 written on separate rows.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -157,8 +142,6 @@ function trigonometry(p5, fn){
    *
    *   describe('The numbers 3.927, -0.707, and 2.356 written on separate rows.');
    * }
-   * </code>
-   * </div>
    */
   fn.acos = function(ratio) {
     return this._fromRadians(Math.acos(ratio));
@@ -178,8 +161,6 @@ function trigonometry(p5, fn){
    * @return {Number}       arc sine of the given value.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -197,11 +178,8 @@ function trigonometry(p5, fn){
    *
    *   describe('The numbers 1.047, 0.866, and 1.047 written on separate rows.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -219,8 +197,6 @@ function trigonometry(p5, fn){
    *
    *   describe('The numbers 4.189, -0.866, and -1.047 written on separate rows.');
    * }
-   * </code>
-   * </div>
    */
   fn.asin = function(ratio) {
     return this._fromRadians(Math.asin(ratio));
@@ -240,8 +216,6 @@ function trigonometry(p5, fn){
    * @return {Number}       arc tangent of the given value.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -259,11 +233,8 @@ function trigonometry(p5, fn){
    *
    *   describe('The numbers 1.047, 1.732, and 1.047 written on separate rows.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -281,8 +252,6 @@ function trigonometry(p5, fn){
    *
    *   describe('The numbers 4.189, 1.732, and 1.047 written on separate rows.');
    * }
-   * </code>
-   * </div>
    */
   fn.atan = function(ratio) {
     return this._fromRadians(Math.atan(ratio));
@@ -307,8 +276,6 @@ function trigonometry(p5, fn){
    * @return {Number}   arc tangent of the given point.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -328,11 +295,8 @@ function trigonometry(p5, fn){
    *   // Draw the shape.
    *   rect(0, 0, 60, 10);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -358,8 +322,6 @@ function trigonometry(p5, fn){
    *   // Draw the shape.
    *   rect(-30, -5, 60, 10);
    * }
-   * </code>
-   * </div>
    */
   fn.atan2 = function(y, x) {
     return this._fromRadians(Math.atan2(y, x));
@@ -378,8 +340,6 @@ function trigonometry(p5, fn){
    * @return {Number}       cosine of the angle.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -397,11 +357,8 @@ function trigonometry(p5, fn){
    *   line(50, y, x, y);
    *   circle(x, y, 20);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -418,11 +375,8 @@ function trigonometry(p5, fn){
    *   // Draw the point.
    *   point(x, y);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -439,8 +393,6 @@ function trigonometry(p5, fn){
    *   // Draw the point.
    *   point(x, y);
    * }
-   * </code>
-   * </div>
    */
   fn.cos = function(angle) {
     return Math.cos(this._toRadians(angle));
@@ -459,8 +411,6 @@ function trigonometry(p5, fn){
    * @return {Number}       sine of the angle.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -478,11 +428,8 @@ function trigonometry(p5, fn){
    *   line(50, y, x, y);
    *   circle(x, y, 20);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -499,11 +446,8 @@ function trigonometry(p5, fn){
    *   // Draw the point.
    *   point(x, y);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -520,8 +464,6 @@ function trigonometry(p5, fn){
    *   // Draw the point.
    *   point(x, y);
    * }
-   * </code>
-   * </div>
    */
   fn.sin = function(angle) {
     return Math.sin(this._toRadians(angle));
@@ -541,8 +483,6 @@ function trigonometry(p5, fn){
    * @return {Number}       tangent of the angle.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -559,8 +499,6 @@ function trigonometry(p5, fn){
    *   // Draw the point.
    *   point(x, y);
    * }
-   * </code>
-   * </div>
    */
   fn.tan = function(angle) {
     return Math.tan(this._toRadians(angle));
@@ -581,8 +519,6 @@ function trigonometry(p5, fn){
    * @return {Number}         converted angle.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -597,8 +533,6 @@ function trigonometry(p5, fn){
    *
    *   describe('The text "0.79 rad = 45˚".');
    * }
-   * </code>
-   * </div>
    */
   fn.degrees = angle => angle * constants.RAD_TO_DEG;
 
@@ -617,8 +551,6 @@ function trigonometry(p5, fn){
    * @return {Number}         converted angle.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -633,8 +565,6 @@ function trigonometry(p5, fn){
    *
    *   describe('The text "45˚ = 0.785 rad".');
    * }
-   * </code>
-   * </div>
    */
   fn.radians = angle => angle * constants.DEG_TO_RAD;
 
@@ -655,8 +585,6 @@ function trigonometry(p5, fn){
    * @method angleMode
    * @param {(RADIANS|DEGREES)} mode either RADIANS or DEGREES.
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -670,11 +598,8 @@ function trigonometry(p5, fn){
    *
    *   describe('A diagonal line radiating from the top-left corner of a square.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -691,11 +616,8 @@ function trigonometry(p5, fn){
    *
    *   describe('A diagonal line radiating from the top-left corner of a square.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -719,11 +641,8 @@ function trigonometry(p5, fn){
    *
    *   describe('A translucent white flower on a dark background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -750,11 +669,8 @@ function trigonometry(p5, fn){
    *
    *   describe('A translucent white flower on a dark background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -772,11 +688,8 @@ function trigonometry(p5, fn){
    *   line(50, y, x, y);
    *   circle(x, y, 20);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -797,11 +710,8 @@ function trigonometry(p5, fn){
    *   line(50, y, x, y);
    *   circle(x, y, 20);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -820,8 +730,6 @@ function trigonometry(p5, fn){
    *
    *   describe('Two diagonal lines radiating from the top-left corner of a square. The lines are oriented 30 degrees from the edges of the square and 30 degrees apart from each other.');
    * }
-   * </code>
-   * </div>
    */
   /**
    * @method angleMode
@@ -864,7 +772,8 @@ function trigonometry(p5, fn){
    * @returns {Number}
    */
   fn._toRadians = function(angle) {
-    if (this._angleMode === DEGREES) {
+    // returns undefined if no argument
+    if (typeof angle !== 'undefined' && this._angleMode === DEGREES) {
       return angle * constants.DEG_TO_RAD;
     }
     return angle;
