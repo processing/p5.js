@@ -51,7 +51,7 @@ WebGPU mode is not aiming to be a more efficient renderer. This is similar to We
 
 The underlying WebGPU technology is still relatively new, but it seems like it will grow to support more than the older WebGL technology can. WebGPU mode in p5.js will be a spot for us to give artists and programmers access to these new computing capabilities, in an accessible package. Compute shaders will likely be the first example of this. Both WebGL and WebGPU support shaders, which currently are used to position vertices of shapes and to pick pixel colors within a triangle all in parallel on the GPU. The WebGPU specification additionally has [compute shaders](https://webgpufundamentals.org/webgpu/lessons/webgpu-compute-shaders.html), which can be used to process arbitrary data in parallel without it being attached to rendering.
 
-WebGPU mode will not try expose everything WebGPU has to offer to programmers. Instead, it should strategically pick what it exposes, balancing the goals of **expanding creative possibilities** and **being easy to learn.** As an example, a p5.js compute shader API does not need to do everything raw WebGPU compute shaders can do as long as it is still helpful for common tasks, and can be easily adopted without a steep learning curve.
+WebGPU mode will not try to expose everything WebGPU has to offer to programmers. Instead, it should strategically pick what it exposes, balancing the goals of **expanding creative possibilities** and **being easy to learn.** As an example, a p5.js compute shader API does not need to do everything raw WebGPU compute shaders can do as long as it is still helpful for common tasks, and can be easily adopted without a steep learning curve.
 
 ### Preparing for the future
 
