@@ -142,6 +142,34 @@ function trigonometry(p5, fn){
    *
    *   describe('The numbers 3.927, -0.707, and 2.356 written on separate rows.');
    * }
+   *
+   * `acos()` can also be used in shaders with p5.strands. The following example
+   * uses `acos()` to create a pulsing color transition on a shape.
+   *
+   * ```js example
+   * let myShader;
+   *
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *   myShader = buildColorShader(shaderCallback);
+   *   describe('A sphere that pulses between orange and teal.');
+   * }
+   *
+   * function shaderCallback() {
+   *   let t = millis() * 0.001;
+   *   let value = acos(cos(t)) / PI;
+   *   finalColor.begin();
+   *   finalColor.set(mix([1, 0.5, 0, 1], [0, 0.8, 0.8, 1], value));
+   *   finalColor.end();
+   * }
+   *
+   * function draw() {
+   *   background(220);
+   *   shader(myShader);
+   *   noStroke();
+   *   sphere(30);
+   * }
+   * ```
    */
   fn.acos = function(ratio) {
     return this._fromRadians(Math.acos(ratio));
@@ -197,6 +225,34 @@ function trigonometry(p5, fn){
    *
    *   describe('The numbers 4.189, -0.866, and -1.047 written on separate rows.');
    * }
+   *
+   * `asin()` can also be used in shaders with p5.strands. The following example
+   * uses `asin()` to create a smooth color transition on a shape.
+   *
+   * ```js example
+   * let myShader;
+   *
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *   myShader = buildColorShader(shaderCallback);
+   *   describe('A sphere with a green to purple gradient.');
+   * }
+   *
+   * function shaderCallback() {
+   *   let t = millis() * 0.001;
+   *   let value = asin(sin(t)) / (PI / 2);
+   *   finalColor.begin();
+   *   finalColor.set(mix([0, 1, 0.5, 1], [0.5, 0, 1, 1], 0.5 + 0.5 * value));
+   *   finalColor.end();
+   * }
+   *
+   * function draw() {
+   *   background(220);
+   *   shader(myShader);
+   *   noStroke();
+   *   sphere(30);
+   * }
+   * ```
    */
   fn.asin = function(ratio) {
     return this._fromRadians(Math.asin(ratio));
@@ -252,6 +308,34 @@ function trigonometry(p5, fn){
    *
    *   describe('The numbers 4.189, 1.732, and 1.047 written on separate rows.');
    * }
+   *
+   * `atan()` can also be used in shaders with p5.strands. The following example
+   * uses `atan()` to create a color effect based on an angle.
+   *
+   * ```js example
+   * let myShader;
+   *
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *   myShader = buildColorShader(shaderCallback);
+   *   describe('A sphere whose color shifts with a sawtooth pattern.');
+   * }
+   *
+   * function shaderCallback() {
+   *   let t = millis() * 0.001;
+   *   let value = atan(tan(t)) / (PI / 2);
+   *   finalColor.begin();
+   *   finalColor.set(mix([1, 0, 0.5, 1], [0.5, 1, 0, 1], 0.5 + 0.5 * value));
+   *   finalColor.end();
+   * }
+   *
+   * function draw() {
+   *   background(220);
+   *   shader(myShader);
+   *   noStroke();
+   *   sphere(30);
+   * }
+   * ```
    */
   fn.atan = function(ratio) {
     return this._fromRadians(Math.atan(ratio));
@@ -393,6 +477,34 @@ function trigonometry(p5, fn){
    *   // Draw the point.
    *   point(x, y);
    * }
+   *
+   * `cos()` can also be used in shaders with p5.strands. The following example
+   * uses `cos()` to smoothly oscillate the color of a shape over time.
+   *
+   * ```js example
+   * let myShader;
+   *
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *   myShader = buildColorShader(shaderCallback);
+   *   describe('A sphere that fades between yellow and blue.');
+   * }
+   *
+   * function shaderCallback() {
+   *   let t = millis() * 0.001;
+   *   let value = 0.5 + 0.5 * cos(t);
+   *   finalColor.begin();
+   *   finalColor.set(mix([1, 1, 0, 1], [0, 0, 1, 1], value));
+   *   finalColor.end();
+   * }
+   *
+   * function draw() {
+   *   background(220);
+   *   shader(myShader);
+   *   noStroke();
+   *   sphere(30);
+   * }
+   * ```
    */
   fn.cos = function(angle) {
     return Math.cos(this._toRadians(angle));
@@ -464,6 +576,34 @@ function trigonometry(p5, fn){
    *   // Draw the point.
    *   point(x, y);
    * }
+   *
+   * `sin()` can also be used in shaders with p5.strands. The following example
+   * uses `sin()` to oscillate the color of a shape over time.
+   *
+   * ```js example
+   * let myShader;
+   *
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *   myShader = buildColorShader(shaderCallback);
+   *   describe('A sphere that pulses between cyan and magenta.');
+   * }
+   *
+   * function shaderCallback() {
+   *   let t = millis() * 0.001;
+   *   let value = 0.5 + 0.5 * sin(t);
+   *   finalColor.begin();
+   *   finalColor.set(mix([0, 1, 1, 1], [1, 0, 1, 1], value));
+   *   finalColor.end();
+   * }
+   *
+   * function draw() {
+   *   background(220);
+   *   shader(myShader);
+   *   noStroke();
+   *   sphere(30);
+   * }
+   * ```
    */
   fn.sin = function(angle) {
     return Math.sin(this._toRadians(angle));
@@ -499,6 +639,35 @@ function trigonometry(p5, fn){
    *   // Draw the point.
    *   point(x, y);
    * }
+   *
+   * `tan()` can also be used in shaders with p5.strands. The following example
+   * uses `tan()` to create rapid color transitions on a shape.
+   *
+   * ```js example
+   * let myShader;
+   *
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *   myShader = buildColorShader(shaderCallback);
+   *   describe('A sphere with rapidly shifting colors.');
+   * }
+   *
+   * function shaderCallback() {
+   *   let t = millis() * 0.0005;
+   *   let value = 0.5 + 0.5 * tan(t);
+   *   value = min(max(value, 0), 1);
+   *   finalColor.begin();
+   *   finalColor.set(mix([1, 0.5, 0, 1], [0, 0.5, 1, 1], value));
+   *   finalColor.end();
+   * }
+   *
+   * function draw() {
+   *   background(220);
+   *   shader(myShader);
+   *   noStroke();
+   *   sphere(30);
+   * }
+   * ```
    */
   fn.tan = function(angle) {
     return Math.tan(this._toRadians(angle));
@@ -533,6 +702,35 @@ function trigonometry(p5, fn){
    *
    *   describe('The text "0.79 rad = 45˚".');
    * }
+   *
+   * `degrees()` can also be used in shaders with p5.strands. The following example
+   * uses `degrees()` to convert a radian value to degrees inside a shader.
+   *
+   * ```js example
+   * let myShader;
+   *
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *   myShader = buildColorShader(shaderCallback);
+   *   describe('A sphere that cycles through warm colors.');
+   * }
+   *
+   * function shaderCallback() {
+   *   let t = millis() * 0.001;
+   *   let deg = degrees(t);
+   *   let value = (deg % 360) / 360;
+   *   finalColor.begin();
+   *   finalColor.set(mix([1, 0, 0, 1], [1, 1, 0, 1], value));
+   *   finalColor.end();
+   * }
+   *
+   * function draw() {
+   *   background(220);
+   *   shader(myShader);
+   *   noStroke();
+   *   sphere(30);
+   * }
+   * ```
    */
   fn.degrees = angle => angle * constants.RAD_TO_DEG;
 
@@ -565,6 +763,35 @@ function trigonometry(p5, fn){
    *
    *   describe('The text "45˚ = 0.785 rad".');
    * }
+   *
+   * `radians()` can also be used in shaders with p5.strands. The following example
+   * uses `radians()` to convert degrees to radians inside a shader.
+   *
+   * ```js example
+   * let myShader;
+   *
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *   myShader = buildColorShader(shaderCallback);
+   *   describe('A sphere that fades between red and white.');
+   * }
+   *
+   * function shaderCallback() {
+   *   let deg = (millis() * 0.05) % 360;
+   *   let rad = radians(deg);
+   *   let value = 0.5 + 0.5 * sin(rad);
+   *   finalColor.begin();
+   *   finalColor.set(mix([1, 0, 0, 1], [1, 1, 1, 1], value));
+   *   finalColor.end();
+   * }
+   *
+   * function draw() {
+   *   background(220);
+   *   shader(myShader);
+   *   noStroke();
+   *   sphere(30);
+   * }
+   * ```
    */
   fn.radians = angle => angle * constants.DEG_TO_RAD;
 
