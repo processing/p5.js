@@ -552,7 +552,7 @@ p5.Color = class Color {
 
       case 'hsla%':
         if (!this.hsla) this.hsla = color_conversion._rgbaToHSLA(this._array);
-        return 'hsl('.concat(
+        return 'hsla('.concat(
           (100 * this.hsla[0]).toPrecision(3),
           '%, ',
           (100 * this.hsla[1]).toPrecision(3),
