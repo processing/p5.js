@@ -227,6 +227,32 @@ function noise(p5, fn){
    *     }
    *   }
    * }
+   *
+   * `noise()` can also be used in shaders with p5.strands. The following example
+   * uses `noise()` to create a cloud-like texture effect in a filter shader.
+   *
+   * ```js example
+   * let myFilter;
+   *
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *   myFilter = buildFilterShader(shaderCallback);
+   *   describe('A cloud-like noise pattern.');
+   * }
+   *
+   * function shaderCallback() {
+   *   filterColor.begin();
+   *   let coord = filterColor.texCoord;
+   *   let t = millis() / 2000;
+   *   let value = noise(coord.x * 5, coord.y * 5, t);
+   *   filterColor.set(mix([0.1, 0.1, 0.3, 1], [0.9, 0.9, 1, 1], value));
+   *   filterColor.end();
+   * }
+   *
+   * function draw() {
+   *   filter(myFilter);
+   * }
+   * ```
    */
   fn.noise = function(x, y = 0, z = 0) {
     if (perlin == null) {

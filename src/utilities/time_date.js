@@ -198,6 +198,34 @@ function timeDate(p5, fn){
    *     `The text "It took ${round(ms, 2)} ms to load the data" written in black on a gray background.`
    *   );
    * }
+   *
+   * `millis()` can also be used in shaders with p5.strands. The following example
+   * uses `millis()` to create time-based color transitions on a shape.
+   *
+   * ```js example
+   * let myShader;
+   *
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *   myShader = buildColorShader(shaderCallback);
+   *   describe('A sphere whose color shifts over time.');
+   * }
+   *
+   * function shaderCallback() {
+   *   let t = millis() * 0.001;
+   *   let value = 0.5 + 0.5 * sin(t);
+   *   finalColor.begin();
+   *   finalColor.set(mix([0.2, 0.6, 0.8, 1], [0.8, 0.2, 0.6, 1], value));
+   *   finalColor.end();
+   * }
+   *
+   * function draw() {
+   *   background(220);
+   *   shader(myShader);
+   *   noStroke();
+   *   sphere(30);
+   * }
+   * ```
    */
   fn.millis = function() {
     if (this._millisStart === -1) {
