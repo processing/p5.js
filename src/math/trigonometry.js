@@ -158,8 +158,10 @@ function trigonometry(p5, fn){
    * function shaderCallback() {
    *   let t = millis() * 0.001;
    *   let value = acos(cos(t)) / PI;
+   *   let orange = [1, 0.5, 0, 1];
+   *   let teal = [0, 0.8, 0.8, 1];
    *   finalColor.begin();
-   *   finalColor.set(mix([1, 0.5, 0, 1], [0, 0.8, 0.8, 1], value));
+   *   finalColor.set(mix(orange, teal, value));
    *   finalColor.end();
    * }
    *
@@ -240,9 +242,11 @@ function trigonometry(p5, fn){
    *
    * function shaderCallback() {
    *   let t = millis() * 0.001;
-   *   let value = asin(sin(t)) / (PI / 2);
+   *   let value = (asin(sin(t)) / (PI / 2) + 1) * 0.5;
+   *   let green = [0, 1, 0.5, 1];
+   *   let purple = [0.5, 0, 1, 1];
    *   finalColor.begin();
-   *   finalColor.set(mix([0, 1, 0.5, 1], [0.5, 0, 1, 1], 0.5 + 0.5 * value));
+   *   finalColor.set(mix(green, purple, value));
    *   finalColor.end();
    * }
    *
@@ -323,9 +327,11 @@ function trigonometry(p5, fn){
    *
    * function shaderCallback() {
    *   let t = millis() * 0.001;
-   *   let value = atan(tan(t)) / (PI / 2);
+   *   let value = (atan(t) + PI / 2) / PI;
+   *   let pink = [1, 0, 0.5, 1];
+   *   let lime = [0.5, 1, 0, 1];
    *   finalColor.begin();
-   *   finalColor.set(mix([1, 0, 0.5, 1], [0.5, 1, 0, 1], 0.5 + 0.5 * value));
+   *   finalColor.set(mix(pink, lime, value));
    *   finalColor.end();
    * }
    *
@@ -493,8 +499,10 @@ function trigonometry(p5, fn){
    * function shaderCallback() {
    *   let t = millis() * 0.001;
    *   let value = 0.5 + 0.5 * cos(t);
+   *   let yellow = [1, 1, 0, 1];
+   *   let blue = [0, 0, 1, 1];
    *   finalColor.begin();
-   *   finalColor.set(mix([1, 1, 0, 1], [0, 0, 1, 1], value));
+   *   finalColor.set(mix(yellow, blue, value));
    *   finalColor.end();
    * }
    *
@@ -592,8 +600,10 @@ function trigonometry(p5, fn){
    * function shaderCallback() {
    *   let t = millis() * 0.001;
    *   let value = 0.5 + 0.5 * sin(t);
+   *   let cyan = [0, 1, 1, 1];
+   *   let magenta = [1, 0, 1, 1];
    *   finalColor.begin();
-   *   finalColor.set(mix([0, 1, 1, 1], [1, 0, 1, 1], value));
+   *   finalColor.set(mix(cyan, magenta, value));
    *   finalColor.end();
    * }
    *
@@ -654,10 +664,11 @@ function trigonometry(p5, fn){
    *
    * function shaderCallback() {
    *   let t = millis() * 0.0005;
-   *   let value = 0.5 + 0.5 * tan(t);
-   *   value = min(max(value, 0), 1);
+   *   let value = min(max(0.5 + 0.5 * tan(t), 0), 1);
+   *   let orange = [1, 0.5, 0, 1];
+   *   let blue = [0, 0.5, 1, 1];
    *   finalColor.begin();
-   *   finalColor.set(mix([1, 0.5, 0, 1], [0, 0.5, 1, 1], value));
+   *   finalColor.set(mix(orange, blue, value));
    *   finalColor.end();
    * }
    *
@@ -719,8 +730,10 @@ function trigonometry(p5, fn){
    *   let t = millis() * 0.001;
    *   let deg = degrees(t);
    *   let value = (deg % 360) / 360;
+   *   let red = [1, 0, 0, 1];
+   *   let yellow = [1, 1, 0, 1];
    *   finalColor.begin();
-   *   finalColor.set(mix([1, 0, 0, 1], [1, 1, 0, 1], value));
+   *   finalColor.set(mix(red, yellow, value));
    *   finalColor.end();
    * }
    *
@@ -780,8 +793,10 @@ function trigonometry(p5, fn){
    *   let deg = (millis() * 0.05) % 360;
    *   let rad = radians(deg);
    *   let value = 0.5 + 0.5 * sin(rad);
+   *   let red = [1, 0, 0, 1];
+   *   let white = [1, 1, 1, 1];
    *   finalColor.begin();
-   *   finalColor.set(mix([1, 0, 0, 1], [1, 1, 1, 1], value));
+   *   finalColor.set(mix(red, white, value));
    *   finalColor.end();
    * }
    *
