@@ -646,7 +646,20 @@ function _createGif(
   failureCallback,
   finishCallback
 ) {
-  const gifReader = new omggif.GifReader(arrayBuffer);
+  let gifReader;
+  try {
+    gifReader = new omggif.GifReader(arrayBuffer);
+  } catch (e) {
+    p5._friendlyFileLoadError(8, pImg.src);
+    if (typeof failureCallback === 'function') {
+      failureCallback(e);
+    } else {
+      console.error(e);
+    }
+    finishCallback();
+    return;
+  }
+
   pImg.width = pImg.canvas.width = gifReader.width;
   pImg.height = pImg.canvas.height = gifReader.height;
   const frames = [];
