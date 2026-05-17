@@ -559,6 +559,29 @@ suite('p5.Vector', function() {
       });
     });
 
+    suite('with 4D vectors', function() {
+      test('should work with 4D vectors', function() {
+        const v = myp5.createVector(5, 5, 5, 5);
+        const w = myp5.createVector(2, 2, 2, 2);
+        v.rem(w);
+        expect(v.x).to.eql(1);
+        expect(v.y).to.eql(1);
+        expect(v.z).to.eql(1);
+        expect(v[3]).to.eql(1);
+      });
+
+      test('should work with 5D vectors', function() {
+        const v = myp5.createVector(7, 8, 9, 10, 11);
+        const w = myp5.createVector(3, 3, 4, 4, 5);
+        v.rem(w);
+        expect(v.x).to.eql(1);
+        expect(v.y).to.eql(2);
+        expect(v.z).to.eql(1);
+        expect(v[3]).to.eql(2);
+        expect(v[4]).to.eql(1);
+      });
+    });
+
     suite('p5.Vector.rem(v1,v2)', function() {
       let v1, v2, res;
       setup(function() {
