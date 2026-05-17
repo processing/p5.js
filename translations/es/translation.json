@@ -1,18 +1,18 @@
 {
   "fes": {
-    "autoplay": "Su browser impidío un medio tocar (de '{{src}}'), posiblemente porque las reglas de autoplay. Para aprender más, visite {{link}}.",
-    "checkUserDefinedFns": "",
+    "autoplay": "Su browser impidío un medio tocar (de '{{src}}'), posiblemente por las reglas de autoplay. Para aprender más, visite {{link}}.",
+    "checkUserDefinedFns": "Parece que ha usado un nombre incorrecto. Ha usado {{name}}, en vez de {{actualName}}. Favor de correctar si no fue intencional.",
     "fileLoadError": {
-      "bytes": "",
-      "font": "",
-      "gif": "",
-      "image": "",
-      "json": "",
+      "bytes": "Parece que hubo un problema al cargar tu archivo. {{suggestion}}",
+      "font": "Parece que hubo un problema al cargar tu fuente. {{suggestion}}",
+      "gif": "Hubo un problema al cargar tu GIF. Asegúrate de que tu GIF esté usando la codificación 87a o 89a",
+      "image": "Parece que hubo un problema al cargar tu imagen. {{suggestion}}",
+      "json": "Parece que hubo un problema al cargar tu archivo JSON. {{suggestion}}",
       "large": "",
-      "strings": "",
+      "strings": "Parece que hubo un problema al cargar tu archivo de text. {{suggestion}}",
       "suggestion": "",
-      "table": "",
-      "xml": ""
+      "table": "Parece que hubo un problema al cargar tu archivo de tabla. {{suggestion}}",
+      "xml": "Parece que hubo un problema al cargar tu archivo XML. {{suggestion}}"
     },
     "friendlyParamError": {
       "type_EMPTY_VAR": "",
