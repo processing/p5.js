@@ -370,6 +370,22 @@ suite('p5.prototype.saveGif', function() {
     });
   });
 
+  test('should continue looping sketch after saveGif', function(done) {
+    myp5.saveGif('mySketch', 2).then(() => {
+      assert.equal(myp5.isLooping(), true, 'Should still be looping');
+      done();
+    });
+  });
+
+  test('should not continue looping paused sketch after saveGif',
+    function(done) {
+      myp5.noLoop();
+      myp5.saveGif('mySketch', 2).then(() => {
+        assert.equal(myp5.isLooping(), false, 'Should not be looping');
+        done();
+      });
+    });
+
   testWithDownload('should download a GIF', async function(blobContainer) {
     myp5.saveGif(myGif, 3, 2);
     await waitForBlob(blobContainer);
