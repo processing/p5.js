@@ -26,7 +26,9 @@ import {
   OKLCH as OKLCHSpace,
   contrastWCAG21,
   contrastAPCA,
-  P3
+  P3,
+
+  XYZ_D65 as XYZ_D65Space
 } from 'colorjs.io/fn';
 import HSBSpace from './color_spaces/hsb.js';
 
@@ -1030,6 +1032,11 @@ function color(p5, fn, lifecycles){
   p5.Color.addColorMode(LCH, LCHSpace);
   p5.Color.addColorMode(OKLAB, OKLab);
   p5.Color.addColorMode(OKLCH, OKLCHSpace);
+
+  // The fundamental color space to which all colors can be converted (https://colorjs.io/docs/spaces#xyz-d65)
+  // This needs to be registered with color.js for interpolation to work
+  // reliably.
+  ColorSpace.register(XYZ_D65Space);
 
   lifecycles.presetup = function(){
     const pInst = this;
