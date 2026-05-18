@@ -191,6 +191,14 @@ p5.prototype.textLeading = function(theLeading) {
  */
 p5.prototype.textSize = function(theSize) {
   p5._validateParameters('textSize', arguments);
+
+  // New FES Warning Logic
+  if (arguments.length > 0 && theSize <= 0) {
+    p5._friendlyError(
+      `textSize() was called with a value of ${theSize}. ` +
+      'Text size must be a positive number greater than 0 to render correctly and prevent text overlapping when wrapping.'
+    );
+  }
   return this._renderer.textSize(...arguments);
 };
 
