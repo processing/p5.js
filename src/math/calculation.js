@@ -36,6 +36,36 @@ function calculation(p5, fn){
    *   // from the middle.
    *   rect(0, 100 - h, 100, h);
    * }
+   *
+   * `abs()` can also be used in shaders with p5.strands. The following example
+   * uses `abs()` to create a mirror effect on the color of a shape.
+   *
+   * ```js example
+   * let myShader;
+   *
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *   myShader = buildColorShader(shaderCallback);
+   *   describe('A sphere with colors that fold back like a mirror.');
+   * }
+   *
+   * function shaderCallback() {
+   *   let t = millis() * 0.001;
+   *   let value = abs(sin(t));
+   *   let navy = [0.2, 0.2, 0.8, 1];
+   *   let coral = [0.8, 0.2, 0.2, 1];
+   *   finalColor.begin();
+   *   finalColor.set(mix(navy, coral, value));
+   *   finalColor.end();
+   * }
+   *
+   * function draw() {
+   *   background(220);
+   *   shader(myShader);
+   *   noStroke();
+   *   sphere(30);
+   * }
+   * ```
    */
   fn.abs = Math.abs;
 
@@ -75,6 +105,35 @@ function calculation(p5, fn){
    *
    *   describe('Two rectangles. The one on the left is dark red and the one on the right is bright red.');
    * }
+   *
+   * `ceil()` can also be used in shaders with p5.strands. The following example
+   * uses `ceil()` to create a stepped color effect on a shape.
+   *
+   * ```js example
+   * let myShader;
+   *
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *   myShader = buildColorShader(shaderCallback);
+   *   describe('A sphere with stepped color bands.');
+   * }
+   *
+   * function shaderCallback() {
+   *   let t = millis() * 0.001;
+   *   let steps = ceil(t * 2) / 2;
+   *   let value = fract(steps);
+   *   finalColor.begin();
+   *   finalColor.set([value, 0.5, 1 - value, 1]);
+   *   finalColor.end();
+   * }
+   *
+   * function draw() {
+   *   background(220);
+   *   shader(myShader);
+   *   noStroke();
+   *   sphere(30);
+   * }
+   * ```
    */
   fn.ceil = Math.ceil;
 
@@ -262,6 +321,36 @@ function calculation(p5, fn){
    *   // Draw a point.
    *   point(x, y);
    * }
+   *
+   * `exp()` can also be used in shaders with p5.strands. The following example
+   * uses `exp()` to create an accelerating color transition on a shape.
+   *
+   * ```js example
+   * let myShader;
+   *
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *   myShader = buildColorShader(shaderCallback);
+   *   describe('A sphere that brightens with accelerating speed.');
+   * }
+   *
+   * function shaderCallback() {
+   *   let t = millis() * 0.0005;
+   *   let value = min(exp(t) * 0.01, 1);
+   *   let darkBlue = [0.1, 0.1, 0.3, 1];
+   *   let lightYellow = [1, 1, 0.5, 1];
+   *   finalColor.begin();
+   *   finalColor.set(mix(darkBlue, lightYellow, value));
+   *   finalColor.end();
+   * }
+   *
+   * function draw() {
+   *   background(220);
+   *   shader(myShader);
+   *   noStroke();
+   *   sphere(30);
+   * }
+   * ```
    */
   fn.exp = Math.exp;
 
@@ -296,6 +385,35 @@ function calculation(p5, fn){
    *
    *   describe('Two rectangles. The one on the left is bright red and the one on the right is black.');
    * }
+   *
+   * `floor()` can also be used in shaders with p5.strands. The following example
+   * uses `floor()` to create banding effects on a shape.
+   *
+   * ```js example
+   * let myShader;
+   *
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *   myShader = buildColorShader(shaderCallback);
+   *   describe('A sphere with posterized color bands.');
+   * }
+   *
+   * function shaderCallback() {
+   *   let t = millis() * 0.001;
+   *   let bands = floor(t * 5) / 5;
+   *   let value = fract(bands);
+   *   finalColor.begin();
+   *   finalColor.set([0.2, value, 0.8, 1]);
+   *   finalColor.end();
+   * }
+   *
+   * function draw() {
+   *   background(220);
+   *   shader(myShader);
+   *   noStroke();
+   *   sphere(30);
+   * }
+   * ```
    */
   fn.floor = Math.floor;
 
@@ -377,6 +495,37 @@ function calculation(p5, fn){
    *   x = mouseX;
    *   y = mouseY;
    * }
+   *
+   * `lerp()` can also be used in shaders with p5.strands, where it maps to the
+   * GLSL `mix()` function. The following example uses `lerp()` to blend colors
+   * on a shape over time.
+   *
+   * ```js example
+   * let myShader;
+   *
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *   myShader = buildColorShader(shaderCallback);
+   *   describe('A sphere that blends between teal and coral.');
+   * }
+   *
+   * function shaderCallback() {
+   *   let t = millis() * 0.001;
+   *   let value = 0.5 + 0.5 * sin(t);
+   *   let teal = [0, 0.8, 0.8, 1];
+   *   let coral = [1, 0.5, 0.3, 1];
+   *   finalColor.begin();
+   *   finalColor.set(lerp(teal, coral, value));
+   *   finalColor.end();
+   * }
+   *
+   * function draw() {
+   *   background(220);
+   *   shader(myShader);
+   *   noStroke();
+   *   sphere(30);
+   * }
+   * ```
    */
   fn.lerp = function(start, stop, amt) {
     // p5._validateParameters('lerp', arguments);
@@ -431,6 +580,37 @@ function calculation(p5, fn){
    *   // Draw a point.
    *   point(x, y);
    * }
+   *
+   * `log()` can also be used in shaders with p5.strands. The following example
+   * uses `log()` to create a decelerating color transition on a shape.
+   *
+   * ```js example
+   * let myShader;
+   *
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *   myShader = buildColorShader(shaderCallback);
+   *   describe('A sphere that slowly shifts from purple to yellow.');
+   * }
+   *
+   * function shaderCallback() {
+   *   let t = millis() * 0.001;
+   *   let value = log(1 + t) * 0.2;
+   *   value = min(value, 1);
+   *   let purple = [0.5, 0, 0.5, 1];
+   *   let yellow = [1, 1, 0, 1];
+   *   finalColor.begin();
+   *   finalColor.set(mix(purple, yellow, value));
+   *   finalColor.end();
+   * }
+   *
+   * function draw() {
+   *   background(220);
+   *   shader(myShader);
+   *   noStroke();
+   *   sphere(30);
+   * }
+   * ```
    */
   fn.log = Math.log;
 
@@ -546,6 +726,34 @@ function calculation(p5, fn){
    *   // Draw the circle.
    *   circle(50, 50, 20);
    * }
+   *
+   * `map()` can also be used in shaders with p5.strands. The following example
+   * uses `map()` to remap time values to color in a shader.
+   *
+   * ```js example
+   * let myShader;
+   *
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *   myShader = buildColorShader(shaderCallback);
+   *   describe('A sphere that cycles through hues over time.');
+   * }
+   *
+   * function shaderCallback() {
+   *   let t = millis() * 0.001;
+   *   let value = map(sin(t), -1, 1, 0, 1);
+   *   finalColor.begin();
+   *   finalColor.set([value, 0.5, 1 - value, 1]);
+   *   finalColor.end();
+   * }
+   *
+   * function draw() {
+   *   background(220);
+   *   shader(myShader);
+   *   noStroke();
+   *   sphere(30);
+   * }
+   * ```
    */
   fn.map = function(n, start1, stop1, start2, stop2, withinBounds) {
     // p5._validateParameters('map', arguments);
@@ -614,6 +822,34 @@ function calculation(p5, fn){
    *
    *   describe('The number 20 written in the middle of a gray square.');
    * }
+   *
+   * `max()` can also be used in shaders with p5.strands. The following example
+   * uses `max()` to clamp values in a shader.
+   *
+   * ```js example
+   * let myShader;
+   *
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *   myShader = buildColorShader(shaderCallback);
+   *   describe('A sphere with colors clamped to a minimum brightness.');
+   * }
+   *
+   * function shaderCallback() {
+   *   let t = millis() * 0.001;
+   *   let value = max(sin(t), 0);
+   *   finalColor.begin();
+   *   finalColor.set([value, 0.3, 0.8, 1]);
+   *   finalColor.end();
+   * }
+   *
+   * function draw() {
+   *   background(220);
+   *   shader(myShader);
+   *   noStroke();
+   *   sphere(30);
+   * }
+   * ```
    */
   /**
    * @method max
@@ -690,6 +926,34 @@ function calculation(p5, fn){
    *
    *   describe('The number 5 written in the middle of a gray square.');
    * }
+   *
+   * `min()` can also be used in shaders with p5.strands. The following example
+   * uses `min()` to clamp values in a shader.
+   *
+   * ```js example
+   * let myShader;
+   *
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *   myShader = buildColorShader(shaderCallback);
+   *   describe('A sphere with colors clamped to a maximum brightness.');
+   * }
+   *
+   * function shaderCallback() {
+   *   let t = millis() * 0.001;
+   *   let value = min(abs(sin(t)), 0.5) * 2;
+   *   finalColor.begin();
+   *   finalColor.set([0.8, value, 0.2, 1]);
+   *   finalColor.end();
+   * }
+   *
+   * function draw() {
+   *   background(220);
+   *   shader(myShader);
+   *   noStroke();
+   *   sphere(30);
+   * }
+   * ```
    */
   /**
    * @method min
@@ -790,6 +1054,36 @@ function calculation(p5, fn){
    *
    *   describe('A series of circles that grow exponentially from top left to bottom right.');
    * }
+   *
+   * `pow()` can also be used in shaders with p5.strands. The following example
+   * uses `pow()` to create a gamma curve effect on colors in a shader.
+   *
+   * ```js example
+   * let myShader;
+   *
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *   myShader = buildColorShader(shaderCallback);
+   *   describe('A sphere with colors that shift with a power curve.');
+   * }
+   *
+   * function shaderCallback() {
+   *   let t = millis() * 0.001;
+   *   let value = pow(abs(sin(t)), 2);
+   *   let blue = [0.2, 0.4, 0.8, 1];
+   *   let pink = [0.8, 0.2, 0.4, 1];
+   *   finalColor.begin();
+   *   finalColor.set(mix(blue, pink, value));
+   *   finalColor.end();
+   * }
+   *
+   * function draw() {
+   *   background(220);
+   *   shader(myShader);
+   *   noStroke();
+   *   sphere(30);
+   * }
+   * ```
    */
   fn.pow = Math.pow;
 
@@ -844,6 +1138,34 @@ function calculation(p5, fn){
    *
    *   describe('The number 12.78 written in middle of canvas.');
    * }
+   *
+   * `round()` can also be used in shaders with p5.strands. The following example
+   * uses `round()` to quantize colors in a shader.
+   *
+   * ```js example
+   * let myShader;
+   *
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *   myShader = buildColorShader(shaderCallback);
+   *   describe('A sphere with posterized quantized colors.');
+   * }
+   *
+   * function shaderCallback() {
+   *   let t = millis() * 0.001;
+   *   let value = round(sin(t) * 5) / 5 + 0.5;
+   *   finalColor.begin();
+   *   finalColor.set([value * 0.8, 0.3, 0.7, 1]);
+   *   finalColor.end();
+   * }
+   *
+   * function draw() {
+   *   background(220);
+   *   shader(myShader);
+   *   noStroke();
+   *   sphere(30);
+   * }
+   * ```
    */
   fn.round = function(n, decimals) {
     if (!decimals) {
@@ -956,6 +1278,36 @@ function calculation(p5, fn){
    *   // Draw the point.
    *   point(x, y);
    * }
+   *
+   * `sqrt()` can also be used in shaders with p5.strands. The following example
+   * uses `sqrt()` to create a smooth easing curve on colors in a shader.
+   *
+   * ```js example
+   * let myShader;
+   *
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *   myShader = buildColorShader(shaderCallback);
+   *   describe('A sphere with colors that ease smoothly.');
+   * }
+   *
+   * function shaderCallback() {
+   *   let t = millis() * 0.001;
+   *   let value = sqrt(abs(sin(t)));
+   *   let purple = [0.3, 0.1, 0.5, 1];
+   *   let amber = [0.9, 0.6, 0.2, 1];
+   *   finalColor.begin();
+   *   finalColor.set(mix(purple, amber, value));
+   *   finalColor.end();
+   * }
+   *
+   * function draw() {
+   *   background(220);
+   *   shader(myShader);
+   *   noStroke();
+   *   sphere(30);
+   * }
+   * ```
    */
   fn.sqrt = Math.sqrt;
 
@@ -989,6 +1341,34 @@ function calculation(p5, fn){
    *
    *   describe('The number 56.78 written above the number 0.78.');
    * }
+   *
+   * `fract()` can also be used in shaders with p5.strands. The following example
+   * uses `fract()` to create repeating patterns in a shader.
+   *
+   * ```js example
+   * let myShader;
+   *
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *   myShader = buildColorShader(shaderCallback);
+   *   describe('A sphere with a repeating gradient pattern.');
+   * }
+   *
+   * function shaderCallback() {
+   *   let t = millis() * 0.001;
+   *   let value = fract(t * 0.5);
+   *   finalColor.begin();
+   *   finalColor.set([value, 0.5, 1 - value, 1]);
+   *   finalColor.end();
+   * }
+   *
+   * function draw() {
+   *   background(220);
+   *   shader(myShader);
+   *   noStroke();
+   *   sphere(30);
+   * }
+   * ```
    */
   fn.fract = function(toConvert) {
     // p5._validateParameters('fract', arguments);
