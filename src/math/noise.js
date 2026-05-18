@@ -244,8 +244,10 @@ function noise(p5, fn){
    *   filterColor.begin();
    *   let coord = filterColor.texCoord;
    *   let t = millis() / 2000;
-   *   let value = noise(coord.x * 5, coord.y * 5, t);
-   *   filterColor.set(mix([0.1, 0.1, 0.3, 1], [0.9, 0.9, 1, 1], value));
+   *   let mixFraction = noise(coord.x * 5, coord.y * 5, t);
+   *   let darkBlue = [0.1, 0.1, 0.3, 1];
+   *   let lightBlue = [0.9, 0.9, 1, 1];
+   *   filterColor.set(mix(darkBlue, lightBlue, mixFraction));
    *   filterColor.end();
    * }
    *

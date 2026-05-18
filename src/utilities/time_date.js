@@ -214,8 +214,10 @@ function timeDate(p5, fn){
    * function shaderCallback() {
    *   let t = millis() * 0.001;
    *   let value = 0.5 + 0.5 * sin(t);
+   *   let skyBlue = [0.2, 0.6, 0.8, 1];
+   *   let magenta = [0.8, 0.2, 0.6, 1];
    *   finalColor.begin();
-   *   finalColor.set(mix([0.2, 0.6, 0.8, 1], [0.8, 0.2, 0.6, 1], value));
+   *   finalColor.set(mix(skyBlue, magenta, value));
    *   finalColor.end();
    * }
    *
