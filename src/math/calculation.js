@@ -52,8 +52,10 @@ function calculation(p5, fn){
    * function shaderCallback() {
    *   let t = millis() * 0.001;
    *   let value = abs(sin(t));
+   *   let navy = [0.2, 0.2, 0.8, 1];
+   *   let coral = [0.8, 0.2, 0.2, 1];
    *   finalColor.begin();
-   *   finalColor.set(mix([0.2, 0.2, 0.8, 1], [0.8, 0.2, 0.2, 1], value));
+   *   finalColor.set(mix(navy, coral, value));
    *   finalColor.end();
    * }
    *
@@ -335,8 +337,10 @@ function calculation(p5, fn){
    * function shaderCallback() {
    *   let t = millis() * 0.0005;
    *   let value = min(exp(t) * 0.01, 1);
+   *   let darkBlue = [0.1, 0.1, 0.3, 1];
+   *   let lightYellow = [1, 1, 0.5, 1];
    *   finalColor.begin();
-   *   finalColor.set(mix([0.1, 0.1, 0.3, 1], [1, 1, 0.5, 1], value));
+   *   finalColor.set(mix(darkBlue, lightYellow, value));
    *   finalColor.end();
    * }
    *
@@ -508,8 +512,10 @@ function calculation(p5, fn){
    * function shaderCallback() {
    *   let t = millis() * 0.001;
    *   let value = 0.5 + 0.5 * sin(t);
+   *   let teal = [0, 0.8, 0.8, 1];
+   *   let coral = [1, 0.5, 0.3, 1];
    *   finalColor.begin();
-   *   finalColor.set(lerp([0, 0.8, 0.8, 1], [1, 0.5, 0.3, 1], value));
+   *   finalColor.set(lerp(teal, coral, value));
    *   finalColor.end();
    * }
    *
@@ -591,8 +597,10 @@ function calculation(p5, fn){
    *   let t = millis() * 0.001;
    *   let value = log(1 + t) * 0.2;
    *   value = min(value, 1);
+   *   let purple = [0.5, 0, 0.5, 1];
+   *   let yellow = [1, 1, 0, 1];
    *   finalColor.begin();
-   *   finalColor.set(mix([0.5, 0, 0.5, 1], [1, 1, 0, 1], value));
+   *   finalColor.set(mix(purple, yellow, value));
    *   finalColor.end();
    * }
    *
@@ -1062,8 +1070,10 @@ function calculation(p5, fn){
    * function shaderCallback() {
    *   let t = millis() * 0.001;
    *   let value = pow(abs(sin(t)), 2);
+   *   let blue = [0.2, 0.4, 0.8, 1];
+   *   let pink = [0.8, 0.2, 0.4, 1];
    *   finalColor.begin();
-   *   finalColor.set(mix([0.2, 0.4, 0.8, 1], [0.8, 0.2, 0.4, 1], value));
+   *   finalColor.set(mix(blue, pink, value));
    *   finalColor.end();
    * }
    *
@@ -1284,8 +1294,10 @@ function calculation(p5, fn){
    * function shaderCallback() {
    *   let t = millis() * 0.001;
    *   let value = sqrt(abs(sin(t)));
+   *   let purple = [0.3, 0.1, 0.5, 1];
+   *   let amber = [0.9, 0.6, 0.2, 1];
    *   finalColor.begin();
-   *   finalColor.set(mix([0.3, 0.1, 0.5, 1], [0.9, 0.6, 0.2, 1], value));
+   *   finalColor.set(mix(purple, amber, value));
    *   finalColor.end();
    * }
    *
