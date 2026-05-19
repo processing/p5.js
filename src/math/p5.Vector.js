@@ -527,11 +527,11 @@ class Vector {
    */
   add(...args) {
     const minDimension = prioritizeSmallerDimension(this.dimensions, args);
+    shrinkToDimension(this.values, minDimension);
 
-    this.values = this.values.reduce((acc, v, i) => {
-      if(i < minDimension) acc[i] = this.values[i] + Number(args[i]);
-      return acc;
-    }, new Array(minDimension));
+    for (let i = 0; i < this.values.length; i++) {
+      this.values[i] += args[i];
+    }
 
     return this;
   }
@@ -651,10 +651,11 @@ class Vector {
    */
   rem(...args) {
     const minDimension = prioritizeSmallerDimension(this.dimensions, args);
+    shrinkToDimension(this.values, minDimension);
 
-    this.values = Array.from({ length: minDimension }, (_, i) => {
-      return (args[i] > 0) ? this.values[i] % args[i] : this.values[i];
-    });
+    for (let i = 0; i < this.values.length; i++) {
+      this.values[i] = this.values[i] % args[i];
+    }
 
     return this;
   }
@@ -971,50 +972,12 @@ class Vector {
    */
   mult(...args) {
     const minDimension = prioritizeSmallerDimension(this.dimensions, args);
+    shrinkToDimension(this.values, minDimension);
 
-    this.values = this.values.reduce((acc, v, i) => {
-      if(i < minDimension) acc[i] = this.values[i] * args[i];
-      return acc;
-    }, new Array(minDimension));
+    for (let i = 0; i < this.values.length; i++) {
+      this.values[i] *= args[i];
+    }
 
-    // if (args.length === 1 && args[0] instanceof Vector) {
-    //   const v = args[0];
-    //   const maxLen = Math.min(this.values.length, v.values.length);
-    //   for (let i = 0; i < maxLen; i++) {
-    //     if (Number.isFinite(v.values[i]) && typeof v.values[i] === 'number') {
-    //       if(!this.values[i]) this.values[i] = 0;
-    //       this.values[i] *= v.values[i];
-    //     } else {
-    //       console.warn(
-    //         'p5.Vector.prototype.mult:',
-    //         'v contains components that are either undefined or not finite numbers'
-    //       );
-    //       return this;
-    //     }
-    //   }
-    // } else if (args.length === 1 && Array.isArray(args[0])) {
-    //   const arr = args[0];
-    //   const maxLen = Math.min(this.values.length, arr.length);
-    //   for (let i = 0; i < maxLen; i++) {
-    //     if (Number.isFinite(arr[i]) && typeof arr[i] === 'number') {
-    //       this.values[i] *= arr[i];
-    //     } else {
-    //       console.warn(
-    //         'p5.Vector.prototype.mult:',
-    //         'arr contains elements that are either undefined or not finite numbers'
-    //       );
-    //       return this;
-    //     }
-    //   }
-    // } else if (
-    //   args.length === 1 &&
-    //   typeof args[0] === 'number' &&
-    //   Number.isFinite(args[0])
-    // ) {
-    //   for (let i = 0; i < this.values.length; i++) {
-    //     this.values[i] *= args[0];
-    //   }
-    // }
     return this;
   }
 
@@ -1198,19 +1161,23 @@ class Vector {
    */
   div(...args) {
     const minDimension = prioritizeSmallerDimension(this.dimensions, args);
+    shrinkToDimension(this.values, minDimension);
 
-    if(!args.every(v => typeof v === 'number' && v !== 0)){
-      console.warn(
-        'p5.Vector.prototype.div',
-        'Arguments contain components that are 0'
-      );
-      return this;
-    };
+    if (!this.friendlyErrorsDisabled()) {
+      for (let i = 0; i < this.values.length; i++) {
+        if (typeof args[i] !== 'number' || args[i] === 0) {
+          console.warn(
+            'p5.Vector.prototype.div',
+            'Arguments contain components that are 0'
+          );
+          return this;
+        }
+      }
+    }
 
-    this.values = this.values.reduce((acc, v, i) => {
-      if(i < minDimension) acc[i] = this.values[i] / args[i];
-      return acc;
-    }, new Array(minDimension));
+    for (let i = 0; i < this.values.length; i++) {
+      this.values[i] *= args[i];
+    }
 
     return this;
   }
@@ -1247,7 +1214,12 @@ class Vector {
    * }
    */
   mag() {
-    return Math.sqrt(this.magSq());
+    let sum = 0;
+    for (let i = 0; i < this.values.length; i++) {
+      const component = this.values[i];
+      sum += component * component;
+    }
+    return Math.sqrt(sum);
   }
 
   /**
@@ -1384,12 +1356,16 @@ class Vector {
    * @return {Number}
    */
   dot(...args) {
+    let vals = args;
     if (args[0] instanceof Vector) {
-      return this.dot(...args[0].values);
+      vals = args[0].values;
     }
-    return this.values.reduce((sum, component, index) => {
-      return sum + component * (args[index] || 0);
-    }, 0);
+    const minDimension = prioritizeSmallerDimension(this.dimensions, args);
+    let sum = 0;
+    for (let i = 0; i < minDimension; i++) {
+      sum += this.values[i] * vals[i];
+    }
+    return sum;
   }
 
   /**
