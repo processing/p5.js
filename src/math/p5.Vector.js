@@ -73,12 +73,11 @@ class Vector {
 
     if (typeof args[0] === 'function') {
       this.isPInst = true;
-      this._fromRadians = args[0];
-      this._toRadians = args[1];
-      args = args.slice(2);
+      this._fromRadians = args.shift();
+      this._toRadians = args.shift();
     }
 
-    this.values = [];
+    this.values = args;
     if (!Vector.friendlyErrorsDisabled() && Array.isArray(args)) {
       for (let i = 0; i < args.length; i++) {
         const v = args[i];
@@ -88,9 +87,9 @@ class Vector {
             'p5.Vector'
           );
         }
+        this.values = [];
+        break;
       }
-    } else {
-      this.values = args;
     }
 
     // This property is here where duck typing (checking if obj.isVector) needs
