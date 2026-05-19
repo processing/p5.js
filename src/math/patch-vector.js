@@ -52,8 +52,8 @@ export function _validatedVectorOperation(expectsSoloNumberArgument){
                 'Arguments contain non-finite numbers',
                 'p5.Vector'
               );
-              return this;
             }
+            return this;
           }
         }
       }
