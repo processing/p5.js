@@ -1548,11 +1548,12 @@ class Vector {
    */
   dist(v) {
     const minDimension = prioritizeSmallerDimension(this.dimensions, v.values);
-    const components = this.values.slice(0, minDimension);
+    let sum = 0;
     for (let i = 0; i < minDimension; i++) {
-      components[i] -= v.values[i];
+      const component = this.values[i] - v.values[i];
+      sum += component * component;
     }
-    return Math.hypot(...components);
+    return Math.sqrt(sum);
   }
 
   /**
