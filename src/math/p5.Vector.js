@@ -1547,7 +1547,12 @@ class Vector {
    * }
    */
   dist(v) {
-    return v.copy().sub(this).mag();
+    const minDimension = prioritizeSmallerDimension(this.dimensions, v.values);
+    const components = this.values.slice(0, minDimension);
+    for (let i = 0; i < minDimension; i++) {
+      components[i] -= v.values[i];
+    }
+    return Math.hypot(...components);
   }
 
   /**
