@@ -92,7 +92,7 @@ function math(p5, fn) {
    * }
    */
   fn.createVector = function (...args) {
-    if (this._boundFromRadians) {
+    if (!this._boundFromRadians) {
       this._boundFromRadians = this._fromRadians.bind(this);
       this._boundToRadians = this._toRadians.bind(this);
     }

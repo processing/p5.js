@@ -1280,10 +1280,12 @@ class Vector {
    * }
    */
   magSq() {
-    return this.values.reduce(
-      (sum, component) => sum + component * component,
-      0
-    );
+    let sum = 0;
+    for (let i = 0; i < this.values.length; i++) {
+      const component = this.values[i];
+      sum += component * component;
+    }
+    return sum;
   }
 
   /**
