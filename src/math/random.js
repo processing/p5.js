@@ -230,6 +230,35 @@ function random(p5, fn){
    *   // Draw the point.
    *   point(x, y);
    * }
+   *
+   * `random()` can also be used in shaders with p5.strands. The following example
+   * uses `random()` to create varying colors on a shape.
+   *
+   * ```js example
+   * let myShader;
+   *
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *   myShader = buildColorShader(shaderCallback);
+   *   describe('A sphere with randomly varying colors.');
+   * }
+   *
+   * function shaderCallback() {
+   *   let r = random();
+   *   let g = random();
+   *   let b = random();
+   *   finalColor.begin();
+   *   finalColor.set([r, g, b, 1]);
+   *   finalColor.end();
+   * }
+   *
+   * function draw() {
+   *   background(220);
+   *   shader(myShader);
+   *   noStroke();
+   *   sphere(30);
+   * }
+   * ```
    */
   /**
    * @method random
