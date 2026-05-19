@@ -1194,7 +1194,7 @@ class Vector {
 
     shrinkToDimension(this.values, minDimension);
     for (let i = 0; i < this.values.length; i++) {
-      this.values[i] *= args[i];
+      this.values[i] /= args[i];
     }
 
     return this;
