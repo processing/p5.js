@@ -1167,15 +1167,15 @@ class Vector {
     const minDimension = prioritizeSmallerDimension(this.dimensions, args);
     shrinkToDimension(this.values, minDimension);
 
-    if (!this.friendlyErrorsDisabled()) {
-      for (let i = 0; i < this.values.length; i++) {
-        if (typeof args[i] !== 'number' || args[i] === 0) {
+    for (let i = 0; i < this.values.length; i++) {
+      if (typeof args[i] !== 'number' || args[i] === 0) {
+        if (!this.friendlyErrorsDisabled()) {
           console.warn(
             'p5.Vector.prototype.div',
             'Arguments contain components that are 0'
           );
-          return this;
         }
+        return this;
       }
     }
 
