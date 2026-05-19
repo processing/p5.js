@@ -643,7 +643,7 @@ class Vector {
    *   let v2 = createVector(2, 3, 4);
    *
    *   // Divide without modifying the original vectors.
-   *   let v3 = p5.Vector.rem(v1, v2);
+   *  let v3 = p5.Vector.rem(v1, v2);
    *
    *   // Prints 'p5.Vector Object : [1, 1, 1]'.
    *   print(v3.toString());
@@ -655,10 +655,24 @@ class Vector {
    */
   rem(...args) {
     const minDimension = prioritizeSmallerDimension(this.dimensions, args);
-    shrinkToDimension(this.values, minDimension);
 
+    for (let i = 0; i < minDimension; i++) {
+      if (typeof args[i] !== 'number' || args[i] === 0) {
+        if (!this.friendlyErrorsDisabled()) {
+          console.warn(
+            'p5.Vector.prototype.div',
+            'Arguments contain components that are 0'
+          );
+        }
+        return this;
+      }
+    }
+
+    shrinkToDimension(this.values, minDimension);
     for (let i = 0; i < this.values.length; i++) {
-      this.values[i] = this.values[i] % args[i];
+      if (args[i] > 0) {
+        this.values[i] = this.values[i] % args[i];
+      }
     }
 
     return this;
@@ -1165,9 +1179,8 @@ class Vector {
    */
   div(...args) {
     const minDimension = prioritizeSmallerDimension(this.dimensions, args);
-    shrinkToDimension(this.values, minDimension);
 
-    for (let i = 0; i < this.values.length; i++) {
+    for (let i = 0; i < minDimension; i++) {
       if (typeof args[i] !== 'number' || args[i] === 0) {
         if (!this.friendlyErrorsDisabled()) {
           console.warn(
@@ -1179,6 +1192,7 @@ class Vector {
       }
     }
 
+    shrinkToDimension(this.values, minDimension);
     for (let i = 0; i < this.values.length; i++) {
       this.values[i] *= args[i];
     }
