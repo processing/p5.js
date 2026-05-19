@@ -43,16 +43,18 @@ export function _validatedVectorOperation(expectsSoloNumberArgument){
         args = new Array(3).fill(args[0]);
       }
 
-      if (!Vector.friendlyErrorsDisabled() && Array.isArray(args)) {
+      if (Array.isArray(args)) {
         for (let i = 0; i < args.length; i++) {
           const v = args[i];
           if (typeof v !== 'number' || !Number.isFinite(v)) {
-            this._friendlyError(
-              'Arguments contain non-finite numbers',
-              'p5.Vector'
-            );
+            if (!Vector.friendlyErrorsDisabled()) {
+              this._friendlyError(
+                'Arguments contain non-finite numbers',
+                'p5.Vector'
+              );
+              return this;
+            }
           }
-          return this;
         }
       }
 

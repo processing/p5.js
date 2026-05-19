@@ -78,18 +78,22 @@ class Vector {
     }
 
     this.values = args;
-    if (!Vector.friendlyErrorsDisabled() && Array.isArray(args)) {
+    if (Array.isArray(args)) {
       for (let i = 0; i < args.length; i++) {
         const v = args[i];
         if (typeof v !== 'number' || !Number.isFinite(v)) {
-          this._friendlyError(
-            'Arguments contain non-finite numbers',
-            'p5.Vector'
-          );
+          if (!Vector.friendlyErrorsDisabled()) {
+            this._friendlyError(
+              'Arguments contain non-finite numbers',
+              'p5.Vector'
+            );
+          }
+          this.values = [];
+          break;
         }
-        this.values = [];
-        break;
       }
+    } else {
+      this.values = [];
     }
 
     // This property is here where duck typing (checking if obj.isVector) needs
