@@ -5,12 +5,23 @@
 import * as constants from '../core/constants';
 
 /**
+ * @private
  * This function is used by binary vector operations to prioritize shorter vectors,
  * and to emit a warning when lengths do not match.
  */
 const prioritizeSmallerDimension = function(currentVectorDimension, args) {
   return Math.min(currentVectorDimension, args.length);
 };
+
+/**
+ * @private
+ * In-place, shrinks an array to a dimension.
+ */
+const shrinkToDimension = function(arr, dim) {
+  while (arr.length > dim) {
+    arr.pop();
+  }
+}
 
 
 class Vector {
@@ -41,6 +52,15 @@ class Vector {
    */
   values = [];
 
+  /**
+   * @private
+   * Check for disabled friendly errors.
+   * This is overridden in the addon function to check the p5 instance.
+   */
+  static friendlyErrorsDisabled() {
+    return true;
+  }
+
   // This is how it comes in with createVector()
   // This check if the first argument is a function
   constructor(...args) {
@@ -59,11 +79,16 @@ class Vector {
     }
 
     this.values = [];
-    if(Array.isArray(args) && !args.every(v => typeof v === 'number' && Number.isFinite(v))){
-      this._friendlyError(
-        'Arguments contain non-finite numbers',
-        'p5.Vector'
-      );
+    if (!Vector.friendlyErrorsDisabled() && Array.isArray(args)) {
+      for (let i = 0; i < args.length; i++) {
+        const v = args[i];
+        if (typeof v !== 'number' || !Number.isFinite(v)) {
+          this._friendlyError(
+            'Arguments contain non-finite numbers',
+            'p5.Vector'
+          );
+        }
+      }
     } else {
       this.values = args;
     }
@@ -759,11 +784,11 @@ class Vector {
    */
   sub(...args) {
     const minDimension = prioritizeSmallerDimension(this.dimensions, args);
+    shrinkToDimension(this.values, minDimension);
 
-    this.values = this.values.reduce((acc, v, i) => {
-      if(i < minDimension) acc[i] = this.values[i] - args[i];
-      return acc;
-    }, new Array(minDimension));
+    for (let i = 0; i < this.values.length; i++) {
+      this.values[i] -= args[i];
+    }
 
     return this;
   }
@@ -1372,7 +1397,7 @@ class Vector {
    * The cross product is a vector that points straight out of the plane created
    * by two vectors. The cross product's magnitude is the area of the parallelogram
    * formed by the original two vectors.
-   * 
+   *
    * The cross product is defined on 3-dimensional vectors, and will use the `x`, `y`,
    * and `z` components. This method should only be used with 3D vectors.
    *
@@ -1986,7 +2011,7 @@ class Vector {
     if (this.dimensions < 2 || (
       this._values instanceof Array && this._values.slice(2).some(v => v !== 0))
     ) {
-      p5._friendlyError(  
+      p5._friendlyError(
         'p5.Vector.setHeading() only supports 2D vectors (z === 0). ' +
         'For 3D or higher-dimensional vectors, use rotate() or another ' +
         'appropriate method instead.',
@@ -3617,6 +3642,9 @@ function vector(p5, fn) {
   p5.Vector = Vector;
 
   Vector.prototype._friendlyError = p5._friendlyError;
+  Vector.prototype.friendlyErrorsDisabled = function() {
+    return p5.disableFriendlyErrors;
+  };
 
   /**
    * The x component of the vector
