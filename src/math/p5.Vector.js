@@ -1378,7 +1378,7 @@ class Vector {
     if (args[0] instanceof Vector) {
       vals = args[0].values;
     }
-    const minDimension = prioritizeSmallerDimension(this.dimensions, args);
+    const minDimension = prioritizeSmallerDimension(this.dimensions, vals);
     let sum = 0;
     for (let i = 0; i < minDimension; i++) {
       sum += this.values[i] * vals[i];
