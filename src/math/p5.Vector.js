@@ -656,18 +656,6 @@ class Vector {
   rem(...args) {
     const minDimension = prioritizeSmallerDimension(this.dimensions, args);
 
-    for (let i = 0; i < minDimension; i++) {
-      if (typeof args[i] !== 'number' || args[i] === 0) {
-        if (!this.friendlyErrorsDisabled()) {
-          console.warn(
-            'p5.Vector.prototype.div',
-            'Arguments contain components that are 0'
-          );
-        }
-        return this;
-      }
-    }
-
     shrinkToDimension(this.values, minDimension);
     for (let i = 0; i < this.values.length; i++) {
       if (args[i] > 0) {
