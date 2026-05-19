@@ -54,8 +54,6 @@ export function _validatedVectorOperation(expectsSoloNumberArgument){
           }
           return this;
         }
-      } else {
-        this.values = args;
       }
 
       return target.call(this, ...args);
