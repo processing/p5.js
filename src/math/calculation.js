@@ -40,7 +40,7 @@ function calculation(p5, fn){
    * `abs()` can also be used in shaders with p5.strands. The following example
    * uses `abs()` to create a mirror effect on the color of a shape.
    *
-   * ```js example
+   * @example
    * let myShader;
    *
    * function setup() {
@@ -65,7 +65,6 @@ function calculation(p5, fn){
    *   noStroke();
    *   sphere(30);
    * }
-   * ```
    */
   fn.abs = Math.abs;
 
@@ -109,7 +108,7 @@ function calculation(p5, fn){
    * `ceil()` can also be used in shaders with p5.strands. The following example
    * uses `ceil()` to create a stepped color effect on a shape.
    *
-   * ```js example
+   * @example
    * let myShader;
    *
    * function setup() {
@@ -133,7 +132,6 @@ function calculation(p5, fn){
    *   noStroke();
    *   sphere(30);
    * }
-   * ```
    */
   fn.ceil = Math.ceil;
 
@@ -325,7 +323,7 @@ function calculation(p5, fn){
    * `exp()` can also be used in shaders with p5.strands. The following example
    * uses `exp()` to create an accelerating color transition on a shape.
    *
-   * ```js example
+   * @example
    * let myShader;
    *
    * function setup() {
@@ -350,7 +348,6 @@ function calculation(p5, fn){
    *   noStroke();
    *   sphere(30);
    * }
-   * ```
    */
   fn.exp = Math.exp;
 
@@ -389,7 +386,7 @@ function calculation(p5, fn){
    * `floor()` can also be used in shaders with p5.strands. The following example
    * uses `floor()` to create banding effects on a shape.
    *
-   * ```js example
+   * @example
    * let myShader;
    *
    * function setup() {
@@ -413,7 +410,6 @@ function calculation(p5, fn){
    *   noStroke();
    *   sphere(30);
    * }
-   * ```
    */
   fn.floor = Math.floor;
 
@@ -500,7 +496,7 @@ function calculation(p5, fn){
    * GLSL `mix()` function. The following example uses `lerp()` to blend colors
    * on a shape over time.
    *
-   * ```js example
+   * @example
    * let myShader;
    *
    * function setup() {
@@ -525,7 +521,6 @@ function calculation(p5, fn){
    *   noStroke();
    *   sphere(30);
    * }
-   * ```
    */
   fn.lerp = function(start, stop, amt) {
     // p5._validateParameters('lerp', arguments);
@@ -584,7 +579,7 @@ function calculation(p5, fn){
    * `log()` can also be used in shaders with p5.strands. The following example
    * uses `log()` to create a decelerating color transition on a shape.
    *
-   * ```js example
+   * @example
    * let myShader;
    *
    * function setup() {
@@ -610,7 +605,6 @@ function calculation(p5, fn){
    *   noStroke();
    *   sphere(30);
    * }
-   * ```
    */
   fn.log = Math.log;
 
@@ -730,7 +724,7 @@ function calculation(p5, fn){
    * `map()` can also be used in shaders with p5.strands. The following example
    * uses `map()` to remap time values to color in a shader.
    *
-   * ```js example
+   * @example
    * let myShader;
    *
    * function setup() {
@@ -753,7 +747,6 @@ function calculation(p5, fn){
    *   noStroke();
    *   sphere(30);
    * }
-   * ```
    */
   fn.map = function(n, start1, stop1, start2, stop2, withinBounds) {
     // p5._validateParameters('map', arguments);
@@ -826,7 +819,7 @@ function calculation(p5, fn){
    * `max()` can also be used in shaders with p5.strands. The following example
    * uses `max()` to clamp values in a shader.
    *
-   * ```js example
+   * @example
    * let myShader;
    *
    * function setup() {
@@ -849,7 +842,6 @@ function calculation(p5, fn){
    *   noStroke();
    *   sphere(30);
    * }
-   * ```
    */
   /**
    * @method max
@@ -930,7 +922,7 @@ function calculation(p5, fn){
    * `min()` can also be used in shaders with p5.strands. The following example
    * uses `min()` to clamp values in a shader.
    *
-   * ```js example
+   * @example
    * let myShader;
    *
    * function setup() {
@@ -953,7 +945,6 @@ function calculation(p5, fn){
    *   noStroke();
    *   sphere(30);
    * }
-   * ```
    */
   /**
    * @method min
@@ -1058,7 +1049,7 @@ function calculation(p5, fn){
    * `pow()` can also be used in shaders with p5.strands. The following example
    * uses `pow()` to create a gamma curve effect on colors in a shader.
    *
-   * ```js example
+   * @example
    * let myShader;
    *
    * function setup() {
@@ -1083,7 +1074,6 @@ function calculation(p5, fn){
    *   noStroke();
    *   sphere(30);
    * }
-   * ```
    */
   fn.pow = Math.pow;
 
@@ -1142,7 +1132,7 @@ function calculation(p5, fn){
    * `round()` can also be used in shaders with p5.strands. The following example
    * uses `round()` to quantize colors in a shader.
    *
-   * ```js example
+   * @example
    * let myShader;
    *
    * function setup() {
@@ -1165,7 +1155,6 @@ function calculation(p5, fn){
    *   noStroke();
    *   sphere(30);
    * }
-   * ```
    */
   fn.round = function(n, decimals) {
     if (!decimals) {
@@ -1282,7 +1271,7 @@ function calculation(p5, fn){
    * `sqrt()` can also be used in shaders with p5.strands. The following example
    * uses `sqrt()` to create a smooth easing curve on colors in a shader.
    *
-   * ```js example
+   * @example
    * let myShader;
    *
    * function setup() {
@@ -1307,7 +1296,6 @@ function calculation(p5, fn){
    *   noStroke();
    *   sphere(30);
    * }
-   * ```
    */
   fn.sqrt = Math.sqrt;
 
@@ -1345,7 +1333,7 @@ function calculation(p5, fn){
    * `fract()` can also be used in shaders with p5.strands. The following example
    * uses `fract()` to create repeating patterns in a shader.
    *
-   * ```js example
+   * @example
    * let myShader;
    *
    * function setup() {
@@ -1368,7 +1356,6 @@ function calculation(p5, fn){
    *   noStroke();
    *   sphere(30);
    * }
-   * ```
    */
   fn.fract = function(toConvert) {
     // p5._validateParameters('fract', arguments);
