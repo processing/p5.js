@@ -146,7 +146,7 @@ function trigonometry(p5, fn){
    * `acos()` can also be used in shaders with p5.strands. The following example
    * uses `acos()` to create a pulsing color transition on a shape.
    *
-   * ```js example
+   * @example
    * let myShader;
    *
    * function setup() {
@@ -171,7 +171,6 @@ function trigonometry(p5, fn){
    *   noStroke();
    *   sphere(30);
    * }
-   * ```
    */
   fn.acos = function(ratio) {
     return this._fromRadians(Math.acos(ratio));
@@ -231,7 +230,7 @@ function trigonometry(p5, fn){
    * `asin()` can also be used in shaders with p5.strands. The following example
    * uses `asin()` to create a smooth color transition on a shape.
    *
-   * ```js example
+   * @example
    * let myShader;
    *
    * function setup() {
@@ -256,7 +255,6 @@ function trigonometry(p5, fn){
    *   noStroke();
    *   sphere(30);
    * }
-   * ```
    */
   fn.asin = function(ratio) {
     return this._fromRadians(Math.asin(ratio));
@@ -316,7 +314,7 @@ function trigonometry(p5, fn){
    * `atan()` can also be used in shaders with p5.strands. The following example
    * uses `atan()` to create a color effect based on an angle.
    *
-   * ```js example
+   * @example
    * let myShader;
    *
    * function setup() {
@@ -341,7 +339,6 @@ function trigonometry(p5, fn){
    *   noStroke();
    *   sphere(30);
    * }
-   * ```
    */
   fn.atan = function(ratio) {
     return this._fromRadians(Math.atan(ratio));
@@ -487,7 +484,7 @@ function trigonometry(p5, fn){
    * `cos()` can also be used in shaders with p5.strands. The following example
    * uses `cos()` to smoothly oscillate the color of a shape over time.
    *
-   * ```js example
+   * @example
    * let myShader;
    *
    * function setup() {
@@ -512,7 +509,6 @@ function trigonometry(p5, fn){
    *   noStroke();
    *   sphere(30);
    * }
-   * ```
    */
   fn.cos = function(angle) {
     return Math.cos(this._toRadians(angle));
@@ -588,7 +584,7 @@ function trigonometry(p5, fn){
    * `sin()` can also be used in shaders with p5.strands. The following example
    * uses `sin()` to oscillate the color of a shape over time.
    *
-   * ```js example
+   * @example
    * let myShader;
    *
    * function setup() {
@@ -613,7 +609,6 @@ function trigonometry(p5, fn){
    *   noStroke();
    *   sphere(30);
    * }
-   * ```
    */
   fn.sin = function(angle) {
     return Math.sin(this._toRadians(angle));
@@ -653,7 +648,7 @@ function trigonometry(p5, fn){
    * `tan()` can also be used in shaders with p5.strands. The following example
    * uses `tan()` to create rapid color transitions on a shape.
    *
-   * ```js example
+   * @example
    * let myShader;
    *
    * function setup() {
@@ -678,7 +673,6 @@ function trigonometry(p5, fn){
    *   noStroke();
    *   sphere(30);
    * }
-   * ```
    */
   fn.tan = function(angle) {
     return Math.tan(this._toRadians(angle));
@@ -717,7 +711,7 @@ function trigonometry(p5, fn){
    * `degrees()` can also be used in shaders with p5.strands. The following example
    * uses `degrees()` to convert a radian value to degrees inside a shader.
    *
-   * ```js example
+   * @example
    * let myShader;
    *
    * function setup() {
@@ -743,7 +737,6 @@ function trigonometry(p5, fn){
    *   noStroke();
    *   sphere(30);
    * }
-   * ```
    */
   fn.degrees = angle => angle * constants.RAD_TO_DEG;
 
@@ -780,7 +773,7 @@ function trigonometry(p5, fn){
    * `radians()` can also be used in shaders with p5.strands. The following example
    * uses `radians()` to convert degrees to radians inside a shader.
    *
-   * ```js example
+   * @example
    * let myShader;
    *
    * function setup() {
@@ -806,7 +799,6 @@ function trigonometry(p5, fn){
    *   noStroke();
    *   sphere(30);
    * }
-   * ```
    */
   fn.radians = angle => angle * constants.DEG_TO_RAD;
 
