@@ -5,12 +5,23 @@
 import * as constants from '../core/constants';
 
 /**
+ * @private
  * This function is used by binary vector operations to prioritize shorter vectors,
  * and to emit a warning when lengths do not match.
  */
 const prioritizeSmallerDimension = function(currentVectorDimension, args) {
   return Math.min(currentVectorDimension, args.length);
 };
+
+/**
+ * @private
+ * In-place, shrinks an array to a dimension.
+ */
+const shrinkToDimension = function(arr, dim) {
+  while (arr.length > dim) {
+    arr.pop();
+  }
+}
 
 
 class Vector {
@@ -41,6 +52,15 @@ class Vector {
    */
   values = [];
 
+  /**
+   * @private
+   * Check for disabled friendly errors.
+   * This is overridden in the addon function to check the p5 instance.
+   */
+  static friendlyErrorsDisabled() {
+    return true;
+  }
+
   // This is how it comes in with createVector()
   // This check if the first argument is a function
   constructor(...args) {
@@ -53,19 +73,27 @@ class Vector {
 
     if (typeof args[0] === 'function') {
       this.isPInst = true;
-      this._fromRadians = args[0];
-      this._toRadians = args[1];
-      args = args.slice(2);
+      this._fromRadians = args.shift();
+      this._toRadians = args.shift();
     }
 
-    this.values = [];
-    if(Array.isArray(args) && !args.every(v => typeof v === 'number' && Number.isFinite(v))){
-      this._friendlyError(
-        'Arguments contain non-finite numbers',
-        'p5.Vector'
-      );
+    this.values = args;
+    if (Array.isArray(args)) {
+      for (let i = 0; i < args.length; i++) {
+        const v = args[i];
+        if (typeof v !== 'number' || !Number.isFinite(v)) {
+          if (!Vector.friendlyErrorsDisabled()) {
+            this._friendlyError(
+              'Arguments contain non-finite numbers',
+              'p5.Vector'
+            );
+          }
+          this.values = [];
+          break;
+        }
+      }
     } else {
-      this.values = args;
+      this.values = [];
     }
 
     // This property is here where duck typing (checking if obj.isVector) needs
@@ -503,11 +531,11 @@ class Vector {
    */
   add(...args) {
     const minDimension = prioritizeSmallerDimension(this.dimensions, args);
+    shrinkToDimension(this.values, minDimension);
 
-    this.values = this.values.reduce((acc, v, i) => {
-      if(i < minDimension) acc[i] = this.values[i] + Number(args[i]);
-      return acc;
-    }, new Array(minDimension));
+    for (let i = 0; i < this.values.length; i++) {
+      this.values[i] += args[i];
+    }
 
     return this;
   }
@@ -615,7 +643,7 @@ class Vector {
    *   let v2 = createVector(2, 3, 4);
    *
    *   // Divide without modifying the original vectors.
-   *   let v3 = p5.Vector.rem(v1, v2);
+   *  let v3 = p5.Vector.rem(v1, v2);
    *
    *   // Prints 'p5.Vector Object : [1, 1, 1]'.
    *   print(v3.toString());
@@ -628,9 +656,12 @@ class Vector {
   rem(...args) {
     const minDimension = prioritizeSmallerDimension(this.dimensions, args);
 
-    this.values = Array.from({ length: minDimension }, (_, i) => {
-      return (args[i] > 0) ? this.values[i] % args[i] : this.values[i];
-    });
+    shrinkToDimension(this.values, minDimension);
+    for (let i = 0; i < this.values.length; i++) {
+      if (args[i] > 0) {
+        this.values[i] = this.values[i] % args[i];
+      }
+    }
 
     return this;
   }
@@ -759,11 +790,11 @@ class Vector {
    */
   sub(...args) {
     const minDimension = prioritizeSmallerDimension(this.dimensions, args);
+    shrinkToDimension(this.values, minDimension);
 
-    this.values = this.values.reduce((acc, v, i) => {
-      if(i < minDimension) acc[i] = this.values[i] - args[i];
-      return acc;
-    }, new Array(minDimension));
+    for (let i = 0; i < this.values.length; i++) {
+      this.values[i] -= args[i];
+    }
 
     return this;
   }
@@ -947,50 +978,12 @@ class Vector {
    */
   mult(...args) {
     const minDimension = prioritizeSmallerDimension(this.dimensions, args);
+    shrinkToDimension(this.values, minDimension);
 
-    this.values = this.values.reduce((acc, v, i) => {
-      if(i < minDimension) acc[i] = this.values[i] * args[i];
-      return acc;
-    }, new Array(minDimension));
+    for (let i = 0; i < this.values.length; i++) {
+      this.values[i] *= args[i];
+    }
 
-    // if (args.length === 1 && args[0] instanceof Vector) {
-    //   const v = args[0];
-    //   const maxLen = Math.min(this.values.length, v.values.length);
-    //   for (let i = 0; i < maxLen; i++) {
-    //     if (Number.isFinite(v.values[i]) && typeof v.values[i] === 'number') {
-    //       if(!this.values[i]) this.values[i] = 0;
-    //       this.values[i] *= v.values[i];
-    //     } else {
-    //       console.warn(
-    //         'p5.Vector.prototype.mult:',
-    //         'v contains components that are either undefined or not finite numbers'
-    //       );
-    //       return this;
-    //     }
-    //   }
-    // } else if (args.length === 1 && Array.isArray(args[0])) {
-    //   const arr = args[0];
-    //   const maxLen = Math.min(this.values.length, arr.length);
-    //   for (let i = 0; i < maxLen; i++) {
-    //     if (Number.isFinite(arr[i]) && typeof arr[i] === 'number') {
-    //       this.values[i] *= arr[i];
-    //     } else {
-    //       console.warn(
-    //         'p5.Vector.prototype.mult:',
-    //         'arr contains elements that are either undefined or not finite numbers'
-    //       );
-    //       return this;
-    //     }
-    //   }
-    // } else if (
-    //   args.length === 1 &&
-    //   typeof args[0] === 'number' &&
-    //   Number.isFinite(args[0])
-    // ) {
-    //   for (let i = 0; i < this.values.length; i++) {
-    //     this.values[i] *= args[0];
-    //   }
-    // }
     return this;
   }
 
@@ -1175,18 +1168,22 @@ class Vector {
   div(...args) {
     const minDimension = prioritizeSmallerDimension(this.dimensions, args);
 
-    if(!args.every(v => typeof v === 'number' && v !== 0)){
-      console.warn(
-        'p5.Vector.prototype.div',
-        'Arguments contain components that are 0'
-      );
-      return this;
-    };
+    for (let i = 0; i < minDimension; i++) {
+      if (typeof args[i] !== 'number' || args[i] === 0) {
+        if (!this.friendlyErrorsDisabled()) {
+          console.warn(
+            'p5.Vector.prototype.div',
+            'Arguments contain components that are 0'
+          );
+        }
+        return this;
+      }
+    }
 
-    this.values = this.values.reduce((acc, v, i) => {
-      if(i < minDimension) acc[i] = this.values[i] / args[i];
-      return acc;
-    }, new Array(minDimension));
+    shrinkToDimension(this.values, minDimension);
+    for (let i = 0; i < this.values.length; i++) {
+      this.values[i] /= args[i];
+    }
 
     return this;
   }
@@ -1223,7 +1220,12 @@ class Vector {
    * }
    */
   mag() {
-    return Math.sqrt(this.magSq());
+    let sum = 0;
+    for (let i = 0; i < this.values.length; i++) {
+      const component = this.values[i];
+      sum += component * component;
+    }
+    return Math.sqrt(sum);
   }
 
   /**
@@ -1255,10 +1257,12 @@ class Vector {
    * }
    */
   magSq() {
-    return this.values.reduce(
-      (sum, component) => sum + component * component,
-      0
-    );
+    let sum = 0;
+    for (let i = 0; i < this.values.length; i++) {
+      const component = this.values[i];
+      sum += component * component;
+    }
+    return sum;
   }
 
   /**
@@ -1358,12 +1362,16 @@ class Vector {
    * @return {Number}
    */
   dot(...args) {
+    let vals = args;
     if (args[0] instanceof Vector) {
-      return this.dot(...args[0].values);
+      vals = args[0].values;
     }
-    return this.values.reduce((sum, component, index) => {
-      return sum + component * (args[index] || 0);
-    }, 0);
+    const minDimension = prioritizeSmallerDimension(this.dimensions, vals);
+    let sum = 0;
+    for (let i = 0; i < minDimension; i++) {
+      sum += this.values[i] * vals[i];
+    }
+    return sum;
   }
 
   /**
@@ -1372,7 +1380,7 @@ class Vector {
    * The cross product is a vector that points straight out of the plane created
    * by two vectors. The cross product's magnitude is the area of the parallelogram
    * formed by the original two vectors.
-   * 
+   *
    * The cross product is defined on 3-dimensional vectors, and will use the `x`, `y`,
    * and `z` components. This method should only be used with 3D vectors.
    *
@@ -1521,7 +1529,13 @@ class Vector {
    * }
    */
   dist(v) {
-    return v.copy().sub(this).mag();
+    const minDimension = prioritizeSmallerDimension(this.dimensions, v.values);
+    let sum = 0;
+    for (let i = 0; i < minDimension; i++) {
+      const component = this.values[i] - v.values[i];
+      sum += component * component;
+    }
+    return Math.sqrt(sum);
   }
 
   /**
@@ -1986,7 +2000,7 @@ class Vector {
     if (this.dimensions < 2 || (
       this._values instanceof Array && this._values.slice(2).some(v => v !== 0))
     ) {
-      p5._friendlyError(  
+      p5._friendlyError(
         'p5.Vector.setHeading() only supports 2D vectors (z === 0). ' +
         'For 3D or higher-dimensional vectors, use rotate() or another ' +
         'appropriate method instead.',
@@ -3617,6 +3631,9 @@ function vector(p5, fn) {
   p5.Vector = Vector;
 
   Vector.prototype._friendlyError = p5._friendlyError;
+  Vector.prototype.friendlyErrorsDisabled = function() {
+    return p5.disableFriendlyErrors;
+  };
 
   /**
    * The x component of the vector
