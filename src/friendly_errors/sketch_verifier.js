@@ -230,5 +230,5 @@ function sketchVerifier(p5, _fn, lifecycles) {
 export default sketchVerifier;
 
 if (typeof p5 !== 'undefined') {
-  sketchVerifier(p5, p5.prototype);
+  p5.registerAddon(sketchVerifier);
 }

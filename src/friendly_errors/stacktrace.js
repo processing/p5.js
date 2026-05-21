@@ -238,6 +238,174 @@ function ErrorStackParser() {
 
 // End borrow
 
-export function getErrorStackParser() {
-  return new ErrorStackParser();
-}
+export const errorStackParser = new ErrorStackParser();
+/**
+ * Takes a stacktrace array and filters out all frames that show internal p5
+ * details.
+ *
+ * Generates and prints a friendly error message using key:
+ * "fes.wrongPreload", "fes.libraryError".
+ *
+ * The processed stack is used to find whether the error happened internally
+ * within the library, and if the error was due to a non-loadX() method
+ * being used in preload.
+ *
+ * "Internally" here means that the exact location of the error (the top of
+ * the stack) is a piece of code written in the p5.js library (which may or
+ * may not have been called from the user's sketch).
+ *
+ * @method processStack
+ * @private
+ * @param {Error} error
+ * @param {Array} stacktrace
+ *
+ * @returns {Array} An array with two elements, [isInternal, friendlyStack]
+ *                 isInternal: a boolean value indicating whether the error
+ *                             happened internally
+ *                 friendlyStack: the filtered (simplified) stacktrace
+ */
+export const processStack = (error, stacktrace, entryPoints) => {
+  // cannot process a stacktrace that doesn't exist
+  if (!stacktrace) return [false, null];
+
+  stacktrace.forEach(frame => {
+    frame.functionName = frame.functionName || '';
+  });
+
+  // isInternal - Did this error happen inside the library
+  let isInternal = false;
+  let p5FileName, friendlyStack, currentEntryPoint;
+
+  // Intentionally throw an error that we catch so that we can check the name
+  // of the current file. Any errors we see from this file, we treat as
+  // internal errors.
+  try {
+    throw new Error();
+  } catch (testError) {
+    const testStacktrace = errorStackParser.parse(testError);
+    p5FileName = testStacktrace[0].fileName;
+  }
+
+  for (let i = stacktrace.length - 1; i >= 0; i--) {
+    let splitted = stacktrace[i].functionName.split('.');
+    if (entryPoints.includes(splitted[splitted.length - 1])) {
+      // remove everything below an entry point function (setup, draw, etc).
+      // (it's usually the internal initialization calls)
+      friendlyStack = stacktrace.slice(0, i + 1);
+      currentEntryPoint = splitted[splitted.length - 1];
+      // We call the error "internal" if the source of the error was a
+      // function from within the p5.js library file, but called from the
+      // user's code directly. We only need to check the topmost frame in
+      // the stack trace since any function internal to p5 should pass this
+      // check, not just public p5 functions.
+      if (stacktrace[0].fileName === p5FileName) {
+        isInternal = true;
+        break;
+      }
+      break;
+    }
+  }
+
+  // in some cases ( errors in promises, callbacks, etc), no entry-point
+  // function may be found in the stacktrace. In that case just use the
+  // entire stacktrace for friendlyStack
+  if (!friendlyStack) friendlyStack = stacktrace;
+
+  if (isInternal) {
+    // the frameIndex property is added before the filter, so frameIndex
+    // corresponds to the index of a frame in the original stacktrace.
+    // Then we filter out all frames which belong to the file that contains
+    // the p5 library
+    friendlyStack = friendlyStack
+      .map((frame, index) => {
+        frame.frameIndex = index;
+        return frame;
+      })
+      .filter(frame => frame.fileName !== p5FileName);
+
+    // a weird case, if for some reason we can't identify the function called
+    // from user's code
+    if (friendlyStack.length === 0) return [true, null];
+
+    // get the function just above the topmost frame in the friendlyStack.
+    // i.e the name of the library function called from user's code
+    const func = stacktrace[friendlyStack[0].frameIndex - 1].functionName
+      .split('.')
+      .slice(-1)[0];
+
+    // Try and get the location (line no.) from the top element of the stack
+    let locationObj;
+    if (
+      friendlyStack[0].fileName &&
+      friendlyStack[0].lineNumber &&
+      friendlyStack[0].columnNumber
+    ) {
+      locationObj = {
+        location: `${friendlyStack[0].fileName}:${
+          friendlyStack[0].lineNumber
+        }:${friendlyStack[0].columnNumber}`,
+        file: friendlyStack[0].fileName.split('/').slice(-1),
+        line: friendlyStack[0].lineNumber
+      };
+
+      // if already handled by another part of the FES, don't handle again
+      if (p5._fesLogCache[locationObj.location]) return [true, null];
+    }
+
+    // Check if the error is due to a non loadX method being used incorrectly
+    // in preload
+    if (
+      currentEntryPoint === 'preload' &&
+      fn._preloadMethods[func] == null
+    ) {
+      // TODO: we don't need this anymore
+      const message = TL.tl`${locationObj ? TL.tl`[${locationObj.file}, line ${locationObj.line}]` : ''} An error with message "${error.message}" occurred inside the p5.js library when "${func}" was called. If not stated otherwise, it might be due to "${func}" being called from preload. Nothing besides load calls (loadImage, loadJSON, loadFont, loadStrings, etc.) should be inside the preload function.`;
+      p5._friendlyError(
+        message,
+        'preload'
+      );
+    } else {
+      // Library error
+      const message = TL.tl`${locationObj ? TL.tl`[${locationObj.file}, line ${locationObj.line}]` : ''} An error with message "${error.message}" occurred inside the p5js library when ${func} was called. If not stated otherwise, it might be an issue with the arguments passed to ${func}.`;
+      p5._friendlyError(
+        message,
+        func
+      );
+    }
+
+    // Finally, if it's an internal error, print the friendlyStack
+    // ( fesErrorMonitor won't handle this error )
+    if (friendlyStack && friendlyStack.length) {
+      printFriendlyStack(friendlyStack);
+    }
+  }
+  return [isInternal, friendlyStack];
+};
+
+/**
+ * Prints a friendly stacktrace for user-written functions for "global" errors
+ *
+ * Generates and prints a friendly error message using key:
+ * "fes.globalErrors.stackTop", "fes.globalErrors.stackSubseq".
+ *
+ * @method printFriendlyStack
+ * @private
+ * @param {Array} friendlyStack
+ */
+export const printFriendlyStack = friendlyStack => {
+  if (friendlyStack.length > 1) {
+    let stacktraceMsg = '';
+    friendlyStack.forEach((frame, idx) => {
+      const location = `${frame.fileName}:${frame.lineNumber}:${
+        frame.columnNumber
+      }`;
+      if (idx === 0) {
+        frameMsg = TL.tl`┌[${location}] \n\t Error at line ${frame.lineNumber} in ${frame.functionName}()\n`;
+      } else {
+        frameMsg = TL.tl`└[${location}] \n\t Called from line ${frame.lineNumber} in ${frame.functionName}()\n`;
+      }
+      stacktraceMsg += frameMsg;
+    });
+    console.log(stacktraceMsg);
+  }
+};

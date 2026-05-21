@@ -22,84 +22,75 @@
  * sequence of each function, please look at the FES Reference + Dev Notes:
  * https://github.com/processing/p5.js/blob/main/contributor_docs/fes_reference_dev_notes.md
  */
-import errorTable from './browser_errors';
-import { getErrorStackParser } from './stacktrace';
+import { errorTable } from './browser_errors';
+import { errorStackParser, processStack, printFriendlyStack } from './stacktrace';
 import { TL, FES } from './fes';
 
 function fesCore(p5, fn, lifecycles){
-  // p5.js blue, p5.js orange, auto dark green; fallback p5.js darkened magenta
-  const typeColors = ['#2D7BB6', '#EE9900', '#4DB200', '#C83C00'];
+  // This is a lazily-defined list of p5 symbols that may be
+  // misused by beginners at top-level code, outside of setup/draw. We'd like
+  // to detect these errors and help the user by suggesting they move them
+  // into setup/draw.
+  //
+  // For more details, see https://github.com/processing/p5.js/issues/1121.
   let misusedAtTopLevelCode = null;
-  let defineMisusedAtTopLevelCode = null;
+  /**
+   * A helper function for populating misusedAtTopLevel list.
+   *
+   * @method defineMisusedAtTopLevelCode
+   * @private
+   */
+  let defineMisusedAtTopLevelCode = () => {
+    const uniqueNamesFound = {};
+    const getSymbols = obj =>
+      Object.getOwnPropertyNames(obj)
+        .filter(name => {
+          if (name[0] === '_') {
+            return false;
+          }
+          if (name in uniqueNamesFound) {
+            return false;
+          }
+
+          uniqueNamesFound[name] = true;
+
+          return true;
+        })
+        .map(name => {
+          let type;
+
+          if (typeof obj[name] === 'function') {
+            type = 'function';
+          } else if (name === name.toUpperCase()) {
+            type = 'constant';
+          } else {
+            type = 'variable';
+          }
+
+          return { name, type };
+        });
+
+    misusedAtTopLevelCode = getSymbols(fn);
+
+    // This will ultimately ensure that we report the most specific error
+    // possible to the user, e.g. advising them about HALF_PI instead of PI
+    // when their code misuses the former.
+    misusedAtTopLevelCode.sort((a, b) => b.name.length - a.name.length);
+  };
 
   // the threshold for the maximum allowed levenshtein distance
   // used in misspelling detection
   const EDIT_DIST_THRESHOLD = 2;
 
-  // to enable or disable styling (color, font-size, etc. ) for fes messages
-  const ENABLE_FES_STYLING = false;
-
   // Used for internally thrown errors that should not get wrapped by another
   // friendly error handler
   class FESError extends Error { };
 
-  lifecycles.presetup = function () {
-    // let doFriendlyWelcome = false; // TEMP until we get it all working LM
-    // if(doFriendlyWelcome){
-    //   // p5.js brand - magenta: #ED225D
-    //   //const astrixBgColor = 'transparent';
-    //   //const astrixTxtColor = '#ED225D';
-    //   //const welcomeBgColor = '#ED225D';
-    //   //const welcomeTextColor = 'white';
-    //   const welcomeMessage = translator('fes.pre', {
-    //     message: translator('fes.welcome')
-    //   });
-    //   console.log(
-    //     '    _ \n' +
-    //       ' /\\| |/\\ \n' +
-    //       " \\ ` ' /  \n" +
-    //       ' / , . \\  \n' +
-    //       ' \\/|_|\\/ ' +
-    //       '\n\n' +
-    //       welcomeMessage
-    //   );
-    // }
-  };
-
   if (typeof IS_MINIFIED !== 'undefined') {
     p5._friendlyError =
       p5._checkForUserDefinedFunctions =
-      p5._fesErrorMonitor =
       () => {};
   } else {
-    // -- Borrowed from jQuery 1.11.3 --
-    const class2type = {};
-    const toString = class2type.toString;
-    const names = [
-      'Boolean',
-      'Number',
-      'String',
-      'Function',
-      'Array',
-      'Date',
-      'RegExp',
-      'Object',
-      'Error'
-    ];
-    for (let n = 0; n < names.length; n++) {
-      class2type[`[object ${names[n]}]`] = names[n].toLowerCase();
-    }
-    const getType = obj => {
-      if (obj == null) {
-        return `${obj}`;
-      }
-      return typeof obj === 'object' || typeof obj === 'function'
-        ? class2type[toString.call(obj)] || 'object'
-        : typeof obj;
-    };
-
-    // -- End borrow --
-
     // entry points into user-defined code
     const entryPoints = [
       'setup',
@@ -164,27 +155,13 @@ function fesCore(p5, fn, lifecycles){
      * @private
      * @param  {String}          message  Message to be printed
      * @param  {String}          [func]   Name of function
-     * @param  {Number|String}   [color]  CSS color code
      *
      * @return console logs
      */
-    p5._report = (message, func, color) => {
-      if ('undefined' === getType(color)) {
-        color = '#B40033'; // dark magenta
-      } else if (getType(color) === 'number') {
-        // Type to color
-        color = typeColors[color];
-      }
-
+    p5._report = (message, func) => {
       // Add a link to the reference docs of func at the end of the message
       message = mapToReference(message, func);
-      // let style = [`color: ${color}`, 'font-family: Arial', 'font-size: larger'];
       FES.log(message);
-      // if (ENABLE_FES_STYLING) {
-      //   console.log('%c' + prefixedMsg, style.join(';'));
-      // } else {
-      //   console.log(prefixedMsg);
-      // }
     };
 
     /**
@@ -214,11 +191,10 @@ function fesCore(p5, fn, lifecycles){
      * @private
      * @param  {String}         message   Message to be printed
      * @param  {String}         [func]    Name of the function linked to error
-     * @param  {Number|String}  [color]   CSS color code
      */
-    p5._friendlyError = function(message, func, color) {
-      // if (p5.disableFriendlyErrors) return;
-      p5._report(message, func, color);
+    p5._friendlyError = function(message, func) {
+      if (p5.disableFriendlyErrors) return;
+      p5._report(message, func);
     };
 
     /**
@@ -324,7 +300,7 @@ function fesCore(p5, fn, lifecycles){
         symbol => symbol.name !== errSym
       );
       if (matchedSymbols.length !== 0) {
-        const parsed = getErrorStackParser().parse(error);
+        const parsed = errorStackParser.parse(error);
         let locationObj;
         if (
           parsed &&
@@ -374,177 +350,6 @@ function fesCore(p5, fn, lifecycles){
     };
 
     /**
-     * Prints a friendly stacktrace for user-written functions for "global" errors
-     *
-     * Generates and prints a friendly error message using key:
-     * "fes.globalErrors.stackTop", "fes.globalErrors.stackSubseq".
-     *
-     * @method printFriendlyStack
-     * @private
-     * @param {Array} friendlyStack
-     */
-    const printFriendlyStack = friendlyStack => {
-      if (friendlyStack.length > 1) {
-        let stacktraceMsg = '';
-        friendlyStack.forEach((frame, idx) => {
-          const location = `${frame.fileName}:${frame.lineNumber}:${
-            frame.columnNumber
-          }`;
-          if (idx === 0) {
-            frameMsg = TL.tl`┌[${location}] \n\t Error at line ${frame.lineNumber} in ${frame.functionName}()\n`;
-          } else {
-            frameMsg = TL.tl`└[${location}] \n\t Called from line ${frame.lineNumber} in ${frame.functionName}()\n`;
-          }
-          stacktraceMsg += frameMsg;
-        });
-        console.log(stacktraceMsg);
-      }
-    };
-
-    /**
-     * Takes a stacktrace array and filters out all frames that show internal p5
-     * details.
-     *
-     * Generates and prints a friendly error message using key:
-     * "fes.wrongPreload", "fes.libraryError".
-     *
-     * The processed stack is used to find whether the error happened internally
-     * within the library, and if the error was due to a non-loadX() method
-     * being used in preload.
-     *
-     * "Internally" here means that the exact location of the error (the top of
-     * the stack) is a piece of code written in the p5.js library (which may or
-     * may not have been called from the user's sketch).
-     *
-     * @method processStack
-     * @private
-     * @param {Error} error
-     * @param {Array} stacktrace
-     *
-     * @returns {Array} An array with two elements, [isInternal, friendlyStack]
-     *                 isInternal: a boolean value indicating whether the error
-     *                             happened internally
-     *                 friendlyStack: the filtered (simplified) stacktrace
-     */
-    const processStack = (error, stacktrace) => {
-      // cannot process a stacktrace that doesn't exist
-      if (!stacktrace) return [false, null];
-
-      stacktrace.forEach(frame => {
-        frame.functionName = frame.functionName || '';
-      });
-
-      // isInternal - Did this error happen inside the library
-      let isInternal = false;
-      let p5FileName, friendlyStack, currentEntryPoint;
-
-      // Intentionally throw an error that we catch so that we can check the name
-      // of the current file. Any errors we see from this file, we treat as
-      // internal errors.
-      try {
-        throw new Error();
-      } catch (testError) {
-        const testStacktrace = getErrorStackParser().parse(testError);
-        p5FileName = testStacktrace[0].fileName;
-      }
-
-      for (let i = stacktrace.length - 1; i >= 0; i--) {
-        let splitted = stacktrace[i].functionName.split('.');
-        if (entryPoints.includes(splitted[splitted.length - 1])) {
-          // remove everything below an entry point function (setup, draw, etc).
-          // (it's usually the internal initialization calls)
-          friendlyStack = stacktrace.slice(0, i + 1);
-          currentEntryPoint = splitted[splitted.length - 1];
-          // We call the error "internal" if the source of the error was a
-          // function from within the p5.js library file, but called from the
-          // user's code directly. We only need to check the topmost frame in
-          // the stack trace since any function internal to p5 should pass this
-          // check, not just public p5 functions.
-          if (stacktrace[0].fileName === p5FileName) {
-            isInternal = true;
-            break;
-          }
-          break;
-        }
-      }
-
-      // in some cases ( errors in promises, callbacks, etc), no entry-point
-      // function may be found in the stacktrace. In that case just use the
-      // entire stacktrace for friendlyStack
-      if (!friendlyStack) friendlyStack = stacktrace;
-
-      if (isInternal) {
-        // the frameIndex property is added before the filter, so frameIndex
-        // corresponds to the index of a frame in the original stacktrace.
-        // Then we filter out all frames which belong to the file that contains
-        // the p5 library
-        friendlyStack = friendlyStack
-          .map((frame, index) => {
-            frame.frameIndex = index;
-            return frame;
-          })
-          .filter(frame => frame.fileName !== p5FileName);
-
-        // a weird case, if for some reason we can't identify the function called
-        // from user's code
-        if (friendlyStack.length === 0) return [true, null];
-
-        // get the function just above the topmost frame in the friendlyStack.
-        // i.e the name of the library function called from user's code
-        const func = stacktrace[friendlyStack[0].frameIndex - 1].functionName
-          .split('.')
-          .slice(-1)[0];
-
-        // Try and get the location (line no.) from the top element of the stack
-        let locationObj;
-        if (
-          friendlyStack[0].fileName &&
-          friendlyStack[0].lineNumber &&
-          friendlyStack[0].columnNumber
-        ) {
-          locationObj = {
-            location: `${friendlyStack[0].fileName}:${
-              friendlyStack[0].lineNumber
-            }:${friendlyStack[0].columnNumber}`,
-            file: friendlyStack[0].fileName.split('/').slice(-1),
-            line: friendlyStack[0].lineNumber
-          };
-
-          // if already handled by another part of the FES, don't handle again
-          if (p5._fesLogCache[locationObj.location]) return [true, null];
-        }
-
-        // Check if the error is due to a non loadX method being used incorrectly
-        // in preload
-        if (
-          currentEntryPoint === 'preload' &&
-          fn._preloadMethods[func] == null
-        ) {
-          // TODO: we don't need this anymore
-          const message = TL.tl`${locationObj ? TL.tl`[${locationObj.file}, line ${locationObj.line}]` : ''} An error with message "${error.message}" occurred inside the p5.js library when "${func}" was called. If not stated otherwise, it might be due to "${func}" being called from preload. Nothing besides load calls (loadImage, loadJSON, loadFont, loadStrings, etc.) should be inside the preload function.`;
-          p5._friendlyError(
-            message,
-            'preload'
-          );
-        } else {
-          // Library error
-          const message = TL.tl`${locationObj ? TL.tl`[${locationObj.file}, line ${locationObj.line}]` : ''} An error with message "${error.message}" occurred inside the p5js library when ${func} was called. If not stated otherwise, it might be an issue with the arguments passed to ${func}.`;
-          p5._friendlyError(
-            message,
-            func
-          );
-        }
-
-        // Finally, if it's an internal error, print the friendlyStack
-        // ( fesErrorMonitor won't handle this error )
-        if (friendlyStack && friendlyStack.length) {
-          printFriendlyStack(friendlyStack);
-        }
-      }
-      return [isInternal, friendlyStack];
-    };
-
-    /**
      * Handles "global" errors that the browser catches.
      *
      * Called when an error event happens and detects the type of error.
@@ -575,10 +380,14 @@ function fesCore(p5, fn, lifecycles){
       }
       if (!error) return;
 
-      let stacktrace = getErrorStackParser().parse(error);
+      let stacktrace = errorStackParser.parse(error);
       // process the stacktrace from the browser and simplify it to give
       // friendlyStack.
-      let [isInternal, friendlyStack] = processStack(error, stacktrace);
+      let [isInternal, friendlyStack] = processStack(
+        error,
+        stacktrace,
+        entryPoints
+      );
 
       // if this is an internal library error, the type of the error is not relevant,
       // only the user code that lead to it is.
@@ -799,68 +608,13 @@ function fesCore(p5, fn, lifecycles){
       }
     };
 
-    p5._fesErrorMonitor = fesErrorMonitor;
     p5._checkForUserDefinedFunctions = checkForUserDefinedFunctions;
     p5._fesLogCache = {};
 
     window.addEventListener('load', checkForUserDefinedFunctions, false);
-    window.addEventListener('error', p5._fesErrorMonitor, false);
-    window.addEventListener('unhandledrejection', p5._fesErrorMonitor, false);
+    window.addEventListener('error', fesErrorMonitor, false);
+    window.addEventListener('unhandledrejection', fesErrorMonitor, false);
   }
-
-  // This is a lazily-defined list of p5 symbols that may be
-  // misused by beginners at top-level code, outside of setup/draw. We'd like
-  // to detect these errors and help the user by suggesting they move them
-  // into setup/draw.
-  //
-  // For more details, see https://github.com/processing/p5.js/issues/1121.
-  misusedAtTopLevelCode = null;
-  const FAQ_URL =
-    'https://github.com/processing/p5.js/wiki/p5.js-overview#why-cant-i-assign-variables-using-p5-functions-and-variables-before-setup';
-
-  /**
-   * A helper function for populating misusedAtTopLevel list.
-   *
-   * @method defineMisusedAtTopLevelCode
-   * @private
-   */
-  defineMisusedAtTopLevelCode = () => {
-    const uniqueNamesFound = {};
-    const getSymbols = obj =>
-      Object.getOwnPropertyNames(obj)
-        .filter(name => {
-          if (name[0] === '_') {
-            return false;
-          }
-          if (name in uniqueNamesFound) {
-            return false;
-          }
-
-          uniqueNamesFound[name] = true;
-
-          return true;
-        })
-        .map(name => {
-          let type;
-
-          if (typeof obj[name] === 'function') {
-            type = 'function';
-          } else if (name === name.toUpperCase()) {
-            type = 'constant';
-          } else {
-            type = 'variable';
-          }
-
-          return { name, type };
-        });
-
-    misusedAtTopLevelCode = getSymbols(fn);
-
-    // This will ultimately ensure that we report the most specific error
-    // possible to the user, e.g. advising them about HALF_PI instead of PI
-    // when their code misuses the former.
-    misusedAtTopLevelCode.sort((a, b) => b.name.length - a.name.length);
-  };
 
   /**
    * Detects browser level error event for p5 constants/functions used outside
@@ -876,7 +630,7 @@ function fesCore(p5, fn, lifecycles){
    *
    * @returns {Boolean} true
    */
-  const helpForMisusedAtTopLevelCode = () => {
+  const helpForMisusedAtTopLevelCode = e => {
     if (!misusedAtTopLevelCode) {
       defineMisusedAtTopLevelCode();
     }
@@ -903,8 +657,9 @@ function fesCore(p5, fn, lifecycles){
       //   * 'PI' is undefined                           (Microsoft Edge)
       //   * ReferenceError: PI is undefined             (Firefox)
       //   * Uncaught ReferenceError: PI is not defined  (Chrome)
-
       if (e.message && e.message.match(`\\W?${symbol.name}\\W`) !== null) {
+        const FAQ_URL =
+          'https://github.com/processing/p5.js/wiki/p5.js-overview#why-cant-i-assign-variables-using-p5-functions-and-variables-before-setup';
         const symbolName =
           symbol.type === 'function' ? `${symbol.name}()` : symbol.name;
         FES.log(
