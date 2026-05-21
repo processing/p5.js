@@ -71,7 +71,7 @@ function noise(p5, fn){
    * @param  {Number} [z] z-coordinate in noise space.
    * @return {Number}     Perlin noise value at specified coordinates.
    *
-   * @example
+  * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -89,8 +89,9 @@ function noise(p5, fn){
    *   strokeWeight(5);
    *   point(x, y);
    * }
+  * ```
    *
-   * @example
+  * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -115,8 +116,9 @@ function noise(p5, fn){
    *   strokeWeight(5);
    *   point(x, y);
    * }
+  * ```
    *
-   * @example
+  * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -138,8 +140,9 @@ function noise(p5, fn){
    *   // Draw the line.
    *   line(x, 0, x, y);
    * }
+  * ```
    *
-   * @example
+  * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -166,8 +169,9 @@ function noise(p5, fn){
    *     line(x, 0, x, y);
    *   }
    * }
+  * ```
    *
-   * @example
+  * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -196,8 +200,9 @@ function noise(p5, fn){
    *
    *   describe('A gray cloudy pattern.');
    * }
+  * ```
    *
-   * @example
+  * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -227,6 +232,7 @@ function noise(p5, fn){
    *     }
    *   }
    * }
+  * ```
    *
    * `noise()` can also be used in shaders with p5.strands, where it returns
    * values in the range 0 to 1. The following example uses `noise()` to create
