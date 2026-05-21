@@ -101,11 +101,7 @@ function trigonometry(p5, fn){
    * <a href="#/p5/angleMode">angleMode()</a> is `DEGREES`, then values are
    * returned in the range 0 to 180.
    *
-   * @method acos
-   * @param  {Number} value value whose arc cosine is to be returned.
-   * @return {Number}       arc cosine of the given value.
-   *
-   * @example
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -123,8 +119,9 @@ function trigonometry(p5, fn){
    *
    *   describe('The numbers 3.142, -1, and 3.142 written on separate rows.');
    * }
+   * ```
    *
-   * @example
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -142,11 +139,12 @@ function trigonometry(p5, fn){
    *
    *   describe('The numbers 3.927, -0.707, and 2.356 written on separate rows.');
    * }
+   * ```
    *
    * `acos()` can also be used in shaders with p5.strands. The following example
    * uses `acos()` to create a pulsing color transition on a shape.
    *
-   * @example
+   * ```js example
    * let myShader;
    *
    * function setup() {
@@ -156,12 +154,23 @@ function trigonometry(p5, fn){
    * }
    *
    * function shaderCallback() {
+   *   // shaderCallback runs on the GPU. millis() gives ms since start; multiply by 0.001 for seconds.
    *   let t = millis() * 0.001;
+   *
+   *   // acos(cos(t)) creates a triangle wave that goes from 0 to PI and back.
+   *   // Dividing by PI normalizes the result to the 0 to 1 range.
    *   let value = acos(cos(t)) / PI;
+   *
+   *   // Each color is [R, G, B, A] with values from 0 to 1.
    *   let orange = [1, 0.5, 0, 1];
    *   let teal = [0, 0.8, 0.8, 1];
+   *
    *   finalColor.begin();
+   *
+   *   // mix() blends between orange (when value = 0) and teal (when value = 1).
+   *   // acos() creates a pulsing effect by turning smooth oscillation into a triangle wave.
    *   finalColor.set(mix(orange, teal, value));
+   *
    *   finalColor.end();
    * }
    *
@@ -171,6 +180,11 @@ function trigonometry(p5, fn){
    *   noStroke();
    *   sphere(30);
    * }
+   * ```
+   *
+   * @method acos
+   * @param  {Number} value value whose arc cosine is to be returned.
+   * @return {Number}       arc cosine of the given value.
    */
   fn.acos = function(ratio) {
     return this._fromRadians(Math.acos(ratio));
@@ -185,11 +199,7 @@ function trigonometry(p5, fn){
    * the <a href="#/p5/angleMode">angleMode()</a> is `DEGREES` then values are
    * returned in the range -90 to 90.
    *
-   * @method asin
-   * @param  {Number} value value whose arc sine is to be returned.
-   * @return {Number}       arc sine of the given value.
-   *
-   * @example
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -207,8 +217,9 @@ function trigonometry(p5, fn){
    *
    *   describe('The numbers 1.047, 0.866, and 1.047 written on separate rows.');
    * }
+   * ```
    *
-   * @example
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -226,26 +237,38 @@ function trigonometry(p5, fn){
    *
    *   describe('The numbers 4.189, -0.866, and -1.047 written on separate rows.');
    * }
+   * ```
    *
    * `asin()` can also be used in shaders with p5.strands. The following example
    * uses `asin()` to create a smooth color transition on a shape.
    *
-   * @example
+   * ```js example
    * let myShader;
    *
    * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *   myShader = buildColorShader(shaderCallback);
-   *   describe('A sphere with a green to purple gradient.');
+   *   describe('A sphere that smoothly shifts between green and purple.');
    * }
    *
    * function shaderCallback() {
+   *   // shaderCallback runs on the GPU. millis() gives ms since start; multiply by 0.001 for seconds.
    *   let t = millis() * 0.001;
+   *
+   *   // asin(sin(t)) returns a value between -PI/2 and PI/2.
+   *   // Dividing by PI/2 normalizes to -1 to 1, then adding 1 and multiplying by 0.5
+   *   // remaps to the 0 to 1 range.
    *   let value = (asin(sin(t)) / (PI / 2) + 1) * 0.5;
+   *
+   *   // Each color is [R, G, B, A] with values from 0 to 1.
    *   let green = [0, 1, 0.5, 1];
    *   let purple = [0.5, 0, 1, 1];
+   *
    *   finalColor.begin();
+   *
+   *   // mix() blends between green (when value = 0) and purple (when value = 1).
    *   finalColor.set(mix(green, purple, value));
+   *
    *   finalColor.end();
    * }
    *
@@ -255,6 +278,11 @@ function trigonometry(p5, fn){
    *   noStroke();
    *   sphere(30);
    * }
+   * ```
+   *
+   * @method asin
+   * @param  {Number} value value whose arc sine is to be returned.
+   * @return {Number}       arc sine of the given value.
    */
   fn.asin = function(ratio) {
     return this._fromRadians(Math.asin(ratio));
@@ -269,11 +297,7 @@ function trigonometry(p5, fn){
    * (about 1.57). If the <a href="#/p5/angleMode">angleMode()</a> is `DEGREES`
    * then values are returned in the range -90 to 90.
    *
-   * @method atan
-   * @param  {Number} value value whose arc tangent is to be returned.
-   * @return {Number}       arc tangent of the given value.
-   *
-   * @example
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -291,8 +315,9 @@ function trigonometry(p5, fn){
    *
    *   describe('The numbers 1.047, 1.732, and 1.047 written on separate rows.');
    * }
+   * ```
    *
-   * @example
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -310,26 +335,41 @@ function trigonometry(p5, fn){
    *
    *   describe('The numbers 4.189, 1.732, and 1.047 written on separate rows.');
    * }
+   * ```
    *
    * `atan()` can also be used in shaders with p5.strands. The following example
-   * uses `atan()` to create a color effect based on an angle.
+   * uses `atan()` to create a soft color transition on a shape.
    *
-   * @example
+   * ```js example
    * let myShader;
    *
    * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *   myShader = buildColorShader(shaderCallback);
-   *   describe('A sphere whose color shifts with a sawtooth pattern.');
+   *   describe('A sphere that softly shifts between pink and lime.');
    * }
    *
    * function shaderCallback() {
-   *   let t = millis() * 0.001;
-   *   let value = (atan(t) + PI / 2) / PI;
+   *   // shaderCallback runs on the GPU. millis() gives ms since start; multiply by 0.001 for seconds.
+   *   // sin() oscillates the input between -5 and 5, so atan() gets both positive and negative values.
+   *   let t = sin(millis() * 0.001) * 5;
+   *
+   *   // atan(t) returns values between -PI/2 and PI/2.
+   *   // Dividing by PI/2 normalizes to -1 to 1, then adding 1 and multiplying by 0.5
+   *   // remaps to the 0 to 1 range.
+   *   // atan() compresses the wide range of t into a smooth S-curve (soft clipping).
+   *   let value = (atan(t) / (PI / 2) + 1) * 0.5;
+   *
+   *   // Each color is [R, G, B, A] with values from 0 to 1.
    *   let pink = [1, 0, 0.5, 1];
    *   let lime = [0.5, 1, 0, 1];
+   *
    *   finalColor.begin();
+   *
+   *   // mix() blends between pink (when value = 0) and lime (when value = 1).
+   *   // atan() creates a soft, eased transition instead of a linear blend.
    *   finalColor.set(mix(pink, lime, value));
+   *
    *   finalColor.end();
    * }
    *
@@ -339,6 +379,11 @@ function trigonometry(p5, fn){
    *   noStroke();
    *   sphere(30);
    * }
+   * ```
+   *
+   * @method atan
+   * @param  {Number} value value whose arc tangent is to be returned.
+   * @return {Number}       arc tangent of the given value.
    */
   fn.atan = function(ratio) {
     return this._fromRadians(Math.atan(ratio));
@@ -422,11 +467,7 @@ function trigonometry(p5, fn){
    * calculates the cosine of an angle, using radians by default, or according
    * to if <a href="#/p5/angleMode">angleMode()</a> setting (RADIANS or DEGREES).
    *
-   * @method cos
-   * @param  {Number} angle the angle, in radians by default, or according to if <a href="/reference/p5/angleMode/">angleMode()</a> setting (RADIANS or DEGREES).
-   * @return {Number}       cosine of the angle.
-   *
-   * @example
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -444,8 +485,9 @@ function trigonometry(p5, fn){
    *   line(50, y, x, y);
    *   circle(x, y, 20);
    * }
+   * ```
    *
-   * @example
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -462,8 +504,9 @@ function trigonometry(p5, fn){
    *   // Draw the point.
    *   point(x, y);
    * }
+   * ```
    *
-   * @example
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -480,11 +523,12 @@ function trigonometry(p5, fn){
    *   // Draw the point.
    *   point(x, y);
    * }
+   * ```
    *
    * `cos()` can also be used in shaders with p5.strands. The following example
    * uses `cos()` to smoothly oscillate the color of a shape over time.
    *
-   * @example
+   * ```js example
    * let myShader;
    *
    * function setup() {
@@ -494,12 +538,22 @@ function trigonometry(p5, fn){
    * }
    *
    * function shaderCallback() {
+   *   // shaderCallback runs on the GPU. millis() gives ms since start; multiply by 0.001 for seconds.
    *   let t = millis() * 0.001;
+   *
+   *   // cos(t) oscillates between -1 and 1.
+   *   // 0.5 + 0.5 * cos(t) remaps this to the 0 to 1 range.
    *   let value = 0.5 + 0.5 * cos(t);
+   *
+   *   // Each color is [R, G, B, A] with values from 0 to 1.
    *   let yellow = [1, 1, 0, 1];
    *   let blue = [0, 0, 1, 1];
+   *
    *   finalColor.begin();
+   *
+   *   // mix() blends between yellow (when value = 0) and blue (when value = 1).
    *   finalColor.set(mix(yellow, blue, value));
+   *
    *   finalColor.end();
    * }
    *
@@ -509,6 +563,11 @@ function trigonometry(p5, fn){
    *   noStroke();
    *   sphere(30);
    * }
+   * ```
+   *
+   * @method cos
+   * @param  {Number} angle the angle, in radians by default, or according to if <a href="/reference/p5/angleMode/">angleMode()</a> setting (RADIANS or DEGREES).
+   * @return {Number}       cosine of the angle.
    */
   fn.cos = function(angle) {
     return Math.cos(this._toRadians(angle));
@@ -522,11 +581,7 @@ function trigonometry(p5, fn){
    * calculates the sine of an angle, using radians by default, or according to
    * if <a href="#/p5/angleMode">angleMode()</a> setting (RADIANS or DEGREES).
    *
-   * @method sin
-   * @param  {Number} angle the angle, in radians by default, or according to if <a href="/reference/p5/angleMode/">angleMode()</a> setting (RADIANS or DEGREES).
-   * @return {Number}       sine of the angle.
-   *
-   * @example
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -544,8 +599,9 @@ function trigonometry(p5, fn){
    *   line(50, y, x, y);
    *   circle(x, y, 20);
    * }
+   * ```
    *
-   * @example
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -562,8 +618,9 @@ function trigonometry(p5, fn){
    *   // Draw the point.
    *   point(x, y);
    * }
+   * ```
    *
-   * @example
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -580,11 +637,12 @@ function trigonometry(p5, fn){
    *   // Draw the point.
    *   point(x, y);
    * }
+   * ```
    *
    * `sin()` can also be used in shaders with p5.strands. The following example
    * uses `sin()` to oscillate the color of a shape over time.
    *
-   * @example
+   * ```js example
    * let myShader;
    *
    * function setup() {
@@ -594,12 +652,22 @@ function trigonometry(p5, fn){
    * }
    *
    * function shaderCallback() {
+   *   // shaderCallback runs on the GPU. millis() gives ms since start; multiply by 0.001 for seconds.
    *   let t = millis() * 0.001;
+   *
+   *   // sin(t) oscillates between -1 and 1.
+   *   // 0.5 + 0.5 * sin(t) remaps this to the 0 to 1 range.
    *   let value = 0.5 + 0.5 * sin(t);
+   *
+   *   // Each color is [R, G, B, A] with values from 0 to 1.
    *   let cyan = [0, 1, 1, 1];
    *   let magenta = [1, 0, 1, 1];
+   *
    *   finalColor.begin();
+   *
+   *   // mix() blends between cyan (when value = 0) and magenta (when value = 1).
    *   finalColor.set(mix(cyan, magenta, value));
+   *
    *   finalColor.end();
    * }
    *
@@ -609,6 +677,11 @@ function trigonometry(p5, fn){
    *   noStroke();
    *   sphere(30);
    * }
+   * ```
+   *
+   * @method sin
+   * @param  {Number} angle the angle, in radians by default, or according to if <a href="/reference/p5/angleMode/">angleMode()</a> setting (RADIANS or DEGREES).
+   * @return {Number}       sine of the angle.
    */
   fn.sin = function(angle) {
     return Math.sin(this._toRadians(angle));
@@ -623,11 +696,7 @@ function trigonometry(p5, fn){
    * by default, or according to
    * if <a href="#/p5/angleMode">angleMode()</a> setting (RADIANS or DEGREES).
    *
-   * @method tan
-   * @param  {Number} angle the angle, in radians by default, or according to if <a href="/reference/p5/angleMode/">angleMode()</a> setting (RADIANS or DEGREES).
-   * @return {Number}       tangent of the angle.
-   *
-   * @example
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -644,11 +713,12 @@ function trigonometry(p5, fn){
    *   // Draw the point.
    *   point(x, y);
    * }
+   * ```
    *
    * `tan()` can also be used in shaders with p5.strands. The following example
    * uses `tan()` to create rapid color transitions on a shape.
    *
-   * @example
+   * ```js example
    * let myShader;
    *
    * function setup() {
@@ -658,12 +728,24 @@ function trigonometry(p5, fn){
    * }
    *
    * function shaderCallback() {
+   *   // shaderCallback runs on the GPU. millis() gives ms since start; multiply by 0.0005 to slow it down.
    *   let t = millis() * 0.0005;
+   *
+   *   // tan(t) can grow to very large values (even infinity) at certain angles.
+   *   // 0.5 + 0.5 * tan(t) shifts the range but can still go way past 0 or 1.
+   *   // min(max(..., 0), 1) clamps the result to the 0 to 1 range.
    *   let value = min(max(0.5 + 0.5 * tan(t), 0), 1);
+   *
+   *   // Each color is [R, G, B, A] with values from 0 to 1.
    *   let orange = [1, 0.5, 0, 1];
    *   let blue = [0, 0.5, 1, 1];
+   *
    *   finalColor.begin();
+   *
+   *   // mix() blends between orange (when value = 0) and blue (when value = 1).
+   *   // tan() creates rapid, dramatic color shifts as it spikes and resets.
    *   finalColor.set(mix(orange, blue, value));
+   *
    *   finalColor.end();
    * }
    *
@@ -673,6 +755,11 @@ function trigonometry(p5, fn){
    *   noStroke();
    *   sphere(30);
    * }
+   * ```
+   *
+   * @method tan
+   * @param  {Number} angle the angle, in radians by default, or according to if <a href="/reference/p5/angleMode/">angleMode()</a> setting (RADIANS or DEGREES).
+   * @return {Number}       tangent of the angle.
    */
   fn.tan = function(angle) {
     return Math.tan(this._toRadians(angle));
@@ -688,11 +775,7 @@ function trigonometry(p5, fn){
    * quarter of a full rotation. The same angle is 2 &times; &pi; &divide; 4
    * (about 1.57) radians.
    *
-   * @method degrees
-   * @param  {Number} radians radians value to convert to degrees.
-   * @return {Number}         converted angle.
-   *
-   * @example
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -707,11 +790,12 @@ function trigonometry(p5, fn){
    *
    *   describe('The text "0.79 rad = 45˚".');
    * }
+   * ```
    *
    * `degrees()` can also be used in shaders with p5.strands. The following example
    * uses `degrees()` to convert a radian value to degrees inside a shader.
    *
-   * @example
+   * ```js example
    * let myShader;
    *
    * function setup() {
@@ -721,13 +805,25 @@ function trigonometry(p5, fn){
    * }
    *
    * function shaderCallback() {
+   *   // shaderCallback runs on the GPU. millis() gives ms since start; multiply by 0.001 for seconds.
    *   let t = millis() * 0.001;
+   *
+   *   // degrees() converts the radian value t to degrees.
+   *   // (deg % 360) wraps the degrees into a 0-360 range.
+   *   // Dividing by 360 normalizes to the 0 to 1 range.
    *   let deg = degrees(t);
    *   let value = (deg % 360) / 360;
+   *
+   *   // Each color is [R, G, B, A] with values from 0 to 1.
    *   let red = [1, 0, 0, 1];
    *   let yellow = [1, 1, 0, 1];
+   *
    *   finalColor.begin();
+   *
+   *   // mix() blends between red (when value = 0) and yellow (when value = 1).
+   *   // degrees() creates a cycling sawtooth pattern as time increases.
    *   finalColor.set(mix(red, yellow, value));
+   *
    *   finalColor.end();
    * }
    *
@@ -737,6 +833,11 @@ function trigonometry(p5, fn){
    *   noStroke();
    *   sphere(30);
    * }
+   * ```
+   *
+   * @method degrees
+   * @param  {Number} radians radians value to convert to degrees.
+   * @return {Number}         converted angle.
    */
   fn.degrees = angle => angle * constants.RAD_TO_DEG;
 
@@ -750,11 +851,7 @@ function trigonometry(p5, fn){
    * quarter of a full rotation. The same angle is 2 &times; &pi; &divide; 4
    * (about 1.57) radians.
    *
-   * @method radians
-   * @param  {Number} degrees degree value to convert to radians.
-   * @return {Number}         converted angle.
-   *
-   * @example
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -769,11 +866,12 @@ function trigonometry(p5, fn){
    *
    *   describe('The text "45˚ = 0.785 rad".');
    * }
+   * ```
    *
    * `radians()` can also be used in shaders with p5.strands. The following example
    * uses `radians()` to convert degrees to radians inside a shader.
    *
-   * @example
+   * ```js example
    * let myShader;
    *
    * function setup() {
@@ -783,13 +881,27 @@ function trigonometry(p5, fn){
    * }
    *
    * function shaderCallback() {
+   *   // shaderCallback runs on the GPU. millis() gives ms since start.
+   *   // Multiply by 0.05 and mod 360 to cycle through 0-360 degrees over time.
    *   let deg = (millis() * 0.05) % 360;
+   *
+   *   // radians() converts degrees to radians so sin() can use them.
    *   let rad = radians(deg);
+   *
+   *   // sin(rad) oscillates between -1 and 1.
+   *   // 0.5 + 0.5 * sin(rad) remaps this to the 0 to 1 range.
    *   let value = 0.5 + 0.5 * sin(rad);
+   *
+   *   // Each color is [R, G, B, A] with values from 0 to 1.
    *   let red = [1, 0, 0, 1];
    *   let white = [1, 1, 1, 1];
+   *
    *   finalColor.begin();
+   *
+   *   // mix() blends between red (when value = 0) and white (when value = 1).
+   *   // radians() converts the degree input so sin() can produce smooth oscillation.
    *   finalColor.set(mix(red, white, value));
+   *
    *   finalColor.end();
    * }
    *
@@ -799,6 +911,11 @@ function trigonometry(p5, fn){
    *   noStroke();
    *   sphere(30);
    * }
+   * ```
+   *
+   * @method radians
+   * @param  {Number} degrees degree value to convert to radians.
+   * @return {Number}         converted angle.
    */
   fn.radians = angle => angle * constants.DEG_TO_RAD;
 
