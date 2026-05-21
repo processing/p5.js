@@ -181,7 +181,7 @@ function rendererWebGPU(p5, fn) {
      * Copies data from the GPU to the CPU using a temporary buffer,
      * so it must be awaited. Returns a `Float32Array` for number
      * buffers, or an array of plain objects for struct buffers.
-     * 
+     *
      * Note: This is a GPU -> CPU read, so calling it often (like every frame)
      * can be slow.
      *
@@ -4027,7 +4027,7 @@ ${hookUniformFields}}
           baseComputeShader,
           {
             compute: {
-              'void iteration': '(index: vec3<i32>) {}',
+              'void computeIteration': '(inputs: ComputeInputs) {}',
             },
           }
         );
