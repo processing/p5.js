@@ -71,7 +71,11 @@ function noise(p5, fn){
    * @param  {Number} [z] z-coordinate in noise space.
    * @return {Number}     Perlin noise value at specified coordinates.
    *
-  * ```js example
+   * `noise()` can also be used in shaders with p5.strands, where it returns
+   * values in the range 0 to 1. One of the examples below uses `noise()` to
+   * create a cloud-like texture effect in a filter shader.
+   *
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -89,9 +93,8 @@ function noise(p5, fn){
    *   strokeWeight(5);
    *   point(x, y);
    * }
-  * ```
    *
-  * ```js example
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -116,9 +119,8 @@ function noise(p5, fn){
    *   strokeWeight(5);
    *   point(x, y);
    * }
-  * ```
    *
-  * ```js example
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -140,9 +142,8 @@ function noise(p5, fn){
    *   // Draw the line.
    *   line(x, 0, x, y);
    * }
-  * ```
    *
-  * ```js example
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -169,9 +170,8 @@ function noise(p5, fn){
    *     line(x, 0, x, y);
    *   }
    * }
-  * ```
    *
-  * ```js example
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -200,9 +200,8 @@ function noise(p5, fn){
    *
    *   describe('A gray cloudy pattern.');
    * }
-  * ```
    *
-  * ```js example
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -232,13 +231,8 @@ function noise(p5, fn){
    *     }
    *   }
    * }
-  * ```
    *
-   * `noise()` can also be used in shaders with p5.strands, where it returns
-   * values in the range 0 to 1. The following example uses `noise()` to create
-   * a cloud-like texture effect in a filter shader.
-   *
-   * ```js example
+   * @example
    * let myFilter;
    *
    * function setup() {
@@ -262,7 +256,6 @@ function noise(p5, fn){
    * function draw() {
    *   filter(myFilter);
    * }
-   * ```
    */
   fn.noise = function(x, y = 0, z = 0) {
     if (perlin == null) {
