@@ -181,6 +181,7 @@ export const glslBackend = {
   getRandomVertexShaderSnippet() {
     return randomVertGLSL;
   },
+  
   getTypeName(baseType, dimension) {
     const primitiveTypeName = TypeNames[baseType + dimension]
     if (!primitiveTypeName) {

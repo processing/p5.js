@@ -400,6 +400,44 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
     });
     return createStrandsNode(id, dimension, strandsContext);
   });
+  augmentFn(fn, p5, 'paletteLerp', function(colorsNode, positionsNode, tNode) {
+    if (!strandsContext.active) return;
+
+    const n = colorsNode.length;
+
+    // Wrap raw values into StrandsNodes
+    const colors = colorsNode.map(c => p5.strandsNode(c));
+    const positions = positionsNode.map(p => p5.strandsNode(p));
+    const t = p5.strandsNode(tNode);
+
+    // Helper: mix(a, b, clamp((t - pa) / (pb - pa), 0, 1))
+    function segmentLerp(ca, cb, pa, pb) {
+      const zero = p5.strandsNode(0.0);
+      const one  = p5.strandsNode(1.0);
+      const num  = t.sub(pa);
+      const den  = pb.sub(pa);
+      const localT = num.div(den).clamp(zero, one);
+      return buildTernary(
+        strandsContext,
+        pa.equalTo(pb),   // guard: pa == pb → return midpoint
+        ca.mix(cb, p5.strandsNode(0.5)),
+        ca.mix(cb, localT)
+      );
+    }
+
+    // Build nested ternary chain from right to left:
+    // t >= p[last] ? c[last] : (t < p[n-1] ? seg(n-2,n-1) : (...))
+    let result = colors[n - 1];
+    for (let i = n - 2; i >= 0; i--) {
+      const seg = segmentLerp(colors[i], colors[i + 1], positions[i], positions[i + 1]);
+      result = buildTernary(strandsContext, t.lessThan(positions[i + 1]), seg, result);
+    }
+    // Clamp edges
+    result = buildTernary(strandsContext, t.greaterEqual(positions[n - 1]), colors[n - 1], result);
+    result = buildTernary(strandsContext, t.lessEqual(positions[0]), colors[0], result);
+
+    return result;
+  });
 
   strandsContext._randomSeed = null;
 
