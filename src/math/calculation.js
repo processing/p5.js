@@ -12,11 +12,7 @@ function calculation(p5, fn){
    * -5 and 5 are both five units away from zero, so calling `abs(-5)` and
    * `abs(5)` both return 5. The absolute value of a number is always positive.
    *
-   * @method abs
-   * @param  {Number} n number to compute.
-   * @return {Number}   absolute value of given number.
-   *
-   * @example
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -36,11 +32,12 @@ function calculation(p5, fn){
    *   // from the middle.
    *   rect(0, 100 - h, 100, h);
    * }
+   * ```
    *
    * `abs()` can also be used in shaders with p5.strands. The following example
    * uses `abs()` to create a mirror effect on the color of a shape.
    *
-   * @example
+   * ```js example
    * let myShader;
    *
    * function setup() {
@@ -50,12 +47,25 @@ function calculation(p5, fn){
    * }
    *
    * function shaderCallback() {
+   *   // shaderCallback runs on the GPU. millis() gives ms since start; multiply by 0.001 for seconds.
    *   let t = millis() * 0.001;
-   *   let value = abs(sin(t));
+   *
+   *   // sin(t) goes between -1 and 1 over time.
+   *   let sinVal = sin(t);
+   *
+   *   // abs() folds the negative values to positive.
+   *   // Now value goes between 0 and 1, creating a mirror effect.
+   *   let value = abs(sinVal);
+   *
+   *   // Each color is [R, G, B, A] with values from 0 to 1.
    *   let navy = [0.2, 0.2, 0.8, 1];
    *   let coral = [0.8, 0.2, 0.2, 1];
+   *
    *   finalColor.begin();
+   *
+   *   // mix() blends between navy (when value = 0) and coral (when value = 1).
    *   finalColor.set(mix(navy, coral, value));
+   *
    *   finalColor.end();
    * }
    *
@@ -65,6 +75,12 @@ function calculation(p5, fn){
    *   noStroke();
    *   sphere(30);
    * }
+   * ```
+   *
+   * @method abs
+   * @param  {Number} n number to compute.
+   * @return {Number}   absolute value of given number.
+   *
    */
   fn.abs = Math.abs;
 
@@ -75,11 +91,7 @@ function calculation(p5, fn){
    * For example, calling `ceil(9.03)` and `ceil(9.97)` both return the value
    * 10.
    *
-   * @method ceil
-   * @param  {Number} n number to round up.
-   * @return {Integer}   rounded up number.
-   *
-   * @example
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -104,11 +116,12 @@ function calculation(p5, fn){
    *
    *   describe('Two rectangles. The one on the left is dark red and the one on the right is bright red.');
    * }
+   * ```
    *
    * `ceil()` can also be used in shaders with p5.strands. The following example
    * uses `ceil()` to create a stepped color effect on a shape.
    *
-   * @example
+   * ```js example
    * let myShader;
    *
    * function setup() {
@@ -118,11 +131,28 @@ function calculation(p5, fn){
    * }
    *
    * function shaderCallback() {
+   *   // shaderCallback runs on the GPU. millis() gives ms since start; multiply by 0.001 for seconds.
    *   let t = millis() * 0.001;
-   *   let steps = ceil(t * 2) / 2;
-   *   let value = fract(steps);
+   *
+   *   // sin(t) goes between -1 and 1.
+   *   // 0.5 + 0.5 * sin(t) remaps this to the 0 to 1 range.
+   *   let sinVal = 0.5 + 0.5 * sin(t);
+   *
+   *   // Multiply by 4 then ceil to get the next whole number up.
+   *   // Divide by 4 to bring the result back to the 0 to 1 range.
+   *   // This creates 4 distinct stepped color levels: 0.25, 0.5, 0.75, 1.
+   *   let value = ceil(sinVal * 4) / 4;
+   *
+   *   // Each color is [R, G, B, A] with values from 0 to 1.
+   *   let cyan = [0, 0.5, 1, 1];
+   *   let orange = [1, 0.5, 0, 1];
+   *
    *   finalColor.begin();
-   *   finalColor.set([value, 0.5, 1 - value, 1]);
+   *
+   *   // mix() blends between cyan (when value = 0) and orange (when value = 1).
+   *   // ceil() creates sharp steps between color levels.
+   *   finalColor.set(mix(cyan, orange, value));
+   *
    *   finalColor.end();
    * }
    *
@@ -132,6 +162,11 @@ function calculation(p5, fn){
    *   noStroke();
    *   sphere(30);
    * }
+   * ```
+   *
+   * @method ceil
+   * @param  {Number} n number to round up.
+   * @return {Integer}   rounded up number.
    */
   fn.ceil = Math.ceil;
 
@@ -269,11 +304,7 @@ function calculation(p5, fn){
    * Calculates the value of Euler's number e (2.71828...) raised to the power
    * of a number.
    *
-   * @method exp
-   * @param  {Number} n exponent to raise.
-   * @return {Number}   e^n
-   *
-   * @example
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -297,8 +328,9 @@ function calculation(p5, fn){
    *
    *   describe('A series of circles that grow exponentially from top left to bottom right.');
    * }
+   * ```
    *
-   * @example
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -319,11 +351,12 @@ function calculation(p5, fn){
    *   // Draw a point.
    *   point(x, y);
    * }
+   * ```
    *
    * `exp()` can also be used in shaders with p5.strands. The following example
    * uses `exp()` to create an accelerating color transition on a shape.
    *
-   * @example
+   * ```js example
    * let myShader;
    *
    * function setup() {
@@ -333,12 +366,24 @@ function calculation(p5, fn){
    * }
    *
    * function shaderCallback() {
+   *   // shaderCallback runs on the GPU. millis() gives ms since start; multiply by 0.0005 to slow it.
    *   let t = millis() * 0.0005;
+   *
+   *   // exp(t) grows slowly at first, then accelerates (exponential growth).
+   *   // Multiply by 0.01 to keep it from growing too fast.
+   *   // min(..., 1) caps the value at 1 so it doesn't go past white.
    *   let value = min(exp(t) * 0.01, 1);
+   *
+   *   // Each color is [R, G, B, A] with values from 0 to 1.
    *   let darkBlue = [0.1, 0.1, 0.3, 1];
    *   let lightYellow = [1, 1, 0.5, 1];
+   *
    *   finalColor.begin();
+   *
+   *   // mix() blends between darkBlue (when value = 0) and lightYellow (when value = 1).
+   *   // Because exp() accelerates, the color transition gets faster over time.
    *   finalColor.set(mix(darkBlue, lightYellow, value));
+   *
    *   finalColor.end();
    * }
    *
@@ -348,6 +393,11 @@ function calculation(p5, fn){
    *   noStroke();
    *   sphere(30);
    * }
+   * ```
+   *
+   * @method exp
+   * @param  {Number} n exponent to raise.
+   * @return {Number}   e^n
    */
   fn.exp = Math.exp;
 
@@ -355,11 +405,7 @@ function calculation(p5, fn){
    * Calculates the closest integer value that is less than or equal to the
    * value of a number.
    *
-   * @method floor
-   * @param  {Number} n number to round down.
-   * @return {Integer}  rounded down number.
-   *
-   * @example
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -382,11 +428,12 @@ function calculation(p5, fn){
    *
    *   describe('Two rectangles. The one on the left is bright red and the one on the right is black.');
    * }
+   * ```
    *
    * `floor()` can also be used in shaders with p5.strands. The following example
    * uses `floor()` to create banding effects on a shape.
    *
-   * @example
+   * ```js example
    * let myShader;
    *
    * function setup() {
@@ -396,11 +443,28 @@ function calculation(p5, fn){
    * }
    *
    * function shaderCallback() {
+   *   // shaderCallback runs on the GPU. millis() gives ms since start; multiply by 0.001 for seconds.
    *   let t = millis() * 0.001;
-   *   let bands = floor(t * 5) / 5;
-   *   let value = fract(bands);
+   *
+   *   // sin(t) goes between -1 and 1.
+   *   // 0.5 + 0.5 * sin(t) remaps this to the 0 to 1 range.
+   *   let sinVal = 0.5 + 0.5 * sin(t);
+   *
+   *   // Multiply by 4 then floor to get the next whole number down.
+   *   // Divide by 4 to bring the result back to the 0 to 1 range.
+   *   // This creates 5 distinct stepped color levels: 0, 0.25, 0.5, 0.75, 1.
+   *   let value = floor(sinVal * 4) / 4;
+   *
+   *   // Each color is [R, G, B, A] with values from 0 to 1.
+   *   let darkPurple = [0.2, 0, 0.8, 1];
+   *   let brightTeal = [0.2, 1, 0.8, 1];
+   *
    *   finalColor.begin();
-   *   finalColor.set([0.2, value, 0.8, 1]);
+   *
+   *   // mix() blends between darkPurple (when value = 0) and brightTeal (when value = 1).
+   *   // The floor() creates visible banding/posterization in the color.
+   *   finalColor.set(mix(darkPurple, brightTeal, value));
+   *
    *   finalColor.end();
    * }
    *
@@ -410,6 +474,11 @@ function calculation(p5, fn){
    *   noStroke();
    *   sphere(30);
    * }
+   * ```
+   *
+   * @method floor
+   * @param  {Number} n number to round down.
+   * @return {Integer}  rounded down number.
    */
   fn.floor = Math.floor;
 
@@ -426,13 +495,7 @@ function calculation(p5, fn){
    * number outside of the original interval. For example, calling
    * `lerp(0, 10, 1.5)` will return 15.
    *
-   * @method lerp
-   * @param  {Number} start first value.
-   * @param  {Number} stop  second value.
-   * @param  {Number} amt   number.
-   * @return {Number}       lerped value.
-   *
-   * @example
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -460,8 +523,9 @@ function calculation(p5, fn){
    *
    *   describe('Five points in a horizontal line. The outer points are black and the inner points are gray.');
    * }
+   * ```
    *
-   * @example
+   * ```js example
    * let x = 50;
    * let y = 50;
    * let targetX = 50;
@@ -491,12 +555,13 @@ function calculation(p5, fn){
    *   x = mouseX;
    *   y = mouseY;
    * }
+   * ```
    *
    * `lerp()` can also be used in shaders with p5.strands, where it maps to the
-   * GLSL `mix()` function. The following example uses `lerp()` to blend colors
-   * on a shape over time.
+   * <a href="#/p5/mix">mix()</a> function in GLSL. The following example uses
+   * <a href="#/p5/mix">mix()</a> to blend colors on a shape over time.
    *
-   * @example
+   * ```js example
    * let myShader;
    *
    * function setup() {
@@ -506,12 +571,23 @@ function calculation(p5, fn){
    * }
    *
    * function shaderCallback() {
+   *   // shaderCallback runs on the GPU. millis() gives ms since start; multiply by 0.001 for seconds.
    *   let t = millis() * 0.001;
+   *
+   *   // sin(t) goes between -1 and 1 over time.
+   *   // 0.5 + 0.5 * sin(t) remaps this to the 0 to 1 range.
    *   let value = 0.5 + 0.5 * sin(t);
+   *
+   *   // Each color is [R, G, B, A] with values from 0 to 1.
    *   let teal = [0, 0.8, 0.8, 1];
    *   let coral = [1, 0.5, 0.3, 1];
+   *
    *   finalColor.begin();
-   *   finalColor.set(lerp(teal, coral, value));
+   *
+   *   // In p5.strands, lerp() maps to the GLSL mix() function.
+   *   // mix() blends teal (when value = 0) and coral (when value = 1).
+   *   finalColor.set(mix(teal, coral, value));
+   *
    *   finalColor.end();
    * }
    *
@@ -521,6 +597,13 @@ function calculation(p5, fn){
    *   noStroke();
    *   sphere(30);
    * }
+   * ```
+   *
+   * @method lerp
+   * @param  {Number} start first value.
+   * @param  {Number} stop  second value.
+   * @param  {Number} amt   number.
+   * @return {Number}       lerped value.
    */
   fn.lerp = function(start, stop, amt) {
     // p5._validateParameters('lerp', arguments);
@@ -533,11 +616,7 @@ function calculation(p5, fn){
    * `log()` expects the `n` parameter to be a value greater than 0 because
    * the natural logarithm is defined that way.
    *
-   * @method log
-   * @param  {Number} n number greater than 0.
-   * @return {Number}   natural logarithm of n.
-   *
-   * @example
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -553,8 +632,9 @@ function calculation(p5, fn){
    *
    *   describe('Two white circles. The circle at the top-left is small. The circle at the bottom-right is about five times larger.');
    * }
+   * ```
    *
-   * @example
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -575,11 +655,12 @@ function calculation(p5, fn){
    *   // Draw a point.
    *   point(x, y);
    * }
+   * ```
    *
    * `log()` can also be used in shaders with p5.strands. The following example
    * uses `log()` to create a decelerating color transition on a shape.
    *
-   * @example
+   * ```js example
    * let myShader;
    *
    * function setup() {
@@ -589,13 +670,26 @@ function calculation(p5, fn){
    * }
    *
    * function shaderCallback() {
+   *   // shaderCallback runs on the GPU. millis() gives ms since start; multiply by 0.001 for seconds.
    *   let t = millis() * 0.001;
+   *
+   *   // log(1 + t) grows quickly at first, then slows down over time.
+   *   // Add 1 so we never try log(0), which is undefined.
+   *   // Multiply by 0.2 to keep it in a usable range.
+   *   // min(..., 1) caps the value at 1.
    *   let value = log(1 + t) * 0.2;
    *   value = min(value, 1);
+   *
+   *   // Each color is [R, G, B, A] with values from 0 to 1.
    *   let purple = [0.5, 0, 0.5, 1];
    *   let yellow = [1, 1, 0, 1];
+   *
    *   finalColor.begin();
+   *
+   *   // mix() blends between purple (when value = 0) and yellow (when value = 1).
+   *   // Because log() slows down over time, the color transition decelerates.
    *   finalColor.set(mix(purple, yellow, value));
+   *
    *   finalColor.end();
    * }
    *
@@ -605,6 +699,11 @@ function calculation(p5, fn){
    *   noStroke();
    *   sphere(30);
    * }
+   * ```
+   *
+   * @method log
+   * @param  {Number} n number greater than 0.
+   * @return {Number}   natural logarithm of n.
    */
   fn.log = Math.log;
 
@@ -672,16 +771,7 @@ function calculation(p5, fn){
    * constrains the remapped value to the target range. For example,
    * `map(11, 0, 10, 0, 100, true)` returns 100.
    *
-   * @method map
-   * @param  {Number} value  the value to be remapped.
-   * @param  {Number} start1 lower bound of the value's current range.
-   * @param  {Number} stop1  upper bound of the value's current range.
-   * @param  {Number} start2 lower bound of the value's target range.
-   * @param  {Number} stop2  upper bound of the value's target range.
-   * @param  {Boolean} [withinBounds] constrain the value to the newly mapped range.
-   * @return {Number}        remapped number.
-   *
-   * @example
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -700,8 +790,9 @@ function calculation(p5, fn){
    *   // Draw the bottom line.
    *   line(0, 75, 0, x);
    * }
+   * ```
    *
-   * @example
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -720,24 +811,39 @@ function calculation(p5, fn){
    *   // Draw the circle.
    *   circle(50, 50, 20);
    * }
+   * ```
    *
    * `map()` can also be used in shaders with p5.strands. The following example
    * uses `map()` to remap time values to color in a shader.
    *
-   * @example
+   * ```js example
    * let myShader;
    *
    * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *   myShader = buildColorShader(shaderCallback);
-   *   describe('A sphere that cycles through hues over time.');
+   *   describe('A sphere that shifts between cyan and orange over time.');
    * }
    *
    * function shaderCallback() {
+   *   // shaderCallback runs on the GPU. millis() gives ms since start; multiply by 0.001 for seconds.
    *   let t = millis() * 0.001;
-   *   let value = map(sin(t), -1, 1, 0, 1);
+   *
+   *   // sin(t) goes between -1 and 1 over time.
+   *   let sinVal = sin(t);
+   *
+   *   // map() remaps this from the range [-1, 1] to the range [0, 1].
+   *   let value = map(sinVal, -1, 1, 0, 1);
+   *
+   *   // Each color is [R, G, B, A] with values from 0 to 1.
+   *   let cyan = [0, 0.5, 1, 1];
+   *   let orange = [1, 0.5, 0, 1];
+   *
    *   finalColor.begin();
-   *   finalColor.set([value, 0.5, 1 - value, 1]);
+   *
+   *   // mix() blends between cyan (when value = 0) and orange (when value = 1).
+   *   finalColor.set(mix(cyan, orange, value));
+   *
    *   finalColor.end();
    * }
    *
@@ -747,6 +853,16 @@ function calculation(p5, fn){
    *   noStroke();
    *   sphere(30);
    * }
+   * ```
+   *
+   * @method map
+   * @param  {Number} value  the value to be remapped.
+   * @param  {Number} start1 lower bound of the value's current range.
+   * @param  {Number} stop1  upper bound of the value's current range.
+   * @param  {Number} start2 lower bound of the value's target range.
+   * @param  {Number} stop2  upper bound of the value's target range.
+   * @param  {Boolean} [withinBounds] constrain the value to the newly mapped range.
+   * @return {Number}        remapped number.
    */
   fn.map = function(n, start1, stop1, start2, stop2, withinBounds) {
     // p5._validateParameters('map', arguments);
@@ -770,12 +886,7 @@ function calculation(p5, fn){
    * The version of `max()` with two or more parameters interprets them as
    * individual numbers and returns the largest number.
    *
-   * @method max
-   * @param  {Number} n0 first number to compare.
-   * @param  {Number} n1 second number to compare.
-   * @return {Number}             maximum number.
-   *
-   * @example
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -793,8 +904,9 @@ function calculation(p5, fn){
    *
    *   describe('The number 20 written in the middle of a gray square.');
    * }
+   * ```
    *
-   * @example
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -815,24 +927,38 @@ function calculation(p5, fn){
    *
    *   describe('The number 20 written in the middle of a gray square.');
    * }
+   * ```
    *
    * `max()` can also be used in shaders with p5.strands. The following example
    * uses `max()` to clamp values in a shader.
    *
-   * @example
+   * ```js example
    * let myShader;
    *
    * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *   myShader = buildColorShader(shaderCallback);
-   *   describe('A sphere with colors clamped to a minimum brightness.');
+   *   describe('A sphere that shifts from rose to steelBlue and stops.');
    * }
    *
    * function shaderCallback() {
+   *   // shaderCallback runs on the GPU. millis() gives ms since start; multiply by 0.001 for seconds.
    *   let t = millis() * 0.001;
-   *   let value = max(sin(t), 0);
+   *
+   *   // 1 - t * 0.2 decreases steadily over time.
+   *   // max(..., 0) ensures the value never goes below 0.
+   *   let value = max(1 - t * 0.2, 0);
+   *
+   *   // Each color is [R, G, B, A] with values from 0 to 1.
+   *   let steelBlue = [0, 0.3, 0.8, 1];
+   *   let rose = [1, 0.3, 0.8, 1];
+   *
    *   finalColor.begin();
-   *   finalColor.set([value, 0.3, 0.8, 1]);
+   *
+   *   // mix() blends between steelBlue (when value = 0) and rose (when value = 1).
+   *   // max() clamps the blend so the color stops changing once it reaches steelBlue.
+   *   finalColor.set(mix(steelBlue, rose, value));
+   *
    *   finalColor.end();
    * }
    *
@@ -842,6 +968,12 @@ function calculation(p5, fn){
    *   noStroke();
    *   sphere(30);
    * }
+   * ```
+   *
+   * @method max
+   * @param  {Number} n0 first number to compare.
+   * @param  {Number} n1 second number to compare.
+   * @return {Number}             maximum number.
    */
   /**
    * @method max
@@ -873,12 +1005,7 @@ function calculation(p5, fn){
    * The version of `min()` with two or more parameters interprets them as
    * individual numbers and returns the smallest number.
    *
-   * @method min
-   * @param  {Number} n0 first number to compare.
-   * @param  {Number} n1 second number to compare.
-   * @return {Number}             minimum number.
-   *
-   * @example
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -896,8 +1023,9 @@ function calculation(p5, fn){
    *
    *   describe('The number 5 written in the middle of a gray square.');
    * }
+   * ```
    *
-   * @example
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -918,24 +1046,38 @@ function calculation(p5, fn){
    *
    *   describe('The number 5 written in the middle of a gray square.');
    * }
+   * ```
    *
    * `min()` can also be used in shaders with p5.strands. The following example
    * uses `min()` to clamp values in a shader.
    *
-   * @example
+   * ```js example
    * let myShader;
    *
    * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *   myShader = buildColorShader(shaderCallback);
-   *   describe('A sphere with colors clamped to a maximum brightness.');
+   *   describe('A sphere that shifts from red to green and stops.');
    * }
    *
    * function shaderCallback() {
+   *   // shaderCallback runs on the GPU. millis() gives ms since start; multiply by 0.001 for seconds.
    *   let t = millis() * 0.001;
-   *   let value = min(abs(sin(t)), 0.5) * 2;
+   *
+   *   // t * 0.2 grows steadily over time.
+   *   // min(..., 1) caps the value at 1 so it doesn't go past the target color.
+   *   let value = min(t * 0.2, 1);
+   *
+   *   // Each color is [R, G, B, A] with values from 0 to 1.
+   *   let deepRed = [0.8, 0, 0.2, 1];
+   *   let yellowGreen = [0.8, 1, 0.2, 1];
+   *
    *   finalColor.begin();
-   *   finalColor.set([0.8, value, 0.2, 1]);
+   *
+   *   // mix() blends between deepRed (when value = 0) and yellowGreen (when value = 1).
+   *   // min() clamps the blend so the color stops changing once it reaches yellowGreen.
+   *   finalColor.set(mix(deepRed, yellowGreen, value));
+   *
    *   finalColor.end();
    * }
    *
@@ -945,6 +1087,12 @@ function calculation(p5, fn){
    *   noStroke();
    *   sphere(30);
    * }
+   * ```
+   *
+   * @method min
+   * @param  {Number} n0 first number to compare.
+   * @param  {Number} n1 second number to compare.
+   * @return {Number}             minimum number.
    */
   /**
    * @method min
@@ -1013,12 +1161,7 @@ function calculation(p5, fn){
    * 2 &times; 2 &times; 2. `pow(2, -3)` evaluates 1 &#247;
    * (2 &times; 2 &times; 2).
    *
-   * @method pow
-   * @param  {Number} n base of the exponential expression.
-   * @param  {Number} e power by which to raise the base.
-   * @return {Number}   n^e.
-   *
-   * @example
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1045,11 +1188,12 @@ function calculation(p5, fn){
    *
    *   describe('A series of circles that grow exponentially from top left to bottom right.');
    * }
+   * ```
    *
    * `pow()` can also be used in shaders with p5.strands. The following example
    * uses `pow()` to create a gamma curve effect on colors in a shader.
    *
-   * @example
+   * ```js example
    * let myShader;
    *
    * function setup() {
@@ -1059,12 +1203,24 @@ function calculation(p5, fn){
    * }
    *
    * function shaderCallback() {
-   *   let t = millis() * 0.001;
-   *   let value = pow(abs(sin(t)), 2);
-   *   let blue = [0.2, 0.4, 0.8, 1];
-   *   let pink = [0.8, 0.2, 0.4, 1];
+   *   // shaderCallback runs on the GPU. millis() gives ms since start; multiply by 0.0005 to slow it.
+   *   let t = millis() * 0.0005;
+   *
+   *   // pow(t, 2) squares the time value: it starts slow then accelerates.
+   *   // Multiply by 0.001 so it doesn't reach 1 too quickly.
+   *   // min(..., 1) caps the value at 1.
+   *   let value = min(pow(t, 2) * 0.001, 1);
+   *
+   *   // Each color is [R, G, B, A] with values from 0 to 1.
+   *   let deepBlue = [0, 0.1, 0.5, 1];
+   *   let gold = [1, 0.8, 0, 1];
+   *
    *   finalColor.begin();
-   *   finalColor.set(mix(blue, pink, value));
+   *
+   *   // mix() blends between deepBlue (when value = 0) and gold (when value = 1).
+   *   // Because pow() accelerates, the color transition gets faster over time.
+   *   finalColor.set(mix(deepBlue, gold, value));
+   *
    *   finalColor.end();
    * }
    *
@@ -1074,6 +1230,12 @@ function calculation(p5, fn){
    *   noStroke();
    *   sphere(30);
    * }
+   * ```
+   *
+   * @method pow
+   * @param  {Number} n base of the exponential expression.
+   * @param  {Number} e power by which to raise the base.
+   * @return {Number}   n^e.
    */
   fn.pow = Math.pow;
 
@@ -1086,12 +1248,7 @@ function calculation(p5, fn){
    * decimal places to use when rounding. For example, `round(12.34, 1)` returns
    * 12.3. `decimals` is 0 by default.
    *
-   * @method round
-   * @param  {Number} n number to round.
-   * @param  {Number} [decimals] number of decimal places to round to, default is 0.
-   * @return {Integer}  rounded number.
-   *
-   * @example
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1109,8 +1266,9 @@ function calculation(p5, fn){
    *
    *   describe('The number 4 written in middle of the canvas.');
    * }
+   * ```
    *
-   * @example
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1128,11 +1286,12 @@ function calculation(p5, fn){
    *
    *   describe('The number 12.78 written in middle of canvas.');
    * }
+   * ```
    *
    * `round()` can also be used in shaders with p5.strands. The following example
    * uses `round()` to quantize colors in a shader.
    *
-   * @example
+   * ```js example
    * let myShader;
    *
    * function setup() {
@@ -1142,10 +1301,27 @@ function calculation(p5, fn){
    * }
    *
    * function shaderCallback() {
+   *   // shaderCallback runs on the GPU. millis() gives ms since start; multiply by 0.001 for seconds.
    *   let t = millis() * 0.001;
-   *   let value = round(sin(t) * 5) / 5 + 0.5;
+   *
+   *   // sin(t) goes between -1 and 1.
+   *   // 0.5 + 0.5 * sin(t) remaps this to the 0 to 1 range.
+   *   let sinVal = 0.5 + 0.5 * sin(t);
+   *
+   *   // Multiply by 4 then round to get 5 distinct levels (0, 0.25, 0.5, 0.75, 1).
+   *   // Divide by 4 to bring the result back to the 0 to 1 range.
+   *   let value = round(sinVal * 4) / 4;
+   *
+   *   // Each color is [R, G, B, A] with values from 0 to 1.
+   *   let mutedBlue = [0.3, 0.4, 0.7, 1];
+   *   let rose = [0.8, 0.3, 0.4, 1];
+   *
    *   finalColor.begin();
-   *   finalColor.set([value * 0.8, 0.3, 0.7, 1]);
+   *
+   *   // mix() blends between mutedBlue (when value = 0) and rose (when value = 1).
+   *   // The round() creates stepped bands of color like a posterization effect.
+   *   finalColor.set(mix(mutedBlue, rose, value));
+   *
    *   finalColor.end();
    * }
    *
@@ -1155,6 +1331,12 @@ function calculation(p5, fn){
    *   noStroke();
    *   sphere(30);
    * }
+   * ```
+   *
+   * @method round
+   * @param  {Number} n number to round.
+   * @param  {Number} [decimals] number of decimal places to round to, default is 0.
+   * @return {Integer}  rounded number.
    */
   fn.round = function(n, decimals) {
     if (!decimals) {
@@ -1225,11 +1407,7 @@ function calculation(p5, fn){
    * always returns a positive value. `sqrt()` doesn't work with negative arguments
    * such as `sqrt(-9)`.
    *
-   * @method sqrt
-   * @param  {Number} n non-negative number to square root.
-   * @return {Number}   square root of number.
-   *
-   * @example
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1245,8 +1423,9 @@ function calculation(p5, fn){
    *
    *   describe('Two white circles. The circle at the top-left is small. The circle at the bottom-right is ten times larger.');
    * }
+   * ```
    *
-   * @example
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1267,35 +1446,63 @@ function calculation(p5, fn){
    *   // Draw the point.
    *   point(x, y);
    * }
+   * ```
    *
    * `sqrt()` can also be used in shaders with p5.strands. The following example
-   * uses `sqrt()` to create a smooth easing curve on colors in a shader.
+   * uses `sqrt()` to create a smooth ease-out curve on color and size.
    *
-   * @example
+   * ```js example
    * let myShader;
    *
    * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *   myShader = buildColorShader(shaderCallback);
-   *   describe('A sphere with colors that ease smoothly.');
+   *   describe('A sphere that grows and shifts from navy to orange with an ease-out curve.');
    * }
    *
    * function shaderCallback() {
+   *   // shaderCallback runs on the GPU. millis() gives ms since start; multiply by 0.001 for seconds.
    *   let t = millis() * 0.001;
-   *   let value = sqrt(abs(sin(t)));
-   *   let purple = [0.3, 0.1, 0.5, 1];
-   *   let amber = [0.9, 0.6, 0.2, 1];
+   *
+   *   // sin(t) goes between -1 and 1.
+   *   // 0.5 + 0.5 * sin(t) remaps this to the 0 to 1 range.
+   *   let sinVal = 0.5 + 0.5 * sin(t);
+   *
+   *   // sqrt(sinVal) creates an ease-out curve: fast start, slow finish.
+   *   // Since sinVal is in [0,1], sqrt() stays in [0,1].
+   *   let value = sqrt(sinVal);
+   *
+   *   // Each color is [R, G, B, A] with values from 0 to 1.
+   *   let navy = [0, 0.1, 0.4, 1];
+   *   let brightOrange = [1, 0.6, 0, 1];
+   *
    *   finalColor.begin();
-   *   finalColor.set(mix(purple, amber, value));
+   *
+   *   // mix() blends between navy (when value = 0) and brightOrange (when value = 1).
+   *   // The sqrt() ease-out makes the color change fast at first, then slow down.
+   *   finalColor.set(mix(navy, brightOrange, value));
+   *
    *   finalColor.end();
+   * }
+   *
+   * function drawShape() {
+   *   let t = millis() * 0.001;
+   *   let sinVal = 0.5 + 0.5 * sin(t);
+   *   let size = 10 + sqrt(sinVal) * 30;
+   *   sphere(size);
    * }
    *
    * function draw() {
    *   background(220);
    *   shader(myShader);
    *   noStroke();
-   *   sphere(30);
+   *   drawShape();
    * }
+   * ```
+   *
+   * @method sqrt
+   * @param  {Number} n non-negative number to square root.
+   * @return {Number}   square root of number.
    */
   fn.sqrt = Math.sqrt;
 
@@ -1305,11 +1512,7 @@ function calculation(p5, fn){
    * A number's fractional part includes its decimal values. For example,
    * `fract(12.34)` returns 0.34.
    *
-   * @method fract
-   * @param {Number} n number whose fractional part will be found.
-   * @returns {Number} fractional part of n.
-   *
-   * @example
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1329,11 +1532,12 @@ function calculation(p5, fn){
    *
    *   describe('The number 56.78 written above the number 0.78.');
    * }
+   * ```
    *
    * `fract()` can also be used in shaders with p5.strands. The following example
    * uses `fract()` to create repeating patterns in a shader.
    *
-   * @example
+   * ```js example
    * let myShader;
    *
    * function setup() {
@@ -1343,10 +1547,24 @@ function calculation(p5, fn){
    * }
    *
    * function shaderCallback() {
+   *   // shaderCallback runs on the GPU. millis() gives ms since start; multiply by 0.001 for seconds.
    *   let t = millis() * 0.001;
+   *
+   *   // Multiply by 0.5 to slow the animation to half speed.
+   *   // fract(t * 0.5) extracts only the decimal part of the number.
+   *   // This creates a smooth sawtooth wave that repeats every 2 seconds.
    *   let value = fract(t * 0.5);
+   *
+   *   // Each color is [R, G, B, A] with values from 0 to 1.
+   *   let cyan = [0, 0.5, 1, 1];
+   *   let orange = [1, 0.5, 0, 1];
+   *
    *   finalColor.begin();
-   *   finalColor.set([value, 0.5, 1 - value, 1]);
+   *
+   *   // mix() blends between cyan (when value = 0) and orange (when value = 1).
+   *   // Because fract() resets to 0 each cycle, the color loops smoothly.
+   *   finalColor.set(mix(cyan, orange, value));
+   *
    *   finalColor.end();
    * }
    *
@@ -1356,6 +1574,11 @@ function calculation(p5, fn){
    *   noStroke();
    *   sphere(30);
    * }
+   * ```
+   *
+   * @method fract
+   * @param {Number} n number whose fractional part will be found.
+   * @returns {Number} fractional part of n.
    */
   fn.fract = function(toConvert) {
     // p5._validateParameters('fract', arguments);
