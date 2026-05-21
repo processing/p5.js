@@ -1,0 +1,13 @@
+{
+	"prettier.enable": false,
+	"eslint.enable": true,
+	"eslint.validate": [
+		{ "language": "html", "autoFix": false },
+		{ "language": "javascript", "autoFix": false },
+		{ "language": "markdown", "autoFix": false },
+	],
+	"editor.defaultFormatter": null,
+	"editor.formatOnSave": false,
+  "editor.codeActionsOnSave": {},
+	"javascript.format.enable": false
+}
