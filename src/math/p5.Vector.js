@@ -9,8 +9,14 @@ import * as constants from '../core/constants';
  * This function is used by binary vector operations to prioritize shorter vectors,
  * and to emit a warning when lengths do not match.
  */
-const prioritizeSmallerDimension = function(currentVectorDimension, args) {
-  return Math.min(currentVectorDimension, args.length);
+const prioritizeSmallerDimension = function (currentVectorDimension, args) {
+  const resultDimension = Math.min(currentVectorDimension, args.length);
+  if (Array.isArray(args) && currentVectorDimension !== args.length) {
+    console.warn(
+      'When working with two vectors of different sizes, the smaller dimension is used. In this operation, both vector will be treated as ' + resultDimension + 'D vectors, and any additional values of the linger vector will be ignored.'
+    );
+  }
+  return resultDimension;
 };
 
 /**
@@ -529,7 +535,7 @@ class Vector {
    * @param  {p5.Vector|Number[]} value The vector to add
    * @chainable
    */
-  add(...args) {
+  add(args) {
     const minDimension = prioritizeSmallerDimension(this.dimensions, args);
     shrinkToDimension(this.values, minDimension);
 
@@ -653,13 +659,18 @@ class Vector {
    * @param {p5.Vector | Number[]}  value  divisor vector.
    * @chainable
    */
-  rem(...args) {
+  rem(args) {
     const minDimension = prioritizeSmallerDimension(this.dimensions, args);
 
     shrinkToDimension(this.values, minDimension);
-    for (let i = 0; i < this.values.length; i++) {
-      if (args[i] > 0) {
+
+    if(Array.isArray(args)){
+      for (let i = 0; i < this.values.length; i++) {
         this.values[i] = this.values[i] % args[i];
+      }
+    } else {
+      for (let i = 0; i < this.values.length; i++) {
+        this.values[i] = this.values[i] % args;
       }
     }
 
@@ -788,7 +799,7 @@ class Vector {
    * @param  {p5.Vector|Number[]} value the vector to subtract
    * @chainable
    */
-  sub(...args) {
+  sub(args) {
     const minDimension = prioritizeSmallerDimension(this.dimensions, args);
     shrinkToDimension(this.values, minDimension);
 
@@ -976,12 +987,18 @@ class Vector {
    * @param  {p5.Vector} v vector to multiply with the components of the original vector.
    * @chainable
    */
-  mult(...args) {
+  mult(args) {
     const minDimension = prioritizeSmallerDimension(this.dimensions, args);
     shrinkToDimension(this.values, minDimension);
 
-    for (let i = 0; i < this.values.length; i++) {
-      this.values[i] *= args[i];
+    if(Array.isArray(args)){
+      for (let i = 0; i < this.values.length; i++) {
+        this.values[i] *= args[i];
+      }
+    } else {
+      for (let i = 0; i < this.values.length; i++) {
+        this.values[i] *= args;
+      }
     }
 
     return this;
@@ -1165,24 +1182,41 @@ class Vector {
    * @param  {p5.Vector} v vector to divide the components of the original vector by.
    * @chainable
    */
-  div(...args) {
+  div(args) {
     const minDimension = prioritizeSmallerDimension(this.dimensions, args);
 
-    for (let i = 0; i < minDimension; i++) {
-      if (typeof args[i] !== 'number' || args[i] === 0) {
-        if (!this.friendlyErrorsDisabled()) {
-          console.warn(
-            'p5.Vector.prototype.div',
-            'Arguments contain components that are 0'
-          );
+    if (Array.isArray(args)) {
+      for (let i = 0; i < minDimension; i++) {
+        if ((typeof args[i] !== 'number' || args[i] === 0)) {
+          if (!this.friendlyErrorsDisabled()) {
+            console.warn(
+              'p5.Vector.prototype.div',
+              'Arguments contain components that are 0'
+            );
+          }
+          return this;
         }
-        return this;
       }
+    } else if(typeof args !== 'number' || args === 0) {
+      if (!this.friendlyErrorsDisabled()) {
+        console.warn(
+          'p5.Vector.prototype.div',
+          'Arguments contain components that are 0'
+        );
+      }
+      return this;
     }
 
     shrinkToDimension(this.values, minDimension);
-    for (let i = 0; i < this.values.length; i++) {
-      this.values[i] /= args[i];
+
+    if(Array.isArray(args)){
+      for (let i = 0; i < this.values.length; i++) {
+        this.values[i] /= args[i];
+      }
+    } else {
+      for (let i = 0; i < this.values.length; i++) {
+        this.values[i] /= args;
+      }
     }
 
     return this;
@@ -1361,7 +1395,7 @@ class Vector {
    * @param  {p5.Vector} v <a href="#/p5.Vector">p5.Vector</a> to be dotted.
    * @return {Number}
    */
-  dot(...args) {
+  dot(args) {
     let vals = args;
     if (args[0] instanceof Vector) {
       vals = args[0].values;
