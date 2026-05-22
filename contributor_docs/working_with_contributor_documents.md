@@ -21,7 +21,7 @@ Their source materials are kept in:
 
 ## Build process overview
 
-During the website build process `build:contributor-docs`, the documents are cloned from the requested branch of the p5.js repo into the relevant website file-system locations.
+During the _website_ build process `build:contributor-docs` the documents are cloned from the requested branch of the p5.js repo into the relevant website file-system locations.  From here, the astro dev server can show previews of how they will look. (Exact instructions and paths follow.)
 
 ## Generating and previewing contributor documents
 
@@ -32,7 +32,7 @@ For a quick preview, various editors have a feature to render markdown files.  F
 * open the command-palette (`F1` or `cmd-shift-p` or `ctrl-shift-p`)
 * type `Markdown: open preview`
 
-<!-- TODO: list limitations of this quick-preview approach: e.g.the website styling (including line width) will not be applied. -->
+There are various limitations to this quick-preview.  For example, the p5.js website page layout and styling (colors, fonts, line-width, etc) will not be applied.
 
 ### Preview on local p5.js-website clone
 
