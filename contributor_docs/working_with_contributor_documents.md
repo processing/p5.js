@@ -161,15 +161,3 @@ Example:
 
 The source document `contributor_docs/unit_testing.md` will be served as `https://beta.p5js.org/contribute/unit_testing/`
 
-
-
-<!-- 
-## TODO
-
-* on linking to reference pages
-* on linking to other contrib and tutorial docs
-* on including images and other assets in a contributor doc
-* translations - won't cover.  link elsewhere?
-* Add a section on quicker experimental editing of the generated version of the contrib doc directly in the website filesystem (no need to rebuild, and it will auto-reload on file save)
-  * However add note that it's easy to forget and lose this work.   
--->
