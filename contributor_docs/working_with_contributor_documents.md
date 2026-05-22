@@ -154,7 +154,7 @@ As a result, this will list a page titled "Unit Testing" with a description of "
 #### The URL for your document
 
 The path in the eventual URL will be
-`contribute/your-filename-without-extension/`
+`contribute/your_filename_without_extension/`
 Note that the trailing slash is necessary in development mode.
 
 Example:
