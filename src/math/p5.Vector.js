@@ -666,9 +666,11 @@ class Vector {
 
     if(Array.isArray(args)){
       for (let i = 0; i < this.values.length; i++) {
-        this.values[i] = this.values[i] % args[i];
+        if (args[i] > 0) {
+          this.values[i] = this.values[i] % args[i];
+        }
       }
-    } else {
+    } else if(args > 0) {
       for (let i = 0; i < this.values.length; i++) {
         this.values[i] = this.values[i] % args;
       }
