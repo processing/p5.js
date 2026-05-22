@@ -14,7 +14,7 @@ export class States {
     this[key] = value;
   }
 
-  getDiff() {
+  takeDiff() {
     const diff = this.#modified;
     this.#modified = {};
     return diff;

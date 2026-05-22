@@ -71,12 +71,14 @@ class Renderer {
     this._isMainCanvas = isMainCanvas;
     this.pixels = [];
 
+    const defaultRatio = typeof window !== 'undefined' ?
+      Math.ceil(window.devicePixelRatio) :
+      1;
     if (isMainCanvas) {
-      this._pixelDensity = Math.ceil(window.devicePixelRatio) || 1;
+      this._pixelDensity = defaultRatio;
     } else {
-      
       const parentDensity = pInst._pInst?._renderer?._pixelDensity;
-      this._pixelDensity = parentDensity || Math.ceil(window.devicePixelRatio) || 1;
+      this._pixelDensity = parentDensity || defaultRatio;
     }
 
     this.width = w;
@@ -133,7 +135,7 @@ class Renderer {
   // and push it into the push pop stack
   push() {
     this._pushPopDepth++;
-    this._pushPopStack.push(this.states.getDiff());
+    this._pushPopStack.push(this.states.takeDiff());
   }
 
   // Pop the previous states out of the push pop stack and

@@ -26,6 +26,7 @@ Our community is large and diverse. Many people learn to code using p5.js, and a
 - [Code Samples](#code-samples)
 - [Comments](#comments)
 - [Accessible Canvas Labels](#accessible-canvas-labels)
+- [Accessible Iframe Names](#accessible-iframe-names)
 - [Whitespace](#whitespace)
 - [Semicolons](#semicolons)
 - [Naming Conventions](#naming-conventions)
@@ -271,6 +272,27 @@ function draw() {
 The above examples and suggestions are based on the [Writing Accessible Canvas Descriptions tutorial](https://p5js.org/tutorials/writing-accessible-canvas-descriptions/). This tutorial gives more detailed guidance, and includes other ways to label your canvas, in addition to  `describe()`: `describeElement()`, `textOutput()`, and `gridOutput()`.
 
 To understand the structure of p5.js’ web accessibility features for contributors, see the [Web Accessibility Contributor Doc](./web_accessibility.md#user-generated-accessible-canvas-descriptions).
+
+
+**[⬆ back to top](#table-of-contents)**
+
+## Accessible Iframe Names
+
+- When embedding content with `<iframe>`, always include a `title` attribute that describes the embedded content.
+
+> Why? Screen reader users rely on frame titles to identify and navigate between embedded content. A missing title violates [WCAG 4.1.2 (Name, Role, Value)](https://www.w3.org/WAI/WCAG21/Understanding/name-role-value.html), which requires all interface components to have a programmatically determined name.
+
+```html
+<!-- Bad. -->
+<iframe src="https://www.youtube.com/embed/example"></iframe>
+
+<!-- Good. -->
+<iframe src="https://www.youtube.com/embed/example" title="Video: Getting Started with p5.js"></iframe>
+```
+
+- Use a `title` that describes what the iframe contains, not just "iframe" or "embedded content."
+
+- If the iframe is purely decorative and carries no meaningful content, use `aria-hidden="true"` instead.
 
 
 **[⬆ back to top](#table-of-contents)**

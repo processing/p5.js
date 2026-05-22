@@ -64,11 +64,15 @@ class GeometryBuilder {
     }
 
     let startIdx = this.geometry.vertices.length;
-    this.geometry.vertices.push(...this.transformVertices(input.vertices));
-    this.geometry.vertexNormals.push(
-      ...this.transformNormals(input.vertexNormals)
-    );
-    this.geometry.uvs.push(...input.uvs);
+    for (const v of this.transformVertices(input.vertices)) {
+      this.geometry.vertices.push(v);
+    }
+    for (const vn of this.transformNormals(input.vertexNormals)) {
+      this.geometry.vertexNormals.push(vn);
+    }
+    for (const val of input.uvs) {
+      this.geometry.uvs.push(val);
+    }
 
     const inputUserVertexProps = input.userVertexProperties;
     const builtUserVertexProps = this.geometry.userVertexProperties;
@@ -103,15 +107,17 @@ class GeometryBuilder {
       );
     }
     if (this.renderer.states.strokeColor) {
-      this.geometry.edges.push(
-        ...input.edges.map(edge => edge.map(idx => idx + startIdx))
-      );
+      for (const edge of input.edges.map(edge => edge.map(idx => idx + startIdx))) {
+        this.geometry.edges.push(edge);
+      }
     }
     const vertexColors = [...input.vertexColors];
     while (vertexColors.length < input.vertices.length * 4) {
       vertexColors.push(...this.renderer.states.curFillColor);
     }
-    this.geometry.vertexColors.push(...vertexColors);
+    for (const c of vertexColors) {
+      this.geometry.vertexColors.push(c);
+    }
   }
 
   /**

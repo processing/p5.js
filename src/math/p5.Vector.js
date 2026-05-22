@@ -4,48 +4,96 @@
 
 import * as constants from '../core/constants';
 
-/// HELPERS FOR REMAINDER METHOD
-const calculateRemainder2D = function (xComponent, yComponent) {
-  if (xComponent !== 0) {
-    this.x = this.x % xComponent;
-  }
-  if (yComponent !== 0) {
-    this.y = this.y % yComponent;
-  }
-  return this;
+/**
+ * @private
+ * This function is used by binary vector operations to prioritize shorter vectors,
+ * and to emit a warning when lengths do not match.
+ */
+const prioritizeSmallerDimension = function(currentVectorDimension, args) {
+  return Math.min(currentVectorDimension, args.length);
 };
 
-const calculateRemainder3D = function (xComponent, yComponent, zComponent) {
-  if (xComponent !== 0) {
-    this.x = this.x % xComponent;
+/**
+ * @private
+ * In-place, shrinks an array to a dimension.
+ */
+const shrinkToDimension = function(arr, dim) {
+  while (arr.length > dim) {
+    arr.pop();
   }
-  if (yComponent !== 0) {
-    this.y = this.y % yComponent;
-  }
-  if (zComponent !== 0) {
-    this.z = this.z % zComponent;
-  }
-  return this;
-};
+}
+
 
 class Vector {
+  /**
+   * The values of an N-dimensional vector.
+   *
+   * This array of numbers that represents the vector.
+   * Each number in the array corresponds to a different component of the vector,
+   * like its position in different directions (e.g., x, y, z).
+   *
+   * You can update the values of the entire vector to a new set of values.
+   * You need to provide an array of numbers, where each number represents a component
+   * of the vector (e.g., x, y, z). The length of the array will become the number of
+   * dimensions of the vector.
+   *
+   * You can add (`add()`), multiply (`mult()`), divide (`div()`), and subtract (`sub()`)
+   * vectors from each other, and calculate remainder (`rem()`). Only use these functions
+   * on vectors when they are the same size: both 2-dimensional, or both 3-dimensional.
+   * When an operation uses two vectors of different sizes, the smaller dimension will be
+   * used, any additional values of the longer vector will be ignored.
+   *
+   * You can multiply, divide, or calculate remainder of a vector with a single number. Then,
+   * the same operation will be done on each element of the vector.
+   *
+   * @type {Array<number>} The array of values representing the vector.
+   * @throws Will throw an error if provided no arguments, or if the arguments
+   *         are not all finity numbers
+   */
+  values = [];
+
+  /**
+   * @private
+   * Check for disabled friendly errors.
+   * This is overridden in the addon function to check the p5 instance.
+   */
+  static friendlyErrorsDisabled() {
+    return true;
+  }
+
   // This is how it comes in with createVector()
   // This check if the first argument is a function
   constructor(...args) {
-    let values = args; // .map(arg => arg || 0);
+
+    if (args.length === 0) {
+      this._friendlyError(
+        'Requires valid arguments.', 'p5.Vector'
+      );
+    }
+
     if (typeof args[0] === 'function') {
       this.isPInst = true;
-      this._fromRadians = args[0];
-      this._toRadians = args[1];
-      values = args.slice(2); // .map(arg => arg || 0);
+      this._fromRadians = args.shift();
+      this._toRadians = args.shift();
     }
-    let dimensions = values.length; // TODO: make default 3 if no arguments
-    if (dimensions === 0) {
-      this.dimensions = 2;
-      this._values = [0, 0, 0];
+
+    this.values = args;
+    if (Array.isArray(args)) {
+      for (let i = 0; i < args.length; i++) {
+        const v = args[i];
+        if (typeof v !== 'number' || !Number.isFinite(v)) {
+          if (!Vector.friendlyErrorsDisabled()) {
+            this._friendlyError(
+              'Arguments contain non-finite numbers',
+              'p5.Vector'
+            );
+          }
+          this.values = [];
+          break;
+        }
+      }
     } else {
-      this.dimensions = dimensions;
-      this._values = values;
+      this.values = [];
     }
 
     // This property is here where duck typing (checking if obj.isVector) needs
@@ -56,40 +104,17 @@ class Vector {
     this.isVector = true;
   }
 
-  /**
-   * Gets the values of the N-dimensional vector.
-   *
-   * This method returns an array of numbers that represent the vector.
-   * Each number in the array corresponds to a different component of the vector,
-   * like its position in different directions (e.g., x, y, z).
-   *
-   * @returns {Array<number>} The array of values representing the vector.
-   */
-  get values() {
-    return this._values;
-  }
+  // This will get overwritten when exported as part of p5.
+  _friendlyError(_e) {}
+
 
   /**
-   * Sets the values of the vector.
+   * Gets how many dimensions the vector has.
    *
-   * This method allows you to update the entire vector with a new set of values.
-   * You need to provide an array of numbers, where each number represents a component
-   * of the vector (e.g., x, y, z). The length of the array should match the number of
-   * dimensions of the vector. If the array is shorter, the missing components will be
-   * set to 0. If the array is longer, the extra values will be ignored.
-   *
-   * @param {Array<number>} newValues - An array of numbers representing the new values for the vector.
-   *
+   * @returns {Number} The number of dimensions. Can be 1, 2, or 3.
    */
-  set values(newValues) {
-    let dimensions = newValues.length;
-    if (dimensions === 0) {
-      this.dimensions = 2;
-      this._values = [0, 0, 0];
-    } else {
-      this.dimensions = dimensions;
-      this._values = newValues.slice();
-    }
+  get dimensions(){
+    return this.values.length;
   }
 
   /**
@@ -102,7 +127,7 @@ class Vector {
    * @returns {Number} The x component of the vector. Returns 0 if the value is not defined.
    */
   get x() {
-    return this._values[0] || 0;
+    return this.values[0] || 0;
   }
 
   /**
@@ -123,10 +148,10 @@ class Vector {
    *          get a value from a position that doesn't exist in the vector.
    */
   getValue(index) {
-    if (index < this._values.length) {
-      return this._values[index];
+    if (index < this.values.length) {
+      return this.values[index];
     } else {
-      p5._friendlyError(
+      this._friendlyError(
         'The index parameter is trying to set a value outside the bounds of the vector',
         'p5.Vector.setValue'
       );
@@ -148,10 +173,10 @@ class Vector {
    * @throws Will throw an error if the index is outside the bounds of the vector, meaning if you try to set a value at a position that doesn't exist in the vector.
    */
   setValue(index, value) {
-    if (index < this._values.length) {
-      this._values[index] = value;
+    if (index < this.values.length) {
+      this.values[index] = value;
     } else {
-      p5._friendlyError(
+      this._friendlyError(
         'The index parameter is trying to set a value outside the bounds of the vector',
         'p5.Vector.setValue'
       );
@@ -168,7 +193,7 @@ class Vector {
    * @returns {Number} The y component of the vector. Returns 0 if the value is not defined.
    */
   get y() {
-    return this._values[1] || 0;
+    return this.values[1] || 0;
   }
 
   /**
@@ -181,7 +206,7 @@ class Vector {
    * @returns {Number} The z component of the vector. Returns 0 if the value is not defined.
    */
   get z() {
-    return this._values[2] || 0;
+    return this.values[2] || 0;
   }
 
   /**
@@ -194,7 +219,7 @@ class Vector {
    * @returns {Number} The w component of the vector. Returns 0 if the value is not defined.
    */
   get w() {
-    return this._values[3] || 0;
+    return this.values[3] || 0;
   }
 
   /**
@@ -207,8 +232,8 @@ class Vector {
    * @param {Number} xVal - The new value for the x component.
    */
   set x(xVal) {
-    if (this._values.length > 1) {
-      this._values[0] = xVal;
+    if (this.values.length > 1) {
+      this.values[0] = xVal;
     }
   }
 
@@ -222,8 +247,8 @@ class Vector {
    * @param {Number} yVal - The new value for the y component.
    */
   set y(yVal) {
-    if (this._values.length > 1) {
-      this._values[1] = yVal;
+    if (this.values.length > 1) {
+      this.values[1] = yVal;
     }
   }
 
@@ -237,8 +262,8 @@ class Vector {
    * @param {Number} zVal - The new value for the z component.
    */
   set z(zVal) {
-    if (this._values.length > 2) {
-      this._values[2] = zVal;
+    if (this.values.length > 2) {
+      this.values[2] = zVal;
     }
   }
 
@@ -252,8 +277,8 @@ class Vector {
    * @param {Number} wVal - The new value for the w component.
    */
   set w(wVal) {
-    if (this._values.length > 3) {
-      this._values[3] = wVal;
+    if (this.values.length > 3) {
+      this.values[3] = wVal;
     }
   }
 
@@ -275,7 +300,7 @@ class Vector {
    * }
    */
   toString() {
-    return `vector[${this._values.join(', ')}]`;
+    return `vector[${this.values.join(', ')}]`;
   }
 
   /**
@@ -333,13 +358,12 @@ class Vector {
    */
   set(...args) {
     if (args[0] instanceof Vector) {
-      this._values = args[0].values.slice();
+      this.values = args[0].values.slice();
     } else if (Array.isArray(args[0])) {
-      this._values = args[0].map(arg => arg || 0);
+      this.values = args[0].map(arg => arg || 0);
     } else {
-      this._values = args.map(arg => arg || 0);
+      this.values = args.map(arg => arg || 0);
     }
-    this.dimensions = this._values.length;
     return this;
   }
 
@@ -369,11 +393,13 @@ class Vector {
    */
   copy() {
     if (this.isPInst) {
-      return new Vector(this._fromRadians, this._toRadians, ...this._values);
+      return new Vector(this._fromRadians, this._toRadians, ...this.values);
     } else {
-      return new Vector(...this._values);
+      return new Vector(...this.values);
     }
   }
+
+
 
   /**
    * Adds to a vector's components.
@@ -382,8 +408,12 @@ class Vector {
    * another <a href="#/p5.Vector">p5.Vector</a> object, as in `v.add(v2)`, or
    * an array of numbers, as in `v.add([1, 2, 3])`.
    *
-   * If a value isn't provided for a component, it won't change. For
-   * example, `v.add(4, 5)` adds 4 to `v.x`, 5 to `v.y`, and 0 to `v.z`.
+   * Add vectors only when they are the same size: both 2-dimensional, or
+   * both 3-dimensional. When two vectors of different sizes are added, the
+   * smaller dimension will be used, any additional values of the longer
+   * vector will be ignored.
+   * For example, adding `[1, 2, 3]` and `[4, 5]` will result in `[5, 7]`.
+   *
    * Calling `add()` with no arguments, as in `v.add()`, has no effect.
    *
    * This method supports N-dimensional vectors.
@@ -500,16 +530,17 @@ class Vector {
    * @chainable
    */
   add(...args) {
-    if (args[0] instanceof Vector) {
-      args = args[0].values;
-    } else if (Array.isArray(args[0])) {
-      args = args[0];
+    const minDimension = prioritizeSmallerDimension(this.dimensions, args);
+    shrinkToDimension(this.values, minDimension);
+
+    for (let i = 0; i < this.values.length; i++) {
+      this.values[i] += args[i];
     }
-    args.forEach((value, index) => {
-      this._values[index] = (this._values[index] || 0) + (value || 0);
-    });
+
     return this;
   }
+
+
 
   /**
    * Performs modulo (remainder) division with a vector's `x`, `y`, and `z`
@@ -520,9 +551,13 @@ class Vector {
    * an array of numbers, as in `v.rem([1, 2, 3])`.
    *
    * If only one value is provided, as in `v.rem(2)`, then all the components
-   * will be set to their values modulo 2. If two values are provided, as in
-   * `v.rem(2, 3)`, then `v.z` won't change. Calling `rem()` with no
+   * will be set to their values modulo 2. Calling `rem()` with no
    * arguments, as in `v.rem()`, has no effect.
+   *
+   * Modulo vectors only when they are the same size: both 2D, or both 3D.
+   * When two vectors of different sizes are used, the smaller dimension will be
+   * used, any additional values of the longer vector will be ignored.
+   * For example, taking `[3, 6, 9]` modulo `[2, 4]` will result in `[1, 2]`.
    *
    * The static version of `rem()`, as in `p5.Vector.rem(v2, v1)`, returns a
    * new <a href="#/p5.Vector">p5.Vector</a> object and doesn't change the
@@ -608,7 +643,7 @@ class Vector {
    *   let v2 = createVector(2, 3, 4);
    *
    *   // Divide without modifying the original vectors.
-   *   let v3 = p5.Vector.rem(v1, v2);
+   *  let v3 = p5.Vector.rem(v1, v2);
    *
    *   // Prints 'p5.Vector Object : [1, 1, 1]'.
    *   print(v3.toString());
@@ -618,59 +653,17 @@ class Vector {
    * @param {p5.Vector | Number[]}  value  divisor vector.
    * @chainable
    */
-  rem(x, y, z) {
-    if (x instanceof Vector) {
-      if ([x.x, x.y, x.z].every(Number.isFinite)) {
-        const xComponent = parseFloat(x.x);
-        const yComponent = parseFloat(x.y);
-        const zComponent = parseFloat(x.z);
-        return calculateRemainder3D.call(
-          this,
-          xComponent,
-          yComponent,
-          zComponent
-        );
-      }
-    } else if (Array.isArray(x)) {
-      if (x.every(element => Number.isFinite(element))) {
-        if (x.length === 2) {
-          return calculateRemainder2D.call(this, x[0], x[1]);
-        }
-        if (x.length === 3) {
-          return calculateRemainder3D.call(this, x[0], x[1], x[2]);
-        }
-      }
-    } else if (arguments.length === 1) {
-      if (Number.isFinite(arguments[0]) && arguments[0] !== 0) {
-        this.x = this.x % arguments[0];
-        this.y = this.y % arguments[0];
-        this.z = this.z % arguments[0];
-        return this;
-      }
-    } else if (arguments.length === 2) {
-      const vectorComponents = [...arguments];
-      if (vectorComponents.every(element => Number.isFinite(element))) {
-        if (vectorComponents.length === 2) {
-          return calculateRemainder2D.call(
-            this,
-            vectorComponents[0],
-            vectorComponents[1]
-          );
-        }
-      }
-    } else if (arguments.length === 3) {
-      const vectorComponents = [...arguments];
-      if (vectorComponents.every(element => Number.isFinite(element))) {
-        if (vectorComponents.length === 3) {
-          return calculateRemainder3D.call(
-            this,
-            vectorComponents[0],
-            vectorComponents[1],
-            vectorComponents[2]
-          );
-        }
+  rem(...args) {
+    const minDimension = prioritizeSmallerDimension(this.dimensions, args);
+
+    shrinkToDimension(this.values, minDimension);
+    for (let i = 0; i < this.values.length; i++) {
+      if (args[i] > 0) {
+        this.values[i] = this.values[i] % args[i];
       }
     }
+
+    return this;
   }
 
   /**
@@ -680,9 +673,12 @@ class Vector {
    * <a href="#/p5.Vector">p5.Vector</a> object, as in `v.sub(v2)`, or an array
    * of numbers, as in `v.sub([1, 2, 3])`.
    *
-   * If a value isn't provided for a component, it won't change. For
-   * example, `v.sub(4, 5)` subtracts 4 from `v.x`, 5 from `v.y`, and 0 from `v.z`.
    * Calling `sub()` with no arguments, as in `v.sub()`, has no effect.
+   *
+   * Subtract vectors only when they are the same size: both 2D, or both 3D.
+   * When two vectors of different sizes are used, the smaller dimension will be
+   * used, any additional values of the longer vector will be ignored.
+   * For example, subtracting `[1, 2]` from `[3, 5, 7]` will result in `[2, 3]`.
    *
    * The static version of `sub()`, as in `p5.Vector.sub(v2, v1)`, returns a new
    * <a href="#/p5.Vector">p5.Vector</a> object and doesn't change the
@@ -793,19 +789,13 @@ class Vector {
    * @chainable
    */
   sub(...args) {
-    if (args[0] instanceof Vector) {
-      args[0].values.forEach((value, index) => {
-        this._values[index] -= value || 0;
-      });
-    } else if (Array.isArray(args[0])) {
-      args[0].forEach((value, index) => {
-        this._values[index] -= value || 0;
-      });
-    } else {
-      args.forEach((value, index) => {
-        this._values[index] -= value || 0;
-      });
+    const minDimension = prioritizeSmallerDimension(this.dimensions, args);
+    shrinkToDimension(this.values, minDimension);
+
+    for (let i = 0; i < this.values.length; i++) {
+      this.values[i] -= args[i];
     }
+
     return this;
   }
 
@@ -817,10 +807,13 @@ class Vector {
    * of numbers, as in `v.mult([1, 2, 3])`.
    *
    * If only one value is provided, as in `v.mult(2)`, then all the components
-   * will be multiplied by 2. If a value isn't provided for a component, it
-   * won't change. For example, `v.mult(4, 5)` multiplies `v.x` by, `v.y` by 5,
-   * and `v.z` by 1. Calling `mult()` with no arguments, as in `v.mult()`, has
+   * will be multiplied by 2. Calling `mult()` with no arguments, as in `v.mult()`, has
    * no effect.
+   *
+   * Multiply vectors only when they are the same size: both 2D, or both 3D.
+   * When two vectors of different sizes are multiplied, the smaller dimension will be
+   * used, any additional values of the longer vector will be ignored.
+   * For example, multiplying `[1, 2, 3]` by `[4, 5]` will result in `[4, 10]`.
    *
    * The static version of `mult()`, as in `p5.Vector.mult(v, 2)`, returns a new
    * <a href="#/p5.Vector">p5.Vector</a> object and doesn't change the
@@ -984,43 +977,13 @@ class Vector {
    * @chainable
    */
   mult(...args) {
-    if (args.length === 1 && args[0] instanceof Vector) {
-      const v = args[0];
-      const maxLen = Math.min(this._values.length, v.values.length);
-      for (let i = 0; i < maxLen; i++) {
-        if (Number.isFinite(v.values[i]) && typeof v.values[i] === 'number') {
-          this._values[i] *= v.values[i];
-        } else {
-          console.warn(
-            'p5.Vector.prototype.mult:',
-            'v contains components that are either undefined or not finite numbers'
-          );
-          return this;
-        }
-      }
-    } else if (args.length === 1 && Array.isArray(args[0])) {
-      const arr = args[0];
-      const maxLen = Math.min(this._values.length, arr.length);
-      for (let i = 0; i < maxLen; i++) {
-        if (Number.isFinite(arr[i]) && typeof arr[i] === 'number') {
-          this._values[i] *= arr[i];
-        } else {
-          console.warn(
-            'p5.Vector.prototype.mult:',
-            'arr contains elements that are either undefined or not finite numbers'
-          );
-          return this;
-        }
-      }
-    } else if (
-      args.length === 1 &&
-      typeof args[0] === 'number' &&
-      Number.isFinite(args[0])
-    ) {
-      for (let i = 0; i < this._values.length; i++) {
-        this._values[i] *= args[0];
-      }
+    const minDimension = prioritizeSmallerDimension(this.dimensions, args);
+    shrinkToDimension(this.values, minDimension);
+
+    for (let i = 0; i < this.values.length; i++) {
+      this.values[i] *= args[i];
     }
+
     return this;
   }
 
@@ -1032,10 +995,13 @@ class Vector {
    * of numbers, as in `v.div([1, 2, 3])`.
    *
    * If only one value is provided, as in `v.div(2)`, then all the components
-   * will be divided by 2. If a value isn't provided for a component, it
-   * won't change. For example, `v.div(4, 5)` divides `v.x` by 4, `v.y` by 5,
-   * and `v.z` by 1. Calling `div()` with no arguments, as in `v.div()`, has
+   * will be divided by 2. Calling `div()` with no arguments, as in `v.div()`, has
    * no effect.
+   *
+   * Divide vectors only when they are the same size: both 2D, or both 3D.
+   * When two vectors of different sizes are divided, the smaller dimension will be
+   * used, any additional values of the longer vector will be ignored.
+   * For example, dividing `[8, 12, 21]` by `[2, 3]` will result in `[4, 4]`.
    *
    * The static version of `div()`, as in `p5.Vector.div(v, 2)`, returns a new
    * <a href="#/p5.Vector">p5.Vector</a> object and doesn't change the
@@ -1200,56 +1166,23 @@ class Vector {
    * @chainable
    */
   div(...args) {
-    if (args.length === 0) return this;
-    if (args.length === 1 && args[0] instanceof Vector) {
-      const v = args[0];
-      if (
-        v._values.every(
-          val => Number.isFinite(val) && typeof val === 'number'
-        )
-      ) {
-        if (v._values.some(val => val === 0)) {
-          console.warn('p5.Vector.prototype.div:', 'divide by 0');
-          return this;
-        }
-        this._values = this._values.map((val, i) => val / v._values[i]);
-      } else {
-        console.warn(
-          'p5.Vector.prototype.div:',
-          'vector contains components that are either undefined or not finite numbers'
-        );
-      }
-      return this;
-    }
+    const minDimension = prioritizeSmallerDimension(this.dimensions, args);
 
-    if (args.length === 1 && Array.isArray(args[0])) {
-      const arr = args[0];
-      if (arr.every(val => Number.isFinite(val) && typeof val === 'number')) {
-        if (arr.some(val => val === 0)) {
-          console.warn('p5.Vector.prototype.div:', 'divide by 0');
-          return this;
+    for (let i = 0; i < minDimension; i++) {
+      if (typeof args[i] !== 'number' || args[i] === 0) {
+        if (!this.friendlyErrorsDisabled()) {
+          console.warn(
+            'p5.Vector.prototype.div',
+            'Arguments contain components that are 0'
+          );
         }
-        this._values = this._values.map((val, i) => val / arr[i]);
-      } else {
-        console.warn(
-          'p5.Vector.prototype.div:',
-          'array contains components that are either undefined or not finite numbers'
-        );
-      }
-      return this;
-    }
-
-    if (args.every(val => Number.isFinite(val) && typeof val === 'number')) {
-      if (args.some(val => val === 0)) {
-        console.warn('p5.Vector.prototype.div:', 'divide by 0');
         return this;
       }
-      this._values = this._values.map((val, i) => val / args[0]);
-    } else {
-      console.warn(
-        'p5.Vector.prototype.div:',
-        'arguments contain components that are either undefined or not finite numbers'
-      );
+    }
+
+    shrinkToDimension(this.values, minDimension);
+    for (let i = 0; i < this.values.length; i++) {
+      this.values[i] /= args[i];
     }
 
     return this;
@@ -1287,7 +1220,12 @@ class Vector {
    * }
    */
   mag() {
-    return Math.sqrt(this.magSq());
+    let sum = 0;
+    for (let i = 0; i < this.values.length; i++) {
+      const component = this.values[i];
+      sum += component * component;
+    }
+    return Math.sqrt(sum);
   }
 
   /**
@@ -1303,7 +1241,8 @@ class Vector {
    *   // Create a p5.Vector object.
    *   let p = createVector(30, 40);
    *
-   *   // Draw a line from the origin.
+   *   // Draw a line from th
+   * e origin.
    *   line(0, 0, p.x, p.y);
    *
    *   // Style the text.
@@ -1318,10 +1257,12 @@ class Vector {
    * }
    */
   magSq() {
-    return this._values.reduce(
-      (sum, component) => sum + component * component,
-      0
-    );
+    let sum = 0;
+    for (let i = 0; i < this.values.length; i++) {
+      const component = this.values[i];
+      sum += component * component;
+    }
+    return sum;
   }
 
   /**
@@ -1421,12 +1362,16 @@ class Vector {
    * @return {Number}
    */
   dot(...args) {
+    let vals = args;
     if (args[0] instanceof Vector) {
-      return this.dot(...args[0]._values);
+      vals = args[0].values;
     }
-    return this._values.reduce((sum, component, index) => {
-      return sum + component * (args[index] || 0);
-    }, 0);
+    const minDimension = prioritizeSmallerDimension(this.dimensions, vals);
+    let sum = 0;
+    for (let i = 0; i < minDimension; i++) {
+      sum += this.values[i] * vals[i];
+    }
+    return sum;
   }
 
   /**
@@ -1435,6 +1380,9 @@ class Vector {
    * The cross product is a vector that points straight out of the plane created
    * by two vectors. The cross product's magnitude is the area of the parallelogram
    * formed by the original two vectors.
+   *
+   * The cross product is defined on 3-dimensional vectors, and will use the `x`, `y`,
+   * and `z` components. This method should only be used with 3D vectors.
    *
    * The static version of `cross()`, as in `p5.Vector.cross(v1, v2)`, is the same
    * as calling `v1.cross(v2)`.
@@ -1581,7 +1529,13 @@ class Vector {
    * }
    */
   dist(v) {
-    return v.copy().sub(this).mag();
+    const minDimension = prioritizeSmallerDimension(this.dimensions, v.values);
+    let sum = 0;
+    for (let i = 0; i < minDimension; i++) {
+      const component = this.values[i] - v.values[i];
+      sum += component * component;
+    }
+    return Math.sqrt(sum);
   }
 
   /**
@@ -2043,8 +1997,18 @@ class Vector {
    * }
    */
   setHeading(a) {
-    if (this.isPInst) a = this._toRadians(a);
-    let m = this.mag();
+    if (this.dimensions < 2 || (
+      this._values instanceof Array && this._values.slice(2).some(v => v !== 0))
+    ) {
+      p5._friendlyError(
+        'p5.Vector.setHeading() only supports 2D vectors (z === 0). ' +
+        'For 3D or higher-dimensional vectors, use rotate() or another ' +
+        'appropriate method instead.',
+        'p5.Vector.setHeading'
+      );
+      return this;
+    }
+    const m = this.mag();
     this.x = m * Math.cos(a);
     this.y = m * Math.sin(a);
     return this;
@@ -2743,6 +2707,7 @@ class Vector {
    * Returns the vector's components as an array of numbers.
    *
    * @return {Number[]} array with the vector's components.
+   * @deprecated To retrieve vector components, use `v.values`
    * @example
    * // META:norender
    * function setup() {
@@ -2829,15 +2794,15 @@ class Vector {
   equals(...args) {
     let values;
     if (args[0] instanceof Vector) {
-      values = args[0]._values;
+      values = args[0].values;
     } else if (Array.isArray(args[0])) {
       values = args[0];
     } else {
       values = args;
     }
 
-    for (let i = 0; i < this._values.length; i++) {
-      if (this._values[i] !== (values[i] || 0)) {
+    for (let i = 0; i < this.values.length; i++) {
+      if (this.values[i] !== (values[i] || 0)) {
         return false;
       }
     }
@@ -2857,8 +2822,8 @@ class Vector {
    * @chainable
    */
   clampToZero() {
-    for (let i = 0; i < this._values.length; i++) {
-      this._values[i] = this._clampToZero(this._values[i]);
+    for (let i = 0; i < this.values.length; i++) {
+      this.values[i] = this._clampToZero(this.values[i]);
     }
     return this;
   }
@@ -3115,7 +3080,7 @@ class Vector {
     if (!target) {
       target = v1.copy();
       if (arguments.length === 3) {
-        p5._friendlyError(
+        this._friendlyError(
           'The target parameter is undefined, it should be of type p5.Vector',
           'p5.Vector.add'
         );
@@ -3162,7 +3127,7 @@ class Vector {
     if (!target) {
       target = v1.copy();
       if (arguments.length === 3) {
-        p5._friendlyError(
+        this._friendlyError(
           'The target parameter is undefined, it should be of type p5.Vector',
           'p5.Vector.sub'
         );
@@ -3206,7 +3171,7 @@ class Vector {
     if (!target) {
       target = v.copy();
       if (arguments.length === 3) {
-        p5._friendlyError(
+        this._friendlyError(
           'The target parameter is undefined, it should be of type p5.Vector',
           'p5.Vector.mult'
         );
@@ -3232,7 +3197,7 @@ class Vector {
       target = v.copy();
     } else {
       if (!(target instanceof Vector)) {
-        p5._friendlyError(
+        this._friendlyError(
           'The target parameter should be of type p5.Vector',
           'p5.Vector.rotate'
         );
@@ -3276,7 +3241,7 @@ class Vector {
       target = v.copy();
 
       if (arguments.length === 3) {
-        p5._friendlyError(
+        this._friendlyError(
           'The target parameter is undefined, it should be of type p5.Vector',
           'p5.Vector.div'
         );
@@ -3344,7 +3309,7 @@ class Vector {
     if (!target) {
       target = v1.copy();
       if (arguments.length === 4) {
-        p5._friendlyError(
+        this._friendlyError(
           'The target parameter is undefined, it should be of type p5.Vector',
           'p5.Vector.lerp'
         );
@@ -3374,7 +3339,7 @@ class Vector {
     if (!target) {
       target = v1.copy();
       if (arguments.length === 4) {
-        p5._friendlyError(
+        this._friendlyError(
           'The target parameter is undefined, it should be of type p5.Vector',
           'p5.Vector.slerp'
         );
@@ -3428,7 +3393,7 @@ class Vector {
       target = v.copy();
     } else {
       if (!(target instanceof Vector)) {
-        p5._friendlyError(
+        this._friendlyError(
           'The target parameter should be of type p5.Vector',
           'p5.Vector.normalize'
         );
@@ -3454,7 +3419,7 @@ class Vector {
       target = v.copy();
     } else {
       if (!(target instanceof Vector)) {
-        p5._friendlyError(
+        this._friendlyError(
           'The target parameter should be of type p5.Vector',
           'p5.Vector.limit'
         );
@@ -3480,7 +3445,7 @@ class Vector {
       target = v.copy();
     } else {
       if (!(target instanceof Vector)) {
-        p5._friendlyError(
+        this._friendlyError(
           'The target parameter should be of type p5.Vector',
           'p5.Vector.setMag'
         );
@@ -3536,7 +3501,7 @@ class Vector {
       target = incidentVector.copy();
     } else {
       if (!(target instanceof Vector)) {
-        p5._friendlyError(
+        this._friendlyError(
           'The target parameter should be of type p5.Vector',
           'p5.Vector.reflect'
         );
@@ -3577,7 +3542,7 @@ class Vector {
     } else if (v1 instanceof Array) {
       v = new Vector().set(v1);
     } else {
-      p5._friendlyError(
+      this._friendlyError(
         'The v1 parameter should be of type Array or p5.Vector',
         'p5.Vector.equals'
       );
@@ -3664,6 +3629,11 @@ function vector(p5, fn) {
    * }
    */
   p5.Vector = Vector;
+
+  Vector.prototype._friendlyError = p5._friendlyError;
+  Vector.prototype.friendlyErrorsDisabled = function() {
+    return p5.disableFriendlyErrors;
+  };
 
   /**
    * The x component of the vector
