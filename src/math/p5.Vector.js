@@ -1397,7 +1397,7 @@ class Vector {
    * @param  {p5.Vector} v <a href="#/p5.Vector">p5.Vector</a> to be dotted.
    * @return {Number}
    */
-  dot(args) {
+  dot(...args) {
     let vals = args;
     if (args[0] instanceof Vector) {
       vals = args[0].values;
