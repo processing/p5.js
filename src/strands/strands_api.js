@@ -671,6 +671,14 @@ function createHookArguments(strandsContext, parameters){
             return createStrandsNode(propNode.id, propNode.dimension, strandsContext, onRebind);
           },
           set(val) {
+
+            if(val?.isStrandsNode&&val.dimension!==propertyType.dataType.dimension){
+              FES.dimensionMismatchError(
+              propertyType.dataType.dimension,
+              val.dimension,
+             `${param.name}.${propertyType.name}`
+              );
+            }
             const oldDependsOn = dag.dependsOn[structNode.id];
             const newDependsOn = [...oldDependsOn];
             let newValueID;
