@@ -338,6 +338,39 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
     return fn.mix(...args);
   });
 
+  // Component accessors: extract scalar channels from a vec4 color
+  const originalRed = fn.red;
+  augmentFn(fn, p5, 'red', function (...args) {
+    if (!strandsContext.active) {
+      return originalRed.apply(this, args);
+    }
+    return p5.strandsNode(args[0]).x;
+  });
+
+  const originalGreen = fn.green;
+  augmentFn(fn, p5, 'green', function (...args) {
+    if (!strandsContext.active) {
+      return originalGreen.apply(this, args);
+    }
+    return p5.strandsNode(args[0]).y;
+  });
+
+  const originalBlue = fn.blue;
+  augmentFn(fn, p5, 'blue', function (...args) {
+    if (!strandsContext.active) {
+      return originalBlue.apply(this, args);
+    }
+    return p5.strandsNode(args[0]).z;
+  });
+
+  const originalAlpha = fn.alpha;
+  augmentFn(fn, p5, 'alpha', function (...args) {
+    if (!strandsContext.active) {
+      return originalAlpha.apply(this, args);
+    }
+    return p5.strandsNode(args[0]).w;
+  });
+
   augmentFn(fn, p5, 'getTexture', function (...rawArgs) {
     if (strandsContext.active) {
       const { id, dimension } = strandsContext.backend.createGetTextureCall(strandsContext, rawArgs);
