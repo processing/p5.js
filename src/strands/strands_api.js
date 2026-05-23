@@ -371,6 +371,97 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
     return p5.strandsNode(args[0]).w;
   });
 
+  // HSB/HSL accessors — inject conversion helpers and extract channel
+  const _hsbSnippet = `vec3 _p5_rgb2hsb(vec3 c) {
+  vec4 K = vec4(0.0, -1.0/3.0, 2.0/3.0, -1.0);
+  vec4 p = mix(vec4(c.bg, K.wz), vec4(c.gb, K.xy), step(c.b, c.g));
+  vec4 q = mix(vec4(p.xyw, c.r), vec4(c.r, p.yzx), step(p.x, c.r));
+  float d = q.x - min(q.w, q.y);
+  float e = 1.0e-10;
+  return vec3(abs(q.z+(q.w-q.y)/(6.0*d+e)), d/(q.x+e), q.x);
+  }`;
+
+  const _hslSnippet = `vec3 _p5_rgb2hsl(vec3 c) {
+  float maxC = max(c.r, max(c.g, c.b));
+  float minC = min(c.r, min(c.g, c.b));
+  float l = (maxC + minC) / 2.0;
+  float d = maxC - minC;
+  float s = d < 1e-10 ? 0.0 : d/(1.0-abs(2.0*l-1.0));
+  float h = 0.0;
+  if (d > 1e-10) {
+    if (maxC == c.r) h = mod((c.g-c.b)/d, 6.0)/6.0;
+    else if (maxC == c.g) h = ((c.b-c.r)/d+2.0)/6.0;
+    else h = ((c.r-c.g)/d+4.0)/6.0;
+  }
+  return vec3(h, s, l);
+  }`;
+
+  function _injectSnippet(snippet) {
+    strandsContext.vertexDeclarations.add(snippet);
+    strandsContext.fragmentDeclarations.add(snippet);
+    strandsContext.computeDeclarations.add(snippet);
+  }
+
+  const originalHue = fn.hue;
+  augmentFn(fn, p5, 'hue', function (...args) {
+    if (!strandsContext.active) {
+      return originalHue.apply(this, args);
+    }
+    _injectSnippet(_hslSnippet);
+    const colorNode = p5.strandsNode(args[0]);
+    const { id, dimension } = build.functionCallNode(
+      strandsContext, '_p5_rgb2hsl',
+      [fn.vec3(colorNode.x, colorNode.y, colorNode.z)],
+      { overloads: [{ params: [DataType.float3], returnType: DataType.float3 }] }
+    );
+    return createStrandsNode(id, dimension, strandsContext).x;
+  });
+
+  const originalSaturation = fn.saturation;
+  augmentFn(fn, p5, 'saturation', function (...args) {
+    if (!strandsContext.active) {
+      return originalSaturation.apply(this, args);
+    }
+    _injectSnippet(_hslSnippet);
+    const colorNode = p5.strandsNode(args[0]);
+    const { id, dimension } = build.functionCallNode(
+      strandsContext, '_p5_rgb2hsl',
+      [fn.vec3(colorNode.x, colorNode.y, colorNode.z)],
+      { overloads: [{ params: [DataType.float3], returnType: DataType.float3 }] }
+    );
+    return createStrandsNode(id, dimension, strandsContext).y;
+  });
+
+  const originalBrightness = fn.brightness;
+  augmentFn(fn, p5, 'brightness', function (...args) {
+    if (!strandsContext.active) {
+      return originalBrightness.apply(this, args);
+    }
+    _injectSnippet(_hsbSnippet);
+    const colorNode = p5.strandsNode(args[0]);
+    const { id, dimension } = build.functionCallNode(
+      strandsContext, '_p5_rgb2hsb',
+      [fn.vec3(colorNode.x, colorNode.y, colorNode.z)],
+      { overloads: [{ params: [DataType.float3], returnType: DataType.float3 }] }
+    );
+    return createStrandsNode(id, dimension, strandsContext).z;
+  });
+
+  const originalLightness = fn.lightness;
+  augmentFn(fn, p5, 'lightness', function (...args) {
+    if (!strandsContext.active) {
+      return originalLightness.apply(this, args);
+    }
+    _injectSnippet(_hslSnippet);
+    const colorNode = p5.strandsNode(args[0]);
+    const { id, dimension } = build.functionCallNode(
+      strandsContext, '_p5_rgb2hsl',
+      [fn.vec3(colorNode.x, colorNode.y, colorNode.z)],
+      { overloads: [{ params: [DataType.float3], returnType: DataType.float3 }] }
+    );
+    return createStrandsNode(id, dimension, strandsContext).z;
+  });
+
   augmentFn(fn, p5, 'getTexture', function (...rawArgs) {
     if (strandsContext.active) {
       const { id, dimension } = strandsContext.backend.createGetTextureCall(strandsContext, rawArgs);
