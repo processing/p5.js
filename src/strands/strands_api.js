@@ -329,6 +329,15 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
     return createStrandsNode(id, dimension, strandsContext);
   });
 
+  const originalLerpColor = fn.lerpColor;
+  augmentFn(fn, p5, 'lerpColor', function (...args) {
+    if (!strandsContext.active) {
+      return originalLerpColor.apply(this, args);
+    }
+    // In strands, colors are vec4s — lerpColor maps directly to GLSL mix()
+    return fn.mix(...args);
+  });
+
   augmentFn(fn, p5, 'getTexture', function (...rawArgs) {
     if (strandsContext.active) {
       const { id, dimension } = strandsContext.backend.createGetTextureCall(strandsContext, rawArgs);
