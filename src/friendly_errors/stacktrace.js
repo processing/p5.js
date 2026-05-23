@@ -2,6 +2,8 @@
  * @for p5
  * @requires core
  */
+import { TL, FES } from './fes';
+
 // Borrow from stacktracejs https://github.com/stacktracejs/stacktrace.js with
 // minor modifications. The license for the same and the code is included below
 
@@ -239,6 +241,7 @@ function ErrorStackParser() {
 // End borrow
 
 export const errorStackParser = new ErrorStackParser();
+
 /**
  * Takes a stacktrace array and filters out all frames that show internal p5
  * details.
@@ -274,7 +277,7 @@ export const processStack = (error, stacktrace, entryPoints) => {
 
   // isInternal - Did this error happen inside the library
   let isInternal = false;
-  let p5FileName, friendlyStack, currentEntryPoint;
+  let p5FileName, friendlyStack;
 
   // Intentionally throw an error that we catch so that we can check the name
   // of the current file. Any errors we see from this file, we treat as
@@ -292,7 +295,6 @@ export const processStack = (error, stacktrace, entryPoints) => {
       // remove everything below an entry point function (setup, draw, etc).
       // (it's usually the internal initialization calls)
       friendlyStack = stacktrace.slice(0, i + 1);
-      currentEntryPoint = splitted[splitted.length - 1];
       // We call the error "internal" if the source of the error was a
       // function from within the p5.js library file, but called from the
       // user's code directly. We only need to check the topmost frame in
@@ -352,26 +354,12 @@ export const processStack = (error, stacktrace, entryPoints) => {
       if (p5._fesLogCache[locationObj.location]) return [true, null];
     }
 
-    // Check if the error is due to a non loadX method being used incorrectly
-    // in preload
-    if (
-      currentEntryPoint === 'preload' &&
-      fn._preloadMethods[func] == null
-    ) {
-      // TODO: we don't need this anymore
-      const message = TL.tl`${locationObj ? TL.tl`[${locationObj.file}, line ${locationObj.line}]` : ''} An error with message "${error.message}" occurred inside the p5.js library when "${func}" was called. If not stated otherwise, it might be due to "${func}" being called from preload. Nothing besides load calls (loadImage, loadJSON, loadFont, loadStrings, etc.) should be inside the preload function.`;
-      p5._friendlyError(
-        message,
-        'preload'
-      );
-    } else {
-      // Library error
-      const message = TL.tl`${locationObj ? TL.tl`[${locationObj.file}, line ${locationObj.line}]` : ''} An error with message "${error.message}" occurred inside the p5js library when ${func} was called. If not stated otherwise, it might be an issue with the arguments passed to ${func}.`;
-      p5._friendlyError(
-        message,
-        func
-      );
-    }
+    // Library error
+    const message = TL.tl`${locationObj ? TL.tl`[${locationObj.file}, line ${locationObj.line}]` : ''} An error with message "${error.message}" occurred inside the p5js library when ${func} was called. If not stated otherwise, it might be an issue with the arguments passed to ${func}.`;
+    p5._friendlyError(
+      message,
+      func
+    );
 
     // Finally, if it's an internal error, print the friendlyStack
     // ( fesErrorMonitor won't handle this error )
@@ -392,13 +380,14 @@ export const processStack = (error, stacktrace, entryPoints) => {
  * @private
  * @param {Array} friendlyStack
  */
-export const printFriendlyStack = friendlyStack => {
+export function printFriendlyStack(friendlyStack) {
   if (friendlyStack.length > 1) {
     let stacktraceMsg = '';
     friendlyStack.forEach((frame, idx) => {
       const location = `${frame.fileName}:${frame.lineNumber}:${
         frame.columnNumber
       }`;
+      let frameMsg;
       if (idx === 0) {
         frameMsg = TL.tl`┌[${location}] \n\t Error at line ${frame.lineNumber} in ${frame.functionName}()\n`;
       } else {
@@ -406,6 +395,8 @@ export const printFriendlyStack = friendlyStack => {
       }
       stacktraceMsg += frameMsg;
     });
-    console.log(stacktraceMsg);
+    FES.log(stacktraceMsg, {
+      prefix: false
+    });
   }
 };
