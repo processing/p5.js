@@ -405,8 +405,6 @@ class Vector {
     }
   }
 
-
-
   /**
    * Adds to a vector's components.
    *
@@ -414,11 +412,10 @@ class Vector {
    * another <a href="#/p5.Vector">p5.Vector</a> object, as in `v.add(v2)`, or
    * an array of numbers, as in `v.add([1, 2, 3])`.
    *
-   * Add vectors only when they are the same size: both 2-dimensional, or
-   * both 3-dimensional. When two vectors of different sizes are added, the
-   * smaller dimension will be used, any additional values of the longer
-   * vector will be ignored.
-   * For example, adding `[1, 2, 3]` and `[4, 5]` will result in `[5, 7]`.
+   * You should add vectors only when they are the same size. When two vectors
+   * of different sizes are added, the smaller dimension will be used, any
+   * additional values of the longer vector will be ignored. For example,
+   * adding `[1, 2, 3]` and `[4, 5]` will result in `[5, 7]`.
    *
    * Calling `add()` with no arguments, as in `v.add()`, has no effect.
    *
@@ -546,11 +543,8 @@ class Vector {
     return this;
   }
 
-
-
   /**
-   * Performs modulo (remainder) division with a vector's `x`, `y`, and `z`
-   * components.
+   * Performs modulo (remainder) division with a vector's components.
    *
    * `rem()` can use separate numbers, as in `v.rem(1, 2, 3)`,
    * another <a href="#/p5.Vector">p5.Vector</a> object, as in `v.rem(v2)`, or
@@ -560,8 +554,8 @@ class Vector {
    * will be set to their values modulo 2. Calling `rem()` with no
    * arguments, as in `v.rem()`, has no effect.
    *
-   * Modulo vectors only when they are the same size: both 2D, or both 3D.
-   * When two vectors of different sizes are used, the smaller dimension will be
+   * You should modulo vectors only when they are the same size. When two
+   * vectors of different sizes are used, the smaller dimension will be
    * used, any additional values of the longer vector will be ignored.
    * For example, taking `[3, 6, 9]` modulo `[2, 4]` will result in `[1, 2]`.
    *
@@ -680,7 +674,7 @@ class Vector {
   }
 
   /**
-   * Subtracts from a vector's `x`, `y`, and `z` components.
+   * Subtracts from a vector's components.
    *
    * `sub()` can use separate numbers, as in `v.sub(1, 2, 3)`, another
    * <a href="#/p5.Vector">p5.Vector</a> object, as in `v.sub(v2)`, or an array
@@ -688,8 +682,8 @@ class Vector {
    *
    * Calling `sub()` with no arguments, as in `v.sub()`, has no effect.
    *
-   * Subtract vectors only when they are the same size: both 2D, or both 3D.
-   * When two vectors of different sizes are used, the smaller dimension will be
+   * You should subtract vectors only when they are the same size. When two
+   * vectors of different sizes are used, the smaller dimension will be
    * used, any additional values of the longer vector will be ignored.
    * For example, subtracting `[1, 2]` from `[3, 5, 7]` will result in `[2, 3]`.
    *
@@ -813,7 +807,7 @@ class Vector {
   }
 
   /**
-   * Multiplies a vector's `x`, `y`, and `z` components.
+   * Multiplies a vector's components.
    *
    * `mult()` can use separate numbers, as in `v.mult(1, 2, 3)`, another
    * <a href="#/p5.Vector">p5.Vector</a> object, as in `v.mult(v2)`, or an array
@@ -823,8 +817,8 @@ class Vector {
    * will be multiplied by 2. Calling `mult()` with no arguments, as in `v.mult()`, has
    * no effect.
    *
-   * Multiply vectors only when they are the same size: both 2D, or both 3D.
-   * When two vectors of different sizes are multiplied, the smaller dimension will be
+   * You should multiply vectors only when they are the same size. When two
+   * vectors of different sizes are multiplied, the smaller dimension will be
    * used, any additional values of the longer vector will be ignored.
    * For example, multiplying `[1, 2, 3]` by `[4, 5]` will result in `[4, 10]`.
    *
@@ -1007,7 +1001,7 @@ class Vector {
   }
 
   /**
-   * Divides a vector's `x`, `y`, and `z` components.
+   * Divides a vector's components.
    *
    * `div()` can use separate numbers, as in `v.div(1, 2, 3)`, another
    * <a href="#/p5.Vector">p5.Vector</a> object, as in `v.div(v2)`, or an array
@@ -1017,8 +1011,8 @@ class Vector {
    * will be divided by 2. Calling `div()` with no arguments, as in `v.div()`, has
    * no effect.
    *
-   * Divide vectors only when they are the same size: both 2D, or both 3D.
-   * When two vectors of different sizes are divided, the smaller dimension will be
+   * You should divide vectors only when they are the same size. When two
+   * vectors of different sizes are divided, the smaller dimension will be
    * used, any additional values of the longer vector will be ignored.
    * For example, dividing `[8, 12, 21]` by `[2, 3]` will result in `[4, 4]`.
    *
