@@ -15,7 +15,8 @@ TL.addTranslations(['en', 'en-US', 'en-GB'], {
   ordinalFirst: 'first',
   typeString: 'string',
   typeBoolean: 'boolean',
-  typeFunction: 'function'
+  typeFunction: 'function',
+  typeNumber: 'number'
 });
 
 TL.addTranslations(['zh', 'zh-CN', 'zh-Hans', 'zh-Hans-CN'], {
@@ -31,7 +32,8 @@ TL.addTranslations(['zh', 'zh-CN', 'zh-Hans', 'zh-Hans-CN'], {
   ordinalFirst: '第一个',
   typeString: '字符串',
   typeBoolean: '布尔值',
-  typeFunction: '函数'
+  typeFunction: '函数',
+  typeNumber: '数字'
 });
 
 export class FES {
@@ -66,7 +68,8 @@ export class FES {
     ],
     types: {
       string: TL.tl`string`,
-      boolean: TL.tl`boolean`
+      boolean: TL.tl`boolean`,
+      number: TL.tl`number`
     }
   }
 }

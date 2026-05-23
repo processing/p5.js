@@ -483,8 +483,7 @@ function validateParams(p5, fn, lifecycles) {
       case 'invalid_type': {
         const position = FES.premade.ordinals[currentError.path.join('.')];
         const expectedType = FES.premade.types[currentError.expected];
-        const actualType = FES.premade.types[currentError.message.split(', received ')[1]];
-        message = FES.tl`Expected ${expectedType} at the ${position} parameter, but received ${actualType} in ${func + '()'}.`;
+        message = FES.tl`Expected ${expectedType} at the ${position} parameter in ${func + '()'}.`
         break;
       }
       case 'too_big': {
