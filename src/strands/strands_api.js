@@ -492,7 +492,7 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
       const u2 = this.random();
       const z = this.sqrt(this.log(u1).mult(-2)).mult(this.cos(u2.mult(2*Math.PI)));
 
-      return z.mult(p5.strandsNode(stdDev)).add(p5.strandsNode(mean));
+      return z.mult(stdDev).add(mean);
     });
 
   augmentFn(fn, p5, 'millis', function (...args) {
