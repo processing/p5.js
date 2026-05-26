@@ -7,7 +7,7 @@ import { Vector } from './p5.Vector.js';
 export function _defaultEmptyVector(target){
   return function(...args){
     if(args.length === 0){
-      this._friendlyError(
+      this.constructor._friendlyError(
         'In 1.x, createVector() was a shortcut for createVector(0, 0, 0). In 2.x, p5.js has vectors of any dimension, so you must provide your desired number of zeros. Use createVector(0, 0) for a 2D vector and createVector(0, 0, 0) for a 3D vector.',
         'p5.createVector'
       );
@@ -49,7 +49,7 @@ export function _validatedVectorOperation(expectsSoloNumberArgument){
         for (let i = 0; i < args.length; i++) {
           const v = args[i];
           if (typeof v !== 'number' || !Number.isFinite(v)) {
-            if (!Vector.friendlyErrorsDisabled()) {
+            if (!this.friendlyErrorsDisabled()) {
               this._friendlyError(
                 'Arguments contain non-finite numbers',
                 'p5.Vector'
@@ -60,7 +60,7 @@ export function _validatedVectorOperation(expectsSoloNumberArgument){
         }
       } else {
         if (typeof args !== 'number' || !Number.isFinite(args)) {
-          if (!Vector.friendlyErrorsDisabled()) {
+          if (!this.friendlyErrorsDisabled()) {
             this._friendlyError(
               'Arguments contain non-finite numbers',
               'p5.Vector'
