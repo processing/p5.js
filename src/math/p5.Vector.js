@@ -9,8 +9,14 @@ import * as constants from '../core/constants';
  * This function is used by binary vector operations to prioritize shorter vectors,
  * and to emit a warning when lengths do not match.
  */
-const prioritizeSmallerDimension = function(currentVectorDimension, args) {
-  return Math.min(currentVectorDimension, args.length);
+const prioritizeSmallerDimension = function (currentVectorDimension, args) {
+  const resultDimension = Math.min(currentVectorDimension, args.length);
+  if (Array.isArray(args) && currentVectorDimension !== args.length) {
+    console.warn(
+      'When working with two vectors of different sizes, the smaller dimension is used. In this operation, both vector will be treated as ' + resultDimension + 'D vectors, and any additional values of the linger vector will be ignored.'
+    );
+  }
+  return resultDimension;
 };
 
 /**
@@ -399,8 +405,6 @@ class Vector {
     }
   }
 
-
-
   /**
    * Adds to a vector's components.
    *
@@ -408,11 +412,10 @@ class Vector {
    * another <a href="#/p5.Vector">p5.Vector</a> object, as in `v.add(v2)`, or
    * an array of numbers, as in `v.add([1, 2, 3])`.
    *
-   * Add vectors only when they are the same size: both 2-dimensional, or
-   * both 3-dimensional. When two vectors of different sizes are added, the
-   * smaller dimension will be used, any additional values of the longer
-   * vector will be ignored.
-   * For example, adding `[1, 2, 3]` and `[4, 5]` will result in `[5, 7]`.
+   * You should add vectors only when they are the same size. When two vectors
+   * of different sizes are added, the smaller dimension will be used, any
+   * additional values of the longer vector will be ignored. For example,
+   * adding `[1, 2, 3]` and `[4, 5]` will result in `[5, 7]`.
    *
    * Calling `add()` with no arguments, as in `v.add()`, has no effect.
    *
@@ -529,7 +532,7 @@ class Vector {
    * @param  {p5.Vector|Number[]} value The vector to add
    * @chainable
    */
-  add(...args) {
+  add(args) {
     const minDimension = prioritizeSmallerDimension(this.dimensions, args);
     shrinkToDimension(this.values, minDimension);
 
@@ -540,11 +543,8 @@ class Vector {
     return this;
   }
 
-
-
   /**
-   * Performs modulo (remainder) division with a vector's `x`, `y`, and `z`
-   * components.
+   * Performs modulo (remainder) division with a vector's components.
    *
    * `rem()` can use separate numbers, as in `v.rem(1, 2, 3)`,
    * another <a href="#/p5.Vector">p5.Vector</a> object, as in `v.rem(v2)`, or
@@ -554,8 +554,8 @@ class Vector {
    * will be set to their values modulo 2. Calling `rem()` with no
    * arguments, as in `v.rem()`, has no effect.
    *
-   * Modulo vectors only when they are the same size: both 2D, or both 3D.
-   * When two vectors of different sizes are used, the smaller dimension will be
+   * You should modulo vectors only when they are the same size. When two
+   * vectors of different sizes are used, the smaller dimension will be
    * used, any additional values of the longer vector will be ignored.
    * For example, taking `[3, 6, 9]` modulo `[2, 4]` will result in `[1, 2]`.
    *
@@ -653,13 +653,20 @@ class Vector {
    * @param {p5.Vector | Number[]}  value  divisor vector.
    * @chainable
    */
-  rem(...args) {
+  rem(args) {
     const minDimension = prioritizeSmallerDimension(this.dimensions, args);
 
     shrinkToDimension(this.values, minDimension);
-    for (let i = 0; i < this.values.length; i++) {
-      if (args[i] > 0) {
-        this.values[i] = this.values[i] % args[i];
+
+    if(Array.isArray(args)){
+      for (let i = 0; i < this.values.length; i++) {
+        if (args[i] > 0) {
+          this.values[i] = this.values[i] % args[i];
+        }
+      }
+    } else if(args > 0) {
+      for (let i = 0; i < this.values.length; i++) {
+        this.values[i] = this.values[i] % args;
       }
     }
 
@@ -667,7 +674,7 @@ class Vector {
   }
 
   /**
-   * Subtracts from a vector's `x`, `y`, and `z` components.
+   * Subtracts from a vector's components.
    *
    * `sub()` can use separate numbers, as in `v.sub(1, 2, 3)`, another
    * <a href="#/p5.Vector">p5.Vector</a> object, as in `v.sub(v2)`, or an array
@@ -675,8 +682,8 @@ class Vector {
    *
    * Calling `sub()` with no arguments, as in `v.sub()`, has no effect.
    *
-   * Subtract vectors only when they are the same size: both 2D, or both 3D.
-   * When two vectors of different sizes are used, the smaller dimension will be
+   * You should subtract vectors only when they are the same size. When two
+   * vectors of different sizes are used, the smaller dimension will be
    * used, any additional values of the longer vector will be ignored.
    * For example, subtracting `[1, 2]` from `[3, 5, 7]` will result in `[2, 3]`.
    *
@@ -788,7 +795,7 @@ class Vector {
    * @param  {p5.Vector|Number[]} value the vector to subtract
    * @chainable
    */
-  sub(...args) {
+  sub(args) {
     const minDimension = prioritizeSmallerDimension(this.dimensions, args);
     shrinkToDimension(this.values, minDimension);
 
@@ -800,7 +807,7 @@ class Vector {
   }
 
   /**
-   * Multiplies a vector's `x`, `y`, and `z` components.
+   * Multiplies a vector's components.
    *
    * `mult()` can use separate numbers, as in `v.mult(1, 2, 3)`, another
    * <a href="#/p5.Vector">p5.Vector</a> object, as in `v.mult(v2)`, or an array
@@ -810,8 +817,8 @@ class Vector {
    * will be multiplied by 2. Calling `mult()` with no arguments, as in `v.mult()`, has
    * no effect.
    *
-   * Multiply vectors only when they are the same size: both 2D, or both 3D.
-   * When two vectors of different sizes are multiplied, the smaller dimension will be
+   * You should multiply vectors only when they are the same size. When two
+   * vectors of different sizes are multiplied, the smaller dimension will be
    * used, any additional values of the longer vector will be ignored.
    * For example, multiplying `[1, 2, 3]` by `[4, 5]` will result in `[4, 10]`.
    *
@@ -976,19 +983,25 @@ class Vector {
    * @param  {p5.Vector} v vector to multiply with the components of the original vector.
    * @chainable
    */
-  mult(...args) {
+  mult(args) {
     const minDimension = prioritizeSmallerDimension(this.dimensions, args);
     shrinkToDimension(this.values, minDimension);
 
-    for (let i = 0; i < this.values.length; i++) {
-      this.values[i] *= args[i];
+    if(Array.isArray(args)){
+      for (let i = 0; i < this.values.length; i++) {
+        this.values[i] *= args[i];
+      }
+    } else {
+      for (let i = 0; i < this.values.length; i++) {
+        this.values[i] *= args;
+      }
     }
 
     return this;
   }
 
   /**
-   * Divides a vector's `x`, `y`, and `z` components.
+   * Divides a vector's components.
    *
    * `div()` can use separate numbers, as in `v.div(1, 2, 3)`, another
    * <a href="#/p5.Vector">p5.Vector</a> object, as in `v.div(v2)`, or an array
@@ -998,8 +1011,8 @@ class Vector {
    * will be divided by 2. Calling `div()` with no arguments, as in `v.div()`, has
    * no effect.
    *
-   * Divide vectors only when they are the same size: both 2D, or both 3D.
-   * When two vectors of different sizes are divided, the smaller dimension will be
+   * You should divide vectors only when they are the same size. When two
+   * vectors of different sizes are divided, the smaller dimension will be
    * used, any additional values of the longer vector will be ignored.
    * For example, dividing `[8, 12, 21]` by `[2, 3]` will result in `[4, 4]`.
    *
@@ -1165,24 +1178,41 @@ class Vector {
    * @param  {p5.Vector} v vector to divide the components of the original vector by.
    * @chainable
    */
-  div(...args) {
+  div(args) {
     const minDimension = prioritizeSmallerDimension(this.dimensions, args);
 
-    for (let i = 0; i < minDimension; i++) {
-      if (typeof args[i] !== 'number' || args[i] === 0) {
-        if (!this.friendlyErrorsDisabled()) {
-          console.warn(
-            'p5.Vector.prototype.div',
-            'Arguments contain components that are 0'
-          );
+    if (Array.isArray(args)) {
+      for (let i = 0; i < minDimension; i++) {
+        if ((typeof args[i] !== 'number' || args[i] === 0)) {
+          if (!this.friendlyErrorsDisabled()) {
+            console.warn(
+              'p5.Vector.prototype.div',
+              'Arguments contain components that are 0'
+            );
+          }
+          return this;
         }
-        return this;
       }
+    } else if(typeof args !== 'number' || args === 0) {
+      if (!this.friendlyErrorsDisabled()) {
+        console.warn(
+          'p5.Vector.prototype.div',
+          'Arguments contain components that are 0'
+        );
+      }
+      return this;
     }
 
     shrinkToDimension(this.values, minDimension);
-    for (let i = 0; i < this.values.length; i++) {
-      this.values[i] /= args[i];
+
+    if(Array.isArray(args)){
+      for (let i = 0; i < this.values.length; i++) {
+        this.values[i] /= args[i];
+      }
+    } else {
+      for (let i = 0; i < this.values.length; i++) {
+        this.values[i] /= args;
+      }
     }
 
     return this;
