@@ -92,7 +92,15 @@ function math(p5, fn) {
    * }
    */
   fn.createVector = function (...args) {
-    return new p5.Vector(...args);
+    if (this instanceof p5) {
+      if (!this._boundFromRadians) {
+        this._boundFromRadians = this._fromRadians.bind(this);
+        this._boundToRadians = this._toRadians.bind(this);
+      }
+      return new p5.Vector(this._boundFromRadians, this._boundToRadians, ...args);
+    } else {
+      return new p5.Vector(...args);
+    }
   };
 
   /**

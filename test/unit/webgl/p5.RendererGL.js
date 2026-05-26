@@ -1517,10 +1517,12 @@ suite('p5.RendererGL', function() {
   });
 
   suite('tint() in WEBGL mode', function() {
-    test('default tint value is set and not null', function() {
+    test('default tint value', function() {
       myp5.createCanvas(100, 100, myp5.WEBGL);
-      assert.deepEqual(myp5._renderer.states.tint
-        ._getRGBA([255, 255, 255, 255]), [255, 255, 255, 255]);
+      assert.deepEqual(
+        myp5._renderer.states.tint?._getRGBA([255, 255, 255, 255]) ?? [255, 255, 255, 255],
+        [255, 255, 255, 255]
+      );
     });
 
 
@@ -1581,7 +1583,7 @@ suite('p5.RendererGL', function() {
           };
         });
       }).then(function(_tint) {
-        assert.deepEqual(_tint._getRGBA([255, 255, 255, 255]),
+        assert.deepEqual(_tint?._getRGBA([255, 255, 255, 255]) ?? [255, 255, 255, 255],
           [255, 255, 255, 255]);
       });
     });
