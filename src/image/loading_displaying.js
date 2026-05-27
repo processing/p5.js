@@ -296,6 +296,7 @@ p5.prototype.saveGif = async function(
     notificationID: 'progressBar'
   }
 ) {
+  p5._validateParameters('saveGif', arguments);
   // validate parameters
   if (typeof fileName !== 'string') {
     throw TypeError('fileName parameter must be a string');
