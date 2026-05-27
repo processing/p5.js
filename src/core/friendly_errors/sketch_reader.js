@@ -208,7 +208,57 @@ if (typeof IS_MINIFIED !== 'undefined') {
    * @private
    * @param {String} code code written by the user
    */
+  // Filter out content inside strands arrow function callbacks
+  // These are transpiled into GLSL and run in a separate execution context
+  // e.g., .modify(() => { let red = 0.5; }) or getWorldInputs((inputs) => { ... })
+  const filterStrandsCallbacks = code => {
+    let inStrandsCallback = false;
+    let braceDepth = 0;
+    let result = [];
+    let i = 0;
+    
+    while (i < code.length) {
+      const remaining = code.slice(i);
+      const arrowMatch = remaining.match(/^\s*=>\s*\{/);
+      if (arrowMatch && !inStrandsCallback) {
+        inStrandsCallback = true;
+        braceDepth = 1;
+        i += arrowMatch[0].length;
+        continue;
+      }
+      
+      if (inStrandsCallback) {
+        const openBrace = code.indexOf('{', i);
+        const closeBrace = code.indexOf('}', i);
+        
+        if (closeBrace !== -1 && (openBrace === -1 || closeBrace < openBrace)) {
+          braceDepth--;
+          if (braceDepth === 0) {
+            inStrandsCallback = false;
+            i = closeBrace + 1;
+            continue;
+          }
+          i = closeBrace + 1;
+        } else if (openBrace !== -1) {
+          braceDepth++;
+          i = openBrace + 1;
+        } else {
+          i++;
+        }
+        continue;
+      }
+      
+      result.push(code[i]);
+      i++;
+    }
+    
+    return result.join('');
+  };
+
   const codeToLines = code => {
+    // Filter out strands callback bodies before scanning
+    code = filterStrandsCallbacks(code);
+    
     //convert code to array of code and filter out
     //unnecessary lines
     let arrayVariables = code
