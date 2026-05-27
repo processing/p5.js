@@ -756,7 +756,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
       }
     }
   };
-  p5.prototype._validateParameters = p5.validateParameters;
+  p5.prototype._validateParameters = p5._validateParameters;
 }
 
 export default p5;
