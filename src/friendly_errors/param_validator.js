@@ -6,6 +6,7 @@ import * as constants from '../core/constants.js';
 import * as z from 'zod/mini';
 import dataDoc from '../../docs/parameterData.json';
 import { FES } from './fes.js';
+import { errorStackParser, processStack, getFriendlyStack } from './stacktrace.js';
 
 function validateParams(p5, fn, lifecycles) {
   // Cache for Zod schemas
@@ -446,7 +447,6 @@ function validateParams(p5, fn, lifecycles) {
         if (error.path?.length > 0 && args[error.path[0]] instanceof Promise)  {
           message += 'Did you mean to put `await` before a loading function? ' +
             'An unexpected Promise was found. ';
-          isVersionError = true;
         }
 
         const expectedTypesStr = Array.from(expectedTypes).join(' or ');
@@ -498,9 +498,14 @@ function validateParams(p5, fn, lifecycles) {
     }
 
     if (isVersionError) {
-      p5._error(this, message);
+      p5._friendlyError(message);
     } else {
-      FES.log(message);
+      const [_null, stacktrace] = processStack(
+        null,
+        errorStackParser.parse(Error()).slice(3)
+      );
+      const locationStr = getFriendlyStack(stacktrace, true);
+      FES.log(FES.tl`${locationStr} ${message}`);
     }
     return message;
   };

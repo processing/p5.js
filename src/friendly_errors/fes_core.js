@@ -23,7 +23,7 @@
  * https://github.com/processing/p5.js/blob/main/contributor_docs/fes_reference_dev_notes.md
  */
 import { errorTable } from './browser_errors';
-import { errorStackParser, processStack, printFriendlyStack } from './stacktrace';
+import { errorStackParser, processStack, printFriendlyStack, getFriendlyStack } from './stacktrace';
 import { TL, FES } from './fes';
 
 function fesCore(p5, fn, lifecycles){
@@ -139,9 +139,9 @@ function fesCore(p5, fn, lifecycles){
 
         //Whenever func having p5.[Class] is encountered, we need to have the error link as mentioned below else different link
         if(funcName.startsWith('p5.')){
-          msgWithReference = `${message} (https://p5js.org/reference/${referenceSection}.${funcName})`;
+          msgWithReference = TL.tl`${message} (https://p5js.org/reference/${referenceSection}.${funcName})`;
         }else{
-          msgWithReference = `${message} (https://p5js.org/reference/${referenceSection}/${funcName})`;
+          msgWithReference = TL.tl`${message} (https://p5js.org/reference/${referenceSection}/${funcName})`;
         }
       }
       return msgWithReference;
@@ -175,13 +175,13 @@ function fesCore(p5, fn, lifecycles){
      * @param  {String}          message  Message to be printed
      * @param  {String}          [func]   Name of function
      */
-    p5._error = (context, message, func) => {
-      p5._report(message, func);
-      context.hitCriticalError = true;
-      // Throw an error to stop the current function (e.g. setup or draw) from
-      // running more code
-      throw new FESError('Stopping sketch to prevent more errors');
-    };
+    // p5._error = (context, message, func) => {
+    //   p5._report(message, func);
+    //   context.hitCriticalError = true;
+    //   // Throw an error to stop the current function (e.g. setup or draw) from
+    //   // running more code
+    //   throw new FESError('Stopping sketch to prevent more errors');
+    // };
 
     /**
      * This is a generic method that can be called from anywhere in the p5
@@ -231,8 +231,9 @@ function fesCore(p5, fn, lifecycles){
       const fnNames = entryPoints;
 
       if (context.preload && !p5.isPreloadSupported()) {
-        p5._error(
-          context,
+        // Print a message but don't stop execution, it is reasonable
+        // for someone to have their own `function preload()` if they want.
+        p5._friendlyError(
           TL.tl`The preload() function has been removed in p5.js 2.0. Please load assets in setup() using async / await keywords or callbacks instead. See https://github.com/processing/p5.js-compatibility for more information about 2.0 and compatibility, or https://dev.to/limzykenneth/asynchronous-p5js-20-458f for more information about promises and async/await.`
         );
       }
@@ -385,8 +386,7 @@ function fesCore(p5, fn, lifecycles){
       // friendlyStack.
       let [isInternal, friendlyStack] = processStack(
         error,
-        stacktrace,
-        entryPoints
+        stacktrace
       );
 
       // if this is an internal library error, the type of the error is not relevant,
@@ -424,7 +424,7 @@ function fesCore(p5, fn, lifecycles){
         stacktrace[0].lineNumber &&
         stacktrace[0].columnNumber
       ) {
-        locationStr = TL.tl`[${stacktrace[0].fileName.split('/').slice(-1)}, line ${friendlyStack[0].lineNumber}]`;
+        locationStr = getFriendlyStack(stacktrace, true);
       }
 
       switch (error.name) {
@@ -507,10 +507,12 @@ function fesCore(p5, fn, lifecycles){
               // of a p5 property/function
               let url = 'https://p5js.org/examples/data-variable-scope.html';
               p5._friendlyError(
-                TL.tl`\n${locationStr} "${errSym}" is not defined in the current scope. If you have defined it in your code, you should check its scope, spelling, and letter-casing (JavaScript is case-sensitive).\n\n+ More info: ${url}`
+                TL.tl`${locationStr} "${errSym}" is not defined in the current scope. If you have defined it in your code, you should check its scope, spelling, and letter-casing (JavaScript is case-sensitive).\n\n+ More info: ${url}`
               );
 
-              if (friendlyStack) printFriendlyStack(friendlyStack);
+              if (friendlyStack) FES.log(getFriendlyStack(friendlyStack), {
+                prefix: false
+              });
               break;
             }
             case 'CANNOTACCESS': {

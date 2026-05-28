@@ -267,7 +267,30 @@ export const errorStackParser = new ErrorStackParser();
  *                             happened internally
  *                 friendlyStack: the filtered (simplified) stacktrace
  */
-export const processStack = (error, stacktrace, entryPoints) => {
+export const processStack = (error, stacktrace) => {
+  // TODO: centralize and make extendable
+  const entryPoints = [
+    'setup',
+    'draw',
+    'deviceMoved',
+    'deviceTurned',
+    'deviceShaken',
+    'doubleClicked',
+    'mousePressed',
+    'mouseReleased',
+    'mouseMoved',
+    'mouseDragged',
+    'mouseClicked',
+    'mouseWheel',
+    'touchStarted',
+    'touchMoved',
+    'touchEnded',
+    'keyPressed',
+    'keyReleased',
+    'keyTyped',
+    'windowResized'
+  ];
+
   // cannot process a stacktrace that doesn't exist
   if (!stacktrace) return [false, null];
 
@@ -282,12 +305,8 @@ export const processStack = (error, stacktrace, entryPoints) => {
   // Intentionally throw an error that we catch so that we can check the name
   // of the current file. Any errors we see from this file, we treat as
   // internal errors.
-  try {
-    throw new Error();
-  } catch (testError) {
-    const testStacktrace = errorStackParser.parse(testError);
-    p5FileName = testStacktrace[0].fileName;
-  }
+  const testStacktrace = errorStackParser.parse(Error());
+  p5FileName = testStacktrace[0].fileName;
 
   for (let i = stacktrace.length - 1; i >= 0; i--) {
     let splitted = stacktrace[i].functionName.split('.');
@@ -355,17 +374,17 @@ export const processStack = (error, stacktrace, entryPoints) => {
     }
 
     // Library error
-    const message = TL.tl`${locationObj ? TL.tl`[${locationObj.file}, line ${locationObj.line}]` : ''} An error with message "${error.message}" occurred inside the p5js library when ${func} was called. If not stated otherwise, it might be an issue with the arguments passed to ${func}.`;
-    p5._friendlyError(
-      message,
-      func
-    );
+    // const message = TL.tl`${locationObj ? TL.tl`[${locationObj.file}, line ${locationObj.line}]` : ''} An error with message "${error.message}" occurred inside the p5js library when ${func} was called. If not stated otherwise, it might be an issue with the arguments passed to ${func}.`;
+    // p5._friendlyError(
+    //   message,
+    //   func
+    // );
 
     // Finally, if it's an internal error, print the friendlyStack
     // ( fesErrorMonitor won't handle this error )
-    if (friendlyStack && friendlyStack.length) {
-      printFriendlyStack(friendlyStack);
-    }
+    // if (friendlyStack && friendlyStack.length) {
+    //   printFriendlyStack(friendlyStack);
+    // }
   }
   return [isInternal, friendlyStack];
 };
@@ -400,3 +419,26 @@ export function printFriendlyStack(friendlyStack) {
     });
   }
 };
+
+export function getFriendlyStack(stacktrace, compact = false) {
+  if (compact) {
+    return `[${stacktrace[0].fileName.split('/').slice(-1)}, line ${stacktrace[0].lineNumber}]`;
+  } else {
+    if (stacktrace.length > 1) {
+      let stacktraceMsg = '';
+      stacktrace.forEach((frame, idx) => {
+        const location = `${frame.fileName}:${frame.lineNumber}:${frame.columnNumber}`;
+        let frameMsg;
+        // TODO: translate
+        if (idx === 0) {
+          frameMsg = `┌[${location}] \n\t Error at line ${frame.lineNumber} in ${frame.functionName}()\n`;
+        } else {
+          frameMsg = `└[${location}] \n\t Called from line ${frame.lineNumber} in ${frame.functionName}()\n`;
+        }
+        stacktraceMsg += frameMsg;
+      });
+
+      return stacktraceMsg || null;
+    }
+  }
+}
