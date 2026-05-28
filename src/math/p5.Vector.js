@@ -310,16 +310,11 @@ class Vector {
   }
 
   /**
-   * Sets the vector's `x`, `y`, and `z` components.
+   * Sets the the vector to a new value.
    *
    * `set()` can use separate numbers, as in `v.set(1, 2, 3)`, a
    * <a href="#/p5.Vector">p5.Vector</a> object, as in `v.set(v2)`, or an
    * array of numbers, as in `v.set([1, 2, 3])`.
-   *
-   * If a value isn't provided for a component, it will be set to 0. For
-   * example, `v.set(4, 5)` sets `v.x` to 4, `v.y` to 5, and `v.z` to 0.
-   * Calling `set()` with no arguments, as in `v.set()`, sets all the vector's
-   * components to 0.
    *
    * @param {Number} [x] x component of the vector.
    * @param {Number} [y] y component of the vector.
