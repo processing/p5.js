@@ -113,7 +113,7 @@ p5.ColorConversion = {
     }
 
     // Convert saturation.
-    sat = 2 * (val - li) / val;
+    sat = val === 0 ? 0 : 2 * (val - li) / val;
 
     // Hue and alpha stay the same.
     return [hue, sat, val, hsla[3]];
