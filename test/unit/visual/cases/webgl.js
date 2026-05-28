@@ -272,6 +272,37 @@ visualSuite('WebGL', function() {
 
       screenshot();
     });
+
+    for (const mode of ['webgl', '2d']) {
+      visualTest(`Transparent background colors are correct in ${mode} mode`, function(p5, screenshot) {
+        p5.createCanvas(50, 50, p5.WEBGL);
+        const g = p5.createGraphics(50, 50, mode === 'webgl' ? p5.WEBGL : p5.P2D);
+        if (mode === 'webgl') g.translate(-p5.width/2, -p5.height/2);
+        g.noStroke();
+        g.fill(255, 0, 0, 100);
+        g.rect(10, 10, 30, 30);
+        g.filter(p5.BLUR, 4);
+        p5.imageMode(p5.CENTER);
+        p5.image(g, 0, 0);
+        screenshot();
+      });
+
+      visualTest(`Multiple filter passes work correctly on a p5.Graphics in ${mode} mode`, function(p5, screenshot) {
+        p5.createCanvas(50, 50, p5.WEBGL);
+        const g = p5.createGraphics(50, 50, mode === 'webgl' ? p5.WEBGL : p5.P2D);
+        if (mode === 'webgl') g.translate(-g.width/2, -g.height/2);
+        g.background(255);
+        g.noStroke();
+        g.fill(0);
+        g.rect(10, 10, 6, 6);
+        g.filter(p5.BLUR, 2);
+        g.rect(30, 30, 6, 6);
+        g.filter(p5.BLUR, 2);
+        p5.imageMode(p5.CENTER);
+        p5.image(g, 0, 0);
+        screenshot();
+      });
+    }
   });
 
   visualSuite('Lights', function() {
@@ -612,6 +643,15 @@ visualSuite('WebGL', function() {
       p5.texture(tex);
       p5.tint(255, 100);
       p5.circle(0, 0, 50);
+      screenshot();
+    });
+
+    visualTest('noTint() before image() does not throw', async (p5, screenshot) => {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      const img = await p5.loadImage('/test/unit/assets/cat.jpg');
+      p5.noTint();
+      p5.imageMode(p5.CENTER);
+      p5.image(img, 0, 0, 50, 50);
       screenshot();
     });
   });
@@ -1076,6 +1116,23 @@ visualSuite('WebGL', function() {
       screenshot();
     });
 
+    visualTest('random() colors a basic shader', (p5, screenshot) => {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      const shader = p5.baseColorShader().modify(() => {
+        p5.randomSeed(12);
+        p5.getFinalColor((color) => {
+          const value = p5.random(0.2, 0.9);
+          color = [value, value, value, 1];
+          return color;
+        });
+      }, { p5 });
+      p5.background(0);
+      p5.noStroke();
+      p5.shader(shader);
+      p5.plane(50, 50);
+      screenshot();
+    });
+
     visualTest('uses width/height in getFinalColor', (p5, screenshot) => {
       let firstShader;
       function firstShaderCallback() {
@@ -1147,7 +1204,7 @@ visualSuite('WebGL', function() {
       p5.plane(50, 50);
       screenshot();
     });
-   
+
     visualSuite('auto-return for shader hooks', () => {
       visualTest('auto-returns input struct when return is omitted', (p5, screenshot) => {
         p5.createCanvas(50, 50, p5.WEBGL);

@@ -17,6 +17,8 @@ import filterBaseVert from '../webgl/shaders/filters/base.vert';
 import webgl2CompatibilityShader from '../webgl/shaders/webgl2Compatibility.glsl';
 import { glslBackend } from '../webgl/strands_glslBackend';
 import { getShaderHookTypes } from '../webgl/shaderHookUtils';
+import randomGLSL from '../webgl/shaders/functions/randomGLSL.glsl';
+import randomVertGLSL from '../webgl/shaders/functions/randomVertGLSL.glsl';
 import { makeFilterShader } from '../core/filterShaders';
 
 class FilterRenderer2D {
@@ -42,6 +44,7 @@ class FilterRenderer2D {
       console.error('WebGL not supported, cannot apply filter.');
       return;
     }
+    this.gl.pixelStorei(this.gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
 
     this.textures = new Map();
 
@@ -309,6 +312,14 @@ class FilterRenderer2D {
   }
 
 
+  getRandomFragmentShaderSnippet() {
+    return randomGLSL;
+  }
+
+  getRandomVertexShaderSnippet() {
+    return randomVertGLSL;
+  }
+
   /**
    * Set the current filter operation and parameter. If a customShader is provided,
    * that overrides the operation-based shader.
@@ -371,7 +382,7 @@ class FilterRenderer2D {
 
   get canvasTexture() {
     if (!this._canvasTexture) {
-      this._canvasTexture = new Texture(this._renderer, this.parentRenderer.wrappedElt);
+      this._canvasTexture = new Texture(this._renderer, this.parentRenderer);
     }
     return this._canvasTexture;
   }

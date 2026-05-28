@@ -18,6 +18,10 @@ function acceleration(p5, fn, lifecycles){
         signal: this._removeSignal
       });
     }
+
+    // Initialize device orientation value
+    this.deviceOrientation = typeof window !== 'undefined' &&
+			window.innerWidth / window.innerHeight > 1.0 ? 'landscape' : 'portrait';
   };
 
   /**
@@ -29,8 +33,7 @@ function acceleration(p5, fn, lifecycles){
    * @property {(LANDSCAPE|PORTRAIT)} deviceOrientation
    * @readOnly
    */
-  fn.deviceOrientation =
-    window.innerWidth / window.innerHeight > 1.0 ? 'landscape' : 'portrait';
+  fn.deviceOrientation = 'landscape';
 
   /**
    * The system variable accelerationX always contains the acceleration of the

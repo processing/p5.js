@@ -606,6 +606,9 @@ function validateParams(p5, fn, lifecycles) {
     function(target, { kind, name }){
       if(kind === 'method'){
         return function(...args){
+          if (p5.disableFriendlyErrors) {
+            return target.apply(this, args);
+          }
           const wasInternalCall = this._isUserCall;
           this._isUserCall = true;
           try {
@@ -629,5 +632,5 @@ function validateParams(p5, fn, lifecycles) {
 export default validateParams;
 
 if (typeof p5 !== 'undefined') {
-  validateParams(p5, p5.prototype);
+  p5.registerAddon(validateParams);
 }
