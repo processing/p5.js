@@ -370,6 +370,15 @@ suite('p5.prototype.saveGif', function() {
     });
   });
 
+  test('should throw an error if duration is less than or equal to 0', function() {
+    assert.throws(function() {
+      myp5.saveGif('myGif', 0);
+    }, RangeError);
+    assert.throws(function() {
+      myp5.saveGif('myGif', -5);
+    }, RangeError);
+  });
+
   testWithDownload('should download a GIF', async function(blobContainer) {
     myp5.saveGif(myGif, 3, 2);
     await waitForBlob(blobContainer);
