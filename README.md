@@ -95,25 +95,21 @@ Lead/Mentor Alumni
 <!-- STEWARDS-LIST:START - Do not remove or modify this section -->
 | Area | Steward(s) |
 |------|-------------|
-| Maintainers | [@davepagurek](https://github.com/davepagurek), [@doradocodes](https://github.com/doradocodes), [@ksen0](https://github.com/ksen0), [@limzykenneth](https://github.com/limzykenneth), [@perminder-17](https://github.com/perminder-17), [@qianqianye](https://github.com/qianqianye) |
+| Maintainers | [@davepagurek](https://github.com/davepagurek), [@doradocodes](https://github.com/doradocodes), [@ksen0](https://github.com/ksen0), [@limzykenneth](https://github.com/limzykenneth), [@perminder-17](https://github.com/perminder-17) |
 | Accessibility | [@calebfoss](https://github.com/calebfoss) |
 | Accessibility (p5.js-website) | [@coseeian](https://github.com/coseeian) |
 | Color | [@limzykenneth](https://github.com/limzykenneth) |
 | Core | [@davepagurek](https://github.com/davepagurek) |
-| DevOps | [@Vaivaswat2244](https://github.com/Vaivaswat2244), [@error-four-o-four](https://github.com/error-four-o-four), [@limzykenneth](https://github.com/limzykenneth), [@lirenjie95](https://github.com/lirenjie95) |
-| Documentation | [@VANSH3104](https://github.com/VANSH3104), [@limzykenneth](https://github.com/limzykenneth), [@perminder-17](https://github.com/perminder-17) |
-| Friendly Errors | [@IIITM-Jay](https://github.com/IIITM-Jay) |
-| Graphics (p5.strands) | [@lukeplowden](https://github.com/lukeplowden) |
-| Graphics (WebGL) | [@RandomGamingDev](https://github.com/RandomGamingDev), [@aferriss](https://github.com/aferriss), [@davepagurek](https://github.com/davepagurek), [@lukeplowden](https://github.com/lukeplowden), [@perminder-17](https://github.com/perminder-17) |
+| DevOps | [@limzykenneth](https://github.com/limzykenneth), [@lirenjie95](https://github.com/lirenjie95) |
+| Documentation | [@limzykenneth](https://github.com/limzykenneth), [@perminder-17](https://github.com/perminder-17) |
+| Graphics (WebGL) | [@davepagurek](https://github.com/davepagurek), [@perminder-17](https://github.com/perminder-17) |
 | i18n (es) | [@marioguzzzman](https://github.com/marioguzzzman) |
-| i18n (hi) | [@Divyansh013](https://github.com/Divyansh013), [@takshittt](https://github.com/takshittt) |
-| i18n (ko) | [@eupthere](https://github.com/eupthere), [@hana-cho](https://github.com/hana-cho) |
+| i18n (hi) | [@Divyansh013](https://github.com/Divyansh013) |
+| i18n (ko) | [@eupthere](https://github.com/eupthere) |
 | i18n (zh) | [@limzykenneth](https://github.com/limzykenneth), [@lirenjie95](https://github.com/lirenjie95) |
-| Math | [@GregStanton](https://github.com/GregStanton), [@holomorfo](https://github.com/holomorfo) |
 | p5.js-web-editor | [@kitlord](https://github.com/kitlord) |
 | p5.js-website | [@Nwakaego-Ego](https://github.com/Nwakaego-Ego), [@clairep94](https://github.com/clairep94), [@doradocodes](https://github.com/doradocodes), [@ksen0](https://github.com/ksen0) |
 | p5.sound.js | [@ogbabydiesal](https://github.com/ogbabydiesal) |
-| Shapes | [@GregStanton](https://github.com/GregStanton) |
 | Typography | [@dhowe](https://github.com/dhowe) |
 <!-- STEWARDS-LIST:END -->
 
