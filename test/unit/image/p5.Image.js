@@ -180,6 +180,20 @@ suite('p5.Image', function() {
     });
   });
 
+  suite('p5.Image.prototype.copy', function() {
+    test('it sets modified property to true', function() {
+      let img1 = myp5.createImage(10, 10);
+      let img2 = myp5.createImage(10, 10);
+
+      img2.setModified(false);
+      assert.isFalse(img2.isModified());
+
+      img2.copy(img1, 0, 0, 10, 10, 0, 0, 10, 10);
+
+      assert.isTrue(img2.isModified());
+    });
+  });
+
   suite('p5.Graphics.get()', function() {
     for (const density of [1, 2]) {
       test(`width and height match at pixel density ${density}`, function() {
