@@ -370,13 +370,13 @@ suite('p5.prototype.saveGif', function() {
     });
   });
 
-  test('should throw an error if duration is less than or equal to 0', function() {
-    assert.throws(function() {
+  test('should silently return if duration is less than or equal to 0', function() {
+    assert.doesNotThrow(function() {
       myp5.saveGif('myGif', 0);
-    }, RangeError);
-    assert.throws(function() {
+    });
+    assert.doesNotThrow(function() {
       myp5.saveGif('myGif', -5);
-    }, RangeError);
+    });
   });
 
   testWithDownload('should download a GIF', async function(blobContainer) {
