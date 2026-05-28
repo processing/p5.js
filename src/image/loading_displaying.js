@@ -304,7 +304,7 @@ p5.prototype.saveGif = async function(
     throw TypeError('Duration parameter must be a number');
   }
   if (duration <= 0) {
-    throw RangeError('Duration parameter must be a positive number');
+    return;
   }
 
   // extract variables for more comfortable use
