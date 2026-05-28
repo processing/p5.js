@@ -370,6 +370,15 @@ suite('p5.prototype.saveGif', function() {
     });
   });
 
+  test('should silently return if duration is less than or equal to 0', function() {
+    assert.doesNotThrow(function() {
+      myp5.saveGif('myGif', 0);
+    });
+    assert.doesNotThrow(function() {
+      myp5.saveGif('myGif', -5);
+    });
+  });
+
   testWithDownload('should download a GIF', async function(blobContainer) {
     myp5.saveGif(myGif, 3, 2);
     await waitForBlob(blobContainer);
