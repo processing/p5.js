@@ -1104,6 +1104,7 @@ p5.Image = class {
    */
   copy(...args) {
     p5.prototype.copy.apply(this, args);
+    this.setModified(true);
   }
 
   /**

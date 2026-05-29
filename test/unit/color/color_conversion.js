@@ -57,6 +57,12 @@ suite('color/p5.ColorConversion', function() {
       result = p5.ColorConversion._hslaToHSBA(hsla);
       assert.arrayApproximately(result, hsba, accuracy);
     });
+
+    test('zero lightness does not produce NaN saturation', function() {
+      result = p5.ColorConversion._hslaToHSBA([0, 1, 0, 1]);
+      assert.isFalse(isNaN(result[1]));
+      assert.strictEqual(result[1], 0);
+    });
   });
 
   suite('hsbaToHSLA', function() {
