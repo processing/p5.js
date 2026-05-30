@@ -351,6 +351,64 @@ function fesCore(p5, fn, lifecycles){
     };
 
     /**
+     * Detects browser level error event for p5 constants/functions used outside
+     * of setup() and draw().
+     *
+     * Generates and prints a friendly error message using key:
+     * "fes.misusedTopLevel".
+     *
+     * @method helpForMisusedAtTopLevelCode
+     * @private
+     * @param {Event} e       Error event
+     * @param {Boolean} log   false
+     *
+     * @returns {Boolean} true
+     */
+    const helpForMisusedAtTopLevelCode = e => {
+      if (!misusedAtTopLevelCode) {
+        defineMisusedAtTopLevelCode();
+      }
+
+      // If we find that we're logging lots of false positives, we can
+      // uncomment the following code to avoid displaying anything if the
+      // user's code isn't likely to be using p5's global mode. (Note that
+      // setup/draw are more likely to be defined due to JS function hoisting.)
+      //
+      //if (!('setup' in window || 'draw' in window)) {
+      //  return;
+      //}
+
+      const matched = misusedAtTopLevelCode.some(symbol => {
+        // Note that while just checking for the occurrence of the
+        // symbol name in the error message could result in false positives,
+        // a more rigorous test is difficult because different browsers
+        // log different messages, and the format of those messages may
+        // change over time.
+        //
+        // For example, if the user uses 'PI' in their code, it may result
+        // in any one of the following messages:
+        //
+        //   * 'PI' is undefined                           (Microsoft Edge)
+        //   * ReferenceError: PI is undefined             (Firefox)
+        //   * Uncaught ReferenceError: PI is not defined  (Chrome)
+        if (e.message && e.message.match(`\\W?${symbol.name}\\W`) !== null) {
+          const FAQ_URL =
+            'https://github.com/processing/p5.js/wiki/p5.js-overview#why-cant-i-assign-variables-using-p5-functions-and-variables-before-setup';
+          const symbolName =
+            symbol.type === 'function' ? `${symbol.name}()` : symbol.name;
+          FES.log(
+            TL.tl`Did you just try to use p5.js's ${symbolName} ${
+              symbol.type
+            }? If so, you may want to move it into your sketch's setup() function.\n\nFor more details, see: ${FAQ_URL}`
+          );
+          return true;
+        }
+      });
+
+      return matched;
+    };
+
+    /**
      * Handles "global" errors that the browser catches.
      *
      * Called when an error event happens and detects the type of error.
@@ -391,12 +449,11 @@ function fesCore(p5, fn, lifecycles){
 
       // if this is an internal library error, the type of the error is not relevant,
       // only the user code that lead to it is.
-      if (isInternal) {
-        return;
-      }
+      if (isInternal) return;
 
       const errList = errorTable[error.name];
       if (!errList) return; // this type of error can't be handled yet
+
       let matchedError;
       for (const obj of errList) {
         let string = obj.msg;
@@ -413,10 +470,9 @@ function fesCore(p5, fn, lifecycles){
         }
       }
 
-      if (!matchedError) return;
+      if (!matchedError) return; // this type of error can't be handled yet
 
       // Try and get the location from the top element of the stack
-      // let locationObj;
       let locationStr = '';
       if (
         stacktrace &&
@@ -498,8 +554,10 @@ function fesCore(p5, fn, lifecycles){
               //let a = 10;
               //console.log(x);
               let errSym = matchedError.match[1];
-
-              if (errSym && handleMisspelling(errSym, error)) {
+              if (
+                (errSym && handleMisspelling(errSym, error)) ||
+                helpForMisusedAtTopLevelCode(e)
+              ) {
                 break;
               }
 
@@ -510,9 +568,12 @@ function fesCore(p5, fn, lifecycles){
                 TL.tl`${locationStr} "${errSym}" is not defined in the current scope. If you have defined it in your code, you should check its scope, spelling, and letter-casing (JavaScript is case-sensitive).\n\n+ More info: ${url}`
               );
 
-              if (friendlyStack) FES.log(getFriendlyStack(friendlyStack), {
-                prefix: false
-              });
+              if (friendlyStack) {
+                const msg = getFriendlyStack(friendlyStack);
+                if(msg) FES.log(msg, {
+                  prefix: false
+                });
+              }
               break;
             }
             case 'CANNOTACCESS': {
@@ -616,74 +677,6 @@ function fesCore(p5, fn, lifecycles){
     window.addEventListener('load', checkForUserDefinedFunctions, false);
     window.addEventListener('error', fesErrorMonitor, false);
     window.addEventListener('unhandledrejection', fesErrorMonitor, false);
-  }
-
-  /**
-   * Detects browser level error event for p5 constants/functions used outside
-   * of setup() and draw().
-   *
-   * Generates and prints a friendly error message using key:
-   * "fes.misusedTopLevel".
-   *
-   * @method helpForMisusedAtTopLevelCode
-   * @private
-   * @param {Event} e       Error event
-   * @param {Boolean} log   false
-   *
-   * @returns {Boolean} true
-   */
-  const helpForMisusedAtTopLevelCode = e => {
-    if (!misusedAtTopLevelCode) {
-      defineMisusedAtTopLevelCode();
-    }
-
-    // If we find that we're logging lots of false positives, we can
-    // uncomment the following code to avoid displaying anything if the
-    // user's code isn't likely to be using p5's global mode. (Note that
-    // setup/draw are more likely to be defined due to JS function hoisting.)
-    //
-    //if (!('setup' in window || 'draw' in window)) {
-    //  return;
-    //}
-
-    misusedAtTopLevelCode.some(symbol => {
-      // Note that while just checking for the occurrence of the
-      // symbol name in the error message could result in false positives,
-      // a more rigorous test is difficult because different browsers
-      // log different messages, and the format of those messages may
-      // change over time.
-      //
-      // For example, if the user uses 'PI' in their code, it may result
-      // in any one of the following messages:
-      //
-      //   * 'PI' is undefined                           (Microsoft Edge)
-      //   * ReferenceError: PI is undefined             (Firefox)
-      //   * Uncaught ReferenceError: PI is not defined  (Chrome)
-      if (e.message && e.message.match(`\\W?${symbol.name}\\W`) !== null) {
-        const FAQ_URL =
-          'https://github.com/processing/p5.js/wiki/p5.js-overview#why-cant-i-assign-variables-using-p5-functions-and-variables-before-setup';
-        const symbolName =
-          symbol.type === 'function' ? `${symbol.name}()` : symbol.name;
-        FES.log(
-          TL.tl`Did you just try to use p5.js's ${symbolName} ${
-            symbol.type
-          }? If so, you may want to move it into your sketch's setup() function.\n\nFor more details, see: ${FAQ_URL}`
-        );
-        return true;
-      }
-    });
-  };
-
-  if (document.readyState !== 'complete') {
-    window.addEventListener('error', helpForMisusedAtTopLevelCode, false);
-
-    // Our job is only to catch ReferenceErrors that are thrown when
-    // global (non-instance mode) p5 APIs are used at the top-level
-    // scope of a file, so we'll unbind our error listener now to make
-    // sure we don't log false positives later.
-    window.addEventListener('load', () => {
-      window.removeEventListener('error', helpForMisusedAtTopLevelCode, false);
-    });
   }
 }
 
