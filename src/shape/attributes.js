@@ -513,8 +513,9 @@ function attributes(p5, fn){
    * Sets the width of the stroke used for points, lines, and the outlines of
    * shapes.
    *
-   * Note: `strokeWeight()` is affected by transformations, especially calls to
-   * <a href="#/p5/scale">scale()</a>.
+   * Note: In 2D mode, `strokeWeight()` is affected by transformations,
+   * especially calls to <a href="#/p5/scale">scale()</a>. It isn't affected by
+   * transformations in WebGL and WebGPU modes.
    * 
    * Calling `strokeWeight()` without an argument returns the current stroke weight as a number.
    *
