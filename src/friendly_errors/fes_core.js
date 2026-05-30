@@ -82,10 +82,6 @@ function fesCore(p5, fn, lifecycles){
   // used in misspelling detection
   const EDIT_DIST_THRESHOLD = 2;
 
-  // Used for internally thrown errors that should not get wrapped by another
-  // friendly error handler
-  class FESError extends Error { };
-
   if (typeof IS_MINIFIED !== 'undefined') {
     p5._friendlyError =
       p5._checkForUserDefinedFunctions =
@@ -163,25 +159,6 @@ function fesCore(p5, fn, lifecycles){
       message = mapToReference(message, func);
       FES.log(message);
     };
-
-    /**
-     * Throws an error with helpful p5 context. Similar to _report, but
-     * this will stop other code execution to prevent downstream errors
-     * from being logged.
-     *
-     * @method _error
-     * @private
-     * @param                    context  p5 instance the error is from
-     * @param  {String}          message  Message to be printed
-     * @param  {String}          [func]   Name of function
-     */
-    // p5._error = (context, message, func) => {
-    //   p5._report(message, func);
-    //   context.hitCriticalError = true;
-    //   // Throw an error to stop the current function (e.g. setup or draw) from
-    //   // running more code
-    //   throw new FESError('Stopping sketch to prevent more errors');
-    // };
 
     /**
      * This is a generic method that can be called from anywhere in the p5
@@ -276,10 +253,6 @@ function fesCore(p5, fn, lifecycles){
      * @returns {Boolean} tell whether error was likely due to typo
      */
     const handleMisspelling = (errSym, error) => {
-      if (!misusedAtTopLevelCode) {
-        defineMisusedAtTopLevelCode();
-      }
-
       const distanceMap = {};
       let min = 999999;
       // compute the levenshtein distance for the symbol against all known
@@ -365,10 +338,6 @@ function fesCore(p5, fn, lifecycles){
      * @returns {Boolean} true
      */
     const helpForMisusedAtTopLevelCode = e => {
-      if (!misusedAtTopLevelCode) {
-        defineMisusedAtTopLevelCode();
-      }
-
       // If we find that we're logging lots of false positives, we can
       // uncomment the following code to avoid displaying anything if the
       // user's code isn't likely to be using p5's global mode. (Note that
@@ -424,8 +393,9 @@ function fesCore(p5, fn, lifecycles){
     const fesErrorMonitor = e => {
       if (p5.disableFriendlyErrors) return;
 
-      // Don't try to handle an error intentionally emitted by FES to halt execution
-      if (e && (e instanceof FESError || e.reason instanceof FESError)) return;
+      if (!misusedAtTopLevelCode) {
+        defineMisusedAtTopLevelCode();
+      }
 
       // Try to get the error object from e
       let error;
