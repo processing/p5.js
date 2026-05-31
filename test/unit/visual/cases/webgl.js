@@ -645,6 +645,15 @@ visualSuite('WebGL', function() {
       p5.circle(0, 0, 50);
       screenshot();
     });
+
+    visualTest('noTint() before image() does not throw', async (p5, screenshot) => {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      const img = await p5.loadImage('/test/unit/assets/cat.jpg');
+      p5.noTint();
+      p5.imageMode(p5.CENTER);
+      p5.image(img, 0, 0, 50, 50);
+      screenshot();
+    });
   });
 
   visualSuite('Hooks coordinate spaces', () => {
