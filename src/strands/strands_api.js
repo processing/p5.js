@@ -486,7 +486,7 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
         return originalRandomGaussian.apply(this, args);
       }
       const mean = args.length >= 1 ? args[0] : 0;
-      const stdDev = args.length>=2 ? args[1] : 1;
+      const stdDev = args.length >= 2 ? args[1] : 1;
 
       const u1 = this.random();
       const u2 = this.random();
