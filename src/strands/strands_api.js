@@ -488,7 +488,7 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
       const mean = args.length >= 1 ? args[0] : 0;
       const stdDev = args.length >= 2 ? args[1] : 1;
 
-      const u1 = this.random();
+      const u1 = this.max(this.random(),1e-6);
       const u2 = this.random();
       const z = this.sqrt(this.log(u1).mult(-2)).mult(this.cos(u2.mult(2*Math.PI)));
 
