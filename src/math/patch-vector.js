@@ -76,6 +76,8 @@ export function _validatedVectorOperation(expectsSoloNumberArgument){
 }
 
 /**
+ * @private
+ * @internal
  * Each of the following decorators validates the data on vector operations.
  * These ensure that the arguments are consistently formatted, and that
  * pre-conditions are met.
