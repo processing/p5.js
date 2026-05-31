@@ -23,7 +23,7 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@3235b876344d2a9aa001b8d1453c930bba69e610 # v3
         with:
-          node-version: 24
+          node-version: 22
       - name: Get semver info
         id: semver
         uses: akshens/semver-tag@8e427cd48c699c97d021df4946f3a0e65af5047e # v4
