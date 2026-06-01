@@ -100,9 +100,9 @@ Lead/Mentor Alumni
 | Accessibility (p5.js-website) | [@coseeian](https://github.com/coseeian) |
 | Color | [@limzykenneth](https://github.com/limzykenneth) |
 | Core | [@davepagurek](https://github.com/davepagurek) |
-| DevOps | [@limzykenneth](https://github.com/limzykenneth), [@lirenjie95](https://github.com/lirenjie95) |
+| DevOps | [@Vaivaswat2244](https://github.com/Vaivaswat2244), [@limzykenneth](https://github.com/limzykenneth), [@lirenjie95](https://github.com/lirenjie95) |
 | Documentation | [@limzykenneth](https://github.com/limzykenneth), [@perminder-17](https://github.com/perminder-17) |
-| Graphics (WebGL) | [@davepagurek](https://github.com/davepagurek), [@perminder-17](https://github.com/perminder-17) |
+| Graphics (WebGL) | [@RandomGamingDev](https://github.com/RandomGamingDev), [@davepagurek](https://github.com/davepagurek), [@perminder-17](https://github.com/perminder-17) |
 | i18n (es) | [@marioguzzzman](https://github.com/marioguzzzman) |
 | i18n (hi) | [@Divyansh013](https://github.com/Divyansh013) |
 | i18n (ko) | [@eupthere](https://github.com/eupthere) |
