@@ -244,6 +244,29 @@ suite('p5.Shader', function() {
       var curShader = myp5._renderer.states.userFillShader;
       assert.isTrue(curShader === null);
     });
+    test('version() detects a #version directive', function() {
+      const shader = myp5.createShader(
+        `
+          #version 300 es
+          precision highp float;
+          attribute vec3 aPosition;
+          uniform mat4 uModelViewMatrix;
+          uniform mat4 uProjectionMatrix;
+
+          void main() {
+            gl_Position = uProjectionMatrix * uModelViewMatrix * vec4(aPosition, 1.0);
+          }
+        `,
+        `
+          precision highp float;
+
+          void main() {
+            gl_FragColor = vec4(1.0);
+          }
+        `
+      );
+      assert.strictEqual(shader.version(), '300 es');
+    });
     suite('Hooks', function() {
       let myShader;
       beforeEach(function() {
