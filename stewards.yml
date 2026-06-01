@@ -68,3 +68,7 @@ kitlord:
 eupthere:
   - i18n:
       - ko
+
+RandomGamingDev:
+  - Graphics:
+      - WebGL
