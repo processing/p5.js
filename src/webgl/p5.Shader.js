@@ -240,7 +240,7 @@ p5.Shader = class {
    * @returns {String} The GLSL version used by the shader.
    */
   version() {
-    const match = /#version (.+)$/.exec(this.vertSrc());
+    const match = /#version (.+)$/m.exec(this.vertSrc());
     if (match) {
       return match[1];
     } else {
