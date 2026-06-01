@@ -76,7 +76,7 @@ jobs:
         with:
           token: ${{ secrets.NPM_TOKEN }}
           tag: r1
-          
+
       # 4. Update p5.js website
       - name: Clone p5.js website
         if: ${{ steps.semver.outputs.is-prerelease != 'true' }}
@@ -112,7 +112,7 @@ jobs:
           github_token: ${{ secrets.ACCESS_TOKEN }}
           branch: main
           directory: website/
-          repository: processing/p5.js-website       
+          repository: processing/p5.js-website
 
       # 5. Update Bower files
       - name: Checkout Bower repo
