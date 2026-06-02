@@ -1133,6 +1133,44 @@ visualSuite('WebGL', function() {
       screenshot();
     });
 
+    visualTest('randomGaussian() colors a basic shader', (p5, screenshot) => {
+  p5.createCanvas(50, 50, p5.WEBGL);
+  const shader = p5.baseColorShader().modify(() => {
+    p5.randomSeed(12);
+    p5.getFinalColor((color) => {
+      const value = p5.randomGaussian(0.5, 0.1);
+      color = [value, value, value, 1];
+      return color;
+    });
+  }, { p5 });
+  p5.background(0);
+  p5.noStroke();
+  p5.shader(shader);
+  p5.plane(50, 50);
+  screenshot();
+});
+
+visualTest('randomGaussian() in a fragment loop averages to the mean', (p5, screenshot) => {
+  p5.createCanvas(50, 50, p5.WEBGL);
+  const shader = p5.baseMaterialShader().modify(() => {
+    p5.randomSeed(7);
+    p5.getPixelInputs(inputs => {
+      let sum = p5.float(0.0);
+      for (let i = 0; i < 20; i++) {
+        sum = sum + p5.randomGaussian(0.5, 0.2);
+      }
+      const avg = sum / 20;
+      inputs.color = [avg, avg, avg, 1.0];
+      return inputs;
+    });
+  }, { p5 });
+  p5.background(0);
+  p5.noStroke();
+  p5.shader(shader);
+  p5.plane(50, 50);
+  screenshot();
+});
+
     visualTest('uses width/height in getFinalColor', (p5, screenshot) => {
       let firstShader;
       function firstShaderCallback() {
