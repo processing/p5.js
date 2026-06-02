@@ -809,6 +809,10 @@ export function createShaderHooksFunctions(strandsContext, fn, shader) {
     if (argIdx >= 0) {
       const structParam = hookType.parameters[argIdx];
       if (structParam.type.properties) {
+        const nameMatch = /^get([A-Z0-9]\w*)$/.exec(hookType.name);
+        const displayName = nameMatch
+          ? nameMatch[1][0].toLowerCase() + nameMatch[1].slice(1)
+          : hookType.name;
         for (const prop of structParam.type.properties) {
           const key = prop.name;
           Object.defineProperty(hook, key, {
@@ -816,9 +820,9 @@ export function createShaderHooksFunctions(strandsContext, fn, shader) {
               if (!this._active) {
                 FES.userError(
                   'scope error',
-                  `It looks like you're trying to access "${hookType.name}.${key}" outside of its begin()/end() block.\n\n` +
-                  `Properties of ${hookType.name} are only available between ` +
-                  `${hookType.name}.begin() and ${hookType.name}.end().\n\n` +
+                  `It looks like you're trying to access "${displayName}.${key}" outside of its begin()/end() block.\n\n` +
+                  `Properties of ${displayName} are only available between ` +
+                  `${displayName}.begin() and ${displayName}.end().\n\n` +
                   `To share data between hooks, use sharedVec3() or sharedFloat() ` +
                   `to pass values between them.`
                 );
@@ -829,7 +833,7 @@ export function createShaderHooksFunctions(strandsContext, fn, shader) {
               if (!this._active) {
                 FES.userError(
                   'scope error',
-                  `It looks like you're trying to set "${hookType.name}.${key}" outside of its begin()/end() block.`
+                  `It looks like you're trying to set "${displayName}.${key}" outside of its begin()/end() block.`
                 );
               }
               this._args[this._argIdx][key] = val;
