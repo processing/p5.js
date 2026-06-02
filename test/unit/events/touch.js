@@ -47,4 +47,41 @@ suite('Touch Events', function() {
       assert.strictEqual(myp5.touches[0].id, 1);
     });
   });
+
+  suite('p5.prototype._onpointercancel', function() {
+    test('should remove the cancelled touch from touches', function() {
+      window.dispatchEvent(touchEvent1);
+      window.dispatchEvent(touchEvent2);
+      assert.strictEqual(myp5.touches.length, 2);
+
+      // A cancelled pointer must be cleaned up even though no
+      // 'pointerup' event is dispatched.
+      const cancelEvent = new PointerEvent('pointercancel', {
+        pointerId: 1,
+        clientX: 100,
+        clientY: 100,
+        pointerType: 'touch'
+      });
+      window.dispatchEvent(cancelEvent);
+
+      assert.strictEqual(myp5.touches.length, 1);
+      assert.strictEqual(myp5.touches[0].id, 2);
+    });
+
+    test('should reset mouseIsPressed once all pointers are cancelled', function() {
+      window.dispatchEvent(touchEvent1);
+      assert.strictEqual(myp5.mouseIsPressed, true);
+
+      const cancelEvent = new PointerEvent('pointercancel', {
+        pointerId: 1,
+        clientX: 100,
+        clientY: 100,
+        pointerType: 'touch'
+      });
+      window.dispatchEvent(cancelEvent);
+
+      assert.strictEqual(myp5.touches.length, 0);
+      assert.strictEqual(myp5.mouseIsPressed, false);
+    });
+  });
 });
