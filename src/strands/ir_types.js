@@ -12,6 +12,7 @@ export const NodeType = {
   ASSIGNMENT: 'assignment',
 };
 export const INSTANCE_ID_VARYING_NAME = '_p5_instanceID';
+export const HOOK_PARAM_PREFIX = '_p5_param_';
 export const NodeTypeToName = Object.fromEntries(
   Object.entries(NodeType).map(([key, val]) => [val, key])
 );

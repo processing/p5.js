@@ -64,7 +64,6 @@ export function visualSuite(
   suiteFn(name, () => {
     let lastShiftThreshold;
     let lastPrefix;
-    let lastDeviceRatio = window.devicePixelRatio;
     beforeAll(() => {
       lastPrefix = namePrefix;
       namePrefix += escapeName(name) + '/';
@@ -72,16 +71,12 @@ export function visualSuite(
       if (newShiftThreshold !== undefined) {
         shiftThreshold = newShiftThreshold;
       }
-
-      // Force everything to be 1x
-      window.devicePixelRatio = 1;
     });
 
     callback();
 
     afterAll(() => {
       namePrefix = lastPrefix;
-      window.devicePixelRatio = lastDeviceRatio;
       shiftThreshold = lastShiftThreshold;
     });
   });
@@ -398,9 +393,12 @@ export function visualTest(
   suiteFn(testName, function() {
     let name;
     let myp5;
+    let lastDeviceRatio = window.devicePixelRatio;
 
     beforeAll(function() {
       name = namePrefix + escapeName(testName);
+      // Force everything to be 1x
+      window.devicePixelRatio = 1;
       return new Promise(res => {
         myp5 = new p5(function(p) {
           p.setup = function() {
@@ -411,6 +409,7 @@ export function visualTest(
     });
 
     afterAll(function() {
+      window.devicePixelRatio = lastDeviceRatio;
       myp5.remove();
     });
 

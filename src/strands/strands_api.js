@@ -10,6 +10,7 @@ import {
   OpCode,
   StatementType,
   NodeType,
+  HOOK_PARAM_PREFIX,
   // isNativeType
 } from './ir_types'
 import { strandsBuiltinFunctions } from './strands_builtins'
@@ -336,6 +337,7 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
   const originalNoise = fn.noise;
   const originalNoiseDetail = fn.noiseDetail;
   const originalRandom = fn.random;
+  const originalRandomGaussian=fn.randomGaussian;
   const originalRandomSeed = fn.randomSeed;
   const originalMillis = fn.millis;
 
@@ -478,6 +480,20 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
       );
     }
   });
+
+   augmentFn(fn, p5, 'randomGaussian', function(...args){
+      if(!strandsContext.active){
+        return originalRandomGaussian.apply(this, args);
+      }
+      const mean = args.length >= 1 ? args[0] : 0;
+      const stdDev = args.length >= 2 ? args[1] : 1;
+
+      const u1 = this.max(this.random(), 1e-6);
+      const u2 = this.random();
+      const z = this.sqrt(this.log(u1).mult(-2)).mult(this.cos(u2.mult(2*Math.PI)));
+
+      return z.mult(stdDev).add(mean);
+    });
 
   augmentFn(fn, p5, 'millis', function (...args) {
     if (!strandsContext.active) {
@@ -647,7 +663,7 @@ function createHookArguments(strandsContext, parameters){
   for (const param of parameters) {
     if(isStructType(param.type)) {
       const structTypeInfo = structType(param);
-      const { id, dimension } = build.structInstanceNode(strandsContext, structTypeInfo, param.name, []);
+      const { id, dimension } = build.structInstanceNode(strandsContext, structTypeInfo, `${HOOK_PARAM_PREFIX}${param.name}`, []);
       const structNode = createStrandsNode(id, dimension, strandsContext).withStructProperties(
         structTypeInfo.properties.map(prop => prop.name)
       );
@@ -660,7 +676,7 @@ function createHookArguments(strandsContext, parameters){
               const oldDeps = dag.dependsOn[structNode.id];
               const newDeps = oldDeps.slice();
               newDeps[i] = newFieldID;
-              const rebuilt = build.structInstanceNode(strandsContext, structTypeInfo, param.name, newDeps);
+              const rebuilt = build.structInstanceNode(strandsContext, structTypeInfo, `${HOOK_PARAM_PREFIX}${param.name}`, newDeps);
               structNode.id = rebuilt.id;
             };
             // TODO: implement member access operations
@@ -681,7 +697,7 @@ function createHookArguments(strandsContext, parameters){
               newValueID = newVal.id;
             }
             newDependsOn[i] = newValueID;
-            const newStructInfo = build.structInstanceNode(strandsContext, structTypeInfo, param.name, newDependsOn);
+            const newStructInfo = build.structInstanceNode(strandsContext, structTypeInfo, `${HOOK_PARAM_PREFIX}${param.name}`, newDependsOn);
             structNode.id = newStructInfo.id;
           }
         })
@@ -697,7 +713,7 @@ function createHookArguments(strandsContext, parameters){
         throw new Error(`Missing dataType for parameter ${param.name} of type ${param.type.typeName}`);
       }
       const typeInfo = param.type.dataType;
-      const { id, dimension } = build.variableNode(strandsContext, typeInfo, param.name);
+      const { id, dimension } = build.variableNode(strandsContext, typeInfo, `${HOOK_PARAM_PREFIX}${param.name}`);
       const arg = createStrandsNode(id, dimension, strandsContext);
       args.push(arg);
     }

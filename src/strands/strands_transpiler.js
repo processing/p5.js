@@ -1661,6 +1661,9 @@ function transformHelperFunctionEarlyReturns(ast, names) {
 }
 
 /**
+ * @private
+ * @internal
+ * 
  * Transpiles a p5.strands callback into executable JavaScript by applying
  * a multi-pass AST transformation pipeline.
  *
