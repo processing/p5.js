@@ -369,95 +369,84 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
     return p5.strandsNode(args[0]).w;
   });
 
-  // HSB/HSL accessors — inject conversion helpers and extract channel
-  const _hsbSnippet = `vec3 _p5_rgb2hsb(vec3 c) {
-  vec4 K = vec4(0.0, -1.0/3.0, 2.0/3.0, -1.0);
-  vec4 p = mix(vec4(c.bg, K.wz), vec4(c.gb, K.xy), step(c.b, c.g));
-  vec4 q = mix(vec4(p.xyw, c.r), vec4(c.r, p.yzx), step(p.x, c.r));
-  float d = q.x - min(q.w, q.y);
-  float e = 1.0e-10;
-  return vec3(abs(q.z+(q.w-q.y)/(6.0*d+e)), d/(q.x+e), q.x);
-}`;
-
-  const _hslSnippet = `vec3 _p5_rgb2hsl(vec3 c) {
-  float maxC = max(c.r, max(c.g, c.b));
-  float minC = min(c.r, min(c.g, c.b));
-  float l = (maxC + minC) / 2.0;
-  float d = maxC - minC;
-  float s = d < 1e-10 ? 0.0 : d/(1.0-abs(2.0*l-1.0));
-  float h = 0.0;
-  if (d > 1e-10) {
-    if (maxC == c.r) h = mod((c.g-c.b)/d, 6.0)/6.0;
-    else if (maxC == c.g) h = ((c.b-c.r)/d+2.0)/6.0;
-    else h = ((c.r-c.g)/d+4.0)/6.0;
+  // Helper: RGB vec3 → HSB vec3 using backend-agnostic strands ops
+  const _rgb2hsb = (colorNode) => {
+    const r = colorNode.x;
+    const g = colorNode.y;
+    const b = colorNode.z;
+    // vec4 K = vec4(0, -1/3, 2/3, -1)
+    const K = fn.vec4(0.0, -1.0/3.0, 2.0/3.0, -1.0);
+    // p = mix(vec4(b, g, K.w, K.z), vec4(g, b, K.x, K.y), step(b, g))
+    const p = fn.mix(
+      fn.vec4(b, g, K.w, K.z),
+      fn.vec4(g, b, K.x, K.y),
+      fn.step(b, g)
+    );
+    // q = mix(vec4(p.x, p.y, p.w, r), vec4(r, p.y, p.z, p.x), step(p.x, r))
+    const q = fn.mix(
+      fn.vec4(p.x, p.y, p.w, r),
+      fn.vec4(r, p.y, p.z, p.x),
+      fn.step(p.x, r)
+    );
+    const d = q.x.sub(fn.min(q.w, q.y));
+    const e = p5.strandsNode(1.0e-10);
+    const h = fn.abs(q.z.add(q.w.sub(q.y).div(d.mult(6.0).add(e))));
+    const s = d.div(q.x.add(e));
+    const v = q.x;
+    return fn.vec3(h, s, v);
   }
-  return vec3(h, s, l);
-}`;
 
-  function _injectSnippet(snippet) {
-    strandsContext.vertexDeclarations.add(snippet);
-    strandsContext.fragmentDeclarations.add(snippet);
-    strandsContext.computeDeclarations.add(snippet);
+  // Helper: RGB vec3 → HSL vec3 using backend-agnostic strands ops
+  const _rgb2hsl = (colorNode) => {
+    const r = colorNode.x;
+    const g = colorNode.y;
+    const b = colorNode.z;
+    const maxC = fn.max(r, fn.max(g, b));
+    const minC = fn.min(r, fn.min(g, b));
+    const l = maxC.add(minC).div(2.0);
+    const d = maxC.sub(minC);
+    const e = p5.strandsNode(1.0e-10);
+    const s = fn.mix(
+      p5.strandsNode(0.0),
+      d.div(p5.strandsNode(1.0).sub(fn.abs(l.mult(2.0).sub(1.0)))),
+      fn.step(e, d)
+    );
+    // Hue: use mix+step to avoid conditionals
+    const h_rg = fn.mod(g.sub(b).div(d.add(e)), p5.strandsNode(6.0)).div(6.0);
+    const h_gb = b.sub(r).div(d.add(e)).add(2.0).div(6.0);
+    const h_br = r.sub(g).div(d.add(e)).add(4.0).div(6.0);
+    const isR = fn.step(maxC.sub(e), r).mult(fn.step(r.sub(e), maxC));
+    const isG = fn.step(maxC.sub(e), g).mult(fn.step(g.sub(e), maxC));
+    const h = fn.mix(fn.mix(h_br, h_gb, isG), h_rg, isR);
+    return fn.vec3(h, s, l);
   }
 
   const originalHue = fn.hue;
   augmentFn(fn, p5, 'hue', function (...args) {
-    if (!strandsContext.active) {
-      return originalHue.apply(this, args);
-    }
-    _injectSnippet(_hslSnippet);
+    if (!strandsContext.active) return originalHue.apply(this, args);
     const colorNode = p5.strandsNode(args[0]);
-    const { id, dimension } = build.functionCallNode(
-      strandsContext, '_p5_rgb2hsl',
-      [fn.vec3(colorNode.x, colorNode.y, colorNode.z)],
-      { overloads: [{ params: [DataType.float3], returnType: DataType.float3 }] }
-    );
-    return createStrandsNode(id, dimension, strandsContext).x;
+    return _rgb2hsl(fn.vec3(colorNode.x, colorNode.y, colorNode.z)).x;
   });
 
   const originalSaturation = fn.saturation;
   augmentFn(fn, p5, 'saturation', function (...args) {
-    if (!strandsContext.active) {
-      return originalSaturation.apply(this, args);
-    }
-    _injectSnippet(_hslSnippet);
+    if (!strandsContext.active) return originalSaturation.apply(this, args);
     const colorNode = p5.strandsNode(args[0]);
-    const { id, dimension } = build.functionCallNode(
-      strandsContext, '_p5_rgb2hsl',
-      [fn.vec3(colorNode.x, colorNode.y, colorNode.z)],
-      { overloads: [{ params: [DataType.float3], returnType: DataType.float3 }] }
-    );
-    return createStrandsNode(id, dimension, strandsContext).y;
+    return _rgb2hsl(fn.vec3(colorNode.x, colorNode.y, colorNode.z)).y;
   });
 
   const originalBrightness = fn.brightness;
   augmentFn(fn, p5, 'brightness', function (...args) {
-    if (!strandsContext.active) {
-      return originalBrightness.apply(this, args);
-    }
-    _injectSnippet(_hsbSnippet);
+    if (!strandsContext.active) return originalBrightness.apply(this, args);
     const colorNode = p5.strandsNode(args[0]);
-    const { id, dimension } = build.functionCallNode(
-      strandsContext, '_p5_rgb2hsb',
-      [fn.vec3(colorNode.x, colorNode.y, colorNode.z)],
-      { overloads: [{ params: [DataType.float3], returnType: DataType.float3 }] }
-    );
-    return createStrandsNode(id, dimension, strandsContext).z;
+    return _rgb2hsb(fn.vec3(colorNode.x, colorNode.y, colorNode.z)).z;
   });
 
   const originalLightness = fn.lightness;
   augmentFn(fn, p5, 'lightness', function (...args) {
-    if (!strandsContext.active) {
-      return originalLightness.apply(this, args);
-    }
-    _injectSnippet(_hslSnippet);
+    if (!strandsContext.active) return originalLightness.apply(this, args);
     const colorNode = p5.strandsNode(args[0]);
-    const { id, dimension } = build.functionCallNode(
-      strandsContext, '_p5_rgb2hsl',
-      [fn.vec3(colorNode.x, colorNode.y, colorNode.z)],
-      { overloads: [{ params: [DataType.float3], returnType: DataType.float3 }] }
-    );
-    return createStrandsNode(id, dimension, strandsContext).z;
+    return _rgb2hsl(fn.vec3(colorNode.x, colorNode.y, colorNode.z)).z;
   });
 
   augmentFn(fn, p5, 'getTexture', function (...rawArgs) {
