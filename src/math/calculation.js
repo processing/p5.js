@@ -673,12 +673,10 @@ function calculation(p5, fn){
    *   // shaderCallback runs on the GPU. millis() gives ms since start; multiply by 0.001 for seconds.
    *   let t = millis() * 0.001;
    *
-   *   // log(1 + t) grows quickly at first, then slows down over time.
-   *   // Add 1 so we never try log(0), which is undefined.
-   *   // Multiply by 0.2 to keep it in a usable range.
+   *   // log(1 + t * 2) grows at a moderate pace over time.
+   *   // Multiply by 0.4 to bring it into the 0 to 1 range.
    *   // min(..., 1) caps the value at 1.
-   *   let value = log(1 + t) * 0.2;
-   *   value = min(value, 1);
+   *   let value = min(log(1 + t * 2) * 0.4, 1);
    *
    *   // Each color is [R, G, B, A] with values from 0 to 1.
    *   let purple = [0.5, 0, 0.5, 1];
@@ -1207,9 +1205,7 @@ function calculation(p5, fn){
    *   let t = millis() * 0.0005;
    *
    *   // pow(t, 2) squares the time value: it starts slow then accelerates.
-   *   // Multiply by 0.001 so it doesn't reach 1 too quickly.
-   *   // min(..., 1) caps the value at 1.
-   *   let value = min(pow(t, 2) * 0.001, 1);
+   *   let value = pow(t, 2);
    *
    *   // Each color is [R, G, B, A] with values from 0 to 1.
    *   let deepBlue = [0, 0.1, 0.5, 1];
