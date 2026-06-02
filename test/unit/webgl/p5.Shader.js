@@ -2759,5 +2759,26 @@ test('returns numbers for builtin globals outside hooks and a strandNode when ca
         }, { myp5 });
       });
     });
+
+    test('scope error uses unprefixed hook name', () => {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+
+      try {
+        myp5.baseMaterialShader().modify(() => {
+          myp5.getWorldInputs.begin();
+          myp5.getWorldInputs.end();
+          const pos = myp5.getWorldInputs.position;
+        }, { myp5 });
+      } catch (e) { /* expected */ }
+
+      assert.isAbove(mockUserError.mock.calls.length, 0, 'FES.userError should have been called');
+      const scopeCall = mockUserError.mock.calls.find(call => call[0] === 'scope error');
+      assert.isDefined(scopeCall, 'scope error should have been called');
+      const errMsg = scopeCall[1];
+      assert.include(errMsg, 'worldInputs');
+      assert.notInclude(errMsg, 'getWorldInputs');
+      assert.include(errMsg, 'begin()');
+      assert.include(errMsg, 'end()');
+    });
   });
 });
