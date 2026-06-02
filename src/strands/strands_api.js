@@ -337,6 +337,7 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
   const originalNoise = fn.noise;
   const originalNoiseDetail = fn.noiseDetail;
   const originalRandom = fn.random;
+  const originalRandomGaussian=fn.randomGaussian;
   const originalRandomSeed = fn.randomSeed;
   const originalMillis = fn.millis;
 
@@ -479,6 +480,20 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
       );
     }
   });
+
+   augmentFn(fn, p5, 'randomGaussian', function(...args){
+      if(!strandsContext.active){
+        return originalRandomGaussian.apply(this, args);
+      }
+      const mean = args.length >= 1 ? args[0] : 0;
+      const stdDev = args.length >= 2 ? args[1] : 1;
+
+      const u1 = this.max(this.random(), 1e-6);
+      const u2 = this.random();
+      const z = this.sqrt(this.log(u1).mult(-2)).mult(this.cos(u2.mult(2*Math.PI)));
+
+      return z.mult(stdDev).add(mean);
+    });
 
   augmentFn(fn, p5, 'millis', function (...args) {
     if (!strandsContext.active) {

@@ -108,10 +108,8 @@ function timeDate(p5, fn){
    * sketch includes asynchronous loading using `async`/`await`, then
    * `millis()` begins tracking time as soon as the asynchronous code
    * starts running.
-   * @method millis
-   * @return {Number} number of milliseconds since starting the sketch.
    *
-   * @example
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -132,8 +130,9 @@ function timeDate(p5, fn){
    *     `The text 'Startup time: ${round(ms, 2)} ms' written in black on a gray background.`
    *   );
    * }
+   * ```
    *
-   * @example
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -154,8 +153,9 @@ function timeDate(p5, fn){
    *   // Display how long the sketch has run.
    *   text(`Running time: ${nf(s, 1, 1)} sec`, 5, 50, 90);
    * }
+   * ```
    *
-   * @example
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -174,8 +174,9 @@ function timeDate(p5, fn){
    *   // Draw the circle.
    *   circle(x, 50, 30);
    * }
+   * ```
    *
-   * @example
+   * ```js example
    * async function setup() {
    *   // Load the GeoJSON.
    *   await loadJSON('https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson');
@@ -198,6 +199,7 @@ function timeDate(p5, fn){
    *     `The text "It took ${round(ms, 2)} ms to load the data" written in black on a gray background.`
    *   );
    * }
+   * ```
    *
    * `millis()` can also be used in shaders with p5.strands. The following example
    * uses `millis()` to create time-based color transitions on a shape.
@@ -228,6 +230,9 @@ function timeDate(p5, fn){
    *   sphere(30);
    * }
    * ```
+   *
+   * @method millis
+   * @return {Number} number of milliseconds since starting the sketch.
    */
   fn.millis = function() {
     if (this._millisStart === -1) {
