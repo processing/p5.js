@@ -32,6 +32,13 @@ suite('Touch Events', function() {
     myp5.remove();
   });
 
+  beforeEach(function() {
+    // Reset pointer state so tests don't leak active pointers into each other.
+    myp5._activePointers.clear();
+    myp5.touches = [];
+    myp5.mouseIsPressed = false;
+  });
+
   suite('p5.prototype.touches', function() {
     test('should be an empty array', function() {
       assert.deepEqual(myp5.touches, []);
@@ -44,6 +51,7 @@ suite('Touch Events', function() {
     });
 
     test('should contain the touch registered', function() {
+      window.dispatchEvent(touchEvent1);
       assert.strictEqual(myp5.touches[0].id, 1);
     });
   });
