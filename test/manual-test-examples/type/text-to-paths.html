@@ -1,0 +1,91 @@
+<html>
+
+<head>
+  <meta charset='UTF-8'>
+  <style>
+    body {
+      padding: 0;
+      margin: 0;
+    }
+
+    canvas {
+      border: 1px solid #f0f0f0;
+      display: block;
+    }
+
+    img {
+      border: 1px solid #fff;
+    }
+
+    div {
+      margin: 100px 0px;
+    }
+  </style>
+</head>
+
+<body>
+  <script type='module'>
+    import p5 from '../../../src/app.js';
+
+    let sketch = function (p) {
+      
+      p.setup = async function () {
+        p.createCanvas(750, 350);
+        p.background(255);
+        let f = await p.loadFont('./font/LiberationSans-Bold.ttf')
+        p.textFont(f, 300);
+        p.fill('#E92D55');
+
+        // draw the paths
+        let paths = f.textToPaths('p5*js', 5, 250);
+
+        if (0) {
+          f.drawPaths(p.drawingContext, paths, { fill: '#E92D55' }); // DIRECT
+        }
+        else {
+          drawPaths(paths, p); // USING P5
+        }
+
+        // draw the points
+        f.textToPoints('p5*js', 5, 250).forEach((pt, i) => {
+          p.fill(0);
+          p.circle(pt.x, pt.y, 5);
+        });
+      }
+    }
+
+    function drawPaths(commands, p) {
+      
+      p.beginShape();
+
+      // TODO: remove (dummy shape for now)
+      p.vertex(0,0);
+      p.vertex(0,0);
+      p.vertex(0,0);
+
+      for (let k = 0; k < commands.length; k++) {
+        let data = commands[k];
+        let type = data.shift();
+        if (type === 'M') {
+          p.beginContour();
+          p.vertex(...data);
+        } else if (type === 'L') {
+          p.vertex(...data);
+        } else if (type === 'C') {
+          p.bezierVertex(...data);
+        } else if (type === 'Q') {
+          p.quadraticVertex(...data);
+        } else if (type === 'Z') {
+          p.endContour();
+        }
+      }
+      p.endShape();
+    }
+
+    new p5(sketch);
+  </script>
+
+</body>
+
+
+</html>
