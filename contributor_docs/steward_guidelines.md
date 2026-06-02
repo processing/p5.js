@@ -1,0 +1,389 @@
+<!-- Learn about how to manage and review contributions to p5.js. -->
+
+# Steward Guidelines
+
+Whether you are new to p5.js contribution, are already active on the p5.js GitHub repositories, or are somewhere in between, you'll find what you need in this guide to p5.js stewardship. If you are not sure what to expect from stewards, or if you are considering how to volunteer or get started as a steward, read on!
+
+
+## Table of Contents
+
+- [Stewardship](#stewardship)
+  - [Community Care](#community-care)
+  - [Areas](#areas)
+  - [Becoming a Steward](#becoming-a-steward)
+  - [Getting Started with Stewardship](#getting-started-with-stewardship)
+- [Issues](#issues)
+  - [Bug report](#bug-report)
+  - [Feature request](#feature-request)
+  - [Feature enhancement](#feature-enhancement)
+  - [Discussion](#discussion)
+- [Pull Requests](#pull-requests)
+  - [Simple fix](#simple-fix)
+  - [Bug fix](#bug-fix)
+  - [New feature/feature enhancement](#new-featurefeature-enhancement)
+  - [Dependabot](#dependabot)
+- [Build Process](#build-process)
+  - [Main build task](#main-build-task)
+- [Release Process](#release-process)
+- [Tips & Tricks](#tips--tricks)
+  - [Reply templates](#reply-templates)
+  - [GitHub CLI](#github-cli)
+  - [Managing notifications](#managing-notifications)
+
+---
+
+## Stewardship
+
+### Community Care
+
+An open source ethos includes [accessibility, education, collaboration, transparency, and agency](https://www.opensourceethos.net/). To live and practice these values while we write code together needs a lot of community care. These are the community care practices that are part of our definition of stewardship:
+
+1. Welcoming new contributors to GitHub through **friendly comments** and helpful **code reviews**
+2. Helping to **facilitate feature discussions** and resolve technical disagreements. For example, this means making connections to other past discussion, or offering input from prior relevant experience. Suggesting features or working on them is contribution, rather than stewardship.
+3. Participating in releases of the p5.js software through **supporting** bug fixing and feature completion. For example, this means guiding other contributors and reviewing their PRs. Fixing bugs is contribution, rather than stewardship.
+
+The rest of these guidelines provide some tips and tricks that will help you effectively contribute to p5.js, and to helpfully guide others' contributions. Most of what is written here are guidelines unless otherwise stated, which means you can adapt the practices shown here to suit your workflow.
+
+Everyone is invited to help steward the community when they can! We are happy to see contributors welcome new contributors, review others' code, and provide API design feedback. There are also some concrete roles:
+
+1. Contributors are able to make Issues, PRs, Comments, and Code Reviews.
+2. Maintainers are also able to merge PRs and admin other parts of the codebase.
+
+Stewards can also be contributors: they can make Issues and PRs as contributors, while they also take on responsibility, when they are stewarding a particular area, to comment on issues and do code reviews, especially when tagged by other contributors to help with discussion and review.
+
+As a contributor, you can check the current stewards in the p5.js repository's README file and tag relevant stewards - but please be mindful of our contributor guidelines, which emphasize patience and mindfulness that most of the technical work on an open-source project is volunteer.
+
+As a steward, we hope that you regularly chime in on code reviews on Issues or PRs that you did not make, if they are in your area and if you are able to provide helpful guidance!
+
+### Areas
+
+There are different areas of work that stewards can be responsible for. These areas match the GitHub Labels in most cases, with a couple of exceptions. Below is the list of areas.
+
+- **Accessibility**: This area specifically refers to digital and web accessibility, including, for example, screen reader support via API like `describe(..)` as well as accessibility support on the reference website
+- **Core**: Refers to core p5.js API, including rendering and environment
+- **DevOps**: Refers to build process, unit testing, and other aspects of the development experience
+- **Documentation**: Includes both reference in the core codebase that is exposed on the website, the contributor docs, and other website content
+- i18n (Internationalization / **Translation**): Includes reviewing translations, particularly for `es`, `hi`, `ko`, `zh`
+- **Graphics**: Contains subareas of WebGL and [p5.strands](https://beta.p5js.org/tutorials/intro-to-p5-strands/)
+- **Color**: Includes Color, ColorMode, accessibility improvements around color usage
+- **Typography**: Refers to all topics on handling text and font
+- **Math**: Includes both external Math API and internal performance improvements
+- **Shapes**: Includes working with custom shapes in both 1.11.x and 2.x versions of p5.js
+- **Maintainers**: This group can merge PRs
+- **p5.sound.js**: The [new p5.sound.js](https://github.com/processing/p5.sound.js) add-on library
+- **p5.js-website**: Non-content aspects of the [reference website](https://p5js.org/) - for example, its structure, automations, technical improvements and so on.
+
+These focus areas may change over time depending on the needs of the project - so if you are going through the process of applying to be a steward, you are welcome to proposals new areas!
+
+### Becoming a Steward
+
+There are two ways to become a steward:
+
+1. _Nomination_ by maintainers or other stewards, such as in conversation over Discord, Discourse, or GitHub.
+2. _Application_ by creating a PR to update `stewards.yml` with your GitHub @ and proposed areas. Please keep in mind each area should have 1-3 stewards. We are always looking for **translation stewards**! Once you make your application PR, other maintainers or stewards may ask for additional supporting material, like making a PR related to the areas you're interested in, or participating in some related discussion.
+
+To remain a steward, you must contribute as a steward to at least 1 of the 2 most recent minor releases (e.g., 2.1.0 or 1.11.0 - when the middle number changes). These are not as frequent as patches (e.g., 2.0.3 to 2.0.4 - when the rightmost number changes), and in practice this means that stewards are expected to be active every 4-6 months or so, supporting other contributors through discussion or code review - not necessarily writing code. To step down from stewardship, you can make a PR to remove yourself from `stewards.yml`. You are always welcome to take a pause and reapply in the future!
+
+### Getting Started with Stewardship
+
+1. Keep this guideline handy as a reference - how to help with new issues, bugs, and features. For example, the "Feature request" section includes tips on how to use the p5.js [access statement](access.md) as a steward.
+2. When helping to answer technical questions or review, try to apply the Processing Foundation [guideline on answering questions](https://discourse.processing.org/t/guidelines-answering-questions/2145) - these can be especially helpful for giving constructive technical feedback.
+3. Join the [p5.js Discord](https://discord.p5js.org)  - in the `#contribute-to-p5` you're welcome to ask any questions you have about this process - or suggest how it can be improved!
+
+## Issues
+
+We encourage most source code contributions to start with an issue, and as such, issues are the place where most of the discussions will take place. The steps to take when reviewing an issue will depend on what kind of issue it is. The repo uses [GitHub issue templates](https://github.com/processing/p5.js/blob/main/.github/ISSUE_TEMPLATE) in order to better organize different kinds of issues and encourage issue authors to provide all relevant information about their problems. The first step in reviewing the issue will often be looking through the filled-out template and determining if you need additional information (e.g., because some fields weren't filled in or the incorrect template was used).
+
+
+### Bug report
+
+Bug report issues should use the "Found a bug" issue template. The following workflow is typical for addressing bug reports:
+
+1. Replicate the bug
+   - The goal of the template is to provide enough information for a reviewer to attempt to replicate the bug in question.
+   - If the reported bug is not relevant to the repo it is opened in (p5.js, p5.js-website, or otherwise):
+     - Transfer the issue to the relevant repo if you have access to it.
+     - Otherwise, leave a comment about where the bug report should be filed (with a direct link provided) and close the issue.
+   - The first step in reviewing a bug report is to see if enough information is provided for a bug replication, and if so, attempt to replicate the bug as described.
+2. If the bug can be replicated:
+   - Some discussion may be required to determine the best way to fix a particular bug. Sometimes, it may be straightforward; sometimes, it may be tricky. Please refer to [p5.js' design principles](./contributor_guidelines.md#software-design-principles) when making this decision on a case-by-case basis.
+   - If the issue author indicated in the issue they are willing to contribute a fix:
+     - Approve the issue for fixing by the issue author by leaving a comment and assigning them to the issue. Use the cog button on the right side next to "Assignee".
+   - If the issue author does not wish to contribute a fix:
+     - Leave a comment recognizing the bug is replicable.
+     - Attempt to fix yourself or add the `help wanted` label to signal an issue needing a fix.
+3. If the bug cannot be replicated:
+   - Ask for additional info if not already provided in the template (p5.js version, browser version, OS version, etc.).
+   - If your testing environment differs from what is reported in the issue (e.g., a different browser or OS):
+     - Leave a comment saying you are not able to replicate in your specific environment.
+     - Add a `help wanted` label to the issue and ask for someone else with the setup specified in the issue to try to replicate the bug.
+   - Sometimes, bugs only occur when using the web editor and not when testing locally. In this case, the issue should be redirected to the [web editor repo](https://github.com/processing/p5.js-web-editor).
+   - If replication is possible later, go back to step 2.
+4. If the bug stems from the code the user provided in the bug report and not p5.js' behavior:
+   - Determine if p5.js' documentation, code implementation, or friendly error system can be improved to prevent the same mistake from being made.
+   - Kindly redirect any further questions to the [forum](https://discourse.processing.org/) or [Discord](https://discord.p5js.org) and close the issue if no further changes are to be made to p5.js.
+
+
+### Feature request
+
+Feature request issues should use the "New Feature Request" issue template. The following workflow is typical for addressing feature requests:
+
+1. As part of p5.js' commitment to increase access, a feature request must make a case for how it increases access of p5.js to communities that are historically marginalized in the field. More details are available [here](access.md).
+   - If a feature request does not have the "Increasing Access" field sufficiently filled out, you can ask the issue author how the feature increases access.
+   - The access statement of a feature can be provided by a different member of the community, including the issue reviewers.
+2. The new feature request can be assessed for inclusion based on the following criteria.
+   - Does the feature fit into the project scope and [design principles](./contributor_guidelines.md#software-design-principles) of p5.js?
+     - For example, a request to add a new drawing primitive shape may be considered, but a request to adopt a browser-based IOT protocol will likely be out of scope.
+     - Overall, the scope of p5.js should be relatively narrow in order to avoid excessive bloat from rarely used features.
+     - If a feature does not fit into the scope of p5.js, suggest that the issue author implement the feature as an addon library.
+     - If it is unclear whether or not it fits, it can be a good idea to suggest making an addon library as a proof-of-concept. This helps give users a way to use the feature, provides a much more concrete example of its usage and importance, and does not necessarily need to be as complete of a solution as a fully integrated feature. It can be integrated into the core of p5.js later if appropriate.
+   - Is the feature likely to cause a breaking change?
+     - Will it conflict with existing p5.js functions and variables?
+     - Will it conflict with typical sketches already written for p5.js?
+     - Features that are likely to cause conflicts such as the ones above are considered breaking changes. Without a [major version release](https://docs.npmjs.com/about-semantic-versioning), we should not make breaking changes to p5.js.
+   - Can the proposed new feature be achieved using existing functionalities already in p5.js, relatively simple native JavaScript code, or existing easy-to-use libraries?
+     - For example, instead of providing a p5.js function to join an array of strings such as `join(["Hello", "world!"])`, the native JavaScript `["Hello", "world!"].join()` should be preferred instead.
+3. If the access requirement and other considerations have been fulfilled, at least two stewards or maintainers must approve the new feature request before work should begin toward a PR. The PR review process for new features is documented below.
+
+
+### Feature enhancement
+
+Feature enhancement issues should use the "Existing Feature Enhancement" issue template. The process is very similar to new feature requests. The difference between a new feature request and feature enhancement can be blurry sometimes. Feature enhancement mainly deals with existing functions of p5.js while a new feature request could be requesting entirely new functions to be added.
+
+1. Similar to new feature requests, feature enhancement should only be accepted if they increase access to p5.js. Please see point 1 of [section above](#feature-request).
+2. Inclusion criteria for feature enhancements are similar to those for feature requests, but particular attention should be paid to potential breaking changes.
+   - If modifying existing functions, all previous valid and documented function signatures must behave in the same way.
+3. Feature enhancements must be approved by at least one steward or maintainer before work should begin toward a PR. The PR review process for feature enhancement is documented below.
+
+
+### Discussion
+
+This type of issue has a minimal template ("Discussion") and should be used to gather feedback around a topic in general before coalescing it into something more specific, like a feature request. These sorts of discussion issues can be closed when the conversation finishes and the resulting more specific issues have been created:
+
+- If an issue is opened as a discussion but should be, for example, a bug report, the correct label should be applied and the "discussion" label removed. Additional info about the bug should also be requested from the author if not already included.
+- If an issue is opened as a discussion but isn't relevant to source code contribution or otherwise relevant to the GitHub repositories/contribution process/contribution community, they should be redirected to the forum or Discord and the issue closed.
+- If relevant, additional labels should be added to discussion issues to further signal what type of discussion it is at a glance.
+
+---
+
+
+## Pull Requests
+
+Almost all code contributions to the p5.js repositories happen through pull requests. Stewards and maintainers may have push access to the repositories but are still encouraged to follow the same issue > PR > review process when contributing code. Here are the steps to review a PR:
+
+- Pull request template can be found [here](https://github.com/processing/p5.js/blob/main/.github/PULL_REQUEST_TEMPLATE.md).
+- Almost all pull requests must have associated issues opened and discussed first, meaning the relevant [issue workflow](#issues) must have been followed first before a PR should be reviewed by any steward or maintainer.
+  - The only instances where this does not apply are very minor typo fixes, which do not require an open issue and can be merged by anyone with merge access to the repo, even if they are not stewards of a particular area.
+  - While this exception exists, we will apply it in practice only while contributors are still encouraged to open new issues first. In other words, if in doubt about whether this exception applies, just open an issue anyway.
+- If a pull request does not fully solve the referenced issue, you can edit the original post and change "Resolves #OOOO" to "Addresses #OOOO" so that it does not automatically close the original issue when the PR is merged.
+
+
+### Simple fix
+
+Simple fixes, such as a small typo fix, can be merged directly by anyone with merge access.  Check on the PR "Files Changed" tab to ensure that the automated CI test passes.
+
+![The "files changed" tab when viewing a pull request on GitHub](images/files-changed.png)
+
+![The "All checks have passed" indicator on a GitHub pull request, highlighted above the merge button](images/all-checks-passed.png)
+
+
+### Bug fix
+
+1. Bug fixes should be reviewed by the relevant area steward, ideally the same one that approved the referenced issue for fixing.
+2. The PR "Files Changed" tab can be used to initially review whether the fix is implemented as described in the issue discussion.
+3. The PR should be tested locally whenever possible and relevant. The GitHub CLI can help streamline some of the process. (See more below in [Tips & Tricks](#tips-tricks)).
+   - [ ] The fix should address the original issue sufficiently.
+   - [ ] The fix should not change any existing behaviors unless agreed upon in the original issue.
+   - [ ] The fix should not have a significant performance impact on p5.js.
+   - [ ] The fix should not have any impact on p5.js' accessibility.
+   - [ ] The fix should use the modern standard of JavaScript coding.
+   - [ ] The fix should pass all automated tests and include new tests if relevant.
+4. If any additional changes are required, line comments should be added to the relevant lines as described [here](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/reviewing-changes-in-pull-requests/commenting-on-a-pull-request#adding-line-comments-to-a-pull-request).
+   - A suggestion block can also be used to suggest specific changes:\
+     ![The Suggest Change button while writing a comment on code in a GitHub pull request](images/suggest-change.png)\
+     ![A suggested change appearing within code fences with the "suggestion" tag](images/suggested-value-change.png)\
+     ![A suggested change previewed as a diff](images/suggestion-preview.png)
+   - If multiple changes are required, don’t add single-line comments many times. Instead, follow the procedure documented [here](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/reviewing-changes-in-pull-requests/reviewing-proposed-changes-in-a-pull-request) to make multiple-line comments and a single request for changes.
+   - If line comments are just for clarification or discussion, choose “Comment” instead of "Request changes":\
+     ![The "comment" option circled within the GitHub Finish Review menu](images/comment-review.png)
+5. Once the PR has been reviewed and no additional changes are required, a steward can mark the PR as "Approved" by choosing the "Approve" option in the previous step, with or without additional comments. The steward can then either request additional review by another steward or maintainer if desired, merge the PR if they have merge access, or request a merge from a maintainer.
+
+6. @[all-contributors](https://allcontributors.org/docs/en/emoji-key) bot should be called to add any new contributors to the list of contributors in the README.md file. Each type of contribution can be indicated in place of `[contribution` `type]` below, the full list of available types of contributions can be found in the link above.
+
+`@all-contributors` `please` `add` `@[GitHub` `handle]` `for` `[contribution` `type]`
+
+
+### New feature/feature enhancement
+
+The process for new feature or feature enhancement PR is similar to bug fixes with just one notable difference:
+
+- A new feature/feature enhancement PR must be reviewed and approved by at least two stewards or maintainers before it can be merged.
+
+
+### Dependabot
+
+Dependabot PRs are usually only visible to repo admins so if this does not apply to you, please skip this section.
+
+- Dependabot PRs can be merged directly if the version update is a [semver](https://semver.org/) patch version and the automated CI test has passed.
+- Dependabot PRs with semver minor version changes can usually be merged directly as long as automated CI test passes. A quick check on the changelog of the updated dependency is recommended.
+- Dependabot PRs with semver major version changes may likely affect either the build process or p5.js functionalities. The reviewer, in this case, is encouraged to review the changelog from the current version to the target version if possible and test the PR locally to ensure all processes are functioning and make any required changes due to potential breaking changes in the dependencies.
+  - Many dependencies bump major version numbers only because they drop official support for very old versions of Node.js. In many cases, major version changes don't necessarily mean breaking changes resulting from dependency API changes.
+
+---
+
+
+## Build process
+
+This section will not cover the general build setup nor commands but rather details about what's happening behind the scenes. Please see the [contributor’s guidelines](contributor_guidelines.md#working-on-p5js-codebase) for more detailed build info.
+
+Starting with p5.js version 2.0, the project no longer uses Grunt for task automation. Instead, the build and test processes are handled using modern tools like npm scripts, ESLint, and [Vitest](https://vitest.dev/).
+
+
+### Main build task
+
+To run lint checks and unit tests, simply run:
+
+```
+npm test
+```
+
+This command runs ESLint to check code style and then execute unit and visual tests using Vitest.
+
+#### `lint` Task
+
+In p5.js 2.0, ESLint is used directly via npm scripts for all linting tasks.
+
+To run lint checks on the codebase:
+
+```
+npm run lint
+```
+
+This checks the source files, build scripts, test files, and documentation examples using ESLint.
+
+If you only want to run linting for specific files or directories, you can use ESLint directly:
+
+```
+npx eslint src/
+npx eslint test/
+```
+
+There is no separate sample linter or YUIDoc-based pipeline anymore.
+
+#### `test` Task
+
+In p5.js 2.0, the testing system no longer uses Mocha via Grunt. Instead, tests are run using [Vitest](https://vitest.dev/) through npm scripts.
+
+To run the full test suite (unit and visual tests), use:
+
+```
+npm test
+```
+
+This command performs:
+- Linting via ESLint
+- Unit tests using Vitest
+- Visual tests (render-based snapshots)
+
+Tests are located in the `test/unit` folder, organized to mirror the `src` directory structure. For example, tests for `src/color/p5.Color.js` live in `test/unit/color/p5.Color.js`.
+
+To run tests interactively in a browser-like environment (useful for debugging), run:
+
+```
+npx vitest --ui
+```
+
+Code coverage is also supported using Vitest's built-in tools. Run:
+
+```
+npx vitest run --coverage
+```
+
+**Note:** The Browserify/Grunt build pipeline (e.g., `browserify`, `uglify`, `brfs-babel`) was removed in v2.  
+
+## Release process
+
+Please see [release\_process.md](release_process.md).
+
+---
+
+
+## Tips & tricks
+
+Sometimes, the number of issues and PR that require review can get a bit overwhelming.  While we try to put in place processes that make things easier, there are some tips and tricks that you can utilize to help with reviewing issues and PRs.
+
+
+### Reply templates
+
+A handy GitHub feature that you can use is the [Saved Replies](https://docs.github.com/en/get-started/writing-on-github/working-with-saved-replies/about-saved-replies) feature, which is available to use when authoring a reply to issues or pull requests. Some of the workflow described above may require responding to issues or PRs with identical or very similar replies (redirecting questions to the forum, accepting an issue for fixing, etc.), and using Saved Replies can just ever so slightly make this more efficient.
+
+Below are some of the Saved Replies that are being used by p5.js maintainers. You can use them yourself or create your own!
+
+
+##### Closing: Can’t Reproduce
+
+> We're not able to reproduce this, but please feel free to reopen if you can provide a code sample that demonstrates the issue. Thanks!
+
+
+##### Closing: Need Snippet
+
+> I'm closing this for organizational purposes. Please reopen if you can provide a code snippet that illustrates the issue. Thanks!
+
+
+##### Closing: Use the Forum
+
+> The GitHub issues here are a good place for bugs and issues with the p5.js library itself. For questions about writing your own code, tests, or following tutorials, the [forum](https://discourse.processing.org/) is the best place to post. Thanks!
+
+
+##### Closing: GSOC
+
+> Thanks! The best place to discuss GSOC proposals is on our [forum](https://discourse.processing.org/c/summer-of-code).
+
+
+##### Closing: Access
+
+> I'm not seeing a lot of interest in this feature, and we don't have a clear explanation of how it [expands access](./access.md), so I will close this for now. If an access statement can be added to the issue request, please feel welcome to reopen.
+
+> We do not see a further explanation of how this issue [expands access](./access.md), so I will close this issue for now. If a more detailed access statement can be added to the feature request, please feel welcome to reopen it. Thank you!
+
+
+##### Closing: Addon
+
+> I think this function is beyond the scope of the p5.js API (we try to keep it as minimal as possible), but it could be a great starting point for an addon library. See the docs here for how to create an addon: [Creating an Addon Library](./creating_libraries.md)
+
+
+##### Closing PR: Need Issue First
+
+> Thank you. As a reminder, issues need to be opened before pull requests are opened and tagged with the issue. This is necessary for tracking development and keeping discussion clear. Thanks!
+
+
+##### Approve issue for fixing
+
+> You can go ahead with a fix. Thanks.
+
+
+##### Merged PR
+
+> Looks good. Thanks!
+
+
+### GitHub CLI
+
+Reviewing a complex PR can be difficult with complex git commands required to get the PR's version of code locally for you to test. Fortunately, the [GitHub CLI](https://cli.github.com/) tool can help greatly with this process and more.
+
+After installing the CLI and logging in, reviewing a PR locally can be done by running the command `gh pr checkout [pull_request_id]`, and the process of fetching a remote fork, creating a branch, and checking out the branch are all done automatically for you. Going back to the main branch will be the same as switching a branch by running `git checkout main`. You can even leave a comment in the PR from the CLI without needing to visit the webpage at all!
+
+There are many other commands available in the GitHub CLI as well that you may or may not find useful, but it is a good tool to have around in any case.
+
+
+### Managing notifications
+
+Instead of manually monitoring the "Issues" or "Pull Requests" tabs of the repo for new issues or PRs, you can "watch" the repo by clicking on the "Watch" button with an eye icon on the top of the repo page opposite the repo name.
+
+![Cropped screenshot of the top right corner of a GitHub repository page showing a series of buttons in the center from left to right: Sponsor, Watch, Fork, Starred.](images/github-repo-metrics.png)
+
+By watching a repo, events such as new issues, new pull requests, mentions of your user handle, and other activities you subscribed to on the repo will be sent as notifications to your [notification page](https://github.com/notifications), where they can be marked as read or dismissed much like an email inbox.
+
+In some cases, you may receive emails from GitHub about events in the repo you are watching as well, and you can customize these (including unsubscribing from them completely) from your [notifications settings page](https://github.com/settings/notifications).
+
+Setting these up to fit the way you work can be the difference between having to find relevant issues/PRs to review manually and being overwhelmed by endless notifications from GitHub. A good balance is required here. As a starting suggestion, stewards should watch this repo for "Issues" and "Pull Requests" and set it to only receive emails on "Participating, @mentions and custom."

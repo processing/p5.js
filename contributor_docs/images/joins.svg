@@ -1,0 +1,21 @@
+<svg width="375" height="100" viewBox="0 0 375 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect width="375" height="100" fill="white"/>
+<rect x="11.7061" y="51.8931" width="46.4062" height="27.0285" transform="rotate(-45 11.7061 51.8931)" fill="black" fill-opacity="0.1" stroke="black"/>
+<rect x="78.0415" y="71.0052" width="46.4062" height="27.0285" transform="rotate(-135 78.0415 71.0052)" fill="black" fill-opacity="0.1" stroke="black"/>
+<rect x="44.5202" y="18.3719" width="14.0143" height="14.0143" transform="rotate(-45 44.5202 18.3719)" fill="#FF3232"/>
+<rect x="101.548" y="51.8931" width="46.4062" height="27.0285" transform="rotate(-45 101.548 51.8931)" fill="black" fill-opacity="0.1" stroke="black"/>
+<rect x="167.884" y="71.0052" width="46.4062" height="27.0285" transform="rotate(-135 167.884 71.0052)" fill="black" fill-opacity="0.1" stroke="black"/>
+<rect x="134.362" y="18.3719" width="14.0143" height="14.0143" transform="rotate(-45 134.362 18.3719)" fill="#32C8FF"/>
+<rect x="191.96" y="51.8931" width="46.4062" height="27.0285" transform="rotate(-45 191.96 51.8931)" fill="black" fill-opacity="0.1" stroke="black"/>
+<rect x="258.295" y="71.0052" width="46.4062" height="27.0285" transform="rotate(-135 258.295 71.0052)" fill="black" fill-opacity="0.1" stroke="black"/>
+<rect x="224.774" y="18.3719" width="14.0143" height="14.0143" transform="rotate(-45 224.774 18.3719)" fill="#32C8FF" fill-opacity="0.2"/>
+<rect x="282.371" y="51.8931" width="46.4062" height="27.0285" transform="rotate(-45 282.371 51.8931)" fill="black" fill-opacity="0.1" stroke="black"/>
+<rect x="348.707" y="71.0052" width="46.4062" height="27.0285" transform="rotate(-135 348.707 71.0052)" fill="black" fill-opacity="0.1" stroke="black"/>
+<rect x="315.186" y="18.3719" width="14.0143" height="14.0143" transform="rotate(-45 315.186 18.3719)" fill="#32C8FF" fill-opacity="0.2"/>
+<path d="M244.583 18.382C243.283 17.0819 241.74 16.0507 240.041 15.3471C238.343 14.6436 236.522 14.2815 234.683 14.2815C232.845 14.2815 231.024 14.6436 229.326 15.3472C227.627 16.0507 226.084 17.082 224.784 18.382L234.684 28.2815L244.583 18.382Z" fill="#32C8FF"/>
+<path d="M325.012 28.2814L315.008 18.4311H334.862L325.012 28.2814Z" fill="#32C8FF"/>
+<text fill="#FF3232" xml:space="preserve" style="white-space: pre" font-family="sans-serif" font-size="12" letter-spacing="0em"><tspan x="10.7833" y="90.8636">Bounding Quad</tspan></text>
+<text fill="#32C8FF" xml:space="preserve" style="white-space: pre" font-family="sans-serif" font-size="12" letter-spacing="0em"><tspan x="126.073" y="90.8636">MITER</tspan></text>
+<text fill="#32C8FF" xml:space="preserve" style="white-space: pre" font-family="sans-serif" font-size="12" letter-spacing="0em"><tspan x="212.498" y="90.8636">ROUND</tspan></text>
+<text fill="#32C8FF" xml:space="preserve" style="white-space: pre" font-family="sans-serif" font-size="12" letter-spacing="0em"><tspan x="306.591" y="90.8636">BEVEL</tspan></text>
+</svg>
