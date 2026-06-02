@@ -208,6 +208,29 @@ suite('p5.RendererGL', function() {
       expect(uSampler.texture.isFramebufferTexture).toBeFalsy();
       myp5.pop();
     });
+
+    test('user-set uSampler on custom shader is not overridden', function() {
+      myp5.createCanvas(10, 10, myp5.WEBGL);
+
+      const myShader = myp5.createFilterShader(`precision highp float;
+uniform sampler2D uSampler;
+varying vec2 vTexCoord;
+void main() {
+  gl_FragColor = texture2D(uSampler, vTexCoord);
+}`);
+
+      const fbo = myp5.createFramebuffer();
+      fbo.draw(() => myp5.background('red'));
+
+      myp5.shader(myShader);
+      myp5.noStroke();
+      myShader.setUniform('uSampler', fbo);
+
+      myp5.plane(myp5.width, myp5.height);
+
+      const pixel = myp5.get(5, 5);
+      assert.deepEqual(pixel, [255, 0, 0, 255]);
+    });
   });
 
   suite('default stroke shader', function() {
