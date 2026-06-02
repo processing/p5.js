@@ -1117,6 +1117,9 @@
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/adrienneg"><img src="https://avatars.githubusercontent.com/u/10889128?v=4?s=64" width="64px;" alt="Adrienne Gifford"/><br /><sub><b>Adrienne Gifford</b></sub></a><br /><a href="#tutorial-adrienneg" title="Tutorials">✅</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/eupthere"><img src="https://avatars.githubusercontent.com/u/30365108?v=4?s=64" width="64px;" alt="eupthere"/><br /><sub><b>eupthere</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=eupthere" title="Code">💻</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="16.66%"><a href="http://joshuahhh.com"><img src="https://avatars.githubusercontent.com/u/643799?v=4?s=64" width="64px;" alt="Joshua Horowitz"/><br /><sub><b>Joshua Horowitz</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=joshuahhh" title="Documentation">📖</a></td>
+    </tr>
   </tbody>
 </table>
 
