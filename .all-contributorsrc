@@ -7480,6 +7480,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "joshuahhh",
+      "name": "Joshua Horowitz",
+      "avatar_url": "https://avatars.githubusercontent.com/u/643799?v=4",
+      "profile": "http://joshuahhh.com",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "repoType": "github",
