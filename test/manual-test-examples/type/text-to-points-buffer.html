@@ -1,0 +1,76 @@
+<html>
+
+<!-- 
+CSS-style font properties (preferred, but doesn't support custom axes):
+  font-weight: 650;
+  font-style: oblique 80deg;  (must add deg)
+  font-stretch: 75%;          (only accepts percentage with %)  
+  font-optical-sizing: auto;  (only allows for 'auto' or 'none')
+Font-variation style properties:
+  font-variations-settings: 'wght' 650, 'slnt' 80, 'wdth' 75, 'opsz' 100;
+-->
+
+<head>
+  <meta charset='UTF-8'>
+  <!-- <script language="javascript" type="text/javascript" src="./lib/Typr.js"></script>
+  <script language="javascript" type="text/javascript" src="./lib/Typr.U.js"></script> -->
+
+  <style>
+    body {
+      padding: 0;
+      margin: 0;
+    }
+
+    canvas {
+      border: 1px solid #f0f0f0;
+      display: block;
+    }
+
+    img {
+      border: 1px solid #fff;
+    }
+
+    div {
+      margin: 100px 0px;
+    }
+  </style>
+</head>
+
+
+
+<body>
+  <script type='module'>
+    import p5 from '../../../src/app.js';
+    let sketch = async function (p) {
+      let f, g, pts;
+      p.setup = async function () {
+        p.createCanvas(400, 300);
+        f = await p.loadFont("https://fonts.gstatic.com/s/opensans/v40/memSYaGs126MiZpBA-UvWbX2vVnXBbObj2OVZyOOSr4dVJWUgsg-1y4nY1M2xLER.ttf");
+        g = p.createGraphics(p.width, p.height)
+        g.background(220);
+        g.textAlign(p.CENTER, p.CENTER)
+        g.textFont(f, 50);
+        
+        g.text('Serendipity', g.width / 2, g.height / 2);
+        //let bb = g.textBounds('Serendipity', g.width / 2, g.height / 2);
+        let bb = f.textBounds('Serendipity', g.width / 2, g.height / 2, { graphics: g });
+        g.noFill();
+        g.stroke(0);
+        g.rect(bb.x, bb.y, bb.w, bb.h);
+        
+        pts = f.textToPoints('Serendipity', g.width / 2, g.height / 2, { graphics: g });
+        pts.forEach((pt, i) => {
+          g.fill(0);
+          g.circle(pt.x, pt.y, 2);
+        });
+        p.image(g, 0, 0);
+      }
+    }
+
+    new p5(sketch);
+  </script>
+
+</body>
+
+
+</html>

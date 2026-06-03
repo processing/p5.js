@@ -1,0 +1,72 @@
+{
+  "fes": {
+    "autoplay": "尝试播放（使用'{{src}}'）的媒体在此浏览器中被禁止，很可能是由于浏览器的自动播放策略。\n\n+ 更多信息：{{url}}",
+    "checkUserDefinedFns": "看起来您可能在{{name}}处意外写错了，应该是{{actualName}}。如果这不是故意的，请进行更正。",
+    "fileLoadError": {
+      "bytes": "似乎在加载文件时出现了问题。{{suggestion}}",
+      "font": "似乎在加载字体时出现了问题。{{suggestion}}",
+      "gif": "加载GIF时出现了问题。请确保您的GIF使用87a或89a编码。",
+      "image": "似乎在加载图像时出现了问题。{{suggestion}}",
+      "json": "似乎在加载JSON文件时出现了问题。{{suggestion}}",
+      "large": "如果您无法成功获取大型文件，我们建议将文件分割成较小的段并获取这些段。",
+      "strings": "似乎在加载文本文件时出现了问题。{{suggestion}}",
+      "suggestion": "尝试检查文件路径（{{filePath}}）是否正确，将文件托管在线上或运行本地服务器。\n\n+ 更多信息：{{url}}",
+      "table": "似乎在加载表格文件时出现了问题。{{suggestion}}",
+      "xml": "似乎在加载XML文件时出现了问题。{{suggestion}}"
+    },
+    "friendlyParamError": {
+      "type_EMPTY_VAR": "{{location}} {{func}}() 期望的是{{formatType}}类型的{{position}}参数，而接收到了一个空变量。如果这不是故意的，通常是作用域的问题。\n\n+ 更多信息：{{url}}",
+      "type_TOO_FEW_ARGUMENTS": "{{location}} {{func}}() 期望至少{{minParams}}个参数，但只收到了{{argCount}}个。",
+      "type_TOO_MANY_ARGUMENTS": "{{location}} {{func}}() 期望最多{{maxParams}}个参数，但收到了{{argCount}}个。",
+      "type_WRONG_TYPE": "{{location}} {{func}}() 期望的是{{formatType}}类型的{{position}}参数，而接收到了{{argType}}类型。"
+    },
+    "globalErrors": {
+      "reference": {
+        "cannotAccess": "\n{{location}} 在声明之前使用了\"{{symbol}}\"。请确保在使用之前已经声明了该变量。\n\n+ 更多信息：{{url}}",
+        "notDefined": "\n{{location}} 在当前范围中未定义\"{{symbol}}\"。如果您已经在代码中定义了它，请检查其作用域、拼写和大小写（JavaScript区分大小写）。\n\n+ 更多信息：{{url}}"
+      },
+      "stackSubseq": "└[{{location}}] \n\t 在{{func}}()中的第{{line}}行调用\n",
+      "stackTop": "┌[{{location}}] \n\t 在{{func}}()的第{{line}}行出现错误\n",
+      "syntax": {
+        "badReturnOrYield": "\n语法错误 - return位于函数外部。请确保没有漏掉任何括号，以便return位于函数内部。\n\n+ 更多信息：{{url}}",
+        "invalidToken": "\n语法错误 - 发现了JavaScript不识别或不期望的符号。\n\n+ 更多信息：{{url}}",
+        "missingInitializer": "\n语法错误 - 声明了一个const变量但没有初始化。在JavaScript中，const必须要有初始值。在同一语句中必须指定值来声明变量。请检查错误中的行号并给const变量赋值。\n\n+ 更多信息：{{url}}",
+        "redeclaredVariable": "\n语法错误 - \"{{symbol}}\" 正在被重新声明。JavaScript不允许重复声明变量。请检查错误中的行号是否重新声明了该变量。\n\n+ 更多信息：{{url}}",
+        "unexpectedToken": "\n语法错误 - 符号出现在不应该出现的位置。\n通常这是由于拼写错误。请检查错误中的行号是否有缺少或多余的内容。\n\n+ 更多信息：{{url}}"
+      },
+      "type": {
+        "constAssign": "\n{{location}} 正在重新赋值const变量。在JavaScript中，不允许对常量进行重新赋值。如果要给变量重新赋值，请确保声明为var或let。\n\n+ 更多信息：{{url}}",
+        "notfunc": "\n{{location}} 无法将\"{{symbol}}\" 调用为函数。\n请检查拼写、大小写（JavaScript区分大小写）和其类型。\n\n+ 更多信息：{{url}}",
+        "notfuncObj": "\n{{location}} 无法将\"{{symbol}}\" 调用为函数。\n请验证\"{{obj}}\"是否包含\"{{symbol}}\"，并检查拼写、大小写（JavaScript区分大小写）和其类型。\n\n+ 更多信息：{{url}}",
+        "readFromNull": "\n{{location}} 无法读取null的属性。在JavaScript中，null表示对象没有值。\n\n+ 更多信息：{{url}}",
+        "readFromUndefined": "\n{{location}} 无法读取undefined的属性。请检查错误中的行号并确保正在操作的变量不是undefined。\n\n+ 更多信息：{{url}}"
+      }
+    },
+    "libraryError": "{{location}} 在调用{{func}}时，在p5js库内部出现了一条错误消息\"{{error}}\"。除非另有说明，否则可能是与传递给{{func}}的参数有关的问题。",
+    "location": "[{{file}}，第{{line}}行]",
+    "misspelling": "{{location}} 看起来您可能在{{name}}处意外写错了，应该是\"{{actualName}}\"。如果希望使用p5.js中的{{type}}，请将其更正为{{actualName}}。",
+    "misspelling_plural": "{{location}} 看起来您可能在{{name}}处意外写错了。\n您可能指的是以下之一：\n{{suggestions}}",
+    "misusedTopLevel": "您刚刚尝试使用了p5.js的{{symbolType}} {{symbolName}}吗？如果是，请将其移到您的sketch的setup()函数中。\n\n+ 更多信息：{{url}}",
+    "positions": {
+      "p_1": "第一",
+      "p_10": "第十",
+      "p_11": "第十一",
+      "p_12": "第十二",
+      "p_2": "第二",
+      "p_3": "第三",
+      "p_4": "第四",
+      "p_5": "第五",
+      "p_6": "第六",
+      "p_7": "第七",
+      "p_8": "第八",
+      "p_9": "第九"
+    },
+    "pre": "\n🌸 p5.js 说：{{message}}",
+    "sketchReaderErrors": {
+      "reservedConst": "您使用了p5.js的保留变量\"{{symbol}}\"，请确保将变量名更改为其他名称。\n\n+ 更多信息：{{url}}",
+      "reservedFunc": "您使用了p5.js的保留函数\"{{symbol}}\"，请确保将函数名更改为其他名称。\n\n+ 更多信息：{{url}}"
+    },
+    "welcome": "欢迎！这是您友好的调试程序。要关闭我，请切换到使用p5.min.js。",
+    "wrongPreload": "{{location}} 在调用\"{{func}}\"时，在p5js库内部出现了一条错误消息\"{{error}}\"。除非另有说明，否则可能是由于在preload中调用了\"{{func}}\"。preload函数之外不应该包含除load函数（loadImage、loadJSON、loadFont、loadStrings等）以外的内容。"
+  }
+}
