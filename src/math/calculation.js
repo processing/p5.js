@@ -558,8 +558,8 @@ function calculation(p5, fn){
    * ```
    *
    * `lerp()` can also be used in shaders with p5.strands, where it maps to the
-   * <a href="#/p5/mix">mix()</a> function in GLSL. The following example uses
-   * <a href="#/p5/mix">mix()</a> to blend colors on a shape over time.
+   * <a href="#/p5/mix">mix()</a> function in GLSL. The following example
+   * uses `lerp()` to blend colors on a shape over time.
    *
    * ```js example
    * let myShader;
@@ -584,9 +584,8 @@ function calculation(p5, fn){
    *
    *   finalColor.begin();
    *
-   *   // In p5.strands, lerp() maps to the GLSL mix() function.
-   *   // mix() blends teal (when value = 0) and coral (when value = 1).
-   *   finalColor.set(mix(teal, coral, value));
+   *   // lerp() blends teal (when value = 0) and coral (when value = 1).
+   *   finalColor.set(lerp(teal, coral, value));
    *
    *   finalColor.end();
    * }
