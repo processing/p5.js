@@ -2,7 +2,7 @@
  * @for p5
  * @requires core
  */
-import { TL, FES } from './fes';
+import { FES } from './fes';
 
 // Borrow from stacktracejs https://github.com/stacktracejs/stacktrace.js with
 // minor modifications. The license for the same and the code is included below
@@ -408,13 +408,13 @@ export function printFriendlyStack(friendlyStack) {
       }`;
       let frameMsg;
       if (idx === 0) {
-        frameMsg = TL.tl`┌[${location}] \n\t Error at line ${frame.lineNumber} in ${frame.functionName}()\n`;
+        frameMsg = FES.log`┌[${location}] \n\t Error at line ${frame.lineNumber} in ${frame.functionName}()\n`;
       } else {
-        frameMsg = TL.tl`└[${location}] \n\t Called from line ${frame.lineNumber} in ${frame.functionName}()\n`;
+        frameMsg = FES.log`└[${location}] \n\t Called from line ${frame.lineNumber} in ${frame.functionName}()\n`;
       }
       stacktraceMsg += frameMsg;
     });
-    FES.log(stacktraceMsg, {
+    FES.log`${stacktraceMsg}`({
       prefix: false
     });
   }

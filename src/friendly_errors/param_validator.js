@@ -5,7 +5,7 @@
 import * as constants from '../core/constants.js';
 import * as z from 'zod/mini';
 import dataDoc from '../../docs/parameterData.json';
-import { FES } from './fes.js';
+import { FES, style, red, white, bgBlack } from './fes.js';
 import { errorStackParser, processStack, getFriendlyStack } from './stacktrace.js';
 
 function validateParams(p5, fn, lifecycles) {
@@ -405,9 +405,9 @@ function validateParams(p5, fn, lifecycles) {
     // Helper function to build a type mismatch message.
     const buildTypeMismatchMessage =
       (actualType, expectedTypeStr, position) => {
-        const positionStr = position ? FES.tl`at the ${ordinals[position]} parameter` : '';
-        const actualTypeStr = actualType ? FES.tl`, but received ${actualType}` : '';
-        return FES.tl`Expected ${expectedTypeStr} ${positionStr}${actualTypeStr}`;
+        const positionStr = position ? FES.log`at the ${ordinals[position]} parameter` : '';
+        const actualTypeStr = actualType ? FES.log`, but received ${actualType}` : '';
+        return FES.log`Expected ${expectedTypeStr} ${positionStr}${actualTypeStr}`;
       };
 
     // Union errors occur when a parameter can be of multiple types but is not
@@ -476,20 +476,20 @@ function validateParams(p5, fn, lifecycles) {
       case 'too_small': {
         const minArgs = currentError.minimum;
         const documentationLink = generateDocumentationLink(func);
-        const referenceLink = FES.tl`For more information, see ${documentationLink}.`;
-        message = FES.tl`Expected at least ${minArgs} argument, but received fewer in ${func}(). ${referenceLink}`;
+        const referenceLink = FES.log`For more information, see ${documentationLink}.`;
+        message = FES.log`Expected at least ${minArgs} argument, but received fewer in ${func}(). ${referenceLink}`;
         break;
       }
       case 'invalid_type': {
         const position = FES.premade.ordinals[currentError.path.join('.')];
         const expectedType = FES.premade.types[currentError.expected];
-        message = FES.tl`Expected ${expectedType} at the ${position} parameter in ${func + '()'}.`
+        message = FES.log`Expected ${expectedType} at the ${position} parameter in ${func + '()'}.`
         break;
       }
       case 'too_big': {
         const maxArgs = currentError.maximum;
-        const referenceLink = FES.tl`For more information, see ${documentationLink}.`;
-        message = FES.tl`Expected at most ${maxArgs} argument, but received more in ${func}(). ${referenceLink}`;
+        const referenceLink = FES.log`For more information, see ${documentationLink}.`;
+        message = FES.log`Expected at most ${maxArgs} argument, but received more in ${func}(). ${referenceLink}`;
         break;
       }
       default: {
@@ -505,7 +505,7 @@ function validateParams(p5, fn, lifecycles) {
         errorStackParser.parse(Error()).slice(3)
       );
       const locationStr = getFriendlyStack(stacktrace, true);
-      FES.log(FES.tl`${locationStr} ${message}`);
+      FES.log`${locationStr} ${message}`();
     }
     return message;
   };

@@ -154,7 +154,7 @@ export const verifierUtils = {
     // reference on the p5.js website.
     function generateFriendlyError(errorType, name, line) {
       const url = `https://p5js.org/reference/p5/${name}`;
-      const message = FES.tl`${errorType} "${name}" on line ${line} is being redeclared and conflicts with a p5.js ${errorType}. p5.js reference: ${url}`;
+      const message = FES.log`${errorType} "${name}" on line ${line} is being redeclared and conflicts with a p5.js ${errorType}. p5.js reference: ${url}`;
       return message;
     }
 
@@ -163,7 +163,7 @@ export const verifierUtils = {
       const libDefinition = constants[name];
       if (libDefinition !== undefined) {
         const message = generateFriendlyError('Constant', name, line+1);
-        FES.log(message);
+        FES.log`${message}`();
         return true;
       }
     }
@@ -179,8 +179,8 @@ export const verifierUtils = {
 
     for (let { name, line } of allDefinitions) {
       if (!ignoreFunction.includes(name) && globalFunctions.has(name)) {
-        const message = generateFriendlyError(FES.tl`function`, name, line+1);
-        FES.log(message);
+        const message = generateFriendlyError(FES.log`function`, name, line+1);
+        FES.log`${message}`();
         return true;
       }
     }
