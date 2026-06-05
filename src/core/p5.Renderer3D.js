@@ -1501,7 +1501,11 @@ export class Renderer3D extends Renderer {
     // the next time a shader is used. However, the texture() function
     // works differently and is global p5 state. If the p5 state has
     // been cleared, we also need to clear the value in uSampler to match.
-    fillShader.setUniform("uSampler", this.states._tex || empty);
+    this._settingFillUniforms = true;
+    if (this.states._tex || !fillShader._userSetSampler) {
+      fillShader.setUniform("uSampler", this.states._tex || empty);
+    }
+    this._settingFillUniforms = false;
     fillShader.setUniform(
       "uTint",
       this.states.tint?._getRGBA([255, 255, 255, 255]) ?? [255, 255, 255, 255]
