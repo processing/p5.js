@@ -618,7 +618,7 @@ function loadingDisplaying(p5, fn){
         gifReader.decodeAndBlitFrameRGBA(frameNum, framePixels);
       } catch (e) {
         // p5._friendlyFileLoadError(8, pImg.src);
-        p5.FES.log(p5.FES.tl`There was some trouble loading your GIF. Make sure that your GIF is using 87a or 89a encoding.`);
+        p5.FES.log`There was some trouble loading your GIF. Make sure that your GIF is using 87a or 89a encoding.`();
         throw e;
       }
     };

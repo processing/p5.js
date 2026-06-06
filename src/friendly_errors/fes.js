@@ -19,25 +19,28 @@ TL.addTranslations(['en', 'en-US', 'en-GB'], {
   typeNumber: 'number'
 });
 
-TL.addTranslations(['zh', 'zh-CN', 'zh-Hans', 'zh-Hans-CN'], {
-  paramTooFew: {
-    '${minArgs}_[*]': '预期至少会收到 ${minArgs} 个参数，但 ${functionName}() 函数中接收到的参数却更少。${referenceLink}'
-  },
-  paramTooMany: {
-    '${minArgs}_[*]': '预期最多会收到 ${minArgs} 个参数，但 ${functionName}() 函数中接收到的参数却更多。${referenceLink}'
-  },
-  paramType: '${functionName} 函数中${position}参数应为${expectedType}。',
-  redeclare: '第 ${line} 行的${errorType} “${name}” 被重复声明，与 p5.js ${errorType}冲突。p5.js 参考：${url}',
-  referenceLink: '有关更多信息，请参阅 ${referenceURL}。',
-  ordinalFirst: '第一个',
-  typeString: '字符串',
-  typeBoolean: '布尔值',
-  typeFunction: '函数',
-  typeNumber: '数字'
-});
+const defaultLanguage = navigator.language;
+const localTranslation = window.localStorage.getItem(defaultLanguage);
+let translationPromise;
+if (localTranslation) {
+  TL.addTranslations(defaultLanguage, JSON.parse(localTranslation));
+  translationPromise = Promise.resolve();
+}else{
+  translationPromise = fetch('./fes-zh.json')
+    .then(res => {
+      if (res.ok) return res.json();
+      throw null;
+    })
+    .then(data => {
+      TL.addTranslations(defaultLanguage, data);
+      window.localStorage.setItem(defaultLanguage, JSON.stringify(data));
+    })
+    .catch(() => Promise.resolve());
+}
 
 export class FES {
   static languageCode = navigator.languages;
+  static translationPromise = translationPromise;
 
   // Rather than logging directly, provide an interface to
   // compose a message
@@ -107,8 +110,8 @@ export class FES {
     return FES.#printMessage('warn', strings, ...values);
   }
 
-  // Just an alias to TL.tl
-  static tl = TL.tl;
+  // Just an alias to TL
+  static TL = TL;
 
   static premade = {
     ordinals: [
@@ -172,3 +175,7 @@ export function underline(message) {
 
 // Re-export TL
 export { TL };
+
+export default function (p5, fn, lifecycles) {
+  p5.FES = FES;
+}

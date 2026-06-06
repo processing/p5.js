@@ -498,7 +498,7 @@ function validateParams(p5, fn, lifecycles) {
     }
 
     if (isVersionError) {
-      p5._friendlyError(message);
+      FES.log`${message}`();
     } else {
       const [_null, stacktrace] = processStack(
         null,

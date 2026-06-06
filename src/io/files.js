@@ -63,9 +63,9 @@ export async function request(path, type) {
       console.log('You may have encountered a CORS error');
     } else if (err instanceof HTTPError) {
       const infoURL = 'https://github.com/processing/p5.js/wiki/Local-server';
-      FES.log(TL.tl`It looks like there was a problem loading your ${errorFileType}. Try checking if the file path (${path}) is correct, hosting the file online, or running a local server.
+      FES.log`It looks like there was a problem loading your ${errorFileType}. Try checking if the file path (${path}) is correct, hosting the file online, or running a local server.
 
-+ More info: ${infoURL}`);
++ More info: ${infoURL}`();
     } else if (err instanceof SyntaxError) {
       console.log('There is an error parsing the response to requested data structure');
     }

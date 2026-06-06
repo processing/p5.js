@@ -129,7 +129,7 @@ class MediaElement extends Element {
         if (e.name === 'NotAllowedError') {
           if (typeof IS_MINIFIED === 'undefined') {
             // friendlyAutoplayError(this.src);
-            FES.log(TL.tl`The media that tried to play (with '${this.src}') wasn't allowed to by this browser, most likely due to the browser's autoplay policy.\n\n+ More info: https://developer.mozilla.org/docs/Web/Media/Autoplay_guide`);
+            FES.log`The media that tried to play (with '${this.src}') wasn't allowed to by this browser, most likely due to the browser's autoplay policy.\n\n+ More info: https://developer.mozilla.org/docs/Web/Media/Autoplay_guide`();
           } else {
             console.error(e);
           }
@@ -368,7 +368,7 @@ class MediaElement extends Element {
     const timeout = setTimeout(() => {
       if (typeof IS_MINIFIED === 'undefined') {
         // friendlyAutoplayError(this.src);
-        FES.log(TL.tl`The media that tried to play (with '${this.src}') wasn't allowed to by this browser, most likely due to the browser's autoplay policy.\n\n+ More info: https://developer.mozilla.org/docs/Web/Media/Autoplay_guide`);
+        FES.log`The media that tried to play (with '${this.src}') wasn't allowed to by this browser, most likely due to the browser's autoplay policy.\n\n+ More info: https://developer.mozilla.org/docs/Web/Media/Autoplay_guide`();
       } else {
         console.error(e);
       }
