@@ -43,33 +43,24 @@ export class FES {
   // compose a message
   // This static method is not used directly, other methods curry it
   static #printMessage(method, strings, ...values) {
-    const translation = TL.tl(strings, ...values.map(value => value.message));
-
     const styleStrings = [];
-    let results = '';
-    for (let i = 0; i < strings.length; i++) {
-      results += translation.strings[i];
-
-      if (values[i]) {
-        if (values[i] instanceof TL) {
-          results += values[i].toString(FES.languageCode);
-        } else if (values[i] instanceof StyledMessage) {
-          results += `%c${values[i].toString(FES.languageCode)}%c`;
-          styleStrings.push(values[i].styleString, '');
-        } else if (
-          values[i] instanceof Function &&
-          Object.hasOwn(values[i], 'results') &&
-          Object.hasOwn(values[i], 'styleStrings')
-        ) {
-          results += values[i].results;
-          styleStrings.push(...values[i].styleStrings);
+    const translation = TL.tl(strings, ...values.map(
+      value => {
+        if(value instanceof StyledMessage){
+          const ret = `%c${value.message.toString(FES.languageCode)}%c`;
+          styleStrings.push(value.styleString, '');
+          return ret;
+        } else if (value.message && value.styleStrings) {
+          styleStrings.push(...value.styleStrings);
+          return value.message;
         } else {
-          results += values[i];
+          return value;
         }
       }
-    }
+    ));
+    const results = translation.toString(FES.languageCode);
 
-    const executor = function (options) {
+    const executor = options => {
       const { prefix } = Object.assign({
         prefix: TL.tl`🌸 p5.js says: `
       }, options);
@@ -86,7 +77,7 @@ export class FES {
       }
     };
 
-    executor.results = results;
+    executor.message = results;
     executor.styleStrings = styleStrings;
 
     executor.toString = function (lang) {
@@ -114,27 +105,6 @@ export class FES {
 
   static warn(strings, ...values) {
     return FES.#printMessage('warn', strings, ...values);
-  }
-
-  static group(messages) { // : GroupMessage
-    // interface Message {
-    //   message: string,
-    //   level: string // Default 'log'
-    // }
-    // interface GroupMessage {
-    //   message?: string | null,
-    //   group: (Message|GroupMessage)[]
-    // }
-
-    console.group(`%c${messages.message}`, 'font-weight: normal; color: initial;');
-    for(const item of messages.group ?? []){
-      if (item.group) {
-        FES.group(item);
-      } else {
-        console[item.level || 'log'](item.message);
-      }
-    }
-    console.groupEnd();
   }
 
   // Just an alias to TL.tl
@@ -172,43 +142,32 @@ export function style(message, mod) {
       acc += `${key}: ${val};`;
       return acc;
     }, '');
-  return new StyledMessage(message, styleString);
+  if (message instanceof StyledMessage) {
+    message.styleString += styleString;
+    return message;
+  } else {
+    return new StyledMessage(message, styleString);
+  }
 }
 
 export function red(message) {
-  if (message instanceof StyledMessage) {
-    message.styleString += 'color: red;';
-    return message;
-  } else {
-    return style(message, { color: 'red' });
-  }
+  return style(message, { color: 'red' });
 }
 
 export function white(message) {
-  if (message instanceof StyledMessage) {
-    message.styleString += 'color: white;';
-    return message;
-  } else {
-    return style(message, { color: 'white' });
-  }
+  return style(message, { color: 'white' });
 }
 
 export function bgBlack(message) {
-  if (message instanceof StyledMessage) {
-    message.styleString += 'background: black;';
-    return message;
-  } else {
-    return style(message, { background: 'black' });
-  }
+  return style(message, { background: 'black' });
 }
 
 export function bgGrey(message) {
-  if (message instanceof StyledMessage) {
-    message.styleString += 'background: grey;';
-    return message;
-  } else {
-    return style(message, { background: 'grey' });
-  }
+  return style(message, { background: 'grey' });
+}
+
+export function underline(message) {
+  return style(message, { 'text-decoration': 'underline' });
 }
 
 // Re-export TL

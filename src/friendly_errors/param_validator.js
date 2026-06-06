@@ -5,7 +5,7 @@
 import * as constants from '../core/constants.js';
 import * as z from 'zod/mini';
 import dataDoc from '../../docs/parameterData.json';
-import { FES, style, red, white, bgBlack } from './fes.js';
+import { FES } from './fes.js';
 import { errorStackParser, processStack, getFriendlyStack } from './stacktrace.js';
 
 function validateParams(p5, fn, lifecycles) {
