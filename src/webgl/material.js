@@ -3307,4 +3307,41 @@ p5.RendererGL.prototype._applyBlendMode = function () {
   }
 };
 
+p5.prototype.buildColorShader = function(hooks) {
+  this._assert3d('buildColorShader');
+  let s = this.baseColorShader();
+  return s.modify(hooks || {});
+};
+
+p5.prototype.buildMaterialShader = function(hooks) {
+  this._assert3d('buildMaterialShader');
+  let s = this.baseMaterialShader();
+  return s.modify(hooks || {});
+};
+
+p5.prototype.buildNormalShader = function(hooks) {
+  this._assert3d('buildNormalShader');
+  let s = this.baseNormalShader();
+  return s.modify(hooks || {});
+};
+
+p5.prototype.buildStrokeShader = function(hooks) {
+  this._assert3d('buildStrokeShader');
+  let s = this.baseStrokeShader();
+  return s.modify(hooks || {});
+};
+
+p5.prototype.buildFilterShader = function(fragSrc, hooks) {
+  this._assert3d('buildFilterShader');
+  let s = this.createFilterShader(fragSrc);
+  if (hooks) {
+    return s.modify(hooks);
+  }
+  return s;
+};
+
+p5.prototype.uniformTexture = function(tex) {
+  return { type: 'sampler2D', name: 'uTexture', texture: tex };
+};
+
 export default p5;

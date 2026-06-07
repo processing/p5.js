@@ -182,6 +182,8 @@ p5.Shader = class {
       // Stores helper functions to prepend to shaders.
       helpers: options.helpers || {},
 
+      varyings: options.varyings || {},
+
       // Stores the hook implementations
       vertex: options.vertex || {},
       fragment: options.fragment || {},
@@ -196,6 +198,43 @@ p5.Shader = class {
     };
   }
 
+  _sharedVarying(glslType, name, desc) {
+    this.hooks.varyings[glslType + ' ' + name] = true;
+    return {
+      type: glslType,
+      name,
+      description: desc || ''
+    };
+  }
+
+  sharedFloat(name, desc) {
+    return this._sharedVarying('float', name, desc);
+  }
+
+  sharedVec2(name, desc) {
+    return this._sharedVarying('vec2', name, desc);
+  }
+
+  sharedVec3(name, desc) {
+    return this._sharedVarying('vec3', name, desc);
+  }
+
+  sharedVec4(name, desc) {
+    return this._sharedVarying('vec4', name, desc);
+  }
+
+  sharedInt(name, desc) {
+    return this._sharedVarying('int', name, desc);
+  }
+
+  sharedMat4(name, desc) {
+    return this._sharedVarying('mat4', name, desc);
+  }
+
+  sharedBool(name, desc) {
+    return this._sharedVarying('bool', name, desc);
+  }
+
   shaderSrc(src, shaderType) {
     const main = 'void main';
     const [preMain, postMain] = src.split(main);
@@ -203,6 +242,9 @@ p5.Shader = class {
     let hooks = '';
     for (const key in this.hooks.uniforms) {
       hooks += `uniform ${key};\n`;
+    }
+    for (const key in this.hooks.varyings) {
+      hooks += `varying ${key};\n`;
     }
     if (this.hooks.declarations) {
       hooks += this.hooks.declarations + '\n';
@@ -335,6 +377,11 @@ p5.Shader = class {
     for (const key in this.hooks.helpers) {
       console.log(key + this.hooks.helpers[key]);
     }
+    console.log('');
+    console.log('==== Varyings (shared between vertex & fragment): ====');
+    for (const key in this.hooks.varyings) {
+      console.log('varying ' + key + ';');
+    }
   }
 
   /**
@@ -464,10 +511,17 @@ p5.Shader = class {
       modifiedFragment[key] = true;
     }
 
+    const newVaryings = Object.assign(
+      {},
+      this.hooks.varyings,
+      hooks.varyings || {}
+    );
+
     return new p5.Shader(this._renderer, this._vertSrc, this._fragSrc, {
       declarations:
         (this.hooks.declarations || '') + '\n' + (hooks.declarations || ''),
       uniforms: Object.assign({}, this.hooks.uniforms, hooks.uniforms || {}),
+      varyings: newVaryings,
       fragment: Object.assign({}, this.hooks.fragment, newHooks.fragment || {}),
       vertex: Object.assign({}, this.hooks.vertex, newHooks.vertex || {}),
       helpers: Object.assign({}, this.hooks.helpers, newHooks.helpers || {}),
@@ -755,7 +809,10 @@ p5.Shader = class {
     const shader = new p5.Shader(
       context._renderer,
       this._vertSrc,
-      this._fragSrc
+      this._fragSrc,
+      {
+        varyings: Object.assign({}, this.hooks.varyings)
+      }
     );
     shader.ensureCompiledOnContext(context);
     return shader;
