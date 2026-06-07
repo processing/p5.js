@@ -131,10 +131,11 @@ async function loadMaterialTextures(materials, modelPath, instance) {
 // as the aggregate; each part gets its own localised verts with faces re-indexed
 // against them, plus its material's state.
 function buildMaterialParts(model, faceMaterials, materials) {
-  // one group per material, plus a null group for faces before any usemtl so
-  // none get dropped. no materials at all -> keep the default wrap.
+  // only split when there are genuinely multiple materials. a single material
+  // (or none) stays as the geometry's own part and renders as before. one group
+  // per material, plus a null group for faces before any usemtl so none drop.
   const names = [...new Set(faceMaterials)];
-  if (!names.some(name => name != null)) return;
+  if (names.filter(name => name != null).length < 2) return;
 
   const hasUvs = model.uvs.length > 0;
   const hasNormals = model.vertexNormals.length > 0;

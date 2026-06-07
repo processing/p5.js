@@ -1,4 +1,5 @@
 import p5 from '../../../src/app.js';
+import { vi } from 'vitest';
 
 suite('p5.GeometryPart', function() {
   let myp5;
@@ -70,11 +71,12 @@ suite('p5.GeometryPart', function() {
       expect(geom.parts[0].faces).toBe(geom.faces);
     });
 
-    test('the part gid tracks the geometry gid after it changes', function() {
+    test('a single-material geometry is its own part', function() {
       const geom = new p5.Geometry(undefined, undefined, undefined,
         myp5._renderer);
       geom.gid = 'my-model';
-      expect(geom.parts[0].gid).toEqual('my-model|part0');
+      expect(geom.parts[0]).toBe(geom);
+      expect(geom.parts[0].gid).toEqual('my-model');
     });
 
     test('a built-in primitive also gets one part', function() {
@@ -83,6 +85,28 @@ suite('p5.GeometryPart', function() {
       }, myp5._renderer);
       expect(geom.parts.length).toEqual(1);
       expect(geom.parts[0].vertices.length).toEqual(1);
+    });
+  });
+
+  suite('multi-material rendering', function() {
+    test('draws each part and passes the instance count through', async function() {
+      const renderer = myp5.createCanvas(50, 50, myp5.WEBGL);
+      const model = await new Promise(resolve =>
+        myp5.loadModel('/test/unit/assets/octa-color.obj', resolve));
+
+      // octa-color has several materials, so several parts.
+      expect(model.parts.length).toBeGreaterThan(1);
+
+      const spy = vi.spyOn(renderer, '_drawFills');
+      myp5.background(255);
+      myp5.model(model, 4);
+
+      // one fill draw per material part, each carrying the instance count.
+      expect(spy).toHaveBeenCalledTimes(model.parts.length);
+      for (const call of spy.mock.calls) {
+        expect(call[1].count).toEqual(4);
+      }
+      spy.mockRestore();
     });
   });
 });

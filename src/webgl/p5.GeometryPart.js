@@ -32,6 +32,19 @@ class GeometryPart {
 
     this.partState = partState || createPartState();
     this.dirtyFlags = {};
+
+    // custom per-vertex attributes (p5.strands). empty for parsed parts; the
+    // single-part wrap points this back at the parent geometry.
+    this.userVertexProperties = {};
+  }
+
+  // the renderer needs this to pick a blend mode. a part is transparent if any
+  // of its vertex colors has alpha below 1.
+  hasFillTransparency() {
+    for (let i = 3; i < this.vertexColors.length; i += 4) {
+      if (this.vertexColors[i] < 1) return true;
+    }
+    return false;
   }
 }
 

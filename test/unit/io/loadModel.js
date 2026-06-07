@@ -112,10 +112,12 @@ suite('loadModel', function() {
     };
     try {
       const model = await mockP5Prototype.loadModel('/test/unit/assets/textured.obj');
-      // single material -> one part carrying that material's state
-      assert.equal(model.parts.length, 1);
-      assert.equal(model.parts[0].partState.texture, fakeImage);
-      assert.equal(model.parts[0].partState.shininess, 50);
+      // two materials, so two parts; the textured one carries the image.
+      assert.equal(model.parts.length, 2);
+      const textured = model.parts.find(p => p.partState.texture);
+      assert.ok(textured, 'a part has the loaded texture');
+      assert.equal(textured.partState.texture, fakeImage);
+      assert.equal(textured.partState.shininess, 50);
     } finally {
       delete mockP5Prototype.loadImage;
     }
@@ -127,8 +129,8 @@ suite('loadModel', function() {
     };
     try {
       const model = await mockP5Prototype.loadModel('/test/unit/assets/textured.obj');
-      assert.equal(model.parts.length, 1);
-      assert.equal(model.parts[0].partState.texture, null);
+      assert.equal(model.parts.length, 2);
+      assert.ok(model.parts.every(p => p.partState.texture == null));
     } finally {
       delete mockP5Prototype.loadImage;
     }

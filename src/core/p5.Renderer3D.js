@@ -589,7 +589,28 @@ export class Renderer3D extends Renderer {
       geometry.vertices.length >= 3 &&
       ![constants.LINES, constants.POINTS].includes(mode)
     ) {
-      this._drawFills(geometry, { mode, count });
+      // draw every part. a part with no material state draws straight (no
+      // push/pop); a single-material geometry is its own part, so that case is
+      // exactly the old single draw. multi-material parts each apply their own
+      // material around the draw.
+      const parts = geometry.parts && geometry.parts.length
+        ? geometry.parts
+        : [geometry];
+      for (const part of parts) {
+        const state = part.partState;
+        const hasMaterial = state && (
+          state.fill || state.texture || state.ambientColor ||
+          state.specularColor || state.shininess != null
+        );
+        if (hasMaterial) {
+          this.push();
+          this._applyPartState(state);
+          this._drawFills(part, { mode, count });
+          this.pop();
+        } else {
+          this._drawFills(part, { mode, count });
+        }
+      }
     }
 
     if (this.states.strokeColor && geometry.lineVertices.length >= 1) {
@@ -626,6 +647,31 @@ export class Renderer3D extends Renderer {
     this._drawBuffers(geometry, { mode, count });
 
     shader.unbindShader();
+  }
+
+  // apply a part's material to the renderer before it's drawn. only non-null
+  // fields are set, so an empty part state leaves the uniforms untouched.
+  _applyPartState(partState) {
+    if (!partState) return;
+    if (partState.fill) {
+      const c = partState.fill;
+      this.states.setValue('curFillColor', [c[0], c[1], c[2], 1]);
+    }
+    if (partState.texture) {
+      this.states.setValue('_tex', partState.texture);
+      this.states.setValue('drawMode', constants.TEXTURE);
+    }
+    if (partState.ambientColor) {
+      this.states.setValue('curAmbientColor', partState.ambientColor);
+      this.states.setValue('_hasSetAmbient', true);
+    }
+    if (partState.specularColor) {
+      this.states.setValue('curSpecularColor', partState.specularColor);
+      this.states.setValue('_useSpecularMaterial', true);
+    }
+    if (partState.shininess != null) {
+      this.states.setValue('_useShininess', partState.shininess);
+    }
   }
 
   _drawStrokes(geometry, { count } = {}) {
