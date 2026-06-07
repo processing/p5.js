@@ -8,6 +8,8 @@ import dataDoc from '../../docs/parameterData.json';
 import { FES } from './fes.js';
 import { errorStackParser, processStack, getFriendlyStack } from './stacktrace.js';
 
+let documentationData = dataDoc;
+
 function validateParams(p5, fn, lifecycles) {
   // Cache for Zod schemas
   let schemaRegistry = new Map();
@@ -145,7 +147,7 @@ function validateParams(p5, fn, lifecycles) {
    */
   const generateZodSchemasForFunc = function (func) {
     const { funcName, funcClass } = extractFuncNameAndClass(func);
-    let funcInfo = dataDoc[funcClass][funcName];
+    let funcInfo = documentationData[funcClass][funcName];
 
     if(!funcInfo) return;
 
@@ -611,9 +613,36 @@ function validateParams(p5, fn, lifecycles) {
     }
   );
 
+  p5.extendParameterValidation = (data) => {
+    documentationData = mergeDeep(documentationData, data);
+  };
+
   lifecycles.presetup = function(){
     loadP5Constructors();
   };
+}
+
+function isObject(item) {
+  return (item && typeof item === 'object' && !Array.isArray(item));
+}
+
+// Deep merge implementation: https://stackoverflow.com/questions/27936772/how-to-deep-merge-instead-of-shallow-merge
+function mergeDeep(target, ...sources) {
+  if (!sources.length) return target;
+  const source = sources.shift();
+
+  if (isObject(target) && isObject(source)) {
+    for (const key in source) {
+      if (isObject(source[key])) {
+        if (!target[key]) Object.assign(target, { [key]: {} });
+        mergeDeep(target[key], source[key]);
+      } else {
+        Object.assign(target, { [key]: source[key] });
+      }
+    }
+  }
+
+  return mergeDeep(target, ...sources);
 }
 
 export default validateParams;
