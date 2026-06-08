@@ -3,6 +3,7 @@
  * @requires core
  */
 import { FES } from './fes';
+import { entryPoints } from './browser_errors';
 
 // Borrow from stacktracejs https://github.com/stacktracejs/stacktrace.js with
 // minor modifications. The license for the same and the code is included below
@@ -268,29 +269,6 @@ export const errorStackParser = new ErrorStackParser();
  *                 friendlyStack: the filtered (simplified) stacktrace
  */
 export const processStack = (error, stacktrace) => {
-  // TODO: centralize and make extendable
-  const entryPoints = [
-    'setup',
-    'draw',
-    'deviceMoved',
-    'deviceTurned',
-    'deviceShaken',
-    'doubleClicked',
-    'mousePressed',
-    'mouseReleased',
-    'mouseMoved',
-    'mouseDragged',
-    'mouseClicked',
-    'mouseWheel',
-    'touchStarted',
-    'touchMoved',
-    'touchEnded',
-    'keyPressed',
-    'keyReleased',
-    'keyTyped',
-    'windowResized'
-  ];
-
   // cannot process a stacktrace that doesn't exist
   if (!stacktrace) return [false, null];
 

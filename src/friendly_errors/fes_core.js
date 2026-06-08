@@ -22,7 +22,7 @@
  * sequence of each function, please look at the FES Reference + Dev Notes:
  * https://github.com/processing/p5.js/blob/main/contributor_docs/fes_reference_dev_notes.md
  */
-import { errorTable } from './browser_errors';
+import { errorTable, entryPoints } from './browser_errors';
 import { errorStackParser, processStack, printFriendlyStack, getFriendlyStack } from './stacktrace';
 import { FES } from './fes';
 
@@ -87,29 +87,6 @@ function fesCore(p5, fn, lifecycles){
       p5._checkForUserDefinedFunctions =
       () => {};
   } else {
-    // entry points into user-defined code
-    const entryPoints = [
-      'setup',
-      'draw',
-      'deviceMoved',
-      'deviceTurned',
-      'deviceShaken',
-      'doubleClicked',
-      'mousePressed',
-      'mouseReleased',
-      'mouseMoved',
-      'mouseDragged',
-      'mouseClicked',
-      'mouseWheel',
-      'touchStarted',
-      'touchMoved',
-      'touchEnded',
-      'keyPressed',
-      'keyReleased',
-      'keyTyped',
-      'windowResized'
-    ];
-
     /**
      * Takes a message and a p5 function func, and adds a link pointing to
      * the reference documentation of func at the end of the message
