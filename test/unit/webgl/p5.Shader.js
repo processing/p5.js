@@ -2641,14 +2641,28 @@ test('returns numbers for builtin globals outside hooks and a strandNode when ca
       assert.approximately(pixelColor[2], 0, 5);
     });
 
-    test('reports a friendly error when assigning a scalar to a sharedVec3 (bridge)', async () => {
+    test('allows scalar broadcast when assigning a scalar to a sharedVec3 (bridge)', async () => {
   await myp5.createCanvas(5, 5, myp5.WEBGL);
 
   expect(() => {
     myp5.baseMaterialShader().modify(() => {
       let worldPosX = myp5.sharedVec3();
       myp5.getWorldInputs(inputs => {
-        worldPosX = inputs.position.x;   // scalar → vec3 mismatch
+        worldPosX = inputs.position.x;   // scalar → vec3, valid broadcast
+        return inputs;
+      });
+    },{myp5});
+  }).not.toThrow();
+});
+
+test('reports a friendly error when assigning a vec2 to a sharedVec3 (bridge)', async () => {
+  await myp5.createCanvas(5, 5, myp5.WEBGL);
+
+  expect(() => {
+    myp5.baseMaterialShader().modify(() => {
+      let myVec = myp5.sharedVec3();
+      myp5.getWorldInputs(inputs => {
+        myVec = inputs.position.xy;   // vec2 → vec3 mismatch
         return inputs;
       });
     },{myp5});
