@@ -829,6 +829,10 @@ function material(p5, fn) {
    *   describe('a image of bricks tinted dark blue');
    * }
    */
+  fn.uniformTexture = function (tex) {
+    return { type: 'sampler2D', name: 'uTexture', texture: tex };
+  };
+
   fn.createFilterShader = function (fragSrc, skipContextCheck = false) {
     // p5._validateParameters('buildFilterShader', arguments);
     let defaultVertV1 = `

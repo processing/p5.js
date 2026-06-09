@@ -1164,6 +1164,39 @@ class Shader {
     }
     return this;
   }
+
+  _sharedVarying(type, name) {
+    this.hooks.varyingVariables.push(`${type} ${name}`);
+    return { type, name };
+  }
+
+  sharedFloat(name) {
+    return this._sharedVarying('float', name);
+  }
+
+  sharedVec2(name) {
+    return this._sharedVarying('vec2', name);
+  }
+
+  sharedVec3(name) {
+    return this._sharedVarying('vec3', name);
+  }
+
+  sharedVec4(name) {
+    return this._sharedVarying('vec4', name);
+  }
+
+  sharedInt(name) {
+    return this._sharedVarying('int', name);
+  }
+
+  sharedMat4(name) {
+    return this._sharedVarying('mat4', name);
+  }
+
+  sharedBool(name) {
+    return this._sharedVarying('bool', name);
+  }
 };
 
 function shader(p5, fn){
