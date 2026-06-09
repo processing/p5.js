@@ -77,7 +77,7 @@ void main(void) {
   c.ambient = inputs.ambientLight;
   c.specular = specular;
   c.emissive = inputs.emissiveMaterial;
-  OUT_COLOR = HOOK_getFinalColor(HOOK_combineColors(c));
+  OUT_COLOR = HOOK_getFinalColor(HOOK_combineColors(c), vTexCoord);
   OUT_COLOR.rgb *= OUT_COLOR.a; // Premultiply alpha before rendering
   HOOK_afterFragment();
 }

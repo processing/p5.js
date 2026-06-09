@@ -1,6 +1,5 @@
 /**
  * @for p5
- * @requires core
  */
 import { FES } from './fes';
 import { entryPoints } from './browser_errors';

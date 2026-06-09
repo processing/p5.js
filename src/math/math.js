@@ -1,7 +1,6 @@
 /**
  * @module Math
  * @for p5
- * @requires core
  */
 
 function math(p5, fn) {
@@ -38,7 +37,7 @@ function math(p5, fn) {
    * <a href="#/p5.Vector">p5.Vector</a> class.
    *
    * @method createVector
-   * @param {...Number} x Zero or more numbers, representing each component of the vector.
+   * @param {...Number} x List of numbers representing each component of the vector.
    * @return {p5.Vector} new <a href="#/p5.Vector">p5.Vector</a> object.
    *
    * @example
@@ -92,20 +91,15 @@ function math(p5, fn) {
    *   point(pos);
    * }
    */
-  fn.createVector = function (x, y, z) {
-    if (arguments.length === 0) {
-      p5._friendlyError(
-        'In 1.x, createVector() was a shortcut for createVector(0, 0, 0). In 2.x, p5.js has vectors of any dimension, so you must provide your desired number of zeros. Use createVector(0, 0) for a 2D vector and createVector(0, 0, 0) for a 3D vector.'
-      );
-    }
+  fn.createVector = function (...args) {
     if (this instanceof p5) {
-      return new p5.Vector(
-        this._fromRadians.bind(this),
-        this._toRadians.bind(this),
-        ...arguments
-      );
+      if (!this._boundFromRadians) {
+        this._boundFromRadians = this._fromRadians.bind(this);
+        this._boundToRadians = this._toRadians.bind(this);
+      }
+      return new p5.Vector(this._boundFromRadians, this._boundToRadians, ...args);
     } else {
-      return new p5.Vector(x, y, z);
+      return new p5.Vector(...args);
     }
   };
 

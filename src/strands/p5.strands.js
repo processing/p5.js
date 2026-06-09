@@ -2,7 +2,6 @@
  * @module 3D
  * @submodule p5.strands
  * @for p5
- * @requires core
  */
 
 import { transpileStrandsToJS } from "./strands_transpiler";
@@ -50,6 +49,7 @@ function strands(p5, fn) {
     ctx.windowOverrides = {};
     ctx.fnOverrides = {};
     ctx.graphicsOverrides = {};
+    ctx._randomSeed = null;
     if (active) {
       p5.disableFriendlyErrors = true;
     }
@@ -65,6 +65,7 @@ function strands(p5, fn) {
     ctx.computeDeclarations = new Set();
     ctx.hooks = [];
     ctx.active = false;
+    ctx._randomSeed = null;
     p5.disableFriendlyErrors = ctx.previousFES;
     for (const key in ctx.windowOverrides) {
       window[key] = ctx.windowOverrides[key];
@@ -214,7 +215,17 @@ if (typeof p5 !== "undefined") {
 
 /* ------------------------------------------------------------- */
 /**
- * @property {Object} worldInputs
+ * @typedef {Object} WorldInputsHook
+ * @property {any} position
+ * @property {any} normal
+ * @property {any} texCoord
+ * @property {any} color
+ * @property {function(): undefined} begin
+ * @property {function(): undefined} end
+ */
+
+/**
+ * @property {WorldInputsHook} worldInputs
  * @beta
  * @description
  * A shader hook block that modifies the world-space properties of each vertex in a shader. This hook can be used inside <a href="#/p5/buildColorShader">`buildColorShader()`</a> and similar shader <a href="#/p5.Shader/modify">`modify()`</a> calls to customize vertex positions, normals, texture coordinates, and colors before rendering. Modifications happen between the `.begin()` and `.end()` methods of the hook. "World space" refers to the coordinate system of the 3D scene, before any camera or projection transformations are applied.
@@ -259,7 +270,22 @@ if (typeof p5 !== "undefined") {
  */
 
 /**
- * @property {Object} combineColors
+ * @typedef {Object} CombineColorsHook
+ * @property {any} baseColor
+ * @property {any} diffuse
+ * @property {any} ambientColor
+ * @property {any} ambient
+ * @property {any} specularColor
+ * @property {any} specular
+ * @property {any} emissive
+ * @property {any} opacity
+ * @property {function(): undefined} begin
+ * @property {function(): undefined} end
+ * @property {function(color: any): void} set
+ */
+
+/**
+ * @property {CombineColorsHook} combineColors
  * @beta
  * @description
  * A shader hook block that modifies how color components are combined in the fragment shader. This hook can be used inside <a href="#/p5/buildMaterialShader">`buildMaterialShader()`</a> and similar shader <a href="#/p5.Shader/modify">`modify()`</a> calls to control the final color output of a material. Modifications happen between the `.begin()` and `.end()` methods of the hook.
@@ -592,7 +618,26 @@ if (typeof p5 !== "undefined") {
  */
 
 /**
- * @property {Object} pixelInputs
+ * @typedef {Object} PixelInputsHook
+ * @property {any} normal
+ * @property {any} texCoord
+ * @property {any} ambientLight
+ * @property {any} ambientMaterial
+ * @property {any} specularMaterial
+ * @property {any} emissiveMaterial
+ * @property {any} color
+ * @property {any} shininess
+ * @property {any} metalness
+ * @property {any} tangent
+ * @property {any} center
+ * @property {any} position
+ * @property {any} strokeWeight
+ * @property {function(): undefined} begin
+ * @property {function(): undefined} end
+ */
+
+/**
+ * @property {PixelInputsHook} pixelInputs
  * @beta
  * @description
  * A shader hook block that modifies the properties of each pixel before the final color is calculated. This hook can be used inside <a href="#/p5/buildMaterialShader">`buildMaterialShader()`</a> and similar shader <a href="#/p5.Shader/modify">`modify()`</a> calls to adjust per-pixel data before lighting is applied. Modifications happen between the `.begin()` and `.end()` methods of the hook.
@@ -680,13 +725,23 @@ if (typeof p5 !== "undefined") {
  */
 
 /**
- * @property finalColor
+ * @typedef {Object} FinalColorHook
+ * @property {any} color
+ * @property {any} texCoord
+ * @property {function(): undefined} begin
+ * @property {function(): undefined} end
+ * @property {function(color: any): void} set
+ */
+
+/**
+ * @property {FinalColorHook} finalColor
  * @beta
  * @description
  * A shader hook block that modifies the final color of each pixel after all lighting is applied. This hook can be used inside <a href="#/p5/buildMaterialShader">`buildMaterialShader()`</a> and similar shader <a href="#/p5.Shader/modify">`modify()`</a> calls to adjust the color before it appears on the screen. Modifications happen between the `.begin()` and `.end()` methods of the hook.
  *
  * `finalColor` has the following properties:
  * - `color`: a four-component vector representing the pixel color (red, green, blue, alpha).
+ * - `texCoord`: a two-component vector representing the texture coordinates (u, v)
  *
  * Call `.set()` on the hook with a vector with four components (red, green, blue, alpha) to update the final color.
  *
@@ -763,8 +818,18 @@ if (typeof p5 !== "undefined") {
  */
 
 /**
- * @property {Object} filterColor
- * @beta
+ * @typedef {Object} FilterColorHook
+ * @property {any} texCoord
+ * @property {any} canvasSize
+ * @property {any} texelSize
+ * @property {any} canvasContent
+ * @property {function(): undefined} begin
+ * @property {function(): undefined} end
+ * @property {function(color: any): void} set
+ */
+
+/**
+ * @property {FilterColorHook} filterColor
  * @description
  * A shader hook block that sets the color for each pixel in a filter shader. This hook can be used inside <a href="#/p5/buildFilterShader">`buildFilterShader()`</a> to control the output color for each pixel.
  *
@@ -808,7 +873,17 @@ if (typeof p5 !== "undefined") {
  */
 
 /**
- * @property {Object} objectInputs
+ * @typedef {Object} ObjectInputsHook
+ * @property {any} position
+ * @property {any} normal
+ * @property {any} texCoord
+ * @property {any} color
+ * @property {function(): undefined} begin
+ * @property {function(): undefined} end
+ */
+
+/**
+ * @property {ObjectInputsHook} objectInputs
  * @beta
  * @description
  * A shader hook block to modify the properties of each vertex before any transformations are applied. This hook can be used inside <a href="#/p5/buildMaterialShader">`buildMaterialShader()`</a> and similar shader <a href="#/p5.Shader/modify">`modify()`</a> calls to customize vertex positions, normals, texture coordinates, and colors before rendering. Modifications happen between the `.begin()` and `.end()` methods of the hook. "Object space" refers to the coordinate system of the 3D scene before any transformations, cameras, or projection transformations are applied.
@@ -850,7 +925,17 @@ if (typeof p5 !== "undefined") {
  */
 
 /**
- * @property {Object} cameraInputs
+ * @typedef {Object} CameraInputsHook
+ * @property {any} position
+ * @property {any} normal
+ * @property {any} texCoord
+ * @property {any} color
+ * @property {function(): undefined} begin
+ * @property {function(): undefined} end
+ */
+
+/**
+ * @property {CameraInputsHook} cameraInputs
  * @beta
  * @description
  * A shader hook block that adjusts vertex properties from the perspective of the camera. This hook can be used inside <a href="#/p5/buildMaterialShader">`buildMaterialShader()`</a> and similar shader <a href="#/p5.Shader/modify">`modify()`</a> calls to customize vertex positions, normals, texture coordinates, and colors before rendering. "Camera space" refers to the coordinate system of the 3D scene after transformations have been applied, seen relative to the camera.
@@ -1066,4 +1151,138 @@ if (typeof p5 !== "undefined") {
  * @method getCameraInputs
  * @beta
  * @param {Function} callback
+ */
+
+/**
+ * Performs linear interpolation between two values.
+ *
+ * The `mix()` function linearly interpolates between two values based on a third
+ * parameter. It's a GLSL built-in function available in p5.strands shaders.
+ *
+ * The function computes: `x * (1 - a) + y * a`
+ *
+ * When `a` is 0.0, the function returns `x`. When `a` is 1.0, it returns `y`.
+ * Values between 0.0 and 1.0 produce a linear blend between the two values.
+ *
+ * This function works with scalars, vectors (vec2, vec3, vec4), and can also
+ * accept a boolean for the third parameter to select between the two values.
+ *
+ * Note: This function is only available inside shader code created with
+ * <a href="#/p5/buildMaterialShader">buildMaterialShader()</a>,
+ * <a href="#/p5/buildColorShader">buildColorShader()</a>, or similar functions.
+ * For regular p5.js code, use <a href="#/p5/lerp">lerp()</a> instead.
+ *
+ * @method mix
+ * @param  {Number|p5.Vector} x first value to interpolate from.
+ * @param  {Number|p5.Vector} y second value to interpolate to.
+ * @param  {Number|Boolean} a interpolation amount (0.0-1.0) or boolean selector.
+ * @return {Number|p5.Vector} interpolated value.
+ *
+ * @example
+ * <div modernizr='webgl'>
+ * <code>
+ * let myShader;
+ *
+ * function setup() {
+ *   createCanvas(200, 200, WEBGL);
+ *   myShader = buildMaterialShader(applyMix);
+ *   describe('A sphere that transitions smoothly between red and blue.');
+ * }
+ *
+ * function applyMix() {
+ *   let factor = uniformFloat();
+ *
+ *   pixelInputs.begin();
+ *   // Mix between red and blue based on factor
+ *   let red = vec3(1, 0, 0);
+ *   let blue = vec3(0, 0, 1);
+ *   let mixedColor = mix(red, blue, factor);
+ *   pixelInputs.color = vec4(mixedColor, 1);
+ *   // Set ambient color to match to avoid default ambient lighting
+ *   pixelInputs.ambientColor = pixelInputs.color.rgb;
+ *   pixelInputs.end();
+ * }
+ *
+ * function draw() {
+ *   background(255);
+ *   shader(myShader);
+ *   // Oscillate factor between 0 and 1
+ *   let factor = (sin(frameCount * 0.02) + 1) / 2;
+ *   myShader.setUniform('factor', factor);
+ *   noStroke();
+ *   sphere(80);
+ * }
+ * </code>
+ * </div>
+ *
+ * @example
+ * <div modernizr='webgl'>
+ * <code>
+ * let myShader;
+ *
+ * function setup() {
+ *   createCanvas(200, 200, WEBGL);
+ *   myShader = buildMaterialShader(positionMix);
+ *   describe('A sphere with vertices that blend between two positions.');
+ * }
+ *
+ * function positionMix() {
+ *   let time = uniformFloat();
+ *
+ *   worldInputs.begin();
+ *   // Blend vertex position between original and modified
+ *   let originalPos = worldInputs.position;
+ *   let modifiedPos = originalPos + vec3(0, sin(time * 0.001) * 20, 0);
+ *   let factor = (sin(worldInputs.position.x * 0.1) + 1) / 2;
+ *   worldInputs.position = mix(originalPos, modifiedPos, factor);
+ *   worldInputs.end();
+ * }
+ *
+ * function draw() {
+ *   background(220);
+ *   shader(myShader);
+ *   myShader.setUniform('time', millis());
+ *   lights();
+ *   noStroke();
+ *   fill('red');
+ *   sphere(70);
+ * }
+ * </code>
+ * </div>
+ *
+ * @example
+ * <div modernizr='webgl'>
+ * <code>
+ * let myShader;
+ *
+ * function setup() {
+ *   createCanvas(200, 200, WEBGL);
+ *   myShader = buildMaterialShader(gradientMix);
+ *   describe('A torus with a color gradient created using mix().');
+ * }
+ *
+ * function gradientMix() {
+ *   pixelInputs.begin();
+ *   // Create a gradient based on texture coordinates
+ *   let gradient = pixelInputs.texCoord.x;
+ *   let color1 = vec3(1, 0.5, 0); // Orange
+ *   let color2 = vec3(0.5, 0, 1); // Purple
+ *   let mixedColor = mix(color1, color2, gradient);
+ *   pixelInputs.color = vec4(mixedColor, 1);
+ *   // Set ambient color to match to avoid default ambient lighting
+ *   pixelInputs.ambientColor = pixelInputs.color.rgb;
+ *   pixelInputs.end();
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *   shader(myShader);
+ *   lights();
+ *   noStroke();
+ *   rotateX(frameCount * 0.01);
+ *   rotateY(frameCount * 0.01);
+ *   torus(60, 20);
+ * }
+ * </code>
+ * </div>
  */

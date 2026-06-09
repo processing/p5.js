@@ -1,7 +1,6 @@
 /**
  * @module Data
  * @submodule LocalStorage
- * @requires core
  *
  * This module defines the p5 methods for working with local storage
  */

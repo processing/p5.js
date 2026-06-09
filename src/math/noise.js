@@ -15,7 +15,6 @@
  * @module Math
  * @submodule Noise
  * @for p5
- * @requires core
  */
 function noise(p5, fn){
   const PERLIN_YWRAPB = 4;
@@ -66,13 +65,7 @@ function noise(p5, fn){
    * three dimensions. These dimensions can be thought of as space, as in
    * `noise(x, y, z)`, or space and time, as in `noise(x, y, t)`.
    *
-   * @method noise
-   * @param  {Number} x   x-coordinate in noise space.
-   * @param  {Number} [y] y-coordinate in noise space.
-   * @param  {Number} [z] z-coordinate in noise space.
-   * @return {Number}     Perlin noise value at specified coordinates.
-   *
-   * @example
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -90,8 +83,9 @@ function noise(p5, fn){
    *   strokeWeight(5);
    *   point(x, y);
    * }
+   * ```
    *
-   * @example
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -116,8 +110,9 @@ function noise(p5, fn){
    *   strokeWeight(5);
    *   point(x, y);
    * }
+   * ```
    *
-   * @example
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -139,8 +134,9 @@ function noise(p5, fn){
    *   // Draw the line.
    *   line(x, 0, x, y);
    * }
+   * ```
    *
-   * @example
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -167,8 +163,9 @@ function noise(p5, fn){
    *     line(x, 0, x, y);
    *   }
    * }
+   * ```
    *
-   * @example
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -197,8 +194,9 @@ function noise(p5, fn){
    *
    *   describe('A gray cloudy pattern.');
    * }
+   * ```
    *
-   * @example
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -228,6 +226,43 @@ function noise(p5, fn){
    *     }
    *   }
    * }
+   * ```
+   *
+   * `noise()` can also be used in shaders with p5.strands, where it returns
+   * values in the range 0 to 1. The example below uses `noise()` inside a
+   * filter shader to create a cloud-like texture effect:
+   *
+   * ```js example
+   * let myFilter;
+   *
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *   myFilter = buildFilterShader(shaderCallback);
+   *   describe('A cloud-like noise pattern.');
+   * }
+   *
+   * function shaderCallback() {
+   *   filterColor.begin();
+   *   let coord = filterColor.texCoord;
+   *   let t = millis() / 2000;
+   *   // noise() returns values in the range 0 to 1.
+   *   let mixFraction = noise(coord.x * 5, coord.y * 5, t);
+   *   let darkBlue = [0.1, 0.1, 0.3, 1];
+   *   let lightBlue = [0.9, 0.9, 1, 1];
+   *   filterColor.set(mix(darkBlue, lightBlue, mixFraction));
+   *   filterColor.end();
+   * }
+   *
+   * function draw() {
+   *   filter(myFilter);
+   * }
+   * ```
+   *
+   * @method noise
+   * @param  {Number} x   x-coordinate in noise space.
+   * @param  {Number} [y] y-coordinate in noise space.
+   * @param  {Number} [z] z-coordinate in noise space.
+   * @return {Number}     Perlin noise value at specified coordinates.
    */
   fn.noise = function(x, y = 0, z = 0) {
     if (perlin == null) {

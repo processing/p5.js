@@ -2,8 +2,6 @@
  * @module Shape
  * @submodule Attributes
  * @for p5
- * @requires core
- * @requires constants
  */
 
 import * as constants from '../core/constants';
@@ -109,8 +107,10 @@ function attributes(p5, fn){
    * In WebGL mode, `noSmooth()` causes all shapes to be drawn with jagged
    * (aliased) edges. The functions don't affect images or fonts.
    *
+   * Note: In WebGPU mode, you must `await` this function.
+   *
    * @method noSmooth
-   * @chainable
+   * @return {void|Promise<void>}
    *
    * @example
    * let heart;
@@ -164,10 +164,10 @@ function attributes(p5, fn){
       if ('imageSmoothingEnabled' in this.drawingContext) {
         this.drawingContext.imageSmoothingEnabled = false;
       }
+      return this;
     } else {
-      this.setAttributes('antialias', false);
+      return this.setAttributes('antialias', false);
     }
-    return this;
   };
 
   /**
@@ -513,8 +513,9 @@ function attributes(p5, fn){
    * Sets the width of the stroke used for points, lines, and the outlines of
    * shapes.
    *
-   * Note: `strokeWeight()` is affected by transformations, especially calls to
-   * <a href="#/p5/scale">scale()</a>.
+   * Note: In 2D mode, `strokeWeight()` is affected by transformations,
+   * especially calls to <a href="#/p5/scale">scale()</a>. It isn't affected by
+   * transformations in WebGL and WebGPU modes.
    * 
    * Calling `strokeWeight()` without an argument returns the current stroke weight as a number.
    *

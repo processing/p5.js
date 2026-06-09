@@ -137,7 +137,7 @@ export class Renderer3D extends Renderer {
     this.states._useShininess = 1;
     this.states._useMetalness = 0;
 
-    this.states.tint = new Color([1, 1, 1, 1]);
+    this.states.tint = null;
 
     this.states.constantAttenuation = 1;
     this.states.linearAttenuation = 0;
@@ -160,6 +160,7 @@ export class Renderer3D extends Renderer {
 
     // clipping
     this._clipDepths = [];
+    this._textContextSavedStack = [];
     this._isClipApplied = false;
     this._stencilTestOn = false;
 
@@ -220,6 +221,8 @@ export class Renderer3D extends Renderer {
 
     // Used by beginShape/endShape functions to construct a p5.Geometry
     this.shapeBuilder = new ShapeBuilder(this);
+
+    this._largeTessellationAcknowledged = false;
 
     this.geometryBufferCache = new GeometryBufferCache(this);
 
@@ -477,10 +480,6 @@ export class Renderer3D extends Renderer {
    * combining them with `buildGeometry()` once and then drawing that will run
    * faster than repeatedly drawing the individual pieces.
    *
-   * One can also draw shapes directly between
-   * <a href="#/p5/beginGeometry">beginGeometry()</a> and
-   * <a href="#/p5/endGeometry">endGeometry()</a> instead of using a callback
-   * function.
    * @param {Function} callback A function that draws shapes.
    * @returns {p5.Geometry} The model that was built from the callback function.
    */
@@ -1327,12 +1326,24 @@ export class Renderer3D extends Renderer {
     return this;
   }
 
+  push() {
+    super.push()
+    const saved = !!(this.states.textFont?.font);
+    if (saved) {
+      this.textDrawingContext().save()
+    }
+    this._textContextSavedStack.push(saved);
+  }
+
   pop(...args) {
     if (
       this._clipDepths.length > 0 &&
       this._pushPopDepth === this._clipDepths[this._clipDepths.length - 1]
     ) {
       this._clearClip();
+    }
+    if (this._textContextSavedStack.pop()) {
+      this.textDrawingContext().restore()
     }
     super.pop(...args);
     this._applyStencilTestIfClipping();
@@ -1490,8 +1501,15 @@ export class Renderer3D extends Renderer {
     // the next time a shader is used. However, the texture() function
     // works differently and is global p5 state. If the p5 state has
     // been cleared, we also need to clear the value in uSampler to match.
-    fillShader.setUniform("uSampler", this.states._tex || empty);
-    fillShader.setUniform("uTint", this.states.tint._getRGBA([255, 255, 255, 255]));
+    this._settingFillUniforms = true;
+    if (this.states._tex || !fillShader._userSetSampler) {
+      fillShader.setUniform("uSampler", this.states._tex || empty);
+    }
+    this._settingFillUniforms = false;
+    fillShader.setUniform(
+      "uTint",
+      this.states.tint?._getRGBA([255, 255, 255, 255]) ?? [255, 255, 255, 255]
+    );
 
     fillShader.setUniform("uHasSetAmbient", this.states._hasSetAmbient);
     fillShader.setUniform("uAmbientMatColor", this.states.curAmbientColor);
@@ -1994,6 +2012,10 @@ const webGPUAddonMessage = 'Add the WebGPU add-on to your project and pass WEBGP
 
 function renderer3D(p5, fn) {
   p5.Renderer3D = Renderer3D;
+
+  ShapeBuilder.prototype.friendlyErrorsDisabled = function() {
+    return Boolean(p5.disableFriendlyErrors);
+  };
 
   /**
    * Creates a <a href="#/p5/p5.StorageBuffer">`p5.StorageBuffer`</a>, which is

@@ -977,21 +977,6 @@ Example:
    */
 ```
 
-#### The @requires tag
-
-The `@requires` tag defines the required imported modules that the current module depends on.
-
-Example of `@for` and `@requires`
-
-```js
-/**
- * @module Color
- * @submodule Creating & Reading
- * @for p5
- * @requires core
- * @requires constants
- */
-```
 #### <a id="beta"></a>The @beta tag - marking experimental API features
 
 This tag is used to mark that a feature is experimental and that its details may change or it may be removed.  A warning will be presented explaining this on the reference page.

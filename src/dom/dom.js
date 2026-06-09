@@ -13,7 +13,6 @@
  * @module DOM
  * @submodule DOM
  * @for p5
- * @requires p5
  */
 
 import { Element } from './p5.Element';

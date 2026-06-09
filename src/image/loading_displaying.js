@@ -2,7 +2,6 @@
  * @module Image
  * @submodule Loading & Displaying
  * @for p5
- * @requires core
  */
 
 import canvas from '../core/helpers';

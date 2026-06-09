@@ -10,6 +10,7 @@ import {
   OpCode,
   StatementType,
   NodeType,
+  HOOK_PARAM_PREFIX,
   // isNativeType
 } from './ir_types'
 import { strandsBuiltinFunctions } from './strands_builtins'
@@ -219,7 +220,7 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
     const nodeData = DAG.createNodeData({
       nodeType: NodeType.STATEMENT,
       statementType: StatementType.EARLY_RETURN,
-      dependsOn: [valueNode.id]
+      dependsOn: value !== undefined ? [valueNode.id] : []
     });
     const earlyReturnID = DAG.getOrCreateNode(dag, nodeData);
     CFG.recordInBasicBlock(cfg, cfg.currentBlock, earlyReturnID);
@@ -294,6 +295,23 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
     }
   });
 
+  const originalMap = fn.map;
+  augmentFn(fn, p5, 'map', function (...args) {
+    if (!strandsContext.active) {
+      return originalMap.apply(this, args);
+    }
+    const [n, start1, stop1, start2, stop2, withinBounds] = args;
+    const nNode = p5.strandsNode(n);
+    const start1Node = p5.strandsNode(start1);
+    const stop1Node = p5.strandsNode(stop1);
+    const t = nNode.sub(start1Node).div(stop1Node.sub(start1Node));
+    const result = this.mix(start2, stop2, t);
+    if (withinBounds) {
+      return this.clamp(result, this.min(start2, stop2), this.max(start2, stop2));
+    }
+    return result;
+  });
+
   augmentFn(fn, p5, 'getTexture', function (...rawArgs) {
     if (strandsContext.active) {
       const { id, dimension } = strandsContext.backend.createGetTextureCall(strandsContext, rawArgs);
@@ -318,6 +336,9 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
   // Add noise function with backend-agnostic implementation
   const originalNoise = fn.noise;
   const originalNoiseDetail = fn.noiseDetail;
+  const originalRandom = fn.random;
+  const originalRandomGaussian=fn.randomGaussian;
+  const originalRandomSeed = fn.randomSeed;
   const originalMillis = fn.millis;
 
   strandsContext._noiseOctaves = null;
@@ -337,7 +358,7 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
       return originalNoise.apply(this, args); // fallback to regular p5.js noise
     }
     // Get noise shader snippet from the current renderer
-    const noiseSnippet = this._renderer.getNoiseShaderSnippet();
+    const noiseSnippet = strandsContext.backend.getNoiseShaderSnippet();
     strandsContext.vertexDeclarations.add(noiseSnippet);
     strandsContext.fragmentDeclarations.add(noiseSnippet);
     strandsContext.computeDeclarations.add(noiseSnippet);
@@ -381,6 +402,98 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
     });
     return createStrandsNode(id, dimension, strandsContext);
   });
+
+  strandsContext._randomSeed = null;
+
+  augmentFn(fn, p5, 'randomSeed', function (seed) {
+    if (!strandsContext.active) {
+      return originalRandomSeed.apply(this, arguments);
+    }
+    strandsContext._randomSeed = seed;
+  });
+
+  augmentFn(fn, p5, 'random', function (...args) {
+    if (!strandsContext.active) {
+      return originalRandom.apply(this, args);
+    }
+
+    const randomVertSnippet = strandsContext.backend.getRandomVertexShaderSnippet();
+    const randomFragSnippet = strandsContext.backend.getRandomFragmentShaderSnippet();
+
+    strandsContext.vertexDeclarations.add(randomVertSnippet);
+    strandsContext.fragmentDeclarations.add(randomFragSnippet);
+
+    if (strandsContext.backend.getRandomComputeShaderSnippet) {
+      const randomComputeSnippet = strandsContext.backend.getRandomComputeShaderSnippet();
+      strandsContext.computeDeclarations.add(randomComputeSnippet);
+    }
+
+    let seedNode;
+    if (strandsContext._randomSeed !== null && strandsContext._randomSeed.isStrandsNode) {
+      seedNode = strandsContext._randomSeed;
+    } else {
+      const userSeed = strandsContext._randomSeed;
+      seedNode = getOrCreateUniformNode(
+        strandsContext,
+        '_p5_randomSeed',
+        DataType.float1,
+        userSeed !== null
+          ? () => userSeed
+          : () => performance.now(),
+      );
+    }
+
+    // The shader-side random() owns a private per-invocation counter, so a
+    // single AST node still produces distinct values across runtime loop
+    // iterations. We just pass the seed.
+    const nodeArgs = [seedNode];
+    const randomOverloads = [{
+      params: [DataType.float1],
+      returnType: DataType.float1,
+    }];
+
+    if (args.length === 0) {
+      const { id, dimension } = build.functionCallNode(strandsContext, 'random', nodeArgs, {
+        overloads: randomOverloads,
+      });
+      return createStrandsNode(id, dimension, strandsContext);
+    } else if (args.length === 1) {
+      // random(max) → [0, max)
+      const rawNode = build.functionCallNode(strandsContext, 'random', nodeArgs, {
+        overloads: randomOverloads,
+      });
+      const rawStrandsNode = createStrandsNode(rawNode.id, rawNode.dimension, strandsContext);
+      return rawStrandsNode.mult(p5.strandsNode(args[0]));
+    } else if (args.length === 2) {
+      // random(min, max) → [min, max)
+      const rawNode = build.functionCallNode(strandsContext, 'random', nodeArgs, {
+        overloads: randomOverloads,
+      });
+      const rawStrandsNode = createStrandsNode(rawNode.id, rawNode.dimension, strandsContext);
+      const minNode = p5.strandsNode(args[0]);
+      const maxNode = p5.strandsNode(args[1]);
+      // min + raw * (max - min)
+      return rawStrandsNode.mult(maxNode.sub(minNode)).add(minNode);
+    } else {
+      p5._friendlyError(
+        `It looks like you've called random() with ${args.length} arguments. In strands, random() supports 0, 1, or 2 numeric arguments.`
+      );
+    }
+  });
+
+   augmentFn(fn, p5, 'randomGaussian', function(...args){
+      if(!strandsContext.active){
+        return originalRandomGaussian.apply(this, args);
+      }
+      const mean = args.length >= 1 ? args[0] : 0;
+      const stdDev = args.length >= 2 ? args[1] : 1;
+
+      const u1 = this.max(this.random(), 1e-6);
+      const u2 = this.random();
+      const z = this.sqrt(this.log(u1).mult(-2)).mult(this.cos(u2.mult(2*Math.PI)));
+
+      return z.mult(stdDev).add(mean);
+    });
 
   augmentFn(fn, p5, 'millis', function (...args) {
     if (!strandsContext.active) {
@@ -550,7 +663,7 @@ function createHookArguments(strandsContext, parameters){
   for (const param of parameters) {
     if(isStructType(param.type)) {
       const structTypeInfo = structType(param);
-      const { id, dimension } = build.structInstanceNode(strandsContext, structTypeInfo, param.name, []);
+      const { id, dimension } = build.structInstanceNode(strandsContext, structTypeInfo, `${HOOK_PARAM_PREFIX}${param.name}`, []);
       const structNode = createStrandsNode(id, dimension, strandsContext).withStructProperties(
         structTypeInfo.properties.map(prop => prop.name)
       );
@@ -563,7 +676,7 @@ function createHookArguments(strandsContext, parameters){
               const oldDeps = dag.dependsOn[structNode.id];
               const newDeps = oldDeps.slice();
               newDeps[i] = newFieldID;
-              const rebuilt = build.structInstanceNode(strandsContext, structTypeInfo, param.name, newDeps);
+              const rebuilt = build.structInstanceNode(strandsContext, structTypeInfo, `${HOOK_PARAM_PREFIX}${param.name}`, newDeps);
               structNode.id = rebuilt.id;
             };
             // TODO: implement member access operations
@@ -584,7 +697,7 @@ function createHookArguments(strandsContext, parameters){
               newValueID = newVal.id;
             }
             newDependsOn[i] = newValueID;
-            const newStructInfo = build.structInstanceNode(strandsContext, structTypeInfo, param.name, newDependsOn);
+            const newStructInfo = build.structInstanceNode(strandsContext, structTypeInfo, `${HOOK_PARAM_PREFIX}${param.name}`, newDependsOn);
             structNode.id = newStructInfo.id;
           }
         })
@@ -600,7 +713,7 @@ function createHookArguments(strandsContext, parameters){
         throw new Error(`Missing dataType for parameter ${param.name} of type ${param.type.typeName}`);
       }
       const typeInfo = param.type.dataType;
-      const { id, dimension } = build.variableNode(strandsContext, typeInfo, param.name);
+      const { id, dimension } = build.variableNode(strandsContext, typeInfo, `${HOOK_PARAM_PREFIX}${param.name}`);
       const arg = createStrandsNode(id, dimension, strandsContext);
       args.push(arg);
     }
@@ -682,6 +795,54 @@ export function createShaderHooksFunctions(strandsContext, fn, shader) {
     hook.set = function(result) {
       hook._result = result;
     };
+    hook._active = false;
+
+    const numStructArgs = hookType.parameters.filter(
+      param => param.type && param.type.properties
+    ).length;
+    let argIdx = -1;
+    if (numStructArgs === 1) {
+      argIdx = hookType.parameters.findIndex(
+        param => param.type && param.type.properties
+      );
+    }
+    if (argIdx >= 0) {
+      const structParam = hookType.parameters[argIdx];
+      if (structParam.type.properties) {
+        const nameMatch = /^get([A-Z0-9]\w*)$/.exec(hookType.name);
+        const displayName = nameMatch
+          ? nameMatch[1][0].toLowerCase() + nameMatch[1].slice(1)
+          : hookType.name;
+        for (const prop of structParam.type.properties) {
+          const key = prop.name;
+          Object.defineProperty(hook, key, {
+            get() {
+              if (!this._active) {
+                FES.userError(
+                  'scope error',
+                  `It looks like you're trying to access "${displayName}.${key}" outside of its begin()/end() block.\n\n` +
+                  `Properties of ${displayName} are only available between ` +
+                  `${displayName}.begin() and ${displayName}.end().\n\n` +
+                  `To share data between hooks, use sharedVec3() or sharedFloat() ` +
+                  `to pass values between them.`
+                );
+              }
+              return this._args[this._argIdx][key];
+            },
+            set(val) {
+              if (!this._active) {
+                FES.userError(
+                  'scope error',
+                  `It looks like you're trying to set "${displayName}.${key}" outside of its begin()/end() block.`
+                );
+              }
+              this._args[this._argIdx][key] = val;
+            },
+            enumerable: true,
+          });
+        }
+      }
+    }
 
     let entryBlockID;
     function setupHook() {
@@ -690,25 +851,14 @@ export function createShaderHooksFunctions(strandsContext, fn, shader) {
       CFG.addEdge(cfg, cfg.currentBlock, entryBlockID);
       CFG.pushBlock(cfg, entryBlockID);
       const args = createHookArguments(strandsContext, hookType.parameters);
-      const numStructArgs = hookType.parameters.filter(param => param.type.properties).length;
-      let argIdx = -1;
-      if (numStructArgs === 1) {
-        argIdx = hookType.parameters.findIndex(param => param.type.properties);
-      }
+      hook._active = true;
+      hook._args = args;
+      hook._argIdx = argIdx;
       hook._properties = [];
       for (let i = 0; i < args.length; i++) {
         if (i === argIdx) {
           for (const key of args[argIdx].structProperties || []) {
             hook._properties.push(key);
-            Object.defineProperty(hook, key, {
-              get() {
-                return args[argIdx][key];
-              },
-              set(val) {
-                args[argIdx][key] = val;
-              },
-              enumerable: true,
-            });
           }
           if (hookType.returnType?.typeName === hookType.parameters[argIdx].type.typeName) {
             hook.set(args[argIdx]);
@@ -722,6 +872,7 @@ export function createShaderHooksFunctions(strandsContext, fn, shader) {
     };
 
     function finishHook() {
+      hook._active = false;
       const userReturned = hook._result;
       strandsContext.activeHook = undefined;
 
@@ -786,17 +937,21 @@ export function createShaderHooksFunctions(strandsContext, fn, shader) {
             return newStruct.id;
           }
         }
+        else if (!expectedReturnType.dataType || expectedReturnType.typeName?.trim() === 'void') {
+          return null;
+        }
         else /*if(isNativeType(expectedReturnType.typeName))*/ {
-          if (!expectedReturnType.dataType) {
-            throw new Error(`Missing dataType for return type ${expectedReturnType.typeName}`);
-          }
           const expectedTypeInfo = expectedReturnType.dataType;
           return enforceReturnTypeMatch(strandsContext, expectedTypeInfo, retNode, hookType.name);
         }
       }
       for (const { valueNode, earlyReturnID } of hook.earlyReturns) {
         const id = handleRetVal(valueNode);
-        dag.dependsOn[earlyReturnID] = [id];
+        if (id !== null) {
+          dag.dependsOn[earlyReturnID] = [id];
+        } else {
+          dag.dependsOn[earlyReturnID] = [];
+        }
       }
       rootNodeID = userReturned ? handleRetVal(userReturned) : undefined;
       const fullHookName = `${hookType.returnType.typeName} ${hookType.name}`;

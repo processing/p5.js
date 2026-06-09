@@ -1,4 +1,8 @@
-import { NodeType, OpCodeToSymbol, BlockType, OpCode, NodeTypeToName, isStructType, BaseType, StatementType, DataType, INSTANCE_ID_VARYING_NAME } from "../strands/ir_types";
+import noiseWGSL from './shaders/functions/noise3DWGSL.js';
+import randomWGSL from './shaders/functions/randomWGSL';
+import randomVertWGSL from './shaders/functions/randomVertWGSL';
+import randomComputeWGSL from './shaders/functions/randomComputeWGSL';
+import { NodeType, OpCodeToSymbol, BlockType, OpCode, NodeTypeToName, isStructType, BaseType, StatementType, DataType, INSTANCE_ID_VARYING_NAME, HOOK_PARAM_PREFIX } from "../strands/ir_types";
 import { getNodeDataFromID, extractNodeTypeInfo } from "../strands/ir_dag";
 import * as FES from '../strands/strands_FES';
 import * as build from '../strands/ir_builders';
@@ -186,16 +190,16 @@ export const wgslBackend = {
   hookEntry(hookType) {
     const params = hookType.parameters.map((param) => {
       // For struct types, use a raw prefix since we'll create a mutable copy
-      const paramName = param.type.properties ? `_p5_strands_raw_${param.name}` : param.name;
+      const paramName = param.type.properties ? `_p5_strands_raw_${param.name}` : `${HOOK_PARAM_PREFIX}${param.name}`;
       return `${paramName}: ${param.type.typeName}`;
     }).join(', ');
 
     const firstLine = `(${params}) {`;
 
-    // Generate mutable copies for struct parameters with original names
+    // Generate mutable copies for struct parameters
     const mutableCopies = hookType.parameters
       .filter(param => param.type.properties) // Only struct types
-      .map(param => `  var ${param.name} = _p5_strands_raw_${param.name};`)
+      .map(param => `  var ${HOOK_PARAM_PREFIX}${param.name} = _p5_strands_raw_${param.name};`)
       .join('\n');
 
     return mutableCopies ? firstLine + '\n' + mutableCopies : firstLine;
@@ -263,6 +267,19 @@ export const wgslBackend = {
     }
     return primitiveTypeName;
   },
+  getNoiseShaderSnippet() {
+    return noiseWGSL;
+  },
+  getRandomFragmentShaderSnippet() {
+    return randomWGSL;
+  },
+  getRandomVertexShaderSnippet() {
+    return randomVertWGSL;
+  },
+  getRandomComputeShaderSnippet() {
+    return randomComputeWGSL;
+  },
+
   generateHookUniformKey(name, typeInfo) {
     // For sampler2D types, we don't add them to the uniform struct,
     // but we still need them in the shader's hooks object so that
@@ -301,9 +318,13 @@ export const wgslBackend = {
       // Generate just a semicolon (unless suppressed)
       generationContext.write(semicolon);
     } else if (node.statementType === StatementType.EARLY_RETURN) {
-      const exprNodeID = node.dependsOn[0];
-      const expr = this.generateExpression(generationContext, dag, exprNodeID);
-      generationContext.write(`return ${expr}${semicolon}`);
+      if (node.dependsOn && node.dependsOn.length > 0) {
+        const exprNodeID = node.dependsOn[0];
+        const expr = this.generateExpression(generationContext, dag, exprNodeID);
+        generationContext.write(`return ${expr}${semicolon}`);
+      } else {
+        generationContext.write(`return${semicolon}`);
+      }
     }
   },
   generateAssignment(generationContext, dag, nodeID) {
@@ -482,6 +503,18 @@ export const wgslBackend = {
         }
 
         const functionArgs = node.dependsOn.map(arg =>this.generateExpression(generationContext, dag, arg));
+
+        if (node.identifier === 'random') {
+          const ctx = generationContext.shaderContext;
+          if (ctx === 'fragment') {
+            functionArgs.push('_p5FragPos.xy');
+          } else if (ctx === 'vertex') {
+            functionArgs.push('f32(_p5VertexId)');
+          } else if (ctx === 'compute') {
+            functionArgs.push('_p5GlobalId');
+          }
+        }
+
         return `${node.identifier}(${functionArgs.join(', ')})`;
       }
       if (node.opCode === OpCode.Binary.MEMBER_ACCESS) {
@@ -575,12 +608,25 @@ export const wgslBackend = {
     const samplerVariable = build.variableNode(strandsContext, { baseType: BaseType.SAMPLER, dimension: 1 }, samplerIdentifier);
     const samplerNode = createStrandsNode(samplerVariable.id, samplerVariable.dimension, strandsContext);
 
-    // Create the augmented args: [texture, sampler, coords]
-    const augmentedArgs = [textureArg, samplerNode, coordsArg];
+    // Create a LOD literal node (0.0) so we can use textureSampleLevel instead
+    // of textureSample. textureSample doesn't let you use uniform values in control
+    // flow, whereas textureSampleLevel does. While we don't have mipmaps, we don't
+    // miss out.
+    // TODO: if we *do* add mipmap support, update this logic -- we'd need to hoist
+    // the texture lookup out of the control flow.
+    const lodLiteral = build.scalarLiteralNode(
+      strandsContext,
+      { dimension: 1, baseType: BaseType.FLOAT },
+      0.0
+    );
+    const lodNode = createStrandsNode(lodLiteral.id, lodLiteral.dimension, strandsContext);
 
-    const { id, dimension } = build.functionCallNode(strandsContext, 'textureSample', augmentedArgs, {
+    // Create the augmented args: [texture, sampler, coords, lod]
+    const augmentedArgs = [textureArg, samplerNode, coordsArg, lodNode];
+
+    const { id, dimension } = build.functionCallNode(strandsContext, 'textureSampleLevel', augmentedArgs, {
       overloads: [{
-        params: [DataType.sampler2D, DataType.sampler, DataType.float2],
+        params: [DataType.sampler2D, DataType.sampler, DataType.float2, DataType.float1],
         returnType: DataType.float4
       }]
     });

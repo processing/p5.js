@@ -2,7 +2,6 @@
  * @module 3D
  * @submodule Material
  * @for p5
- * @requires core
  */
 
 import * as constants from "../core/constants";
@@ -2116,7 +2115,7 @@ function material(p5, fn) {
    *   // Replace alpha in the color with dithering by
    *   // randomly setting pixel colors to 0 based on opacity
    *   let a = 1;
-   *   if (noise(pixelInputs.position.xy) > pixelInputs.color.a) {
+   *   if (random() > pixelInputs.color.a) {
    *     a = 0;
    *   }
    *   pixelInputs.color.a = a;

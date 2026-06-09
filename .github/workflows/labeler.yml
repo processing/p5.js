@@ -3,12 +3,13 @@ on:
   issues:
     types: [opened, edited]
 permissions:
+  contents: read
   issues: write
 jobs:
   triage:
     runs-on: ubuntu-latest
     steps:
-      - uses: github/issue-labeler@v3.2
+      - uses: github/issue-labeler@98b5412841f6c4b0b3d9c29d53c13fad16bd7de2 # v3.2
         with:
           repo-token: "${{ secrets.GITHUB_TOKEN }}"
           configuration-path: .github/labeler.yml
