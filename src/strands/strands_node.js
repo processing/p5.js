@@ -57,8 +57,10 @@ export class StrandsNode {
 
     // For varying variables, we need both assignment generation AND a way to reference by identifier
     if (this._originalIdentifier) {
-      const valueDim = value?.isStrandsNode?value.dimension:(Array.isArray(value)?value.length:1);
-      if(valueDim!==this._originalDimension&&valueDim!==1){
+      const valueDim = value?.isStrandsNode
+        ? value.dimension
+        : (Array.isArray(value) ? value.length : 1);
+      if (valueDim !== this._originalDimension && valueDim !== 1){
         dimensionMismatchError(
           this._originalDimension,
           valueDim,
@@ -117,8 +119,10 @@ export class StrandsNode {
 
     // For varying variables, create swizzle assignment
     if (this._originalIdentifier) {
-      const valueDim = value?.isStrandsNode?value.dimension:(Array.isArray(value)?value.length:1);
-      if(valueDim!==swizzlePattern.length&&valueDim!==1){
+      const valueDim = value?.isStrandsNode
+        ? value.dimension
+        : (Array.isArray(value) ? value.length : 1);
+      if (valueDim !== swizzlePattern.length && valueDim !== 1){
         dimensionMismatchError(
           swizzlePattern.length,
           valueDim,
