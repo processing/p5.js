@@ -23,6 +23,7 @@ import creatingReading from '../color/creating_reading';
 import trigonometry from '../math/trigonometry';
 import { renderers } from './rendering';
 import customShapes from '../shape/custom_shapes';
+import files from '../io/files';
 
 class Graphics {
   constructor(w, h, renderer, pInst, canvas) {
@@ -673,6 +674,8 @@ function graphics(p5, fn){
   material(p5, p5.Graphics.prototype);
   creatingReading(p5, p5.Graphics.prototype);
   trigonometry(p5, p5.Graphics.prototype);
+
+  files(p5, p5.Graphics.prototype);
 }
 
 export default graphics;
