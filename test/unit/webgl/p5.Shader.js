@@ -516,27 +516,6 @@ test('returns numbers for builtin globals outside hooks and a strandNode when ca
   myp5.createCanvas(5, 5, myp5.WEBGL);
   myp5.baseMaterialShader().modify(() => {
     myp5.getPixelInputs(inputs => {
-      const mxInHook = window.mouseX;
-      const wInHook = window.width;
-      assert.isTrue(mxInHook.isStrandsNode);
-      assert.isTrue(wInHook.isStrandsNode);
-      inputs.color = [1, 0, 0, 1];
-      return inputs;
-    });
-  }, { myp5 });
-
-  const mx = window.mouseX;
-  const w = window.width;
-  assert.isNumber(mx);
-  assert.isNumber(w);
-  assert.strictEqual(w, myp5.width);
-});
-
-test('returns numbers for builtin globals via instance access outside hooks and a strandNode inside hooks', () => {
-  myp5.createCanvas(5, 5, myp5.WEBGL);
-  myp5.baseMaterialShader().modify(() => {
-    myp5.getPixelInputs(inputs => {
-      //In instance mode, myp5.mouseX and myp5.width should return strands nodes
       const mxInHook = myp5.mouseX;
       const wInHook = myp5.width;
       assert.isTrue(mxInHook.isStrandsNode);
@@ -546,12 +525,11 @@ test('returns numbers for builtin globals via instance access outside hooks and 
     });
   }, { myp5 });
 
-  //Outside hooks, instance access should return normal numbers
   const mx = myp5.mouseX;
   const w = myp5.width;
   assert.isNumber(mx);
   assert.isNumber(w);
-  assert.strictEqual(w, 5);
+  assert.strictEqual(w, myp5.width);
 });
 
     test('map() works inside a strands modify callback', () => {

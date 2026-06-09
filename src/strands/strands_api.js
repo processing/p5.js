@@ -105,17 +105,20 @@ function installBuiltinGlobalAccessors(strandsContext) {
     const spec = BUILTIN_GLOBAL_SPECS[name]
     const sym = Symbol(`_strands_${name}`)
 
-    // Define on window for global mode
-    Object.defineProperty(window, name, {
-      get: () => {
-        if (strandsContext.active) {
-          return getBuiltinGlobalNode(strandsContext, name);
-        }
-        const inst = getRuntimeP5Instance()
-        return spec.get(inst);
-      },
-      configurable: true,
-    })
+    // Define on window for global mode only
+    const inst = getRuntimeP5Instance()
+    if (inst?._isGlobal) {
+      Object.defineProperty(window, name, {
+        get: () => {
+          if (strandsContext.active) {
+            return getBuiltinGlobalNode(strandsContext, name);
+          }
+          const inst = getRuntimeP5Instance()
+          return spec.get(inst);
+        },
+        configurable: true,
+      })
+    }
 
     // Define on p5.prototype for instance mode
     const originalProtoDesc = Object.getOwnPropertyDescriptor(strandsContext.p5.prototype, name);
