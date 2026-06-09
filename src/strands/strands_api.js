@@ -686,8 +686,10 @@ function createHookArguments(strandsContext, parameters){
             return createStrandsNode(propNode.id, propNode.dimension, strandsContext, onRebind);
           },
           set(val) {
-            const valDim = val?.isStrandsNode?val.dimension:(Array.isArray(val)?val.length:1);
-            if(valDim!==propertyType.dataType.dimension&&valDim!==1){
+            const valDim = val?.isStrandsNode
+              ? val.dimension
+              : (Array.isArray(val) ? val.length : 1);
+            if( valDim !== propertyType.dataType.dimension && valDim !== 1){
               FES.dimensionMismatchError(
                 propertyType.dataType.dimension,
                 valDim,
