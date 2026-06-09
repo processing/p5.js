@@ -35,7 +35,7 @@
     "omggif": "^1.0.10",
     "pako": "^2.1.0",
     "zod": "^4.2.1",
-    "tl-util": "https://pkg.pr.new/limzykenneth/tl-util@b6e23c0"
+    "tl-util": "npm:@limzykenneth/tl-util@0.0.1"
   },
   "devDependencies": {
     "@eslint/compat": "^1.2.9",
