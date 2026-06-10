@@ -66,15 +66,15 @@ class Geometry {
     Geometry.nextId++;
 
     // every geometry is one or more parts (see p5.GeometryPart). loaders that
-    // know about materials fill _parts themselves; anything built the old way
+    // know about materials fill parts themselves; anything built the old way
     // gets wrapped in a single part below.
-    this._parts = [];
+    this.parts = [];
 
     if (callback instanceof Function) {
       callback.call(this);
     }
 
-    if (this._parts.length === 0) {
+    if (this.parts.length === 0) {
       this._wrapInSinglePart();
     }
   }
@@ -107,7 +107,7 @@ class Geometry {
       enumerable: true,
       configurable: true
     });
-    this._parts = [part];
+    this.parts = [part];
   }
 
   /**

@@ -39,7 +39,6 @@ suite('p5.GeometryPart', function() {
       ambientColor: null,
       specularColor: null,
       shininess: null,
-      opacity: null,
       texture: null
     });
   });
@@ -61,29 +60,29 @@ suite('p5.GeometryPart', function() {
     test('a plain geometry gets exactly one part', function() {
       const geom = new p5.Geometry(undefined, undefined, undefined,
         myp5._renderer);
-      expect(geom._parts.length).toEqual(1);
+      expect(geom.parts.length).toEqual(1);
     });
 
     test('the part is a live view onto the geometry buffers', function() {
       const geom = new p5.Geometry(undefined, undefined, undefined,
         myp5._renderer);
-      expect(geom._parts[0].vertices).toBe(geom.vertices);
-      expect(geom._parts[0].faces).toBe(geom.faces);
+      expect(geom.parts[0].vertices).toBe(geom.vertices);
+      expect(geom.parts[0].faces).toBe(geom.faces);
     });
 
     test('the part gid tracks the geometry gid after it changes', function() {
       const geom = new p5.Geometry(undefined, undefined, undefined,
         myp5._renderer);
       geom.gid = 'my-model';
-      expect(geom._parts[0].gid).toEqual('my-model|part0');
+      expect(geom.parts[0].gid).toEqual('my-model|part0');
     });
 
     test('a built-in primitive also gets one part', function() {
       const geom = new p5.Geometry(1, 1, function() {
         this.vertices.push(new p5.Vector(0, 0, 0));
       }, myp5._renderer);
-      expect(geom._parts.length).toEqual(1);
-      expect(geom._parts[0].vertices.length).toEqual(1);
+      expect(geom.parts.length).toEqual(1);
+      expect(geom.parts[0].vertices.length).toEqual(1);
     });
   });
 });

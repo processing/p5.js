@@ -93,7 +93,6 @@ function mtlToPartState(material) {
   if (material.ambientColor) state.ambientColor = material.ambientColor;
   if (material.specularColor) state.specularColor = material.specularColor;
   if (material.shininess !== undefined) state.shininess = material.shininess;
-  if (material.opacity !== undefined) state.opacity = material.opacity;
   if (material.texture) state.texture = material.texture;
   return state;
 }
@@ -164,7 +163,7 @@ function buildMaterialParts(model, faceMaterials, materials) {
     parts.push(part);
   }
 
-  model._parts = parts;
+  model.parts = parts;
 }
 
 function loading(p5, fn){

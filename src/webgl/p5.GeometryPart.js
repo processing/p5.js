@@ -12,7 +12,6 @@ function createPartState() {
     ambientColor: null,   // Ka
     specularColor: null,  // Ks
     shininess: null,      // Ns
-    opacity: null,        // d
     texture: null         // map_Kd
   };
 }

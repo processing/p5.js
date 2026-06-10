@@ -83,19 +83,18 @@ suite('loadModel', function() {
     const model = await mockP5Prototype.loadModel(validObjFileforMtl);
 
     // octa-color.obj uses 8 materials, one per face
-    assert.equal(model._parts.length, 8);
+    assert.equal(model.parts.length, 8);
 
     // every face ends up in exactly one part
-    const totalFaces = model._parts.reduce((sum, p) => sum + p.faces.length, 0);
+    const totalFaces = model.parts.reduce((sum, p) => sum + p.faces.length, 0);
     assert.equal(totalFaces, model.faces.length);
 
     // first material (m000001) is Kd 0 0 0.5 -> part fill
-    assert.deepEqual(model._parts[0].partState.fill, [0, 0, 0.5]);
-    assert.equal(model._parts[0].partState.shininess, 100);
-    assert.equal(model._parts[0].partState.opacity, 1);
+    assert.deepEqual(model.parts[0].partState.fill, [0, 0, 0.5]);
+    assert.equal(model.parts[0].partState.shininess, 100);
 
     // faces re-indexed against each part's own localised verts
-    for (const part of model._parts) {
+    for (const part of model.parts) {
       for (const face of part.faces) {
         for (const idx of face) {
           assert.ok(idx >= 0 && idx < part.vertices.length);
@@ -114,9 +113,9 @@ suite('loadModel', function() {
     try {
       const model = await mockP5Prototype.loadModel('/test/unit/assets/textured.obj');
       // single material -> one part carrying that material's state
-      assert.equal(model._parts.length, 1);
-      assert.equal(model._parts[0].partState.texture, fakeImage);
-      assert.equal(model._parts[0].partState.shininess, 50);
+      assert.equal(model.parts.length, 1);
+      assert.equal(model.parts[0].partState.texture, fakeImage);
+      assert.equal(model.parts[0].partState.shininess, 50);
     } finally {
       delete mockP5Prototype.loadImage;
     }
@@ -128,8 +127,8 @@ suite('loadModel', function() {
     };
     try {
       const model = await mockP5Prototype.loadModel('/test/unit/assets/textured.obj');
-      assert.equal(model._parts.length, 1);
-      assert.equal(model._parts[0].partState.texture, null);
+      assert.equal(model.parts.length, 1);
+      assert.equal(model.parts[0].partState.texture, null);
     } finally {
       delete mockP5Prototype.loadImage;
     }
