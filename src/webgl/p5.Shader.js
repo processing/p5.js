@@ -1103,6 +1103,10 @@ class Shader {
       return;
     }
 
+    if (uniformName === 'uSampler' && !this._renderer._settingFillUniforms) {
+      this._userSetSampler = true;
+    }
+
     // In p5.strands-related code, where some of the code may be in
     // p5.webgpu.js instead of the main p5.js build, we generally use
     // duck typing instead of instanceof to avoid accidentally importing
