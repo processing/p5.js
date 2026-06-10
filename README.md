@@ -103,6 +103,7 @@ Lead/Mentor Alumni
 | DevOps | [@Vaivaswat2244](https://github.com/Vaivaswat2244), [@limzykenneth](https://github.com/limzykenneth), [@lirenjie95](https://github.com/lirenjie95) |
 | Documentation | [@limzykenneth](https://github.com/limzykenneth), [@perminder-17](https://github.com/perminder-17) |
 | Graphics (WebGL) | [@RandomGamingDev](https://github.com/RandomGamingDev), [@davepagurek](https://github.com/davepagurek), [@perminder-17](https://github.com/perminder-17) |
+| Graphics (WebGPU) | [@aashu2006](https://github.com/aashu2006), [@davepagurek](https://github.com/davepagurek), [@perminder-17](https://github.com/perminder-17) |
 | i18n (es) | [@marioguzzzman](https://github.com/marioguzzzman) |
 | i18n (hi) | [@Divyansh013](https://github.com/Divyansh013) |
 | i18n (ko) | [@eupthere](https://github.com/eupthere) |
