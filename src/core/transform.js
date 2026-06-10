@@ -898,8 +898,8 @@ p5.prototype.rotateZ = function(angle) {
  * scaling along the x-, y-, and z-axes. Doing so is the same as calling
  * `scale(myVector.x, myVector.y, myVector.z)`.
  *
- * By default, transformations accumulate. For example, calling `scale(1)`
- * twice has the same effect as calling `scale(2)` once. The
+ * By default, transformations accumulate. For example, calling `scale(3)`
+ * twice has the same effect as calling `scale(9)` once. The
  * <a href="#/p5/push">push()</a> and <a href="#/p5/pop">pop()</a> functions
  * can be used to isolate transformations within distinct drawing groups.
  *

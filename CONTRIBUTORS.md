@@ -1119,6 +1119,8 @@
     </tr>
     <tr>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/nitin-rajpoot"><img src="https://avatars.githubusercontent.com/u/175546686?v=4?s=64" width="64px;" alt="Nitin Rajpoot"/><br /><sub><b>Nitin Rajpoot</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=nitin-rajpoot" title="Code">💻</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="http://joshuahhh.com"><img src="https://avatars.githubusercontent.com/u/643799?v=4?s=64" width="64px;" alt="Joshua Horowitz"/><br /><sub><b>Joshua Horowitz</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=joshuahhh" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/BHARATH0153"><img src="https://avatars.githubusercontent.com/u/214236921?v=4?s=64" width="64px;" alt="chandra"/><br /><sub><b>chandra</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=BHARATH0153" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
