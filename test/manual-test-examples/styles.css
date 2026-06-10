@@ -1,0 +1,25 @@
+html, body {margin:0; padding:0;}
+
+header {
+  width: 100%;
+  position: absolute;
+  color: black;
+  background-color: rgba(240, 240, 240, 0.75);
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 105%;
+}
+
+header p {
+  width: 100%;
+  text-align: center;
+}
+
+#gl-info {
+  font-family: Arial, Helvetica, sans-serif;
+  position: absolute;
+  top:0;
+  right: 0;
+  background:rgba(255, 255, 255, 0.5);
+  padding:5px;
+  font-size: 10px;
+}

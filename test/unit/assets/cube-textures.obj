@@ -1,0 +1,26 @@
+# Simple Cube OBJ File that maps each face
+# to a texture
+
+# Vertices
+v  0.0  0.0  0.0
+v  1.0  0.0  0.0
+v  1.0  1.0  0.0
+v  0.0  1.0  0.0
+v  0.0  0.0  1.0
+v  1.0  0.0  1.0
+v  1.0  1.0  1.0
+v  0.0  1.0  1.0
+
+# Texture coords
+vt 0 0
+vt 1 0
+vt 1 1
+vt 0 1
+
+# Faces
+f  1/1 2/2 3/3 4/4
+f  5/1 6/2 7/3 8/4
+f  1/1 5/2 8/3 4/4
+f  2/1 6/2 7/3 3/4
+f  4/1 3/2 7/3 8/4
+f  1/1 2/2 6/3 5/4

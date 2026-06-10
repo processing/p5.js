@@ -1,0 +1,30 @@
+# Configuration for welcome - https://github.com/behaviorbot/welcome
+
+# Configuration for new-issue-welcome - https://github.com/behaviorbot/new-issue-welcome
+
+# Comment to be posted to on first time issues
+newIssueWelcomeComment: >
+   Welcome! 👋 Thanks for opening your first issue here! And to ensure the community is able to respond to your issue, please make sure to fill out the inputs in the issue forms.
+    
+   For guidance on contributing, check out our [contributing guidelines](https://github.com/processing/p5.js/blob/main/CONTRIBUTING.md) and other [resources for contributors](https://p5js.org/contribute/).
+
+   💬 If you have questions or need support,  feel free to join the [Processing Foundation Forum](https://discourse.processing.org/) or visit our [Community page](https://p5js.org/community/).
+
+   📜 Please also review our [Code of Conduct](https://p5js.org/code-of-conduct/) to understand our community standards.
+
+   Thank You!
+# Configuration for new-pr-welcome - https://github.com/behaviorbot/new-pr-welcome
+# Comment to be posted to on PRs from first time contributors in your repository
+newPRWelcomeComment: >
+   🎉 Thanks for opening this pull request! For guidance on contributing, check out our [contributor guidelines](https://p5js.org/contribute/contributor_guidelines/) and other [resources for contributors](https://p5js.org/contribute)!
+
+   🤔 Please ensure that your PR links to an issue, which has been approved for work by a maintainer; otherwise, there might already be someone working on it, or still ongoing discussion about implementation. You are welcome to join the discussion in an Issue if you're not sure!
+
+   🌸  Once your PR is merged, be sure to [add yourself](https://github.com/processing/p5.js/issues/2309) to the [list of contributors on the readme page](https://github.com/processing/p5.js#contributors) !
+
+
+   Thank You!
+
+# Configuration for first-pr-merge - https://github.com/behaviorbot/first-pr-merge
+
+# Comment to be posted to on pull requests merged by a first time user

@@ -1,0 +1,82 @@
+name: Testing
+
+on:
+  push:
+    branches:
+      - main
+      - dev-2.0
+  pull_request:
+    branches:
+      - '*'
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            browser: chrome
+          # - os: windows-latest
+          #   browser: chrome
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          persist-credentials: false
+      
+      - name: Use Node.js 22.x
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 22.x
+      
+      - name: Verify Chrome (Ubuntu)
+        if: matrix.os == 'ubuntu-latest' && matrix.browser == 'chrome'
+        run: |
+          google-chrome --version
+
+      - name: Verify Chrome (Windows)
+        if: matrix.os == 'windows-latest' && matrix.browser == 'chrome'
+        run: |
+          & "C:\Program Files\Google\Chrome\Application\chrome.exe" --version
+      
+      - name: Get node modules
+        run: npm ci
+        env:
+          CI: true
+
+      - name: Build and test (Ubuntu)
+        id: test
+        if: matrix.os == 'ubuntu-latest'
+        run: npm test -- --project=unit-tests
+        continue-on-error: true
+        env:
+          CI: true
+
+      - name: Generate Visual Test Report
+        if: always()
+        run: node visual-report.js
+        env:
+          CI: true
+      - name: Upload Visual Test Report
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: visual-test-report
+          path: test/unit/visual/visual-report.html
+          retention-days: 14
+      - name: generate TypeScript types
+        run: npm run generate-types
+        env:
+          CI: true
+      - name: test TypeScript types
+        run: npm run test:types
+        env:
+          CI: true
+      - name: fail job if tests failed
+        if: steps.test.outcome != 'success'
+        run: exit 1

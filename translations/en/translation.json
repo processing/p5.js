@@ -1,0 +1,73 @@
+{
+  "fes": {
+    "autoplay": "The media that tried to play (with '{{src}}') wasn't allowed to by this browser, most likely due to the browser's autoplay policy.\n\n+ More info: {{url}}",
+    "checkUserDefinedFns": "It seems that you may have accidentally written {{name}} instead of {{actualName}}. Please correct it if it's not intentional.",
+    "fileLoadError": {
+      "bytes": "It looks like there was a problem loading your file. {{suggestion}}",
+      "font": "It looks like there was a problem loading your font. {{suggestion}}",
+      "gif": "There was some trouble loading your GIF. Make sure that your GIF is using 87a or 89a encoding.",
+      "image": "It looks like there was a problem loading your image. {{suggestion}}",
+      "json": "It looks like there was a problem loading your JSON file. {{suggestion}}",
+      "large": "If your large file isn't fetched successfully, we recommend splitting the file into smaller segments and fetching those.",
+      "strings": "It looks like there was a problem loading your text file. {{suggestion}}",
+      "suggestion": "Try checking if the file path ({{filePath}}) is correct, hosting the file online, or running a local server.\n\n+ More info: {{url}}",
+      "table": "It looks like there was a problem loading your table file. {{suggestion}}",
+      "xml": "It looks like there was a problem loading your XML file. {{suggestion}}"
+    },
+    "friendlyParamError": {
+      "type_EMPTY_VAR": "{{location}} {{func}}() was expecting {{formatType}} for the {{position}} parameter, received an empty variable instead. If not intentional, this is often a problem with scope.\n\n+ More info: {{url}}",
+      "type_TOO_FEW_ARGUMENTS": "{{location}} {{func}}() was expecting at least {{minParams}} arguments, but received only {{argCount}}.",
+      "type_TOO_MANY_ARGUMENTS": "{{location}} {{func}}() was expecting no more than {{maxParams}} arguments, but received {{argCount}}.",
+      "type_WRONG_TYPE": "{{location}} {{func}}() was expecting {{formatType}} for the {{position}} parameter, received {{argType}} instead."
+    },
+    "globalErrors": {
+      "reference": {
+        "cannotAccess": "\n{{location}} \"{{symbol}}\" is used before declaration. Make sure you have declared the variable before using it.\n\n+ More info: {{url}}",
+        "notDefined": "\n{{location}} \"{{symbol}}\" is not defined in the current scope. If you have defined it in your code, you should check its scope, spelling, and letter-casing (JavaScript is case-sensitive).\n\n+ More info: {{url}}"
+      },
+      "stackSubseq": "└[{{location}}] \n\t Called from line {{line}} in {{func}}()\n",
+      "stackTop": "┌[{{location}}] \n\t Error at line {{line}} in {{func}}()\n",
+      "syntax": {
+        "badReturnOrYield": "\nSyntax Error - return lies outside of a function. Make sure you’re not missing any brackets, so that return lies inside a function.\n\n+ More info: {{url}}",
+        "invalidToken": "\nSyntax Error - Found a symbol that JavaScript doesn't recognize or didn't expect at it's place.\n\n+ More info: {{url}}",
+        "missingInitializer": "\nSyntax Error - A const variable is declared but not initialized. In JavaScript, an initializer for a const is required. A value must be specified in the same statement in which the variable is declared. Check the line number in the error and assign the const variable a value.\n\n+ More info: {{url}}",
+        "redeclaredVariable": "\nSyntax Error - \"{{symbol}}\" is being redeclared. JavaScript doesn't allow declaring a variable more than once. Check the line number in error for redeclaration of the variable.\n\n+ More info: {{url}}",
+        "unexpectedToken": "\nSyntax Error - Symbol present at a place that wasn't expected.\nUsually this is due to a typo. Check the line number in the error for anything missing/extra.\n\n+ More info: {{url}}"
+      },
+      "type": {
+        "constAssign": "\n{{location}} A const variable is being re-assigned. In javascript, re-assigning a value to a constant is not allowed. If you want to re-assign new values to a variable, make sure it is declared as var or let.\n\n+ More info: {{url}}",
+        "notfunc": "\n{{location}} \"{{symbol}}\" could not be called as a function.\nCheck the spelling, letter-casing (JavaScript is case-sensitive) and its type.\n\n+ More info: {{url}}",
+        "notfuncObj": "\n{{location}} \"{{symbol}}\" could not be called as a function.\nVerify whether \"{{obj}}\" has \"{{symbol}}\" in it and check the spelling, letter-casing (JavaScript is case-sensitive) and its type.\n\n+ More info: {{url}}",
+        "readFromNull": "\n{{location}} The property of null can't be read. In javascript the value null indicates that an object has no value.\n\n+ More info: {{url}}",
+        "readFromUndefined": "\n{{location}} Cannot read property of undefined. Check the line number in error and make sure the variable which is being operated is not undefined.\n\n + More info: {{url}}"
+      }
+    },
+    "libraryError": "{{location}} An error with message \"{{error}}\" occurred inside the p5js library when {{func}} was called. If not stated otherwise, it might be an issue with the arguments passed to {{func}}.",
+    "location": "[{{file}}, line {{line}}]",
+    "misspelling": "{{location}} It seems that you may have accidentally written \"{{name}}\" instead of \"{{actualName}}\". Please correct it to {{actualName}} if you wish to use the {{type}} from p5.js.",
+    "misspelling_plural": "{{location}} It seems that you may have accidentally written \"{{name}}\".\nYou may have meant one of the following: \n{{suggestions}}",
+    "misusedTopLevel": "Did you just try to use p5.js's {{symbolName}} {{symbolType}}? If so, you may want to move it into your sketch's setup() function.\n\n+ More info: {{url}}",
+    "preloadDisabled": "The preload() function has been removed in p5.js 2.0. Please load assets in setup() using async / await keywords or callbacks instead. See https://github.com/processing/p5.js-compatibility for more information about 2.0 and compatibility, or https://dev.to/limzykenneth/asynchronous-p5js-20-458f for more information about promises and async/await.",
+    "positions": {
+      "p_1": "first",
+      "p_10": "tenth",
+      "p_11": "eleventh",
+      "p_12": "twelfth",
+      "p_2": "second",
+      "p_3": "third",
+      "p_4": "fourth",
+      "p_5": "fifth",
+      "p_6": "sixth",
+      "p_7": "seventh",
+      "p_8": "eighth",
+      "p_9": "ninth"
+    },
+    "pre": "\n🌸 p5.js says: {{message}}",
+    "sketchReaderErrors": {
+      "reservedConst": "you have used a p5.js reserved variable \"{{symbol}}\" make sure you change the variable name to something else.\n\n+ More info: {{url}}",
+      "reservedFunc": "you have used a p5.js reserved function \"{{symbol}}\" make sure you change the function name to something else.\n\n+ More info: {{url}}"
+    },
+    "welcome": "Welcome! This is your friendly debugger. To turn me off, switch to using p5.min.js.",
+    "wrongPreload": "{{location}} An error with message \"{{error}}\" occurred inside the p5js library when \"{{func}}\" was called. If not stated otherwise, it might be due to \"{{func}}\" being called from preload. Nothing besides load calls (loadImage, loadJSON, loadFont, loadStrings, etc.) should be inside the preload function."
+  }
+}
