@@ -1754,4 +1754,28 @@ visualTest('randomGaussian() in a fragment loop averages to the mean', (p5, scre
       screenshot();
     });
   });
+
+  visualTest(
+    'user-set uSampler on custom shader is not overridden',
+    function(p5, screenshot) {
+      p5.createCanvas(50, 50, p5.WEBGL);
+
+      const myShader = p5.createFilterShader(`precision highp float;
+uniform sampler2D uSampler;
+varying vec2 vTexCoord;
+void main() {
+  gl_FragColor = texture2D(uSampler, vTexCoord);
+}`);
+
+      const fbo = p5.createFramebuffer();
+      fbo.draw(() => p5.background(255, 0, 0));
+
+      p5.shader(myShader);
+      p5.noStroke();
+      myShader.setUniform('uSampler', fbo);
+      p5.plane(p5.width, p5.height);
+
+      screenshot();
+    }
+  );
 });
