@@ -7507,6 +7507,16 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "mmendieta2",
+      "name": "May",
+      "avatar_url": "https://avatars.githubusercontent.com/u/143908478?v=4",
+      "profile": "https://github.com/mmendieta2",
+      "contributions": [
+        "code",
+        "test"
+      ]
     }
   ],
   "repoType": "github",
