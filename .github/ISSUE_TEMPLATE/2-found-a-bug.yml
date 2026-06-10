@@ -1,0 +1,73 @@
+name: 📃 p5.js 1.x Bug Report
+description: This template is for reporting bugs (broken or incorrect behaviour) on p5.js versions 1.11 or earlier. Please note there is no active development on p5.js version 1.x.
+title: "[p5.js 1.x Bug Report]: "
+labels: [Bug]
+body:
+- type: checkboxes
+  id: sub-area
+  attributes:
+    label: Most appropriate sub-area of p5.js?
+    description: You may select more than one.
+    options:
+        - label: Accessibility
+        - label: Color
+        - label: Core/Environment/Rendering
+        - label: Data
+        - label: DOM
+        - label: Events
+        - label: Image
+        - label: IO
+        - label: Math
+        - label: Typography
+        - label: Utilities
+        - label: WebGL
+        - label: WebGPU
+        - label: p5.strands
+        - label: Build process
+        - label: Unit testing
+        - label: Internationalization
+        - label: Friendly errors
+        - label: Other (specify if possible)
+- type: input
+  attributes:
+    label: p5.js version 
+    description: You can find this in the first line of the p5.js file.
+  validations:
+    required: false
+- type: input
+  attributes:
+    label: Web browser and version 
+    description: In the address bar, on Chrome enter "chrome://version", on Firefox enter "about:support". On Safari, use "About Safari".
+  validations:
+    required: false
+- type: input
+  attributes:
+    label: Operating system 
+    description: "Ex: Windows/MacOSX/Linux/Android/iOS along with version"
+  validations:
+    required: false
+- type: textarea
+  attributes:
+    label: Steps to reproduce this 
+    description: Include a simple code snippet that demonstrates the problem, along with any console errors produced. If this isn't possible, then simply describe the issue as best you can!
+    value: "### Steps:
+    
+    1.
+
+    2.
+
+    3.
+
+
+    ### Snippet:
+    
+
+    ```js
+
+
+      // Paste your code here :) 
+
+
+    ```"
+  validations:
+    required: true

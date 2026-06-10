@@ -1,0 +1,39 @@
+"Area:Accessibility":
+  - '\[[xX]\]\s*Accessibility'
+"Area:Color":
+  - '\[[xX]\]\s*Color'
+"Area:Core":
+  - '\[[xX]\]\s*Core'
+"Area:Data":
+  - '\[[xX]\]\s*Data'
+"Area:DOM":
+  - '\[[xX]\]\s*DOM'
+"Area:Events":
+  - '\[[xX]\]\s*Events'
+"Area:Image":
+  - '\[[xX]\]\s*Image'
+"Area:IO":
+  - '\[[xX]\]\s*IO'
+"Area:Math":
+  - '\[[xX]\]\s*Math'
+"Area:Typography":
+  - '\[[xX]\]\s*Typography'
+"Area:Utilities":
+  - '\[[xX]\]\s*Utilities'
+"Area:WebGL":
+  - '\[[xX]\]\s*WebGL'
+"Internationalization":
+  - '\[[xX]\]\s*Internationalization'
+"DevOps":
+  - '\[[xX]\]\s*Build Process'
+  - '\[[xX]\]\s*Unit Testing'
+"Build Process":
+  - '\[[xX]\]\s*Build Process'
+"Unit Testing":
+  - '\[[xX]\]\s*Unit Testing'
+"Friendly Errors":
+  - '\[[xX]\]\s*Friendly Errors'
+"p5.strands":
+  - '\[[xX]\]\s*p5.strands'
+"Area:WebGPU":
+  - '\[[xX]\]\s*WebGPU'
