@@ -46,15 +46,6 @@ The p5.js community shares an interest in exploring the creation of art and desi
 
 Learn more about [our community](https://p5js.org/community/) and read our community statement and [code of conduct](https://github.com/processing/p5.js/blob/main/CODE_OF_CONDUCT.md). You can directly support our work with p5.js by donating to [the Processing Foundation](https://processingfoundation.org/support).
 
-## 🌼 p5.js 2.0 Now Available for Community Testing & Development!
-
-We are releasing p5.js 2.0 to the community for testing and development! Here’s what you need to know.
-
-* For **reference**: p5.js 1.x reference will stay on [https://p5js.org/](https://p5js.org/), and p5.js 2.x documentation will be on [https://beta.p5js.org/](https://beta.p5js.org/)
-* In the p5.js Editor: the **default will continue to be 1.x** until at least August 2026 - more information and discussion on timeline can be found on [this Discourse thread](https://discourse.processing.org/t/dev-updates-p5-js-2-0-you-are-here/46130) or [this GitHub thread](https://github.com/processing/p5.js/issues/7488)
-* For updating sketches and add-on libraries: check out [the compatibility add-on libraries and guides](https://github.com/processing/p5.js-compatibility)
-* For **contribution**: `npm latest` will default to 2.x, but the git branches are still separated with `main` on 1.x and `dev-2.0` on 2.x. We will switch the branches when we have updated all automations (including deploying updated documentation to the website). Want to contribute ideas or implementation? Check the [2.x project board](https://github.com/orgs/processing/projects/21/views/8) for an overview of what still needs discussion, and what’s ready for work!
-
 ## Issues
 
 If you have found a bug in the p5.js library or want to request new features, feel free to file an issue! See our [contributor guidelines](https://p5js.org/contribute/contributor_guidelines) for a full reference of our contribution process. A set of templates for reporting issues and requesting features are provided to assist you (and us!). Different parts of p5.js are in different repositories. You can open an issue on each of them through these links:
@@ -95,25 +86,22 @@ Lead/Mentor Alumni
 <!-- STEWARDS-LIST:START - Do not remove or modify this section -->
 | Area | Steward(s) |
 |------|-------------|
-| Maintainers | [@davepagurek](https://github.com/davepagurek), [@doradocodes](https://github.com/doradocodes), [@ksen0](https://github.com/ksen0), [@limzykenneth](https://github.com/limzykenneth), [@perminder-17](https://github.com/perminder-17), [@qianqianye](https://github.com/qianqianye) |
+| Maintainers | [@davepagurek](https://github.com/davepagurek), [@doradocodes](https://github.com/doradocodes), [@ksen0](https://github.com/ksen0), [@limzykenneth](https://github.com/limzykenneth), [@perminder-17](https://github.com/perminder-17) |
 | Accessibility | [@calebfoss](https://github.com/calebfoss) |
 | Accessibility (p5.js-website) | [@coseeian](https://github.com/coseeian) |
 | Color | [@limzykenneth](https://github.com/limzykenneth) |
 | Core | [@davepagurek](https://github.com/davepagurek) |
-| DevOps | [@Vaivaswat2244](https://github.com/Vaivaswat2244), [@error-four-o-four](https://github.com/error-four-o-four), [@limzykenneth](https://github.com/limzykenneth), [@lirenjie95](https://github.com/lirenjie95) |
-| Documentation | [@VANSH3104](https://github.com/VANSH3104), [@limzykenneth](https://github.com/limzykenneth), [@perminder-17](https://github.com/perminder-17) |
-| Friendly Errors | [@IIITM-Jay](https://github.com/IIITM-Jay) |
-| Graphics (p5.strands) | [@lukeplowden](https://github.com/lukeplowden) |
-| Graphics (WebGL) | [@RandomGamingDev](https://github.com/RandomGamingDev), [@aferriss](https://github.com/aferriss), [@davepagurek](https://github.com/davepagurek), [@lukeplowden](https://github.com/lukeplowden), [@perminder-17](https://github.com/perminder-17) |
+| DevOps | [@Vaivaswat2244](https://github.com/Vaivaswat2244), [@limzykenneth](https://github.com/limzykenneth), [@lirenjie95](https://github.com/lirenjie95) |
+| Documentation | [@limzykenneth](https://github.com/limzykenneth), [@perminder-17](https://github.com/perminder-17) |
+| Graphics (WebGL) | [@RandomGamingDev](https://github.com/RandomGamingDev), [@davepagurek](https://github.com/davepagurek), [@perminder-17](https://github.com/perminder-17) |
+| Graphics (WebGPU) | [@aashu2006](https://github.com/aashu2006), [@davepagurek](https://github.com/davepagurek), [@perminder-17](https://github.com/perminder-17) |
 | i18n (es) | [@marioguzzzman](https://github.com/marioguzzzman) |
-| i18n (hi) | [@Divyansh013](https://github.com/Divyansh013), [@takshittt](https://github.com/takshittt) |
-| i18n (ko) | [@hana-cho](https://github.com/hana-cho) |
+| i18n (hi) | [@Divyansh013](https://github.com/Divyansh013) |
+| i18n (ko) | [@eupthere](https://github.com/eupthere) |
 | i18n (zh) | [@limzykenneth](https://github.com/limzykenneth), [@lirenjie95](https://github.com/lirenjie95) |
-| Math | [@GregStanton](https://github.com/GregStanton), [@holomorfo](https://github.com/holomorfo) |
-| p5.js-web-editor | [@iron-56](https://github.com/iron-56) |
+| p5.js-web-editor | [@kitlord](https://github.com/kitlord) |
 | p5.js-website | [@Nwakaego-Ego](https://github.com/Nwakaego-Ego), [@clairep94](https://github.com/clairep94), [@doradocodes](https://github.com/doradocodes), [@ksen0](https://github.com/ksen0) |
 | p5.sound.js | [@ogbabydiesal](https://github.com/ogbabydiesal) |
-| Shapes | [@GregStanton](https://github.com/GregStanton) |
 | Typography | [@dhowe](https://github.com/dhowe) |
 <!-- STEWARDS-LIST:END -->
 
