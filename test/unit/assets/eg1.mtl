@@ -1,0 +1,9 @@
+newmtl coloredMaterial
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 0.000000 0.000000 # Only this material has a diffuse color
+Ks 0.500000 0.500000 0.500000
+Ke 0.0 0.0 0.0
+Ni 1.000000
+d 1.000000
+illum 2

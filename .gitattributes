@@ -1,0 +1,18 @@
+# Common settings that generally should always be used with your language specific settings
+
+# Auto detect text files and perform LF normalization
+
+# Scripts
+*.bash     text eol=lf
+*.js       text eol=lf
+
+#
+# Exclude files from exporting
+#
+
+.gitattributes export-ignore
+.gitignore     export-ignore
+.gitkeep       export-ignore
+
+# Apply override to all files in the directory
+*.md linguist-detectable

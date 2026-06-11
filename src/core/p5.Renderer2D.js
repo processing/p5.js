@@ -1,0 +1,1047 @@
+import * as constants from './constants';
+import p5 from './main';
+import { Renderer } from './p5.Renderer';
+import { Graphics } from './p5.Graphics';
+import { Image } from '../image/p5.Image';
+import { Element } from '../dom/p5.Element';
+import { MediaElement } from '../dom/p5.MediaElement';
+import { RGBHDR } from '../color/creating_reading';
+import FilterRenderer2D from '../image/filterRenderer2D';
+import { Matrix } from '../math/p5.Matrix';
+import { PrimitiveToPath2DConverter } from '../shape/custom_shapes';
+import { DefaultFill, textCoreConstants } from '../type/textCore';
+
+const styleEmpty = 'rgba(0,0,0,0)';
+
+class Renderer2D extends Renderer {
+  constructor(pInst, w, h, isMainCanvas, elt, attributes = {}) {
+    super(pInst, w, h, isMainCanvas);
+
+    this.canvas = this.elt = elt || document.createElement('canvas');
+
+    if (isMainCanvas) {
+      // for pixel method sharing with pimage
+      this._pInst._curElement = this;
+      this._pInst.canvas = this.canvas;
+    } else {
+      // hide if offscreen buffer by default
+      this.canvas.style.display = 'none';
+    }
+
+    if(!this.elt.id){
+      this.elt.id = `defaultCanvas${p5.sketchCount++}`;
+    }
+    this.elt.classList.add('p5Canvas');
+
+    // Extend renderer with methods of p5.Element with getters
+    for (const p of Object.getOwnPropertyNames(Element.prototype)) {
+      if (p !== 'constructor' && p[0] !== '_') {
+        Object.defineProperty(this, p, {
+          get() {
+            return this.wrappedElt[p];
+          }
+        });
+      }
+    }
+
+    // Set canvas size
+    this.elt.width = w * this._pixelDensity;
+    this.elt.height = h * this._pixelDensity;
+    this.elt.style.width = `${w}px`;
+    this.elt.style.height = `${h}px`;
+
+    // Attach canvas element to DOM
+    if (this._pInst._userNode) {
+      // user input node case
+      this._pInst._userNode.appendChild(this.elt);
+    } else {
+      //create main element
+      if (document.getElementsByTagName('main').length === 0) {
+        let m = document.createElement('main');
+        document.body.appendChild(m);
+      }
+      //append canvas to main
+      document.getElementsByTagName('main')[0].appendChild(this.elt);
+    }
+
+    // Get and store drawing context
+    this.drawingContext = this.canvas.getContext('2d', attributes);
+    if(attributes.colorSpace === 'display-p3'){
+      this.states.colorMode = RGBHDR;
+    }
+    this.scale(this._pixelDensity, this._pixelDensity);
+
+    // Set and return p5.Element
+    this.wrappedElt = new Element(this.elt, this._pInst);
+    this.clipPath = null;
+  }
+
+  get filterRenderer() {
+    if (!this._filterRenderer) {
+      this._filterRenderer = new FilterRenderer2D(this);
+    }
+    return this._filterRenderer;
+  }
+
+  remove(){
+    this.wrappedElt.remove();
+    this.wrappedElt = null;
+    this.canvas = null;
+    this.elt = null;
+  }
+
+  getFilterGraphicsLayer() {
+    // create hidden webgl renderer if it doesn't exist
+    if (!this.filterGraphicsLayer) {
+      const pInst = this._pInst;
+
+      // create secondary layer
+      this.filterGraphicsLayer =
+        new Graphics(
+          this.width,
+          this.height,
+          constants.WEBGL,
+          pInst
+        );
+    }
+    if (
+      this.filterGraphicsLayer.width !== this.width ||
+      this.filterGraphicsLayer.height !== this.height
+    ) {
+      // Resize the graphics layer
+      this.filterGraphicsLayer.resizeCanvas(this.width, this.height);
+    }
+    if (
+      this.filterGraphicsLayer.pixelDensity() !== this._pInst.pixelDensity()
+    ) {
+      this.filterGraphicsLayer.pixelDensity(this._pInst.pixelDensity());
+    }
+
+    return this.filterGraphicsLayer;
+  }
+
+  _applyDefaults() {
+    this.states.setValue('_cachedFillStyle', undefined);
+    this.states.setValue('_cachedStrokeStyle', undefined);
+    this._cachedBlendMode = constants.BLEND;
+    this._setFill(constants._DEFAULT_FILL);
+    this._setStroke(constants._DEFAULT_STROKE);
+    this.drawingContext.lineCap = constants.ROUND;
+    this.drawingContext.font = 'normal 12px sans-serif';
+  }
+
+  resize(w, h) {
+    super.resize(w, h);
+
+    // save canvas properties
+    const props = {};
+    for (const key in this.drawingContext) {
+      const val = this.drawingContext[key];
+      if (typeof val !== 'object' && typeof val !== 'function') {
+        props[key] = val;
+      }
+    }
+
+    this.canvas.width = w * this._pixelDensity;
+    this.canvas.height = h * this._pixelDensity;
+    this.canvas.style.width = `${w}px`;
+    this.canvas.style.height = `${h}px`;
+    this.drawingContext.scale(
+      this._pixelDensity,
+      this._pixelDensity
+    );
+
+    // reset canvas properties
+    for (const savedKey in props) {
+      try {
+        this.drawingContext[savedKey] = props[savedKey];
+      } catch (err) {
+        // ignore read-only property errors
+      }
+    }
+  }
+
+  //////////////////////////////////////////////
+  // COLOR | Setting
+  //////////////////////////////////////////////
+
+  background(...args) {
+    if (args.length === 0) {
+      return this;// setter with no args does nothing
+    }
+    this.push();
+    this.resetMatrix();
+    if (args[0] instanceof Image) {
+      const img = args[0];
+      if (args[1] >= 0) {
+        // set transparency of background
+        this.drawingContext.globalAlpha = args[1] / 255;
+      }
+      this._pInst.image(img, 0, 0, this.width, this.height);
+    } else {
+      // create background rect
+      const color = this._pInst.color(...args);
+
+      // Add accessible outputs if the method exists; on success,
+      // set the accessible output background to white.
+      if (this._pInst._addAccsOutput?.()) {
+        this._pInst._accsBackground?.(color._getRGBA([255, 255, 255, 255]));
+      }
+
+      const newFill = color.toString();
+      this._setFill(newFill);
+
+      if (this._isErasing) {
+        this.blendMode(this._cachedBlendMode);
+      }
+
+      this.drawingContext.fillRect(0, 0, this.width, this.height);
+
+      if (this._isErasing) {
+        this._pInst.erase();
+      }
+    }
+    this.pop();
+
+    return this;
+  }
+
+  clear() {
+    this.drawingContext.save();
+    this.resetMatrix();
+    this.drawingContext.clearRect(0, 0, this.width, this.height);
+    this.drawingContext.restore();
+  }
+
+  fill(...args) {
+    super.fill(...args);
+    const color = this.states.fillColor;
+    if (args.length === 0) {
+      return color; // getter
+    }
+    this._setFill(color.toString());
+
+    // Add accessible outputs if the method exists; on success,
+    // set the accessible output background to white.
+    if (this._pInst._addAccsOutput?.()) {
+      this._pInst._accsCanvasColors?.('fill', color._getRGBA([255, 255, 255, 255]));
+    }
+  }
+
+  stroke(...args) {
+    super.stroke(...args);
+    const color = this.states.strokeColor;
+    if (args.length === 0) {
+      return color; // getter
+    }
+    this._setStroke(color.toString());
+
+    // Add accessible outputs if the method exists; on success,
+    // set the accessible output background to white.
+    if (this._pInst._addAccsOutput?.()) {
+      this._pInst._accsCanvasColors?.('stroke', color._getRGBA([255, 255, 255, 255]));
+    }
+  }
+
+  erase(opacityFill, opacityStroke) {
+    if (!this._isErasing) {
+      // cache the fill style
+      this.states.setValue('_cachedFillStyle', this.drawingContext.fillStyle);
+      const newFill = this._pInst.color(255, opacityFill).toString();
+      this.drawingContext.fillStyle = newFill;
+
+      // cache the stroke style
+      this.states.setValue('_cachedStrokeStyle', this.drawingContext.strokeStyle);
+      const newStroke = this._pInst.color(255, opacityStroke).toString();
+      this.drawingContext.strokeStyle = newStroke;
+
+      // cache blendMode
+      const tempBlendMode = this._cachedBlendMode;
+      this.blendMode(constants.REMOVE);
+      this._cachedBlendMode = tempBlendMode;
+
+      this._isErasing = true;
+    }
+  }
+
+  noErase() {
+    if (this._isErasing) {
+      this.drawingContext.fillStyle = this.states._cachedFillStyle;
+      this.drawingContext.strokeStyle = this.states._cachedStrokeStyle;
+
+      this.blendMode(this._cachedBlendMode);
+      this._isErasing = false;
+    }
+  }
+
+  drawShape(shape) {
+    const visitor = new PrimitiveToPath2DConverter({
+      strokeWeight: this.states.strokeWeight
+    });
+    shape.accept(visitor);
+    if (this._clipping) {
+      const currentTransform = this.drawingContext.getTransform();
+      const clipBaseTransform = this._clipBaseTransform.inverse();
+      const relativeTransform = clipBaseTransform.multiply(currentTransform);
+      this.clipPath.addPath(visitor.path, relativeTransform);
+      this.clipPath.closePath();
+    } else {
+      if (this.states.fillColor) {
+        this.drawingContext.fill(visitor.fillPath || visitor.path);
+      }
+      if (this.states.strokeColor) {
+        this.drawingContext.stroke(visitor.strokePath || visitor.path);
+      }
+    }
+  }
+
+  beginClip(options = {}) {
+    super.beginClip(options);
+    this._clipBaseTransform = this.drawingContext.getTransform();
+    // cache the fill style
+    this.states.setValue('_cachedFillStyle', this.drawingContext.fillStyle);
+    const newFill = this._pInst.color(255, 0).toString();
+    this.drawingContext.fillStyle = newFill;
+
+    // cache the stroke style
+    this.states.setValue('_cachedStrokeStyle', this.drawingContext.strokeStyle);
+    const newStroke = this._pInst.color(255, 0).toString();
+    this.drawingContext.strokeStyle = newStroke;
+
+    // cache blendMode
+    const tempBlendMode = this._cachedBlendMode;
+    this.blendMode(constants.BLEND);
+    this._cachedBlendMode = tempBlendMode;
+
+    // Since everything must be in one path, create a new single Path2D to chain all shapes onto.
+    // Start a new path. Everything from here on out should become part of this
+    // one path so that we can clip to the whole thing.
+    this.clipPath = new Path2D();
+    this._clipBaseTransform = this.drawingContext.getTransform();
+
+    if (this._clipInvert) {
+      // Slight hack: draw a big rectangle over everything with reverse winding
+      // order. This is hopefully large enough to cover most things.
+      this.clipPath.moveTo(
+        -2 * this.width,
+        -2 * this.height
+      );
+      this.clipPath.lineTo(
+        -2 * this.width,
+        2 * this.height
+      );
+      this.clipPath.lineTo(
+        2 * this.width,
+        2 * this.height
+      );
+      this.clipPath.lineTo(
+        2 * this.width,
+        -2 * this.height
+      );
+      this.clipPath.closePath();
+    }
+  }
+
+  endClip() {
+    const savedTransform = this.drawingContext.getTransform();
+    this.drawingContext.setTransform(this._clipBaseTransform);
+    this.drawingContext.clip(this.clipPath);
+    this.drawingContext.setTransform(savedTransform);
+
+    this.clipPath = null;
+
+    super.endClip();
+
+    this.drawingContext.fillStyle = this.states._cachedFillStyle;
+    this.drawingContext.strokeStyle = this.states._cachedStrokeStyle;
+
+    this.blendMode(this._cachedBlendMode);
+  }
+
+  //////////////////////////////////////////////
+  // IMAGE | Loading & Displaying
+  //////////////////////////////////////////////
+
+  image(
+    img,
+    sx,
+    sy,
+    sWidth,
+    sHeight,
+    dx,
+    dy,
+    dWidth,
+    dHeight
+  ) {
+    let cnv;
+    if (img.gifProperties) {
+      img._animateGif(this._pInst);
+    }
+
+    try {
+      if (img instanceof MediaElement) {
+        img._ensureCanvas();
+      }
+      if (this.states.tint && img.canvas) {
+        cnv = this._getTintedImageCanvas(img);
+      }
+      if (!cnv) {
+        cnv = img.canvas || img.elt;
+      }
+      let s = 1;
+      if (img.width && img.width > 0) {
+        s = cnv.width / img.width;
+      }
+      if (this._isErasing) {
+        this.blendMode(this._cachedBlendMode);
+      }
+
+      this.drawingContext.drawImage(
+        cnv,
+        s * sx,
+        s * sy,
+        s * sWidth,
+        s * sHeight,
+        dx,
+        dy,
+        dWidth,
+        dHeight
+      );
+      if (this._isErasing) {
+        this._pInst.erase();
+      }
+    } catch (e) {
+      if (e.name !== 'NS_ERROR_NOT_AVAILABLE') {
+        throw e;
+      }
+    }
+  }
+
+  _getTintedImageCanvas(img) {
+    if (!img.canvas) {
+      return img;
+    }
+
+    if (!img.tintCanvas) {
+      // Once an image has been tinted, keep its tint canvas
+      // around so we don't need to re-incur the cost of
+      // creating a new one for each tint
+      img.tintCanvas = document.createElement('canvas');
+    }
+
+    // Keep the size of the tint canvas up-to-date
+    if (img.tintCanvas.width !== img.canvas.width) {
+      img.tintCanvas.width = img.canvas.width;
+    }
+    if (img.tintCanvas.height !== img.canvas.height) {
+      img.tintCanvas.height = img.canvas.height;
+    }
+
+    // Goal: multiply the r,g,b,a values of the source by
+    // the r,g,b,a values of the tint color
+    const ctx = img.tintCanvas.getContext('2d');
+
+    ctx.save();
+    ctx.clearRect(0, 0, img.canvas.width, img.canvas.height);
+
+    if (
+      this.states.tint[0] < 255 ||
+      this.states.tint[1] < 255 ||
+      this.states.tint[2] < 255
+    ) {
+      // Color tint: we need to use the multiply blend mode to change the colors.
+      // However, the canvas implementation of this destroys the alpha channel of
+      // the image. To accommodate, we first get a version of the image with full
+      // opacity everywhere, tint using multiply, and then use the destination-in
+      // blend mode to restore the alpha channel again.
+
+      // Start with the original image
+      ctx.drawImage(img.canvas, 0, 0);
+
+      // This blend mode makes everything opaque but forces the luma to match
+      // the original image again
+      ctx.globalCompositeOperation = 'luminosity';
+      ctx.drawImage(img.canvas, 0, 0);
+
+      // This blend mode forces the hue and chroma to match the original image.
+      // After this we should have the original again, but with full opacity.
+      ctx.globalCompositeOperation = 'color';
+      ctx.drawImage(img.canvas, 0, 0);
+
+      // Apply color tint
+      ctx.globalCompositeOperation = 'multiply';
+      ctx.fillStyle = `rgb(${this.states.tint.slice(0, 3).join(', ')})`;
+      ctx.fillRect(0, 0, img.canvas.width, img.canvas.height);
+
+      // Replace the alpha channel with the original alpha * the alpha tint
+      ctx.globalCompositeOperation = 'destination-in';
+      ctx.globalAlpha = this.states.tint[3] / 255;
+      ctx.drawImage(img.canvas, 0, 0);
+    } else {
+      // If we only need to change the alpha, we can skip all the extra work!
+      ctx.globalAlpha = this.states.tint[3] / 255;
+      ctx.drawImage(img.canvas, 0, 0);
+    }
+
+    ctx.restore();
+    return img.tintCanvas;
+  }
+
+  //////////////////////////////////////////////
+  // IMAGE | Pixels
+  //////////////////////////////////////////////
+
+  blendMode(mode) {
+    if (typeof mode === 'undefined') { // getter
+      return this._cachedBlendMode;
+    }
+    if (mode === constants.SUBTRACT) {
+      console.warn('blendMode(SUBTRACT) only works in WEBGL mode.');
+    } else if (
+      mode === constants.BLEND ||
+      mode === constants.REMOVE ||
+      mode === constants.DARKEST ||
+      mode === constants.LIGHTEST ||
+      mode === constants.DIFFERENCE ||
+      mode === constants.MULTIPLY ||
+      mode === constants.EXCLUSION ||
+      mode === constants.SCREEN ||
+      mode === constants.REPLACE ||
+      mode === constants.OVERLAY ||
+      mode === constants.HARD_LIGHT ||
+      mode === constants.SOFT_LIGHT ||
+      mode === constants.DODGE ||
+      mode === constants.BURN ||
+      mode === constants.ADD
+    ) {
+      this._cachedBlendMode = mode;
+      this.drawingContext.globalCompositeOperation = mode;
+    } else {
+      throw new Error(`Mode ${mode} not recognized.`);
+    }
+  }
+
+  blend(...args) {
+    const currBlend = this.drawingContext.globalCompositeOperation;
+    const blendMode = args[args.length - 1];
+
+    const copyArgs = Array.prototype.slice.call(args, 0, args.length - 1);
+
+    this.drawingContext.globalCompositeOperation = blendMode;
+
+    p5.prototype.copy.apply(this, copyArgs);
+
+    this.drawingContext.globalCompositeOperation = currBlend;
+  }
+
+  // p5.Renderer2D.prototype.get = p5.Renderer.prototype.get;
+  // .get() is not overridden
+
+  // x,y are canvas-relative (pre-scaled by _pixelDensity)
+  _getPixel(x, y) {
+    let imageData, index;
+    imageData = this.drawingContext.getImageData(x, y, 1, 1).data;
+    index = 0;
+    return [
+      imageData[index + 0],
+      imageData[index + 1],
+      imageData[index + 2],
+      imageData[index + 3]
+    ];
+  }
+
+  loadPixels() {
+    const pd = this._pixelDensity;
+    const w = this.width * pd;
+    const h = this.height * pd;
+    const imageData = this.drawingContext.getImageData(0, 0, w, h);
+    // @todo this should actually set pixels per object, so diff buffers can
+    // have diff pixel arrays.
+    this.imageData = imageData;
+    this.pixels = imageData.data;
+  }
+
+  set(x, y, imgOrCol) {
+    // round down to get integer numbers
+    x = Math.floor(x);
+    y = Math.floor(y);
+    if (imgOrCol instanceof Graphics || imgOrCol instanceof Image) {
+      this.drawingContext.save();
+      this.drawingContext.setTransform(1, 0, 0, 1, 0, 0);
+      this.drawingContext.scale(
+        this._pixelDensity,
+        this._pixelDensity
+      );
+      const width = imgOrCol.width;
+      const height = imgOrCol.height;
+      this.drawingContext.clearRect(x, y, width, height);
+      this.drawingContext.drawImage(imgOrCol.canvas, x, y, width, height);
+    } else {
+      let r = 0,
+        g = 0,
+        b = 0,
+        a = 0;
+      let idx =
+        4 *
+        (y *
+          this._pixelDensity *
+          (this.width * this._pixelDensity) +
+          x * this._pixelDensity);
+      if (!this.imageData) {
+        this.loadPixels();
+      }
+      if (typeof imgOrCol === 'number') {
+        if (idx < this.pixels.length) {
+          r = imgOrCol;
+          g = imgOrCol;
+          b = imgOrCol;
+          a = 255;
+          //this.updatePixels.call(this);
+        }
+      } else if (Array.isArray(imgOrCol)) {
+        if (imgOrCol.length < 4) {
+          throw new Error('pixel array must be of the form [R, G, B, A]');
+        }
+        if (idx < this.pixels.length) {
+          r = imgOrCol[0];
+          g = imgOrCol[1];
+          b = imgOrCol[2];
+          a = imgOrCol[3];
+          //this.updatePixels.call(this);
+        }
+      } else if (imgOrCol instanceof p5.Color) {
+        if (idx < this.pixels.length) {
+          [r, g, b, a] = imgOrCol._getRGBA([255, 255, 255, 255]);
+          //this.updatePixels.call(this);
+        }
+      }
+      // loop over pixelDensity * pixelDensity
+      for (let i = 0; i < this._pixelDensity; i++) {
+        for (let j = 0; j < this._pixelDensity; j++) {
+          // loop over
+          idx =
+            4 *
+            ((y * this._pixelDensity + j) *
+              this.width *
+              this._pixelDensity +
+              (x * this._pixelDensity + i));
+          this.pixels[idx] = r;
+          this.pixels[idx + 1] = g;
+          this.pixels[idx + 2] = b;
+          this.pixels[idx + 3] = a;
+        }
+      }
+    }
+  }
+
+  updatePixels(x, y, w, h) {
+    const pd = this._pixelDensity;
+    if (
+      x === undefined &&
+      y === undefined &&
+      w === undefined &&
+      h === undefined
+    ) {
+      x = 0;
+      y = 0;
+      w = this.width;
+      h = this.height;
+    }
+    x *= pd;
+    y *= pd;
+    w *= pd;
+    h *= pd;
+
+    if (this.gifProperties) {
+      this.gifProperties.frames[this.gifProperties.displayIndex].image =
+        this.imageData;
+    }
+
+    this.drawingContext.putImageData(this.imageData, 0, 0, x, y, w, h);
+  }
+
+  //////////////////////////////////////////////
+  // SHAPE | 2D Primitives
+  //////////////////////////////////////////////
+
+  /*
+   * This function requires that:
+   *
+   *   0 <= start < TWO_PI
+   *
+   *   start <= stop < start + TWO_PI
+   */
+  arc(x, y, w, h, start, stop, mode) {
+    const shape = new p5.Shape({ position: new p5.Vector(0, 0) });
+    shape.beginShape();
+    shape.arcPrimitive(
+      x,
+      y,
+      w,
+      h,
+      start,
+      stop,
+      mode
+    );
+    shape.endShape();
+    this.drawShape(shape);
+
+    return this;
+
+  }
+
+  ellipse(args) {
+    const x = parseFloat(args[0]),
+      y = parseFloat(args[1]),
+      w = parseFloat(args[2]),
+      h = parseFloat(args[3]);
+
+    const shape = new p5.Shape({ position: new p5.Vector(0, 0) });
+    shape.beginShape();
+    shape.ellipsePrimitive(x,y,w,h);
+    shape.endShape();
+    this.drawShape(shape);
+    return this;
+  }
+
+  line(x1, y1, x2, y2) {
+    const shape = new p5.Shape({ position: new p5.Vector(0, 0) });
+    shape.beginShape();
+    shape.line(x1, y1, x2, y2);
+    shape.endShape();
+    this.drawShape(shape);
+
+    return this;
+  }
+
+  point(x, y) {
+    const shape = new p5.Shape({ position: new p5.Vector(0, 0) });
+    shape.beginShape();
+    shape.point(x, y);
+    shape.endShape();
+    this.drawShape(shape);
+
+    return this;
+  }
+
+  quad(x1, y1, x2, y2, x3, y3, x4, y4) {
+    const shape = new p5.Shape({ position: new p5.Vector(0, 0) });
+    shape.beginShape();
+    shape.quad(x1, y1, x2, y2, x3, y3, x4, y4);
+    shape.endShape();
+    this.drawShape(shape);
+
+    return this;
+  }
+
+  rect(args) {
+    const x = args[0];
+    const y = args[1];
+    const w = args[2];
+    const h = args[3];
+    let tl = args[4];
+    let tr = args[5];
+    let br = args[6];
+    let bl = args[7];
+
+    const shape = new p5.Shape({ position: new p5.Vector(0, 0) });
+    shape.beginShape();
+    shape.rectPrimitive(x, y, w, h, tl, tr, br, bl);
+    shape.endShape();
+    this.drawShape(shape);
+
+    return this;
+  }
+
+  triangle(args) {
+    const x1 = args[0],
+      y1 = args[1];
+    const x2 = args[2],
+      y2 = args[3];
+    const x3 = args[4],
+      y3 = args[5];
+
+    const shape = new p5.Shape({ position: new p5.Vector(0, 0) });
+    shape.beginShape();
+    shape.triangle(x1, y1, x2, y2, x3, y3);
+    shape.endShape();
+    this.drawShape(shape);
+
+    return this;
+  }
+
+  //////////////////////////////////////////////
+  // SHAPE | Attributes
+  //////////////////////////////////////////////
+
+  strokeCap(cap) {
+    if (typeof cap === 'undefined') { // getter
+      return this.drawingContext.lineCap;
+    }
+    if (
+      cap === constants.ROUND ||
+      cap === constants.SQUARE ||
+      cap === constants.PROJECT
+    ) {
+      this.drawingContext.lineCap = cap;
+    }
+    return this;
+  }
+
+  strokeJoin(join) {
+    if (typeof join === 'undefined') { // getter
+      return this.drawingContext.lineJoin;
+    }
+    if (
+      join === constants.ROUND ||
+      join === constants.BEVEL ||
+      join === constants.MITER
+    ) {
+      this.drawingContext.lineJoin = join;
+    }
+    return this;
+  }
+
+  strokeWeight(w) {
+    super.strokeWeight(w);
+    if (typeof w === 'undefined') {
+      return this.states.strokeWeight;
+    }
+    if (w === 0) {
+      // hack because lineWidth 0 doesn't work
+      this.drawingContext.lineWidth = 0.0001;
+    } else {
+      this.drawingContext.lineWidth = w;
+    }
+    return this;
+  }
+
+  _getFill() {
+    if (!this.states._cachedFillStyle) {
+      this.states.setValue('_cachedFillStyle', this.drawingContext.fillStyle);
+    }
+    return this.states._cachedFillStyle;
+  }
+
+  _setFill(fillStyle) {
+    if (fillStyle !== this.states._cachedFillStyle) {
+      this.drawingContext.fillStyle = fillStyle;
+      this.states.setValue('_cachedFillStyle', fillStyle);
+    }
+  }
+
+  _getStroke() {
+    if (!this.states._cachedStrokeStyle) {
+      this.states.setValue('_cachedStrokeStyle', this.drawingContext.strokeStyle);
+    }
+    return this.states._cachedStrokeStyle;
+  }
+
+  _setStroke(strokeStyle) {
+    if (strokeStyle !== this.states._cachedStrokeStyle) {
+      this.drawingContext.strokeStyle = strokeStyle;
+      this.states.setValue('_cachedStrokeStyle', strokeStyle);
+    }
+  }
+
+  //////////////////////////////////////////////
+  // TRANSFORM
+  //////////////////////////////////////////////
+
+  applyMatrix(a, b, c, d, e, f) {
+    this.drawingContext.transform(a, b, c, d, e, f);
+  }
+
+  getWorldToScreenMatrix() {
+    let domMatrix = new DOMMatrix()
+      .scale(1 / this._pixelDensity)
+      .multiply(this.drawingContext.getTransform());
+    return new Matrix(domMatrix.toFloat32Array());
+  }
+
+  resetMatrix() {
+    this.drawingContext.setTransform(1, 0, 0, 1, 0, 0);
+    this.drawingContext.scale(
+      this._pixelDensity,
+      this._pixelDensity
+    );
+    return this;
+  }
+
+  rotate(rad) {
+    this.drawingContext.rotate(rad);
+    return this;
+  }
+
+  scale(x, y) {
+    // support passing objects with x,y properties (including p5.Vector)
+    if (typeof x === 'object' && 'x' in x && 'y' in x) {
+      y = x.y;
+      x = x.x;
+    }
+    this.drawingContext.scale(x, y);
+    return this;
+  }
+
+  translate(x, y) {
+    // support passing objects with x,y properties (including p5.Vector)
+    if (typeof x === 'object' && 'x' in x && 'y' in x) {
+      y = x.y;
+      x = x.x;
+    }
+    this.drawingContext.translate(x, y);
+    return this;
+  }
+
+  //////////////////////////////////////////////
+  // TYPOGRAPHY (see src/type/textCore.js)
+  //////////////////////////////////////////////
+
+  //////////////////////////////////////////////
+  // STRUCTURE
+  //////////////////////////////////////////////
+
+  // a push() operation is in progress.
+  // the renderer should return a 'style' object that it wishes to
+  // store on the push stack.
+  // derived renderers should call the base class' push() method
+  // to fetch the base style object.
+  push() {
+    this.drawingContext.save();
+
+    // get the base renderer style
+    return super.push();
+  }
+
+  // a pop() operation is in progress
+  // the renderer is passed the 'style' object that it returned
+  // from its push() method.
+  // derived renderers should pass this object to their base
+  // class' pop method
+  pop(style) {
+    this.drawingContext.restore();
+
+    super.pop(style);
+  }
+
+  // Text support methods
+  textCanvas() {
+    return this.canvas;
+  }
+
+  textDrawingContext() {
+    return this.drawingContext;
+  }
+
+  _renderText(text, x, y, maxY, minY) {
+    let states = this.states;
+    let context = this.textDrawingContext();
+
+    if (y < minY || y >= maxY) {
+      return; // don't render lines beyond minY/maxY
+    }
+
+    this.push();
+
+    // no stroke unless specified by user
+    if (states.strokeColor && states.strokeSet) {
+      context.strokeText(text, x, y);
+    }
+
+    if (!this._clipping && states.fillColor) {
+
+      // if fill hasn't been set by user, use default text fill
+      if (!states.fillSet) {
+        this._setFill(DefaultFill);
+      }
+      context.fillText(text, x, y);
+    }
+
+    this.pop();
+  }
+
+  /*
+    Position the lines of text based on their textAlign/textBaseline properties
+  */
+  _positionLines(x, y, width, height, lines) {
+    let { textLeading, textAlign } = this.states;
+    let adjustedX, lineData = new Array(lines.length);
+    let adjustedW = typeof width === 'undefined' ? 0 : width;
+    let adjustedH = typeof height === 'undefined' ? 0 : height;
+
+    for (let i = 0; i < lines.length; i++) {
+      switch (textAlign) {
+        case textCoreConstants.START:
+          throw new Error('textBounds: START not yet supported for textAlign'); // default to LEFT
+        case constants.LEFT:
+          adjustedX = x;
+          break;
+        case constants.CENTER:
+          adjustedX = x + adjustedW / 2;
+          break;
+        case constants.RIGHT:
+          adjustedX = x + adjustedW;
+          break;
+        case textCoreConstants.END:
+          throw new Error('textBounds: END not yet supported for textAlign');
+      }
+      lineData[i] = { text: lines[i], x: adjustedX, y: y + i * textLeading };
+    }
+
+    return this._yAlignOffset(lineData, adjustedH);
+  }
+
+  /*
+    Get the y-offset for text given the height, leading, line-count and textBaseline property
+  */
+  _yAlignOffset(dataArr, height) {
+    if (typeof height === 'undefined') {
+      throw Error('_yAlignOffset: height is required');
+    }
+
+    let { textLeading, textBaseline } = this.states;
+    let yOff = 0, numLines = dataArr.length;
+    let ydiff = height - (textLeading * (numLines - 1));
+
+    switch (textBaseline) { // drawingContext ?
+      case constants.TOP:
+        break; // ??
+      case constants.BASELINE:
+        break;
+      case textCoreConstants._CTX_MIDDLE:
+        yOff = ydiff / 2 + this._middleAlignOffset();
+        break;
+      case constants.BOTTOM:
+        yOff = ydiff;
+        break;
+      case textCoreConstants.IDEOGRAPHIC:
+        console.warn('textBounds: IDEOGRAPHIC not yet supported for textBaseline'); // FES?
+        break;
+      case textCoreConstants.HANGING:
+        console.warn('textBounds: HANGING not yet supported for textBaseline'); // FES?
+        break;
+    }
+
+    dataArr.forEach(ele => ele.y += yOff);
+    return dataArr;
+  }
+}
+
+function renderer2D(p5, fn){
+  /**
+   * p5.Renderer2D
+   * The 2D graphics canvas renderer class.
+   * extends p5.Renderer
+   * @private
+   */
+  p5.Renderer2D = Renderer2D;
+  p5.renderers[constants.P2D] = Renderer2D;
+  p5.renderers['p2d-hdr'] = new Proxy(Renderer2D, {
+    construct(target, [pInst, w, h, isMainCanvas, elt]){
+      return new target(pInst, w, h, isMainCanvas, elt, { colorSpace: 'display-p3' });
+    }
+  });
+}
+
+export default renderer2D;
+export { Renderer2D };
