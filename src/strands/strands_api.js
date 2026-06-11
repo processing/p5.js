@@ -103,7 +103,7 @@ function installBuiltinGlobalAccessors(strandsContext) {
 
   for (const name of Object.keys(BUILTIN_GLOBAL_SPECS)) {
     const spec = BUILTIN_GLOBAL_SPECS[name]
-    const sym = Symbol(`_strands_${name}`)
+    const backingKey = `_strands_${name}`
 
     // Define on window for global mode only
     const inst = getRuntimeP5Instance()
@@ -120,32 +120,29 @@ function installBuiltinGlobalAccessors(strandsContext) {
       })
     }
 
-    // Define on p5.prototype for instance mode
+    // Save original property descriptor in strandsContext
     const originalProtoDesc = Object.getOwnPropertyDescriptor(strandsContext.p5.prototype, name);
+    strandsContext.fnOverrides[`__builtinGlobal_${name}`] = originalProtoDesc;
 
-    // For data properties (like mouseX), save the initial value into Symbol-keyed store
-    if (originalProtoDesc && 'value' in originalProtoDesc) {
-      strandsContext.p5.prototype[sym] = originalProtoDesc.value;
-    }
-
+    // Define on p5.prototype for instance mode
     Object.defineProperty(strandsContext.p5.prototype, name, {
       get: function() {
         if (strandsContext.active) {
           return getBuiltinGlobalNode(strandsContext, name);
         }
         // If our setter stored a value on this instance, return it
-        if (Object.prototype.hasOwnProperty.call(this, sym)) {
-          return this[sym];
+        if (Object.prototype.hasOwnProperty.call(this, backingKey)) {
+          return this[backingKey];
         }
         // Delegate to original getter (e.g. width -> this._renderer?.width)
         if (originalProtoDesc?.get) {
           return originalProtoDesc.get.call(this);
         }
-        // Fall back to Symbol on prototype chain (for data properties like mouseX)
-        return this[sym];
+        // Fall back to original value for data properties (like mouseX)
+        return originalProtoDesc?.value;
       },
       set: function(val) {
-        this[sym] = val;
+        this[backingKey] = val;
       },
       configurable: true,
     })
@@ -154,6 +151,7 @@ function installBuiltinGlobalAccessors(strandsContext) {
     const GraphicsProto = strandsContext.p5?.Graphics?.prototype;
     if (GraphicsProto) {
       const originalDesc = Object.getOwnPropertyDescriptor(GraphicsProto, name);
+      strandsContext.fnOverrides[`__builtinGlobalGraphics_${name}`] = originalDesc;
       Object.defineProperty(GraphicsProto, name, {
         get: function() {
           if (strandsContext.active) {
@@ -163,13 +161,13 @@ function installBuiltinGlobalAccessors(strandsContext) {
           if (originalDesc?.get) {
             return originalDesc.get.call(this);
           }
-          return this[sym];
+          return this[backingKey];
         },
         set: function(val) {
           if (originalDesc?.set) {
             originalDesc.set.call(this, val);
           } else {
-            this[sym] = val;
+            this[backingKey] = val;
           }
         },
         configurable: true,
