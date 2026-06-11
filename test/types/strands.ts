@@ -42,6 +42,7 @@ function starShaderCallback() {
 
   function semiSphere() {
     let id = instanceID();
+    let idx = instanceIndex();
     let theta = rand2([id, 0.1234])  * TWO_PI + time / 100000;
     let phi = rand2([id, 3.321]) * PI + time / 50000;
   

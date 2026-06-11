@@ -541,6 +541,16 @@ test('returns numbers for builtin globals outside hooks and a strandNode when ca
   assert.strictEqual(w, myp5.width);
 });
 
+test('instanceIndex() is an alias for instanceID()', () => {
+  myp5.createCanvas(5, 5, myp5.WEBGL);
+  myp5.baseMaterialShader().modify(() => {
+    myp5.getWorldInputs(inputs => {
+      const idx = myp5.instanceIndex();
+      assert.isTrue(idx.isStrandsNode);
+      return inputs;
+    });
+  }, { myp5 });
+});
     test('map() works inside a strands modify callback', () => {
       myp5.createCanvas(50, 50, myp5.WEBGL);
       const testShader = myp5.baseMaterialShader().modify(() => {
