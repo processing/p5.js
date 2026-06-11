@@ -1133,17 +1133,53 @@ visualSuite('WebGL', function() {
       screenshot();
     });
 
-    visualTest('uses width/height in getFinalColor', (p5, screenshot) => {
-      let firstShader;
-      function firstShaderCallback() {
-        getFinalColor((color) => {
-          color = [width / 60, height / 60, 0, 1];
-          return color;
-        });
+    visualTest('randomGaussian() colors a basic shader', (p5, screenshot) => {
+  p5.createCanvas(50, 50, p5.WEBGL);
+  const shader = p5.baseColorShader().modify(() => {
+    p5.randomSeed(12);
+    p5.getFinalColor((color) => {
+      const value = p5.randomGaussian(0.5, 0.1);
+      color = [value, value, value, 1];
+      return color;
+    });
+  }, { p5 });
+  p5.background(0);
+  p5.noStroke();
+  p5.shader(shader);
+  p5.plane(50, 50);
+  screenshot();
+});
+
+visualTest('randomGaussian() in a fragment loop averages to the mean', (p5, screenshot) => {
+  p5.createCanvas(50, 50, p5.WEBGL);
+  const shader = p5.baseMaterialShader().modify(() => {
+    p5.randomSeed(7);
+    p5.getPixelInputs(inputs => {
+      let sum = p5.float(0.0);
+      for (let i = 0; i < 20; i++) {
+        sum = sum + p5.randomGaussian(0.5, 0.2);
       }
+      const avg = sum / 20;
+      inputs.color = [avg, avg, avg, 1.0];
+      return inputs;
+    });
+  }, { p5 });
+  p5.background(0);
+  p5.noStroke();
+  p5.shader(shader);
+  p5.plane(50, 50);
+  screenshot();
+});
+
+    visualTest('uses width/height in getFinalColor', (p5, screenshot) => {
       p5.createCanvas(60, 60, p5.WEBGL);
       p5.pixelDensity(1);
-      firstShader = p5.baseColorShader().modify(firstShaderCallback);
+      const firstShader = p5.baseColorShader().modify(() => {
+        p5.getFinalColor((color) => {
+          color = [p5.width / 60, p5.height / 60, 0, 1];
+          return color;
+        });
+      }, { p5 });
       p5.background(0);
       p5.shader(firstShader);
       p5.noStroke();
@@ -1716,4 +1752,28 @@ visualSuite('WebGL', function() {
       screenshot();
     });
   });
+
+  visualTest(
+    'user-set uSampler on custom shader is not overridden',
+    function(p5, screenshot) {
+      p5.createCanvas(50, 50, p5.WEBGL);
+
+      const myShader = p5.createFilterShader(`precision highp float;
+uniform sampler2D uSampler;
+varying vec2 vTexCoord;
+void main() {
+  gl_FragColor = texture2D(uSampler, vTexCoord);
+}`);
+
+      const fbo = p5.createFramebuffer();
+      fbo.draw(() => p5.background(255, 0, 0));
+
+      p5.shader(myShader);
+      p5.noStroke();
+      myShader.setUniform('uSampler', fbo);
+      p5.plane(p5.width, p5.height);
+
+      screenshot();
+    }
+  );
 });

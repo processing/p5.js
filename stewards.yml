@@ -1,6 +1,3 @@
-aferriss:
-  - Graphics:
-      - WebGL
 
 calebfoss:
   - Accessibility
@@ -10,12 +7,10 @@ davepagurek:
   - Maintainers
   - Graphics:
       - WebGL
+      - WebGPU
 
 dhowe:
   - Typography
-
-qianqianye:
-  - Maintainers
 
 ogbabydiesal:
   - p5.sound.js
@@ -31,13 +26,9 @@ limzykenneth:
 perminder-17:
   - Graphics:
       - WebGL
+      - WebGPU
   - Documentation
   - Maintainers
-
-lukeplowden:
-  - Graphics:
-      - WebGL
-      - p5.strands
 
 ksen0:
   - Maintainers
@@ -47,37 +38,13 @@ Divyansh013:
   - i18n:
       - hi
 
-GregStanton:
-  - Math
-  - Shapes
-
-holomorfo:
-  - Math
-
 lirenjie95:
   - i18n:
       - zh
   - DevOps
 
-IIITM-Jay:
-  - Friendly Errors
-
 Vaivaswat2244:
   - DevOps
-
-RandomGamingDev:
-  - Graphics:
-      - WebGL
-
-VANSH3104:
-  - Documentation
-
-error-four-o-four:
-  - DevOps
-
-takshittt:
-  - i18n:
-      - hi
 
 clairep94:
   - p5.js-website
@@ -92,14 +59,22 @@ doradocodes:
 coseeian:
   - Accessibility:
       - p5.js-website
-
-hana-cho:
-  - i18n:
-      - ko
-
+      
 marioguzzzman:
   - i18n:
       - es
 
-iron-56:
+kitlord:
   - p5.js-web-editor
+
+eupthere:
+  - i18n:
+      - ko
+
+RandomGamingDev:
+  - Graphics:
+      - WebGL
+
+aashu2006:
+  - Graphics:
+      - WebGPU

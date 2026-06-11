@@ -7,7 +7,7 @@ import { Vector } from './p5.Vector.js';
 export function _defaultEmptyVector(target){
   return function(...args){
     if(args.length === 0){
-      this._friendlyError(
+      this.constructor._friendlyError(
         'In 1.x, createVector() was a shortcut for createVector(0, 0, 0). In 2.x, p5.js has vectors of any dimension, so you must provide your desired number of zeros. Use createVector(0, 0) for a 2D vector and createVector(0, 0, 0) for a 3D vector.',
         'p5.createVector'
       );
@@ -28,7 +28,7 @@ export function _defaultEmptyVector(target){
  */
 export function _validatedVectorOperation(expectsSoloNumberArgument){
   return function(target){
-    return function(...args){
+    return function (...args) {
       if (args.length === 0) {
         // No arguments? No action
         return this;
@@ -38,16 +38,18 @@ export function _validatedVectorOperation(expectsSoloNumberArgument){
       } else if (Array.isArray(args[0])) {
         // First argument is an array? Great, keep it!
         args = args[0];
-      } else if (expectsSoloNumberArgument && args.length === 1){
+      } else if (args.length === 1){
         // Special case for a solo numeric arguments only applies sometimes
-        args = new Array(3).fill(args[0]);
+        if (expectsSoloNumberArgument) {
+          args = args[0];
+        }
       }
 
-      if (Array.isArray(args)) {
+      if(Array.isArray(args)){
         for (let i = 0; i < args.length; i++) {
           const v = args[i];
           if (typeof v !== 'number' || !Number.isFinite(v)) {
-            if (!Vector.friendlyErrorsDisabled()) {
+            if (!this.friendlyErrorsDisabled()) {
               this._friendlyError(
                 'Arguments contain non-finite numbers',
                 'p5.Vector'
@@ -56,14 +58,26 @@ export function _validatedVectorOperation(expectsSoloNumberArgument){
             return this;
           }
         }
+      } else {
+        if (typeof args !== 'number' || !Number.isFinite(args)) {
+          if (!this.friendlyErrorsDisabled()) {
+            this._friendlyError(
+              'Arguments contain non-finite numbers',
+              'p5.Vector'
+            );
+          }
+          return this;
+        }
       }
 
-      return target.call(this, ...args);
+      return target.call(this, args);
     };
   };
 }
 
 /**
+ * @private
+ * @internal
  * Each of the following decorators validates the data on vector operations.
  * These ensure that the arguments are consistently formatted, and that
  * pre-conditions are met.
