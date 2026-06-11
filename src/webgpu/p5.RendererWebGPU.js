@@ -246,6 +246,116 @@ function rendererWebGPU(p5, fn) {
       }
       return rawCopy;
     }
+
+    /**
+     * Updates a single element in the buffer at a given index. Use this
+     * when only a small number of elements need to change. If you need to
+     * replace all the data at once, use
+     * <a href="#/p5.StorageBuffer/update">`update()`</a> instead.
+     *
+     * ```js
+     * let buf;
+     *
+     * async function setup() {
+     *   await createCanvas(100, 100, WEBGPU);
+     *
+     *   // Float buffer: update one value by index
+     *   buf = createStorage(new Float32Array([1, 2, 3, 4]));
+     *   buf.set(2, 9.5); // only index 2 changes → [1, 2, 9.5, 4]
+     *
+     *   let result = await buf.read();
+     *   print(result[2]); // 9.5
+     *   describe('Prints 9.5 to the console.');
+     * }
+     * ```
+     *
+     * ```js
+     * let particles;
+     * const numParticles = 100;
+     *
+     * async function setup() {
+     *   await createCanvas(100, 100, WEBGPU);
+     *   particles = createStorage(makeParticles());
+     *
+     *   // Replace particle 42 without touching the others
+     *   particles.set(42, {
+     *     position: createVector(0, 0),
+     *     velocity: createVector(1, 0),
+     *   });
+     *
+     *   // Read back to confirm the update
+     *   let result = await particles.read();
+     *   print(result[42].position.x, result[42].position.y); // 0, 0
+     *   describe('Prints the position of particle 42 after updating it.');
+     * }
+     *
+     * function makeParticles() {
+     *   let data = [];
+     *   for (let i = 0; i < numParticles; i++) {
+     *     data.push({
+     *       position: createVector(random(width), random(height)),
+     *       velocity: createVector(random(-1, 1), random(-1, 1)),
+     *     });
+     *   }
+     *   return data;
+     * }
+     * ```
+     *
+     * @method set
+     * @for p5.StorageBuffer
+     * @beta
+     * @webgpu
+     * @webgpuOnly
+     * @param {Number} index The zero-based index of the element to update.
+     * @param {Number|Object} value The new value. Pass a number for float
+     *   buffers, or a plain object matching the original struct layout for
+     *   struct buffers.
+     */
+    set(index, value) {
+      const device = this._renderer.device;
+
+      if (this._schema !== null) {
+        // buffer was created with an array of structs
+        if (typeof value !== 'object' || value === null || Array.isArray(value)) {
+          throw new Error(
+            'set() expects a plain object matching the original struct format for this buffer'
+          );
+        }
+
+        const { stride } = this._schema;
+        const byteOffset = index * stride;
+
+        if (byteOffset + stride > this.size) {
+          throw new Error(
+            `set() index ${index} is out of bounds for this buffer ` +
+            `(buffer holds ${Math.floor(this.size / stride)} elements)`
+          );
+        }
+
+        // pack just this one element using the same logic as update()
+        const packed = this._renderer._packStructArray([value], this._schema);
+        // use packed.buffer (ArrayBuffer) so the size arg is always in bytes
+        device.queue.writeBuffer(this.buffer, byteOffset, packed.buffer, 0, stride);
+      } else {
+        // buffer was created with a float array
+        if (typeof value !== 'number') {
+          throw new Error(
+            'set() expects a number for this float buffer'
+          );
+        }
+
+        const byteOffset = index * 4;
+
+        if (byteOffset + 4 > this.size) {
+          throw new Error(
+            `set() index ${index} is out of bounds for this buffer ` +
+            `(buffer holds ${Math.floor(this.size / 4)} floats)`
+          );
+        }
+
+        device.queue.writeBuffer(this.buffer, byteOffset, new Float32Array([value]));
+      }
+    }
   }
 
   /**

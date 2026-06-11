@@ -6840,7 +6840,8 @@
       "profile": "https://yugalkaushik.vercel.app",
       "contributions": [
         "code",
-        "doc"
+        "doc",
+        "bug"
       ]
     },
     {
@@ -7246,7 +7247,8 @@
       "avatar_url": "https://avatars.githubusercontent.com/u/121508087?v=4",
       "profile": "https://github.com/menacingly-coded",
       "contributions": [
-        "doc"
+        "doc",
+        "code"
       ]
     },
     {
@@ -7411,6 +7413,97 @@
       "name": "Nitin Rajpoot",
       "avatar_url": "https://avatars.githubusercontent.com/u/175546686?v=4",
       "profile": "https://github.com/Nitin2332",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "geeta102",
+      "name": "geeta102",
+      "avatar_url": "https://avatars.githubusercontent.com/u/216125877?v=4",
+      "profile": "https://github.com/geeta102",
+      "contributions": [
+        "bug",
+        "code"
+      ]
+    },
+    {
+      "login": "Kathrina-dev",
+      "name": "Kathrina Elangbam",
+      "avatar_url": "https://avatars.githubusercontent.com/u/178802899?v=4",
+      "profile": "https://github.com/Kathrina-dev",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "Jianru-Lin",
+      "name": "Jianru Lin",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1057486?v=4",
+      "profile": "https://github.com/Jianru-Lin",
+      "contributions": [
+        "doc"
+      ]
+    },
+    {
+      "login": "kushal1061",
+      "name": "Kushalpal Bishnoi",
+      "avatar_url": "https://avatars.githubusercontent.com/u/177997075?v=4",
+      "profile": "https://github.com/kushal1061",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "harshiltewari2004",
+      "name": "harshiltewari2004",
+      "avatar_url": "https://avatars.githubusercontent.com/u/197800028?v=4",
+      "profile": "https://github.com/harshiltewari2004",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "adrienneg",
+      "name": "Adrienne Gifford",
+      "avatar_url": "https://avatars.githubusercontent.com/u/10889128?v=4",
+      "profile": "https://github.com/adrienneg",
+      "contributions": [
+        "tutorial"
+      ]
+    },
+    {
+      "login": "eupthere",
+      "name": "eupthere",
+      "avatar_url": "https://avatars.githubusercontent.com/u/30365108?v=4",
+      "profile": "https://github.com/eupthere",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "nitin-rajpoot",
+      "name": "Nitin Rajpoot",
+      "avatar_url": "https://avatars.githubusercontent.com/u/175546686?v=4",
+      "profile": "https://github.com/nitin-rajpoot",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "joshuahhh",
+      "name": "Joshua Horowitz",
+      "avatar_url": "https://avatars.githubusercontent.com/u/643799?v=4",
+      "profile": "http://joshuahhh.com",
+      "contributions": [
+        "doc"
+      ]
+    },
+    {
+      "login": "BHARATH0153",
+      "name": "chandra",
+      "avatar_url": "https://avatars.githubusercontent.com/u/214236921?v=4",
+      "profile": "https://github.com/BHARATH0153",
       "contributions": [
         "code"
       ]

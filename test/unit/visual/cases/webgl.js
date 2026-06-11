@@ -272,6 +272,37 @@ visualSuite('WebGL', function() {
 
       screenshot();
     });
+
+    for (const mode of ['webgl', '2d']) {
+      visualTest(`Transparent background colors are correct in ${mode} mode`, function(p5, screenshot) {
+        p5.createCanvas(50, 50, p5.WEBGL);
+        const g = p5.createGraphics(50, 50, mode === 'webgl' ? p5.WEBGL : p5.P2D);
+        if (mode === 'webgl') g.translate(-p5.width/2, -p5.height/2);
+        g.noStroke();
+        g.fill(255, 0, 0, 100);
+        g.rect(10, 10, 30, 30);
+        g.filter(p5.BLUR, 4);
+        p5.imageMode(p5.CENTER);
+        p5.image(g, 0, 0);
+        screenshot();
+      });
+
+      visualTest(`Multiple filter passes work correctly on a p5.Graphics in ${mode} mode`, function(p5, screenshot) {
+        p5.createCanvas(50, 50, p5.WEBGL);
+        const g = p5.createGraphics(50, 50, mode === 'webgl' ? p5.WEBGL : p5.P2D);
+        if (mode === 'webgl') g.translate(-g.width/2, -g.height/2);
+        g.background(255);
+        g.noStroke();
+        g.fill(0);
+        g.rect(10, 10, 6, 6);
+        g.filter(p5.BLUR, 2);
+        g.rect(30, 30, 6, 6);
+        g.filter(p5.BLUR, 2);
+        p5.imageMode(p5.CENTER);
+        p5.image(g, 0, 0);
+        screenshot();
+      });
+    }
   });
 
   visualSuite('Lights', function() {
@@ -612,6 +643,15 @@ visualSuite('WebGL', function() {
       p5.texture(tex);
       p5.tint(255, 100);
       p5.circle(0, 0, 50);
+      screenshot();
+    });
+
+    visualTest('noTint() before image() does not throw', async (p5, screenshot) => {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      const img = await p5.loadImage('/test/unit/assets/cat.jpg');
+      p5.noTint();
+      p5.imageMode(p5.CENTER);
+      p5.image(img, 0, 0, 50, 50);
       screenshot();
     });
   });
@@ -1093,6 +1133,44 @@ visualSuite('WebGL', function() {
       screenshot();
     });
 
+    visualTest('randomGaussian() colors a basic shader', (p5, screenshot) => {
+  p5.createCanvas(50, 50, p5.WEBGL);
+  const shader = p5.baseColorShader().modify(() => {
+    p5.randomSeed(12);
+    p5.getFinalColor((color) => {
+      const value = p5.randomGaussian(0.5, 0.1);
+      color = [value, value, value, 1];
+      return color;
+    });
+  }, { p5 });
+  p5.background(0);
+  p5.noStroke();
+  p5.shader(shader);
+  p5.plane(50, 50);
+  screenshot();
+});
+
+visualTest('randomGaussian() in a fragment loop averages to the mean', (p5, screenshot) => {
+  p5.createCanvas(50, 50, p5.WEBGL);
+  const shader = p5.baseMaterialShader().modify(() => {
+    p5.randomSeed(7);
+    p5.getPixelInputs(inputs => {
+      let sum = p5.float(0.0);
+      for (let i = 0; i < 20; i++) {
+        sum = sum + p5.randomGaussian(0.5, 0.2);
+      }
+      const avg = sum / 20;
+      inputs.color = [avg, avg, avg, 1.0];
+      return inputs;
+    });
+  }, { p5 });
+  p5.background(0);
+  p5.noStroke();
+  p5.shader(shader);
+  p5.plane(50, 50);
+  screenshot();
+});
+
     visualTest('uses width/height in getFinalColor', (p5, screenshot) => {
       let firstShader;
       function firstShaderCallback() {
@@ -1164,7 +1242,7 @@ visualSuite('WebGL', function() {
       p5.plane(50, 50);
       screenshot();
     });
-   
+
     visualSuite('auto-return for shader hooks', () => {
       visualTest('auto-returns input struct when return is omitted', (p5, screenshot) => {
         p5.createCanvas(50, 50, p5.WEBGL);
@@ -1676,4 +1754,28 @@ visualSuite('WebGL', function() {
       screenshot();
     });
   });
+
+  visualTest(
+    'user-set uSampler on custom shader is not overridden',
+    function(p5, screenshot) {
+      p5.createCanvas(50, 50, p5.WEBGL);
+
+      const myShader = p5.createFilterShader(`precision highp float;
+uniform sampler2D uSampler;
+varying vec2 vTexCoord;
+void main() {
+  gl_FragColor = texture2D(uSampler, vTexCoord);
+}`);
+
+      const fbo = p5.createFramebuffer();
+      fbo.draw(() => p5.background(255, 0, 0));
+
+      p5.shader(myShader);
+      p5.noStroke();
+      myShader.setUniform('uSampler', fbo);
+      p5.plane(p5.width, p5.height);
+
+      screenshot();
+    }
+  );
 });

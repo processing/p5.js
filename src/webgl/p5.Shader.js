@@ -99,7 +99,7 @@ class Shader {
    * @returns {String} The GLSL version used by the shader.
    */
   version() {
-    const match = /#version (.+)$/.exec(this.vertSrc());
+    const match = /#version (.+)$/m.exec(this.vertSrc());
     if (match) {
       return match[1];
     } else {
@@ -1101,6 +1101,10 @@ class Shader {
     const uniform = this.uniforms[uniformName];
     if (!uniform) {
       return;
+    }
+
+    if (uniformName === 'uSampler' && !this._renderer._settingFillUniforms) {
+      this._userSetSampler = true;
     }
 
     // In p5.strands-related code, where some of the code may be in
