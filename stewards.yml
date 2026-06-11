@@ -7,6 +7,7 @@ davepagurek:
   - Maintainers
   - Graphics:
       - WebGL
+      - WebGPU
 
 dhowe:
   - Typography
@@ -25,6 +26,7 @@ limzykenneth:
 perminder-17:
   - Graphics:
       - WebGL
+      - WebGPU
   - Documentation
   - Maintainers
 
@@ -39,6 +41,9 @@ Divyansh013:
 lirenjie95:
   - i18n:
       - zh
+  - DevOps
+
+Vaivaswat2244:
   - DevOps
 
 clairep94:
@@ -65,3 +70,11 @@ kitlord:
 eupthere:
   - i18n:
       - ko
+
+RandomGamingDev:
+  - Graphics:
+      - WebGL
+
+aashu2006:
+  - Graphics:
+      - WebGPU
