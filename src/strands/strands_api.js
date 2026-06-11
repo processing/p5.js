@@ -103,15 +103,75 @@ function installBuiltinGlobalAccessors(strandsContext) {
 
   for (const name of Object.keys(BUILTIN_GLOBAL_SPECS)) {
     const spec = BUILTIN_GLOBAL_SPECS[name]
-    Object.defineProperty(window, name, {
-      get: () => {
+    const backingKey = `_strands_${name}`
+
+    // Define on window for global mode only
+    const inst = getRuntimeP5Instance()
+    if (inst?._isGlobal) {
+      Object.defineProperty(window, name, {
+        get: () => {
+          if (strandsContext.active) {
+            return getBuiltinGlobalNode(strandsContext, name);
+          }
+          const inst = getRuntimeP5Instance()
+          return spec.get(inst);
+        },
+        configurable: true,
+      })
+    }
+
+    // Capture original descriptor (held in closure for the getter to delegate to)
+    const originalProtoDesc = Object.getOwnPropertyDescriptor(strandsContext.p5.prototype, name);
+
+    // Define on p5.prototype for instance mode
+    Object.defineProperty(strandsContext.p5.prototype, name, {
+      get: function() {
         if (strandsContext.active) {
           return getBuiltinGlobalNode(strandsContext, name);
         }
-        const inst = getRuntimeP5Instance()
-          return spec.get(inst);
+        // If our setter stored a value on this instance, return it
+        if (Object.prototype.hasOwnProperty.call(this, backingKey)) {
+          return this[backingKey];
+        }
+        // Delegate to original getter (e.g. width -> this._renderer?.width)
+        if (originalProtoDesc?.get) {
+          return originalProtoDesc.get.call(this);
+        }
+        // Fall back to original value for data properties (like mouseX)
+        return originalProtoDesc?.value;
       },
+      set: function(val) {
+        this[backingKey] = val;
+      },
+      configurable: true,
     })
+
+    // Define on p5.Graphics.prototype for graphics mode
+    const GraphicsProto = strandsContext.p5?.Graphics?.prototype;
+    if (GraphicsProto) {
+      const originalDesc = Object.getOwnPropertyDescriptor(GraphicsProto, name);
+
+      Object.defineProperty(GraphicsProto, name, {
+        get: function() {
+          if (strandsContext.active) {
+            return getBuiltinGlobalNode(strandsContext, name);
+          }
+          // Delegate to original getter if it exists (class-level getters like width, deltaTime)
+          if (originalDesc?.get) {
+            return originalDesc.get.call(this);
+          }
+          return this[backingKey];
+        },
+        set: function(val) {
+          if (originalDesc?.set) {
+            originalDesc.set.call(this, val);
+          } else {
+            this[backingKey] = val;
+          }
+        },
+        configurable: true,
+      })
+    }
   }
   strandsContext._builtinGlobalsAccessorsInstalled = true
 }
