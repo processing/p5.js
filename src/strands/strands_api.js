@@ -246,6 +246,7 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
     const node = build.variableNode(strandsContext, { baseType: BaseType.INT, dimension: 1 }, strandsContext.backend.instanceIdReference());
     return createStrandsNode(node.id, node.dimension, strandsContext);
   });
+  augmentFn(fn, p5, 'instanceIndex', fn.instanceID);
   // Internal methods use p5 static methods; user-facing methods use fn.
   // Some methods need to be used by both.
   p5.strandsIf = function(conditionNode, ifBody) {

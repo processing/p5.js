@@ -456,6 +456,21 @@ if (typeof p5 !== "undefined") {
  */
 
 /**
+ * @method instanceIndex
+ * @beta
+ * @description
+ * An alias for <a href="#/p5/instanceID">`instanceID()`</a>. Returns the index
+ * of the current instance when drawing multiple copies of a shape with
+ * <a href="#/p5/model">`model(count)`</a>.
+ *
+ * The first instance has an index of `0`, the second has `1`, and so on.
+ *
+ * `instanceIndex()` can only be used inside a p5.strands shader callback.
+ *
+ * @returns {*} The index of the current instance.
+ */
+
+/**
  * @method smoothstep
  * @beta
  * @description
