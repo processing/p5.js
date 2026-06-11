@@ -103,15 +103,75 @@ function installBuiltinGlobalAccessors(strandsContext) {
 
   for (const name of Object.keys(BUILTIN_GLOBAL_SPECS)) {
     const spec = BUILTIN_GLOBAL_SPECS[name]
-    Object.defineProperty(window, name, {
-      get: () => {
+    const backingKey = `_strands_${name}`
+
+    // Define on window for global mode only
+    const inst = getRuntimeP5Instance()
+    if (inst?._isGlobal) {
+      Object.defineProperty(window, name, {
+        get: () => {
+          if (strandsContext.active) {
+            return getBuiltinGlobalNode(strandsContext, name);
+          }
+          const inst = getRuntimeP5Instance()
+          return spec.get(inst);
+        },
+        configurable: true,
+      })
+    }
+
+    // Capture original descriptor (held in closure for the getter to delegate to)
+    const originalProtoDesc = Object.getOwnPropertyDescriptor(strandsContext.p5.prototype, name);
+
+    // Define on p5.prototype for instance mode
+    Object.defineProperty(strandsContext.p5.prototype, name, {
+      get: function() {
         if (strandsContext.active) {
           return getBuiltinGlobalNode(strandsContext, name);
         }
-        const inst = getRuntimeP5Instance()
-          return spec.get(inst);
+        // If our setter stored a value on this instance, return it
+        if (Object.prototype.hasOwnProperty.call(this, backingKey)) {
+          return this[backingKey];
+        }
+        // Delegate to original getter (e.g. width -> this._renderer?.width)
+        if (originalProtoDesc?.get) {
+          return originalProtoDesc.get.call(this);
+        }
+        // Fall back to original value for data properties (like mouseX)
+        return originalProtoDesc?.value;
       },
+      set: function(val) {
+        this[backingKey] = val;
+      },
+      configurable: true,
     })
+
+    // Define on p5.Graphics.prototype for graphics mode
+    const GraphicsProto = strandsContext.p5?.Graphics?.prototype;
+    if (GraphicsProto) {
+      const originalDesc = Object.getOwnPropertyDescriptor(GraphicsProto, name);
+
+      Object.defineProperty(GraphicsProto, name, {
+        get: function() {
+          if (strandsContext.active) {
+            return getBuiltinGlobalNode(strandsContext, name);
+          }
+          // Delegate to original getter if it exists (class-level getters like width, deltaTime)
+          if (originalDesc?.get) {
+            return originalDesc.get.call(this);
+          }
+          return this[backingKey];
+        },
+        set: function(val) {
+          if (originalDesc?.set) {
+            originalDesc.set.call(this, val);
+          } else {
+            this[backingKey] = val;
+          }
+        },
+        configurable: true,
+      })
+    }
   }
   strandsContext._builtinGlobalsAccessorsInstalled = true
 }
@@ -470,6 +530,7 @@ const _rgb2hsl = (instance, colorNode) => {
   const originalNoise = fn.noise;
   const originalNoiseDetail = fn.noiseDetail;
   const originalRandom = fn.random;
+  const originalRandomGaussian=fn.randomGaussian;
   const originalRandomSeed = fn.randomSeed;
   const originalMillis = fn.millis;
 
@@ -612,6 +673,20 @@ const _rgb2hsl = (instance, colorNode) => {
       );
     }
   });
+
+   augmentFn(fn, p5, 'randomGaussian', function(...args){
+      if(!strandsContext.active){
+        return originalRandomGaussian.apply(this, args);
+      }
+      const mean = args.length >= 1 ? args[0] : 0;
+      const stdDev = args.length >= 2 ? args[1] : 1;
+
+      const u1 = this.max(this.random(), 1e-6);
+      const u2 = this.random();
+      const z = this.sqrt(this.log(u1).mult(-2)).mult(this.cos(u2.mult(2*Math.PI)));
+
+      return z.mult(stdDev).add(mean);
+    });
 
   augmentFn(fn, p5, 'millis', function (...args) {
     if (!strandsContext.active) {
@@ -913,6 +988,54 @@ export function createShaderHooksFunctions(strandsContext, fn, shader) {
     hook.set = function(result) {
       hook._result = result;
     };
+    hook._active = false;
+
+    const numStructArgs = hookType.parameters.filter(
+      param => param.type && param.type.properties
+    ).length;
+    let argIdx = -1;
+    if (numStructArgs === 1) {
+      argIdx = hookType.parameters.findIndex(
+        param => param.type && param.type.properties
+      );
+    }
+    if (argIdx >= 0) {
+      const structParam = hookType.parameters[argIdx];
+      if (structParam.type.properties) {
+        const nameMatch = /^get([A-Z0-9]\w*)$/.exec(hookType.name);
+        const displayName = nameMatch
+          ? nameMatch[1][0].toLowerCase() + nameMatch[1].slice(1)
+          : hookType.name;
+        for (const prop of structParam.type.properties) {
+          const key = prop.name;
+          Object.defineProperty(hook, key, {
+            get() {
+              if (!this._active) {
+                FES.userError(
+                  'scope error',
+                  `It looks like you're trying to access "${displayName}.${key}" outside of its begin()/end() block.\n\n` +
+                  `Properties of ${displayName} are only available between ` +
+                  `${displayName}.begin() and ${displayName}.end().\n\n` +
+                  `To share data between hooks, use sharedVec3() or sharedFloat() ` +
+                  `to pass values between them.`
+                );
+              }
+              return this._args[this._argIdx][key];
+            },
+            set(val) {
+              if (!this._active) {
+                FES.userError(
+                  'scope error',
+                  `It looks like you're trying to set "${displayName}.${key}" outside of its begin()/end() block.`
+                );
+              }
+              this._args[this._argIdx][key] = val;
+            },
+            enumerable: true,
+          });
+        }
+      }
+    }
 
     let entryBlockID;
     function setupHook() {
@@ -921,25 +1044,14 @@ export function createShaderHooksFunctions(strandsContext, fn, shader) {
       CFG.addEdge(cfg, cfg.currentBlock, entryBlockID);
       CFG.pushBlock(cfg, entryBlockID);
       const args = createHookArguments(strandsContext, hookType.parameters);
-      const numStructArgs = hookType.parameters.filter(param => param.type.properties).length;
-      let argIdx = -1;
-      if (numStructArgs === 1) {
-        argIdx = hookType.parameters.findIndex(param => param.type.properties);
-      }
+      hook._active = true;
+      hook._args = args;
+      hook._argIdx = argIdx;
       hook._properties = [];
       for (let i = 0; i < args.length; i++) {
         if (i === argIdx) {
           for (const key of args[argIdx].structProperties || []) {
             hook._properties.push(key);
-            Object.defineProperty(hook, key, {
-              get() {
-                return args[argIdx][key];
-              },
-              set(val) {
-                args[argIdx][key] = val;
-              },
-              enumerable: true,
-            });
           }
           if (hookType.returnType?.typeName === hookType.parameters[argIdx].type.typeName) {
             hook.set(args[argIdx]);
@@ -953,6 +1065,7 @@ export function createShaderHooksFunctions(strandsContext, fn, shader) {
     };
 
     function finishHook() {
+      hook._active = false;
       const userReturned = hook._result;
       strandsContext.activeHook = undefined;
 

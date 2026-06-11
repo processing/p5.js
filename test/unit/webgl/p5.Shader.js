@@ -244,6 +244,29 @@ suite('p5.Shader', function() {
       var curShader = myp5._renderer.states.userFillShader;
       assert.isTrue(curShader === null);
     });
+    test('version() detects a #version directive', function() {
+      const shader = myp5.createShader(
+        `
+          #version 300 es
+          precision highp float;
+          attribute vec3 aPosition;
+          uniform mat4 uModelViewMatrix;
+          uniform mat4 uProjectionMatrix;
+
+          void main() {
+            gl_Position = uProjectionMatrix * uModelViewMatrix * vec4(aPosition, 1.0);
+          }
+        `,
+        `
+          precision highp float;
+
+          void main() {
+            gl_FragColor = vec4(1.0);
+          }
+        `
+      );
+      assert.strictEqual(shader.version(), '300 es');
+    });
     suite('Hooks', function() {
       let myShader;
       beforeEach(function() {
@@ -493,8 +516,8 @@ test('returns numbers for builtin globals outside hooks and a strandNode when ca
   myp5.createCanvas(5, 5, myp5.WEBGL);
   myp5.baseMaterialShader().modify(() => {
     myp5.getPixelInputs(inputs => {
-      const mxInHook = window.mouseX;
-      const wInHook = window.width;
+      const mxInHook = myp5.mouseX;
+      const wInHook = myp5.width;
       assert.isTrue(mxInHook.isStrandsNode);
       assert.isTrue(wInHook.isStrandsNode);
       inputs.color = [1, 0, 0, 1];
@@ -502,13 +525,12 @@ test('returns numbers for builtin globals outside hooks and a strandNode when ca
     });
   }, { myp5 });
 
-  const mx = window.mouseX;
-  const w = window.width;
+  const mx = myp5.mouseX;
+  const w = myp5.width;
   assert.isNumber(mx);
   assert.isNumber(w);
   assert.strictEqual(w, myp5.width);
 });
-
 
     test('map() works inside a strands modify callback', () => {
       myp5.createCanvas(50, 50, myp5.WEBGL);
@@ -2839,6 +2861,27 @@ test('returns numbers for builtin globals outside hooks and a strandNode when ca
           myp5.filterColor.end();
         }, { myp5 });
       });
+    });
+
+    test('scope error uses unprefixed hook name', () => {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+
+      try {
+        myp5.baseMaterialShader().modify(() => {
+          myp5.getWorldInputs.begin();
+          myp5.getWorldInputs.end();
+          const pos = myp5.getWorldInputs.position;
+        }, { myp5 });
+      } catch (e) { /* expected */ }
+
+      assert.isAbove(mockUserError.mock.calls.length, 0, 'FES.userError should have been called');
+      const scopeCall = mockUserError.mock.calls.find(call => call[0] === 'scope error');
+      assert.isDefined(scopeCall, 'scope error should have been called');
+      const errMsg = scopeCall[1];
+      assert.include(errMsg, 'worldInputs');
+      assert.notInclude(errMsg, 'getWorldInputs');
+      assert.include(errMsg, 'begin()');
+      assert.include(errMsg, 'end()');
     });
   });
 });
