@@ -1,0 +1,16 @@
+<svg width="375" height="75" viewBox="0 0 375 75" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect width="375" height="75" fill="white"/>
+<text fill="#FF3232" xml:space="preserve" style="white-space: pre" font-family="sans-serif" font-size="12" letter-spacing="0em"><tspan x="10.7833" y="61.8636">Bounding Quad</tspan></text>
+<text fill="#32C8FF" xml:space="preserve" style="white-space: pre" font-family="sans-serif" font-size="12" letter-spacing="0em"><tspan x="120.071" y="61.8636">EXTEND</tspan></text>
+<text fill="#32C8FF" xml:space="preserve" style="white-space: pre" font-family="sans-serif" font-size="12" letter-spacing="0em"><tspan x="212.498" y="61.8636">ROUND</tspan></text>
+<text fill="#32C8FF" xml:space="preserve" style="white-space: pre" font-family="sans-serif" font-size="12" letter-spacing="0em"><tspan x="301.273" y="61.8636">SQUARE</tspan></text>
+<rect x="19.5189" y="11.6742" width="57.0448" height="31.3388" fill="#D9D9D9" stroke="black"/>
+<rect x="77.0637" y="11.1742" width="15.3145" height="32.3388" fill="#FF3232"/>
+<rect x="109.611" y="11.6742" width="57.0448" height="31.3388" fill="#D9D9D9" stroke="black"/>
+<rect x="167.156" y="11.1742" width="15.3145" height="32.3388" fill="#32C8FF"/>
+<rect x="290.433" y="11.6742" width="57.0448" height="31.3388" fill="#D9D9D9" stroke="black"/>
+<rect x="347.977" y="11.1742" width="15.3145" height="32.3388" fill="#32C8FF" fill-opacity="0.2"/>
+<rect x="199.703" y="11.6742" width="57.0448" height="31.3388" fill="#D9D9D9" stroke="black"/>
+<rect x="257.247" y="11.1742" width="15.9527" height="32.3388" fill="#32C8FF" fill-opacity="0.2"/>
+<path d="M257.247 43.2963C261.478 43.2963 265.536 41.6155 268.528 38.6238C271.519 35.6321 273.2 31.5745 273.2 27.3436C273.2 23.1127 271.519 19.0551 268.528 16.0634C265.536 13.0717 261.478 11.391 257.247 11.391L257.247 27.3436L257.247 43.2963Z" fill="#32C8FF"/>
+</svg>
