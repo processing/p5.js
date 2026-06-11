@@ -120,9 +120,8 @@ function installBuiltinGlobalAccessors(strandsContext) {
       })
     }
 
-    // Save original property descriptor in strandsContext
+    // Capture original descriptor (held in closure for the getter to delegate to)
     const originalProtoDesc = Object.getOwnPropertyDescriptor(strandsContext.p5.prototype, name);
-    strandsContext.fnOverrides[`__builtinGlobal_${name}`] = originalProtoDesc;
 
     // Define on p5.prototype for instance mode
     Object.defineProperty(strandsContext.p5.prototype, name, {
@@ -151,7 +150,7 @@ function installBuiltinGlobalAccessors(strandsContext) {
     const GraphicsProto = strandsContext.p5?.Graphics?.prototype;
     if (GraphicsProto) {
       const originalDesc = Object.getOwnPropertyDescriptor(GraphicsProto, name);
-      strandsContext.fnOverrides[`__builtinGlobalGraphics_${name}`] = originalDesc;
+
       Object.defineProperty(GraphicsProto, name, {
         get: function() {
           if (strandsContext.active) {
