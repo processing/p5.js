@@ -1,7 +1,7 @@
 import noiseGLSL from './shaders/functions/noise3DGLSL.glsl';
 import randomGLSL from './shaders/functions/randomGLSL.glsl';
 import randomVertGLSL from './shaders/functions/randomVertGLSL.glsl';
-import { NodeType, OpCodeToSymbol, BlockType, OpCode, NodeTypeToName, isStructType, BaseType, StatementType, DataType, INSTANCE_ID_VARYING_NAME } from "../strands/ir_types";
+import { NodeType, OpCodeToSymbol, BlockType, OpCode, NodeTypeToName, isStructType, BaseType, StatementType, DataType, INSTANCE_ID_VARYING_NAME, HOOK_PARAM_PREFIX } from "../strands/ir_types";
 import { getNodeDataFromID, extractNodeTypeInfo } from "../strands/ir_dag";
 import * as FES from '../strands/strands_FES';
 import * as build from '../strands/ir_builders';
@@ -168,7 +168,7 @@ const cfgHandlers = {
 export const glslBackend = {
   hookEntry(hookType) {
     const firstLine = `(${hookType.parameters.flatMap((param) => {
-      return `${param.qualifiers?.length ? param.qualifiers.join(' ') : ''}${param.type.typeName} ${param.name}`;
+      return `${param.qualifiers?.length ? param.qualifiers.join(' ') : ''}${param.type.typeName} ${HOOK_PARAM_PREFIX}${param.name}`;
     }).join(', ')}) {`;
     return firstLine;
   },
@@ -329,6 +329,12 @@ export const glslBackend = {
         const parentID = node.dependsOn[0];
         const parentExpr = this.generateExpression(generationContext, dag, parentID);
         return `${parentExpr}.${node.swizzle}`;
+      }
+      if (node.opCode === OpCode.Binary.ARRAY_ACCESS) {
+        const [bufferID, indexID] = node.dependsOn;
+        const bufferExpr = this.generateExpression(generationContext, dag, bufferID);
+        const indexExpr = this.generateExpression(generationContext, dag, indexID);
+        return `${bufferExpr}[${indexExpr}]`;
       }
       if (node.dependsOn.length === 2) {
         const [lID, rID] = node.dependsOn;

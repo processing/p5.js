@@ -166,18 +166,15 @@ export class StrandsNode {
   }
 
   get(index) {
-    // Validate baseType is 'storage'
     const nodeData = getNodeDataFromID(this.strandsContext.dag, this.id);
-    if (nodeData.baseType !== 'storage') {
-      throw new Error('get() can only be used on storage buffers');
-    }
 
-    // For struct storage, return a proxy with per-field getters/setters
-    if (this._schema) {
+    // Validate baseType is 'storage'
+    // For struct storage buffers, return a proxy with per-field getters/setters
+    if (nodeData.baseType === 'storage' && this._schema) {
       return createStructArrayElementProxy(this.strandsContext, this, index, this._schema);
     }
 
-    // Create array access node: buffer.get(index) -> buffer[index]
+    // Create array access node for storage and non-storage (vector) access
     const { id, dimension } = arrayAccessNode(
       this.strandsContext,
       this,

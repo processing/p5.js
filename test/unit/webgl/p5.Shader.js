@@ -244,6 +244,29 @@ suite('p5.Shader', function() {
       var curShader = myp5._renderer.states.userFillShader;
       assert.isTrue(curShader === null);
     });
+    test('version() detects a #version directive', function() {
+      const shader = myp5.createShader(
+        `
+          #version 300 es
+          precision highp float;
+          attribute vec3 aPosition;
+          uniform mat4 uModelViewMatrix;
+          uniform mat4 uProjectionMatrix;
+
+          void main() {
+            gl_Position = uProjectionMatrix * uModelViewMatrix * vec4(aPosition, 1.0);
+          }
+        `,
+        `
+          precision highp float;
+
+          void main() {
+            gl_FragColor = vec4(1.0);
+          }
+        `
+      );
+      assert.strictEqual(shader.version(), '300 es');
+    });
     suite('Hooks', function() {
       let myShader;
       beforeEach(function() {
@@ -459,6 +482,21 @@ suite('p5.Shader', function() {
       }).not.toThrowError();
     });
 
+    test('buildFilterShader can use numeric constants from scope', () => {
+      myp5.createCanvas(5, 5, myp5.WEBGL);
+      const constants = { val: 100 };
+      const myShader = myp5.buildFilterShader(({ constants }) => {
+        filterColor.begin();
+        let c = 0;
+        c += constants.val / 255;
+        filterColor.set([c, c, c, 1]);
+        filterColor.end();
+      }, { constants });
+      expect(() => {
+        myp5.filter(myShader);
+      }).not.toThrowError();
+    });
+
     test('buildMaterialShader forwards scope to modify', () => {
       myp5.createCanvas(5, 5, myp5.WEBGL);
       expect(() => {
@@ -662,6 +700,107 @@ test('returns numbers for builtin globals outside hooks and a strandNode when ca
       assert.approximately(pixelColor[0], 153, 5); // 0.6 * 255 = 153
       assert.approximately(pixelColor[1], 153, 5);
       assert.approximately(pixelColor[2], 153, 5);
+    });
+
+    suite('array indexing on non-storage vectors (#8756)', () => {
+      afterEach(() => {
+        mockUserError.mockClear();
+      });
+
+      test('indexing into array returned from helper function works in WebGL', () => {
+        myp5.createCanvas(5, 5, myp5.WEBGL);
+        const myShader = myp5.baseMaterialShader().modify(() => {
+          const brightness = myp5.uniformFloat();
+          function getArr() {
+            return [1, 2];
+          }
+          const arr = getArr();
+          myp5.getPixelInputs(inputs => {
+            inputs.color = [arr[0] * brightness, arr[1], 0, 1];
+            return inputs;
+          });
+        }, { myp5 });
+        expect(() => {
+          myp5.shader(myShader);
+          myp5.plane(myp5.width, myp5.height);
+        }).not.toThrowError();
+      });
+
+      test('inline literal indexing [1, 2][0] works in WebGL', () => {
+        myp5.createCanvas(5, 5, myp5.WEBGL);
+        const myShader = myp5.baseMaterialShader().modify(() => {
+          const brightness = myp5.uniformFloat();
+          myp5.getPixelInputs(inputs => {
+            inputs.color = [[1, 2][0] * brightness, 0, 0, 1];
+            return inputs;
+          });
+        }, { myp5 });
+        expect(() => {
+          myp5.shader(myShader);
+          myp5.plane(myp5.width, myp5.height);
+        }).not.toThrowError();
+      });
+
+      test('array literal with 1 element throws descriptive error in WebGL', () => {
+        myp5.createCanvas(5, 5, myp5.WEBGL);
+        expect(() => {
+          myp5.baseMaterialShader().modify(() => {
+            const arr = [1];
+            myp5.getPixelInputs(inputs => {
+              inputs.color = [arr[0], 0, 0, 1];
+              return inputs;
+            });
+          }, { myp5 });
+        }).toThrowError('and must have 2-4 elements (got 1)');
+      });
+
+      test('array literal with 5 elements throws descriptive error in WebGL', () => {
+        myp5.createCanvas(5, 5, myp5.WEBGL);
+        expect(() => {
+          myp5.baseMaterialShader().modify(() => {
+            const arr = [1, 2, 3, 4, 5];
+            myp5.getPixelInputs(inputs => {
+              inputs.color = [arr[0], 0, 0, 1];
+              return inputs;
+            });
+          }, { myp5 });
+        }).toThrowError('and must have 2-4 elements (got 5)');
+      });
+
+      test('valid array lengths 2, 3, 4 work in WebGL', () => {
+        myp5.createCanvas(5, 5, myp5.WEBGL);
+        expect(() => {
+          const s2 = myp5.baseMaterialShader().modify(() => {
+            const arr = [1, 2];
+            myp5.getPixelInputs(inputs => {
+              inputs.color = [arr[0], 0, 0, 1];
+              return inputs;
+            });
+          }, { myp5 });
+          myp5.shader(s2);
+          myp5.plane(myp5.width, myp5.height);
+
+          const s3 = myp5.baseMaterialShader().modify(() => {
+            const arr = [1, 2, 3];
+            myp5.getPixelInputs(inputs => {
+              inputs.color = [arr[0], 0, 0, 1];
+              return inputs;
+            });
+          }, { myp5 });
+          myp5.shader(s3);
+          myp5.plane(myp5.width, myp5.height);
+
+          const s4 = myp5.baseMaterialShader().modify(() => {
+            const arr = [1, 2, 3, 4];
+            myp5.getPixelInputs(inputs => {
+              inputs.color = [arr[0], 0, 0, 1];
+              return inputs;
+            });
+          }, { myp5 });
+          myp5.shader(s4);
+          myp5.plane(myp5.width, myp5.height);
+        }).not.toThrowError();
+      });
     });
 
     suite('if statement conditionals', () => {
@@ -2540,7 +2679,9 @@ test('returns numbers for builtin globals outside hooks and a strandNode when ca
         }, { myp5 });
       } catch (e) { /* expected */ }
 
-      assert.isAbove(mockUserError.mock.calls.length, 0, 'FES.userError should have been called');
+
+
+      assert.isAbove(mockUserError.mock.calls.length, 0, 'FES.userError should have been called, btw: '+globalThis.FESCalled);
       const errMsg = mockUserError.mock.calls[0][1];
       assert.include(errMsg, 'float3');
       assert.include(errMsg, 'float4');
@@ -2617,6 +2758,27 @@ test('returns numbers for builtin globals outside hooks and a strandNode when ca
           myp5.filterColor.end();
         }, { myp5 });
       });
+    });
+
+    test('scope error uses unprefixed hook name', () => {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+
+      try {
+        myp5.baseMaterialShader().modify(() => {
+          myp5.getWorldInputs.begin();
+          myp5.getWorldInputs.end();
+          const pos = myp5.getWorldInputs.position;
+        }, { myp5 });
+      } catch (e) { /* expected */ }
+
+      assert.isAbove(mockUserError.mock.calls.length, 0, 'FES.userError should have been called');
+      const scopeCall = mockUserError.mock.calls.find(call => call[0] === 'scope error');
+      assert.isDefined(scopeCall, 'scope error should have been called');
+      const errMsg = scopeCall[1];
+      assert.include(errMsg, 'worldInputs');
+      assert.notInclude(errMsg, 'getWorldInputs');
+      assert.include(errMsg, 'begin()');
+      assert.include(errMsg, 'end()');
     });
   });
 });

@@ -135,7 +135,7 @@ class Renderer {
   // and push it into the push pop stack
   push() {
     this._pushPopDepth++;
-    this._pushPopStack.push(this.states.getDiff());
+    this._pushPopStack.push(this.states.takeDiff());
   }
 
   // Pop the previous states out of the push pop stack and
