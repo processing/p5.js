@@ -301,6 +301,13 @@ visualSuite('Shape drawing', function() {
         screenshot();
       });
 
+      visualTest('Drawing rounded rectangles', function(p5, screenshot) {
+        setup(p5);
+        p5.rect(5, 5, 40, 20, 5);
+        p5.rect(5, 30, 40, 15, 2, 4, 6, 8);
+        screenshot();
+      });
+
       visualTest('Drawing with a single closed contour', function(p5, screenshot) {
         setup(p5);
         p5.beginShape();
