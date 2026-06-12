@@ -338,18 +338,20 @@ if (typeof p5 !== "undefined") {
  */
 
 /**
- * @method instanceID
+ * @property instanceIndex
  * @beta
  * @description
  * Returns the index of the current instance when drawing multiple copies of a
  * shape with <a href="#/p5/model">`model(count)`</a>. The first instance has an
- * ID of `0`, the second has `1`, and so on.
+ * index of `0`, the second has `1`, and so on.
  *
  * This lets each copy of a shape behave differently. For example, you can use
- * the ID to place instances at different positions, give them different colors,
+ * the index to place instances at different positions, give them different colors,
  * or animate them at different speeds.
  *
- * `instanceID()` can only be used inside a p5.strands shader callback.
+ * `instanceIndex` can only be used inside a p5.strands shader callback.
+ *
+ * (Note: `instanceID()` is also available as a function for compatibility.)
  *
  * ```js example
  * let instancesShader;
@@ -372,7 +374,7 @@ if (typeof p5 !== "undefined") {
  *   // Spread spheres evenly across the canvas based on their index
  *   let spacing = width / count;
  *   worldInputs.position.x +=
- *     (instanceID() - (count - 1) / 2) * spacing;
+ *     (instanceIndex - (count - 1) / 2) * spacing;
  *   worldInputs.end();
  * }
  *
@@ -386,7 +388,7 @@ if (typeof p5 !== "undefined") {
  * }
  * ```
  *
- * If you are using WebGPU mode, a common pattern is to use `instanceID()` to look up data made with
+ * If you are using WebGPU mode, a common pattern is to use `instanceIndex` to look up data made with
  * <a href="#/p5/createStorage">`createStorage()`</a>.
  * This lets you give each instance different properties.
  *
@@ -429,7 +431,7 @@ if (typeof p5 !== "undefined") {
  *   let itemColor = sharedVec4();
  *
  *   worldInputs.begin();
- *   let item = data[instanceID()];
+ *   let item = data[instanceIndex];
  *   itemColor = item.color;
  *   worldInputs.position += item.position;
  *   worldInputs.end();
@@ -451,23 +453,20 @@ if (typeof p5 !== "undefined") {
  * This can be paired with <a href="#/p5/buildComputeShader">`buildComputeShader`</a>
  * to update the data being read.
  *
- * @webgpu
- * @returns {*} The index of the current instance.
+ * @type {StrandsNode}
  */
 
 /**
- * @method instanceIndex
+ * @method instanceID
  * @beta
  * @description
- * An alias for <a href="#/p5/instanceID">`instanceID()`</a>. Returns the index
- * of the current instance when drawing multiple copies of a shape with
- * <a href="#/p5/model">`model(count)`</a>.
+ * A function alias for <a href="#/p5/instanceIndex">`instanceIndex`</a>, kept for compatibility.
+ * Returns the index of the current instance when drawing multiple copies of a
+ * shape with <a href="#/p5/model">`model(count)`</a>.
  *
- * The first instance has an index of `0`, the second has `1`, and so on.
+ * `instanceID()` can only be used inside a p5.strands shader callback.
  *
- * `instanceIndex()` can only be used inside a p5.strands shader callback.
- *
- * @returns {*} The index of the current instance.
+ * @returns {StrandsNode} The index of the current instance.
  */
 
 /**
