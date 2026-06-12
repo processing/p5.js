@@ -1172,16 +1172,14 @@ visualTest('randomGaussian() in a fragment loop averages to the mean', (p5, scre
 });
 
     visualTest('uses width/height in getFinalColor', (p5, screenshot) => {
-      let firstShader;
-      function firstShaderCallback() {
-        getFinalColor((color) => {
-          color = [width / 60, height / 60, 0, 1];
-          return color;
-        });
-      }
       p5.createCanvas(60, 60, p5.WEBGL);
       p5.pixelDensity(1);
-      firstShader = p5.baseColorShader().modify(firstShaderCallback);
+      const firstShader = p5.baseColorShader().modify(() => {
+        p5.getFinalColor((color) => {
+          color = [p5.width / 60, p5.height / 60, 0, 1];
+          return color;
+        });
+      }, { p5 });
       p5.background(0);
       p5.shader(firstShader);
       p5.noStroke();
