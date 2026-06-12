@@ -444,10 +444,12 @@ class Renderer2D extends Renderer {
     ctx.save();
     ctx.clearRect(0, 0, img.canvas.width, img.canvas.height);
 
+    const tint = this.states.tint._array || this.states.tint;
+
     if (
-      this.states.tint[0] < 255 ||
-      this.states.tint[1] < 255 ||
-      this.states.tint[2] < 255
+      tint[0] < 255 ||
+      tint[1] < 255 ||
+      tint[2] < 255
     ) {
       // Color tint: we need to use the multiply blend mode to change the colors.
       // However, the canvas implementation of this destroys the alpha channel of
@@ -470,16 +472,16 @@ class Renderer2D extends Renderer {
 
       // Apply color tint
       ctx.globalCompositeOperation = 'multiply';
-      ctx.fillStyle = `rgb(${this.states.tint.slice(0, 3).join(', ')})`;
+      ctx.fillStyle = `rgb(${tint.slice(0, 3).join(', ')})`;
       ctx.fillRect(0, 0, img.canvas.width, img.canvas.height);
 
       // Replace the alpha channel with the original alpha * the alpha tint
       ctx.globalCompositeOperation = 'destination-in';
-      ctx.globalAlpha = this.states.tint[3] / 255;
+      ctx.globalAlpha = tint[3] / 255;
       ctx.drawImage(img.canvas, 0, 0);
     } else {
       // If we only need to change the alpha, we can skip all the extra work!
-      ctx.globalAlpha = this.states.tint[3] / 255;
+      ctx.globalAlpha = tint[3] / 255;
       ctx.drawImage(img.canvas, 0, 0);
     }
 
