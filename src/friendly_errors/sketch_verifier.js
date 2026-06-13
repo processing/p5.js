@@ -162,7 +162,7 @@ export const verifierUtils = {
     for (let { name, line } of allDefinitions) {
       const libDefinition = constants[name];
       if (libDefinition !== undefined) {
-        const message = generateFriendlyError('Constant', name, line+1);
+        const message = generateFriendlyError('constant', name, line+1);
         FES.log`${message}`();
         return true;
       }

@@ -53,7 +53,7 @@ export class FES {
           const ret = `%c${value.message.toString(FES.languageCode)}%c`;
           styleStrings.push(value.styleString, '');
           return ret;
-        } else if (value.message && value.styleStrings) {
+        } else if (value?.message && value?.styleStrings) {
           styleStrings.push(...value.styleStrings);
           return value.message;
         } else {

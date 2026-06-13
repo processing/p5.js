@@ -7,6 +7,7 @@ import dataDoc from '../../docs/parameterData.json';
 import { FES } from './fes.js';
 import { errorStackParser, processStack, getFriendlyStack } from './stacktrace.js';
 
+z.config(z.locales.en());
 let documentationData = dataDoc;
 
 function validateParams(p5, fn, lifecycles) {
@@ -287,10 +288,10 @@ function validateParams(p5, fn, lifecycles) {
           rest = params.pop();
         }
 
-        let combined = z.tuple(params.map(s => s.schema));
-        if (rest) {
-          combined = combined.rest(rest.schema);
-        }
+        let combined = z.tuple(params.map(s => s.schema), rest?.schema);
+        // if (rest) {
+        //   combined = combined.rest(rest.schema);
+        // }
         return combined;
       });
     });
@@ -418,7 +419,7 @@ function validateParams(p5, fn, lifecycles) {
 
     const processUnionError = error => {
       const expectedTypes = new Set();
-      let actualType;
+      let actualType, message = '';
 
       const collectIssue = issue => {
         if (!issue) return;
@@ -434,7 +435,10 @@ function validateParams(p5, fn, lifecycles) {
         // constant values in the error message, the error message will
         // direct users to the documentation.
         else if (issue.code === 'invalid_value') {
-          if (Array.isArray(issue.values) && issue.values.every(v => v === Infinity || v === -Infinity)) {
+          if (
+            Array.isArray(issue.values) &&
+            issue.values.every(v => v === Infinity || v === -Infinity)
+          ) {
             expectedTypes.add('number');
           } else {
             expectedTypes.add('constant (please refer to documentation for allowed values)');
@@ -457,16 +461,15 @@ function validateParams(p5, fn, lifecycles) {
 
       if (expectedTypes.size > 0) {
         if (error.path?.length > 0 && args[error.path[0]] instanceof Promise)  {
-          message += 'Did you mean to put `await` before a loading function? ' +
-            'An unexpected Promise was found. ';
+          message = FES.log`Did you mean to put \`await\` before a loading function? An unexpected Promise was found. `;
         }
 
         const expectedTypesStr = Array.from(expectedTypes).join(' or ');
         const position = error.path.join('.');
 
-        message += buildTypeMismatchMessage(
+        message = FES.log`${message}${buildTypeMismatchMessage(
           actualType, expectedTypesStr, position
-        );
+        )} in ${func + '()'}.`;
       }
 
       return message;
@@ -483,7 +486,7 @@ function validateParams(p5, fn, lifecycles) {
 
     switch (currentError.code) {
       case 'invalid_union': {
-        processUnionError(currentError);
+        message = processUnionError(currentError);
         break;
       }
       case 'too_small': {
@@ -496,13 +499,15 @@ function validateParams(p5, fn, lifecycles) {
       case 'invalid_type': {
         const position = FES.premade.ordinals[currentError.path.join('.')];
         const expectedType = FES.premade.types[currentError.expected];
+        // NOTE: need type info
         message = FES.log`Expected ${expectedType} at the ${position} parameter in ${func + '()'}.`
         break;
       }
       case 'too_big': {
         const maxArgs = currentError.maximum;
+        const documentationLink = generateDocumentationLink(func);
         const referenceLink = FES.log`For more information, see ${documentationLink}.`;
-        message = FES.log`Expected at most ${maxArgs} argument, but received more in ${func}(). ${referenceLink}`;
+        message = FES.log`Expected at most ${maxArgs} arguments, but received more in ${func}(). ${referenceLink}`;
         break;
       }
       default: {
