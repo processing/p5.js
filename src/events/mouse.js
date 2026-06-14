@@ -1073,6 +1073,11 @@ p5.prototype._onmousemove = function(e) {
   const context = this._isGlobal ? window : this;
   let executeDefault;
   this._updateNextMouseCoords(e);
+
+  if (this.mouseIsPressed && e.buttons === 0) {
+    this._onmouseup(e);
+  }
+
   if (!this.mouseIsPressed) {
     if (typeof context.mouseMoved === 'function') {
       executeDefault = context.mouseMoved(e);

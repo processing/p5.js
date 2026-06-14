@@ -484,6 +484,7 @@ function addElement(elt, pInst, media) {
   const c = media
     ? new p5.MediaElement(elt, pInst)
     : new p5.Element(elt, pInst);
+
   pInst._elements.push(c);
   return c;
 }
