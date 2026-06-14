@@ -1069,6 +1069,10 @@ function pointer(p5, fn, lifecycles){
     this._activePointers.set(e.pointerId, e);
     this._setMouseButton(e);
 
+    if (this.mouseIsPressed && e.buttons === 0) {
+      this._onpointerup(e);
+    }
+
     if (
       !this.mouseIsPressed &&
       typeof this._customActions.mouseMoved === 'function'
