@@ -294,7 +294,7 @@ suite('Mouse Events', function() {
       };
 
       window.dispatchEvent(new MouseEvent('mousedown')); //dispatch a mousedown event
-      window.dispatchEvent(new MouseEvent('mousemove')); //dispatch mousemove event while mouse is down to trigger mouseDragged
+      window.dispatchEvent(new MouseEvent('mousemove', { buttons: 1 })); //dispatch mousemove event while mouse is down to trigger mouseDragged
       assert.deepEqual(count, 1);
     });
 
@@ -313,7 +313,7 @@ suite('Mouse Events', function() {
       let sketches = parallelSketches([sketchFn, sketchFn]); //create two sketches
       await sketches.setup; //wait for all sketches to setup
       window.dispatchEvent(new MouseEvent('mousedown')); //dispatch a mousedown event
-      window.dispatchEvent(new MouseEvent('mousemove')); //dispatch mousemove event while mouse is down to trigger mouseDragged
+      window.dispatchEvent(new MouseEvent('mousemove', { buttons: 1 })); //dispatch mousemove event while mouse is down to trigger mouseDragged
       sketches.end(); //resolve all sketches by calling their finish functions
       let counts = await sketches.result; //get array holding number of times mouseDragged was called. Rejected sketches also thrown here
       assert.deepEqual(counts, [1, 1]);
