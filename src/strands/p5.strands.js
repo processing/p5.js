@@ -29,6 +29,20 @@ function strands(p5, fn) {
   //////////////////////////////////////////////
   // Global Runtime
   //////////////////////////////////////////////
+  function initPersistentStrandsContext(ctx) {
+    ctx.p5 = p5;
+    ctx._builtinGlobalsAccessorsInstalled = false;
+    resetTransientStrandsContext(ctx);
+  }
+
+  function createBuiltinGlobalsCache(dag) {
+    return {
+      dag,
+      nodes: new Map(),
+      uniformsAdded: new Set()
+    };
+  }
+
   function initStrandsContext(
     ctx,
     backend,
@@ -49,14 +63,19 @@ function strands(p5, fn) {
     ctx.windowOverrides = {};
     ctx.fnOverrides = {};
     ctx.graphicsOverrides = {};
+    ctx._noiseOctaves = null;
+    ctx._noiseAmpFalloff = null;
     ctx._randomSeed = null;
+    ctx._builtinGlobals = createBuiltinGlobalsCache(ctx.dag);
+    ctx.sharedVariables = new Map();
+    ctx.activeHook = undefined;
+    ctx._instanceIDUsedInFragment = false;
     if (active) {
       p5.disableFriendlyErrors = true;
     }
-    ctx.p5 = p5;
   }
 
-  function deinitStrandsContext(ctx) {
+  function resetTransientStrandsContext(ctx) {
     ctx.dag = createDirectedAcyclicGraph();
     ctx.cfg = createControlFlowGraph();
     ctx.uniforms = [];
@@ -64,8 +83,24 @@ function strands(p5, fn) {
     ctx.fragmentDeclarations = new Set();
     ctx.computeDeclarations = new Set();
     ctx.hooks = [];
+    ctx.backend = undefined;
     ctx.active = false;
+    ctx.renderer = null;
+    ctx.baseShader = null;
+    ctx.previousFES = p5.disableFriendlyErrors;
+    ctx.windowOverrides = {};
+    ctx.fnOverrides = {};
+    ctx.graphicsOverrides = {};
+    ctx._noiseOctaves = null;
+    ctx._noiseAmpFalloff = null;
     ctx._randomSeed = null;
+    ctx._builtinGlobals = createBuiltinGlobalsCache(ctx.dag);
+    ctx.sharedVariables = new Map();
+    ctx.activeHook = undefined;
+    ctx._instanceIDUsedInFragment = false;
+  }
+
+  function deinitStrandsContext(ctx) {
     p5.disableFriendlyErrors = ctx.previousFES;
     for (const key in ctx.windowOverrides) {
       window[key] = ctx.windowOverrides[key];
@@ -84,10 +119,11 @@ function strands(p5, fn) {
         }
       }
     }
+    resetTransientStrandsContext(ctx);
   }
 
   const strandsContext = {};
-  initStrandsContext(strandsContext);
+  initPersistentStrandsContext(strandsContext);
   initGlobalStrandsAPI(p5, fn, strandsContext);
 
   function withTempGlobalMode(pInst, callback) {

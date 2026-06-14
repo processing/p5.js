@@ -22,6 +22,41 @@ suite('WebGPU p5.Shader', function() {
   });
 
   suite('p5.strands', () => {
+    test('builtin global accessors remain usable across modify calls and after failures', async () => {
+      await myp5.createCanvas(5, 5, myp5.WEBGPU);
+
+      myp5.baseMaterialShader().modify(() => {
+        myp5.getPixelInputs(inputs => {
+          inputs.color = [myp5.mouseX / myp5.width, 0, 0, 1];
+          return inputs;
+        });
+      }, { myp5 });
+
+      expect(() => {
+        myp5.baseMaterialShader().modify(() => {
+          throw new Error('intentional failure');
+        }, { myp5 });
+      }).toThrowError('intentional failure');
+
+      myp5.baseMaterialShader().modify(() => {
+        myp5.getPixelInputs(inputs => {
+          // global accessors are still usable
+          // meaning _builtinGlobalsAccessorsInstalled is not accidentally reset
+          const mxInHook = myp5.mouseX;
+          const wInHook = myp5.width;
+          // inside modify hooks, global accessors return strands nodes
+          assert.isTrue(mxInHook.isStrandsNode);
+          assert.isTrue(wInHook.isStrandsNode);
+          inputs.color = [1, 0, 0, 1];
+          return inputs;
+        });
+      }, { myp5 });
+
+      // after modify finishes, global accessors go back to ordinary p5 values
+      assert.isNumber(myp5.mouseX);
+      assert.isNumber(myp5.width);
+    });
+
     test('does not break when arrays are in uniform callbacks', async () => {
       await myp5.createCanvas(5, 5, myp5.WEBGPU);
       const myShader = myp5.baseMaterialShader().modify(() => {
@@ -39,6 +74,28 @@ suite('WebGPU p5.Shader', function() {
         myp5.shader(myShader);
         myp5.plane(myp5.width, myp5.height);
       }).not.toThrowError();
+    });
+
+    test('does not leak shared variable metadata into later shaders', async () => {
+      await myp5.createCanvas(50, 50, myp5.WEBGPU);
+
+      const firstShader = myp5.baseMaterialShader().modify(() => {
+        let __worldPos = myp5.varyingVec3();
+        myp5.getWorldInputs((inputs) => {
+          __worldPos = inputs.position.xyz;
+          return inputs;
+        });
+        myp5.getFinalColor(() => [myp5.abs(__worldPos / 25), 1]);
+      }, { myp5 });
+
+      const secondShader = myp5.baseMaterialShader().modify(() => {
+        myp5.getFinalColor(() => [1, 0, 0, 1]);
+      }, { myp5 });
+
+      assert.deepEqual(firstShader.hooks.varyingVariables, ['__worldPos: vec3<f32>']);
+      assert.deepEqual(secondShader.hooks.varyingVariables, []);
+      assert.notInclude(secondShader._vertSrc, '__worldPos');
+      assert.notInclude(secondShader._fragSrc, '__worldPos');
     });
 
     suite('if statement conditionals', () => {
@@ -1168,6 +1225,37 @@ suite('WebGPU p5.Shader', function() {
     });
 
     suite('noise()', () => {
+      test('noiseDetail state does not leak across modify calls', async () => {
+        await myp5.createCanvas(50, 50, myp5.WEBGPU);
+
+        const firstShader = myp5.baseFilterShader().modify(() => {
+          myp5.noiseDetail(7, 0.2);
+          myp5.getColor(() => {
+            return [myp5.noise(10), 0, 0, 1];
+          });
+        }, { myp5 });
+
+        const secondShader = myp5.baseFilterShader().modify(() => {
+          myp5.getColor(() => {
+            return [myp5.noise(10), 0, 0, 1];
+          });
+        }, { myp5 });
+
+        const explicitDefaultShader = myp5.baseFilterShader().modify(() => {
+          myp5.noiseDetail(4, 0.5);
+          myp5.getColor(() => {
+            return [myp5.noise(10), 0, 0, 1];
+          });
+        }, { myp5 });
+
+        const firstHook = firstShader.hooks.fragment['vec4<f32> getColor'];
+        const secondHook = secondShader.hooks.fragment['vec4<f32> getColor'];
+        const defaultHook = explicitDefaultShader.hooks.fragment['vec4<f32> getColor'];
+
+        assert.notStrictEqual(firstHook, secondHook);
+        assert.strictEqual(secondHook, defaultHook);
+      });
+
       for (let i = 1; i <= 3; i++) {
         test(`works with ${i}D vectors`, async () => {
           await expect((async () => {
@@ -1227,6 +1315,40 @@ suite('WebGPU p5.Shader', function() {
           })()).rejects.toThrowError();
         });
       }
+    });
+
+    test('randomSeed state does not leak across modify calls', async () => {
+      await myp5.createCanvas(50, 50, myp5.WEBGPU);
+
+      const firstShader = myp5.baseFilterShader().modify(() => {
+        myp5.randomSeed(12);
+        myp5.getColor(() => [myp5.random(), 0, 0, 1]);
+      }, { myp5 });
+
+      const secondShader = myp5.baseFilterShader().modify(() => {
+        myp5.getColor(() => [myp5.random(), 0, 0, 1]);
+      }, { myp5 });
+
+      assert.strictEqual(firstShader.hooks.uniforms['_p5_randomSeed: f32'](), 12);
+      assert.notStrictEqual(secondShader.hooks.uniforms['_p5_randomSeed: f32'](), 12);
+    });
+
+    test('instanceID varying does not leak across modify calls', async () => {
+      await myp5.createCanvas(50, 50, myp5.WEBGPU);
+
+      const firstShader = myp5.baseMaterialShader().modify(() => {
+        myp5.getFinalColor(() => {
+          const id = myp5.instanceID();
+          return [id / 10, 0, 0, 1];
+        });
+      }, { myp5 });
+
+      const secondShader = myp5.baseMaterialShader().modify(() => {
+        myp5.getFinalColor(() => [1, 0, 0, 1]);
+      }, { myp5 });
+
+      assert.isDefined(firstShader.hooks.instanceIDVarying);
+      assert.isNull(secondShader.hooks.instanceIDVarying);
     });
 
     suite('compute shaders', () => {

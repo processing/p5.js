@@ -401,9 +401,6 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
   const originalRandomSeed = fn.randomSeed;
   const originalMillis = fn.millis;
 
-  strandsContext._noiseOctaves = null;
-  strandsContext._noiseAmpFalloff = null;
-
   augmentFn(fn, p5, 'noiseDetail', function (lod, falloff = 0.5) {
     if (!strandsContext.active) {
       return originalNoiseDetail.apply(this, arguments);
@@ -462,8 +459,6 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
     });
     return createStrandsNode(id, dimension, strandsContext);
   });
-
-  strandsContext._randomSeed = null;
 
   augmentFn(fn, p5, 'randomSeed', function (seed) {
     if (!strandsContext.active) {
@@ -605,11 +600,6 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
     // Shared variables with smart context detection
     augmentFn(fn, p5, `shared${pascalTypeName}`, function(name) {
       const { id, dimension } = build.variableNode(strandsContext, typeInfo, name);
-
-      // Initialize shared variables tracking if not present
-      if (!strandsContext.sharedVariables) {
-        strandsContext.sharedVariables = new Map();
-      }
 
       // Track this shared variable for smart declaration generation
       strandsContext.sharedVariables.set(name, {
