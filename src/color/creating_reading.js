@@ -132,6 +132,14 @@ function creatingReading(p5, fn){
    * The version of `color()` with four parameters interprets them as RGBA, HSBA,
    * or HSLA colors, depending on the current `colorMode()`. The last parameter
    * sets the alpha (transparency) value.
+   * In p5.strands shader callbacks, `color()` accepts the same input
+   * formats but returns a `vec4` instead of a `p5.Color` object, with
+   * RGBA components normalized to the 0–1 range. All colors in strands
+   * are RGB-based; `colorMode()` has no effect inside shader callbacks.
+   * Color utility functions such as `red()`, `green()`, `blue()`,
+   * `alpha()`, `hue()`, `saturation()`, `brightness()`, and
+   * `lightness()` also return values in the 0–1 range when used in
+   * strands.
    *
    * @method color
    * @param  {Number} gray number specifying value between white and black.
