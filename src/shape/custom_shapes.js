@@ -543,6 +543,47 @@ class EllipsePrimitive extends ShapePrimitive {
   }
 }
 
+class RectPrimitive extends ShapePrimitive {
+  #x;
+  #y;
+  #w;
+  #h;
+  #tl;
+  #tr;
+  #br;
+  #bl;
+  #vertexCapacity = 1;
+
+  constructor(startVertex, x, y, w, h, tl, tr, br, bl) {
+    super(startVertex);
+    this.#x = x;
+    this.#y = y;
+    this.#w = w;
+    this.#h = h;
+    this.#tl = tl;
+    this.#tr = tr;
+    this.#br = br;
+    this.#bl = bl;
+  }
+
+  get x() { return this.#x; }
+  get y() { return this.#y; }
+  get w() { return this.#w; }
+  get h() { return this.#h; }
+  get tl() { return this.#tl; }
+  get tr() { return this.#tr; }
+  get br() { return this.#br; }
+  get bl() { return this.#bl; }
+
+  get vertexCapacity() {
+    return this.#vertexCapacity;
+  }
+
+  accept(visitor) {
+    visitor.visitRectPrimitive(this);
+  }
+}
+
 // ---- TESSELLATION PRIMITIVES ----
 
 class TriangleFan extends ShapePrimitive {
@@ -1025,6 +1066,42 @@ class Shape {
     return primitive.addToShape(this);
   }
 
+  rectPrimitive(x, y, w, h, tl, tr, br, bl) {
+    const startVertex = this.#createVertex(new Vector(x, y));
+    const primitive = new RectPrimitive(startVertex, x, y, w, h, tl, tr, br, bl);
+    return primitive.addToShape(this);
+  }
+
+  point(x, y) {
+    const v0 = this.#createVertex(new Vector(x, y));
+    const primitive = new Point(v0);
+    return primitive.addToShape(this);
+  }
+
+  line(x1, y1, x2, y2) {
+    const v0 = this.#createVertex(new Vector(x1, y1));
+    const v1 = this.#createVertex(new Vector(x2, y2));
+    const primitive = new Line(v0, v1);
+    return primitive.addToShape(this);
+  }
+
+  triangle(x1, y1, x2, y2, x3, y3) {
+    const v0 = this.#createVertex(new Vector(x1, y1));
+    const v1 = this.#createVertex(new Vector(x2, y2));
+    const v2 = this.#createVertex(new Vector(x3, y3));
+    const primitive = new Triangle(v0, v1, v2);
+    return primitive.addToShape(this);
+  }
+
+  quad(x1, y1, x2, y2, x3, y3, x4, y4) {
+    const v0 = this.#createVertex(new Vector(x1, y1));
+    const v1 = this.#createVertex(new Vector(x2, y2));
+    const v2 = this.#createVertex(new Vector(x3, y3));
+    const v3 = this.#createVertex(new Vector(x4, y4));
+    const primitive = new Quad(v0, v1, v2, v3);
+    return primitive.addToShape(this);
+  }
+
   beginContour(shapeKind = constants.PATH) {
     if (this.at(-1)?.kind === constants.EMPTY_PATH) {
       this.contours.pop();
@@ -1128,6 +1205,9 @@ class PrimitiveVisitor {
   }
   visitEllipsePrimitive(ellipse) {
     throw new Error('Method visitEllipsePrimitive() has not been implemented.');
+  }
+  visitRectPrimitive(rect) {
+    throw new Error('Method visitRectPrimitive() has not been implemented.');
   }
 
   // isolated primitives
@@ -1332,6 +1412,62 @@ class PrimitiveToPath2DConverter extends PrimitiveVisitor {
     this.path.moveTo(centerX + radiusX, centerY);
     this.path.ellipse(centerX, centerY, radiusX, radiusY, 0, 0, 2 * Math.PI);
   }
+  visitRectPrimitive(rect) {
+    const x = rect.x;
+    const y = rect.y;
+    const w = rect.w;
+    const h = rect.h;
+    let tl = rect.tl;
+    let tr = rect.tr;
+    let br = rect.br;
+    let bl = rect.bl;
+
+    if (typeof tl === 'undefined') {
+      this.path.rect(x, y, w, h);
+    } else {
+      if (typeof tr === 'undefined') {
+        tr = tl;
+      }
+      if (typeof br === 'undefined') {
+        br = tr;
+      }
+      if (typeof bl === 'undefined') {
+        bl = br;
+      }
+
+      const absW = Math.abs(w);
+      const absH = Math.abs(h);
+      const hw = absW / 2;
+      const hh = absH / 2;
+
+      if (absW < 2 * tl) {
+        tl = hw;
+      }
+      if (absH < 2 * tl) {
+        tl = hh;
+      }
+      if (absW < 2 * tr) {
+        tr = hw;
+      }
+      if (absH < 2 * tr) {
+        tr = hh;
+      }
+      if (absW < 2 * br) {
+        br = hw;
+      }
+      if (absH < 2 * br) {
+        br = hh;
+      }
+      if (absW < 2 * bl) {
+        bl = hw;
+      }
+      if (absH < 2 * bl) {
+        bl = hh;
+      }
+
+      this.path.roundRect(x, y, w, h, [tl, tr, br, bl]);
+    }
+  }
   visitQuadStrip(quadStrip) {
     for (let i = 0; i < quadStrip.vertices.length - 3; i += 2) {
       const v0 = quadStrip.vertices[i];
@@ -1526,6 +1662,72 @@ class PrimitiveToVerticesConverter extends PrimitiveVisitor {
         centerY + radiusY * Math.sin(angle)
       );
       verts.push(new Vertex(vertexProps));
+    }
+
+    this.contours.push(verts);
+  }
+  visitRectPrimitive(rect) {
+    const x = rect.x;
+    const y = rect.y;
+    const w = rect.w;
+    const h = rect.h;
+    let tl = rect.tl;
+    let tr = rect.tr;
+    let br = rect.br;
+    let bl = rect.bl;
+
+    const startVertex = rect.vertices[0];
+    const getVertexProps = (px, py) => {
+      const props = {};
+      for (const [key, value] of Object.entries(startVertex)) {
+        if (key === 'position') continue;
+        props[key] = value;
+      }
+      props.position = new Vector(px, py);
+      return new Vertex(props);
+    };
+
+    const verts = [];
+    if (typeof tl === 'undefined') {
+      verts.push(getVertexProps(x, y));
+      verts.push(getVertexProps(x + w, y));
+      verts.push(getVertexProps(x + w, y + h));
+      verts.push(getVertexProps(x, y + h));
+      verts.push(getVertexProps(x, y));
+    } else {
+      if (typeof tr === 'undefined') tr = tl;
+      if (typeof br === 'undefined') br = tr;
+      if (typeof bl === 'undefined') bl = br;
+
+      const absW = Math.abs(w);
+      const absH = Math.abs(h);
+      const hw = absW / 2;
+      const hh = absH / 2;
+
+      if (absW < 2 * tl) tl = hw;
+      if (absH < 2 * tl) tl = hh;
+      if (absW < 2 * tr) tr = hw;
+      if (absH < 2 * tr) tr = hh;
+      if (absW < 2 * br) br = hw;
+      if (absH < 2 * br) br = hh;
+      if (absW < 2 * bl) bl = hw;
+      if (absH < 2 * bl) bl = hh;
+
+      const addCornerArc = (cx, cy, rx, ry, startAngle, endAngle) => {
+        const perimeter = Math.PI / 2 * (rx + ry) / 2;
+        const numPoints = Math.max(1, Math.ceil(this.curveDetail * perimeter));
+        for (let i = 0; i <= numPoints; i++) {
+          const angle = startAngle + (endAngle - startAngle) * (i / numPoints);
+          verts.push(getVertexProps(cx + rx * Math.cos(angle), cy + ry * Math.sin(angle)));
+        }
+      };
+
+      addCornerArc(x + tl, y + tl, tl, tl, Math.PI, 1.5 * Math.PI);
+      addCornerArc(x + w - tr, y + tr, tr, tr, 1.5 * Math.PI, 2 * Math.PI);
+      addCornerArc(x + w - br, y + h - br, br, br, 0, 0.5 * Math.PI);
+      addCornerArc(x + bl, y + h - bl, bl, bl, 0.5 * Math.PI, Math.PI);
+
+      verts.push(verts[0]);
     }
 
     this.contours.push(verts);
@@ -3050,6 +3252,7 @@ export {
   Quad,
   ArcPrimitive,
   EllipsePrimitive,
+  RectPrimitive,
   TriangleFan,
   TriangleStrip,
   QuadStrip,

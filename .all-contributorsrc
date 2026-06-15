@@ -7471,6 +7471,42 @@
       "contributions": [
         "tutorial"
       ]
+    },
+    {
+      "login": "eupthere",
+      "name": "eupthere",
+      "avatar_url": "https://avatars.githubusercontent.com/u/30365108?v=4",
+      "profile": "https://github.com/eupthere",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "nitin-rajpoot",
+      "name": "Nitin Rajpoot",
+      "avatar_url": "https://avatars.githubusercontent.com/u/175546686?v=4",
+      "profile": "https://github.com/nitin-rajpoot",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "joshuahhh",
+      "name": "Joshua Horowitz",
+      "avatar_url": "https://avatars.githubusercontent.com/u/643799?v=4",
+      "profile": "http://joshuahhh.com",
+      "contributions": [
+        "doc"
+      ]
+    },
+    {
+      "login": "BHARATH0153",
+      "name": "chandra",
+      "avatar_url": "https://avatars.githubusercontent.com/u/214236921?v=4",
+      "profile": "https://github.com/BHARATH0153",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "repoType": "github",
