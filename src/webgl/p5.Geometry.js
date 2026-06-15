@@ -2156,6 +2156,7 @@ function geometry(p5, fn){
    * @property vertices
    * @for p5.Geometry
    * @name vertices
+   * @deprecated planned for removal in 3.0, access geometry data through `parts` instead
    *
    * @example
    * // Click and drag the mouse to view the scene from different angles.
@@ -2253,6 +2254,7 @@ function geometry(p5, fn){
    * @property vertexNormals
    * @name vertexNormals
    * @for p5.Geometry
+   * @deprecated planned for removal in 3.0, access geometry data through `parts` instead
    *
    * @example
    * // Click and drag the mouse to view the scene from different angles.
@@ -2393,6 +2395,7 @@ function geometry(p5, fn){
    * @property faces
    * @name faces
    * @for p5.Geometry
+   * @deprecated planned for removal in 3.0, access geometry data through `parts` instead
    *
    * @example
    * // Click and drag the mouse to view the scene from different angles.
@@ -2464,6 +2467,7 @@ function geometry(p5, fn){
    * @property uvs
    * @name uvs
    * @for p5.Geometry
+   * @deprecated planned for removal in 3.0, access geometry data through `parts` instead
    *
    * @example
    * let img;
