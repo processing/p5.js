@@ -736,6 +736,204 @@ test('returns numbers for builtin globals outside hooks and a strandNode when ca
       assert.approximately(pixelColor[2], 153, 5);
     });
 
+    test('renames only problematic inferred uniform names', () => {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+      const testShader = myp5.baseMaterialShader().modify(() => {
+        // Names containing two underscores are treated as problematic because of GLSL
+        // naming constraints, so p5.strands remaps them through a shared naming layer.
+        const __val = myp5.uniformFloat(() => 0.8);
+        const brightness = myp5.uniformFloat(() => 0.2);
+        myp5.getPixelInputs(inputs => {
+          inputs.color = [__val, brightness, brightness, 1.0];
+          return inputs;
+        });
+      }, { myp5 });
+
+      assert.strictEqual(
+        testShader.hooks.shaderNameMap.externalToInternal.__val,
+        '_p5_strands_0'
+      );
+      assert.strictEqual(
+        testShader.hooks.shaderNameMap.internalToExternal._p5_strands_0,
+        '__val'
+      );
+      assert.strictEqual(
+        testShader.hooks.shaderNameMap.externalToInternal.brightness,
+        undefined
+      );
+
+      myp5.noStroke();
+      myp5.shader(testShader);
+      myp5.plane(myp5.width, myp5.height);
+
+      const pixelColor = myp5.get(25, 25);
+      assert.approximately(pixelColor[0], 204, 5); // Red channel should be ~204 (0.8 * 255)
+      assert.approximately(pixelColor[1], 51, 5); // Green channel should be ~51 (0.2 * 255)
+      assert.approximately(pixelColor[2], 51, 5); // Blue channel should be ~51 (0.2 * 255)
+    });
+
+    test('handles implicit uniform names containing two underscores', () => {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+      myp5.pixelDensity(1);
+      const testShader = myp5.baseMaterialShader().modify(() => {
+        // using implicit uniform name with two underscores, which should be remapped
+        const __val = myp5.uniformFloat();
+        myp5.getPixelInputs(inputs => {
+          inputs.color = [__val, __val, __val, 1.0];
+          return inputs;
+        });
+      }, { myp5 });
+
+      // setting the uniform using the original name
+      testShader.setUniform('__val', 0.6);
+
+      myp5.noStroke();
+      myp5.shader(testShader);
+      myp5.plane(myp5.width, myp5.height);
+
+      const pixelColor = myp5.get(25, 25);
+      assert.approximately(pixelColor[0], 153, 5); // Red channel should be ~153 (0.6 * 255)
+      assert.approximately(pixelColor[1], 153, 5); // Green channel should be ~153 (0.6 * 255)
+      assert.approximately(pixelColor[2], 153, 5); // Blue channel should be ~153 (0.6 * 255)
+    });
+
+    test('handles explicit uniform names containing two underscores', () => {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+      myp5.pixelDensity(1);
+      const testShader = myp5.baseMaterialShader().modify(() => {
+        // using explicit uniform name with two underscores, which should be remapped
+        const val = myp5.uniformFloat('__val');
+        myp5.getPixelInputs(inputs => {
+          inputs.color = [val, val, val, 1.0];
+          return inputs;
+        });
+      }, { myp5 });
+
+      // setting the uniform using the original name
+      testShader.setUniform('__val', 0.6);
+
+      myp5.noStroke();
+      myp5.shader(testShader);
+      myp5.plane(myp5.width, myp5.height);
+
+      const pixelColor = myp5.get(25, 25);
+      assert.approximately(pixelColor[0], 153, 5); // Red channel should be ~153 (0.6 * 255)
+      assert.approximately(pixelColor[1], 153, 5); // Green channel should be ~153 (0.6 * 255)
+      assert.approximately(pixelColor[2], 153, 5); // Blue channel should be ~153 (0.6 * 255)
+    });
+
+    test('continues inferred uniform suffixes across chained modify calls', () => {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+      const shader1 = myp5.baseMaterialShader().modify(() => {
+        const __first = myp5.uniformFloat(() => 0.2);
+        myp5.getPixelInputs(inputs => {
+          inputs.color.r = __first;
+          return inputs;
+        });
+      }, { myp5 });
+
+      const shader2 = shader1.modify(() => {
+        const __second = myp5.uniformFloat(() => 0.8);
+        myp5.getWorldInputs(inputs => {
+          inputs.position.y += __second * 0.0;
+          return inputs;
+        });
+      }, { myp5 });
+
+      assert.strictEqual(
+        shader2.hooks.shaderNameMap.externalToInternal.__first,
+        '_p5_strands_0'
+      );
+      assert.strictEqual(
+        shader2.hooks.shaderNameMap.externalToInternal.__second,
+        '_p5_strands_1'
+      );
+      assert.strictEqual(
+        shader2.hooks.shaderNameState.nextSuffix,
+        2
+      );
+    });
+
+    test('does not leak shared/varying state into later modify calls', () => {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+
+      const firstShader = myp5.baseMaterialShader().modify(() => {
+        let __worldPos = myp5.varyingVec3();
+        myp5.getWorldInputs(inputs => {
+          __worldPos = inputs.position.xyz;
+          return inputs;
+        });
+        myp5.getFinalColor(() => {
+          return [myp5.abs(__worldPos / 25), 1];
+        });
+      }, { myp5 });
+
+      const internalName =
+        firstShader.hooks.shaderNameMap.externalToInternal.__worldPos;
+      assert.deepEqual(
+        firstShader.hooks.varyingVariables,
+        [`vec3 ${internalName}`]
+      );
+
+      const secondShader = myp5.baseFilterShader().modify(() => {
+        myp5.filterColor.begin();
+        myp5.filterColor.set([1, 0, 0, 1]);
+        myp5.filterColor.end();
+      }, { myp5 });
+
+      assert.deepEqual(
+        secondShader.hooks.varyingVariables,
+        []
+      );
+      assert.notInclude(secondShader.vertSrc(), '__worldPos');
+      assert.notInclude(secondShader.fragSrc(), '__worldPos');
+    });
+
+    test('rejects explicit use of the reserved internal strands prefix', () => {
+      expect(() => {
+        myp5.baseMaterialShader().modify(() => {
+          const brightness = myp5.uniformFloat('_p5_strands_forbidden');
+          myp5.getPixelInputs(inputs => {
+            inputs.color = [brightness, brightness, brightness, 1.0];
+            return inputs;
+          });
+        }, { myp5 });
+      }).toThrow('reserved internal p5.strands prefix');
+    });
+
+    test('restores original inferred names in WebGL compile errors', () => {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+
+      // First build a valid strands shader so the inferred name '__val' is
+      // remapped through the normal shaderNameMap path.
+      const mappedShader = myp5.baseMaterialShader().modify(() => {
+        const __val = myp5.uniformFloat(() => 0.8);
+        myp5.getWorldInputs(inputs => {
+          inputs.position.x += __val * 0.0;
+          return inputs;
+        });
+      }, { myp5 });
+
+      const internalName =
+        mappedShader.hooks.shaderNameMap.externalToInternal.__val;
+
+      // Then override the vertex hook with invalid GLSL using the internal
+      // remapped name. The `+ ;` is a deliberate syntax error, which forces
+      // WebGL compilation to fail and exercise original-name restoration in
+      // the reported error text.
+      const badShader = mappedShader.modify({
+        'Vertex getWorldInputs': `(Vertex inputs) {
+          inputs.position.x = ${internalName} + ;
+          return inputs;
+        }`
+      });
+
+      expect(() => {
+        myp5.shader(badShader);
+        myp5.plane(myp5.width, myp5.height);
+      }).toThrow('__val');
+    });
+
     suite('array indexing on non-storage vectors (#8756)', () => {
       afterEach(() => {
         mockUserError.mockClear();
@@ -2006,8 +2204,8 @@ test('returns numbers for builtin globals outside hooks and a strandNode when ca
 
         assert.deepEqual(firstShader.hooks.varyingVariables, ['vec3 worldPos']);
         assert.deepEqual(secondShader.hooks.varyingVariables, []);
-        assert.notInclude(secondShader._vertSrc, 'worldPos');
-        assert.notInclude(secondShader._fragSrc, 'worldPos');
+        assert.notInclude(secondShader.vertSrc(), 'worldPos');
+        assert.notInclude(secondShader.fragSrc(), 'worldPos');
       });
 
       test('handle passing a value from a vertex hook to a fragment hook', () => {
@@ -2074,6 +2272,70 @@ test('returns numbers for builtin globals outside hooks and a strandNode when ca
         assert.approximately(cornerColor[0], 255, 5);
         assert.approximately(cornerColor[1], 255, 5);
         assert.approximately(cornerColor[2], 0, 5);
+      });
+
+      test('handles inferred varying names containing two underscores', () => {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+        myp5.pixelDensity(1);
+
+        const testShader = myp5.baseMaterialShader().modify(() => {
+          // using implicit varying name with two underscores, which should be remapped
+          let __worldPos = myp5.varyingVec3();
+          myp5.getWorldInputs(inputs => {
+            __worldPos = inputs.position.xyz;
+            return inputs;
+          });
+          myp5.getFinalColor(() => {
+            return [myp5.abs(__worldPos / 25), 1];
+          });
+        }, { myp5 });
+
+        myp5.background(0, 0, 255);
+        myp5.noStroke();
+        myp5.shader(testShader);
+        myp5.plane(myp5.width, myp5.height);
+
+        const midColor = myp5.get(25, 25);
+        assert.approximately(midColor[0], 0, 5); // Red channel should be ~0
+        assert.approximately(midColor[1], 0, 5); // Green channel should be ~0
+        assert.approximately(midColor[2], 0, 5); // Blue channel should be ~0
+
+        const cornerColor = myp5.get(0, 0);
+        assert.approximately(cornerColor[0], 255, 5); // Red channel should be ~255
+        assert.approximately(cornerColor[1], 255, 5); // Green channel should be ~255
+        assert.approximately(cornerColor[2], 0, 5); // Blue channel should be ~0
+      });
+
+      test('handles explicit varying names containing two underscores', () => {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+        myp5.pixelDensity(1);
+
+        const testShader = myp5.baseMaterialShader().modify(() => {
+          // using explicit varying name with two underscores, which should be remapped
+          let worldPos = myp5.varyingVec3('__worldPos');
+          myp5.getWorldInputs(inputs => {
+            worldPos = inputs.position.xyz;
+            return inputs;
+          });
+          myp5.getFinalColor(() => {
+            return [myp5.abs(worldPos / 25), 1];
+          });
+        }, { myp5 });
+
+        myp5.background(0, 0, 255);
+        myp5.noStroke();
+        myp5.shader(testShader);
+        myp5.plane(myp5.width, myp5.height);
+
+        const midColor = myp5.get(25, 25);
+        assert.approximately(midColor[0], 0, 5); // Red channel should be ~0
+        assert.approximately(midColor[1], 0, 5); // Green channel should be ~0
+        assert.approximately(midColor[2], 0, 5); // Blue channel should be ~0
+
+        const cornerColor = myp5.get(0, 0);
+        assert.approximately(cornerColor[0], 255, 5); // Red channel should be ~255
+        assert.approximately(cornerColor[1], 255, 5); // Green channel should be ~255
+        assert.approximately(cornerColor[2], 0, 5); // Blue channel should be ~0
       });
 
       test('handle passing a value from a vertex hook to a fragment hook as part of hook output', () => {
@@ -2168,6 +2430,60 @@ test('returns numbers for builtin globals outside hooks and a strandNode when ca
         assert.approximately(centerColor[0], 0, 5);   // Red component
         assert.approximately(centerColor[1], 0, 5);   // Green component
         assert.approximately(centerColor[2], 255, 5); // Blue component
+      });
+
+      test('handles inferred shared names containing two underscores', () => {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+        myp5.pixelDensity(1);
+
+        const testShader = myp5.baseMaterialShader().modify(() => {
+          // using implicit shared name with two underscores, which should be remapped
+          let __processedNormal = myp5.sharedVec3();
+          myp5.getPixelInputs(inputs => {
+            __processedNormal = myp5.normalize(inputs.normal);
+            return inputs;
+          });
+          myp5.getFinalColor(() => {
+            return [myp5.abs(__processedNormal), 1];
+          });
+        }, { myp5 });
+
+        myp5.background(255, 0, 0);
+        myp5.noStroke();
+        myp5.shader(testShader);
+        myp5.plane(myp5.width, myp5.height);
+
+        const centerColor = myp5.get(25, 25);
+        assert.approximately(centerColor[0], 0, 5);
+        assert.approximately(centerColor[1], 0, 5);
+        assert.approximately(centerColor[2], 255, 5);
+      });
+
+      test('handles explicit shared names containing two underscores', () => {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+        myp5.pixelDensity(1);
+
+        const testShader = myp5.baseMaterialShader().modify(() => {
+          // using explicit shared name with two underscores, which should be remapped
+          let processedNormal = myp5.sharedVec3('__processedNormal');
+          myp5.getPixelInputs(inputs => {
+            processedNormal = myp5.normalize(inputs.normal);
+            return inputs;
+          });
+          myp5.getFinalColor(() => {
+            return [myp5.abs(processedNormal), 1];
+          });
+        }, { myp5 });
+
+        myp5.background(255, 0, 0);
+        myp5.noStroke();
+        myp5.shader(testShader);
+        myp5.plane(myp5.width, myp5.height);
+
+        const centerColor = myp5.get(25, 25);
+        assert.approximately(centerColor[0], 0, 5);
+        assert.approximately(centerColor[1], 0, 5);
+        assert.approximately(centerColor[2], 255, 5);
       });
 
       test('handle passing a value from a vertex hook to a fragment hook using shared*', () => {

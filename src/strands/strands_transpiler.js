@@ -3,6 +3,11 @@ import { ancestor, recursive } from 'acorn-walk';
 import escodegen from 'escodegen';
 import { UnarySymbolToName } from './ir_types';
 import * as FES from './strands_FES';
+import {
+  createStrandsShaderNameMap,
+  createStrandsShaderNameState,
+  getOrCreateInternalShaderName
+} from './strands_names';
 let blockVarCounter = 0;
 let loopVarCounter = 0;
 function replaceBinaryOperator(codeSource) {
@@ -512,10 +517,15 @@ const ASTCallbacks = {
       if (node.init.arguments.length === 0 ||
           node.init.arguments[0].type !== 'Literal' ||
           typeof node.init.arguments[0].value !== 'string') {
+        const uniformName = getOrCreateInternalShaderName(
+          state.shaderNameMap,
+          state.shaderNameState,
+          node.id.name
+        );
         const uniformNameLiteral = {
           type: 'Literal',
-          value: node.id.name
-        }
+          value: uniformName
+        };
         node.init.arguments.unshift(uniformNameLiteral);
       }
     }
@@ -526,10 +536,15 @@ const ASTCallbacks = {
         node.init.arguments[0].type !== 'Literal' ||
         typeof node.init.arguments[0].value !== 'string'
       ) {
+        const varyingName = getOrCreateInternalShaderName(
+          state.shaderNameMap,
+          state.shaderNameState,
+          node.id.name
+        );
         const varyingNameLiteral = {
           type: 'Literal',
-          value: node.id.name
-        }
+          value: varyingName
+        };
         node.init.arguments.unshift(varyingNameLiteral);
         state.varyings[node.id.name] = varyingNameLiteral;
       } else {
@@ -1663,7 +1678,7 @@ function transformHelperFunctionEarlyReturns(ast, names) {
 /**
  * @private
  * @internal
- * 
+ *
  * Transpiles a p5.strands callback into executable JavaScript by applying
  * a multi-pass AST transformation pipeline.
  *
@@ -1706,11 +1721,27 @@ function makeGuardedCallbacks(callbacks) {
   return guarded;
 }
 
-function runNonControlFlowPass(ast, uniformCallbackNames) {
-  const nonControlFlowCallbacks = ({ ...ASTCallbacks });
+function runNonControlFlowPass(
+  ast,
+  uniformCallbackNames,
+  initialShaderNameState
+) {
+  const nonControlFlowCallbacks = { ...ASTCallbacks };
   delete nonControlFlowCallbacks.IfStatement;
   delete nonControlFlowCallbacks.ForStatement;
-  ancestor(ast, nonControlFlowCallbacks, undefined, { varyings: {}, uniformCallbackNames });
+  const state = {
+    varyings: {},
+    uniformCallbackNames,
+    shaderNameMap: createStrandsShaderNameMap(),
+    shaderNameState: createStrandsShaderNameState(
+      initialShaderNameState?.nextSuffix || 0
+    )
+  };
+  ancestor(ast, nonControlFlowCallbacks, undefined, state);
+  return {
+    shaderNameMap: state.shaderNameMap,
+    shaderNameState: state.shaderNameState
+  };
 }
 
 function runControlFlowPass(ast, uniformCallbackNames) {
@@ -1798,11 +1829,20 @@ function buildStrandsCallback(p5, ast, scope) {
 
 
 
-export function transpileStrandsToJS(p5, sourceString, srcLocations, scope) {
+export function transpileStrandsToJS(
+  p5,
+  sourceString,
+  srcLocations,
+  scope,
+  initialShaderNameState
+) {
   blockVarCounter = 0;
   loopVarCounter = 0;
 
-  const ast = parse(sourceString, { ecmaVersion: 2021, locations: srcLocations });
+  const ast = parse(sourceString, {
+    ecmaVersion: 2021,
+    locations: srcLocations
+  });
 
   throwIfLoopProtectionInserted(ast);
 
@@ -1813,7 +1853,11 @@ export function transpileStrandsToJS(p5, sourceString, srcLocations, scope) {
   transformSetCallsInControlFlow(ast, uniformCallbackNames);
 
   // Pass 2: transform non-control-flow nodes (operators, varyings, uniforms, arrays)
-  runNonControlFlowPass(ast, uniformCallbackNames);
+  const { shaderNameMap, shaderNameState } = runNonControlFlowPass(
+    ast,
+    uniformCallbackNames,
+    initialShaderNameState
+  );
 
   // Pass 3: transform helper functions with early returns to use __returnValue pattern
   transformHelperFunctionEarlyReturns(ast, uniformCallbackNames);
@@ -1821,5 +1865,10 @@ export function transpileStrandsToJS(p5, sourceString, srcLocations, scope) {
   // Pass 4: transform if/for statements post-order into strandsIf/strandsFor calls
   runControlFlowPass(ast, uniformCallbackNames);
 
-  return buildStrandsCallback(p5, ast, scope);
+  const callback = buildStrandsCallback(p5, ast, scope);
+  return {
+    callback,
+    shaderNameMap,
+    shaderNameState
+  };
 }
