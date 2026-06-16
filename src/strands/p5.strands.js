@@ -453,7 +453,7 @@ if (typeof p5 !== "undefined") {
  * This can be paired with <a href="#/p5/buildComputeShader">`buildComputeShader`</a>
  * to update the data being read.
  *
- * @type {StrandsNode}
+ * @type {*}
  */
 
 /**
@@ -466,7 +466,7 @@ if (typeof p5 !== "undefined") {
  *
  * `instanceID()` can only be used inside a p5.strands shader callback.
  *
- * @returns {StrandsNode} The index of the current instance.
+ * @returns {*} The index of the current instance.
  */
 
 /**
