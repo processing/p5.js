@@ -3656,7 +3656,11 @@ function vector(p5, fn) {
   p5.Vector = Vector;
 
   Vector.prototype._friendlyError = p5._friendlyError;
+  Vector._friendlyError = p5._friendlyError;
   Vector.prototype.friendlyErrorsDisabled = function() {
+    return p5.disableFriendlyErrors;
+  };
+  Vector.friendlyErrorsDisabled = function() {
     return p5.disableFriendlyErrors;
   };
 
