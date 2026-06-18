@@ -2037,4 +2037,12 @@ p5.Image = class {
     }
   }
 };
+
+p5.Image.prototype.freeTexture = function () {
+  if (this._getTexture) {
+    const tex = this._getTexture();
+    if (tex && tex.free) tex.free();
+  }
+};
+
 export default p5.Image;
