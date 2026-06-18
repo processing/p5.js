@@ -125,8 +125,18 @@ function loadingDisplaying(p5, fn){
 
       } else {
         // Non-GIF Section
-        const blob = new Blob([data]);
-        const img = await createImageBitmap(blob);
+        const img = await new Promise((resolve, reject) => {
+          const img = new Image();
+          img.onload = () => resolve(img);
+          img.onerror = e => reject(e);
+
+          // Set crossOrigin to prevent a tainted canvas if image is served with CORS headers
+          // See https://developer.mozilla.org/en-US/docs/HTML/CORS_Enabled_Image
+          // Skip this step if it's just a local data URL image
+          if (!path.startsWith('data:image/')) img.crossOrigin = 'Anonymous';
+
+          img.src = path;
+        });
 
         pImg.width = pImg.canvas.width = img.width;
         pImg.height = pImg.canvas.height = img.height;
