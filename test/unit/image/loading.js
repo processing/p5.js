@@ -245,6 +245,14 @@ suite('loading images', function() {
 
     const img = await mockP5Prototype.loadImage(svgImage);
     assert.isTrue(img instanceof mockP5.Image);
+
+    // ensure the sample svg is fully parsed and drawn correctly
+    assert.equal(img.width, 48);
+    assert.equal(img.height, 48);
+
+    const GREEN = [0, 255, 0, 255];
+    assert.deepEqual(img.get(0, 0), GREEN);
+    assert.deepEqual(img.get(47, 47), GREEN);
   });
 });
 
