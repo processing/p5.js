@@ -1807,6 +1807,7 @@ p5.Image = class {
         props.lastChangeTime = 0;
         props.displayIndex = index;
         this.drawingContext.putImageData(props.frames[index].image, 0, 0);
+        this.setModified(true);
       } else {
         console.log(
           'Cannot set GIF to a frame number that is higher than total number of frames or below zero.'
