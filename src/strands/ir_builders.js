@@ -572,7 +572,11 @@ export function swizzleTrap(id, dimension, strandsContext, onRebind) {
             scalars.push(createStrandsNode(id, dimension, strandsContext));
           }
         } else {
-          FES.userError('type error', `Swizzle assignment: RHS vector does not match LHS vector (need ${chars.length}, got ${value.dimension}).`);
+          FES.dimensionMismatchError(
+            chars.length,
+            value.dimension,
+            `${target._originalIdentifier || 'value'}.${property}`
+          );
         }
       } else if (Array.isArray(value)) {
         const flat = value.flat(Infinity);
