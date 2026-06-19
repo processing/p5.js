@@ -1,15 +1,24 @@
 import p5 from '../../../src/app.js';
-import { vi } from 'vitest';
+import { beforeEach, vi } from 'vitest';
 
 const mockUserError = vi.fn();
-vi.mock('../../../src/strands/strands_FES', () => ({
-  userError: (...args) => {
+vi.mock('../../../src/strands/strands_FES', () => {
+  const userError = (...args) => {
     mockUserError(...args);
     const prefixedMessage = `[p5.strands ${args[0]}]: ${args[1]}`;
     throw new Error(prefixedMessage);
-  },
-  internalError: (msg) => { throw new Error(`[p5.strands internal error]: ${msg}`); }
-}));
+  };
+  return {
+    userError,
+    internalError: (msg) => { throw new Error(`[p5.strands internal error]: ${msg}`); },
+    dimensionMismatchError: (declaredDim, actualDim, varName) => {
+      userError(
+        'dimension mismatch',
+        `Cannot assign a value of dimension ${actualDim} to \`${varName}\`, which expects dimension ${declaredDim}.`
+      );
+    },
+  };
+});
 
 suite('p5.Shader', function() {
   var myp5;
@@ -516,8 +525,8 @@ test('returns numbers for builtin globals outside hooks and a strandNode when ca
   myp5.createCanvas(5, 5, myp5.WEBGL);
   myp5.baseMaterialShader().modify(() => {
     myp5.getPixelInputs(inputs => {
-      const mxInHook = window.mouseX;
-      const wInHook = window.width;
+      const mxInHook = myp5.mouseX;
+      const wInHook = myp5.width;
       assert.isTrue(mxInHook.isStrandsNode);
       assert.isTrue(wInHook.isStrandsNode);
       inputs.color = [1, 0, 0, 1];
@@ -525,13 +534,12 @@ test('returns numbers for builtin globals outside hooks and a strandNode when ca
     });
   }, { myp5 });
 
-  const mx = window.mouseX;
-  const w = window.width;
+  const mx = myp5.mouseX;
+  const w = myp5.width;
   assert.isNumber(mx);
   assert.isNumber(w);
   assert.strictEqual(w, myp5.width);
 });
-
 
     test('map() works inside a strands modify callback', () => {
       myp5.createCanvas(50, 50, myp5.WEBGL);
@@ -653,6 +661,110 @@ test('returns numbers for builtin globals outside hooks and a strandNode when ca
       assert.approximately(left[0], 51, 10);
       assert.approximately(middle[0], 128, 10);
       assert.approximately(right[0], 204, 10);
+    });
+    test('color() with hex string returns correct vec4 in strands', () => {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+      const testShader = myp5.baseMaterialShader().modify(() => {
+        myp5.getPixelInputs(inputs => {
+          const c = myp5.color('#ff0000');
+          inputs.color = [c.x, c.y, c.z, 1.0];
+          return inputs;
+        });
+      }, { myp5 });
+
+      myp5.noStroke();
+      myp5.shader(testShader);
+      myp5.plane(myp5.width, myp5.height);
+
+      const pixelColor = myp5.get(25, 25);
+      assert.approximately(pixelColor[0], 255, 5);
+      assert.approximately(pixelColor[1], 0, 5);
+      assert.approximately(pixelColor[2], 0, 5);
+    });
+
+    test('color() with CSS named color returns correct vec4 in strands', () => {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+      const testShader = myp5.baseMaterialShader().modify(() => {
+        myp5.getPixelInputs(inputs => {
+          const c = myp5.color('blue');
+          inputs.color = [c.x, c.y, c.z, 1.0];
+          return inputs;
+        });
+      }, { myp5 });
+
+      myp5.noStroke();
+      myp5.shader(testShader);
+      myp5.plane(myp5.width, myp5.height);
+
+      const pixelColor = myp5.get(25, 25);
+      assert.approximately(pixelColor[0], 0, 5);
+      assert.approximately(pixelColor[1], 0, 5);
+      assert.approximately(pixelColor[2], 255, 5);
+    });
+
+    test('lerpColor() interpolates between two colors in strands', () => {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+      const testShader = myp5.baseMaterialShader().modify(() => {
+        myp5.getPixelInputs(inputs => {
+          const c1 = myp5.color('#ff0000');
+          const c2 = myp5.color('#0000ff');
+          const mixed = myp5.lerpColor(c1, c2, 0.5);
+          inputs.color = [mixed.x, mixed.y, mixed.z, 1.0];
+          return inputs;
+        });
+      }, { myp5 });
+
+      myp5.noStroke();
+      myp5.shader(testShader);
+      myp5.plane(myp5.width, myp5.height);
+
+      const pixelColor = myp5.get(25, 25);
+      assert.approximately(pixelColor[0], 128, 10);
+      assert.approximately(pixelColor[1], 0, 5);
+      assert.approximately(pixelColor[2], 128, 10);
+    });
+
+    test('red(), green(), blue(), alpha() extract correct channels in strands', () => {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+      const testShader = myp5.baseMaterialShader().modify(() => {
+        myp5.getPixelInputs(inputs => {
+          const c = myp5.color('#ff8000');
+          const r = myp5.red(c);
+          const g = myp5.green(c);
+          const b = myp5.blue(c);
+          inputs.color = [r, g, b, 1.0];
+          return inputs;
+        });
+      }, { myp5 });
+
+      myp5.noStroke();
+      myp5.shader(testShader);
+      myp5.plane(myp5.width, myp5.height);
+
+      const pixelColor = myp5.get(25, 25);
+      assert.approximately(pixelColor[0], 255, 5);
+      assert.approximately(pixelColor[1], 128, 10);
+      assert.approximately(pixelColor[2], 0, 5);
+    });
+
+    test('hue() returns normalized hue value in strands', () => {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+      const testShader = myp5.baseMaterialShader().modify(() => {
+        myp5.getPixelInputs(inputs => {
+          // Pure red has hue 0
+          const c = myp5.color('#ff0000');
+          const h = myp5.hue(c);
+          inputs.color = [h, h, h, 1.0];
+          return inputs;
+        });
+      }, { myp5 });
+
+      myp5.noStroke();
+      myp5.shader(testShader);
+      myp5.plane(myp5.width, myp5.height);
+
+      const pixelColor = myp5.get(25, 25);
+      assert.approximately(pixelColor[0], 0, 5);
     });
 
     test('handle custom uniform names with automatic values', () => {
@@ -2631,6 +2743,62 @@ test('returns numbers for builtin globals outside hooks and a strandNode when ca
       assert.approximately(pixelColor[1], 0, 5);
       assert.approximately(pixelColor[2], 0, 5);
     });
+
+    test('allows scalar broadcast when assigning a scalar to a sharedVec3 (bridge)', async () => {
+  await myp5.createCanvas(5, 5, myp5.WEBGL);
+
+  expect(() => {
+    myp5.baseMaterialShader().modify(() => {
+      let worldPosX = myp5.sharedVec3();
+      myp5.getWorldInputs(inputs => {
+        worldPosX = inputs.position.x;   // scalar → vec3, valid broadcast
+        return inputs;
+      });
+    },{myp5});
+  }).not.toThrow();
+});
+
+test('reports a friendly error when assigning a vec2 to a sharedVec3 (bridge)', async () => {
+  await myp5.createCanvas(5, 5, myp5.WEBGL);
+
+  expect(() => {
+    myp5.baseMaterialShader().modify(() => {
+      let myVec = myp5.sharedVec3();
+      myp5.getWorldInputs(inputs => {
+        myVec = inputs.position.xy;   // vec2 → vec3 mismatch
+        return inputs;
+      });
+    },{myp5});
+  }).toThrow(/dimension mismatch/);
+});
+
+test('reports a friendly error on dimension mismatch via swizzle write (bridgeSwizzle)', async () => {
+  await myp5.createCanvas(5, 5, myp5.WEBGL);
+
+  expect(() => {
+    myp5.baseMaterialShader().modify(() => {
+      let myVec = myp5.sharedVec3();
+      myp5.getWorldInputs(inputs => {
+        myVec.xy = inputs.position;      // vec3 → 2-component swizzle mismatch
+        return inputs;
+      });
+    },{myp5});
+  }).toThrow(/dimension mismatch/);
+});
+
+test('does not error when shared variable assignment dimensions match', async () => {
+  await myp5.createCanvas(5, 5, myp5.WEBGL);
+
+  expect(() => {
+    myp5.baseMaterialShader().modify(() => {
+      let myVec = myp5.sharedVec3();
+      myp5.getWorldInputs(inputs => {
+        myVec = inputs.position;         // vec3 → vec3, OK
+        return inputs;
+      });
+    },{myp5});
+  }).not.toThrow();
+});
   });
 
   suite('p5.strands error messages', () => {
@@ -2648,7 +2816,7 @@ test('returns numbers for builtin globals outside hooks and a strandNode when ca
       assert.include(err.message, '// noprotect');
     };
 
-    afterEach(() => {
+    beforeEach(() => {
       mockUserError.mockClear();
     });
 

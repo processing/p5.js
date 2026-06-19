@@ -1361,6 +1361,62 @@ suite('WebGPU p5.Shader', function() {
           myp5.compute(s4, 4);
         }).not.toThrow();
       });
+
+      test('allows scalar broadcast when assigning a scalar to a sharedVec3 (bridge)', async () => {
+        await myp5.createCanvas(5, 5, myp5.WEBGPU);
+
+        expect(() => {
+          myp5.baseMaterialShader().modify(() => {
+            let worldPosX = myp5.sharedVec3();
+            myp5.getWorldInputs(inputs => {
+              worldPosX = inputs.position.x;   // scalar → vec3, valid broadcast
+              return inputs;
+            });
+          }, { myp5 });
+        }).not.toThrow();
+      });
+
+      test('reports a friendly error when assigning a vec2 to a sharedVec3 (bridge)', async () => {
+        await myp5.createCanvas(5, 5, myp5.WEBGPU);
+
+        expect(() => {
+          myp5.baseMaterialShader().modify(() => {
+            let myVec = myp5.sharedVec3();
+            myp5.getWorldInputs(inputs => {
+              myVec = inputs.position.xy;   // vec2 → vec3 mismatch
+              return inputs;
+            });
+          }, { myp5 });
+        }).toThrow(/dimension mismatch/);
+      });
+
+      test('reports a friendly error on dimension mismatch via swizzle write (bridgeSwizzle)', async () => {
+        await myp5.createCanvas(5, 5, myp5.WEBGPU);
+
+        expect(() => {
+          myp5.baseMaterialShader().modify(() => {
+            let myVec = myp5.sharedVec3();
+            myp5.getWorldInputs(inputs => {
+              myVec.xy = inputs.position;      // vec3 → 2-component swizzle mismatch
+              return inputs;
+            });
+          },{myp5});
+        }).toThrow(/dimension mismatch/);
+      });
+
+      test('does not error when shared variable assignment dimensions match', async () => {
+        await myp5.createCanvas(5, 5, myp5.WEBGPU);
+
+        expect(() => {
+          myp5.baseMaterialShader().modify(() => {
+            let myVec = myp5.sharedVec3();
+            myp5.getWorldInputs(inputs => {
+              myVec = inputs.position;         // vec3 → vec3, OK
+              return inputs;
+            });
+          },{myp5});
+        }).not.toThrow();
+      });
     });
   });
 });
