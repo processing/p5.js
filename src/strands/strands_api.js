@@ -22,6 +22,11 @@ import * as DAG from './ir_dag';
 import * as FES from './strands_FES'
 import { getNodeDataFromID } from './ir_dag'
 import { StrandsNode, createStrandsNode } from './strands_node'
+import {
+  getOrCreateInternalShaderName,
+  isReservedStrandsName,
+  STRANDS_INTERNAL_NAME_PREFIX
+} from './strands_names';
 
 const BUILTIN_GLOBAL_SPECS = {
   width: { typeInfo: DataType.float1, get: (p) => p.width },
@@ -210,6 +215,53 @@ function augmentFnTemporary(fn, strandsContext, name, value) {
       : undefined;
     GraphicsProto[name] = value;
   }
+}
+
+/**
+ * Validates a shader variable name to ensure it does not use reserved prefixes.
+ *
+ * @private
+ * @param {Object} strandsContext The strands context object to use for name map lookup.
+ * @param {string} name The shader variable name to validate.
+ * @param {string} apiName The name of the API function calling this validation. Used for FES error message generation.
+ * @return {void} Throws an error if the name is invalid, otherwise returns silently
+ */
+function validateShaderName(strandsContext, name, apiName) {
+  if (typeof name !== 'string') return;
+  if (strandsContext.shaderNameMap?.internalToExternal?.[name]) return;
+  if (isReservedStrandsName(name)) {
+    FES.userError(
+      'parameter validation error',
+      `${apiName}("${name}") uses the reserved internal p5.strands prefix "${STRANDS_INTERNAL_NAME_PREFIX}". ` +
+      'or the reserved "gl_" prefix. Please choose a different explicit shader name.'
+    );
+  }
+}
+
+/**
+ * Resolves a shader variable name to its internal representation with validation.
+ *
+ * If the internal name does not exist yet, it will be created and stored
+ * in the shaderNameMap for future reference.
+ *
+ * @private
+ * @param {Object} strandsContext The strands context object to use for name map lookup.
+ * @param {string} name The shader variable name to resolve.
+ * @param {string} apiName The name of the API function calling this resolution. Used for FES error message generation.
+ * @return {string} The internal shader variable name.
+ */
+function resolveShaderName(strandsContext, name, apiName) {
+  if (typeof name !== 'string') return name;
+  if (strandsContext.shaderNameMap?.internalToExternal?.[name]) {
+    return name;
+  }
+
+  validateShaderName(strandsContext, name, apiName);
+  return getOrCreateInternalShaderName(
+    strandsContext.shaderNameMap,
+    strandsContext.shaderNameState,
+    name
+  );
 }
 
 //////////////////////////////////////////////
@@ -534,9 +586,6 @@ const _rgb2hsl = (instance, colorNode) => {
   const originalRandomSeed = fn.randomSeed;
   const originalMillis = fn.millis;
 
-  strandsContext._noiseOctaves = null;
-  strandsContext._noiseAmpFalloff = null;
-
   augmentFn(fn, p5, 'noiseDetail', function (lod, falloff = 0.5) {
     if (!strandsContext.active) {
       return originalNoiseDetail.apply(this, arguments);
@@ -595,8 +644,6 @@ const _rgb2hsl = (instance, colorNode) => {
     });
     return createStrandsNode(id, dimension, strandsContext);
   });
-
-  strandsContext._randomSeed = null;
 
   augmentFn(fn, p5, 'randomSeed', function (seed) {
     if (!strandsContext.active) {
@@ -731,24 +778,41 @@ const _rgb2hsl = (instance, colorNode) => {
       }
     }
     augmentFn(fn, p5, `uniform${pascalTypeName}`, function(name, defaultValue) {
-      const { id, dimension } = build.variableNode(strandsContext, typeInfo, name);
-      strandsContext.uniforms.push({ name, typeInfo, defaultValue });
+      const shaderName = resolveShaderName(
+        strandsContext,
+        name,
+        `uniform${pascalTypeName}`
+      );
+      const { id, dimension } = build.variableNode(
+        strandsContext,
+        typeInfo,
+        shaderName
+      );
+      strandsContext.uniforms.push({
+        name: shaderName,
+        typeInfo,
+        defaultValue
+      });
       return createStrandsNode(id, dimension, strandsContext);
     });
     // Shared variables with smart context detection
     augmentFn(fn, p5, `shared${pascalTypeName}`, function(name) {
-      const { id, dimension } = build.variableNode(strandsContext, typeInfo, name);
-
-      // Initialize shared variables tracking if not present
-      if (!strandsContext.sharedVariables) {
-        strandsContext.sharedVariables = new Map();
-      }
+      const shaderName = resolveShaderName(
+        strandsContext,
+        name,
+        `shared${pascalTypeName}`
+      );
+      const { id, dimension } = build.variableNode(
+        strandsContext,
+        typeInfo,
+        shaderName
+      );
 
       // Track this shared variable for smart declaration generation
-      strandsContext.sharedVariables.set(name, {
+      strandsContext.sharedVariables.set(shaderName, {
         typeInfo,
         usedInVertex: false,
-        usedInFragment: false,
+        usedInFragment: false
       });
 
       return createStrandsNode(id, dimension, strandsContext);
@@ -802,6 +866,7 @@ const _rgb2hsl = (instance, colorNode) => {
 
   // Storage buffer uniform function for compute shaders
   fn.uniformStorage = function(name, bufferOrSchema) {
+    const shaderName = resolveShaderName(strandsContext, name, 'uniformStorage');
     let schema = null;
     let defaultValue = null;
 
@@ -829,18 +894,18 @@ const _rgb2hsl = (instance, colorNode) => {
     const { id, dimension } = build.variableNode(
       strandsContext,
       { baseType: 'storage', dimension: 1 },
-      name
+      shaderName
     );
     strandsContext.uniforms.push({
-      name,
+      name: shaderName,
       typeInfo: { baseType: 'storage', dimension: 1, schema },
-      defaultValue,
+      defaultValue
     });
 
     // Create StrandsNode with _originalIdentifier set (like varying variables)
     // This enables proper assignment node creation and ordering preservation
     const node = createStrandsNode(id, dimension, strandsContext);
-    node._originalIdentifier = name;
+    node._originalIdentifier = shaderName;
     node._originalBaseType = 'storage';
     node._originalDimension = 1;
     node._schema = schema;
@@ -966,17 +1031,26 @@ function enforceReturnTypeMatch(strandsContext, expectedType, returned, hookName
   return returnedNodeID;
 }
 export function createShaderHooksFunctions(strandsContext, fn, shader) {
-  installBuiltinGlobalAccessors(strandsContext)
+  installBuiltinGlobalAccessors(strandsContext);
+  // shader.hooks.vertex/fragment/compute mix callable hook entries with stage
+  // metadata such as `declarations` carried over from earlier modify() calls.
+  const isHookEntry = ([name]) => name !== 'declarations';
 
   // Add shader context to hooks before spreading
   const vertexHooksWithContext = Object.fromEntries(
-    Object.entries(shader.hooks.vertex).map(([name, hook]) => [name, { ...hook, shaderContext: 'vertex' }])
+    Object.entries(shader.hooks.vertex)
+      .filter(isHookEntry)
+      .map(([name, hook]) => [name, { ...hook, shaderContext: 'vertex' }])
   );
   const fragmentHooksWithContext = Object.fromEntries(
-    Object.entries(shader.hooks.fragment).map(([name, hook]) => [name, { ...hook, shaderContext: 'fragment' }])
+    Object.entries(shader.hooks.fragment)
+      .filter(isHookEntry)
+      .map(([name, hook]) => [name, { ...hook, shaderContext: 'fragment' }])
   );
   const computeHooksWithContext = Object.fromEntries(
-    Object.entries(shader.hooks.compute).map(([name, hook]) => [name, { ...hook, shaderContext: 'compute' }])
+    Object.entries(shader.hooks.compute)
+      .filter(isHookEntry)
+      .map(([name, hook]) => [name, { ...hook, shaderContext: 'compute' }])
   );
 
   const availableHooks = {

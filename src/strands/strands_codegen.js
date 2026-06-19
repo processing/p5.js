@@ -15,6 +15,8 @@ export function generateShaderCode(strandsContext) {
     uniforms: {},
     storageUniforms: {},
     varyingVariables: [],
+    shaderNameMap: strandsContext.shaderNameMap,
+    shaderNameState: strandsContext.shaderNameState
   };
 
   for (const {name, typeInfo, defaultValue} of strandsContext.uniforms) {
