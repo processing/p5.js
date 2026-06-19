@@ -3683,6 +3683,14 @@ function vector(p5, fn) {
    * @property z
    * @name z
    */
+
+  /**
+   * The dimensions of the vector
+   * @type {Number}
+   * @for p5.Vector
+   * @property dimensions
+   * @name dimensions
+   */
 }
 
 export default vector;
