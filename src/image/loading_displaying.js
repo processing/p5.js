@@ -127,15 +127,16 @@ function loadingDisplaying(p5, fn){
         // Non-GIF Section
         const img = await new Promise((resolve, reject) => {
           const img = new Image();
-          img.onload = () => resolve(img);
+          const blob = new Blob([data], { type: contentType });
+          const url = URL.createObjectURL(blob);
+
           img.onerror = e => reject(e);
+          img.onload = () => {
+            URL.revokeObjectURL(url);
+            resolve(img);
+          };
 
-          // Set crossOrigin to prevent a tainted canvas if image is served with CORS headers
-          // See https://developer.mozilla.org/en-US/docs/HTML/CORS_Enabled_Image
-          // Skip this step if it's just a local data URL image
-          if (!path.startsWith('data:image/')) img.crossOrigin = 'Anonymous';
-
-          img.src = path;
+          img.src = url;
         });
 
         pImg.width = pImg.canvas.width = img.width;
