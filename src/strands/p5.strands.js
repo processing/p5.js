@@ -459,8 +459,11 @@ if (typeof p5 !== "undefined") {
 /**
  * @method instanceID
  * @beta
+ * @deprecated Use <a href="#/p5/instanceIndex">`instanceIndex`</a> instead.
  * @description
  * A function alias for <a href="#/p5/instanceIndex">`instanceIndex`</a>, kept for compatibility.
+ * Prefer using <a href="#/p5/instanceIndex">`instanceIndex`</a> directly as a value instead.
+ *
  * Returns the index of the current instance when drawing multiple copies of a
  * shape with <a href="#/p5/model">`model(count)`</a>.
  *
