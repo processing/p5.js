@@ -1609,7 +1609,7 @@ class Camera {
     // and multiply it to mat1 from the right.
     // This matrix represents the difference between the two.
     // 'deltaRot' means 'difference of rotation matrices'.
-    const deltaRot = rotMat1.mult(rotMat0.copy().transpose()); // mat1 is 3x3
+    const deltaRot = rotMat0.copy().transpose().mult(rotMat1); // mat1 is 3x3
 
     // Calculate the trace and from it the cos value of the angle.
     // An orthogonal matrix is just an orthonormal basis. If this is not the identity

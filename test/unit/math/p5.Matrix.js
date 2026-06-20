@@ -329,19 +329,19 @@ suite('p5.Matrix', function () {
       const multMatrix = new p5.Matrix([1, 1, 1, 0, 1, 1, 1, 0, 1]);
       // When taking a matrix as an argument
       m.mult(multMatrix);
-      expect(toArray(m.mat3)).toEqual([ 4, 3, 6, 10, 9, 15, 16, 15, 24 ]);
+      expect(toArray(m.mat3)).toEqual([ 12, 15, 18, 11, 13, 15, 8, 10, 12 ]);
     });
 
     test('mult a 3x3 matrix with array as argument', function () {
       const m = new p5.Matrix([1, 2, 3, 4, 5, 6, 7, 8, 9]);
       m.mult([1, 1, 1, 0, 1, 1, 1, 0, 1]);
-      expect(toArray(m.mat3)).toEqual([ 4, 3, 6, 10, 9, 15, 16, 15, 24 ]);
+      expect(toArray(m.mat3)).toEqual([ 12, 15, 18, 11, 13, 15, 8, 10, 12 ]);
     });
 
     test('mult a 3x3 matrix with arguments non array', function () {
       const m = new p5.Matrix([1, 2, 3, 4, 5, 6, 7, 8, 9]);
       m.mult(1, 1, 1, 0, 1, 1, 1, 0, 1);
-      expect(toArray(m.mat3)).toEqual([ 4, 3, 6, 10, 9, 15, 16, 15, 24 ]);
+      expect(toArray(m.mat3)).toEqual([ 12, 15, 18, 11, 13, 15, 8, 10, 12 ]);
     });
 
     test('column() and row()', function () {
