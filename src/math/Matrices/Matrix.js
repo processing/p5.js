@@ -521,7 +521,7 @@ export class Matrix extends MatrixInterface {
    * const matrix1 = new p5.Matrix([1, 2, 3, 4, 5, 6, 7, 8, 9]);
    * const matrix2 = new p5.Matrix([9, 8, 7, 6, 5, 4, 3, 2, 1]);
    * matrix1.mult(matrix2);
-   * console.log(matrix1.matrix); // Output: [30, 24, 18, 84, 69, 54, 138, 114, 90]
+   * console.log(matrix1.matrix); // Output: [90, 114, 138, 54, 69, 84, 18, 24, 30]
    *
    * // Multiplying a 4x4 matrix with another 4x4 matrix
    * const matrix4x4_1 = new p5.Matrix(4); // Identity matrix
@@ -536,7 +536,7 @@ export class Matrix extends MatrixInterface {
    *   const matrix2 = new p5.Matrix([9, 8, 7, 6, 5, 4, 3, 2, 1]);
    *   console.log("Before multiplication:", matrix1.matrix);
    *   matrix1.mult(matrix2);
-   *   console.log("After multiplication:", matrix1.matrix); // Output: [30, 24, 18, 84, 69, 54, 138, 114, 90]
+ * console.log("After multiplication:", matrix1.matrix); // Output: [90, 114, 138, 54, 69, 84, 18, 24, 30]
    * }
    */
   mult(multMatrix) {
@@ -1718,8 +1718,8 @@ export class Matrix extends MatrixInterface {
       for (let j = 0; j < this.#sqDimention; j++) {
         for (let k = 0; k < this.#sqDimention; k++) {
           result[i * this.#sqDimention + j] +=
-            this.matrix[i * this.#sqDimention + k] *
-            multMatrix[k * this.#sqDimention + j];
+            multMatrix[i * this.#sqDimention + k] *
+            this.matrix[k * this.#sqDimention + j];
         }
       }
     }
@@ -1730,7 +1730,7 @@ export class Matrix extends MatrixInterface {
   /**
    * This function is only for 3x3 matrices.
    * multiply two mat3s. It is an operation to multiply the 3x3 matrix of
-   * the argument from the right. Arguments can be a 3x3 p5.Matrix,
+   * the argument from the left. Arguments can be a 3x3 p5.Matrix,
    * a Float32Array of length 9, or a javascript array of length 9.
    * In addition, it can also be done by enumerating 9 numbers.
    *
@@ -1740,27 +1740,19 @@ export class Matrix extends MatrixInterface {
    * @chainable
    */
   #mult3x3(_src) {
-    // each row is used for the multiplier
-    let b0 = this.mat3[0];
-    let b1 = this.mat3[1];
-    let b2 = this.mat3[2];
-    this.mat3[0] = b0 * _src[0] + b1 * _src[3] + b2 * _src[6];
-    this.mat3[1] = b0 * _src[1] + b1 * _src[4] + b2 * _src[7];
-    this.mat3[2] = b0 * _src[2] + b1 * _src[5] + b2 * _src[8];
+    const a0 = this.mat3[0], a1 = this.mat3[1], a2 = this.mat3[2];
+    const a3 = this.mat3[3], a4 = this.mat3[4], a5 = this.mat3[5];
+    const a6 = this.mat3[6], a7 = this.mat3[7], a8 = this.mat3[8];
 
-    b0 = this.mat3[3];
-    b1 = this.mat3[4];
-    b2 = this.mat3[5];
-    this.mat3[3] = b0 * _src[0] + b1 * _src[3] + b2 * _src[6];
-    this.mat3[4] = b0 * _src[1] + b1 * _src[4] + b2 * _src[7];
-    this.mat3[5] = b0 * _src[2] + b1 * _src[5] + b2 * _src[8];
-
-    b0 = this.mat3[6];
-    b1 = this.mat3[7];
-    b2 = this.mat3[8];
-    this.mat3[6] = b0 * _src[0] + b1 * _src[3] + b2 * _src[6];
-    this.mat3[7] = b0 * _src[1] + b1 * _src[4] + b2 * _src[7];
-    this.mat3[8] = b0 * _src[2] + b1 * _src[5] + b2 * _src[8];
+    this.mat3[0] = _src[0] * a0 + _src[1] * a3 + _src[2] * a6;
+    this.mat3[1] = _src[0] * a1 + _src[1] * a4 + _src[2] * a7;
+    this.mat3[2] = _src[0] * a2 + _src[1] * a5 + _src[2] * a8;
+    this.mat3[3] = _src[3] * a0 + _src[4] * a3 + _src[5] * a6;
+    this.mat3[4] = _src[3] * a1 + _src[4] * a4 + _src[5] * a7;
+    this.mat3[5] = _src[3] * a2 + _src[4] * a5 + _src[5] * a8;
+    this.mat3[6] = _src[6] * a0 + _src[7] * a3 + _src[8] * a6;
+    this.mat3[7] = _src[6] * a1 + _src[7] * a4 + _src[8] * a7;
+    this.mat3[8] = _src[6] * a2 + _src[7] * a5 + _src[8] * a8;
 
     return this;
   }
