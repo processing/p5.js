@@ -120,7 +120,7 @@ visualSuite("WebGPU", function () {
       const model = p5.buildGeometry(() => p5.sphere(5));
       const shader = p5.baseMaterialShader().modify(() => {
         p5.getWorldInputs((inputs) => {
-          inputs.position += (p5.instanceID() - 1) * 15
+          inputs.position += (p5.instanceIndex - 1) * 15
           return inputs;
         });
       }, { p5 });
@@ -144,7 +144,7 @@ visualSuite("WebGPU", function () {
         }
 
         function semiSphere() {
-          let id = p5.instanceID();
+          let id = p5.instanceIndex;
           let theta = rand2([id, 0.1234])  * p5.TWO_PI + time / 100000;
           let phi = rand2([id, 3.321]) * p5.PI + time / 50000;
 
@@ -162,7 +162,7 @@ visualSuite("WebGPU", function () {
         });
 
         p5.getObjectInputs((inputs) => {
-          let size = 1 + 0.5 * p5.sin(time * 0.002 + p5.instanceID());
+          let size = 1 + 0.5 * p5.sin(time * 0.002 + p5.instanceIndex);
           inputs.position *= size;
           return inputs;
         });
@@ -304,7 +304,7 @@ visualSuite("WebGPU", function () {
       const shader = p5.baseMaterialShader().modify(() => {
         // Vertex hook: position instances in a horizontal row
         p5.getWorldInputs((inputs) => {
-          const id = p5.instanceID();
+          const id = p5.instanceIndex;
           const spacing = 12;
           const offset = (id - (numInstances - 1) / 2.0) * spacing;
           inputs.position.x += offset;
@@ -312,7 +312,7 @@ visualSuite("WebGPU", function () {
         });
         // Fragment hook: color each instance based on instanceID
         p5.getFinalColor((color) => {
-          const id = p5.instanceID();
+          const id = p5.instanceIndex;
           const t = id / (numInstances - 1.0);
           color = [t, t, t, 1];
           return color;
@@ -1196,7 +1196,7 @@ visualTest('randomGaussian() in a fragment loop averages to the mean (WebGPU)', 
         const sphereShader = p5.baseMaterialShader().modify(() => {
           const posData = p5.uniformStorage();
           p5.getWorldInputs((inputs) => {
-            const idx = p5.instanceID();
+            const idx = p5.instanceIndex;
             inputs.position.x += posData[idx * 2];
             inputs.position.y += posData[idx * 2 + 1];
             return inputs;
@@ -1304,7 +1304,7 @@ visualTest('randomGaussian() in a fragment loop averages to the mean (WebGPU)', 
         const sphereShader = p5.baseMaterialShader().modify(() => {
           const buf = p5.uniformStorage('buf', particles);
           p5.getWorldInputs((inputs) => {
-            const p = buf[p5.instanceID()].position;
+            const p = buf[p5.instanceIndex].position;
             inputs.position.x += p.x;
             inputs.position.y += p.y;
             return inputs;
@@ -1337,7 +1337,7 @@ visualTest('randomGaussian() in a fragment loop averages to the mean (WebGPU)', 
         const sphereShader = p5.baseMaterialShader().modify(() => {
           const buf = p5.uniformStorage('buf', particles);
           p5.getWorldInputs((inputs) => {
-            const p = buf[p5.instanceID()].position;
+            const p = buf[p5.instanceIndex].position;
             inputs.position.x += p.x;
             inputs.position.y += p.y;
             return inputs;
@@ -1370,7 +1370,7 @@ visualTest('randomGaussian() in a fragment loop averages to the mean (WebGPU)', 
         const sphereShader = p5.baseMaterialShader().modify(() => {
           const buf = p5.uniformStorage('buf', { position: [0, 0] });
           p5.getWorldInputs((inputs) => {
-            const p = buf[p5.instanceID()].position;
+            const p = buf[p5.instanceIndex].position;
             inputs.position.x += p.x;
             inputs.position.y += p.y;
             return inputs;
