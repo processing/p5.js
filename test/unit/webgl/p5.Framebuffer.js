@@ -669,6 +669,102 @@ suite('p5.Framebuffer', function() {
       });
   });
 
+  suite('custom shader with depth uniform', function() {
+    test('custom shader sampling only color texture', function() {
+      myp5.createCanvas(10, 10, myp5.WEBGL);
+
+      const fbo = myp5.createFramebuffer();
+      fbo.draw(() => {
+        myp5.background(255);
+        myp5.noStroke();
+        myp5.fill('red');
+        myp5.box(5, 5, 5);
+      });
+
+      const vertexShader = `
+        attribute vec3 aPosition;
+        attribute vec2 aTexCoord;
+        uniform mat4 uModelViewMatrix;
+        uniform mat4 uProjectionMatrix;
+        varying vec2 vTexCoord;
+        void main() {
+          vTexCoord = aTexCoord;
+          gl_Position = uProjectionMatrix * uModelViewMatrix * vec4(aPosition, 1.0);
+        }
+      `;
+      const fragmentShader = `
+        precision highp float;
+        varying vec2 vTexCoord;
+        uniform sampler2D img;
+        void main() {
+          gl_FragColor = texture2D(img, vTexCoord);
+        }
+      `;
+
+      const customShader = myp5.createShader(vertexShader, fragmentShader);
+
+      myp5.background(0);
+      myp5.noStroke();
+      myp5.shader(customShader);
+      customShader.setUniform('img', fbo.color);
+      myp5.plane(myp5.width, -myp5.height);
+
+      assert.deepEqual(myp5.get(5, 5), [255, 0, 0, 255]);
+    });
+
+    test('custom shader sampling both color and depth textures', function() {
+      myp5.createCanvas(10, 10, myp5.WEBGL);
+
+      const fbo = myp5.createFramebuffer();
+      fbo.draw(() => {
+        myp5.background(255);
+        myp5.noStroke();
+        myp5.fill('red');
+        myp5.box(5, 5, 5);
+      });
+
+      const vertexShader = `
+        attribute vec3 aPosition;
+        attribute vec2 aTexCoord;
+        uniform mat4 uModelViewMatrix;
+        uniform mat4 uProjectionMatrix;
+        varying vec2 vTexCoord;
+        void main() {
+          vTexCoord = aTexCoord;
+          gl_Position = uProjectionMatrix * uModelViewMatrix * vec4(aPosition, 1.0);
+        }
+      `;
+      const fragmentShader = `
+        precision highp float;
+        varying vec2 vTexCoord;
+        uniform sampler2D img;
+        uniform sampler2D depth;
+        void main() {
+          vec4 color = texture2D(img, vTexCoord);
+          float d = texture2D(depth, vTexCoord).r;
+          gl_FragColor = vec4(color.rgb * (1.0 - d), 1.0);
+        }
+      `;
+
+      const customShader = myp5.createShader(vertexShader, fragmentShader);
+
+      myp5.background(0);
+      myp5.noStroke();
+      myp5.shader(customShader);
+      customShader.setUniform('img', fbo.color);
+      customShader.setUniform('depth', fbo.depth);
+      myp5.plane(myp5.width, -myp5.height);
+
+      // The box is at z=0 with camera at z=800.
+      // Depth at center should be ~0.91 (232/255).
+      // Color should be dimmed: 255 * (1 - 0.91) ≈ 23
+      // Just check it's not full red (not 255) and not zero
+      const pixel = myp5.get(5, 5);
+      assert(pixel[0] < 200, 'red should be significantly dimmed by depth');
+      assert(pixel[0] > 0, 'red should still be visible');
+    });
+  });
+
   suite('saveCanvas', function() {
     test('should download a png file', async () => {
       myp5.createCanvas(100, 100, myp5.WEBGL);
