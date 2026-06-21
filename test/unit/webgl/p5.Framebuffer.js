@@ -754,11 +754,6 @@ suite('p5.Framebuffer', function() {
       customShader.setUniform('img', fbo.color);
       customShader.setUniform('depth', fbo.depth);
       myp5.plane(myp5.width, -myp5.height);
-
-      // The box is at z=0 with camera at z=800.
-      // Depth at center should be ~0.91 (232/255).
-      // Color should be dimmed: 255 * (1 - 0.91) ≈ 23
-      // Just check it's not full red (not 255) and not zero
       const pixel = myp5.get(5, 5);
       assert(pixel[0] < 200, 'red should be significantly dimmed by depth');
       assert(pixel[0] > 0, 'red should still be visible');
