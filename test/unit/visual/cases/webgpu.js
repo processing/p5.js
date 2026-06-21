@@ -364,6 +364,25 @@ visualSuite("WebGPU", function () {
       p5.plane(50, 50);
       await screenshot();
     });
+
+    visualTest('hook returning a fresh struct (not the struct argument) applies modifications', async function(p5, screenshot) {
+      await p5.createCanvas(50, 50, p5.WEBGPU);
+      const shader = p5.baseMaterialShader().modify(() => {
+        p5.worldInputs.begin();
+        p5.worldInputs.set({
+          position: p5.worldInputs.position.add([10, 0, 0]),
+          normal: p5.worldInputs.normal,
+          texCoord: p5.worldInputs.texCoord,
+          color: [1, 0, 0, 1],
+        });
+        p5.worldInputs.end();
+      }, { p5 });
+      p5.background(0);
+      p5.noStroke();
+      p5.shader(shader);
+      p5.plane(20, 20);
+      await screenshot();
+    }, { focus: true });
   });
 
   visualTest('randomGaussian() colors a basic shader (WebGPU)', async function(p5, screenshot) {

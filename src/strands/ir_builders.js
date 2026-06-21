@@ -344,38 +344,24 @@ export function castToFloat(strandsContext, dep) {
   return createStrandsNode(id, dimension, strandsContext);
 }
 
-export function structConstructorNode(strandsContext, structTypeInfo, rawUserArgs) {
+export function structConstructorNode(strandsContext, structTypeInfo, dependsOn) {
   const { cfg, dag } = strandsContext;
-  const { identifer, properties } = structTypeInfo;
+  const { properties } = structTypeInfo;
 
-  if (!(rawUserArgs.length === properties.length)) {
+  if (dependsOn.length !== properties.length) {
     FES.userError('type error',
-      `You've tried to construct a ${structTypeInfo.typeName} struct with ${rawUserArgs.length} properties, but it expects ${properties.length} properties.\n` +
+      `You've tried to construct a ${structTypeInfo.typeName} struct with ${dependsOn.length} properties, but it expects ${properties.length} properties.\n` +
       `The properties it expects are:\n` +
-      `${properties.map(prop => prop.name + ' ' + prop.DataType.baseType + prop.DataType.dimension)}`
+      `${properties.map(prop => `${prop.name}: ${prop.dataType.baseType}${prop.dataType.dimension}`).join(', ')}`
     );
-  }
-
-  const dependsOn = [];
-  for (let i = 0; i < properties.length; i++) {
-    const expectedProperty = properties[i];
-    const { originalNodeID, mappedDependencies } = mapPrimitiveDepsToIDs(strandsContext, expectedProperty.dataType, rawUserArgs[i]);
-    if (originalNodeID) {
-      dependsOn.push(originalNodeID);
-    }
-    else {
-      dependsOn.push(
-        constructTypeFromIDs(strandsContext, expectedProperty.dataType, mappedDependencies)
-      );
-    }
   }
 
   const nodeData = DAG.createNodeData({
     nodeType: NodeType.OPERATION,
     opCode: OpCode.Nary.CONSTRUCTOR,
     dimension: properties.length,
-    baseType: structTypeInfo.typeName ,
-    dependsOn
+    baseType: structTypeInfo.typeName,
+    dependsOn,
   });
   const id = DAG.getOrCreateNode(dag, nodeData);
   CFG.recordInBasicBlock(cfg, cfg.currentBlock, id);
