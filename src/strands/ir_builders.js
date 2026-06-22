@@ -316,7 +316,6 @@ function mapPrimitiveDepsToIDs(strandsContext, typeInfo, dependsOn) {
     if (originalBaseType !== BaseType.MAT || calculatedDimensions !== dimension * dimension) {
       FES.userError('type error', `You've tried to construct a ${baseType + dimension} with ${calculatedDimensions} components`);
     }
-    // Keep the MAT dimension, not the total scalar count
   }
   const inferredTypeInfo = {
     dimension,
