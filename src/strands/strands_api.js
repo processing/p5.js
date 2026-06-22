@@ -765,6 +765,9 @@ const _rgb2hsl = (instance, colorNode) => {
         typeAliases.push('Texture')
       } else if (/^vec/.test(typeInfo.fnName)) {
         typeAliases.push(pascalTypeName.replace('Vec', 'Vector'));
+      } else if (/^Mat\d+x\d+$/.test(pascalTypeName)) {
+        const shortName = pascalTypeName.replace(/x\d+$/, '');
+        typeAliases.push(shortName);
       }
     }
     augmentFn(fn, p5, `uniform${pascalTypeName}`, function(name, defaultValue) {
@@ -835,6 +838,11 @@ const _rgb2hsl = (instance, colorNode) => {
         );
       }
     });
+
+    if (typeInfo.baseType === BaseType.MAT) {
+      const shortName = typeInfo.fnName.replace(/x\d+$/, '');
+      augmentFn(fn, p5, shortName, fn[typeInfo.fnName]);
+    }
   }
 
   // Storage buffer uniform function for compute shaders

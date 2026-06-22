@@ -107,6 +107,52 @@ const builtInGLSLFunctions = {
   refract: [{ params: [GenType.FLOAT, GenType.FLOAT,DataType.float1], returnType: GenType.FLOAT, isp5Function: false}],
 }
 
+const matrixFunctions = {
+  transform2D: [
+    { params: [DataType.float1, DataType.float1, DataType.float1, DataType.float1, DataType.float1, DataType.float1], returnType: DataType.mat3, isp5Function: false },
+  ],
+  transform3D: [
+    { params: [DataType.float1, DataType.float1, DataType.float1, DataType.float1, DataType.float1, DataType.float1, DataType.float1, DataType.float1, DataType.float1], returnType: DataType.mat4, isp5Function: false },
+  ],
+  translate: [
+    { params: [DataType.float1, DataType.float1], returnType: DataType.mat4, isp5Function: false },
+    { params: [DataType.float2], returnType: DataType.mat4, isp5Function: false },
+    { params: [DataType.float1, DataType.float1, DataType.float1], returnType: DataType.mat4, isp5Function: false },
+    { params: [DataType.float3], returnType: DataType.mat4, isp5Function: false },
+  ],
+  rotate: [
+    { params: [DataType.float1], returnType: DataType.mat4, isp5Function: false },
+    { params: [DataType.float1, DataType.float3], returnType: DataType.mat4, isp5Function: false },
+  ],
+  scale: [
+    { params: [DataType.float1], returnType: DataType.mat4, isp5Function: false },
+    { params: [DataType.float1, DataType.float1], returnType: DataType.mat4, isp5Function: false },
+    { params: [DataType.float2], returnType: DataType.mat4, isp5Function: false },
+    { params: [DataType.float1, DataType.float1, DataType.float1], returnType: DataType.mat4, isp5Function: false },
+    { params: [DataType.float3], returnType: DataType.mat4, isp5Function: false },
+  ],
+  multiply: [
+    { params: [DataType.mat4, DataType.mat4], returnType: DataType.mat4, isp5Function: false },
+    { params: [DataType.mat3, DataType.mat3], returnType: DataType.mat3, isp5Function: false },
+    { params: [DataType.mat2, DataType.mat2], returnType: DataType.mat2, isp5Function: false },
+    { params: [DataType.mat4, DataType.float4], returnType: DataType.float4, isp5Function: false },
+    { params: [DataType.mat3, DataType.float3], returnType: DataType.float3, isp5Function: false },
+    { params: [DataType.mat2, DataType.float2], returnType: DataType.float2, isp5Function: false },
+    { params: [DataType.float4, DataType.mat4], returnType: DataType.float4, isp5Function: false },
+    { params: [DataType.float3, DataType.mat3], returnType: DataType.float3, isp5Function: false },
+    { params: [DataType.float2, DataType.mat2], returnType: DataType.float2, isp5Function: false },
+  ],
+  transformPoint: [
+    { params: [DataType.mat4, DataType.float3], returnType: DataType.float3, isp5Function: false },
+    { params: [DataType.mat3, DataType.float2], returnType: DataType.float2, isp5Function: false },
+  ],
+  transformNormal: [
+    { params: [DataType.mat4, DataType.float3], returnType: DataType.float3, isp5Function: false },
+    { params: [DataType.mat3, DataType.float2], returnType: DataType.float2, isp5Function: false },
+  ],
+};
+
 export const strandsBuiltinFunctions = {
   ...builtInGLSLFunctions,
+  ...matrixFunctions,
 }

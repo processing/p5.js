@@ -97,6 +97,52 @@ export function binaryOpNode(strandsContext, leftStrandsNode, rightArg, opCode) 
     DAG.propagateTypeToAssignOnUse(dag, rightStrandsNode.id, leftType.baseType, leftType.dimension);
     rightType = DAG.extractNodeTypeInfo(dag, rightStrandsNode.id);
   }
+
+  if (opCode === OpCode.Binary.MULTIPLY) {
+    if (leftType.baseType === BaseType.MAT) {
+      if (rightType.baseType === BaseType.MAT && rightType.dimension === leftType.dimension) {
+        // mat × mat → mat
+        const nodeData = DAG.createNodeData({
+          nodeType: NodeType.OPERATION,
+          opCode,
+          dependsOn: [leftStrandsNode.id, rightStrandsNode.id],
+          baseType: BaseType.MAT,
+          dimension: leftType.dimension,
+        });
+        const id = DAG.getOrCreateNode(dag, nodeData);
+        CFG.recordInBasicBlock(cfg, cfg.currentBlock, id);
+        return { id, dimension: leftType.dimension };
+      }
+      if (rightType.baseType === BaseType.FLOAT && rightType.dimension === leftType.dimension) {
+        // mat × vec → vec (float)
+        const nodeData = DAG.createNodeData({
+          nodeType: NodeType.OPERATION,
+          opCode,
+          dependsOn: [leftStrandsNode.id, rightStrandsNode.id],
+          baseType: BaseType.FLOAT,
+          dimension: leftType.dimension,
+        });
+        const id = DAG.getOrCreateNode(dag, nodeData);
+        CFG.recordInBasicBlock(cfg, cfg.currentBlock, id);
+        return { id, dimension: leftType.dimension };
+      }
+    }
+    if (rightType.baseType === BaseType.MAT && leftType.baseType === BaseType.FLOAT &&
+        leftType.dimension === rightType.dimension) {
+      // vec × mat → vec (float)
+      const nodeData = DAG.createNodeData({
+        nodeType: NodeType.OPERATION,
+        opCode,
+        dependsOn: [leftStrandsNode.id, rightStrandsNode.id],
+        baseType: BaseType.FLOAT,
+        dimension: rightType.dimension,
+      });
+      const id = DAG.getOrCreateNode(dag, nodeData);
+      CFG.recordInBasicBlock(cfg, cfg.currentBlock, id);
+      return { id, dimension: rightType.dimension };
+    }
+  }
+
   const cast = { node: null, toType: leftType };
   const bothDeferred = leftType.baseType === rightType.baseType && leftType.baseType === BaseType.DEFER;
   if (bothDeferred) {
@@ -221,6 +267,7 @@ function mapPrimitiveDepsToIDs(strandsContext, typeInfo, dependsOn) {
   const inputs = Array.isArray(dependsOn) ? dependsOn : [dependsOn];
   const mappedDependencies = [];
   let { dimension, baseType } = typeInfo;
+  const originalBaseType = baseType;
 
   const dag = strandsContext.dag;
   let calculatedDimensions = 0;
@@ -243,7 +290,8 @@ function mapPrimitiveDepsToIDs(strandsContext, typeInfo, dependsOn) {
       continue;
     }
     else if (typeof dep === 'number') {
-      const { id, dimension } = scalarLiteralNode(strandsContext, { dimension: 1, baseType }, dep);
+      const scalarBaseType = baseType === BaseType.MAT ? BaseType.FLOAT : baseType;
+      const { id, dimension } = scalarLiteralNode(strandsContext, { dimension: 1, baseType: scalarBaseType }, dep);
       mappedDependencies.push(id);
       calculatedDimensions += dimension;
       continue;
@@ -267,13 +315,16 @@ function mapPrimitiveDepsToIDs(strandsContext, typeInfo, dependsOn) {
     dimension = calculatedDimensions;
   } else if (dimension > calculatedDimensions && calculatedDimensions === 1) {
     calculatedDimensions = dimension;
-  } else if(calculatedDimensions !== 1 && calculatedDimensions !== dimension) {
-    FES.userError('type error', `You've tried to construct a ${baseType + dimension} with ${calculatedDimensions} components`);
+  } else if (calculatedDimensions !== 1 && calculatedDimensions !== dimension) {
+    if (originalBaseType !== BaseType.MAT || calculatedDimensions !== dimension * dimension) {
+      FES.userError('type error', `You've tried to construct a ${baseType + dimension} with ${calculatedDimensions} components`);
+    }
+    // Keep the MAT dimension, not the total scalar count
   }
   const inferredTypeInfo = {
     dimension,
-    baseType,
-    priority: BasePriority[baseType],
+    baseType: originalBaseType === BaseType.MAT ? BaseType.MAT : baseType,
+    priority: BasePriority[originalBaseType === BaseType.MAT ? BaseType.MAT : baseType],
   }
   return { originalNodeID, mappedDependencies, inferredTypeInfo };
 }

@@ -7,6 +7,9 @@
 import { transpileStrandsToJS } from "./strands_transpiler";
 import { BlockType } from "./ir_types";
 
+import matrixTransformGLSL from "../webgl/shaders/functions/matrixTransformGLSL.glsl";
+import matrixTransformWGSL from "../webgpu/shaders/functions/matrixTransformWGSL.js";
+
 import { createDirectedAcyclicGraph } from "./ir_dag";
 import {
   createControlFlowGraph,
@@ -132,6 +135,12 @@ function strands(p5, fn) {
           renderer: this._renderer,
           baseShader: this,
         });
+
+        const isGLSLBackend = this._renderer.strandsBackend.instanceIdReference() === 'gl_InstanceID';
+        strandsContext.vertexDeclarations.add(isGLSLBackend ? matrixTransformGLSL : matrixTransformWGSL);
+        strandsContext.fragmentDeclarations.add(isGLSLBackend ? matrixTransformGLSL : matrixTransformWGSL);
+        strandsContext.computeDeclarations.add(isGLSLBackend ? matrixTransformGLSL : matrixTransformWGSL);
+
         createShaderHooksFunctions(strandsContext, fn, this);
         // TODO: expose this, is internal for debugging for now.
         options.parser = true;
