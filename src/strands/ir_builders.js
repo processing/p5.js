@@ -101,7 +101,6 @@ export function binaryOpNode(strandsContext, leftStrandsNode, rightArg, opCode) 
   if (opCode === OpCode.Binary.MULTIPLY) {
     if (leftType.baseType === BaseType.MAT) {
       if (rightType.baseType === BaseType.MAT && rightType.dimension === leftType.dimension) {
-        // mat × mat → mat
         const nodeData = DAG.createNodeData({
           nodeType: NodeType.OPERATION,
           opCode,
@@ -114,7 +113,6 @@ export function binaryOpNode(strandsContext, leftStrandsNode, rightArg, opCode) 
         return { id, dimension: leftType.dimension };
       }
       if (rightType.baseType === BaseType.FLOAT && rightType.dimension === leftType.dimension) {
-        // mat × vec → vec (float)
         const nodeData = DAG.createNodeData({
           nodeType: NodeType.OPERATION,
           opCode,
@@ -129,7 +127,6 @@ export function binaryOpNode(strandsContext, leftStrandsNode, rightArg, opCode) 
     }
     if (rightType.baseType === BaseType.MAT && leftType.baseType === BaseType.FLOAT &&
         leftType.dimension === rightType.dimension) {
-      // vec × mat → vec (float)
       const nodeData = DAG.createNodeData({
         nodeType: NodeType.OPERATION,
         opCode,
