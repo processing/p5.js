@@ -40,6 +40,7 @@ suite('loading images', function() {
   const disposeNoneGif = '/test/unit/assets/dispose_none.gif';
   const disposeBackgroundGif = '/test/unit/assets/dispose_background.gif';
   const disposePreviousGif = '/test/unit/assets/dispose_previous.gif';
+  const svgImage = '/test/unit/assets/green.svg';
   const invalidFile = '404file';
 
   beforeAll(async function() {
@@ -237,6 +238,21 @@ suite('loading images', function() {
     gifImage.reset();
     assert.equal(gifImage.gifProperties.displayIndex, 0);
     assert.equal(gifImage.gifProperties.timeDisplayed, 0);
+  });
+
+  test('loads vector (SVG) images', async () => {
+    await expect(mockP5Prototype.loadImage(svgImage)).resolves.not.toThrow();
+
+    const img = await mockP5Prototype.loadImage(svgImage);
+    assert.isTrue(img instanceof mockP5.Image);
+
+    // ensure the sample svg is fully parsed and drawn correctly
+    assert.equal(img.width, 48);
+    assert.equal(img.height, 48);
+
+    const GREEN = [0, 255, 0, 255];
+    assert.deepEqual(img.get(0, 0), GREEN);
+    assert.deepEqual(img.get(47, 47), GREEN);
   });
 });
 
