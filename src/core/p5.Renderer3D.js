@@ -247,6 +247,8 @@ export class Renderer3D extends Renderer {
 
     this._curShader = undefined;
     this.drawShapeCount = 1;
+    // Set by the instances() wrapper; undefined means "no instancing".
+    this._instanceCount = undefined;
 
     this.scratchMat3 = new Matrix(3);
 
@@ -548,6 +550,11 @@ export class Renderer3D extends Renderer {
   }
 
   model(model, count = 1) {
+    // Use _instanceCount only when count was NOT explicitly passed.
+    // arguments.length distinguishes model(geom) from model(geom, 1).
+    if (arguments.length < 2 && this._instanceCount !== undefined) {
+      count = this._instanceCount;
+    }
     if (model.vertices.length > 0) {
       if (this.geometryBuilder) {
         this.geometryBuilder.addRetained(model);
@@ -679,6 +686,7 @@ export class Renderer3D extends Renderer {
   }
 
   _drawGeometryScaled(model, scaleX, scaleY, scaleZ) {
+    const count = this._instanceCount || 1;
     let originalModelMatrix = this.states.uModelMatrix;
     this.states.setValue("uModelMatrix", this.states.uModelMatrix.clone());
     try {
@@ -687,7 +695,7 @@ export class Renderer3D extends Renderer {
       if (this.geometryBuilder) {
         this.geometryBuilder.addRetained(model);
       } else {
-        this._drawGeometry(model);
+        this._drawGeometry(model, { count });
       }
     } finally {
       this.states.setValue("uModelMatrix", originalModelMatrix);

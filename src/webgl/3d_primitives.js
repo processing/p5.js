@@ -2595,6 +2595,77 @@ function primitives3D(p5, fn){
     }
     return this._renderer.curveDetail(d);
   };
+
+  /**
+   * Draws `count` instances of the next 3D primitive or model using WebGL
+   * instanced rendering.
+   *
+   * Call a draw method on the returned object to render that primitive
+   * `count` times in a single draw call. Instance-specific transforms and
+   * attributes (position, color, etc.) are supplied through a custom shader
+   * that reads per-instance data from an instanced attribute buffer.
+   *
+   * @method instances
+   * @param  {Number} count number of instances to draw. Must be a positive
+   *   integer.
+   * @returns {Object} an object with methods `sphere`, `box`, `plane`,
+   *   `ellipsoid`, `cylinder`, `cone`, `torus`, and `model`. Call one of
+   *   these to draw `count` instances of that primitive.
+   *
+   * @example
+   * <div>
+   * <code>
+   * // Draw 10 spheres in a single instanced draw call.
+   * // A custom shader reads gl_InstanceID to offset each sphere.
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   * }
+   * function draw() {
+   *   background(200);
+   *   instances(10).sphere(20);
+   * }
+   * </code>
+   * </div>
+   */
+  fn.instances = function(count) {
+    this._assert3d('instances');
+
+    if (typeof count !== 'number' || !isFinite(count) || count < 1) {
+      console.log(
+        '🌸 p5.js says: instances() requires a positive integer count.' +
+        ' Clamping to 1.'
+      );
+      count = Math.max(1, Math.round(count) || 1);
+    } else {
+      count = Math.round(count);
+    }
+
+    const r = this._renderer;
+    const p = this;
+
+    // Each wrapped method: set _instanceCount, call the renderer method with
+    // the correct `this`, clear _instanceCount in finally so it never leaks.
+    const wrap = method => function(...args) {
+      r._instanceCount = count;
+      try {
+        method.apply(r, args);
+      } finally {
+        r._instanceCount = undefined;
+      }
+      return p;
+    };
+
+    return {
+      sphere:    wrap(r.sphere),
+      box:       wrap(r.box),
+      plane:     wrap(r.plane),
+      ellipsoid: wrap(r.ellipsoid),
+      cylinder:  wrap(r.cylinder),
+      cone:      wrap(r.cone),
+      torus:     wrap(r.torus),
+      model:     wrap(r.model)
+    };
+  };
 }
 
 export default primitives3D;
