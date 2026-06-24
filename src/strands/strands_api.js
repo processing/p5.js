@@ -176,6 +176,43 @@ function installBuiltinGlobalAccessors(strandsContext) {
   strandsContext._builtinGlobalsAccessorsInstalled = true
 }
 
+function installInstanceIndexAccessor(strandsContext) {
+  if (strandsContext._instanceIndexAccessorInstalled) return;
+
+  const getRuntimeP5Instance = () => strandsContext.renderer?._pInst || strandsContext.p5?.instance;
+
+  const instanceIndexGetter = function() {
+    if (strandsContext.active) {
+      const node = build.variableNode(strandsContext, { baseType: BaseType.INT, dimension: 1 }, strandsContext.backend.instanceIdReference());
+      return createStrandsNode(node.id, node.dimension, strandsContext);
+    }
+    return undefined;
+  };
+
+  const inst = getRuntimeP5Instance();
+  if (inst?._isGlobal) {
+    Object.defineProperty(window, 'instanceIndex', {
+      get: instanceIndexGetter,
+      configurable: true,
+    });
+  }
+
+  Object.defineProperty(strandsContext.p5.prototype, 'instanceIndex', {
+    get: instanceIndexGetter,
+    configurable: true,
+  });
+
+  const GraphicsProto = strandsContext.p5?.Graphics?.prototype;
+  if (GraphicsProto) {
+    Object.defineProperty(GraphicsProto, 'instanceIndex', {
+      get: instanceIndexGetter,
+      configurable: true,
+    });
+  }
+
+  strandsContext._instanceIndexAccessorInstalled = true;
+}
+
 //////////////////////////////////////////////
 // Prototype mirroring helpers
 //////////////////////////////////////////////
@@ -879,6 +916,17 @@ function createHookArguments(strandsContext, parameters){
             return createStrandsNode(propNode.id, propNode.dimension, strandsContext, onRebind);
           },
           set(val) {
+            const valDim = val?.isStrandsNode
+              ? val.dimension
+              : (Array.isArray(val) ? val.length : 1);
+            if( valDim !== propertyType.dataType.dimension && valDim !== 1){
+              FES.dimensionMismatchError(
+                propertyType.dataType.dimension,
+                valDim,
+                `${param.name}.${propertyType.name}`
+              );
+            }
+
             const oldDependsOn = dag.dependsOn[structNode.id];
             const newDependsOn = [...oldDependsOn];
             let newValueID;
@@ -956,6 +1004,7 @@ function enforceReturnTypeMatch(strandsContext, expectedType, returned, hookName
 }
 export function createShaderHooksFunctions(strandsContext, fn, shader) {
   installBuiltinGlobalAccessors(strandsContext)
+  installInstanceIndexAccessor(strandsContext)
 
   // Add shader context to hooks before spreading
   const vertexHooksWithContext = Object.fromEntries(
