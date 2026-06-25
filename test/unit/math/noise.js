@@ -34,6 +34,16 @@ suite('Noise', function() {
     });
   });
 
+  // Test for null arguments
+  suite('null arguments', function() {
+    test('null should returns NaN', function() {
+      assert.isNaN(mockP5Prototype.noise(null));
+    });
+    test('noise(0, 0, null) returns NaN', function() {
+      assert.isNaN(mockP5Prototype.noise(0, 0, null));
+    });
+  });
+
   // Test for noiseSeed
   suite('p5.prototype.noiseSeed', function() {
     beforeEach(function() {
