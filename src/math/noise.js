@@ -265,6 +265,7 @@ function noise(p5, fn){
    * @return {Number}     Perlin noise value at specified coordinates.
    */
   fn.noise = function(x, y = 0, z = 0) {
+    if (x === null || y === null || z === null) return NaN;
     if (perlin == null) {
       perlin = new Array(PERLIN_SIZE + 1);
       for (let i = 0; i < PERLIN_SIZE + 1; i++) {
