@@ -972,7 +972,7 @@ visualSuite('WebGL', function() {
       const sh = p5.baseMaterialShader().modify(() => {
         const data = p5.uniformTexture(() => positionData);
         p5.getWorldInputs((inputs) => {
-          const angle = p5.getTexture(data, [p5.instanceID()/3, 0]).r * p5.TWO_PI;
+          const angle = p5.getTexture(data, [p5.instanceIndex/3, 0]).r * p5.TWO_PI;
           inputs.position.xy += [p5.cos(angle) * 10, p5.sin(angle) * 10];
           return inputs;
         });
@@ -1031,7 +1031,7 @@ visualSuite('WebGL', function() {
       p5.createCanvas(50, 50, p5.WEBGL);
       const shader = p5.baseMaterialShader().modify(() => {
         p5.getWorldInputs((inputs) => {
-          const id = p5.instanceID();
+          const id = p5.instanceIndex;
           const gridSize = 5;
           const row = p5.floor(id / gridSize);
           const col = id - row * gridSize;
@@ -1055,7 +1055,7 @@ visualSuite('WebGL', function() {
       p5.createCanvas(50, 50, p5.WEBGL);
       const shader = p5.baseMaterialShader().modify(() => {
         p5.getWorldInputs((inputs) => {
-          const id = p5.instanceID();
+          const id = p5.instanceIndex;
           const gridSize = 5;
           const row = p5.int(id / gridSize);
           const col = id - row * gridSize;
@@ -1080,7 +1080,7 @@ visualSuite('WebGL', function() {
       const shader = p5.baseMaterialShader().modify(() => {
         // Vertex hook: position instances in a horizontal row
         p5.getWorldInputs((inputs) => {
-          const id = p5.instanceID();
+          const id = p5.instanceIndex;
           const spacing = 12;
           const offset = (id - (numInstances - 1) / 2.0) * spacing;
           inputs.position.x += offset;
@@ -1088,7 +1088,7 @@ visualSuite('WebGL', function() {
         });
         // Fragment hook: color each instance based on instanceID
         p5.getFinalColor((color) => {
-          const id = p5.instanceID();
+          const id = p5.instanceIndex;
           const t = id / (numInstances - 1.0);
           color = [t, t, t, 1];
           return color;
@@ -1359,7 +1359,7 @@ visualTest('randomGaussian() in a fragment loop averages to the mean', (p5, scre
         }
 
         function semiSphere() {
-          let id = p5.instanceID();
+          let id = p5.instanceIndex;
           let theta = rand2([id, 0.1234])  * p5.TWO_PI + time / 100000;
           let phi = rand2([id, 3.321]) * p5.PI + time / 50000;
 
@@ -1377,7 +1377,7 @@ visualTest('randomGaussian() in a fragment loop averages to the mean', (p5, scre
         });
 
         p5.getObjectInputs((inputs) => {
-          let size = 1 + 0.5 * p5.sin(time * 0.002 + p5.instanceID());
+          let size = 1 + 0.5 * p5.sin(time * 0.002 + p5.instanceIndex);
           inputs.position *= size;
           return inputs;
         });
@@ -1498,6 +1498,25 @@ visualTest('randomGaussian() in a fragment loop averages to the mean', (p5, scre
       myShader.setUniform('uColor', p5.color(0, 100, 200));
       p5.noStroke();
       p5.circle(0, 0, 30);
+      screenshot();
+    });
+
+    visualTest('hook returning a fresh struct (not the struct argument) applies modifications', (p5, screenshot) => {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      const shader = p5.baseMaterialShader().modify(() => {
+        p5.worldInputs.begin();
+        p5.worldInputs.set({
+          position: p5.worldInputs.position.add([10, 0, 0]),
+          normal: p5.worldInputs.normal,
+          texCoord: p5.worldInputs.texCoord,
+          color: [1, 0, 0, 1],
+        });
+        p5.worldInputs.end();
+      }, { p5 });
+      p5.background(0);
+      p5.noStroke();
+      p5.shader(shader);
+      p5.plane(20, 20);
       screenshot();
     });
   });

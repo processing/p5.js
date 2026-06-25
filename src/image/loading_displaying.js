@@ -125,8 +125,23 @@ function loadingDisplaying(p5, fn){
 
       } else {
         // Non-GIF Section
-        const blob = new Blob([data]);
-        const img = await createImageBitmap(blob);
+        const img = await new Promise((resolve, reject) => {
+          const img = new Image();
+          const blob = new Blob([data], { type: contentType });
+          const url = URL.createObjectURL(blob);
+
+          img.onerror = e => {
+            URL.revokeObjectURL(url);
+            reject(e);
+          };
+
+          img.onload = () => {
+            URL.revokeObjectURL(url);
+            resolve(img);
+          };
+
+          img.src = url;
+        });
 
         pImg.width = pImg.canvas.width = img.width;
         pImg.height = pImg.canvas.height = img.height;
