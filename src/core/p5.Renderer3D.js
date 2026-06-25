@@ -549,12 +549,8 @@ export class Renderer3D extends Renderer {
     this.updateShapeVertexProperties();
   }
 
-  model(model, count = 1) {
-    // Use _instanceCount only when count was NOT explicitly passed.
-    // arguments.length distinguishes model(geom) from model(geom, 1).
-    if (arguments.length < 2 && this._instanceCount !== undefined) {
-      count = this._instanceCount;
-    }
+  model(model, count) {
+    count = count ?? this._instanceCount ?? 1;
     if (model.vertices.length > 0) {
       if (this.geometryBuilder) {
         this.geometryBuilder.addRetained(model);

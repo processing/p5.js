@@ -366,19 +366,27 @@ function convertFunctionTypeForInterface(typeNode, options) {
     .map((param, i) => {
       let typeObj;
       let paramName;
-      if (param.type === 'ParameterType') {
-        typeObj = param.expression;
-        paramName = param.name ?? `p${i}`;
-      } else if (typeof param.type === 'object' && param.type !== null) {
-        typeObj = param.type;
-        paramName = param.name ?? `p${i}`;
+      let isOptional = false;
+
+      let currentParam = param;
+      if (currentParam && currentParam.type === 'OptionalType') {
+        isOptional = true;
+        currentParam = currentParam.expression;
+      }
+
+      if (currentParam && currentParam.type === 'ParameterType') {
+        typeObj = currentParam.expression;
+        paramName = currentParam.name ?? `p${i}`;
+      } else if (currentParam && typeof currentParam.type === 'object' && currentParam.type !== null) {
+        typeObj = currentParam.type;
+        paramName = currentParam.name ?? `p${i}`;
       } else {
         // param itself is a plain type node
-        typeObj = param;
+        typeObj = currentParam;
         paramName = `p${i}`;
       }
       const paramType = convertTypeToTypeScript(typeObj, options);
-      return `${paramName}: ${paramType}`;
+      return `${paramName}${isOptional ? '?' : ''}: ${paramType}`;
     })
     .join(', ');
 

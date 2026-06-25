@@ -2597,6 +2597,18 @@ function primitives3D(p5, fn){
   };
 
   /**
+   * @typedef {Object} InstancesWrapper
+   * @property {function(radius: Number=, detailX: Number=, detailY: Number=): undefined} sphere
+   * @property {function(width: Number=, height: Number=, depth: Number=, detailX: Number=, detailY: Number=): undefined} box
+   * @property {function(width: Number=, height: Number=, detailX: Number=, detailY: Number=): undefined} plane
+   * @property {function(radiusX: Number=, radiusY: Number=, radiusZ: Number=, detailX: Number=, detailY: Number=): undefined} ellipsoid
+   * @property {function(radius: Number=, height: Number=, detailX: Number=, detailY: Number=, bottomCap: Boolean=, topCap: Boolean=): undefined} cylinder
+   * @property {function(radius: Number=, height: Number=, detailX: Number=, detailY: Number=, cap: Boolean=): undefined} cone
+   * @property {function(radius: Number=, tubeRadius: Number=, detailX: Number=, detailY: Number=): undefined} torus
+   * @property {function(model: p5.Geometry, count: Number=): undefined} model
+   */
+
+  /**
    * Draws `count` instances of the next 3D primitive or model using WebGL
    * instanced rendering.
    *
@@ -2608,21 +2620,38 @@ function primitives3D(p5, fn){
    * @method instances
    * @param  {Number} count number of instances to draw. Must be a positive
    *   integer.
-   * @returns {Object} an object with methods `sphere`, `box`, `plane`,
+   * @returns {p5.InstancesWrapper} an object with methods `sphere`, `box`, `plane`,
    *   `ellipsoid`, `cylinder`, `cone`, `torus`, and `model`. Call one of
    *   these to draw `count` instances of that primitive.
    *
    * @example
    * <div>
    * <code>
-   * // Draw 10 spheres in a single instanced draw call.
-   * // A custom shader reads gl_InstanceID to offset each sphere.
+   * let myShader;
+   * let count = 5;
+   *
    * function setup() {
-   *   createCanvas(100, 100, WEBGL);
+   *   createCanvas(200, 200, WEBGL);
+   *   myShader = buildMaterialShader(drawSpaced);
+   *   describe('Five red spheres arranged in a horizontal line.');
    * }
+   *
+   * function drawSpaced() {
+   *   worldInputs.begin();
+   *   // Spread spheres evenly across the canvas based on their index
+   *   let spacing = width / count;
+   *   worldInputs.position.x +=
+   *     (instanceIndex - (count - 1) / 2) * spacing;
+   *   worldInputs.end();
+   * }
+   *
    * function draw() {
-   *   background(200);
-   *   instances(10).sphere(20);
+   *   background(220);
+   *   lights();
+   *   noStroke();
+   *   fill('red');
+   *   shader(myShader);
+   *   instances(count).sphere(15);
    * }
    * </code>
    * </div>
@@ -2631,17 +2660,16 @@ function primitives3D(p5, fn){
     this._assert3d('instances');
 
     if (typeof count !== 'number' || !isFinite(count) || count < 1) {
-      console.log(
-        '🌸 p5.js says: instances() requires a positive integer count.' +
-        ' Clamping to 1.'
+      p5._friendlyError(
+        'instances() requires a positive integer count. Clamping to 1.',
+        'instances'
       );
-      count = Math.max(1, Math.round(count) || 1);
+      count = 1;
     } else {
       count = Math.round(count);
     }
 
     const r = this._renderer;
-    const p = this;
 
     // Each wrapped method: set _instanceCount, call the renderer method with
     // the correct `this`, clear _instanceCount in finally so it never leaks.
@@ -2652,7 +2680,6 @@ function primitives3D(p5, fn){
       } finally {
         r._instanceCount = undefined;
       }
-      return p;
     };
 
     return {

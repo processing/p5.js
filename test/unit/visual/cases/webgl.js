@@ -1101,6 +1101,25 @@ visualSuite('WebGL', function() {
       p5.model(obj, numInstances);
       screenshot();
     });
+
+    visualTest('instances() API draws multiple spaced primitives', (p5, screenshot) => {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      const count = 5;
+      const shader = p5.baseMaterialShader().modify(() => {
+        p5.getWorldInputs((inputs) => {
+          let spacing = p5.width / count;
+          inputs.position.x += (p5.instanceIndex - (count - 1) / 2.0) * spacing;
+          return inputs;
+        });
+      }, { p5 });
+      p5.background(220);
+      p5.lights();
+      p5.noStroke();
+      p5.fill('red');
+      p5.shader(shader);
+      p5.instances(count).sphere(7);
+      screenshot();
+    });
   });
 
   visualSuite('p5.strands', () => {
