@@ -1111,7 +1111,7 @@ visualSuite('WebGL', function() {
           inputs.position.x += (p5.instanceIndex - (count - 1) / 2.0) * spacing;
           return inputs;
         });
-      }, { p5 });
+      }, { p5, count });
       p5.background(220);
       p5.lights();
       p5.noStroke();
