@@ -254,6 +254,23 @@ suite('loading images', function() {
     assert.deepEqual(img.get(0, 0), GREEN);
     assert.deepEqual(img.get(47, 47), GREEN);
   });
+
+  test('revokes any object URLs created during loading', async () => {
+    const createSpy = vi.spyOn(URL, 'createObjectURL');
+    const revokeSpy = vi.spyOn(URL, 'revokeObjectURL');
+
+    // successful load
+    await mockP5Prototype.loadImage(svgImage);
+    expect(revokeSpy).toHaveBeenCalledTimes(createSpy.mock.calls.length);
+
+    // errored load
+    const INVALID_PATH = '';
+    try { await mockP5Prototype.loadImage(INVALID_PATH); } catch {}
+    expect(revokeSpy).toHaveBeenCalledTimes(createSpy.mock.calls.length);
+
+    createSpy.mockRestore();
+    revokeSpy.mockRestore();
+  });
 });
 
 suite.todo('displaying images', function() {
