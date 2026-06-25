@@ -253,6 +253,19 @@ p5.prototype.textStyle = function(theStyle) {
 /**
  * Calculates the maximum width of a string of text drawn when
  * <a href="#/p5/text">text()</a> is called.
+ *  * 
+ * <p><strong>Note:</strong></p>
+ * <p>
+ * In p5.js 2.0, <code>textWidth()</code> may return <code>0</code> when
+ * measuring a string that contains only whitespace characters,
+ * such as a single space (<code>' '</code>). In earlier versions,
+ * whitespace contributed to the measured width.
+ * </p>
+ * <p>
+ * This behavior differs from <code>fontWidth()</code>, which measures
+ * individual glyph widths, including whitespace.
+ * </p>
+ *
  *
  * @method textWidth
  * @param {String} str string of text to measure.
