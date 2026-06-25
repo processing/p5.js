@@ -2605,6 +2605,11 @@ function primitives3D(p5, fn){
    * @property {function(radius: Number=, height: Number=, detailX: Number=, detailY: Number=, bottomCap: Boolean=, topCap: Boolean=): undefined} cylinder
    * @property {function(radius: Number=, height: Number=, detailX: Number=, detailY: Number=, cap: Boolean=): undefined} cone
    * @property {function(radius: Number=, tubeRadius: Number=, detailX: Number=, detailY: Number=): undefined} torus
+   * @property {function(x1: Number, y1: Number, x2: Number, y2: Number, x3: Number, y3: Number): undefined} triangle
+   * @property {function(x: Number, y: Number, w: Number, h: Number=, detailX: Number=, detailY: Number=): undefined} rect
+   * @property {function(x1: Number, y1: Number, z1: Number=, x2: Number, y2: Number, z2: Number=, x3: Number, y3: Number, z3: Number=, x4: Number, y4: Number, z4: Number=, detailX: Number=, detailY: Number=): undefined} quad
+   * @property {function(x: Number, y: Number, w: Number, h: Number=, detail: Number=): undefined} ellipse
+   * @property {function(x: Number, y: Number, w: Number, h: Number, start: Number, stop: Number, mode: String=, detail: Number=): undefined} arc
    * @property {function(model: p5.Geometry, count: Number=): undefined} model
    */
 
@@ -2621,7 +2626,8 @@ function primitives3D(p5, fn){
    * @param  {Number} count number of instances to draw. Must be a positive
    *   integer.
    * @returns {p5.InstancesWrapper} an object with methods `sphere`, `box`, `plane`,
-   *   `ellipsoid`, `cylinder`, `cone`, `torus`, and `model`. Call one of
+   *   `ellipsoid`, `cylinder`, `cone`, `torus`, `triangle`, `rect`, `quad`,
+   *   `ellipse`, `arc`, and `model`. Call one of
    *   these to draw `count` instances of that primitive.
    *
    * @example
@@ -2671,12 +2677,12 @@ function primitives3D(p5, fn){
 
     const r = this._renderer;
 
-    // Each wrapped method: set _instanceCount, call the renderer method with
-    // the correct `this`, clear _instanceCount in finally so it never leaks.
-    const wrap = method => function(...args) {
+    // Each wrapped method: set _instanceCount, call the method with
+    // the correct context, clear _instanceCount in finally so it never leaks.
+    const wrap = (method, ctx = r) => function(...args) {
       r._instanceCount = count;
       try {
-        method.apply(r, args);
+        method.apply(ctx, args);
       } finally {
         r._instanceCount = undefined;
       }
@@ -2690,6 +2696,11 @@ function primitives3D(p5, fn){
       cylinder:  wrap(r.cylinder),
       cone:      wrap(r.cone),
       torus:     wrap(r.torus),
+      triangle:  wrap(this.triangle, this),
+      rect:      wrap(this.rect, this),
+      quad:      wrap(this.quad, this),
+      ellipse:   wrap(this.ellipse, this),
+      arc:       wrap(this.arc, this),
       model:     wrap(r.model)
     };
   };

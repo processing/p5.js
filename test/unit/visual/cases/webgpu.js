@@ -345,6 +345,24 @@ visualSuite("WebGPU", function () {
       await screenshot();
     });
 
+    visualTest('instances() API draws multiple spaced 2D rects (WebGPU)', async function(p5, screenshot) {
+      await p5.createCanvas(50, 50, p5.WEBGPU);
+      const count = 3;
+      const shader = p5.baseMaterialShader().modify(() => {
+        p5.getWorldInputs(inputs => {
+          let spacing = p5.width / count;
+          inputs.position.x += (p5.instanceIndex - (count - 1) / 2.0) * spacing;
+          return inputs;
+        });
+      }, { p5, count });
+      p5.background(220);
+      p5.noStroke();
+      p5.fill('blue');
+      p5.shader(shader);
+      p5.instances(count).rect(-5, -5, 10, 10);
+      await screenshot();
+    });
+
     visualTest('random() colors a basic shader (WebGPU)', async function(p5, screenshot) {
       await p5.createCanvas(50, 50, p5.WEBGPU);
       const shader = p5.baseColorShader().modify(() => {
