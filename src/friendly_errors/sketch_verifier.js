@@ -1,6 +1,7 @@
 import { parse } from 'acorn';
 import { simple as walk } from 'acorn-walk';
-import * as constants from '../constants';
+import * as constants from '../core/constants';
+import { FES } from './fes';
 
 // List of functions to ignore as they either are meant to be re-defined or
 // generate false positive outputs.
@@ -34,7 +35,6 @@ const ignoreFunction = [
 ];
 
 export const verifierUtils = {
-
   /**
    * Fetches the contents of a script element in the user's sketch.
    *
@@ -154,7 +154,7 @@ export const verifierUtils = {
     // reference on the p5.js website.
     function generateFriendlyError(errorType, name, line) {
       const url = `https://p5js.org/reference/p5/${name}`;
-      const message = `${errorType} "${name}" on line ${line} is being redeclared and conflicts with a p5.js ${errorType.toLowerCase()}. p5.js reference: ${url}`;
+      const message = FES.log`${errorType} "${name}" on line ${line} is being redeclared and conflicts with a p5.js ${errorType}. p5.js reference: ${url}`;
       return message;
     }
 
@@ -162,8 +162,8 @@ export const verifierUtils = {
     for (let { name, line } of allDefinitions) {
       const libDefinition = constants[name];
       if (libDefinition !== undefined) {
-        const message = generateFriendlyError('Constant', name, line);
-        console.log(message);
+        const message = generateFriendlyError('constant', name, line+1);
+        FES.log`${message}`();
         return true;
       }
     }
@@ -179,8 +179,8 @@ export const verifierUtils = {
 
     for (let { name, line } of allDefinitions) {
       if (!ignoreFunction.includes(name) && globalFunctions.has(name)) {
-        const message = generateFriendlyError('Function', name, line);
-        console.log(message);
+        const message = generateFriendlyError(FES.log`function`, name, line+1);
+        FES.log`${message}`();
         return true;
       }
     }
@@ -230,5 +230,5 @@ function sketchVerifier(p5, _fn, lifecycles) {
 export default sketchVerifier;
 
 if (typeof p5 !== 'undefined') {
-  sketchVerifier(p5, p5.prototype);
+  p5.registerAddon(sketchVerifier);
 }

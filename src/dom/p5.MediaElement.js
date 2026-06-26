@@ -4,6 +4,8 @@
  */
 
 import { Element } from './p5.Element';
+// import { friendlyAutoplayError } from '../friendly_errors/fes_core';
+import { FES, TL } from '../friendly_errors/fes';
 
 /**
  * @typedef {'video'} VIDEO
@@ -126,7 +128,8 @@ class MediaElement extends Element {
         // if it's an autoplay failure error
         if (e.name === 'NotAllowedError') {
           if (typeof IS_MINIFIED === 'undefined') {
-            p5._friendlyAutoplayError(this.src);
+            // friendlyAutoplayError(this.src);
+            FES.log`The media that tried to play (with '${this.src}') wasn't allowed to by this browser, most likely due to the browser's autoplay policy.\n\n+ More info: https://developer.mozilla.org/docs/Web/Media/Autoplay_guide`();
           } else {
             console.error(e);
           }
@@ -364,7 +367,8 @@ class MediaElement extends Element {
   _setupAutoplayFailDetection() {
     const timeout = setTimeout(() => {
       if (typeof IS_MINIFIED === 'undefined') {
-        p5._friendlyAutoplayError(this.src);
+        // friendlyAutoplayError(this.src);
+        FES.log`The media that tried to play (with '${this.src}') wasn't allowed to by this browser, most likely due to the browser's autoplay policy.\n\n+ More info: https://developer.mozilla.org/docs/Web/Media/Autoplay_guide`();
       } else {
         console.error(e);
       }
