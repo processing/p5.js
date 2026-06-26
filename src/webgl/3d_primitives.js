@@ -2611,6 +2611,10 @@ function primitives3D(p5, fn){
    * @property {function(x: Number, y: Number, w: Number, h: Number=, detail: Number=): undefined} ellipse
    * @property {function(x: Number, y: Number, w: Number, h: Number, start: Number, stop: Number, mode: String=, detail: Number=): undefined} arc
    * @property {function(model: p5.Geometry, count: Number=): undefined} model
+   * @property {function(x1: Number, y1: Number, z1: Number|Number, x2: Number=, y2: Number=, z2: Number=): undefined} line
+   * @property {function(x: Number, y: Number, z: Number=): undefined} point
+   * @property {function(x1: Number, y1: Number, z1: Number|Number, x2: Number=, y2: Number=, z2: Number=, x3: Number=, y3: Number=, z3: Number=, x4: Number=, y4: Number=, z4: Number=): undefined} bezier
+   * @property {function(x1: Number, y1: Number, z1: Number|Number, x2: Number=, y2: Number=, z2: Number=, x3: Number=, y3: Number=, z3: Number=, x4: Number=, y4: Number=, z4: Number=): undefined} spline
    */
 
   /**
@@ -2627,7 +2631,7 @@ function primitives3D(p5, fn){
    *   integer.
    * @returns {p5.InstancesWrapper} an object with methods `sphere`, `box`, `plane`,
    *   `ellipsoid`, `cylinder`, `cone`, `torus`, `triangle`, `rect`, `quad`,
-   *   `ellipse`, `arc`, and `model`. Call one of
+   *   `ellipse`, `arc`, `model`, `line`, `point`, `bezier`, and `spline`. Call one of
    *   these to draw `count` instances of that primitive.
    *
    * @example
@@ -2688,7 +2692,7 @@ function primitives3D(p5, fn){
       }
     };
 
-    return {
+    const result = {
       sphere:    wrap(r.sphere),
       box:       wrap(r.box),
       plane:     wrap(r.plane),
@@ -2701,8 +2705,18 @@ function primitives3D(p5, fn){
       quad:      wrap(this.quad, this),
       ellipse:   wrap(this.ellipse, this),
       arc:       wrap(this.arc, this),
-      model:     wrap(r.model)
+      model:     wrap(r.model),
+      line:      wrap(this.line, this),
+      point:     wrap(this.point, this),
+      bezier:    wrap(this.bezier, this),
+      spline:    wrap(this.spline, this)
     };
+
+    if (typeof this.curve === 'function') {
+      result.curve = wrap(this.curve, this);
+    }
+
+    return result;
   };
 }
 
