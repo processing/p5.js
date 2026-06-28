@@ -2,6 +2,7 @@
   "name": "p5",
   "repository": "processing/p5.js",
   "scripts": {
+    "start": "npx grunt",
     "build": "grunt build",
     "dev": "grunt yui browserify:dev connect:yui watch:quick",
     "docs": "grunt yui",
