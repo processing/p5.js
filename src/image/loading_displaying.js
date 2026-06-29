@@ -130,7 +130,11 @@ function loadingDisplaying(p5, fn){
           const blob = new Blob([data], { type: contentType });
           const url = URL.createObjectURL(blob);
 
-          img.onerror = e => reject(e);
+          img.onerror = e => {
+            URL.revokeObjectURL(url);
+            reject(e);
+          };
+
           img.onload = () => {
             URL.revokeObjectURL(url);
             resolve(img);
