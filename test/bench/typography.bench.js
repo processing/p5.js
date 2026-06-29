@@ -12,26 +12,17 @@ const strs = {
   ).join("\n") // This will hit around 15fps, 21275 points
 };
 
-// TODO: We might consider parameterizing tests since they mainly vary by renderer.
-//       For example, `TO_POINTS` each function can have an array of test parameters.
-const TO_POINTS = {
-  single: {str: "Performance", size: 20, sf: 0.5, points: 317, variance: 5}
-};
+// Parameterizing test cases by function ensures consitency in test parameters across all renderers.
+// Future tests should follow a similar format (e.g. TO_CONTOURS_CASES, etc)
+const TO_POINTS_CASES = [
+  {label: "textToPoints() single word", str: strs.single, textSize: 20, sampleFactor: 0.5, points: 317, variance: 5, render: false},
+  {label: "textToPoints() single word, 150pt", str: strs.single, textSize: 150, sampleFactor: 0.5, points: 2336, variance: 50, render: false},
+  {label: "textToPoints() single word, with render", str: strs.single, textSize: 20, sampleFactor: 0.5, points: 317, variance: 5, render: true},
+  {label: "textToPoints() 10 words", str: strs.ten, textSize: 20, sampleFactor: 0.5, points: 1453, variance: 5, render: false},
+  {label: "textToPoints() paragraph", str: strs.paragraph, textSize: 20, sampleFactor: 0.5, points: 21275, variance: 50, render: false},
+];
 
-// TODO: Alternatively, we can create an array of test bodies which take a p5 instance which has already run _setup()
-const TO_POINTS_FNS = {
-  single: {
-    label: "textToPoints() single word",
-    fn: (myp5, font) => {
-      myp5.textSize(20);
-      const points = font.textToPoints(strs.single, 6, 20, { sampleFactor: 0.5 });
-      assert.closeTo(points.length, 317, 5);
-      myp5.remove();
-    }
-  }
-};
-
-async function _setup(w = 400, h = 400, renderer = undefined) {
+async function bootstrap(w = 400, h = 400, renderer = undefined) {
   var myp5;
   var font;
   new p5(function (p) {
@@ -58,328 +49,77 @@ const options = { iterations: 20, time: 500 };
 describe("Typography: bench 2D", function() {
   var myp5, font;
 
-  bench(
-    "textToPoints() single word",
-    async () => {
-      try {
-        const { myp5, font } = await _setup();
-        myp5.textSize(20);
-        const points = font.textToPoints(strs.single, 6, 20, { sampleFactor: 0.5 });
-        assert.closeTo(points.length, 317, 5);
-        myp5.remove();
-      } catch (error) {
-        console.log(error);
-      }
-    },
-    options
-  );
-
-  bench(
-    "textToPoints() single word, 150pt",
-    async () => {
-      try {
-        const { myp5, font } = await _setup();
-        myp5.textSize(150);
-        const points = font.textToPoints(strs.single, 6, 20, { sampleFactor: 0.5 });
-        assert.closeTo(points.length, 2336, 50);
-        myp5.remove();
-      } catch (error) {
-        console.log(error);
-      }
-    },
-    options
-  );
-
-  // TODO: This is an example of using setup() to isolate benchmarks away from p5 instance setup code
-  //       which adds ~50ms universally to all benchmarks.
-  bench(
-    "textToPoints() single word, isolated benchmark",
-    async () => {
-      const points = font.textToPoints(strs.single, 6, 20, { sampleFactor: 0.5 });
-      assert.closeTo(points.length, 317, 5);
-    },
-    {
-      ...options,
-      setup: async () => {
-        ({ myp5, font } = await _setup());
-        myp5.textSize(20);
+  for (let testCase of TO_POINTS_CASES) {
+    bench(
+      testCase.label,
+      async () => {
+        const points = font.textToPoints(testCase.str, 10, 20, { sampleFactor: testCase.sampleFactor });
+        assert.closeTo(points.length, testCase.points, testCase.variance);
+        if (testCase.render) {
+          drawPoints(myp5, points);
+        }
       },
-      teardown: () => myp5.remove()
-    }
-  );
-
-  bench(
-    "textToPoints() single word, with render",
-    async () => {
-      try {
-        const { myp5, font } = await _setup();
-        myp5.textSize(20);
-        const points = font.textToPoints(strs.single, 6, 20, { sampleFactor: 0.5 });
-        assert.closeTo(points.length, 317, 5);
-        drawPoints(myp5, points);
-        myp5.remove();
-      } catch (error) {
-        console.log(error);
+      {
+        ...options,
+        setup: async () => {
+          ({myp5, font} = await bootstrap());
+          myp5.textSize(testCase.textSize);
+        },
+        teardown: () => myp5.remove()
       }
-    },
-    options
-  );
-
-  bench(
-    "textToPoints() 10 words",
-    async () => {
-      try {
-        const { myp5, font } = await _setup();
-        myp5.textSize(20);
-        const points = font.textToPoints(strs.ten, 6, 20, { sampleFactor: 0.5 });
-        assert.closeTo(points.length, 1453, 5);
-        myp5.remove();
-      } catch (error) {
-        console.log(error);
-      }
-    },
-    options
-  );
-
-  bench(
-    "textToPoints() Paragraph",
-    async () => {
-      try {
-        const { myp5, font } = await _setup();
-        myp5.textSize(20);
-        const points = font.textToPoints(strs.paragraph, 6, 20, { sampleFactor: 0.5 });
-        assert.closeTo(points.length, 21275, 50);
-        myp5.remove();
-      } catch (error) {
-        console.log(error);
-      }
-    },
-    options
-  );
-
-  // TODO: textToContours()
-  // TODO: textToPaths()
+    );
+  }
 
 });
 
 describe("Typography: bench WebGL", function() {
   var myp5, font;
 
-  bench(
-    "textToPoints() single word",
-    async () => {
-      try {
-        const { myp5, font } = await _setup(400, 400, WEBGL);
-        myp5.textSize(20);
-        const points = font.textToPoints(strs.single, 6, 20, { sampleFactor: 0.5 });
-        assert.closeTo(points.length, 317, 5);
-        myp5.remove();
-      } catch (error) {
-        console.log(error);
-      }
-    },
-    options
-  );
-
-  bench(
-    "textToPoints() single word, 150pt",
-    async () => {
-      try {
-        const { myp5, font } = await _setup(400, 400, WEBGL);
-        myp5.textSize(150);
-        const points = font.textToPoints(strs.single, 6, 20, { sampleFactor: 0.5 });
-        assert.closeTo(points.length, 2336, 50);
-        myp5.remove();
-      } catch (error) {
-        console.log(error);
-      }
-    },
-    options
-  );
-
-  // TODO: this is an example of using setup() to isolate benchmarks away from p5 instance setup code
-  //       which adds ~50ms universally to all benchmarks
-  bench(
-    "textToPoints() single word, isolated benchmark",
-    async () => {
-      const points = font.textToPoints(strs.single, 6, 20, { sampleFactor: 0.5 });
-      assert.closeTo(points.length, 317, 5);
-    },
-    {
-      ...options,
-      setup: async () => {
-        ({ myp5, font } = await _setup(400, 400, WEBGL));
-        myp5.textSize(20);
+  for (let testCase of TO_POINTS_CASES) {
+    bench(
+      testCase.label,
+      async () => {
+        const points = font.textToPoints(testCase.str, 10, 20, { sampleFactor: testCase.sampleFactor });
+        assert.closeTo(points.length, testCase.points, testCase.variance);
+        if (testCase.render) {
+          drawPoints(myp5, points);
+        }
       },
-      teardown: () => myp5.remove()
-    }
-  );
-
-  bench(
-    "textToPoints() single word, with render",
-    async () => {
-      try {
-        const { myp5, font } = await _setup(400, 400, WEBGL);
-        myp5.textSize(20);
-        const points = font.textToPoints(strs.single, 6, 20, { sampleFactor: 0.5 });
-        assert.closeTo(points.length, 317, 5);
-        drawPoints(myp5, points);
-        myp5.remove();
-      } catch (error) {
-        console.log(error);
+      {
+        ...options,
+        setup: async () => {
+          ({myp5, font} = await bootstrap(400, 400, WEBGL));
+          myp5.textSize(testCase.textSize);
+        },
+        teardown: () => myp5.remove()
       }
-    },
-    options
-  );
-
-  bench(
-    "textToPoints() 10 words",
-    async () => {
-      try {
-        const { myp5, font } = await _setup(400, 400, WEBGL);
-        myp5.textSize(20);
-        const points = font.textToPoints(strs.ten, 6, 20, { sampleFactor: 0.5 });
-        assert.closeTo(points.length, 1453, 5);
-        myp5.remove();
-      } catch (error) {
-        console.log(error);
-      }
-    },
-    options
-  );
-
-  bench(
-    "textToPoints() Paragraph",
-    async () => {
-      try {
-        const { myp5, font } = await _setup(400, 400, WEBGL);
-        myp5.textSize(20);
-        const points = font.textToPoints(strs.paragraph, 6, 20, { sampleFactor: 0.5 });
-        assert.closeTo(points.length, 21275, 50);
-        myp5.remove();
-      } catch (error) {
-        console.log(error);
-      }
-    },
-    options
-  );
-
-  // TODO: textToContours()
-  // TODO: textToPaths()
-  // TODO: textToPoints()
-  // TODO: textToContours()
-  // TODO: textToPaths()
-  // TODO: textToModel()
+    );
+  }
 
 });
 
 describe("Typography: bench WebGPU", function() {
   var myp5, font;
 
-  bench(
-    "textToPoints() single word",
-    async () => {
-      try {
-        const { myp5, font } = await _setup(400, 400, WEBGPU);
-        myp5.textSize(20);
-        const points = font.textToPoints(strs.single, 6, 20, { sampleFactor: 0.5 });
-        assert.closeTo(points.length, 317, 5);
-        myp5.remove();
-      } catch (error) {
-        console.log(error);
-      }
-    },
-    options
-  );
-
-  bench(
-    "textToPoints() single word, 150pt",
-    async () => {
-      try {
-        const { myp5, font } = await _setup(400, 400, WEBGPU);
-        myp5.textSize(150);
-        const points = font.textToPoints(strs.single, 6, 20, { sampleFactor: 0.5 });
-        assert.closeTo(points.length, 2336, 50);
-        myp5.remove();
-      } catch (error) {
-        console.log(error);
-      }
-    },
-    options
-  );
-
-  // TODO: this is an example of using setup() to isolate benchmarks away from p5 instance setup code
-  //       which adds ~50ms universally to all benchmarks
-  bench(
-    "textToPoints() single word, isolated benchmark",
-    async () => {
-      const points = font.textToPoints(strs.single, 6, 20, { sampleFactor: 0.5 });
-      assert.closeTo(points.length, 317, 5);
-    },
-    {
-      ...options,
-      setup: async () => {
-        ({ myp5, font } = await _setup(400, 400, WEBGPU));
-        myp5.textSize(20);
+  for (let testCase of TO_POINTS_CASES) {
+    bench(
+      testCase.label,
+      async () => {
+        const points = font.textToPoints(testCase.str, 10, 20, { sampleFactor: testCase.sampleFactor });
+        assert.closeTo(points.length, testCase.points, testCase.variance);
+        if (testCase.render) {
+          drawPoints(myp5, points);
+        }
       },
-      teardown: () => myp5.remove()
-    }
-  );
-
-  bench(
-    "textToPoints() single word, with render",
-    async () => {
-      try {
-        const { myp5, font } = await _setup(400, 400, WEBGPU);
-        myp5.textSize(20);
-        const points = font.textToPoints(strs.single, 6, 20, { sampleFactor: 0.5 });
-        assert.closeTo(points.length, 317, 5);
-        drawPoints(myp5, points);
-        myp5.remove();
-      } catch (error) {
-        console.log(error);
+      {
+        ...options,
+        setup: async () => {
+          ({myp5, font} = await bootstrap(400, 400, WEBGPU));
+          myp5.textSize(testCase.textSize);
+        },
+        teardown: () => myp5.remove()
       }
-    },
-    options
-  );
-
-  bench(
-    "textToPoints() 10 words",
-    async () => {
-      try {
-        const { myp5, font } = await _setup(400, 400, WEBGPU);
-        myp5.textSize(20);
-        const points = font.textToPoints(strs.ten, 6, 20, { sampleFactor: 0.5 });
-        assert.closeTo(points.length, 1453, 5);
-        myp5.remove();
-      } catch (error) {
-        console.log(error);
-      }
-    },
-    options
-  );
-
-  bench(
-    "textToPoints() Paragraph",
-    async () => {
-      try {
-        const { myp5, font } = await _setup(400, 400, WEBGPU);
-        myp5.textSize(20);
-        const points = font.textToPoints(strs.paragraph, 6, 20, { sampleFactor: 0.5 });
-        assert.closeTo(points.length, 21275, 50);
-        myp5.remove();
-      } catch (error) {
-        console.log(error);
-      }
-    },
-    options
-  );
-
-  // TODO: textToContours()
-  // TODO: textToPaths()
-  // TODO: textToPoints()
-  // TODO: textToContours()
-  // TODO: textToPaths()
-  // TODO: textToModel()
+    );
+  }
 
 });
