@@ -833,11 +833,20 @@ function vertex(p5, fn){
    *   describe('A row of four squares. Their colors transition from purple on the left to red on the right');
    * }
    */
-  fn.endShape = function(mode, count = 1) {
+  fn.endShape = function(mode, count) {
     // p5._validateParameters('endShape', arguments);
-    if (count < 1) {
-      console.log('🌸 p5.js says: You can not have less than one instance');
-      count = 1;
+    if (typeof mode === 'number') {
+      count = mode;
+      mode = undefined;
+    }
+
+    if (count !== undefined) {
+      if (count < 1) {
+        console.log('🌸 p5.js says: You can not have less than one instance');
+        count = 1;
+      } else {
+        count = Math.round(count);
+      }
     }
 
     this._renderer.endShape(mode, count);
