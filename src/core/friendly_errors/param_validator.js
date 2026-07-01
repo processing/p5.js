@@ -551,7 +551,7 @@ function validateParams(p5, fn, lifecycles) {
       args.every(arg => arg === undefined)
     ) {
       const undefinedErrorMessage = `🌸 p5.js says: All arguments for ${func}() are undefined. There is likely an error in the code.`;
-
+      console.log(undefinedErrorMessage);
       return {
         success: false,
         error: undefinedErrorMessage
