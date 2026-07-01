@@ -79,6 +79,63 @@ suite('loadModel', function() {
     assert.deepEqual(model.vertexColors, expectedColors);
   });
 
+  test('splits a multi-material OBJ into one part per material', async function() {
+    const model = await mockP5Prototype.loadModel(validObjFileforMtl);
+
+    // octa-color.obj uses 8 materials, one per face
+    assert.equal(model.parts.length, 8);
+
+    // every face ends up in exactly one part
+    const totalFaces = model.parts.reduce((sum, p) => sum + p.faces.length, 0);
+    assert.equal(totalFaces, model.faces.length);
+
+    // first material (m000001) is Kd 0 0 0.5 -> part fill
+    assert.deepEqual(model.parts[0].partState.fill, [0, 0, 0.5]);
+    assert.equal(model.parts[0].partState.shininess, 100);
+
+    // faces re-indexed against each part's own localised verts
+    for (const part of model.parts) {
+      for (const face of part.faces) {
+        for (const idx of face) {
+          assert.ok(idx >= 0 && idx < part.vertices.length);
+        }
+      }
+    }
+  });
+
+  test('loads the diffuse texture (map_Kd) onto the part state', async function() {
+    const fakeImage = { width: 1, height: 1 };
+    mockP5Prototype.loadImage = async url => {
+      // texture path is resolved relative to the model folder
+      assert.ok(url.endsWith('/cat.jpg'));
+      return fakeImage;
+    };
+    try {
+      const model = await mockP5Prototype.loadModel('/test/unit/assets/textured.obj');
+      // two materials, so two parts; the textured one carries the image.
+      assert.equal(model.parts.length, 2);
+      const textured = model.parts.find(p => p.partState.texture);
+      assert.ok(textured, 'a part has the loaded texture');
+      assert.equal(textured.partState.texture, fakeImage);
+      assert.equal(textured.partState.shininess, 50);
+    } finally {
+      delete mockP5Prototype.loadImage;
+    }
+  });
+
+  test('a texture that fails to load is skipped without failing the model', async function() {
+    mockP5Prototype.loadImage = async () => {
+      throw new Error('Not Found');
+    };
+    try {
+      const model = await mockP5Prototype.loadModel('/test/unit/assets/textured.obj');
+      assert.equal(model.parts.length, 2);
+      assert.ok(model.parts.every(p => p.partState.texture == null));
+    } finally {
+      delete mockP5Prototype.loadImage;
+    }
+  });
+
   test('mixed material coloring loads model with sentinel colors for uncolored vertices', async function() {
     const model = await mockP5Prototype.loadModel(inconsistentColorObjFile);
     assert.instanceOf(model, Geometry);
