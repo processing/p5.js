@@ -8,7 +8,8 @@ export default defineConfig({
     vitePluginString({
       include: [
         'src/webgl/shaders/**/*'
-      ]
+      ],
+      compress: false
     })
   ]
 });
