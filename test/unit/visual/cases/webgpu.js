@@ -363,22 +363,46 @@ visualSuite("WebGPU", function () {
       await screenshot();
     });
 
-    visualTest('instances() API draws immediate-mode shape primitives (WebGPU)', async function(p5, screenshot) {
+    visualTest('instances() API draws instanced lines and points (WebGPU)', async function(p5, screenshot) {
       await p5.createCanvas(50, 50, p5.WEBGPU);
-      const count = 4;
-      const shader = p5.baseMaterialShader().modify(() => {
+      const count = 3;
+      const spaceFn = () => {
         p5.getWorldInputs(inputs => {
           let spacing = p5.width / count;
           inputs.position.x += (p5.instanceIndex - (count - 1) / 2.0) * spacing;
           return inputs;
         });
-      }, { p5, count });
+      };
+      const matShader = p5.buildMaterialShader(spaceFn, { p5, count });
+      const strShader = p5.buildStrokeShader(spaceFn, { p5, count });
+      p5.background(220);
+      p5.stroke(0);
+      p5.strokeWeight(3);
+      p5.shader(matShader);
+      p5.strokeShader(strShader);
+      p5.instances(count).line(0, -15, 0, 0, 15, 0);
+      p5.instances(count).point(0, 0, 0);
+      await screenshot();
+    });
+
+    visualTest('instances() API draws instanced curves (WebGPU)', async function(p5, screenshot) {
+      await p5.createCanvas(50, 50, p5.WEBGPU);
+      const count = 3;
+      const spaceFn = () => {
+        p5.getWorldInputs(inputs => {
+          let spacing = p5.width / count;
+          inputs.position.x += (p5.instanceIndex - (count - 1) / 2.0) * spacing;
+          return inputs;
+        });
+      };
+      const matShader = p5.buildMaterialShader(spaceFn, { p5, count });
+      const strShader = p5.buildStrokeShader(spaceFn, { p5, count });
       p5.background(220);
       p5.stroke(0);
       p5.strokeWeight(2);
-      p5.shader(shader);
-      p5.instances(count).line(0, -15, 0, 0, 15, 0);
-      p5.instances(count).point(0, -10, 0);
+      p5.noFill();
+      p5.shader(matShader);
+      p5.strokeShader(strShader);
       p5.instances(count).bezier(-5, -5, 0, -2, 5, 0, 2, -5, 0, 5, 5, 0);
       p5.instances(count).spline(-5, 5, 0, -2, -5, 0, 2, 5, 0, 5, -5, 0);
       await screenshot();
