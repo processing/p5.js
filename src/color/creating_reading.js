@@ -341,6 +341,20 @@ function creatingReading(p5, fn){
    *
    *   describe('Two blue rectangles. A darker rectangle on the left and a brighter one on the right.');
    * }
+   *
+   * @example
+   * // Strands: color() inside a modify() callback returns a vec4
+   * // with normalized RGBA (0-1), instead of a p5.Color object.
+   * function setup() {
+   *   let shader = baseMaterialShader().modify(() => {
+   *     p5.getPixelInputs((inputs) => {
+   *       // Same syntax as regular sketch code...
+   *       let c = color(255, 0, 0);
+   *       // ...but c is a vec4 like (1.0, 0.0, 0.0, 1.0), not a p5.Color.
+   *       return c;
+   *     });
+   *   });
+   * }
    */
   /**
    * @method color
@@ -396,10 +410,24 @@ function creatingReading(p5, fn){
    * to 255. If the <a href="/reference/p5/colorMode/">colorMode()</a> is set to RGB, it
    * returns the red value in the given range.
    *
+   * In p5.strands shader callbacks, `red()` operates on `vec4` values and
+   * returns the red channel as a normalized value in the 0–1 range.
+   * `colorMode()` has no effect inside shader callbacks.
+   *
    * @method red
    * @param {p5.Color|Number[]|String} color <a href="/reference/p5/p5.Color/">p5.Color</a> object, array of
    *                                         color components, or CSS color string.
    * @return {Number} the red value.
+   *
+   * @example
+   * function setup() {
+   *   let shader = baseMaterialShader().modify(() => {
+   *     p5.getPixelInputs((inputs) => {
+   *       let r = red(inputs.color);
+   *       return vec4(r, 0.0, 0.0, 1.0);
+   *     });
+   *   });
+   * }
    *
    * @example
    * function setup() {
@@ -517,10 +545,24 @@ function creatingReading(p5, fn){
    * to 255. If the <a href="/reference/p5/colorMode/">colorMode()</a> is set to RGB, it
    * returns the green value in the given range.
    *
+   * In p5.strands shader callbacks, `green()` operates on `vec4` values and
+   * returns the green channel as a normalized value in the 0–1 range.
+   * `colorMode()` has no effect inside shader callbacks.
+   *
    * @method green
    * @param {p5.Color|Number[]|String} color <a href="/reference/p5/p5.Color/">p5.Color</a> object, array of
    *                                         color components, or CSS color string.
    * @return {Number} the green value.
+   *
+   * @example
+   * function setup() {
+   *   let shader = baseMaterialShader().modify(() => {
+   *     p5.getPixelInputs((inputs) => {
+   *       let g = green(inputs.color);
+   *       return vec4(0.0, g, 0.0, 1.0);
+   *     });
+   *   });
+   * }
    *
    * @example
    * function setup() {
@@ -638,10 +680,24 @@ function creatingReading(p5, fn){
    * to 255. If the <a href="/reference/p5/colorMode/">colorMode()</a> is set to RGB, it
    * returns the blue value in the given range.
    *
+   * In p5.strands shader callbacks, `blue()` operates on `vec4` values and
+   * returns the blue channel as a normalized value in the 0–1 range.
+   * `colorMode()` has no effect inside shader callbacks.
+   *
    * @method blue
    * @param {p5.Color|Number[]|String} color <a href="/reference/p5/p5.Color/">p5.Color</a> object, array of
    *                                         color components, or CSS color string.
    * @return {Number} the blue value.
+   *
+   * @example
+   * function setup() {
+   *   let shader = baseMaterialShader().modify(() => {
+   *     p5.getPixelInputs((inputs) => {
+   *       let b = blue(inputs.color);
+   *       return vec4(0.0, 0.0, b, 1.0);
+   *     });
+   *   });
+   * }
    *
    * @example
    * function setup() {
@@ -755,10 +811,24 @@ function creatingReading(p5, fn){
    * <a href="#/p5.Color">p5.Color</a> object, an array of color components, or
    * a CSS color string.
    *
+   * In p5.strands shader callbacks, `alpha()` operates on `vec4` values and
+   * returns the alpha channel as a normalized value in the 0–1 range.
+   * `colorMode()` has no effect inside shader callbacks.
+   *
    * @method alpha
    * @param {p5.Color|Number[]|String} color <a href="#/p5.Color">p5.Color</a> object, array of
    *                                         color components, or CSS color string.
    * @return {Number} the alpha value.
+   *
+   * @example
+   * function setup() {
+   *   let shader = baseMaterialShader().modify(() => {
+   *     p5.getPixelInputs((inputs) => {
+   *       let a = alpha(inputs.color);
+   *       return vec4(inputs.color.rgb, a * 0.5);
+   *     });
+   *   });
+   * }
    *
    * @example
    * function setup() {
@@ -850,10 +920,24 @@ function creatingReading(p5, fn){
    * <a href="/reference/p5/colorMode/">colorMode()</a> is set to HSB or HSL, it returns the hue
    * value in the given mode.
    *
+   * In p5.strands shader callbacks, `hue()` operates on `vec4` values and
+   * returns the hue as a normalized value in the 0–1 range.
+   * `colorMode()` has no effect inside shader callbacks.
+   *
    * @method hue
    * @param {p5.Color|Number[]|String} color <a href="/reference/p5/p5.Color/">p5.Color</a> object, array of
    *                                         color components, or CSS color string.
    * @return {Number} the hue value.
+   *
+   * @example
+   * function setup() {
+   *   let shader = baseMaterialShader().modify(() => {
+   *     p5.getPixelInputs((inputs) => {
+   *       let h = hue(inputs.color);
+   *       return vec4(h, h, h, 1.0);
+   *     });
+   *   });
+   * }
    *
    * @example
    * function setup() {
@@ -976,10 +1060,24 @@ function creatingReading(p5, fn){
    * <a href="/reference/p5/colorMode/">colorMode()</a> is set to HSB or HSL, it returns the
    * saturation value in the given mode.
    *
+   * In p5.strands shader callbacks, `saturation()` operates on `vec4` values
+   * and returns the saturation as a normalized value in the 0–1 range.
+   * `colorMode()` has no effect inside shader callbacks.
+   *
    * @method saturation
    * @param {p5.Color|Number[]|String} color <a href="/reference/p5/p5.Color/">p5.Color</a> object, array of
    *                                         color components, or CSS color string.
    * @return {Number} the saturation value
+   *
+   * @example
+   * function setup() {
+   *   let shader = baseMaterialShader().modify(() => {
+   *     p5.getPixelInputs((inputs) => {
+   *       let s = saturation(inputs.color);
+   *       return vec4(s, s, s, 1.0);
+   *     });
+   *   });
+   * }
    *
    * @example
    * function setup() {
@@ -1133,11 +1231,24 @@ function creatingReading(p5, fn){
    * By default, `brightness()` returns a color's HSB brightness in the range 0
    * to 100. If the <a href="/reference/p5/colorMode/">colorMode()</a> is set to HSB, it
    * returns the brightness value in the given range.
+   * In p5.strands shader callbacks, `brightness()` operates on `vec4` values
+   * and returns the brightness as a normalized value in the 0–1 range.
+   * `colorMode()` has no effect inside shader callbacks.
    *
    * @method brightness
    * @param {p5.Color|Number[]|String} color <a href="/reference/p5/p5.Color/">p5.Color</a> object, array of
    *                                         color components, or CSS color string.
    * @return {Number} the brightness value.
+   *
+   * @example
+   * function setup() {
+   *   let shader = baseMaterialShader().modify(() => {
+   *     p5.getPixelInputs((inputs) => {
+   *       let b = brightness(inputs.color);
+   *       return vec4(b, b, b, 1.0);
+   *     });
+   *   });
+   * }
    *
    * @example
    * function setup() {
@@ -1263,11 +1374,24 @@ function creatingReading(p5, fn){
    * By default, `lightness()` returns a color's HSL lightness in the range 0
    * to 100. If the <a href="/reference/p5/colorMode/">colorMode()</a> is set to HSL, it
    * returns the lightness value in the given range.
+   * In p5.strands shader callbacks, `lightness()` operates on `vec4` values
+   * and returns the lightness as a normalized value in the 0–1 range.
+   * `colorMode()` has no effect inside shader callbacks.
    *
    * @method lightness
    * @param {p5.Color|Number[]|String} color <a href="/reference/p5/p5.Color/">p5.Color</a> object, array of
    *                                         color components, or CSS color string.
    * @return {Number} the lightness value.
+   *
+   * @example
+   * function setup() {
+   *   let shader = baseMaterialShader().modify(() => {
+   *     p5.getPixelInputs((inputs) => {
+   *       let l = lightness(inputs.color);
+   *       return vec4(l, l, l, 1.0);
+   *     });
+   *   });
+   * }
    *
    * @example
    * function setup() {
@@ -1396,11 +1520,24 @@ function creatingReading(p5, fn){
    * The way that colors are interpolated depends on the current
    * <a href="#/p5/colorMode">colorMode()</a>.
    *
+   * In p5.strands shader callbacks, `lerpColor()` interpolates between
+   * `vec4` colors and returns a normalized `vec4` with RGBA components in
+   * the 0–1 range. `colorMode()` has no effect inside shader callbacks.
+   *
    * @method lerpColor
    * @param  {p5.Color} c1  interpolate from this color.
    * @param  {p5.Color} c2  interpolate to this color.
    * @param  {Number}   amt number between 0 and 1.
    * @return {p5.Color}     interpolated color.
+   *
+   * @example
+   * function setup() {
+   *   let shader = baseMaterialShader().modify(() => {
+   *     let c1 = color('red');
+   *     let c2 = color('blue');
+   *     let mixed = lerpColor(c1, c2, 0.5);
+   *   });
+   * }
    *
    * @example
    * function setup() {
