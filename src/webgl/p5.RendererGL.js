@@ -441,14 +441,14 @@ class RendererGL extends Renderer3D {
     return gl.getParameter(gl.MAX_TEXTURE_SIZE);
   }
 
-  _adjustDimensions(width, height) {
+  _adjustDimensions(width, height, density = this._pixelDensity) {
     if (!this._maxTextureSize) {
       this._maxTextureSize = this._getMaxTextureSize();
     }
     let maxTextureSize = this._maxTextureSize;
 
     let maxAllowedPixelDimensions = Math.floor(
-      maxTextureSize / this._pixelDensity
+      maxTextureSize / density
     );
     let adjustedWidth = Math.min(width, maxAllowedPixelDimensions);
     let adjustedHeight = Math.min(height, maxAllowedPixelDimensions);
