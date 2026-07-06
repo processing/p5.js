@@ -20,7 +20,7 @@
 * [Appendix: Tags quick reference](#tags-quick-reference)
 * [Appendix: Summary of differences with p5.js v1.x](#doc-differences-v1-to-v2)
 
-In p5.js, we author the code reference you see on the [reference](https://beta.p5js.org/reference/) page on the p5.js website by including specialized comments alongside the library’s source code. For each p5 function, for example, a reference comment includes the name and description of the function, details of its parameters and return value, and examples of use. The content you see on each p5.js function/variable’s reference page is built from these reference comments in the source code.
+In p5.js, we author the code reference you see on the [reference](https://p5js.org/reference/) page on the p5.js website by including specialized comments alongside the library’s source code. For each p5 function, for example, a reference comment includes the name and description of the function, details of its parameters and return value, and examples of use. The content you see on each p5.js function/variable’s reference page is built from these reference comments in the source code.
 
 This document will show you how to write and format the reference comments so that they can eventually be rendered onto the website correctly. You should follow this guide whenever you are editing or writing a reference for any p5.js function or variable.
 
@@ -30,7 +30,7 @@ If you're looking to learn about the build process that generates the reference 
 
 ### A note about p5.js versions
 
-This document describes how to work with p5.js version 2.x, whose reference documentation is currently being hosted at https://beta.p5js.org/reference/.  If you are documenting code for p5.js v1.x, you should consult [this document](https://p5js.org/contribute/contributing_to_the_p5js_reference/), instead, as some of the syntax and processes are different.
+This document describes how to work with p5.js version 2.x, whose reference documentation is at https://p5js.org/reference/. If you are documenting code for p5.js v1.x, you should consult [this document](https://p5js.org/contribute/contributing_to_the_p5js_reference/), instead, as some of the syntax and processes are different.
 
 (Most of the differences are detailed in [this appendix](#doc-differences-v1-to-v2)).
 
@@ -92,7 +92,7 @@ In abstract, a comment block for a p5 _function_ typically looks as follows.  (W
 
 ### A look at a real example function: `sin()`
 
-Let’s take a look at a real reference comment block for a function from the library - the `sin()` function. You can compare what you see in the comment block below with what you can see on the published [reference page for `sin()`](https://beta.p5js.org/reference/p5/sin/).  
+Let’s take a look at a real reference comment block for a function from the library - the `sin()` function. You can compare what you see in the comment block below with what you can see on the published [reference page for `sin()`](https://p5js.org/reference/p5/sin/).  
 
 It is very long.  If it is overwhelming, notice that it is 80% made up of example sketches.
 
@@ -210,7 +210,7 @@ In some places, you may see the  `@description` tag used.  It explicitly marks t
 #### The first sentence of the description
 
 The first sentence in the description, in particular, should concisely summarize what the function does.  
-It may be presented alone with the function name in listings (e.g. in [the function list](https://beta.p5js.org/reference/#Shape) on the front page of the reference website), where it should help the reader understand quickly if the function is what they're looking for.
+It may be presented alone with the function name in listings (e.g. in [the function list](https://p5js.org/reference/#Shape) on the front page of the reference website), where it should help the reader understand quickly if the function is what they're looking for.
 
 **Examples of first sentences of function descriptions**
 
@@ -256,7 +256,7 @@ Multiplies a vector by a scalar and returns a new vector.
 #### Using images within the description section
 
 In some cases it may be desirable to include, in the description, images or audio or video to help explain or demonstrate a function's working.
-For an example of this see the reference for [`applyMatrix`](https://beta.p5js.org/reference/p5/applymatrix/).
+For an example of this see the reference for [`applyMatrix`](https://p5js.org/reference/p5/applymatrix/).
 
 _Hosting_ of these images is discussed later in [this section on assets](#using-assets).
 
@@ -314,17 +314,17 @@ If the parameter is optional, add square brackets around the name:
 
 #### Examples of parameter types
 
-An example from [rect()](https://beta.p5js.org/reference/p5/rect/), where the topleft ("tl") parameter is optional:
+An example from [rect()](https://p5js.org/reference/p5/rect/), where the topleft ("tl") parameter is optional:
 ```
 @param  {Number} [tl] optional radius of top-left corner.
 ```
-An example from [createCanvas](https://beta.p5js.org/reference/p5/createcanvas/) where a "renderer" parameter can optionally be supplied:
+An example from [createCanvas](https://p5js.org/reference/p5/createcanvas/) where a "renderer" parameter can optionally be supplied:
 
 ```
 @param  {(P2D|WEBGL)} [renderer] either P2D or WEBGL. Defaults to P2D.
 ```
 
-A more advanced example from [hue](https://beta.p5js.org/reference/p5/hue/) where the color parameter can be a p5.Color object, an array of numbers, or a string:
+A more advanced example from [hue](https://p5js.org/reference/p5/hue/) where the color parameter can be a p5.Color object, an array of numbers, or a string:
 ```
 * @param {p5.Color|Number[]|String} color
 ```
@@ -425,19 +425,19 @@ You can include links in the description of a return.  For how to link to anothe
 
 More examples of `@return`:
 
-Linking to the documentation of the returned object.  (From: [createVector()](https://beta.p5js.org/reference/p5/createVector/)):
+Linking to the documentation of the returned object.  (From: [createVector()](https://p5js.org/reference/p5/createVector/)):
 ```
 @return {p5.Vector} new 
 <a href="#/p5.Vector">p5.Vector</a> object.
 ```
 
-Returning an array. (From [p5.Image#get()](https://beta.p5js.org/reference/p5.image/get/)):
+Returning an array. (From [p5.Image#get()](https://p5js.org/reference/p5.image/get/)):
 ```
 @return {Number[]} color of the pixel at (x, y)
 in array format `[R, G, B, A]`.
 ```
 
-Returning a Promise.  (From [loadFilterShader()](https://beta.p5js.org/reference/p5/loadFilterShader/)):
+Returning a Promise.  (From [loadFilterShader()](https://p5js.org/reference/p5/loadFilterShader/)):
 ```
 @return {Promise<p5.Shader>} a promise that 
 resolves with a shader object.
@@ -455,7 +455,7 @@ If the method returns the parent object, you can skip the `@return` tag and add 
 
 #### Multiple function signatures
 
-If a function has multiple possible parameter options, you can specify each individually. For example, the [`background()`](https://beta.p5js.org/reference/p5/background/) function takes a number of different parameter options (see "Syntax" section on the reference page). Choose one version to list as the first signature using the template above. After the end of the first reference comment block, you can add additional signatures, each in its own block, using only the `@method` and `@param` tags following the example below.
+If a function has multiple possible parameter options, you can specify each individually. For example, the [`background()`](https://p5js.org/reference/p5/background/) function takes a number of different parameter options (see "Syntax" section on the reference page). Choose one version to list as the first signature using the template above. After the end of the first reference comment block, you can add additional signatures, each in its own block, using only the `@method` and `@param` tags following the example below.
 
 ```js
 /**
@@ -493,7 +493,7 @@ In a separate comment block for the static method, document its parameters and r
 
 Example: 
 
-The p5.Vector class has an instance method [add()](https://beta.p5js.org/reference/p5.vector/add/), and a static `add()` method, too.
+The p5.Vector class has an instance method [add()](https://p5js.org/reference/p5.vector/add/), and a static `add()` method, too.
 
 Here's (a simplification of) the documentation of the _instance_ method.  Note that the description also mentions the static version.
 
@@ -717,7 +717,7 @@ Example (from `createCanvas()`):
 
 It is possible, and often desirable, to include early runnable examples _within_ the description section, before the main "Examples" section of the page.  This is particularly useful when a function or class has a lengthy and detailed description section.
 
-The <a href="https://beta.p5js.org/reference/p5/image/">p5.Image reference</a> has a good example of this. ([Source here](https://github.com/processing/p5.js/blob/6a61f7fb3055969fe53d9f82027f891d245b3e9f/src/webgl/material.js#L597)).
+The <a href="https://p5js.org/reference/p5/image/">p5.Image reference</a> has a good example of this. ([Source here](https://github.com/processing/p5.js/blob/6a61f7fb3055969fe53d9f82027f891d245b3e9f/src/webgl/material.js#L597)).
 
 To add such an example, instead of using an `@example` tag, surround the example code in a "fenced" markdown code-block with the annotation `js example`.  Here's an example of how it should look:
 
@@ -743,7 +743,7 @@ The basic principle of writing good example code for the reference is to keep th
 
 While it may be tempting to make a more interesting, engaging, or "cool" example using other functions (e.g. noise()), or using clever math, that makes it harder for readers to understand.  Try to minimize the number of concepts used in your example.
 
-We won’t go through the details about best practices and code style for the example code here; please see the [reference style guide](https://beta.p5js.org/contribute/documentation_style_guide/), instead.
+We won’t go through the details about best practices and code style for the example code here; please see the [reference style guide](https://p5js.org/contribute/documentation_style_guide/), instead.
 
 ### When examples omit setup()
 
@@ -768,7 +768,7 @@ If your example code (or the description section) uses asset files (e.g. images,
 
 Examples: 
 
-For a full working example, see the [tint()](https://beta.p5js.org/reference/p5/tint/) reference.
+For a full working example, see the [tint()](https://p5js.org/reference/p5/tint/) reference.
 
 ```js
 img = await loadImage('assets/rockies.jpg');
@@ -824,7 +824,7 @@ Finally, for every example you add, you are required to use the p5.js function `
 * }
 ```
 
-For more on `describe()` visit the [web accessibility contributor documentation](./web_accessibility/#describe), and the [Writing Accessible Canvas Descriptions](https://beta.p5js.org/tutorials/writing-accessible-canvas-descriptions/) tutorial.
+For more on `describe()` visit the [web accessibility contributor documentation](./web_accessibility/#describe), and the [Writing Accessible Canvas Descriptions](https://p5js.org/tutorials/writing-accessible-canvas-descriptions/) tutorial.
 
 
 ## <a id="linking"></a>Linking to other p5.js features
@@ -863,20 +863,20 @@ As seen above, when there's no property involved, just a class itself, the secon
 
 Full examples:
 
-From the description of [dist](https://beta.p5js.org/reference/p5/dist/) in [calculation.js](https://github.com/processing/p5.js/blob/dev-2.0/src/math/calculation.js)
+From the description of [dist](https://p5js.org/reference/p5/dist/) in [calculation.js](https://github.com/processing/p5.js/blob/dev-2.0/src/math/calculation.js)
 ```
 * Use <a href="#/p5.Vector/dist">p5.Vector.dist()</a> 
 * to calculate the distance between two 
 * <a href="#/p5.Vector">p5.Vector</a> objects.
 ```
 
-From the description of [pmouseX](https://beta.p5js.org/reference/p5/pmousex/):
+From the description of [pmouseX](https://p5js.org/reference/p5/pmousex/):
 ```
 * Its value is <a href="#/p5/mouseX">mouseX</a>
 * from the previous frame.
 ```
 
-From the `@return` statement of [createVector()](https://beta.p5js.org/reference/p5/createVector/):
+From the `@return` statement of [createVector()](https://p5js.org/reference/p5/createVector/):
 ```
 * @return {p5.Vector} new 
 * <a href="#/p5.Vector">p5.Vector</a> object.
@@ -931,16 +931,16 @@ After the `@module` tag, an optional `@submodule` tag can be used to further gro
 
 The convention p5.js follows is that each subfolder in the `src/` folder will be one `@module` while each file inside the subfolder will be its own `@submodule` under the overall subfolder’s `@module`. Unless you are adding new subfolders/files to the p5.js source code, you shouldn’t need to edit a file's top-level reference comment block.
 
-On the website, the [top-level reference page](https://beta.p5js.org/reference) presents a list functions and variables grouped by their modules and submodules.
+On the website, the [top-level reference page](https://p5js.org/reference) presents a list functions and variables grouped by their modules and submodules.
 
 Examples of module + submodule groupings
 
-The ["Image" module](https://beta.p5js.org/reference/#Image) in `src/image/` has the following submodules: "Loading & Displaying", "Pixels", and "p5.Image".
+The ["Image" module](https://p5js.org/reference/#Image) in `src/image/` has the following submodules: "Loading & Displaying", "Pixels", and "p5.Image".
 
-The ["Color" module](https://beta.p5js.org/reference/#Color) in `src/color/` has the following submodules: 
+The ["Color" module](https://p5js.org/reference/#Color) in `src/color/` has the following submodules: 
  "Creating & Reading", "Setting", and "Color Conversion".
 
-The _conceptual_ ["3D" module](https://beta.p5js.org/reference/#3D) documents code  mostly from `src/webgl/` (there is no `src/3D/`), and has the following submodules: "Camera", "Interaction", "Lights", "Material", "strands", "p5.Camera", "p5.Shader".
+The _conceptual_ ["3D" module](https://p5js.org/reference/#3D) documents code  mostly from `src/webgl/` (there is no `src/3D/`), and has the following submodules: "Camera", "Interaction", "Lights", "Material", "strands", "p5.Camera", "p5.Shader".
 
 Examples:
 
@@ -1235,7 +1235,7 @@ The website won't be _fully_ functional when partially prepared in this way.  No
   * You'll need to ensure local links end with a trailing slash '/', to be matched by Astro.
 * The search facility will not work by default
   * Look into `npm run build:search` to build the necessary index files.
-  * ...or just find your function/variable in the [top-level listing](https://beta.p5js.org/reference/).
+  * ...or just find your function/variable in the [top-level listing](https://p5js.org/reference/).
 
 
 ## <a id="linting-the-docs"></a>Linting the comments to find errors
