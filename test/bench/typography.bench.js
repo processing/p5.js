@@ -12,7 +12,7 @@ const strs = {
   ).join("\n") // This will hit around 15fps, 21275 points
 };
 
-// Parameterizing test cases by function ensures consitency in test parameters across all renderers.
+// Parameterizing test cases by function ensures consistency in test parameters across all renderers.
 // Future tests should follow a similar format (e.g. TO_CONTOURS_CASES, etc)
 const TO_POINTS_CASES = [
   {label: "textToPoints() single word", str: strs.single, textSize: 20, sampleFactor: 0.5, points: 317, variance: 5, render: false},
