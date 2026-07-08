@@ -272,7 +272,7 @@ function fesCore(p5, fn, lifecycles){
         let msg;
         if (matchedSymbols.length === 1) {
           // To be used when there is only one closest match
-          msg = FES.log`${locationObj ? FES.log`[${locationObj.file}, line ${locationObj.line}]` : ''} It seems that you may have accidentally written "${errSym}"" instead of "${matchedSymbols[0].name}". Please correct it to ${matchedSymbols[0].name} if you wish to use the ${matchedSymbols[0].type} from p5.js.`;
+          msg = FES.log`${locationObj ? FES.log`[${locationObj.file}, line ${locationObj.line}]` : ''} It seems that you may have accidentally written "${errSym}" instead of "${matchedSymbols[0].name}". Please correct it to ${matchedSymbols[0].name} if you wish to use the ${matchedSymbols[0].type} from p5.js.`;
         } else {
           // To be used when there are multiple closest matches. Gives each
           // suggestion on its own line, the function name followed by a link to
