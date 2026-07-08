@@ -510,6 +510,14 @@ function validateParams(p5, fn, lifecycles) {
         message = FES.log`Expected at most ${maxArgs} arguments, but received more in ${func}(). ${referenceLink}`;
         break;
       }
+      case 'custom': {
+        const position = FES.premade.ordinals[currentError.path.join('.')];
+        const match = currentError.message.match(/Input not instance of (\w+)/);
+        if (match) {
+          message = FES.log`Expected ${match[1]} at the ${position} parameter in ${func + '()'}.`
+          break;
+        }
+      }
       default: {
         console.log('Zod error object', currentError);
       }
