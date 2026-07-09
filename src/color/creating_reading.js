@@ -13,11 +13,11 @@ import { Color } from './p5.Color';
  */
 export const RGB = 'rgb';
 /**
- * @typedef {'rgbhdr'} RGBHDR
- * @property {RGBHDR} RGBHDR
+ * @typedef {'rgbp3'} RGBP3
+ * @property {RGBP3} RGBP3
  * @final
  */
-export const RGBHDR = 'rgbhdr';
+export const RGBP3 = 'rgbp3';
 /**
  * HSB (hue, saturation, brightness) is a type of color model.
  * You can learn more about it at
@@ -73,7 +73,7 @@ export const RGBA = 'rgba';
 
 function creatingReading(p5, fn){
   fn.RGB = RGB;
-  fn.RGBHDR = RGBHDR;
+  fn.RGBP3 = RGBP3;
   fn.HSB = HSB;
   fn.HSL = HSL;
   fn.HWB = HWB;
@@ -90,7 +90,7 @@ function creatingReading(p5, fn){
   p5.Renderer.states.colorMode = RGB;
   p5.Renderer.states.colorMaxes = {
     [RGB]: [255, 255, 255, 255],
-    [RGBHDR]: [255, 255, 255, 255],
+    [RGBP3]: [255, 255, 255, 255],
     [HSB]: [360, 100, 100, 1],
     [HSL]: [360, 100, 100, 1],
     [HWB]: [360, 100, 100, 1],
