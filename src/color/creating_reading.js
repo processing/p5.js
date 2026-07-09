@@ -348,12 +348,11 @@ function creatingReading(p5, fn){
    *   createCanvas(100, 100, WEBGL);
    *
    *   myShader = baseMaterialShader().modify(() => {
-   *     getPixelInputs((inputs) => {
+   *     getFinalColor((col) => {
    *       // Same syntax as regular sketch code...
    *       let c = color(255, 0, 0);
    *       // ...but c is a vec4 with normalized RGBA (0-1), not a p5.Color.
-   *       inputs.color = c;
-   *       return inputs;
+   *       return vec4(c.r, c.g, c.b, c.a);
    *     });
    *   });
    * }
@@ -435,10 +434,9 @@ function creatingReading(p5, fn){
    *   createCanvas(100, 100, WEBGL);
    *
    *   myShader = baseMaterialShader().modify(() => {
-   *     getPixelInputs((inputs) => {
-   *       let r = red(inputs.color);
-   *       inputs.color = [r, 0, 0, 1];
-   *       return inputs;
+   *     getFinalColor((col) => {
+   *       let r = red(col);
+   *       return vec4(r, 0, 0, 1.0);
    *     });
    *   });
    * }
@@ -582,10 +580,9 @@ function creatingReading(p5, fn){
    *   createCanvas(100, 100, WEBGL);
    *
    *   myShader = baseMaterialShader().modify(() => {
-   *     getPixelInputs((inputs) => {
-   *       let g = green(inputs.color);
-   *       inputs.color = [0, g, 0, 1];
-   *       return inputs;
+   *     getFinalColor((col) => {
+   *       let g = green(col);
+   *       return vec4(0, g, 0, 1.0);
    *     });
    *   });
    * }
@@ -729,10 +726,9 @@ function creatingReading(p5, fn){
    *   createCanvas(100, 100, WEBGL);
    *
    *   myShader = baseMaterialShader().modify(() => {
-   *     getPixelInputs((inputs) => {
-   *       let b = blue(inputs.color);
-   *       inputs.color = [0, 0, b, 1];
-   *       return inputs;
+   *     getFinalColor((col) => {
+   *       let b = blue(col);
+   *       return vec4(0, 0, b, 1.0);
    *     });
    *   });
    * }
@@ -872,10 +868,9 @@ function creatingReading(p5, fn){
    *   createCanvas(100, 100, WEBGL);
    *
    *   myShader = baseMaterialShader().modify(() => {
-   *     getPixelInputs((inputs) => {
-   *       let a = alpha(inputs.color);
-   *       inputs.color = [inputs.color.rgb, a * 0.5];
-   *       return inputs;
+   *     getFinalColor((col) => {
+   *       let a = alpha(col);
+   *       return vec4(col.r, col.g, col.b, a * 0.5);
    *     });
    *   });
    * }
@@ -993,10 +988,9 @@ function creatingReading(p5, fn){
    *   createCanvas(100, 100, WEBGL);
    *
    *   myShader = baseMaterialShader().modify(() => {
-   *     getPixelInputs((inputs) => {
-   *       let h = hue(inputs.color);
-   *       inputs.color = [h, h, h, 1];
-   *       return inputs;
+   *     getFinalColor((col) => {
+   *       let h = hue(col);
+   *       return vec4(h, h, h, 1.0);
    *     });
    *   });
    * }
@@ -1145,10 +1139,9 @@ function creatingReading(p5, fn){
    *   createCanvas(100, 100, WEBGL);
    *
    *   myShader = baseMaterialShader().modify(() => {
-   *     getPixelInputs((inputs) => {
-   *       let s = saturation(inputs.color);
-   *       inputs.color = [s, s, s, 1];
-   *       return inputs;
+   *     getFinalColor((col) => {
+   *       let s = saturation(col);
+   *       return vec4(s, s, s, 1.0);
    *     });
    *   });
    * }
@@ -1329,10 +1322,9 @@ function creatingReading(p5, fn){
    *   createCanvas(100, 100, WEBGL);
    *
    *   myShader = baseMaterialShader().modify(() => {
-   *     getPixelInputs((inputs) => {
-   *       let b = brightness(inputs.color);
-   *       inputs.color = [b, b, b, 1];
-   *       return inputs;
+   *     getFinalColor((col) => {
+   *       let b = brightness(col);
+   *       return vec4(b, b, b, 1.0);
    *     });
    *   });
    * }
@@ -1485,10 +1477,9 @@ function creatingReading(p5, fn){
    *   createCanvas(100, 100, WEBGL);
    *
    *   myShader = baseMaterialShader().modify(() => {
-   *     getPixelInputs((inputs) => {
-   *       let l = lightness(inputs.color);
-   *       inputs.color = [l, l, l, 1];
-   *       return inputs;
+   *     getFinalColor((col) => {
+   *       let l = lightness(col);
+   *       return vec4(l, l, l, 1.0);
    *     });
    *   });
    * }
@@ -1644,12 +1635,14 @@ function creatingReading(p5, fn){
    *   createCanvas(100, 100, WEBGL);
    *
    *   myShader = baseMaterialShader().modify(() => {
-   *     getPixelInputs((inputs) => {
+   *     getFinalColor((col) => {
    *       let c1 = color('red');
    *       let c2 = color('blue');
    *       let mixed = lerpColor(c1, c2, 0.5);
-   *       inputs.color = mixed;
-   *       return inputs;
+   *       let r = red(mixed);
+   *       let g = green(mixed);
+   *       let b = blue(mixed);
+   *       return vec4(r, g, b, 1.0);
    *     });
    *   });
    * }
