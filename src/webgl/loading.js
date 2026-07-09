@@ -89,7 +89,13 @@ function parseMtlData(data) {
 function mtlToPartState(material) {
   const state = createPartState();
   if (!material) return state;
-  if (material.diffuseColor) state.fill = material.diffuseColor;
+  if (material.diffuseColor) {
+    // carry the mtl transparency (d / Tr) in the fill's alpha. opaque materials
+    // stay rgb so nothing changes for them.
+    state.fill = material.opacity != null && material.opacity < 1
+      ? [...material.diffuseColor, material.opacity]
+      : material.diffuseColor;
+  }
   if (material.ambientColor) state.ambientColor = material.ambientColor;
   if (material.specularColor) state.specularColor = material.specularColor;
   if (material.shininess !== undefined) state.shininess = material.shininess;

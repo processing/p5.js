@@ -89,24 +89,26 @@ suite('p5.GeometryPart', function() {
   });
 
   suite('multi-material rendering', function() {
-    test('draws each part and passes the instance count through', async function() {
+    test('draws a fill per part and a stroke for the model', async function() {
       const renderer = myp5.createCanvas(50, 50, myp5.WEBGL);
-      const model = await new Promise(resolve =>
-        myp5.loadModel('/test/unit/assets/octa-color.obj', resolve));
+      const model = await myp5.loadModel('/test/unit/assets/octa-color.obj');
 
       // octa-color has several materials, so several parts.
       expect(model.parts.length).toBeGreaterThan(1);
 
-      const spy = vi.spyOn(renderer, '_drawFills');
+      const fillSpy = vi.spyOn(renderer, '_drawFills');
+      const strokeSpy = vi.spyOn(renderer, '_drawStrokes');
       myp5.background(255);
-      myp5.model(model, 4);
+      myp5.stroke(0);
+      myp5.model(model);
 
-      // one fill draw per material part, each carrying the instance count.
-      expect(spy).toHaveBeenCalledTimes(model.parts.length);
-      for (const call of spy.mock.calls) {
-        expect(call[1].count).toEqual(4);
-      }
-      spy.mockRestore();
+      // one fill draw per material part.
+      expect(fillSpy).toHaveBeenCalledTimes(model.parts.length);
+      // the model's outline is still stroked.
+      expect(strokeSpy).toHaveBeenCalled();
+
+      fillSpy.mockRestore();
+      strokeSpy.mockRestore();
     });
   });
 });

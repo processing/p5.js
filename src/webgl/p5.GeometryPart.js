@@ -38,9 +38,11 @@ class GeometryPart {
     this.userVertexProperties = {};
   }
 
-  // the renderer needs this to pick a blend mode. a part is transparent if any
-  // of its vertex colors has alpha below 1.
+  // the renderer needs this to pick a blend mode. a part is transparent if its
+  // fill has alpha below 1, or any of its vertex colors does.
   hasFillTransparency() {
+    const fill = this.partState && this.partState.fill;
+    if (fill && fill.length > 3 && fill[3] < 1) return true;
     for (let i = 3; i < this.vertexColors.length; i += 4) {
       if (this.vertexColors[i] < 1) return true;
     }
@@ -48,13 +50,4 @@ class GeometryPart {
   }
 }
 
-function geometryPart(p5, fn) {
-  p5.GeometryPart = GeometryPart;
-}
-
-export default geometryPart;
 export { GeometryPart, createPartState };
-
-if (typeof p5 !== 'undefined') {
-  geometryPart(p5, p5.prototype);
-}

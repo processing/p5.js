@@ -8,7 +8,7 @@
 
 import * as constants from '../core/constants';
 import { DataArray } from './p5.DataArray';
-import { createPartState } from './p5.GeometryPart';
+import { GeometryPart, createPartState } from './p5.GeometryPart';
 import { Vector } from '../math/p5.Vector';
 import { downloadFile } from '../io/utilities';
 
@@ -2122,6 +2122,7 @@ function geometry(p5, fn){
    * }
    */
   p5.Geometry = Geometry;
+  p5.GeometryPart = GeometryPart;
 
   /**
    * An array with the geometry's vertices.

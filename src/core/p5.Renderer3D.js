@@ -589,14 +589,11 @@ export class Renderer3D extends Renderer {
       geometry.vertices.length >= 3 &&
       ![constants.LINES, constants.POINTS].includes(mode)
     ) {
-      // draw every part. a part with no material state draws straight (no
-      // push/pop); a single-material geometry is its own part, so that case is
-      // exactly the old single draw. multi-material parts each apply their own
-      // material around the draw.
-      const parts = geometry.parts && geometry.parts.length
-        ? geometry.parts
-        : [geometry];
-      for (const part of parts) {
+      // draw every part. a geometry always has at least one part (the
+      // constructor makes it its own single part when nothing else does), so no
+      // fallback is needed. a part with no material state draws straight;
+      // multi-material parts apply their own material around the draw.
+      for (const part of geometry.parts) {
         const state = part.partState;
         const hasMaterial = state && (
           state.fill || state.texture || state.ambientColor ||
@@ -655,7 +652,10 @@ export class Renderer3D extends Renderer {
     if (!partState) return;
     if (partState.fill) {
       const c = partState.fill;
-      this.states.setValue('curFillColor', [c[0], c[1], c[2], 1]);
+      // fills can carry alpha (a 4th component), e.g. an mtl `d` transparency
+      // or a fill(r, g, b, a) call. default to opaque when it's rgb only.
+      const alpha = c.length > 3 ? c[3] : 1;
+      this.states.setValue('curFillColor', [c[0], c[1], c[2], alpha]);
     }
     if (partState.texture) {
       this.states.setValue('_tex', partState.texture);
