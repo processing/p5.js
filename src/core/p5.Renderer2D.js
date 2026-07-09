@@ -5,7 +5,7 @@ import { Graphics } from './p5.Graphics';
 import { Image } from '../image/p5.Image';
 import { Element } from '../dom/p5.Element';
 import { MediaElement } from '../dom/p5.MediaElement';
-import { RGBHDR } from '../color/creating_reading';
+import { RGBP3 } from '../color/creating_reading';
 import FilterRenderer2D from '../image/filterRenderer2D';
 import { Matrix } from '../math/p5.Matrix';
 import { PrimitiveToPath2DConverter } from '../shape/custom_shapes';
@@ -67,7 +67,7 @@ class Renderer2D extends Renderer {
     // Get and store drawing context
     this.drawingContext = this.canvas.getContext('2d', attributes);
     if(attributes.colorSpace === 'display-p3'){
-      this.states.colorMode = RGBHDR;
+      this.states.colorMode = RGBP3;
     }
     this.scale(this._pixelDensity, this._pixelDensity);
 
@@ -1038,7 +1038,7 @@ function renderer2D(p5, fn){
    */
   p5.Renderer2D = Renderer2D;
   p5.renderers[constants.P2D] = Renderer2D;
-  p5.renderers['p2d-hdr'] = new Proxy(Renderer2D, {
+  p5.renderers['p2d-p3'] = new Proxy(Renderer2D, {
     construct(target, [pInst, w, h, isMainCanvas, elt]){
       return new target(pInst, w, h, isMainCanvas, elt, { colorSpace: 'display-p3' });
     }
