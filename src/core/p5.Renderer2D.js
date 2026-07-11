@@ -276,7 +276,9 @@ class Renderer2D extends Renderer {
 
   drawShape(shape) {
     const visitor = new PrimitiveToPath2DConverter({
-      strokeWeight: this.states.strokeWeight
+      strokeWeight: this.states.strokeWeight,
+      hasFill: !!this.states.fillColor || this._clipping,
+      hasStroke: !!this.states.strokeColor || this._clipping
     });
     shape.accept(visitor);
     if (this._clipping) {
@@ -666,6 +668,19 @@ class Renderer2D extends Renderer {
   // SHAPE | 2D Primitives
   //////////////////////////////////////////////
 
+  // Scratch shape reused by the primitive methods below (arc, ellipse,
+  // line, ...). Each call fully consumes the shape via drawShape() before
+  // returning, so a single reusable instance per renderer avoids
+  // rebuilding a Shape (and its vertex-property closures) per call.
+  _primitiveShape() {
+    if (!this._scratchShape) {
+      this._scratchShape = new p5.Shape({ position: new p5.Vector(0, 0) });
+    } else {
+      this._scratchShape.reset();
+    }
+    return this._scratchShape;
+  }
+
   /*
    * This function requires that:
    *
@@ -674,7 +689,7 @@ class Renderer2D extends Renderer {
    *   start <= stop < start + TWO_PI
    */
   arc(x, y, w, h, start, stop, mode) {
-    const shape = new p5.Shape({ position: new p5.Vector(0, 0) });
+    const shape = this._primitiveShape();
     shape.beginShape();
     shape.arcPrimitive(
       x,
@@ -698,7 +713,7 @@ class Renderer2D extends Renderer {
       w = parseFloat(args[2]),
       h = parseFloat(args[3]);
 
-    const shape = new p5.Shape({ position: new p5.Vector(0, 0) });
+    const shape = this._primitiveShape();
     shape.beginShape();
     shape.ellipsePrimitive(x,y,w,h);
     shape.endShape();
@@ -707,7 +722,7 @@ class Renderer2D extends Renderer {
   }
 
   line(x1, y1, x2, y2) {
-    const shape = new p5.Shape({ position: new p5.Vector(0, 0) });
+    const shape = this._primitiveShape();
     shape.beginShape();
     shape.line(x1, y1, x2, y2);
     shape.endShape();
@@ -717,7 +732,7 @@ class Renderer2D extends Renderer {
   }
 
   point(x, y) {
-    const shape = new p5.Shape({ position: new p5.Vector(0, 0) });
+    const shape = this._primitiveShape();
     shape.beginShape();
     shape.point(x, y);
     shape.endShape();
@@ -727,7 +742,7 @@ class Renderer2D extends Renderer {
   }
 
   quad(x1, y1, x2, y2, x3, y3, x4, y4) {
-    const shape = new p5.Shape({ position: new p5.Vector(0, 0) });
+    const shape = this._primitiveShape();
     shape.beginShape();
     shape.quad(x1, y1, x2, y2, x3, y3, x4, y4);
     shape.endShape();
@@ -746,7 +761,7 @@ class Renderer2D extends Renderer {
     let br = args[6];
     let bl = args[7];
 
-    const shape = new p5.Shape({ position: new p5.Vector(0, 0) });
+    const shape = this._primitiveShape();
     shape.beginShape();
     shape.rectPrimitive(x, y, w, h, tl, tr, br, bl);
     shape.endShape();
@@ -763,7 +778,7 @@ class Renderer2D extends Renderer {
     const x3 = args[4],
       y3 = args[5];
 
-    const shape = new p5.Shape({ position: new p5.Vector(0, 0) });
+    const shape = this._primitiveShape();
     shape.beginShape();
     shape.triangle(x1, y1, x2, y2, x3, y3);
     shape.endShape();
