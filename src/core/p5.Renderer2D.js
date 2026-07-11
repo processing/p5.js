@@ -241,7 +241,8 @@ class Renderer2D extends p5.Renderer {
     dx,
     dy,
     dWidth,
-    dHeight
+    dHeight,
+    dz
   ) {
     let cnv;
     if (img.gifProperties) {
