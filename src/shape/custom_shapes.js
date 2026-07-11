@@ -609,70 +609,35 @@ class QuadStrip extends ShapePrimitive {
 
 // ---- PRIMITIVE SHAPE CREATORS ----
 
-class PrimitiveShapeCreators {
-  // TODO: make creators private?
-  // That'd probably be better, but for now, it may be convenient to use
-  // native Map properties like size, e.g. for testing, and it's simpler to
-  // not have to wrap all the properties that might be useful
-  creators;
-
-  constructor() {
-    let creators = new Map();
-
-    /* TODO: REFACTOR BASED ON THE CODE BELOW,
-       ONCE CONSTANTS ARE IMPLEMENTED AS SYMBOLS
-
-    // Store Symbols as strings for use in Map keys
-    const EMPTY_PATH = constants.EMPTY_PATH.description;
-    const PATH = constants.PATH.description;
-    //etc.
-
-    creators.set(`vertex-${EMPTY_PATH}`, (...vertices) => new Anchor(...vertices));
-    // etc.
-
-    get(vertexKind, shapeKind) {
-      const key = `${vertexKind}-${shapeKind.description}`;
-      return this.creators.get(key);
-    }
-    // etc.
-    */
-
-    // vertex
-    creators.set(`vertex-${constants.EMPTY_PATH}`, (...vertices) => new Anchor(...vertices));
-    creators.set(`vertex-${constants.PATH}`, (...vertices) => new LineSegment(...vertices));
-    creators.set(`vertex-${constants.POINTS}`, (...vertices) => new Point(...vertices));
-    creators.set(`vertex-${constants.LINES}`, (...vertices) => new Line(...vertices));
-    creators.set(`vertex-${constants.TRIANGLES}`, (...vertices) => new Triangle(...vertices));
-    creators.set(`vertex-${constants.QUADS}`, (...vertices) => new Quad(...vertices));
-    creators.set(`vertex-${constants.TRIANGLE_FAN}`, (...vertices) => new TriangleFan(...vertices));
-    creators.set(`vertex-${constants.TRIANGLE_STRIP}`, (...vertices) => new TriangleStrip(...vertices));
-    creators.set(`vertex-${constants.QUAD_STRIP}`, (...vertices) => new QuadStrip(...vertices));
-
-    // bezierVertex (constructors all take order and vertices so they can be called in a uniform way)
-    creators.set(`bezierVertex-${constants.EMPTY_PATH}`, (order, ...vertices) => new Anchor(...vertices));
-    creators.set(`bezierVertex-${constants.PATH}`, (order, ...vertices) => new BezierSegment(order, ...vertices));
-
-    // splineVertex
-    creators.set(`splineVertex-${constants.EMPTY_PATH}`, (...vertices) => new Anchor(...vertices));
-    creators.set(`splineVertex-${constants.PATH}`, (...vertices) => new SplineSegment(...vertices));
-
-    this.creators = creators;
+// Creators are stored in a static nested object keyed by vertex kind and
+// then by shape kind, so a lookup is two property accesses with no key
+// string to build, and nothing is constructed per Shape. Shape kinds are
+// primitive constants (numbers/strings), which work as computed keys;
+// Symbols would too, if constants become Symbols later.
+const defaultPrimitiveShapeCreators = {
+  vertex: {
+    [constants.EMPTY_PATH]: (...vertices) => new Anchor(...vertices),
+    [constants.PATH]: (...vertices) => new LineSegment(...vertices),
+    [constants.POINTS]: (...vertices) => new Point(...vertices),
+    [constants.LINES]: (...vertices) => new Line(...vertices),
+    [constants.TRIANGLES]: (...vertices) => new Triangle(...vertices),
+    [constants.QUADS]: (...vertices) => new Quad(...vertices),
+    [constants.TRIANGLE_FAN]: (...vertices) => new TriangleFan(...vertices),
+    [constants.TRIANGLE_STRIP]: (...vertices) => new TriangleStrip(...vertices),
+    [constants.QUAD_STRIP]: (...vertices) => new QuadStrip(...vertices)
+  },
+  // bezierVertex creators all take order and vertices so they can be
+  // called in a uniform way
+  bezierVertex: {
+    [constants.EMPTY_PATH]: (order, ...vertices) => new Anchor(...vertices),
+    [constants.PATH]: (order, ...vertices) =>
+      new BezierSegment(order, ...vertices)
+  },
+  splineVertex: {
+    [constants.EMPTY_PATH]: (...vertices) => new Anchor(...vertices),
+    [constants.PATH]: (...vertices) => new SplineSegment(...vertices)
   }
-
-  get(vertexKind, shapeKind) {
-    const key = `${vertexKind}-${shapeKind}`;
-    return this.creators.get(key);
-  }
-
-  set(vertexKind, shapeKind, creator) {
-    const key = `${vertexKind}-${shapeKind}`;
-    this.creators.set(key, creator);
-  }
-
-  clear() {
-    this.creators.clear();
-  }
-}
+};
 
 // ---- SHAPE ----
 
@@ -696,7 +661,7 @@ class Shape {
 
   constructor(
     vertexProperties,
-    primitiveShapeCreators = new PrimitiveShapeCreators()
+    primitiveShapeCreators = defaultPrimitiveShapeCreators
   ) {
     this.#initialVertexProperties = vertexProperties;
     this.#vertexProperties = vertexProperties;
@@ -898,7 +863,6 @@ class Shape {
     }
   }
 
-  // maybe call this clear() for consistency with PrimitiveShapeCreators.clear()?
   // note: p5.Geometry has a reset() method, but also clearColors()
   // looks like reset() isn't in the public reference, so maybe we can switch
   // everything to clear()? Not sure if reset/clear is used in other classes,
@@ -961,9 +925,8 @@ class Shape {
   }
 
   #createPrimitiveShape(vertexKind, shapeKind, ...vertices) {
-    let primitiveShapeCreator = this.#primitiveShapeCreators.get(
-      vertexKind, shapeKind
-    );
+    let primitiveShapeCreator =
+      this.#primitiveShapeCreators[vertexKind][shapeKind];
 
     return  vertexKind === 'bezierVertex' ?
       primitiveShapeCreator(this.#bezierOrder, ...vertices) :
