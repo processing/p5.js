@@ -331,9 +331,8 @@ class p5 {
     const methods = Object.getOwnPropertyNames(p5.prototype._registeredMethods);
 
     for (const prop of methods) {
-      this._registeredMethods[prop] = p5.prototype._registeredMethods[
-        prop
-      ].slice();
+      this._registeredMethods[prop] =
+        p5.prototype._registeredMethods[prop].slice();
     }
 
     if (window.DeviceOrientationEvent) {
@@ -406,7 +405,7 @@ class p5 {
       }
     };
 
-    this._runIfPreloadsAreDone = function() {
+    this._runIfPreloadsAreDone = function () {
       const context = this._isGlobal ? window : this;
       if (context._preloadCount === 0) {
         const loadingScreen = document.getElementById(context._loadingScreenId);
@@ -425,7 +424,7 @@ class p5 {
       }
     };
 
-    this._decrementPreload = function() {
+    this._decrementPreload = function () {
       const context = this._isGlobal ? window : this;
       if (!context._preloadDone && typeof context.preload === 'function') {
         context._setProperty('_preloadCount', context._preloadCount - 1);
@@ -433,7 +432,7 @@ class p5 {
       }
     };
 
-    this._wrapPreload = function(obj, fnName) {
+    this._wrapPreload = function (obj, fnName) {
       return (...args) => {
         //increment counter
         this._incrementPreload();
@@ -442,7 +441,7 @@ class p5 {
       };
     };
 
-    this._incrementPreload = function() {
+    this._incrementPreload = function () {
       const context = this._isGlobal ? window : this;
       // Do nothing if we tried to increment preloads outside of `preload`
       if (context._preloadDone) return;
@@ -524,8 +523,10 @@ class p5 {
         this._setProperty('deltaTime', this.deltaTime);
         this._frameRate = 1000.0 / this.deltaTime;
         this.redraw();
-        this._lastTargetFrameTime = Math.max(this._lastTargetFrameTime
-          + target_time_between_frames, now);
+        this._lastTargetFrameTime = Math.max(
+          this._lastTargetFrameTime + target_time_between_frames,
+          now
+        );
         this._lastRealFrameTime = now;
 
         // If the user is actually using mouse module, then update
@@ -550,6 +551,27 @@ class p5 {
     };
 
     this._setProperty = (prop, value) => {
+      // Intercept keyCode writes to show Friendly Error warning
+      if (prop === 'keyCode') {
+        if (!this._keyCodeWarningShown) {
+          p5._friendlyError(
+            'keyCode === is deprecated in p5.js 2.0. Please use keyIsDown() instead.\n' +
+              'See https://beta.p5js.org/reference/p5/keyisdown/ for more information.'
+          );
+          this._keyCodeWarningShown = true;
+        }
+
+        this.keyCode = value;
+        this._keyCode = value;
+
+        if (this._isGlobal) {
+          window.keyCode = value;
+          window._keyCode = value;
+        }
+        return;
+      }
+
+      // Default behavior for all other props
       this[prop] = value;
       if (this._isGlobal) {
         window[prop] = value;
@@ -596,7 +618,7 @@ class p5 {
      */
     this.remove = () => {
       // Remove start listener to prevent orphan canvas being created
-      if(this._startListener){
+      if (this._startListener) {
         window.removeEventListener('load', this._startListener, false);
       }
       const loadingScreen = document.getElementById(this._loadingScreenId);
