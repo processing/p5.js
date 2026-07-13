@@ -7311,7 +7311,10 @@
       "avatar_url": "https://avatars.githubusercontent.com/u/81041326?v=4",
       "profile": "https://github.com/Nwakaego-Ego",
       "contributions": [
-        "review"
+        "review",
+        "bug",
+        "code",
+        "doc"
       ]
     },
     {
