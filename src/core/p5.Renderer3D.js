@@ -595,9 +595,13 @@ export class Renderer3D extends Renderer {
       // multi-material parts apply their own material around the draw.
       for (const part of geometry.parts) {
         const state = part.partState;
+        // fill/ambientColor/specularColor are arrays and texture is a p5.Image,
+        // so they're truthy when set; shininess is a number where 0 is valid.
+        // `!= null` keeps every field consistent and treats a 0 as present.
         const hasMaterial = state && (
-          state.fill || state.texture || state.ambientColor ||
-          state.specularColor || state.shininess != null
+          state.fill != null || state.texture != null ||
+          state.ambientColor != null || state.specularColor != null ||
+          state.shininess != null
         );
         if (hasMaterial) {
           this.push();
@@ -651,11 +655,9 @@ export class Renderer3D extends Renderer {
   _applyPartState(partState) {
     if (!partState) return;
     if (partState.fill) {
-      const c = partState.fill;
-      // fills can carry alpha (a 4th component), e.g. an mtl `d` transparency
-      // or a fill(r, g, b, a) call. default to opaque when it's rgb only.
-      const alpha = c.length > 3 ? c[3] : 1;
-      this.states.setValue('curFillColor', [c[0], c[1], c[2], alpha]);
+      // fill is always [r, g, b, a] in 0..1, so it maps straight onto
+      // curFillColor (same shape/range as the array fill() sets).
+      this.states.setValue('curFillColor', partState.fill);
     }
     if (partState.texture) {
       this.states.setValue('_tex', partState.texture);

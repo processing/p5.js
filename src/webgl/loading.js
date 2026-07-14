@@ -90,11 +90,9 @@ function mtlToPartState(material) {
   const state = createPartState();
   if (!material) return state;
   if (material.diffuseColor) {
-    // carry the mtl transparency (d / Tr) in the fill's alpha. opaque materials
-    // stay rgb so nothing changes for them.
-    state.fill = material.opacity != null && material.opacity < 1
-      ? [...material.diffuseColor, material.opacity]
-      : material.diffuseColor;
+    // fill is always [r, g, b, a] in 0..1. the mtl d/Tr becomes the alpha, and
+    // opaque materials default to 1 so the format stays consistent either way.
+    state.fill = [...material.diffuseColor, material.opacity ?? 1];
   }
   if (material.ambientColor) state.ambientColor = material.ambientColor;
   if (material.specularColor) state.specularColor = material.specularColor;

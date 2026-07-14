@@ -60,7 +60,7 @@ suite('mtlToPartState', function() {
       specularColor: [0, 0, 1],
       shininess: 32
     });
-    expect(state.fill).toEqual([1, 0, 0]);
+    expect(state.fill).toEqual([1, 0, 0, 1]);
     expect(state.ambientColor).toEqual([0, 1, 0]);
     expect(state.specularColor).toEqual([0, 0, 1]);
     expect(state.shininess).toEqual(32);

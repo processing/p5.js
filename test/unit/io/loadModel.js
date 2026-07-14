@@ -89,8 +89,8 @@ suite('loadModel', function() {
     const totalFaces = model.parts.reduce((sum, p) => sum + p.faces.length, 0);
     assert.equal(totalFaces, model.faces.length);
 
-    // first material (m000001) is Kd 0 0 0.5 -> part fill
-    assert.deepEqual(model.parts[0].partState.fill, [0, 0, 0.5]);
+    // first material (m000001) is Kd 0 0 0.5 -> part fill, opaque alpha
+    assert.deepEqual(model.parts[0].partState.fill, [0, 0, 0.5, 1]);
     assert.equal(model.parts[0].partState.shininess, 100);
 
     // faces re-indexed against each part's own localised verts

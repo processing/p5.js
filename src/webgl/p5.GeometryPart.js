@@ -5,14 +5,15 @@
  */
 
 // fresh part state. fields use p5 names (fill, texture...), not obj/mtl tokens.
-// importers translate into this and drop anything we can't draw yet.
+// importers translate into this and drop anything we can't draw yet. every color
+// channel is 0..1 (same range as the renderer's curFillColor), not 0..255.
 function createPartState() {
   return {
-    fill: null,           // Kd
-    ambientColor: null,   // Ka
-    specularColor: null,  // Ks
-    shininess: null,      // Ns
-    texture: null         // map_Kd
+    fill: null,           // Kd + d -> [r, g, b, a] | null, each 0..1
+    ambientColor: null,   // Ka -> [r, g, b] | null, each 0..1
+    specularColor: null,  // Ks -> [r, g, b] | null, each 0..1
+    shininess: null,      // Ns -> number | null
+    texture: null         // map_Kd -> p5.Image | null
   };
 }
 
@@ -42,7 +43,7 @@ class GeometryPart {
   // fill has alpha below 1, or any of its vertex colors does.
   hasFillTransparency() {
     const fill = this.partState && this.partState.fill;
-    if (fill && fill.length > 3 && fill[3] < 1) return true;
+    if (fill && fill[3] < 1) return true;
     for (let i = 3; i < this.vertexColors.length; i += 4) {
       if (this.vertexColors[i] < 1) return true;
     }
