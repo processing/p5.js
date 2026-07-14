@@ -33,7 +33,7 @@ async function bootstrap(w = 400, h = 400, renderer = undefined) {
     };
   });
   await vi.waitFor(() => {
-    if (myp5 === undefined) throw new Error("not ready");
+    if (myp5 === undefined || font === undefined) throw new Error("not ready");
   });
   return { myp5, font };
 }
