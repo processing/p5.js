@@ -93,7 +93,7 @@ class Framebuffer {
     this.density = settings.density || this.renderer._pixelDensity;
     if (settings.width && settings.height) {
       const dimensions =
-        this.renderer._adjustDimensions(settings.width, settings.height);
+        this.renderer._adjustDimensions(settings.width, settings.height, this.density);
       this.width = dimensions.adjustedWidth;
       this.height = dimensions.adjustedHeight;
       this._autoSized = false;
@@ -175,7 +175,7 @@ class Framebuffer {
   resize(width, height) {
     this._autoSized = false;
     const dimensions =
-      this.renderer._adjustDimensions(width, height);
+      this.renderer._adjustDimensions(width, height, this.density);
     width = dimensions.adjustedWidth;
     height = dimensions.adjustedHeight;
     this.width = width;
