@@ -30,7 +30,7 @@ If you're looking to learn about the build process that generates the reference 
 
 ### A note about p5.js versions
 
-This document describes how to work with p5.js version 2.x, whose reference documentation is at https://p5js.org/reference/. If you are documenting code for p5.js v1.x, you should consult [this document](https://p5js.org/contribute/contributing_to_the_p5js_reference/), instead, as some of the syntax and processes are different.
+This document describes how to work with p5.js version 2.x, whose reference documentation is at https://p5js.org/reference/. If you are documenting code for p5.js v1.x, you should consult [this document](https://v1.p5js.org/contribute/contributing_to_the_p5js_reference/), instead, as some of the syntax and processes are different.
 
 (Most of the differences are detailed in [this appendix](#doc-differences-v1-to-v2)).
 
@@ -172,7 +172,7 @@ The reference comment block for the `sin()` function:
  */
 ```
 
-If you like, you can find the source code for this `sin` function in the p5 repo, [here in /src/math/trigonometry.js](https://github.com/processing/p5.js/blob/dev-2.0/src/math/trigonometry.js).  Search for `@method sin` for the start of the comment block (and `fn.sin` for the start of the function code).
+If you like, you can find the source code for this `sin` function in the p5 repo, [here in /src/math/trigonometry.js](https://github.com/processing/p5.js/blob/main/src/math/trigonometry.js).  Search for `@method sin` for the start of the comment block (and `fn.sin` for the start of the function code).
 
 Now we'll look at each section in turn.
 
@@ -629,14 +629,14 @@ Syntax:
 
 Examples:
 
-From [`src/events/pointer.js`](https://github.com/processing/p5.js/blob/dev-2.0/src/events/pointer.js):
+From [`src/events/pointer.js`](https://github.com/processing/p5.js/blob/main/src/events/pointer.js):
 ```
  * An `Array` of all the current touch points on a touchscreen device.
  * ...
  * @property {Object[]} touches
 ```
 
-From [`src/image/p5.Image.js`](https://github.com/processing/p5.js/blob/dev-2.0/src/image/p5.Image.js):
+From [`src/image/p5.Image.js`](https://github.com/processing/p5.js/blob/main/src/image/p5.Image.js):
 ```
 * An array containing the color of each pixel on the canvas.
 * ...
@@ -863,7 +863,7 @@ As seen above, when there's no property involved, just a class itself, the secon
 
 Full examples:
 
-From the description of [dist](https://p5js.org/reference/p5/dist/) in [calculation.js](https://github.com/processing/p5.js/blob/dev-2.0/src/math/calculation.js)
+From the description of [dist](https://p5js.org/reference/p5/dist/) in [calculation.js](https://github.com/processing/p5.js/blob/main/src/math/calculation.js )
 ```
 * Use <a href="#/p5.Vector/dist">p5.Vector.dist()</a> 
 * to calculate the distance between two 
