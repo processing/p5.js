@@ -7516,6 +7516,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "slash-init",
+      "name": "Gaurav",
+      "avatar_url": "https://avatars.githubusercontent.com/u/186584533?v=4",
+      "profile": "https://github.com/slash-init",
+      "contributions": [
+        "bug"
+      ]
     }
   ],
   "repoType": "github",

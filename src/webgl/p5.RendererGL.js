@@ -297,7 +297,14 @@ class RendererGL extends Renderer3D {
         }
       }
     } else {
-      const glMode = mode === constants.TRIANGLES ? gl.TRIANGLES : gl.TRIANGLE_STRIP;
+      let glMode;
+      if (mode === constants.TRIANGLES) {
+        glMode = gl.TRIANGLES;
+      } else if (mode === constants.TRIANGLE_FAN) {
+        glMode = gl.TRIANGLE_FAN;
+      } else {
+        glMode = gl.TRIANGLE_STRIP;
+      }
       if (count === 1) {
         gl.drawArrays(glMode, 0, geometry.vertices.length);
       } else {
@@ -593,6 +600,10 @@ class RendererGL extends Renderer3D {
   }
   defaultFarScale() {
     return 10;
+  }
+
+  supportsTriangleFan() {
+    return true;
   }
 
   viewport(w, h) {

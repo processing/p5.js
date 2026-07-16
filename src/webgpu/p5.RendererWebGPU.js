@@ -1325,6 +1325,10 @@ function rendererWebGPU(p5, fn) {
       );
     }
 
+    supportsTriangleFan() {
+      return false;
+    }
+
     viewport() {}
 
     zClipRange() {
