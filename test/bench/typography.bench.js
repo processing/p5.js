@@ -22,6 +22,13 @@ const TO_POINTS_CASES = [
   {label: "textToPoints() paragraph", str: strs.paragraph, textSize: 20, sampleFactor: 0.5, points: 21275, variance: 50, render: false},
 ];
 
+const TO_PATHS_CASES = [
+  {label: "textToPaths() single word", str: strs.single, textSize: 20, commands: 253, variance: 0, render: false},
+  {label: "textToPaths() single word, 150pt", str: strs.single, textSize: 150, commands: 253, variance: 0, render: false},
+  {label: "textToPaths() 10 words", str: strs.ten, textSize: 20, commands: 1157, variance: 0, render: false},
+  {label: "textToPaths() paragraph", str: strs.paragraph, textSize: 20, commands: 16716, variance: 0, render: false},
+];
+
 async function bootstrap(w = 400, h = 400, renderer = undefined) {
   var myp5;
   var font;
@@ -70,6 +77,24 @@ describe("Typography: bench 2D", function() {
     );
   }
 
+  for (let testCase of TO_PATHS_CASES) {
+    bench(
+      testCase.label,
+      async () => {
+        const paths = font.textToPaths(testCase.str, 10, 20);
+        assert.closeTo(paths.length, testCase.commands, testCase.variance);
+      },
+      {
+        ...options,
+        setup: async () => {
+          ({myp5, font} = await bootstrap());
+          myp5.textSize(testCase.textSize);
+        },
+        teardown: () => myp5.remove()
+      }
+    );
+  }
+
 });
 
 describe("Typography: bench WebGL", function() {
@@ -96,6 +121,24 @@ describe("Typography: bench WebGL", function() {
     );
   }
 
+  for (let testCase of TO_PATHS_CASES) {
+    bench(
+      testCase.label,
+      async () => {
+        const paths = font.textToPaths(testCase.str, 10, 20);
+        assert.closeTo(paths.length, testCase.commands, testCase.variance);
+      },
+      {
+        ...options,
+        setup: async () => {
+          ({myp5, font} = await bootstrap(400, 400, WEBGL));
+          myp5.textSize(testCase.textSize);
+        },
+        teardown: () => myp5.remove()
+      }
+    );
+  }
+
 });
 
 describe("Typography: bench WebGPU", function() {
@@ -110,6 +153,24 @@ describe("Typography: bench WebGPU", function() {
         if (testCase.render) {
           drawPoints(myp5, points);
         }
+      },
+      {
+        ...options,
+        setup: async () => {
+          ({myp5, font} = await bootstrap(400, 400, WEBGPU));
+          myp5.textSize(testCase.textSize);
+        },
+        teardown: () => myp5.remove()
+      }
+    );
+  }
+
+  for (let testCase of TO_PATHS_CASES) {
+    bench(
+      testCase.label,
+      async () => {
+        const paths = font.textToPaths(testCase.str, 10, 20);
+        assert.closeTo(paths.length, testCase.commands, testCase.variance);
       },
       {
         ...options,
