@@ -133,7 +133,7 @@ function creatingReading(p5, fn){
    * or HSLA colors, depending on the current `colorMode()`. The last parameter
    * sets the alpha (transparency) value.
    *
-   * ```js
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -151,7 +151,7 @@ function creatingReading(p5, fn){
    * }
    * ```
    *
-   * ```js
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -178,7 +178,7 @@ function creatingReading(p5, fn){
    * }
    * ```
    *
-   * ```js
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -196,7 +196,7 @@ function creatingReading(p5, fn){
    * }
    * ```
    *
-   * ```js
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -221,7 +221,7 @@ function creatingReading(p5, fn){
    * }
    * ```
    *
-   * ```js
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -259,7 +259,7 @@ function creatingReading(p5, fn){
    * }
    * ```
    *
-   * ```js
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -284,7 +284,7 @@ function creatingReading(p5, fn){
    * }
    * ```
    *
-   * ```js
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -309,7 +309,7 @@ function creatingReading(p5, fn){
    * }
    * ```
    *
-   * ```js
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -345,7 +345,7 @@ function creatingReading(p5, fn){
    * `alpha()`, `hue()`, `saturation()`, `brightness()`, and `lightness()`
    * also return values in the 0–1 range when used in strands.
    *
-   * ```js
+   * ```js example
    * let myShader;
    * function setup() {
    *   createCanvas(100, 100, WEBGL);
@@ -430,7 +430,7 @@ function creatingReading(p5, fn){
    * to 255. If the <a href="/reference/p5/colorMode/">colorMode()</a> is set to RGB, it
    * returns the red value in the given range.
    *
-   * ```js
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -455,7 +455,7 @@ function creatingReading(p5, fn){
    * }
    * ```
    *
-   * ```js
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -480,7 +480,7 @@ function creatingReading(p5, fn){
    * }
    * ```
    *
-   * ```js
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -505,7 +505,7 @@ function creatingReading(p5, fn){
    * }
    * ```
    *
-   * ```js
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -537,7 +537,7 @@ function creatingReading(p5, fn){
    * returns the red channel as a normalized value in the 0–1 range.
    * `colorMode()` has no effect inside shader callbacks.
    *
-   * ```js
+   * ```js example
    * let myShader;
    * function setup() {
    *   createCanvas(100, 100, WEBGL);
@@ -583,7 +583,7 @@ function creatingReading(p5, fn){
    * to 255. If the <a href="/reference/p5/colorMode/">colorMode()</a> is set to RGB, it
    * returns the green value in the given range.
    *
-   * ```js
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -608,7 +608,7 @@ function creatingReading(p5, fn){
    * }
    * ```
    *
-   * ```js
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -633,7 +633,7 @@ function creatingReading(p5, fn){
    * }
    * ```
    *
-   * ```js
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -658,7 +658,7 @@ function creatingReading(p5, fn){
    * }
    * ```
    *
-   * ```js
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -690,7 +690,7 @@ function creatingReading(p5, fn){
    * returns the green channel as a normalized value in the 0–1 range.
    * `colorMode()` has no effect inside shader callbacks.
    *
-   * ```js
+   * ```js example
    * let myShader;
    * function setup() {
    *   createCanvas(100, 100, WEBGL);
@@ -736,7 +736,7 @@ function creatingReading(p5, fn){
    * to 255. If the <a href="/reference/p5/colorMode/">colorMode()</a> is set to RGB, it
    * returns the blue value in the given range.
    *
-   * ```js
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -761,7 +761,7 @@ function creatingReading(p5, fn){
    * }
    * ```
    *
-   * ```js
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -786,7 +786,7 @@ function creatingReading(p5, fn){
    * }
    * ```
    *
-   * ```js
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -811,7 +811,7 @@ function creatingReading(p5, fn){
    * }
    * ```
    *
-   * ```js
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -843,7 +843,7 @@ function creatingReading(p5, fn){
    * returns the blue channel as a normalized value in the 0–1 range.
    * `colorMode()` has no effect inside shader callbacks.
    *
-   * ```js
+   * ```js example
    * let myShader;
    * function setup() {
    *   createCanvas(100, 100, WEBGL);
@@ -885,7 +885,7 @@ function creatingReading(p5, fn){
    * <a href="#/p5.Color">p5.Color</a> object, an array of color components, or
    * a CSS color string.
    *
-   * ```js
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -910,7 +910,7 @@ function creatingReading(p5, fn){
    * }
    * ```
    *
-   * ```js
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -935,7 +935,7 @@ function creatingReading(p5, fn){
    * }
    * ```
    *
-   * ```js
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -964,7 +964,7 @@ function creatingReading(p5, fn){
    * returns the alpha channel as a normalized value in the 0–1 range.
    * `colorMode()` has no effect inside shader callbacks.
    *
-   * ```js
+   * ```js example
    * let myShader;
    * function setup() {
    *   createCanvas(100, 100, WEBGL);
@@ -1011,7 +1011,7 @@ function creatingReading(p5, fn){
    * <a href="/reference/p5/colorMode/">colorMode()</a> is set to HSB or HSL, it returns the hue
    * value in the given mode.
    *
-   * ```js
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1041,7 +1041,7 @@ function creatingReading(p5, fn){
    * }
    * ```
    *
-   * ```js
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1071,7 +1071,7 @@ function creatingReading(p5, fn){
    * }
    * ```
    *
-   * ```js
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1105,7 +1105,7 @@ function creatingReading(p5, fn){
    * returns the hue as a normalized value in the 0–1 range.
    * `colorMode()` has no effect inside shader callbacks.
    *
-   * ```js
+   * ```js example
    * let myShader;
    * function setup() {
    *   createCanvas(100, 100, WEBGL);
@@ -1168,7 +1168,7 @@ function creatingReading(p5, fn){
    * <a href="/reference/p5/colorMode/">colorMode()</a> is set to HSB or HSL, it returns the
    * saturation value in the given mode.
    *
-   * ```js
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1196,7 +1196,7 @@ function creatingReading(p5, fn){
    * }
    * ```
    *
-   * ```js
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1224,7 +1224,7 @@ function creatingReading(p5, fn){
    * }
    * ```
    *
-   * ```js
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1252,7 +1252,7 @@ function creatingReading(p5, fn){
    * }
    * ```
    *
-   * ```js
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1280,7 +1280,7 @@ function creatingReading(p5, fn){
    * }
    * ```
    *
-   * ```js
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1312,7 +1312,7 @@ function creatingReading(p5, fn){
    * and returns the saturation as a normalized value in the 0–1 range.
    * `colorMode()` has no effect inside shader callbacks.
    *
-   * ```js
+   * ```js example
    * let myShader;
    * function setup() {
    *   createCanvas(100, 100, WEBGL);
@@ -1359,7 +1359,7 @@ function creatingReading(p5, fn){
    * to 100. If the <a href="/reference/p5/colorMode/">colorMode()</a> is set to HSB, it
    * returns the brightness value in the given range.
    *
-   * ```js
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1387,7 +1387,7 @@ function creatingReading(p5, fn){
    * }
    * ```
    *
-   * ```js
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1415,7 +1415,7 @@ function creatingReading(p5, fn){
    * }
    * ```
    *
-   * ```js
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1443,7 +1443,7 @@ function creatingReading(p5, fn){
    * }
    * ```
    *
-   * ```js
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1475,7 +1475,7 @@ function creatingReading(p5, fn){
    * and returns the brightness as a normalized value in the 0–1 range.
    * `colorMode()` has no effect inside shader callbacks.
    *
-   * ```js
+   * ```js example
    * let myShader;
    * function setup() {
    *   createCanvas(100, 100, WEBGL);
@@ -1521,7 +1521,7 @@ function creatingReading(p5, fn){
    * to 100. If the <a href="/reference/p5/colorMode/">colorMode()</a> is set to HSL, it
    * returns the lightness value in the given range.
    *
-   * ```js
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1549,7 +1549,7 @@ function creatingReading(p5, fn){
    * }
    * ```
    *
-   * ```js
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1577,7 +1577,7 @@ function creatingReading(p5, fn){
    * }
    * ```
    *
-   * ```js
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1605,7 +1605,7 @@ function creatingReading(p5, fn){
    * }
    * ```
    *
-   * ```js
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1637,7 +1637,7 @@ function creatingReading(p5, fn){
    * and returns the lightness as a normalized value in the 0–1 range.
    * `colorMode()` has no effect inside shader callbacks.
    *
-   * ```js
+   * ```js example
    * let myShader;
    * function setup() {
    *   createCanvas(100, 100, WEBGL);
@@ -1685,7 +1685,7 @@ function creatingReading(p5, fn){
    * The way that colors are interpolated depends on the current
    * <a href="#/p5/colorMode">colorMode()</a>.
    *
-   * ```js
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1726,7 +1726,7 @@ function creatingReading(p5, fn){
    * `vec4` colors and returns a normalized `vec4` with RGBA components in
    * the 0–1 range. `colorMode()` has no effect inside shader callbacks.
    *
-   * ```js
+   * ```js example
    * let myShader;
    * function setup() {
    *   createCanvas(100, 100, WEBGL);
