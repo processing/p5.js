@@ -1123,6 +1123,7 @@
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/BHARATH0153"><img src="https://avatars.githubusercontent.com/u/214236921?v=4?s=64" width="64px;" alt="chandra"/><br /><sub><b>chandra</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=BHARATH0153" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/gfrancine"><img src="https://avatars.githubusercontent.com/u/74049877?v=4?s=64" width="64px;" alt="gfrancine"/><br /><sub><b>gfrancine</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=gfrancine" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/slash-init"><img src="https://avatars.githubusercontent.com/u/186584533?v=4?s=64" width="64px;" alt="Gaurav"/><br /><sub><b>Gaurav</b></sub></a><br /><a href="https://github.com/processing/p5.js/issues?q=author%3Aslash-init" title="Bug reports">🐛</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://chiuye.github.io/"><img src="https://avatars.githubusercontent.com/u/59855282?v=4?s=64" width="64px;" alt="秋秋"/><br /><sub><b>秋秋</b></sub></a><br /><a href="#translation-Chiuye" title="Translation">🌍</a></td>
     </tr>
   </tbody>
 </table>
