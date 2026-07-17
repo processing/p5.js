@@ -7525,6 +7525,15 @@
       "contributions": [
         "bug"
       ]
+    },
+    {
+      "login": "Chiuye",
+      "name": "秋秋",
+      "avatar_url": "https://avatars.githubusercontent.com/u/59855282?v=4",
+      "profile": "https://chiuye.github.io/",
+      "contributions": [
+        "translation"
+      ]
     }
   ],
   "repoType": "github",
