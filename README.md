@@ -1,6 +1,7 @@
 [![npm version](https://badge.fury.io/js/p5.svg)](https://www.npmjs.com/package/p5)
 [![All Contributors](https://img.shields.io/github/all-contributors/processing/p5.js?color=ee8449)](#contributors)
 [![Total Downloads](https://img.shields.io/npm/dt/p5)](https://www.npmjs.com/package/p5)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fprocessing%2Fp5.js.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fprocessing%2Fp5.js?ref=badge_shield)
 
 # [p5.js](https://p5js.org)
 
@@ -112,3 +113,7 @@ We recognize all types of contributions. This project follows the [all-contribut
 ![Grid of avatars representing contributors to the p5.js project](contributors.png)
 
 Thanks to all the wonderful contributors! 💓
+
+
+## License
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fprocessing%2Fp5.js.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fprocessing%2Fp5.js?ref=badge_large)
