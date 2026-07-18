@@ -380,14 +380,18 @@ export function matrixConstructorNode(strandsContext, dimension, values) {
   return { id, dimension };
 }
 
-export function identityMatrixNode(strandsContext, dimension) {
+export function diagonalMatrixNode(strandsContext, dimension, value) {
   const values = [];
   for (let col = 0; col < dimension; col++) {
     for (let row = 0; row < dimension; row++) {
-      values.push(row === col ? 1 : 0);
+      values.push(row === col ? value : 0);
     }
   }
   return matrixConstructorNode(strandsContext, dimension, values);
+}
+
+export function identityMatrixNode(strandsContext, dimension) {
+  return diagonalMatrixNode(strandsContext, dimension, 1);
 }
 
 export function matrixNode(strandsContext, dimension, args) {
@@ -413,13 +417,7 @@ export function matrixNode(strandsContext, dimension, args) {
     const isScalar = typeof arg === 'number' ||
       (isNode && arg.dimension === 1 && baseTypeOf(arg) !== BaseType.MAT);
     if (isScalar) {
-      const values = [];
-      for (let col = 0; col < dimension; col++) {
-        for (let row = 0; row < dimension; row++) {
-          values.push(row === col ? arg : 0);
-        }
-      }
-      return matrixConstructorNode(strandsContext, dimension, values);
+      return diagonalMatrixNode(strandsContext, dimension, arg);
     }
   }
 
