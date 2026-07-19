@@ -38,10 +38,9 @@ async function bootstrap(w = 400, h = 400, renderer = undefined) {
   var font;
   new p5(function (p) {
     p.setup = async function () {
-      const loadedFont = await p.loadFont(fontFile);
-      await p.createCanvas(w, h, renderer);
       myp5 = p;
-      font = loadedFont;
+      font = await p.loadFont(fontFile);
+      p.createCanvas(w, h, renderer);
     };
   });
   await vi.waitFor(() => {
