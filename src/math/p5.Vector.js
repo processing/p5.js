@@ -2314,7 +2314,7 @@ class Vector {
   }
 
   /**
-   * Calculates new `x`, `y`, and `z` components that are proportionally the
+   * Calculates new vector components that are proportionally the
    * same distance between two vectors.
    *
    * The `amt` parameter is the amount to interpolate between the old vector and
@@ -2325,12 +2325,12 @@ class Vector {
    * returns a new <a href="#/p5.Vector">p5.Vector</a> object and doesn't change
    * the original.
    *
-   * @param  {Number}    x   x component.
-   * @param  {Number}    y   y component.
-   * @param  {Number}    z   z component.
-   * @param  {Number}    amt amount of interpolation between 0.0 (old vector)
-   *                         and 1.0 (new vector). 0.5 is halfway between.
+   *
+   * @param {...Number} values  target vector components
+   * @param  {Number}   amt     amount of interpolation between 0.0 (old vector)
+   *                            and 1.0 (new vector). 0.5 is halfway between.
    * @chainable
+   *
    *
    * @example
    * // META:norender
@@ -2414,6 +2414,11 @@ class Vector {
    *   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
    *   pop();
    * }
+   */
+  /**
+   * @param  {Number[]} arr array to lerp towards.
+   * @param  {Number}    amt
+   * @chainable
    */
   /**
    * @param  {p5.Vector} v  <a href="#/p5.Vector">p5.Vector</a> to lerp toward.
