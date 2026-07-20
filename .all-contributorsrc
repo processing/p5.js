@@ -7525,6 +7525,33 @@
       "contributions": [
         "bug"
       ]
+    },
+    {
+      "login": "zmuen",
+      "name": "Muen Zhang",
+      "avatar_url": "https://avatars.githubusercontent.com/u/75929368?v=4",
+      "profile": "https://github.com/zmuen",
+      "contributions": [
+        "translation"
+      ]
+    },
+    {
+      "login": "SihongShen",
+      "name": "0xS1TXY",
+      "avatar_url": "https://avatars.githubusercontent.com/u/143476316?v=4",
+      "profile": "https://shensihong.com/",
+      "contributions": [
+        "translation"
+      ]
+    },
+    {
+      "login": "Theresa-Em",
+      "name": "Theresa-Em",
+      "avatar_url": "https://avatars.githubusercontent.com/u/39764655?v=4",
+      "profile": "https://github.com/Theresa-Em",
+      "contributions": [
+        "translation"
+      ]
     }
   ],
   "repoType": "github",
