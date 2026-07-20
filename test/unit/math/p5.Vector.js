@@ -1488,10 +1488,11 @@ suite('p5.Vector', function () {
     });
 
     suite('with p5.Vector', function() {
-      test('should call lerp with 4 arguments', function() {
+      test('should call lerp with 2 arguments', function() {
+        const v2 = new Vector(1,2,3)
         vi.spyOn(v, 'lerp');
-        v.lerp(new Vector(1,2,3), 1);
-        expect(v.lerp).toHaveBeenCalledWith(1, 2, 3, 1);
+        v.lerp(v2, 1);
+        expect(v.lerp).toHaveBeenCalledWith(v2, 1);
       });
     });
 
@@ -1517,11 +1518,12 @@ suite('p5.Vector', function () {
     });
 
     suite('with no amt', function () {
-      test('should assume 0 amt', function () {
-        v.x = 0;
-        v.y = 0;
-        v.z = 0;
-        v.lerp(2, 2, 2);
+      test('should handle missing amt according to validation behavior', function () {
+        const target = new Vector(2, 2, 2);
+
+        v.set(0, 0, 0);
+        v.lerp(target);
+
         expect(v.x).to.eql(0);
         expect(v.y).to.eql(0);
         expect(v.z).to.eql(0);

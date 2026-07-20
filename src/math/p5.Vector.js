@@ -2420,13 +2420,24 @@ class Vector {
    * @param  {Number}    amt
    * @chainable
    */
-  lerp(x, y, z, amt) {
-    if (x instanceof Vector) {
-      return this.lerp(x.x, x.y, x.z, y);
+  lerp(...args) {
+    let amt = args.pop();
+    let values;
+
+    if (args[0] instanceof Vector) {
+      values = args[0].values;
+    } else if (Array.isArray(args[0])) {
+      values = args[0];
+    } else {
+      values = args;
     }
-    this.x += (x - this.x) * amt || 0;
-    this.y += (y - this.y) * amt || 0;
-    this.z += (z - this.z) * amt || 0;
+
+    const minDimension = prioritizeSmallerDimension(this.dimensions, values);
+
+    for (let i = 0; i < minDimension; i++) {
+      this.values[i] +=
+        (values[i] - this.values[i]) * amt;
+    }
     return this;
   }
 
