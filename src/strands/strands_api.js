@@ -951,15 +951,15 @@ const _rgb2hsl = (instance, colorNode) => {
     const omc = p5.strandsNode(1).sub(c); // 1 - cos
 
     // Column-major Rodrigues' rotation matrix.
-    const b00 = x.mult(x).mult(omc).add(c);
-    const b01 = y.mult(x).mult(omc).add(z.mult(s));
-    const b02 = z.mult(x).mult(omc).sub(y.mult(s));
-    const b10 = x.mult(y).mult(omc).sub(z.mult(s));
-    const b11 = y.mult(y).mult(omc).add(c);
-    const b12 = z.mult(y).mult(omc).add(x.mult(s));
-    const b20 = x.mult(z).mult(omc).add(y.mult(s));
-    const b21 = y.mult(z).mult(omc).sub(x.mult(s));
-    const b22 = z.mult(z).mult(omc).add(c);
+    const b00 = x.mult(x).mult(omc).add(c); // x^2 * (1 - cos) + cos
+    const b01 = y.mult(x).mult(omc).add(z.mult(s)); // y * x * (1 - cos) + z * sin
+    const b02 = z.mult(x).mult(omc).sub(y.mult(s)); // z * x * (1 - cos) - y * sin
+    const b10 = x.mult(y).mult(omc).sub(z.mult(s)); // x * y * (1 - cos) - z * sin
+    const b11 = y.mult(y).mult(omc).add(c); // y^2 * (1 - cos) + cos
+    const b12 = z.mult(y).mult(omc).add(x.mult(s)); // z * y * (1 - cos) + x * sin
+    const b20 = x.mult(z).mult(omc).add(y.mult(s)); // x * z * (1 - cos) + y * sin
+    const b21 = y.mult(z).mult(omc).sub(x.mult(s)); // y * z * (1 - cos) - x * sin
+    const b22 = z.mult(z).mult(omc).add(c); // z^2 * (1 - cos) + cos
 
     const m = build.matrixConstructorNode(strandsContext, 4, [
       b00, b01, b02, 0,
