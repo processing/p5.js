@@ -5,6 +5,7 @@
  */
 
 import * as constants from './constants';
+import { showLoadingIndicator, hideLoadingIndicator } from './loading';
 
 /**
  * This is the p5 instance constructor.
