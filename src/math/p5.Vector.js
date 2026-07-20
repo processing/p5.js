@@ -2374,6 +2374,20 @@ class Vector {
    * }
    *
    * @example
+   * // META:norender
+   * function setup() {
+   *   // Create p5.Vector objects.
+   *   let v0 = createVector(0, 1, 0, 1);
+   *   let v1 = createVector(1, 0, 1, 0);
+   *
+   *   // Interpolate.
+   *   v0.lerp(v1, 0.5);
+   *
+   *   // Prints "p5.Vector Object : [0.5, 0.5, 0.5, 0.5]" to the console.
+   *   print(v1.toString());
+   * }
+   *
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
