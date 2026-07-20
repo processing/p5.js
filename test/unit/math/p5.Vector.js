@@ -1489,7 +1489,7 @@ suite('p5.Vector', function () {
 
     suite('with p5.Vector', function() {
       test('should call lerp with 2 arguments', function() {
-        const v2 = new Vector(1,2,3)
+        const v2 = new Vector(1,2,3);
         vi.spyOn(v, 'lerp');
         v.lerp(v2, 1);
         expect(v.lerp).toHaveBeenCalledWith(v2, 1);
@@ -1514,6 +1514,32 @@ suite('p5.Vector', function () {
 
       test('should lerp z by amt', function () {
         expect(v.z).to.eql(1);
+      });
+    });
+
+    suite('with x, y, z, w, amt', function () {
+      beforeEach(function () {
+        v.x = 0;
+        v.y = 0;
+        v.z = 0;
+        v.values[3] = 0;
+        v.lerp(2, 2, 2, 2, 0.5);
+      });
+
+      test('should lerp x by amt', function () {
+        expect(v.x).to.eql(1);
+      });
+
+      test('should lerp y by amt', function () {
+        expect(v.y).to.eql(1);
+      });
+
+      test('should lerp z by amt', function () {
+        expect(v.z).to.eql(1);
+      });
+
+      test('should lerp w by amt', function () {
+        expect(v.values[3]).to.eql(1);
       });
     });
 
@@ -1556,6 +1582,35 @@ suite('p5.Vector', function () {
       expect(res.x).to.eql(1);
       expect(res.y).to.eql(1);
       expect(res.z).to.eql(1);
+    });
+  });
+
+  suite('p5.Vector.lerp(v2, amt) on 4 dimensions', function () {
+    var res, v1, v2;
+    beforeEach(function () {
+      let v1 = new Vector(0, 1, 0, 1);
+      let v2 = new Vector(1, 0, 1, 0);
+      res = v1.lerp(v2, 0.5);
+    });
+
+    test('should not be undefined', function () {
+      expect(res).to.not.eql(undefined);
+    });
+
+    test('should be a p5.Vector', function () {
+      expect(res).to.be.an.instanceof(Vector);
+    });
+
+    test('should return neither v1 nor v2', function () {
+      expect(res).to.not.eql(v1);
+      expect(res).to.not.eql(v2);
+    });
+
+    test('should res to be [0.5, 0.5, 0.5, 0.5]', function () {
+      expect(res.values[0]).to.eql(0.5);
+      expect(res.values[1]).to.eql(0.5);
+      expect(res.values[2]).to.eql(0.5);
+      expect(res.values[3]).to.eql(0.5);
     });
   });
 
