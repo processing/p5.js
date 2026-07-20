@@ -243,7 +243,17 @@ class p5 {
 
     const context = this._isGlobal ? window : this;
     if (typeof context.setup === 'function') {
-      await context.setup();
+      if(typeof window !== 'undefined' && this.canvas) {
+        showLoadingIndicator(this.canvas);
+      }
+      try {
+        await context.setup();
+      }
+      finally {
+        if(typeof window !== 'undefined') {
+          hideLoadingIndicator();
+        }
+      }
     }
     if (this.hitCriticalError) return;
 
