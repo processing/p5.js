@@ -8,25 +8,22 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const data = JSON.parse(fs.readFileSync(path.join(__dirname, '../docs/data.json')));
-const hasTag = (entry, tagName) =>
+
+const isHiddenEntry = entry =>
   Array.isArray(entry?.tags) &&
-  entry.tags.some(t => String(t?.title ?? '').toLowerCase() === tagName);
+  entry.tags.some(t => ['private', 'internal'].includes(String(t?.title || '').toLowerCase()));
 
 // Generate documentation used in the p5.js reference. This data will get read in
 // the p5.js-website repo: https://github.com/processing/p5.js-website/
 const htmlStrategy = {
   shouldSkipEntry: entry =>
-    (
-      // Skip static methods on p5.Vector for now because the names clash with
-      // the non static versions
-      entry.scope === 'static' &&
-      entry.memberof === 'Vector' &&
-      ['add', 'sub', 'mult', 'div', 'copy', 'rem', 'rotate', 'dot', 'cross', 'dist', 'lerp', 'slerp',
-        'mag', 'magSq', 'normalize', 'limit', 'setMag', 'heading', 'angleBetween', 'reflect',
-        'array', 'equals'].includes(entry.name)
-    )
-    || hasTag(entry, 'private')
-    || hasTag(entry, 'internal'),
+    // Skip static methods on p5.Vector for now because the names clash with
+    // the non static versions
+    entry.scope === 'static' &&
+    entry.memberof === 'Vector' &&
+    ['add', 'sub', 'mult', 'div', 'copy', 'rem', 'rotate', 'dot', 'cross', 'dist', 'lerp', 'slerp',
+      'mag', 'magSq', 'normalize', 'limit', 'setMag', 'heading', 'angleBetween', 'reflect',
+      'array', 'equals'].includes(entry.name),
 
   processDescription: desc => descriptionString(desc),
 
@@ -34,6 +31,14 @@ const htmlStrategy = {
 };
 
 const processed = processData(data, htmlStrategy);
+
+for (const item of processed.classitems) {
+  const raw = data.find(
+    e => (e.memberof || '') === (item.class || '') &&
+         (e.name || '') === (item.name || '')
+  );
+  item.hidden = isHiddenEntry(raw);
+}
 
 const converted = {
   project: {}, // Unimplemented, probably not needed
