@@ -1,9 +1,21 @@
 /**
- * Creates a loading indicator
+ * @module Loading
+ * @for p5
+ * @private
+ *
+ * Creates a loading indicator when the sketch's setup() function is running.
+ * Currently, the loading indicator is basic and can be extended in the future.
  */
 
 let loadingIndicator = null;
 
+/**
+ * Creates a simple loading indicator at the center of the webpage.
+ *
+ * @method showLoadingIndicator
+ * @param {HTMLElement} canvas The canvas element of the webpage.
+ * @private
+ */
 export function showLoadingIndicator(canvas) {
   if (!canvas || loadingIndicator) {
     return;
@@ -25,6 +37,12 @@ export function showLoadingIndicator(canvas) {
   canvas.parentElement?.appendChild(loadingIndicator);
 }
 
+/**
+ * Removes the loading indicator element from the webpage DOM.
+ *
+ * @method hideLoadingIndicator
+ * @private
+ */
 export function hideLoadingIndicator() {
   loadingIndicator?.remove();
   loadingIndicator = null;
