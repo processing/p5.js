@@ -394,6 +394,64 @@ export function identityMatrixNode(strandsContext, dimension) {
   return diagonalMatrixNode(strandsContext, dimension, 1);
 }
 
+// Convert a matrix into one of a different size, mirroring GLSL's mat3(m4) /
+// mat4(m3). Truncation keeps the upper-left submatrix; extension pads the extra
+// rows and columns with the identity matrix. This is built from column access +
+// swizzles so the GLSL and WGSL backends emit the same code (WGSL has no
+// matrix-resizing constructor of its own).
+export function matrixResizeNode(strandsContext, srcNode, srcDim, dstDim) {
+  const { dag, cfg } = strandsContext;
+
+  const sourceColumn = (colIndex) => {
+    const { id: indexID } = scalarLiteralNode(
+      strandsContext,
+      { dimension: 1, baseType: BaseType.INT },
+      colIndex
+    );
+    const nodeData = DAG.createNodeData({
+      nodeType: NodeType.OPERATION,
+      opCode: OpCode.Binary.ARRAY_ACCESS,
+      dependsOn: [srcNode.id, indexID],
+      dimension: srcDim,
+      baseType: BaseType.FLOAT,
+    });
+    const id = DAG.getOrCreateNode(dag, nodeData);
+    CFG.recordInBasicBlock(cfg, cfg.currentBlock, id);
+    return createStrandsNode(id, srcDim, strandsContext);
+  };
+
+  const columns = [];
+  for (let col = 0; col < dstDim; col++) {
+    if (col < srcDim && dstDim < srcDim) {
+      // Truncate: keep the first dstDim components of the source column.
+      const { id, dimension } = swizzleNode(
+        strandsContext, sourceColumn(col), 'xyzw'.slice(0, dstDim)
+      );
+      columns.push(createStrandsNode(id, dimension, strandsContext));
+    } else if (col < srcDim) {
+      // Extend: keep the source column, padding the extra rows with zeros.
+      const pad = Array(dstDim - srcDim).fill(0);
+      const { id, dimension } = primitiveConstructorNode(
+        strandsContext,
+        { baseType: BaseType.FLOAT, dimension: dstDim },
+        [sourceColumn(col), ...pad]
+      );
+      columns.push(createStrandsNode(id, dimension, strandsContext));
+    } else {
+      // Identity column for indices beyond the source matrix.
+      const comps = Array.from({ length: dstDim }, (_, row) => (row === col ? 1 : 0));
+      const { id, dimension } = primitiveConstructorNode(
+        strandsContext,
+        { baseType: BaseType.FLOAT, dimension: dstDim },
+        comps
+      );
+      columns.push(createStrandsNode(id, dimension, strandsContext));
+    }
+  }
+
+  return matrixConstructorNode(strandsContext, dstDim, columns);
+}
+
 export function matrixNode(strandsContext, dimension, args) {
   const dag = strandsContext.dag;
   const componentCount = dimension * dimension;
@@ -411,6 +469,15 @@ export function matrixNode(strandsContext, dimension, args) {
     // A matrix of the same size -> copy it.
     if (isNode && baseTypeOf(arg) === BaseType.MAT && arg.dimension === dimension) {
       return { id: arg.id, dimension };
+    }
+
+    // A matrix of a different size -> resize conversion. mat3(someMat4) keeps the
+    // upper-left 3x3, and mat4(someMat3) extends it with the identity matrix.
+    // WGSL has no matrix-resizing constructor, so we build the result from
+    // explicit column swizzles at the IR level, which both backends emit
+    // identically (e.g. m[0].xyz).
+    if (isNode && baseTypeOf(arg) === BaseType.MAT) {
+      return matrixResizeNode(strandsContext, arg, arg.dimension, dimension);
     }
 
     // A single scalar -> diagonal matrix (GLSL's matN(s) idiom, e.g. mat4(1.0)).
