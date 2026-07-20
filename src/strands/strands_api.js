@@ -1017,6 +1017,24 @@ const _rgb2hsl = (instance, colorNode) => {
     return t.mult(fn.vec3(p, 1)).xy;
   });
 
+  augmentFn(fn, p5, 'transformNormal', function (...args) {
+    if (!strandsContext.active) {
+      p5._friendlyError(`It looks like you've called transformNormal outside of a shader's modify() function.`);
+      return;
+    }
+    const [t, normal] = args;
+    if (!(t?.isStrandsNode && t.typeInfo().baseType === BaseType.MAT)) {
+      FES.userError('type error',
+        'transformNormal(t, normal): the first argument must be a transform from transform2D()/transform3D().');
+    }
+    const n = p5.strandsNode(normal);
+    // Normals ignore translation, so we use the transform's upper-left block.
+    // Its inverse-transpose is the correct normal matrix, staying accurate even
+    // under non-uniform scale.
+    const linear = fn[`mat${t.dimension - 1}`](t);
+    return fn.normalize(fn.transpose(fn.inverse(linear)).mult(n));
+  });
+
   // Storage buffer uniform function for compute shaders
   fn.uniformStorage = function(name, bufferOrSchema) {
     let schema = null;
