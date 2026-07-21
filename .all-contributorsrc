@@ -7311,7 +7311,10 @@
       "avatar_url": "https://avatars.githubusercontent.com/u/81041326?v=4",
       "profile": "https://github.com/Nwakaego-Ego",
       "contributions": [
-        "review"
+        "review",
+        "bug",
+        "code",
+        "doc"
       ]
     },
     {
@@ -7506,6 +7509,69 @@
       "profile": "https://github.com/BHARATH0153",
       "contributions": [
         "code"
+      ]
+    },
+    {
+      "login": "gfrancine",
+      "name": "gfrancine",
+      "avatar_url": "https://avatars.githubusercontent.com/u/74049877?v=4",
+      "profile": "https://github.com/gfrancine",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "slash-init",
+      "name": "Gaurav",
+      "avatar_url": "https://avatars.githubusercontent.com/u/186584533?v=4",
+      "profile": "https://github.com/slash-init",
+      "contributions": [
+        "bug"
+      ]
+    },
+    {
+      "login": "XiaoPingArchive",
+      "name": "xiaoping",
+      "avatar_url": "https://avatars.githubusercontent.com/u/36060644?v=4",
+      "profile": "https://github.com/XiaoPingArchive",
+      "contributions": [
+        "translation"
+      ]
+    },
+    {
+      "login": "Chiuye",
+      "name": "秋秋",
+      "avatar_url": "https://avatars.githubusercontent.com/u/59855282?v=4",
+      "profile": "https://chiuye.github.io/",
+      "contributions": [
+        "translation"
+      ]
+    },
+    {
+      "login": "zmuen",
+      "name": "Muen Zhang",
+      "avatar_url": "https://avatars.githubusercontent.com/u/75929368?v=4",
+      "profile": "https://github.com/zmuen",
+      "contributions": [
+        "translation"
+      ]
+    },
+    {
+      "login": "SihongShen",
+      "name": "0xS1TXY",
+      "avatar_url": "https://avatars.githubusercontent.com/u/143476316?v=4",
+      "profile": "https://shensihong.com/",
+      "contributions": [
+        "translation"
+      ]
+    },
+    {
+      "login": "Theresa-Em",
+      "name": "Theresa-Em",
+      "avatar_url": "https://avatars.githubusercontent.com/u/39764655?v=4",
+      "profile": "https://github.com/Theresa-Em",
+      "contributions": [
+        "translation"
       ]
     }
   ],

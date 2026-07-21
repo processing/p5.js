@@ -5,7 +5,7 @@ import { Graphics } from './p5.Graphics';
 import { Image } from '../image/p5.Image';
 import { Element } from '../dom/p5.Element';
 import { MediaElement } from '../dom/p5.MediaElement';
-import { RGBHDR } from '../color/creating_reading';
+import { RGBP3 } from '../color/creating_reading';
 import FilterRenderer2D from '../image/filterRenderer2D';
 import { Matrix } from '../math/p5.Matrix';
 import { PrimitiveToPath2DConverter } from '../shape/custom_shapes';
@@ -67,7 +67,7 @@ class Renderer2D extends Renderer {
     // Get and store drawing context
     this.drawingContext = this.canvas.getContext('2d', attributes);
     if(attributes.colorSpace === 'display-p3'){
-      this.states.colorMode = RGBHDR;
+      this.states.colorMode = RGBP3;
     }
     this.scale(this._pixelDensity, this._pixelDensity);
 
@@ -444,10 +444,12 @@ class Renderer2D extends Renderer {
     ctx.save();
     ctx.clearRect(0, 0, img.canvas.width, img.canvas.height);
 
+    const tint = this.states.tint._getRGBA([255, 255, 255, 255]);
+
     if (
-      this.states.tint[0] < 255 ||
-      this.states.tint[1] < 255 ||
-      this.states.tint[2] < 255
+      tint[0] < 255 ||
+      tint[1] < 255 ||
+      tint[2] < 255
     ) {
       // Color tint: we need to use the multiply blend mode to change the colors.
       // However, the canvas implementation of this destroys the alpha channel of
@@ -470,16 +472,16 @@ class Renderer2D extends Renderer {
 
       // Apply color tint
       ctx.globalCompositeOperation = 'multiply';
-      ctx.fillStyle = `rgb(${this.states.tint.slice(0, 3).join(', ')})`;
+      ctx.fillStyle = `rgb(${tint.slice(0, 3).join(', ')})`;
       ctx.fillRect(0, 0, img.canvas.width, img.canvas.height);
 
       // Replace the alpha channel with the original alpha * the alpha tint
       ctx.globalCompositeOperation = 'destination-in';
-      ctx.globalAlpha = this.states.tint[3] / 255;
+      ctx.globalAlpha = tint[3] / 255;
       ctx.drawImage(img.canvas, 0, 0);
     } else {
       // If we only need to change the alpha, we can skip all the extra work!
-      ctx.globalAlpha = this.states.tint[3] / 255;
+      ctx.globalAlpha = tint[3] / 255;
       ctx.drawImage(img.canvas, 0, 0);
     }
 
@@ -705,96 +707,32 @@ class Renderer2D extends Renderer {
   }
 
   line(x1, y1, x2, y2) {
-    const ctx = this.drawingContext;
-    if (!this.states.strokeColor) {
-      return this;
-    } else if (this._getStroke() === styleEmpty) {
-      return this;
-    }
-    if (this._clipping) {
-      const tempPath = new Path2D();
-      tempPath.moveTo(x1, y1);
-      tempPath.lineTo(x2, y2);
-      const currentTransform = this.drawingContext.getTransform();
-      const clipBaseTransform = this._clipBaseTransform.inverse();
-      const relativeTransform = clipBaseTransform.multiply(currentTransform);
-      this.clipPath.addPath(tempPath, relativeTransform);
-      return this;
-    }
-    ctx.beginPath();
-    ctx.moveTo(x1, y1);
-    ctx.lineTo(x2, y2);
-    ctx.stroke();
+    const shape = new p5.Shape({ position: new p5.Vector(0, 0) });
+    shape.beginShape();
+    shape.line(x1, y1, x2, y2);
+    shape.endShape();
+    this.drawShape(shape);
 
     return this;
   }
 
   point(x, y) {
-    const ctx = this.drawingContext;
-    if (!this.states.strokeColor) {
-      return this;
-    } else if (this._getStroke() === styleEmpty) {
-      return this;
-    }
-    const s = this._getStroke();
-    const f = this._getFill();
-    if (this._clipping) {
-      const tempPath = new Path2D();
-      const drawingContextWidth = this.drawingContext.lineWidth;
-      tempPath.arc(x, y, drawingContextWidth / 2, 0, constants.TWO_PI);
-      const currentTransform = this.drawingContext.getTransform();
-      const clipBaseTransform = this._clipBaseTransform.inverse();
-      const relativeTransform = clipBaseTransform.multiply(currentTransform);
-      this.clipPath.addPath(tempPath, relativeTransform);
-      return this;
-    }
-    this._setFill(s);
-    ctx.beginPath();
-    ctx.arc(x, y, ctx.lineWidth / 2, 0, constants.TWO_PI, false);
-    ctx.fill();
-    this._setFill(f);
+    const shape = new p5.Shape({ position: new p5.Vector(0, 0) });
+    shape.beginShape();
+    shape.point(x, y);
+    shape.endShape();
+    this.drawShape(shape);
 
     return this;
   }
 
   quad(x1, y1, x2, y2, x3, y3, x4, y4) {
-    const ctx = this.drawingContext;
-    const doFill = !!this.states.fillColor,
-      doStroke = this.states.strokeColor;
-    if (doFill && !doStroke) {
-      if (this._getFill() === styleEmpty) {
-        return this;
-      }
-    } else if (!doFill && doStroke) {
-      if (this._getStroke() === styleEmpty) {
-        return this;
-      }
-    }
-    if (this._clipping) {
-      const tempPath = new Path2D();
-      tempPath.moveTo(x1, y1);
-      tempPath.lineTo(x2, y2);
-      tempPath.lineTo(x3, y3);
-      tempPath.lineTo(x4, y4);
-      tempPath.closePath();
-      const currentTransform = this.drawingContext.getTransform();
-      const clipBaseTransform = this._clipBaseTransform.inverse();
-      const relativeTransform = clipBaseTransform.multiply(currentTransform);
-      this.clipPath.addPath(tempPath, relativeTransform);
-      return this;
-    }
-    ctx.beginPath();
-    ctx.moveTo(x1, y1);
-    ctx.lineTo(x2, y2);
-    ctx.lineTo(x3, y3);
-    ctx.lineTo(x4, y4);
-    ctx.closePath();
-    if (doFill) {
-      ctx.fill();
-    }
-    if (doStroke) {
-      ctx.stroke();
-    }
+    const shape = new p5.Shape({ position: new p5.Vector(0, 0) });
+    shape.beginShape();
+    shape.quad(x1, y1, x2, y2, x3, y3, x4, y4);
+    shape.endShape();
+    this.drawShape(shape);
+
     return this;
   }
 
@@ -807,134 +745,29 @@ class Renderer2D extends Renderer {
     let tr = args[5];
     let br = args[6];
     let bl = args[7];
-    const ctx = this.drawingContext;
-    const doFill = !!this.states.fillColor,
-      doStroke = this.states.strokeColor;
-    if (doFill && !doStroke) {
-      if (this._getFill() === styleEmpty) {
-        return this;
-      }
-    } else if (!doFill && doStroke) {
-      if (this._getStroke() === styleEmpty) {
-        return this;
-      }
-    }
-    if (this._clipping) {
-      const tempPath = new Path2D();
-      if (typeof tl === 'undefined') {
-        tempPath.rect(x, y, w, h);
-      } else {
-        tempPath.roundRect(x, y, w, h, [tl, tr, br, bl]);
-      }
-      const currentTransform = this.drawingContext.getTransform();
-      const clipBaseTransform = this._clipBaseTransform.inverse();
-      const relativeTransform = clipBaseTransform.multiply(currentTransform);
-      this.clipPath.addPath(tempPath, relativeTransform);
-      return this;
-    }
-    ctx.beginPath();
-    if (typeof tl === 'undefined') {
-      // No rounded corners
-      ctx.rect(x, y, w, h);
-    } else {
-      // At least one rounded corner
-      // Set defaults when not specified
-      if (typeof tr === 'undefined') {
-        tr = tl;
-      }
-      if (typeof br === 'undefined') {
-        br = tr;
-      }
-      if (typeof bl === 'undefined') {
-        bl = br;
-      }
 
-      // corner rounding must always be positive
-      const absW = Math.abs(w);
-      const absH = Math.abs(h);
-      const hw = absW / 2;
-      const hh = absH / 2;
+    const shape = new p5.Shape({ position: new p5.Vector(0, 0) });
+    shape.beginShape();
+    shape.rectPrimitive(x, y, w, h, tl, tr, br, bl);
+    shape.endShape();
+    this.drawShape(shape);
 
-      // Clip radii
-      if (absW < 2 * tl) {
-        tl = hw;
-      }
-      if (absH < 2 * tl) {
-        tl = hh;
-      }
-      if (absW < 2 * tr) {
-        tr = hw;
-      }
-      if (absH < 2 * tr) {
-        tr = hh;
-      }
-      if (absW < 2 * br) {
-        br = hw;
-      }
-      if (absH < 2 * br) {
-        br = hh;
-      }
-      if (absW < 2 * bl) {
-        bl = hw;
-      }
-      if (absH < 2 * bl) {
-        bl = hh;
-      }
-
-      ctx.roundRect(x, y, w, h, [tl, tr, br, bl]);
-    }
-    if (doFill) {
-      ctx.fill();
-    }
-    if (doStroke) {
-      ctx.stroke();
-    }
     return this;
   }
 
-
   triangle(args) {
-    const ctx = this.drawingContext;
-    const doFill = !!this.states.fillColor,
-      doStroke = this.states.strokeColor;
     const x1 = args[0],
       y1 = args[1];
     const x2 = args[2],
       y2 = args[3];
     const x3 = args[4],
       y3 = args[5];
-    if (doFill && !doStroke) {
-      if (this._getFill() === styleEmpty) {
-        return this;
-      }
-    } else if (!doFill && doStroke) {
-      if (this._getStroke() === styleEmpty) {
-        return this;
-      }
-    }
-    if (this._clipping) {
-      const tempPath = new Path2D();
-      tempPath.moveTo(x1, y1);
-      tempPath.lineTo(x2, y2);
-      tempPath.lineTo(x3, y3);
-      tempPath.closePath();
-      const currentTransform = this.drawingContext.getTransform();
-      const clipBaseTransform = this._clipBaseTransform.inverse();
-      const relativeTransform = clipBaseTransform.multiply(currentTransform);
-      this.clipPath.addPath(tempPath, relativeTransform);
-      return this;
-    }
-    ctx.beginPath();
-    ctx.moveTo(x1, y1);
-    ctx.lineTo(x2, y2);
-    ctx.lineTo(x3, y3);
-    ctx.closePath();
-    if (doFill) {
-      ctx.fill();
-    }
-    if (doStroke) {
-      ctx.stroke();
-    }
+
+    const shape = new p5.Shape({ position: new p5.Vector(0, 0) });
+    shape.beginShape();
+    shape.triangle(x1, y1, x2, y2, x3, y3);
+    shape.endShape();
+    this.drawShape(shape);
 
     return this;
   }
@@ -1205,7 +1038,7 @@ function renderer2D(p5, fn){
    */
   p5.Renderer2D = Renderer2D;
   p5.renderers[constants.P2D] = Renderer2D;
-  p5.renderers['p2d-hdr'] = new Proxy(Renderer2D, {
+  p5.renderers['p2d-p3'] = new Proxy(Renderer2D, {
     construct(target, [pInst, w, h, isMainCanvas, elt]){
       return new target(pInst, w, h, isMainCanvas, elt, { colorSpace: 'display-p3' });
     }

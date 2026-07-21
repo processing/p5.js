@@ -103,17 +103,114 @@ function installBuiltinGlobalAccessors(strandsContext) {
 
   for (const name of Object.keys(BUILTIN_GLOBAL_SPECS)) {
     const spec = BUILTIN_GLOBAL_SPECS[name]
-    Object.defineProperty(window, name, {
-      get: () => {
+    const backingKey = `_strands_${name}`
+
+    // Define on window for global mode only
+    const inst = getRuntimeP5Instance()
+    if (inst?._isGlobal) {
+      Object.defineProperty(window, name, {
+        get: () => {
+          if (strandsContext.active) {
+            return getBuiltinGlobalNode(strandsContext, name);
+          }
+          const inst = getRuntimeP5Instance()
+          return spec.get(inst);
+        },
+        configurable: true,
+      })
+    }
+
+    // Capture original descriptor (held in closure for the getter to delegate to)
+    const originalProtoDesc = Object.getOwnPropertyDescriptor(strandsContext.p5.prototype, name);
+
+    // Define on p5.prototype for instance mode
+    Object.defineProperty(strandsContext.p5.prototype, name, {
+      get: function() {
         if (strandsContext.active) {
           return getBuiltinGlobalNode(strandsContext, name);
         }
-        const inst = getRuntimeP5Instance()
-          return spec.get(inst);
+        // If our setter stored a value on this instance, return it
+        if (Object.prototype.hasOwnProperty.call(this, backingKey)) {
+          return this[backingKey];
+        }
+        // Delegate to original getter (e.g. width -> this._renderer?.width)
+        if (originalProtoDesc?.get) {
+          return originalProtoDesc.get.call(this);
+        }
+        // Fall back to original value for data properties (like mouseX)
+        return originalProtoDesc?.value;
       },
+      set: function(val) {
+        this[backingKey] = val;
+      },
+      configurable: true,
     })
+
+    // Define on p5.Graphics.prototype for graphics mode
+    const GraphicsProto = strandsContext.p5?.Graphics?.prototype;
+    if (GraphicsProto) {
+      const originalDesc = Object.getOwnPropertyDescriptor(GraphicsProto, name);
+
+      Object.defineProperty(GraphicsProto, name, {
+        get: function() {
+          if (strandsContext.active) {
+            return getBuiltinGlobalNode(strandsContext, name);
+          }
+          // Delegate to original getter if it exists (class-level getters like width, deltaTime)
+          if (originalDesc?.get) {
+            return originalDesc.get.call(this);
+          }
+          return this[backingKey];
+        },
+        set: function(val) {
+          if (originalDesc?.set) {
+            originalDesc.set.call(this, val);
+          } else {
+            this[backingKey] = val;
+          }
+        },
+        configurable: true,
+      })
+    }
   }
   strandsContext._builtinGlobalsAccessorsInstalled = true
+}
+
+function installInstanceIndexAccessor(strandsContext) {
+  if (strandsContext._instanceIndexAccessorInstalled) return;
+
+  const getRuntimeP5Instance = () => strandsContext.renderer?._pInst || strandsContext.p5?.instance;
+
+  const instanceIndexGetter = function() {
+    if (strandsContext.active) {
+      const node = build.variableNode(strandsContext, { baseType: BaseType.INT, dimension: 1 }, strandsContext.backend.instanceIdReference());
+      return createStrandsNode(node.id, node.dimension, strandsContext);
+    }
+    return undefined;
+  };
+
+  const inst = getRuntimeP5Instance();
+  if (inst?._isGlobal) {
+    Object.defineProperty(window, 'instanceIndex', {
+      get: instanceIndexGetter,
+      configurable: true,
+    });
+  }
+
+  Object.defineProperty(strandsContext.p5.prototype, 'instanceIndex', {
+    get: instanceIndexGetter,
+    configurable: true,
+  });
+
+  const GraphicsProto = strandsContext.p5?.Graphics?.prototype;
+  if (GraphicsProto) {
+    Object.defineProperty(GraphicsProto, 'instanceIndex', {
+      get: instanceIndexGetter,
+      configurable: true,
+    });
+  }
+
+  strandsContext._instanceIndexAccessorInstalled = true;
 }
 
 //////////////////////////////////////////////
@@ -289,7 +386,7 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
   const originalLerp = fn.lerp;
   augmentFn(fn, p5, 'lerp', function (...args) {
     if (strandsContext.active) {
-      return fn.mix(...args);
+      return this.mix(...args);
     } else {
       return originalLerp.apply(this, args);
     }
@@ -310,6 +407,139 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
       return this.clamp(result, this.min(start2, stop2), this.max(start2, stop2));
     }
     return result;
+  });
+
+  const originalColor = fn.color;
+  augmentFn(fn, p5, 'color', function (...args) {
+    if (!strandsContext.active) {
+      return originalColor.apply(this, args);
+    }
+    // Reuse p5's parser - handles hex strings, rgb(), CSS named colors, numerics
+    const c = originalColor.apply(this, args);
+    // _getRGBA() returns [r, g, b, a] normalized to 0-1
+    const rgba = c._getRGBA();
+    const { id, dimension } = build.primitiveConstructorNode(
+      strandsContext,
+      { baseType: BaseType.FLOAT, dimension: null },
+      rgba
+    );
+    return createStrandsNode(id, dimension, strandsContext);
+  });
+  const originalLerpColor = fn.lerpColor;
+  augmentFn(fn, p5, 'lerpColor', function (...args) {
+    if (!strandsContext.active) {
+      return originalLerpColor.apply(this, args);
+    }
+    // In strands, colors are vec4s - lerpColor maps directly to GLSL mix()
+    return this.mix(...args);
+  });
+  // Component accessors: extract scalar channels from a vec4 color
+  const originalRed = fn.red;
+  augmentFn(fn, p5, 'red', function (...args) {
+    if (!strandsContext.active) {
+      return originalRed.apply(this, args);
+    }
+    return p5.strandsNode(args[0]).x;
+  });
+
+  const originalGreen = fn.green;
+  augmentFn(fn, p5, 'green', function (...args) {
+    if (!strandsContext.active) {
+      return originalGreen.apply(this, args);
+    }
+    return p5.strandsNode(args[0]).y;
+  });
+
+  const originalBlue = fn.blue;
+  augmentFn(fn, p5, 'blue', function (...args) {
+    if (!strandsContext.active) {
+      return originalBlue.apply(this, args);
+    }
+    return p5.strandsNode(args[0]).z;
+  });
+
+  const originalAlpha = fn.alpha;
+  augmentFn(fn, p5, 'alpha', function (...args) {
+    if (!strandsContext.active) {
+      return originalAlpha.apply(this, args);
+    }
+    return p5.strandsNode(args[0]).w;
+  });
+
+  // RGB to HSB conversion based on:
+  // https://en.wikipedia.org/wiki/HSL_and_HSV#From_RGB
+  // Using mix/step to avoid branching, via the compact form from:
+  // http://lolengine.net/blog/2013/07/27/rgb-to-hsv-in-glsl
+  const _rgb2hsb = (instance, colorNode) => {
+  const r = colorNode.x;
+  const g = colorNode.y;
+  const b = colorNode.z;
+  const K = instance.vec4(0, -1/3, 2/3, -1);
+  const p = instance.mix(
+    instance.vec4(b, g, K.w, K.z),
+    instance.vec4(g, b, K.x, K.y),
+    instance.step(b, g)
+  );
+  const q = instance.mix(
+    instance.vec4(p.x, p.y, p.w, r),
+    instance.vec4(r, p.y, p.z, p.x),
+    instance.step(p.x, r)
+  );
+  const d = q.x.sub(instance.min(q.w, q.y));
+  const e = p5.strandsNode(1e-10);
+  const h = instance.abs(q.z.add(q.w.sub(q.y).div(d.mult(6).add(e))));
+  const s = d.div(q.x.add(e));
+  return instance.vec3(h, s, q.x);
+};
+
+const _rgb2hsl = (instance, colorNode) => {
+  const r = colorNode.x;
+  const g = colorNode.y;
+  const b = colorNode.z;
+  const maxC = instance.max(r, instance.max(g, b));
+  const minC = instance.min(r, instance.min(g, b));
+  const l = maxC.add(minC).div(2);
+  const d = maxC.sub(minC);
+  const e = p5.strandsNode(1e-10);
+  const s = instance.mix(
+    p5.strandsNode(0),
+    d.div(p5.strandsNode(1).sub(instance.abs(l.mult(2).sub(1)))),
+    instance.step(e, d)
+  );
+  const h_rg = instance.mod(g.sub(b).div(d.add(e)), p5.strandsNode(6)).div(6);
+  const h_gb = b.sub(r).div(d.add(e)).add(2).div(6);
+  const h_br = r.sub(g).div(d.add(e)).add(4).div(6);
+  const isR = instance.step(maxC.sub(e), r).mult(instance.step(r.sub(e), maxC));
+  const isG = instance.step(maxC.sub(e), g).mult(instance.step(g.sub(e), maxC));
+  const h = instance.mix(instance.mix(h_br, h_gb, isG), h_rg, isR);
+  return instance.vec3(h, s, l);
+};
+  const originalHue = fn.hue;
+  augmentFn(fn, p5, 'hue', function (...args) {
+    if (!strandsContext.active) return originalHue.apply(this, args);
+    const colorNode = p5.strandsNode(args[0]);
+    return _rgb2hsl(this, this.vec3(colorNode.x, colorNode.y, colorNode.z)).x;
+  });
+
+  const originalSaturation = fn.saturation;
+  augmentFn(fn, p5, 'saturation', function (...args) {
+    if (!strandsContext.active) return originalSaturation.apply(this, args);
+    const colorNode = p5.strandsNode(args[0]);
+    return _rgb2hsl(this, this.vec3(colorNode.x, colorNode.y, colorNode.z)).y;
+  });
+
+  const originalBrightness = fn.brightness;
+  augmentFn(fn, p5, 'brightness', function (...args) {
+    if (!strandsContext.active) return originalBrightness.apply(this, args);
+    const colorNode = p5.strandsNode(args[0]);
+    return _rgb2hsb(this, this.vec3(colorNode.x, colorNode.y, colorNode.z)).z;
+  });
+
+  const originalLightness = fn.lightness;
+  augmentFn(fn, p5, 'lightness', function (...args) {
+    if (!strandsContext.active) return originalLightness.apply(this, args);
+    const colorNode = p5.strandsNode(args[0]);
+    return _rgb2hsl(this, this.vec3(colorNode.x, colorNode.y, colorNode.z)).z;
   });
 
   augmentFn(fn, p5, 'getTexture', function (...rawArgs) {
@@ -686,6 +916,17 @@ function createHookArguments(strandsContext, parameters){
             return createStrandsNode(propNode.id, propNode.dimension, strandsContext, onRebind);
           },
           set(val) {
+            const valDim = val?.isStrandsNode
+              ? val.dimension
+              : (Array.isArray(val) ? val.length : 1);
+            if( valDim !== propertyType.dataType.dimension && valDim !== 1){
+              FES.dimensionMismatchError(
+                propertyType.dataType.dimension,
+                valDim,
+                `${param.name}.${propertyType.name}`
+              );
+            }
+
             const oldDependsOn = dag.dependsOn[structNode.id];
             const newDependsOn = [...oldDependsOn];
             let newValueID;
@@ -763,6 +1004,7 @@ function enforceReturnTypeMatch(strandsContext, expectedType, returned, hookName
 }
 export function createShaderHooksFunctions(strandsContext, fn, shader) {
   installBuiltinGlobalAccessors(strandsContext)
+  installInstanceIndexAccessor(strandsContext)
 
   // Add shader context to hooks before spreading
   const vertexHooksWithContext = Object.fromEntries(
