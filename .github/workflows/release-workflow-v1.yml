@@ -87,6 +87,7 @@ jobs:
         uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3
         with:
           repository: processing/p5.js-website
+          ref: 'v1'
           path: website
           fetch-depth: 0
           token: ${{ secrets.ACCESS_TOKEN }}
@@ -116,7 +117,7 @@ jobs:
           github_token: ${{ secrets.ACCESS_TOKEN }}
           branch: v1
           directory: website/
-          repository: processing/p5.js-website       
+          repository: processing/p5.js-website
 
       # 5. Update Bower files
       - name: Checkout Bower repo
