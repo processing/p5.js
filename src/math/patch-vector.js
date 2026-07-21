@@ -1,5 +1,13 @@
 import { Vector } from './p5.Vector.js';
 
+function _vectorError(instance, message = 'Requires valid arguments') {
+  if (!instance.friendlyErrorsDisabled()) {
+    instance._friendlyError(message, 'p5.Vector');
+  }
+
+  return instance;
+}
+
 /**
  * @private
  * @internal
@@ -55,13 +63,7 @@ export function _validatedVectorOperation(
             // No arguments? No action (same as other vector ops)
             return this;
           }
-          if (!this.friendlyErrorsDisabled()) {
-            this._friendlyError(
-              'Requires valid arguments',
-              'p5.Vector'
-            );
-          }
-          return this;
+          return _vectorError(this);
         } else {
           for (let i = 0; i < trailingArgCount; i++) {
             trailing.unshift(args.pop());
@@ -70,24 +72,12 @@ export function _validatedVectorOperation(
           for (let i = 0; i < trailing.length; i++) {
             const t = trailing[i];
             if (typeof t !== 'number' || !Number.isFinite(t)) {
-              if (!this.friendlyErrorsDisabled()) {
-                this._friendlyError(
-                  'Arguments contain non-finite numbers',
-                  'p5.Vector'
-                );
-              }
-              return this;
+              return _vectorError(this, 'Arguments contain non-finite numbers');
             }
           }
 
           if (args.length === 0) {
-            if (!this.friendlyErrorsDisabled()) {
-              this._friendlyError(
-                'Requires valid arguments',
-                'p5.Vector'
-              );
-            }
-            return this;
+            return _vectorError(this);
           }
         }
       } else if (args.length === 0) {
@@ -98,25 +88,13 @@ export function _validatedVectorOperation(
       if (args[0] instanceof Vector) {
         // Do not allow extra args after a vector when trailing args are used
         if (trailingArgCount > 0 && args.length > 1) {
-          if (!this.friendlyErrorsDisabled()) {
-            this._friendlyError(
-              'Requires valid arguments',
-              'p5.Vector'
-            );
-          }
-          return this;
+          return _vectorError(this);
         }
         // First argument is a vector? Make it an array
         args = args[0].values;
       } else if (Array.isArray(args[0])) {
         if (trailingArgCount > 0 && args.length > 1) {
-          if (!this.friendlyErrorsDisabled()) {
-            this._friendlyError(
-              'Requires valid arguments',
-              'p5.Vector'
-            );
-          }
-          return this;
+          return _vectorError(this);
         }
         // First argument is an array? Great, keep it!
         args = args[0];
@@ -131,24 +109,12 @@ export function _validatedVectorOperation(
         for (let i = 0; i < args.length; i++) {
           const v = args[i];
           if (typeof v !== 'number' || !Number.isFinite(v)) {
-            if (!this.friendlyErrorsDisabled()) {
-              this._friendlyError(
-                'Arguments contain non-finite numbers',
-                'p5.Vector'
-              );
-            }
-            return this;
+            return _vectorError(this, 'Arguments contain non-finite numbers');
           }
         }
       } else {
         if (typeof args !== 'number' || !Number.isFinite(args)) {
-          if (!this.friendlyErrorsDisabled()) {
-            this._friendlyError(
-              'Arguments contain non-finite numbers',
-              'p5.Vector'
-            );
-          }
-          return this;
+          return _vectorError(this, 'Arguments contain non-finite numbers');
         }
       }
 
