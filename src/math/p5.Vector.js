@@ -2757,8 +2757,10 @@ class Vector {
    * <a href="#/p5.Vector">p5.Vector</a> object.
    *
    * The version of `equals()` with multiple parameters interprets them as the
-   * components of another vector. Any missing parameters are assigned the value
-   * 0.
+   * components of another vector.
+   *
+   * If the two vectors have different lengths, a warning is logged and only
+   * the components up to the shorter length are compared.
    *
    * The static version of `equals()`, as in `p5.Vector.equals(v0, v1)`,
    * interprets both parameters as <a href="#/p5.Vector">p5.Vector</a> objects.
@@ -2826,8 +2828,17 @@ class Vector {
       values = args;
     }
 
-    for (let i = 0; i < this.values.length; i++) {
-      if (this.values[i] !== (values[i] || 0)) {
+    const minDimension = Math.min(this.values.length, values.length);
+    if (this.values.length !== values.length) {
+      console.warn(
+        'When comparing two vectors of different sizes, the smaller dimension is used. Both vectors will be treated as ' +
+          minDimension +
+          'D vectors, and any additional values of the longer vector will be ignored.'
+      );
+    }
+
+    for (let i = 0; i < minDimension; i++) {
+      if (this.values[i] !== values[i]) {
         return false;
       }
     }
