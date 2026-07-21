@@ -1126,6 +1126,7 @@
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/zmuen"><img src="https://avatars.githubusercontent.com/u/75929368?v=4?s=64" width="64px;" alt="Muen Zhang"/><br /><sub><b>Muen Zhang</b></sub></a><br /><a href="#translation-zmuen" title="Translation">🌍</a></td>
     </tr>
     <tr>
+      <td align="center" valign="top" width="16.66%"><a href="https://chiuye.github.io/"><img src="https://avatars.githubusercontent.com/u/59855282?v=4?s=64" width="64px;" alt="秋秋"/><br /><sub><b>秋秋</b></sub></a><br /><a href="#translation-Chiuye" title="Translation">🌍</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://shensihong.com/"><img src="https://avatars.githubusercontent.com/u/143476316?v=4?s=64" width="64px;" alt="0xS1TXY"/><br /><sub><b>0xS1TXY</b></sub></a><br /><a href="#translation-SihongShen" title="Translation">🌍</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/Theresa-Em"><img src="https://avatars.githubusercontent.com/u/39764655?v=4?s=64" width="64px;" alt="Theresa-Em"/><br /><sub><b>Theresa-Em</b></sub></a><br /><a href="#translation-Theresa-Em" title="Translation">🌍</a></td>
     </tr>
