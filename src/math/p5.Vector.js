@@ -2314,27 +2314,40 @@ class Vector {
   }
 
   /**
-   * Calculates new `x`, `y`, and `z` components that are proportionally the
+   * Calculates new vector components that are proportionally the
    * same distance between two vectors.
+   *
+   * `lerp()` can use separate numbers, as in `v.lerp(3, 3, 0.5)`, another
+   * <a href="#/p5.Vector">p5.Vector</a> object, as in `v.lerp(v2, 0.5)`, or an
+   * array of numbers, as in `v.lerp([3, 3], 0.5)`. When using numbers, the last
+   * argument is always the interpolation amount.
    *
    * The `amt` parameter is the amount to interpolate between the old vector and
    * the new vector. 0.0 keeps all components equal to the old vector's, 0.5 is
    * halfway between, and 1.0 sets all components equal to the new vector's.
+   * Values of `amt` outside the range 0 to 1 are allowed and extrapolate beyond
+   * the target.
+   *
+   * This method supports N-dimensional vectors. You should interpolate vectors
+   * only when they are the same size. When two vectors of different sizes are
+   * used, the smaller dimension will be used, and any additional values of the
+   * longer vector will be ignored.
    *
    * The static version of `lerp()`, as in `p5.Vector.lerp(v0, v1, 0.5)`,
    * returns a new <a href="#/p5.Vector">p5.Vector</a> object and doesn't change
-   * the original.
+   * the originals.
    *
-   * @param  {Number}    x   x component.
-   * @param  {Number}    y   y component.
-   * @param  {Number}    z   z component.
-   * @param  {Number}    amt amount of interpolation between 0.0 (old vector)
-   *                         and 1.0 (new vector). 0.5 is halfway between.
+   * @param {...Number} values  target vector components
+   * @param  {Number}   amt     amount of interpolation between 0.0 (old vector)
+   *                            and 1.0 (new vector). 0.5 is halfway between.
    * @chainable
    *
    * @example
-   * // META:norender
    * function setup() {
+   *   createCanvas(100, 100);
+   *
+   *   background(200);
+   *
    *   // Create a p5.Vector object.
    *   let v0 = createVector(1, 1, 1);
    *   let v1 = createVector(3, 3, 3);
@@ -2342,26 +2355,76 @@ class Vector {
    *   // Interpolate.
    *   v0.lerp(v1, 0.5);
    *
-   *   // Prints "p5.Vector Object : [2, 2, 2]" to the console.
-   *   print(v0.toString());
+   *   // Display the result.
+   *   textAlign(CENTER, CENTER);
+   *   text(v0.toString(), 0, 0, width, height);
+   *
+   *   describe('The text "p5.Vector Object : [2, 2, 2]" written on a gray square.');
    * }
    *
    * @example
-   * // META:norender
    * function setup() {
+   *   createCanvas(100, 100);
+   *
+   *   background(200);
+   *
+   *   // Create a p5.Vector object.
+   *   let v = createVector(1, 1);
+   *
+   *   // Interpolate with numbers. The last argument is the amount.
+   *   v.lerp(3, 3, 0.5);
+   *
+   *   // Display the result.
+   *   textAlign(CENTER, CENTER);
+   *   text(v.toString(), 0, 0, width, height);
+   *
+   *   describe('The text "p5.Vector Object : [2, 2]" written on a gray square.');
+   * }
+   *
+   * @example
+   * function setup() {
+   *   createCanvas(100, 100);
+   *
+   *   background(200);
+   *
+   *   // Create a p5.Vector object.
+   *   let v = createVector(1, 1, 1);
+   *
+   *   // Interpolate with an array.
+   *   v.lerp([3, 3, 3], 0.5);
+   *
+   *   // Display the result.
+   *   textAlign(CENTER, CENTER);
+   *   text(v.toString(), 0, 0, width, height);
+   *
+   *   describe('The text "p5.Vector Object : [2, 2, 2]" written on a gray square.');
+   * }
+   *
+   * @example
+   * function setup() {
+   *   createCanvas(100, 100);
+   *
+   *   background(200);
+   *
    *   // Create a p5.Vector object.
    *   let v = createVector(1, 1, 1);
    *
    *   // Interpolate.
    *   v.lerp(3, 3, 3, 0.5);
    *
-   *   // Prints "p5.Vector Object : [2, 2, 2]" to the console.
-   *   print(v.toString());
+   *   // Display the result.
+   *   textAlign(CENTER, CENTER);
+   *   text(v.toString(), 0, 0, width, height);
+   *
+   *   describe('The text "p5.Vector Object : [2, 2, 2]" written on a gray square.');
    * }
    *
    * @example
-   * // META:norender
    * function setup() {
+   *   createCanvas(100, 100);
+   *
+   *   background(200);
+   *
    *   // Create p5.Vector objects.
    *   let v0 = createVector(1, 1, 1);
    *   let v1 = createVector(3, 3, 3);
@@ -2369,8 +2432,31 @@ class Vector {
    *   // Interpolate.
    *   let v2 = p5.Vector.lerp(v0, v1, 0.5);
    *
-   *   // Prints "p5.Vector Object : [2, 2, 2]" to the console.
-   *   print(v2.toString());
+   *   // Display the result.
+   *   textAlign(CENTER, CENTER);
+   *   text(v2.toString(), 0, 0, width, height);
+   *
+   *   describe('The text "p5.Vector Object : [2, 2, 2]" written on a gray square.');
+   * }
+   *
+   * @example
+   * function setup() {
+   *   createCanvas(100, 100);
+   *
+   *   background(200);
+   *
+   *   // Create p5.Vector objects.
+   *   let v0 = createVector(0, 1, 0, 1);
+   *   let v1 = createVector(1, 0, 1, 0);
+   *
+   *   // Interpolate.
+   *   v0.lerp(v1, 0.5);
+   *
+   *   // Display the result.
+   *   textAlign(CENTER, CENTER);
+   *   text(v0.toString(), 0, 0, width, height);
+   *
+   *   describe('The text "p5.Vector Object : [0.5, 0.5, 0.5, 0.5]" written on a gray square.');
    * }
    *
    * @example
@@ -2416,17 +2502,22 @@ class Vector {
    * }
    */
   /**
+   * @param  {Number[]} arr array to lerp towards.
+   * @param  {Number}    amt
+   * @chainable
+   */
+  /**
    * @param  {p5.Vector} v  <a href="#/p5.Vector">p5.Vector</a> to lerp toward.
    * @param  {Number}    amt
    * @chainable
    */
-  lerp(x, y, z, amt) {
-    if (x instanceof Vector) {
-      return this.lerp(x.x, x.y, x.z, y);
+  lerp(values, amt) {
+    const minDimension = prioritizeSmallerDimension(this.dimensions, values);
+    shrinkToDimension(this.values, minDimension);
+
+    for (let i = 0; i < this.values.length; i++) {
+      this.values[i] += (values[i] - this.values[i]) * amt;
     }
-    this.x += (x - this.x) * amt || 0;
-    this.y += (y - this.y) * amt || 0;
-    this.z += (z - this.z) * amt || 0;
     return this;
   }
 

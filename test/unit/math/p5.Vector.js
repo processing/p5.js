@@ -1,7 +1,6 @@
 import { default as vector, Vector } from '../../../src/math/p5.Vector.js';
 import { default as math } from '../../../src/math/math.js';
 import { _defaultEmptyVector, _validatedVectorOperation } from '../../../src/math/patch-vector.js';
-import { vi } from 'vitest';
 
 
 suite('p5.Vector', function () {
@@ -35,6 +34,10 @@ suite('p5.Vector', function () {
     Vector.prototype.mult = _validatedVectorOperation(true)(Vector.prototype.mult, options);
     Vector.prototype.rem = _validatedVectorOperation(true)(Vector.prototype.rem, options);
     Vector.prototype.div = _validatedVectorOperation(true)(Vector.prototype.div, options);
+    Vector.prototype.lerp = _validatedVectorOperation(false, 1, [0])(
+      Vector.prototype.lerp,
+      options
+    );
   });
 
   afterEach(function () {});
@@ -1066,6 +1069,14 @@ suite('p5.Vector', function () {
       assert.deepEqual(v3.rem(v2).values, [0, 2]);
       expect(v3.rem(v2).dimensions).to.eql(2);
     });
+
+    test('should be prioritized in lerp()', function () {
+      assert.deepEqual(v1.lerp(v2, 0.5).values, [1.5]);
+      expect(v1.dimensions).to.eql(1);
+
+      assert.deepEqual(v3.lerp(v2, 0.5).values, [3, 4]);
+      expect(v3.dimensions).to.eql(2);
+    });
   });
 
   suite('dot', function () {
@@ -1483,23 +1494,24 @@ suite('p5.Vector', function () {
   });
 
   suite('lerp', function () {
+    beforeEach(function () {
+      v = new Vector(0, 0, 0);
+    });
+
     test('should return the same object', function () {
       expect(v.lerp()).to.eql(v);
     });
 
     suite('with p5.Vector', function() {
-      test('should call lerp with 4 arguments', function() {
-        vi.spyOn(v, 'lerp');
-        v.lerp(new Vector(1,2,3), 1);
-        expect(v.lerp).toHaveBeenCalledWith(1, 2, 3, 1);
+      test('should lerp toward the vector by amt', function() {
+        const v2 = new Vector(2, 2, 2);
+        v.lerp(v2, 0.5);
+        expect(v.values).to.eql([1, 1, 1]);
       });
     });
 
     suite('with x, y, z, amt', function () {
       beforeEach(function () {
-        v.x = 0;
-        v.y = 0;
-        v.z = 0;
         v.lerp(2, 2, 2, 0.5);
       });
 
@@ -1516,15 +1528,93 @@ suite('p5.Vector', function () {
       });
     });
 
-    suite('with no amt', function () {
-      test('should assume 0 amt', function () {
-        v.x = 0;
-        v.y = 0;
-        v.z = 0;
-        v.lerp(2, 2, 2);
-        expect(v.x).to.eql(0);
-        expect(v.y).to.eql(0);
-        expect(v.z).to.eql(0);
+    suite('with x, y, z, w, amt', function () {
+      beforeEach(function () {
+        v = new Vector(0, 0, 0, 0);
+        v.lerp(2, 2, 2, 2, 0.5);
+      });
+
+      test('should lerp x by amt', function () {
+        expect(v.x).to.eql(1);
+      });
+
+      test('should lerp y by amt', function () {
+        expect(v.y).to.eql(1);
+      });
+
+      test('should lerp z by amt', function () {
+        expect(v.z).to.eql(1);
+      });
+
+      test('should lerp w by amt', function () {
+        expect(v.values[3]).to.eql(1);
+      });
+    });
+
+    suite('with array', function () {
+      test('should lerp toward array components by amt', function () {
+        v.lerp([2, 2, 2], 0.5);
+        expect(v.values).to.eql([1, 1, 1]);
+      });
+    });
+
+    suite('with 2D numeric components', function () {
+      test('should treat the last argument as amt', function () {
+        v = new Vector(1, 1);
+        v.lerp(3, 3, 0.5);
+        expect(v.values).to.eql([2, 2]);
+      });
+    });
+
+    suite('with amt outside 0 to 1', function () {
+      test('should extrapolate when amt is greater than 1', function () {
+        v.lerp(2, 2, 2, 2);
+        expect(v.values).to.eql([4, 4, 4]);
+      });
+
+      test('should extrapolate when amt is less than 0', function () {
+        v.lerp(2, 2, 2, -1);
+        expect(v.values).to.eql([-2, -2, -2]);
+      });
+    });
+
+    suite('with invalid arguments', function () {
+      test('should assume amt of 0 when only a vector is passed', function () {
+        const target = new Vector(2, 2, 2);
+        FESCalled = false;
+        v.set(0, 0, 0);
+        v.lerp(target);
+        expect(FESCalled).to.eql(false);
+        expect(v.values).to.eql([0, 0, 0]);
+      });
+
+      test('should assume amt of 0 when only an array is passed', function () {
+        FESCalled = false;
+        v.lerp([2, 2, 2]);
+        expect(FESCalled).to.eql(false);
+        expect(v.values).to.eql([0, 0, 0]);
+      });
+
+      test('should not change vector when amt is non-finite', function () {
+        FESCalled = false;
+        v.lerp(2, 2, 2, NaN);
+        expect(FESCalled).to.eql(true);
+        expect(v.values).to.eql([0, 0, 0]);
+      });
+
+      test('should not change vector when components are non-finite', function () {
+        FESCalled = false;
+        v.lerp(2, NaN, 2, 0.5);
+        expect(FESCalled).to.eql(true);
+        expect(v.values).to.eql([0, 0, 0]);
+      });
+
+      test('should not change vector with extra args after a vector', function () {
+        const target = new Vector(2, 2, 2);
+        FESCalled = false;
+        v.lerp(target, 1, 0.5);
+        expect(FESCalled).to.eql(true);
+        expect(v.values).to.eql([0, 0, 0]);
       });
     });
   });
@@ -1546,14 +1636,63 @@ suite('p5.Vector', function () {
     });
 
     test('should return neither v1 nor v2', function () {
-      expect(res).to.not.eql(v1);
-      expect(res).to.not.eql(v2);
+      expect(res).to.not.equal(v1);
+      expect(res).to.not.equal(v2);
+    });
+
+    test('should not mutate v1 or v2', function () {
+      expect(v1.values).to.eql([0, 0, 0]);
+      expect(v2.values).to.eql([2, 2, 2]);
     });
 
     test('should res to be [1, 1, 1]', function () {
       expect(res.x).to.eql(1);
       expect(res.y).to.eql(1);
       expect(res.z).to.eql(1);
+    });
+  });
+
+  suite('v.lerp(v2, amt) on 4 dimensions', function () {
+    var res, v1, v2;
+    beforeEach(function () {
+      v1 = new Vector(0, 1, 0, 1);
+      v2 = new Vector(1, 0, 1, 0);
+      res = v1.lerp(v2, 0.5);
+    });
+
+    test('should return this', function () {
+      expect(res).to.equal(v1);
+    });
+
+    test('should not mutate the argument vector', function () {
+      expect(v2.values).to.eql([1, 0, 1, 0]);
+    });
+
+    test('should lerp all components', function () {
+      expect(res.values).to.eql([0.5, 0.5, 0.5, 0.5]);
+    });
+  });
+
+  suite('p5.Vector.lerp(v1, v2, amt) on 4 dimensions', function () {
+    var res, v1, v2;
+    beforeEach(function () {
+      v1 = new Vector(0, 1, 0, 1);
+      v2 = new Vector(1, 0, 1, 0);
+      res = Vector.lerp(v1, v2, 0.5);
+    });
+
+    test('should return neither v1 nor v2', function () {
+      expect(res).to.not.equal(v1);
+      expect(res).to.not.equal(v2);
+    });
+
+    test('should not mutate v1 or v2', function () {
+      expect(v1.values).to.eql([0, 1, 0, 1]);
+      expect(v2.values).to.eql([1, 0, 1, 0]);
+    });
+
+    test('should lerp all components', function () {
+      expect(res.values).to.eql([0.5, 0.5, 0.5, 0.5]);
     });
   });
 
