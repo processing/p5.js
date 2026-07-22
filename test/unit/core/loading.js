@@ -1,9 +1,12 @@
-import { vi } from 'vitest';
-import { showLoadingIndicator, hideLoadingIndicator } from '../../../src/core/loading.js';
+import { vi, suite, test, assert } from 'vitest';
+import loading from '../../../src/core/loading.js';
 
 suite('Loading indicator', function() {
   let container;
   let canvas;
+
+  const lifecycles = {};
+  loading(null, null, lifecycles);
 
   beforeEach(function() {
     container = document.createElement('div');
@@ -13,7 +16,7 @@ suite('Loading indicator', function() {
   });
 
   afterEach(function() {
-    hideLoadingIndicator();
+    lifecycles.postsetup?.();
 
     if (container) {
       container.remove();
@@ -26,6 +29,7 @@ suite('Loading indicator', function() {
     let loadTest;
 
     const p = {
+      canvas: canvas,
       createCanvas: vi.fn(),
       background: vi.fn(),
       fill: vi.fn(),
@@ -43,7 +47,7 @@ suite('Loading indicator', function() {
     };
 
     const setupPromise = (async function setup() {
-      showLoadingIndicator(canvas);
+      lifecycles.presetup.call(p);
 
       try {
         p.createCanvas(400, 400);
@@ -57,19 +61,18 @@ suite('Loading indicator', function() {
         p.circle(p.mouseX, p.mouseY, 20);
       }
       finally {
-        hideLoadingIndicator();
+        lifecycles.postsetup.call(p);
       }
     })();
 
-    const loadingOverlay = container.querySelector('div');
+    const loadingIndicator = container.querySelector('.loading-indicator');
 
-    assert.exists(loadingOverlay);
-    assert.equal(loadingOverlay.textContent, 'Loading...');
+    assert.exists(loadingIndicator);
 
     loadTest();
     await setupPromise;
 
-    assert.isNull(container.querySelector('div'));
+    assert.isNull(container.querySelector('.loading-indicator'));
     assert.deepEqual(p.createCanvas.mock.calls, [[400, 400]]);
     assert.deepEqual(p.background.mock.calls, [['#EB5580']]);
     assert.deepEqual(p.fill.mock.calls, [[255]]);
