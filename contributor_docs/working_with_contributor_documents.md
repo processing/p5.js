@@ -10,8 +10,8 @@
 ## Where are they?
 Contributor documents are displayed on the p5.js website at either:
 
-* https://p5js.org/contribute/ (for p5.js v1)
-* https://beta.p5js.org/contribute/ (for p5.js v2)
+* https://v1.p5js.org/contribute/ (for p5.js v1)
+* https://p5js.org/contribute/ (for p5.js v2)
 
 Their source materials are kept in: 
 * repo: `p5.js`
@@ -159,5 +159,5 @@ Note that the trailing slash is necessary in development mode.
 
 Example:
 
-The source document `contributor_docs/unit_testing.md` will be served as `https://beta.p5js.org/contribute/unit_testing/`
+The source document `contributor_docs/unit_testing.md` will be served as `https://p5js.org/contribute/unit_testing/`
 
