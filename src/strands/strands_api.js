@@ -430,16 +430,56 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
     if (!strandsContext.active) {
       return originalLerpColor.apply(this, args);
     }
-    // In strands, colors are vec4s - lerpColor maps directly to GLSL mix()
-    return this.mix(...args);
+    if (args.length !== 3) {
+      FES.userError(
+        'parameter validation error',
+        `lerpColor() expects 3 arguments (color1, color2, amount), but ${args.length} were provided.`
+      );
+    }
+    try {
+      // In strands, colors are vec4s - lerpColor maps directly to GLSL mix()
+      return this.mix(...args);
+    } catch (err) {
+      if (err.message && err.message.includes('non-numeric value')) {
+        const isValidArg = (a) => {
+          if (a && a.isStrandsNode) return true;
+          if (typeof a === 'number' || typeof a === 'boolean') return true;
+          if (Array.isArray(a)) return a.flat(Infinity).every(isValidArg);
+          return false;
+        };
+        const badArgIndex = args.findIndex(a => !isValidArg(a));
+        FES.userError(
+          'type error',
+          `lerpColor() received a non-numeric value for argument ${badArgIndex + 1}: ${args[badArgIndex]}`
+        );
+      }
+      throw err;
+    }
   });
+  // Wraps p5.strandsNode(value) so that if it rejects a raw, non-numeric
+  // value (e.g. a string like "blue"), the error names the function and
+  // argument that caused it instead of a bare, context-free message.
+  const strandsNodeForArg = (value, functionName, argIndex) => {
+    try {
+      return p5.strandsNode(value);
+    } catch (err) {
+      if (err.message && err.message.includes('non-numeric value')) {
+        FES.userError(
+          'type error',
+          `${functionName}() received a non-numeric value for argument ${argIndex + 1}: ${value}`
+        );
+      }
+      throw err;
+    }
+  };
+
   // Component accessors: extract scalar channels from a vec4 color
   const originalRed = fn.red;
   augmentFn(fn, p5, 'red', function (...args) {
     if (!strandsContext.active) {
       return originalRed.apply(this, args);
     }
-    return p5.strandsNode(args[0]).x;
+    return strandsNodeForArg(args[0], 'red', 0).x;
   });
 
   const originalGreen = fn.green;
@@ -447,7 +487,7 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
     if (!strandsContext.active) {
       return originalGreen.apply(this, args);
     }
-    return p5.strandsNode(args[0]).y;
+    return strandsNodeForArg(args[0], 'green', 0).y;
   });
 
   const originalBlue = fn.blue;
@@ -455,7 +495,7 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
     if (!strandsContext.active) {
       return originalBlue.apply(this, args);
     }
-    return p5.strandsNode(args[0]).z;
+    return strandsNodeForArg(args[0], 'blue', 0).z;
   });
 
   const originalAlpha = fn.alpha;
@@ -463,9 +503,8 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
     if (!strandsContext.active) {
       return originalAlpha.apply(this, args);
     }
-    return p5.strandsNode(args[0]).w;
+    return strandsNodeForArg(args[0], 'alpha', 0).w;
   });
-
   // RGB to HSB conversion based on:
   // https://en.wikipedia.org/wiki/HSL_and_HSV#From_RGB
   // Using mix/step to avoid branching, via the compact form from:
