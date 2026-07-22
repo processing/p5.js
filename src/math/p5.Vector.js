@@ -2343,8 +2343,11 @@ class Vector {
    * @chainable
    *
    * @example
-   * // META:norender
    * function setup() {
+   *   createCanvas(100, 100);
+   *
+   *   background(200);
+   *
    *   // Create a p5.Vector object.
    *   let v0 = createVector(1, 1, 1);
    *   let v1 = createVector(3, 3, 3);
@@ -2352,52 +2355,76 @@ class Vector {
    *   // Interpolate.
    *   v0.lerp(v1, 0.5);
    *
-   *   // Prints "p5.Vector Object : [2, 2, 2]" to the console.
-   *   print(v0.toString());
+   *   // Display the result.
+   *   textAlign(CENTER, CENTER);
+   *   text(v0.toString(), 0, 0, width, height);
+   *
+   *   describe('The text "p5.Vector Object : [2, 2, 2]" written on a gray square.');
    * }
    *
    * @example
-   * // META:norender
    * function setup() {
+   *   createCanvas(100, 100);
+   *
+   *   background(200);
+   *
    *   // Create a p5.Vector object.
    *   let v = createVector(1, 1);
    *
    *   // Interpolate with numbers. The last argument is the amount.
    *   v.lerp(3, 3, 0.5);
    *
-   *   // Prints "p5.Vector Object : [2, 2]" to the console.
-   *   print(v.toString());
+   *   // Display the result.
+   *   textAlign(CENTER, CENTER);
+   *   text(v.toString(), 0, 0, width, height);
+   *
+   *   describe('The text "p5.Vector Object : [2, 2]" written on a gray square.');
    * }
    *
    * @example
-   * // META:norender
    * function setup() {
+   *   createCanvas(100, 100);
+   *
+   *   background(200);
+   *
    *   // Create a p5.Vector object.
    *   let v = createVector(1, 1, 1);
    *
    *   // Interpolate with an array.
    *   v.lerp([3, 3, 3], 0.5);
    *
-   *   // Prints "p5.Vector Object : [2, 2, 2]" to the console.
-   *   print(v.toString());
+   *   // Display the result.
+   *   textAlign(CENTER, CENTER);
+   *   text(v.toString(), 0, 0, width, height);
+   *
+   *   describe('The text "p5.Vector Object : [2, 2, 2]" written on a gray square.');
    * }
    *
    * @example
-   * // META:norender
    * function setup() {
+   *   createCanvas(100, 100);
+   *
+   *   background(200);
+   *
    *   // Create a p5.Vector object.
    *   let v = createVector(1, 1, 1);
    *
    *   // Interpolate.
    *   v.lerp(3, 3, 3, 0.5);
    *
-   *   // Prints "p5.Vector Object : [2, 2, 2]" to the console.
-   *   print(v.toString());
+   *   // Display the result.
+   *   textAlign(CENTER, CENTER);
+   *   text(v.toString(), 0, 0, width, height);
+   *
+   *   describe('The text "p5.Vector Object : [2, 2, 2]" written on a gray square.');
    * }
    *
    * @example
-   * // META:norender
    * function setup() {
+   *   createCanvas(100, 100);
+   *
+   *   background(200);
+   *
    *   // Create p5.Vector objects.
    *   let v0 = createVector(1, 1, 1);
    *   let v1 = createVector(3, 3, 3);
@@ -2405,13 +2432,19 @@ class Vector {
    *   // Interpolate.
    *   let v2 = p5.Vector.lerp(v0, v1, 0.5);
    *
-   *   // Prints "p5.Vector Object : [2, 2, 2]" to the console.
-   *   print(v2.toString());
+   *   // Display the result.
+   *   textAlign(CENTER, CENTER);
+   *   text(v2.toString(), 0, 0, width, height);
+   *
+   *   describe('The text "p5.Vector Object : [2, 2, 2]" written on a gray square.');
    * }
    *
    * @example
-   * // META:norender
    * function setup() {
+   *   createCanvas(100, 100);
+   *
+   *   background(200);
+   *
    *   // Create p5.Vector objects.
    *   let v0 = createVector(0, 1, 0, 1);
    *   let v1 = createVector(1, 0, 1, 0);
@@ -2419,8 +2452,11 @@ class Vector {
    *   // Interpolate.
    *   v0.lerp(v1, 0.5);
    *
-   *   // Prints "p5.Vector Object : [0.5, 0.5, 0.5, 0.5]" to the console.
-   *   print(v0.toString());
+   *   // Display the result.
+   *   textAlign(CENTER, CENTER);
+   *   text(v0.toString(), 0, 0, width, height);
+   *
+   *   describe('The text "p5.Vector Object : [0.5, 0.5, 0.5, 0.5]" written on a gray square.');
    * }
    *
    * @example
