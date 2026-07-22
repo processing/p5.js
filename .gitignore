@@ -20,9 +20,15 @@ lib/p5.*
 lib/p5-test.js
 lib/modules
 p5-website/
-preview/
 release/
 __screenshots__/
+preview/**
+!preview/index.html
+!preview/vite.config.mjs
+!preview/global/
+!preview/global/index.html
+!preview/global/sketch.js
+!preview/global/vite.config.mjs
 
 *.d.ts
 p5.zip
@@ -30,7 +36,6 @@ yarn.lock
 
 docs/data.json
 analyzer/
-preview/
 __screenshots__/
 actual-screenshots/
 visual-report.html
