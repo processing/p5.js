@@ -5,7 +5,6 @@
  */
 
 import * as constants from './constants';
-import { showLoadingIndicator, hideLoadingIndicator } from './loading';
 
 /**
  * This is the p5 instance constructor.
@@ -244,17 +243,7 @@ class p5 {
 
     const context = this._isGlobal ? window : this;
     if (typeof context.setup === 'function') {
-      if(typeof window !== 'undefined' && this.canvas) {
-        showLoadingIndicator(this.canvas);
-      }
-      try {
-        await context.setup();
-      }
-      finally {
-        if(typeof window !== 'undefined') {
-          hideLoadingIndicator();
-        }
-      }
+      await context.setup();
     }
     if (this.hitCriticalError) return;
 
@@ -649,6 +638,7 @@ import rendering from './rendering';
 import renderer from './p5.Renderer';
 import renderer2D from './p5.Renderer2D';
 import graphics from './p5.Graphics';
+import loading from './loading';
 
 p5.registerAddon(transform);
 p5.registerAddon(structure);
@@ -657,6 +647,7 @@ p5.registerAddon(rendering);
 p5.registerAddon(renderer);
 p5.registerAddon(renderer2D);
 p5.registerAddon(graphics);
+p5.registerAddon(loading);
 
 export default p5;
 
