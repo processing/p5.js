@@ -1077,23 +1077,17 @@ function loading(p5, fn){
    * }
    * ```
    *
-   * Multiple instances can be drawn at once with `model(geometry, count)`. On its own,
+   * Multiple instances can be drawn at once with `instances(count)`. On its own,
    * all the instances get drawn to the same spot, but you can use
-   * <a href="#/p5/instanceID">`instanceID()`</a> inside of a shader to handle each instance.
+   * <a href="#/p5/instanceIndex">`instanceIndex`</a> inside of a shader to handle each instance.
    * At large counts, this often runs faster than using a `for` loop.
    *
    * ```js example
    * let instancesShader;
-   * let instance;
    * let count = 5;
-   *
-   * function drawInstance() {
-   *   sphere(15);
-   * }
    *
    * function setup() {
    *   createCanvas(200, 200, WEBGL);
-   *   instance = buildGeometry(drawInstance);
    *   instancesShader = buildMaterialShader(drawSpaced);
    * }
    *
@@ -1102,7 +1096,7 @@ function loading(p5, fn){
    *   // Spread spheres evenly across the canvas based on their index
    *   let spacing = width / count;
    *   worldInputs.position.x +=
-   *     (instanceID() - (count - 1) / 2) * spacing;
+   *     (instanceIndex - (count - 1) / 2) * spacing;
    *   worldInputs.end();
    * }
    *
@@ -1112,7 +1106,7 @@ function loading(p5, fn){
    *   noStroke();
    *   fill('red');
    *   shader(instancesShader);
-   *   model(instance, count);
+   *   instances(count).sphere(15);
    * }
    * ```
    *

@@ -2595,6 +2595,129 @@ function primitives3D(p5, fn){
     }
     return this._renderer.curveDetail(d);
   };
+
+  /**
+   * @typedef {Object} InstancesWrapper
+   * @property {function(radius: Number=, detailX: Number=, detailY: Number=): undefined} sphere
+   * @property {function(width: Number=, height: Number=, depth: Number=, detailX: Number=, detailY: Number=): undefined} box
+   * @property {function(width: Number=, height: Number=, detailX: Number=, detailY: Number=): undefined} plane
+   * @property {function(radiusX: Number=, radiusY: Number=, radiusZ: Number=, detailX: Number=, detailY: Number=): undefined} ellipsoid
+   * @property {function(radius: Number=, height: Number=, detailX: Number=, detailY: Number=, bottomCap: Boolean=, topCap: Boolean=): undefined} cylinder
+   * @property {function(radius: Number=, height: Number=, detailX: Number=, detailY: Number=, cap: Boolean=): undefined} cone
+   * @property {function(radius: Number=, tubeRadius: Number=, detailX: Number=, detailY: Number=): undefined} torus
+   * @property {function(x1: Number, y1: Number, x2: Number, y2: Number, x3: Number, y3: Number): undefined} triangle
+   * @property {function(x: Number, y: Number, w: Number, h: Number=, detailX: Number=, detailY: Number=): undefined} rect
+   * @property {function(x1: Number, y1: Number, z1: Number=, x2: Number, y2: Number, z2: Number=, x3: Number, y3: Number, z3: Number=, x4: Number, y4: Number, z4: Number=, detailX: Number=, detailY: Number=): undefined} quad
+   * @property {function(x: Number, y: Number, w: Number, h: Number=, detail: Number=): undefined} ellipse
+   * @property {function(x: Number, y: Number, w: Number, h: Number, start: Number, stop: Number, mode: String=, detail: Number=): undefined} arc
+   * @property {function(model: p5.Geometry, count: Number=): undefined} model
+   * @property {function(x1: Number, y1: Number, z1: Number|Number, x2: Number=, y2: Number=, z2: Number=): undefined} line
+   * @property {function(x: Number, y: Number, z: Number=): undefined} point
+   * @property {function(x1: Number, y1: Number, z1: Number|Number, x2: Number=, y2: Number=, z2: Number=, x3: Number=, y3: Number=, z3: Number=, x4: Number=, y4: Number=, z4: Number=): undefined} bezier
+   * @property {function(x1: Number, y1: Number, z1: Number|Number, x2: Number=, y2: Number=, z2: Number=, x3: Number=, y3: Number=, z3: Number=, x4: Number=, y4: Number=, z4: Number=): undefined} spline
+   */
+
+  /**
+   * Draws `count` instances of the next 3D primitive or model using WebGL
+   * instanced rendering.
+   *
+   * Call a draw method on the returned object to render that primitive
+   * `count` times in a single draw call. Instance-specific transforms and
+   * attributes (position, color, etc.) are supplied through a custom shader
+   * that reads per-instance data from an instanced attribute buffer.
+   *
+   * @method instances
+   * @param  {Number} count number of instances to draw. Must be a positive
+   *   integer.
+   * @returns {p5.InstancesWrapper} an object with methods `sphere`, `box`, `plane`,
+   *   `ellipsoid`, `cylinder`, `cone`, `torus`, `triangle`, `rect`, `quad`,
+   *   `ellipse`, `arc`, `model`, `line`, `point`, `bezier`, and `spline`. Call one of
+   *   these to draw `count` instances of that primitive.
+   *
+   * @example
+   * <div>
+   * <code>
+   * let myShader;
+   * let count = 5;
+   *
+   * function setup() {
+   *   createCanvas(200, 200, WEBGL);
+   *   myShader = buildMaterialShader(drawSpaced);
+   *   describe('Five red spheres arranged in a horizontal line.');
+   * }
+   *
+   * function drawSpaced() {
+   *   worldInputs.begin();
+   *   // Spread spheres evenly across the canvas based on their index
+   *   let spacing = width / count;
+   *   worldInputs.position.x +=
+   *     (instanceIndex - (count - 1) / 2) * spacing;
+   *   worldInputs.end();
+   * }
+   *
+   * function draw() {
+   *   background(220);
+   *   lights();
+   *   noStroke();
+   *   fill('red');
+   *   shader(myShader);
+   *   instances(count).sphere(15);
+   * }
+   * </code>
+   * </div>
+   */
+  fn.instances = function(count) {
+    this._assert3d('instances');
+
+    if (typeof count !== 'number' || !isFinite(count) || count < 1) {
+      p5._friendlyError(
+        'instances() requires a positive integer count. Clamping to 1.',
+        'instances'
+      );
+      count = 1;
+    } else {
+      count = Math.round(count);
+    }
+
+    const r = this._renderer;
+
+    // Each wrapped method: set _instanceCount, call the method with
+    // the correct context, clear _instanceCount in finally so it never leaks.
+    const wrap = (method, ctx = r) => function(...args) {
+      r._instanceCount = count;
+      try {
+        method.apply(ctx, args);
+      } finally {
+        r._instanceCount = undefined;
+      }
+    };
+
+    const result = {
+      sphere:    wrap(r.sphere),
+      box:       wrap(r.box),
+      plane:     wrap(r.plane),
+      ellipsoid: wrap(r.ellipsoid),
+      cylinder:  wrap(r.cylinder),
+      cone:      wrap(r.cone),
+      torus:     wrap(r.torus),
+      triangle:  wrap(this.triangle, this),
+      rect:      wrap(this.rect, this),
+      quad:      wrap(this.quad, this),
+      ellipse:   wrap(this.ellipse, this),
+      arc:       wrap(this.arc, this),
+      model:     wrap(r.model),
+      line:      wrap(this.line, this),
+      point:     wrap(this.point, this),
+      bezier:    wrap(this.bezier, this),
+      spline:    wrap(this.spline, this)
+    };
+
+    if (typeof this.curve === 'function') {
+      result.curve = wrap(this.curve, this);
+    }
+
+    return result;
+  };
 }
 
 export default primitives3D;
