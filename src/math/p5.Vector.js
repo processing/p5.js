@@ -238,7 +238,7 @@ class Vector {
    * @param {Number} xVal - The new value for the x component.
    */
   set x(xVal) {
-    if (this.values.length > 1) {
+    if (this.values.length > 0) {
       this.values[0] = xVal;
     }
   }
