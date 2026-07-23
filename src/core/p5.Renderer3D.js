@@ -2395,7 +2395,7 @@ function renderer3D(p5, fn) {
       );
       return;
     }
-    return this.baseComputeShader().modify(cb, context, { hook: 'iteration' });
+    return this.baseComputeShader().modify(cb, context, { hook: 'computeIteration' });
   };
 
   /**
