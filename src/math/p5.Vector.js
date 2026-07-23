@@ -3571,6 +3571,7 @@ class Vector {
         'The v1 parameter should be of type Array or p5.Vector',
         'p5.Vector.equals'
       );
+      return false;
     }
     return v.equals(v2);
   }
@@ -3657,6 +3658,11 @@ function vector(p5, fn) {
 
   Vector.prototype._friendlyError = p5._friendlyError;
   Vector.prototype.friendlyErrorsDisabled = function() {
+    return p5.disableFriendlyErrors;
+  };
+
+  Vector._friendlyError = p5._friendlyError;
+  Vector.friendlyErrorsDisabled = function() {
     return p5.disableFriendlyErrors;
   };
 

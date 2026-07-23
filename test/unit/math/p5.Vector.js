@@ -2189,4 +2189,12 @@ suite('p5.Vector', function () {
       ]);
     });
   });
+
+  suite('p5.Vector.equals() [CLASS]', function () {
+    it('should trigger friendly error if first parameter is not a vector or array', function () {
+      FESCalled = false;
+      Vector.equals(1, new Vector(1, 2));
+      assert.isTrue(FESCalled, 'Friendly error should have been triggered');
+    });
+  });
 });
