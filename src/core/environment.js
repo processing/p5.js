@@ -216,7 +216,7 @@ function environment(p5, fn, lifecycles){
    * cursor, `x` and `y` set the location pointed to within the image. They are
    * both 0 by default, so the cursor points to the image's top-left corner. `x`
    * and `y` must be less than the image's width and height, respectively.
-   * 
+   *
    * Calling `cursor()` without an argument returns the current cursor type as a string.
    *
    * @method cursor
@@ -494,7 +494,7 @@ function environment(p5, fn, lifecycles){
    * - `WEBGL2` whose value is `'webgl2'`,
    * - `WEBGL` whose value is `'webgl'`, or
    * - `P2D` whose value is `'p2d'`. This is the default for 2D sketches.
-   * - `P2DHDR` whose value is `'p2d-hdr'` (used for HDR 2D sketches, if available).
+   * - `P2DP3` whose value is `'p2d-p3'` (used for P3 2D sketches, if available).
    *
    * See <a href="#/p5/setAttributes">setAttributes()</a> for ways to set the
    * WebGL version.

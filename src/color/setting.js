@@ -5,7 +5,7 @@
  */
 
 import * as constants from '../core/constants';
-import { RGB, RGBHDR, HSL, HSB, HWB, LAB, LCH, OKLAB, OKLCH } from './creating_reading';
+import { RGB, RGBP3, HSL, HSB, HWB, LAB, LCH, OKLAB, OKLCH } from './creating_reading';
 
 function setting(p5, fn){
   /**
@@ -670,9 +670,9 @@ function setting(p5, fn){
    *
    * Some additional color modes that p5.js supports are:
    *
-   * `RGBHDR` - High Dynamic Range RGB defined within the Display P3 color space.
+   * `RGBP3` - High Dynamic Range RGB defined within the Display P3 color space.
    *          Colors are expressed with an extended dynamic range. To render these colors
-   *          accurately, you must use the HDR canvas.
+   *          accurately, you must use the P3 canvas.
    *
    * `HWB`    - Hue, Whiteness, Blackness.
    *          Similar to HSB and HSL, this mode uses a hue angle.
@@ -720,10 +720,10 @@ function setting(p5, fn){
    *   ranges are currently not handled, so results in those cases may be ambiguous.
    *
    * @method colorMode
-   * @param {RGB|HSB|HSL|RGBHDR|HWB|LAB|LCH|OKLAB|OKLCH} mode   either RGB, HSB, HSL,
+   * @param {RGB|HSB|HSL|RGBP3|HWB|LAB|LCH|OKLAB|OKLCH} mode   either RGB, HSB, HSL,
    *          or one of the extended modes described above.
    * @param {Number}  [max]  range for all values.
-   * @return {RGB|HSB|HSL|RGBHDR|HWB|LAB|LCH|OKLAB|OKLCH} The current color mode.
+   * @return {RGB|HSB|HSL|RGBP3|HWB|LAB|LCH|OKLAB|OKLCH} The current color mode.
    *
    * @example
    * function setup() {
@@ -1016,7 +1016,7 @@ function setting(p5, fn){
    */
   /**
    * @method colorMode
-   * @param {RGB|HSB|HSL|RGBHDR|HWB|LAB|LCH|OKLAB|OKLCH} mode
+   * @param {RGB|HSB|HSL|RGBP3|HWB|LAB|LCH|OKLAB|OKLCH} mode
    * @param {Number} max1     range for the red or hue depending on the
    *                              current color mode.
    * @param {Number} max2     range for the green or saturation depending
@@ -1025,18 +1025,18 @@ function setting(p5, fn){
    *                              depending on the current color mode.
    * @param {Number} [maxA]   range for the alpha.
    *
-   * @return {RGB|HSB|HSL|RGBHDR|HWB|LAB|LCH|OKLAB|OKLCH} The current color mode.
+   * @return {RGB|HSB|HSL|RGBP3|HWB|LAB|LCH|OKLAB|OKLCH} The current color mode.
    */
   /**
    * @method colorMode
-   * @return {RGB|HSB|HSL|RGBHDR|HWB|LAB|LCH|OKLAB|OKLCH} The current color mode.
+   * @return {RGB|HSB|HSL|RGBP3|HWB|LAB|LCH|OKLAB|OKLCH} The current color mode.
    */
   fn.colorMode = function(mode, max1, max2, max3, maxA) {
     // p5._validateParameters('colorMode', arguments);
     if (
       [
         RGB,
-        RGBHDR,
+        RGBP3,
         HSB,
         HSL,
         HWB,
