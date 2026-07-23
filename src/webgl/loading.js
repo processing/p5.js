@@ -5,6 +5,7 @@
  */
 
 import { Geometry } from './p5.Geometry';
+import { GeometryPart, createPartState } from './p5.GeometryPart';
 import { Vector } from '../math/p5.Vector';
 import { request } from '../io/files';
 
@@ -15,6 +16,154 @@ async function fileExists(url) {
   } catch (error) {
     return false;
   }
+}
+
+// parse mtl text into a map of material name -> props. split from the file
+// request so it's testable on its own.
+function parseMtlData(data) {
+  let currentMaterial = null;
+  const materials = {};
+  const lines = data.split('\n');
+
+  for (let line = 0; line < lines.length; ++line) {
+    const tokens = lines[line].trim().split(/\s+/);
+    if (tokens[0] === 'newmtl') {
+      currentMaterial = tokens[1];
+      materials[currentMaterial] = {};
+    } else if (!currentMaterial) {
+      continue;
+    } else if (tokens[0] === 'Kd') {
+      //diffuse color
+      materials[currentMaterial].diffuseColor = [
+        parseFloat(tokens[1]),
+        parseFloat(tokens[2]),
+        parseFloat(tokens[3])
+      ];
+    } else if (tokens[0] === 'Ka') {
+      //ambient color
+      materials[currentMaterial].ambientColor = [
+        parseFloat(tokens[1]),
+        parseFloat(tokens[2]),
+        parseFloat(tokens[3])
+      ];
+    } else if (tokens[0] === 'Ks') {
+      //specular color
+      materials[currentMaterial].specularColor = [
+        parseFloat(tokens[1]),
+        parseFloat(tokens[2]),
+        parseFloat(tokens[3])
+      ];
+    } else if (tokens[0] === 'Ns') {
+      //specular exponent (shininess)
+      materials[currentMaterial].shininess = parseFloat(tokens[1]);
+    } else if (tokens[0] === 'd') {
+      //dissolve, 1 is fully opaque
+      materials[currentMaterial].opacity = parseFloat(tokens[1]);
+    } else if (tokens[0] === 'Tr') {
+      //transparency, the inverse of d
+      materials[currentMaterial].opacity = 1 - parseFloat(tokens[1]);
+    } else if (tokens[0] === 'illum') {
+      //illumination model
+      materials[currentMaterial].illuminationModel = parseInt(tokens[1]);
+    } else if (tokens[0] === 'map_Kd') {
+      //diffuse texture
+      materials[currentMaterial].texturePath = tokens[1];
+    } else if (tokens[0] === 'map_Ka') {
+      //ambient texture
+      materials[currentMaterial].ambientTexturePath = tokens[1];
+    } else if (tokens[0] === 'map_Ks') {
+      //specular texture
+      materials[currentMaterial].specularTexturePath = tokens[1];
+    } else if (tokens[0] === 'map_Bump' || tokens[0] === 'bump') {
+      //bump map. -bm etc can precede the path so take the last token. parsed
+      //but not used until the renderer handles it.
+      materials[currentMaterial].bumpTexturePath = tokens[tokens.length - 1];
+    }
+  }
+
+  return materials;
+}
+
+// mtl material -> part state in p5's vocab. anything we can't draw yet is left
+// off until support lands.
+function mtlToPartState(material) {
+  const state = createPartState();
+  if (!material) return state;
+  if (material.diffuseColor) state.fill = material.diffuseColor;
+  if (material.ambientColor) state.ambientColor = material.ambientColor;
+  if (material.specularColor) state.specularColor = material.specularColor;
+  if (material.shininess !== undefined) state.shininess = material.shininess;
+  if (material.texture) state.texture = material.texture;
+  return state;
+}
+
+// load each material's diffuse texture (map_Kd) and hang it on the material so
+// it lands on the part state. paths resolve relative to the model file, a
+// texture that fails just gets skipped. no-op if there's no loadImage. only
+// map_Kd for now since that's all the renderer can use.
+async function loadMaterialTextures(materials, modelPath, instance) {
+  if (!instance || typeof instance.loadImage !== 'function') return;
+
+  const slash = modelPath.lastIndexOf('/');
+  const folder = slash >= 0 ? modelPath.slice(0, slash) : '';
+  const resolve = file => (folder ? `${folder}/${file}` : file);
+
+  const jobs = [];
+  for (const name in materials) {
+    const material = materials[name];
+    if (!material.texturePath) continue;
+    const url = resolve(material.texturePath);
+    jobs.push(
+      instance.loadImage(url)
+        .then(img => {
+          material.texture = img;
+        })
+        .catch(() => {
+          console.warn(`Texture not found, skipping: ${url}`);
+        })
+    );
+  }
+
+  await Promise.all(jobs);
+}
+
+// split the model's faces into one part per material. the combined arrays stay
+// as the aggregate; each part gets its own localised verts with faces re-indexed
+// against them, plus its material's state.
+function buildMaterialParts(model, faceMaterials, materials) {
+  // one group per material, plus a null group for faces before any usemtl so
+  // none get dropped. no materials at all -> keep the default wrap.
+  const names = [...new Set(faceMaterials)];
+  if (!names.some(name => name != null)) return;
+
+  const hasUvs = model.uvs.length > 0;
+  const hasNormals = model.vertexNormals.length > 0;
+  const parts = [];
+
+  for (const name of names) {
+    const part = new GeometryPart(
+      `${model.gid}|part${parts.length}`,
+      mtlToPartState(materials[name])
+    );
+    // global vertex index -> this part's local index, added on first use
+    const localIndex = new Map();
+    for (let fi = 0; fi < model.faces.length; fi++) {
+      if (faceMaterials[fi] !== name) continue;
+      const localFace = model.faces[fi].map(vi => {
+        if (!localIndex.has(vi)) {
+          localIndex.set(vi, part.vertices.length);
+          part.vertices.push(model.vertices[vi]);
+          if (hasUvs) part.uvs.push(model.uvs[vi]);
+          if (hasNormals) part.vertexNormals.push(model.vertexNormals[vi]);
+        }
+        return localIndex.get(vi);
+      });
+      part.faces.push(localFace);
+    }
+    parts.push(part);
+  }
+
+  model.parts = parts;
 }
 
 function loading(p5, fn){
@@ -446,6 +595,7 @@ function loading(p5, fn){
         const lines = data.split('\n');
 
         const parsedMaterials = await getMaterials(lines);
+        await loadMaterialTextures(parsedMaterials, path, this);
         const cb = () => {
           parseObj(model, lines, parsedMaterials);
 
@@ -482,47 +632,8 @@ function loading(p5, fn){
    * @private
    */
   async function parseMtl(mtlPath) {
-    let currentMaterial = null;
-    let materials = {};
-
     const { data } = await request(mtlPath, 'text');
-    const lines = data.split('\n');
-
-    for (let line = 0; line < lines.length; ++line) {
-      const tokens = lines[line].trim().split(/\s+/);
-      if (tokens[0] === 'newmtl') {
-        const materialName = tokens[1];
-        currentMaterial = materialName;
-        materials[currentMaterial] = {};
-      } else if (tokens[0] === 'Kd') {
-        //Diffuse color
-        materials[currentMaterial].diffuseColor = [
-          parseFloat(tokens[1]),
-          parseFloat(tokens[2]),
-          parseFloat(tokens[3])
-        ];
-      } else if (tokens[0] === 'Ka') {
-        //Ambient Color
-        materials[currentMaterial].ambientColor = [
-          parseFloat(tokens[1]),
-          parseFloat(tokens[2]),
-          parseFloat(tokens[3])
-        ];
-      } else if (tokens[0] === 'Ks') {
-        //Specular color
-        materials[currentMaterial].specularColor = [
-          parseFloat(tokens[1]),
-          parseFloat(tokens[2]),
-          parseFloat(tokens[3])
-        ];
-
-      } else if (tokens[0] === 'map_Kd') {
-        //Texture path
-        materials[currentMaterial].texturePath = tokens[1];
-      }
-    }
-
-    return materials;
+    return parseMtlData(data);
   }
 
   /**
@@ -557,6 +668,8 @@ function loading(p5, fn){
     // Map from source index → Map of material → destination index
     const usedVerts = {}; // Track colored vertices
     let currentMaterial = null;
+    // material per kept face, aligned with model.faces, for bucketing later
+    const faceMaterials = [];
     let hasColoredVertices = false;
     let hasColorlessVertices = false;
     for (let line = 0; line < lines.length; ++line) {
@@ -642,6 +755,7 @@ function loading(p5, fn){
               face[1] !== face[2]
             ) {
               model.faces.push(face);
+              faceMaterials.push(currentMaterial);
             }
           }
         }
@@ -654,6 +768,9 @@ function loading(p5, fn){
     if (!hasColoredVertices) {
       model.vertexColors = [];
     }
+
+    // bucket faces into per-material parts (aggregate arrays above stay as-is)
+    buildMaterialParts(model, faceMaterials, materials);
 
     return model;
   }
@@ -1296,6 +1413,7 @@ function loading(p5, fn){
 }
 
 export default loading;
+export { parseMtlData, mtlToPartState, buildMaterialParts };
 
 if(typeof p5 !== 'undefined'){
   loading(p5, p5.prototype);
