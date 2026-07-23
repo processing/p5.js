@@ -16,6 +16,41 @@ suite('Structure', function() {
     myp5.remove();
   });
 
+  suite('p5.prototype.isLooping', function() {
+    // This suite uses its own p5 instance rather than the shared myp5:
+    // toggling noLoop()/loop() within the same frame would double-pump
+    // the shared instance's draw loop (noLoop() doesn't cancel the
+    // pending requestAnimationFrame tick, and loop() kicks off a new
+    // one), breaking the timing-based tests below.
+    var loopSketch;
+
+    beforeAll(function() {
+      new p5(function(p) {
+        p.setup = function() {
+          loopSketch = p;
+        };
+      });
+    });
+
+    afterAll(function() {
+      loopSketch.remove();
+    });
+
+    test('isLooping should return true by default', function() {
+      assert.strictEqual(loopSketch.isLooping(), true);
+    });
+
+    test('isLooping should return false after noLoop()', function() {
+      loopSketch.noLoop();
+      assert.strictEqual(loopSketch.isLooping(), false);
+    });
+
+    test('isLooping should return true after loop()', function() {
+      loopSketch.loop();
+      assert.strictEqual(loopSketch.isLooping(), true);
+    });
+  });
+
   suite('p5.prototype.loop and p5.prototype.noLoop', function() {
     test('noLoop should stop', function() {
       return new Promise(function(resolve, reject) {
