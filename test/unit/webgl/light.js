@@ -415,4 +415,225 @@ suite('light', function() {
       assert.deepEqual(myp5._renderer.states.spotLightConc, [7]);
     });
   });
+
+  suite('parameter validation', function() {
+    let spy;
+
+    beforeEach(function() {
+      myp5.noLights();
+      spy = vi.spyOn(p5, '_friendlyError').mockImplementation(() => {});
+    });
+
+    afterEach(function() {
+      vi.restoreAllMocks();
+    });
+
+    // ambientLight validation
+    test('ambientLight() with no args emits friendly error', function() {
+      myp5.ambientLight();
+      expect(spy).toHaveBeenCalledTimes(1);
+      expect(spy.mock.calls[0][1]).toBe('ambientLight');
+    });
+
+    test('ambientLight() with valid args does not emit error', function() {
+      myp5.ambientLight(200, 100, 100);
+      expect(spy).not.toHaveBeenCalled();
+    });
+
+    test('ambientLight() with single grayscale arg does not emit error', function() {
+      myp5.ambientLight(128);
+      expect(spy).not.toHaveBeenCalled();
+    });
+
+    test('ambientLight() with CSS string arg does not emit error', function() {
+      myp5.ambientLight('red');
+      expect(spy).not.toHaveBeenCalled();
+    });
+
+    test('ambientLight() with p5.Color arg does not emit error', function() {
+      const c = myp5.color(100, 200, 100);
+      myp5.ambientLight(c);
+      expect(spy).not.toHaveBeenCalled();
+    });
+
+    // specularColor validation
+    test('specularColor() with no args emits friendly error', function() {
+      myp5.specularColor();
+      expect(spy).toHaveBeenCalledTimes(1);
+      expect(spy.mock.calls[0][1]).toBe('specularColor');
+    });
+
+    test('specularColor() with valid args does not emit error', function() {
+      myp5.specularColor(255, 0, 0);
+      expect(spy).not.toHaveBeenCalled();
+    });
+
+    // directionalLight validation
+    test('directionalLight() with 0 args emits friendly error', function() {
+      myp5.directionalLight();
+      expect(spy).toHaveBeenCalledTimes(1);
+      expect(spy.mock.calls[0][1]).toBe('directionalLight');
+    });
+
+    test('directionalLight() with 1 arg emits friendly error', function() {
+      myp5.directionalLight(255);
+      expect(spy).toHaveBeenCalledTimes(1);
+      expect(spy.mock.calls[0][1]).toBe('directionalLight');
+    });
+
+    test('directionalLight() with valid color+vector does not emit error', function() {
+      const c = myp5.color(255, 0, 0);
+      const d = new p5.Vector(0, 0, -1);
+      myp5.directionalLight(c, d);
+      expect(spy).not.toHaveBeenCalled();
+    });
+
+    test('directionalLight() with 6 numeric args does not emit error', function() {
+      myp5.directionalLight(255, 0, 0, 0, 0, -1);
+      expect(spy).not.toHaveBeenCalled();
+    });
+
+    // pointLight validation
+    test('pointLight() with 0 args emits friendly error', function() {
+      myp5.pointLight();
+      expect(spy).toHaveBeenCalledTimes(1);
+      expect(spy.mock.calls[0][1]).toBe('pointLight');
+    });
+
+    test('pointLight() with 1 arg emits friendly error', function() {
+      myp5.pointLight(255);
+      expect(spy).toHaveBeenCalledTimes(1);
+      expect(spy.mock.calls[0][1]).toBe('pointLight');
+    });
+
+    test('pointLight() with valid color+vector does not emit error', function() {
+      const c = myp5.color(255, 0, 0);
+      const pos = new p5.Vector(0, 0, 0);
+      myp5.pointLight(c, pos);
+      expect(spy).not.toHaveBeenCalled();
+    });
+
+    test('pointLight() with 6 numeric args does not emit error', function() {
+      myp5.pointLight(255, 0, 0, 1, 2, 3);
+      expect(spy).not.toHaveBeenCalled();
+    });
+
+    // lightFalloff validation
+    test('lightFalloff() with 0 args emits friendly error', function() {
+      myp5.lightFalloff();
+      expect(spy).toHaveBeenCalledTimes(1);
+      expect(spy.mock.calls[0][1]).toBe('lightFalloff');
+    });
+
+    test('lightFalloff() with 1 arg emits friendly error', function() {
+      myp5.lightFalloff(1);
+      expect(spy).toHaveBeenCalledTimes(1);
+      expect(spy.mock.calls[0][1]).toBe('lightFalloff');
+    });
+
+    test('lightFalloff() with 2 args emits friendly error', function() {
+      myp5.lightFalloff(1, 0);
+      expect(spy).toHaveBeenCalledTimes(1);
+      expect(spy.mock.calls[0][1]).toBe('lightFalloff');
+    });
+
+    test('lightFalloff() with non-numeric args emits friendly error', function() {
+      myp5.lightFalloff('a', 'b', 'c');
+      expect(spy).toHaveBeenCalledTimes(1);
+      expect(spy.mock.calls[0][1]).toBe('lightFalloff');
+    });
+
+    test('lightFalloff() with 3 valid numeric args does not emit error', function() {
+      myp5.lightFalloff(1, 0, 0);
+      expect(spy).not.toHaveBeenCalled();
+    });
+
+    test('lightFalloff() with negative constant emits friendly error', function() {
+      myp5.lightFalloff(-1, 0, 1);
+      expect(spy).toHaveBeenCalledTimes(1);
+      expect(spy.mock.calls[0][1]).toBe('lightFalloff');
+      // Should clamp to 0
+      assert.deepEqual(myp5._renderer.states.constantAttenuation, 0);
+    });
+
+    test('lightFalloff() with all zeros emits friendly error and sets constant to 1', function() {
+      myp5.lightFalloff(0, 0, 0);
+      expect(spy).toHaveBeenCalledTimes(1);
+      expect(spy.mock.calls[0][1]).toBe('lightFalloff');
+      assert.deepEqual(myp5._renderer.states.constantAttenuation, 1);
+    });
+
+    // spotLight validation
+    test('spotLight() with 0 args emits friendly error', function() {
+      myp5.spotLight();
+      expect(spy).toHaveBeenCalledTimes(1);
+      expect(spy.mock.calls[0][1]).toBe('spotLight');
+    });
+
+    test('spotLight() with 1 arg emits friendly error', function() {
+      myp5.spotLight(255);
+      expect(spy).toHaveBeenCalledTimes(1);
+      expect(spy.mock.calls[0][1]).toBe('spotLight');
+    });
+
+    test('spotLight() with 2 args emits friendly error', function() {
+      myp5.spotLight(255, 0);
+      expect(spy).toHaveBeenCalledTimes(1);
+      expect(spy.mock.calls[0][1]).toBe('spotLight');
+    });
+
+    test('spotLight() with valid color+pos+dir objects does not emit error', function() {
+      const c = myp5.color(255, 0, 255);
+      const pos = new p5.Vector(1, 2, 3);
+      const dir = new p5.Vector(0, 1, 0);
+      myp5.spotLight(c, pos, dir);
+      expect(spy).not.toHaveBeenCalled();
+    });
+
+    test('spotLight() with 9 numeric args does not emit error', function() {
+      myp5.spotLight(255, 0, 255, 1, 2, 3, 0, 1, 0);
+      expect(spy).not.toHaveBeenCalled();
+    });
+
+    // noLights validation
+    test('noLights() with args emits friendly error but still works', function() {
+      myp5.ambientLight(200, 0, 0);
+      myp5.noLights(1, 2, 3);
+      expect(spy).toHaveBeenCalledTimes(1);
+      expect(spy.mock.calls[0][1]).toBe('noLights');
+      // Should still clear lights
+      assert.deepEqual(myp5._renderer.states.ambientLightColors, []);
+    });
+
+    test('noLights() without args does not emit error', function() {
+      myp5.noLights();
+      expect(spy).not.toHaveBeenCalled();
+    });
+
+    // Verify chainability on error
+    test('ambientLight() returns this on validation error for chaining', function() {
+      const result = myp5.ambientLight();
+      assert.equal(result, myp5);
+    });
+
+    test('directionalLight() returns this on validation error for chaining', function() {
+      const result = myp5.directionalLight();
+      assert.equal(result, myp5);
+    });
+
+    test('pointLight() returns this on validation error for chaining', function() {
+      const result = myp5.pointLight();
+      assert.equal(result, myp5);
+    });
+
+    test('lightFalloff() returns this on validation error for chaining', function() {
+      const result = myp5.lightFalloff();
+      assert.equal(result, myp5);
+    });
+
+    test('spotLight() returns this on validation error for chaining', function() {
+      const result = myp5.spotLight();
+      assert.equal(result, myp5);
+    });
+  });
 });

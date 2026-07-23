@@ -173,7 +173,20 @@ function light(p5, fn){
    */
   fn.ambientLight = function (v1, v2, v3, a) {
     this._assert3d('ambientLight');
-    // p5._validateParameters('ambientLight', arguments);
+
+    // ambientLight() accepts:
+    //   (v1, v2, v3[, a])  - RGB/HSB/HSL with optional alpha
+    //   (gray[, alpha])    - grayscale with optional alpha
+    //   (value)            - CSS color string
+    //   (values)           - array of color values
+    //   (color)            - p5.Color object
+    if (arguments.length === 0) {
+      p5._friendlyError(
+        'ambientLight() requires at least 1 argument, but none were provided.',
+        'ambientLight'
+      );
+      return this;
+    }
 
     this._renderer.ambientLight(...arguments);
 
@@ -404,7 +417,20 @@ function light(p5, fn){
    */
   fn.specularColor = function (v1, v2, v3) {
     this._assert3d('specularColor');
-    // p5._validateParameters('specularColor', arguments);
+
+    // specularColor() accepts:
+    //   (v1, v2, v3)   - RGB/HSB/HSL color values
+    //   (gray)          - grayscale value
+    //   (value)         - CSS color string
+    //   (values)        - array of color values
+    //   (color)         - p5.Color object
+    if (arguments.length === 0) {
+      p5._friendlyError(
+        'specularColor() requires at least 1 argument, but none were provided.',
+        'specularColor'
+      );
+      return this;
+    }
 
     this._renderer.specularColor(...arguments);
 
@@ -584,9 +610,22 @@ function light(p5, fn){
    */
   fn.directionalLight = function (v1, v2, v3, x, y, z) {
     this._assert3d('directionalLight');
-    // p5._validateParameters('directionalLight', arguments);
 
-    //@TODO: check parameters number
+    // directionalLight() accepts:
+    //   (v1, v2, v3, x, y, z)     - color components + direction components
+    //   (v1, v2, v3, direction)   - color components + p5.Vector direction
+    //   (color, x, y, z)          - p5.Color/String/Array + direction components
+    //   (color, direction)         - p5.Color/String/Array + p5.Vector direction
+    const len = arguments.length;
+    if (len < 2) {
+      p5._friendlyError(
+        'directionalLight() requires at least 2 arguments (color and direction), ' +
+        'but ' + len + ' ' + (len === 1 ? 'was' : 'were') + ' provided.',
+        'directionalLight'
+      );
+      return this;
+    }
+
     this._renderer.directionalLight(...arguments);
 
     return this;
@@ -810,9 +849,22 @@ function light(p5, fn){
    */
   fn.pointLight = function (v1, v2, v3, x, y, z) {
     this._assert3d('pointLight');
-    // p5._validateParameters('pointLight', arguments);
 
-    //@TODO: check parameters number
+    // pointLight() accepts:
+    //   (v1, v2, v3, x, y, z)     - color components + position components
+    //   (v1, v2, v3, position)    - color components + p5.Vector position
+    //   (color, x, y, z)          - p5.Color/String/Array + position components
+    //   (color, position)          - p5.Color/String/Array + p5.Vector position
+    const len = arguments.length;
+    if (len < 2) {
+      p5._friendlyError(
+        'pointLight() requires at least 2 arguments (color and position), ' +
+        'but ' + len + ' ' + (len === 1 ? 'was' : 'were') + ' provided.',
+        'pointLight'
+      );
+      return this;
+    }
+
     this._renderer.pointLight(...arguments);
 
     return this;
@@ -1066,7 +1118,28 @@ function light(p5, fn){
     quadraticAttenuation
   ) {
     this._assert3d('lightFalloff');
-    // p5._validateParameters('lightFalloff', arguments);
+
+    // lightFalloff() requires exactly 3 numeric arguments:
+    //   (constant, linear, quadratic)
+    if (arguments.length < 3) {
+      p5._friendlyError(
+        'lightFalloff() requires 3 arguments (constant, linear, quadratic), ' +
+        'but only ' + arguments.length + ' ' + (arguments.length === 1 ? 'was' : 'were') + ' provided.',
+        'lightFalloff'
+      );
+      return this;
+    }
+    if (
+      typeof constantAttenuation !== 'number' ||
+      typeof linearAttenuation !== 'number' ||
+      typeof quadraticAttenuation !== 'number'
+    ) {
+      p5._friendlyError(
+        'lightFalloff() requires all arguments to be Numbers.',
+        'lightFalloff'
+      );
+      return this;
+    }
 
     this._renderer.lightFalloff(
       constantAttenuation,
@@ -1286,7 +1359,20 @@ function light(p5, fn){
     concentration
   ) {
     this._assert3d('spotLight');
-    // p5._validateParameters('spotLight', arguments);
+
+    // spotLight() accepts many overloads, minimum 3 arguments:
+    //   (color, position, direction[, angle[, concentration]])
+    //   (v1, v2, v3, x, y, z, nx, ny, nz[, angle[, concentration]])
+    //   etc.
+    const len = arguments.length;
+    if (len < 3) {
+      p5._friendlyError(
+        'spotLight() requires at least 3 arguments (color, position, and direction), ' +
+        'but only ' + len + ' ' + (len === 1 ? 'was' : 'were') + ' provided.',
+        'spotLight'
+      );
+      return this;
+    }
 
     this._renderer.spotLight(...arguments);
 
@@ -1349,7 +1435,15 @@ function light(p5, fn){
    */
   fn.noLights = function (...args) {
     this._assert3d('noLights');
-    // p5._validateParameters('noLights', args);
+
+    // noLights() takes no arguments
+    if (args.length > 0) {
+      p5._friendlyError(
+        'noLights() does not accept any arguments, but ' + args.length +
+        ' ' + (args.length === 1 ? 'was' : 'were') + ' provided.',
+        'noLights'
+      );
+    }
 
     this._renderer.noLights();
 
@@ -1483,22 +1577,25 @@ function light(p5, fn){
   ) {
     if (constantAttenuation < 0) {
       constantAttenuation = 0;
-      console.warn(
-        'Value of constant argument in lightFalloff() should be never be negative. Set to 0.'
+      p5._friendlyError(
+        'Value of constant argument in lightFalloff() should never be negative. Set to 0.',
+        'lightFalloff'
       );
     }
 
     if (linearAttenuation < 0) {
       linearAttenuation = 0;
-      console.warn(
-        'Value of linear argument in lightFalloff() should be never be negative. Set to 0.'
+      p5._friendlyError(
+        'Value of linear argument in lightFalloff() should never be negative. Set to 0.',
+        'lightFalloff'
       );
     }
 
     if (quadraticAttenuation < 0) {
       quadraticAttenuation = 0;
-      console.warn(
-        'Value of quadratic argument in lightFalloff() should be never be negative. Set to 0.'
+      p5._friendlyError(
+        'Value of quadratic argument in lightFalloff() should never be negative. Set to 0.',
+        'lightFalloff'
       );
     }
 
@@ -1507,8 +1604,9 @@ function light(p5, fn){
       (linearAttenuation === 0 && quadraticAttenuation === 0)
     ) {
       constantAttenuation = 1;
-      console.warn(
-        'Either one of the three arguments in lightFalloff() should be greater than zero. Set constant argument to 1.'
+      p5._friendlyError(
+        'Either one of the three arguments in lightFalloff() should be greater than zero. Set constant argument to 1.',
+        'lightFalloff'
       );
     }
 
@@ -1681,10 +1779,11 @@ function light(p5, fn){
         break;
 
       default:
-        console.warn(
-          `Sorry, input for spotlight() is not in prescribed format. Too ${
+        p5._friendlyError(
+          `Sorry, input for spotLight() is not in prescribed format. Too ${
             length < 3 ? 'few' : 'many'
-          } arguments were provided`
+          } arguments were provided.`,
+          'spotLight'
         );
         return;
     }
@@ -1720,8 +1819,9 @@ function light(p5, fn){
 
     if (concentration !== undefined && concentration < 1) {
       concentration = 1;
-      console.warn(
-        'Value of concentration needs to be greater than 1. Setting it to 1'
+      p5._friendlyError(
+        'Value of concentration needs to be greater than 1. Setting it to 1.',
+        'spotLight'
       );
     } else if (concentration === undefined) {
       concentration = 100;
