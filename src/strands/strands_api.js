@@ -837,6 +837,204 @@ const _rgb2hsl = (instance, colorNode) => {
     });
   }
 
+  const matrixConstructors = [
+    // 2x2 has no affine/transform form, so it only has matrix names.
+    ['mat2', 2], ['mat2x2', 2],
+    // 3x3 = 2D affine transform.
+    ['transform2D', 3], ['mat3', 3], ['mat3x3', 3],
+    // 4x4 = 3D affine transform.
+    ['transform3D', 4], ['mat4', 4], ['mat4x4', 4],
+  ];
+  for (const [name, dimension] of matrixConstructors) {
+    augmentFn(fn, p5, name, function (...args) {
+      if (!strandsContext.active) {
+        p5._friendlyError(
+          `It looks like you've called ${name} outside of a shader's modify() function.`
+        );
+        return;
+      }
+      const { id, dimension: dim } = build.matrixNode(strandsContext, dimension, args);
+      return createStrandsNode(id, dim, strandsContext);
+    });
+  }
+
+
+  const isStrandsTransform = (t) =>
+    strandsContext.active && !!t?.isStrandsNode && t.typeInfo().baseType === BaseType.MAT;
+
+  const transformStep = (t, values2D, values3D) => {
+    if (!t?.isStrandsNode || t.typeInfo().baseType !== BaseType.MAT) {
+      FES.userError('type error',
+        'The first argument to a transform function (translate, rotate, scale, ' +
+        'skewX, skewY) must be a transform created with transform2D() or transform3D().');
+    }
+    const values = t.dimension === 4 ? values3D : values2D;
+    const m = build.matrixConstructorNode(strandsContext, t.dimension, values);
+    return t.mult(createStrandsNode(m.id, m.dimension, strandsContext));
+  };
+
+  const originalTranslate = fn.translate;
+  augmentFn(fn, p5, 'translate', function (...args) {
+    const t = args[0];
+    if (!isStrandsTransform(t)) return originalTranslate.apply(this, args);
+    const [, x = 0, y = 0, z = 0] = args;
+    return transformStep(t,
+      [1, 0, 0,   0, 1, 0,   x, y, 1],
+      [1, 0, 0, 0,   0, 1, 0, 0,   0, 0, 1, 0,   x, y, z, 1]);
+  });
+
+  const originalScale = fn.scale;
+  augmentFn(fn, p5, 'scale', function (...args) {
+    const t = args[0];
+    if (!isStrandsTransform(t)) return originalScale.apply(this, args);
+    const scales = args.slice(1);
+    const uniform = scales.length === 1; // scale(t, s) scales every axis by s
+    const x = scales[0] ?? 1;
+    const y = scales[1] ?? (uniform ? x : 1);
+    const z = scales[2] ?? (uniform ? x : 1);
+    return transformStep(t,
+      [x, 0, 0,   0, y, 0,   0, 0, 1],
+      [x, 0, 0, 0,   0, y, 0, 0,   0, 0, z, 0,   0, 0, 0, 1]);
+  });
+
+  const originalRotate = fn.rotate;
+  augmentFn(fn, p5, 'rotate', function (...args) {
+    const t = args[0];
+    if (!isStrandsTransform(t)) return originalRotate.apply(this, args);
+    const angle = args[1]; // 2D: rotate in-plane; 3D: rotate about the Z axis
+    const c = this.cos(angle);
+    const s = this.sin(angle);
+    const ns = s.mult(-1); // -sin
+    return transformStep(t,
+      [c, s, 0,   ns, c, 0,   0, 0, 1],
+      [c, s, 0, 0,   ns, c, 0, 0,   0, 0, 1, 0,   0, 0, 0, 1]);
+  });
+
+  augmentFn(fn, p5, 'skewX', function (...args) {
+    if (!strandsContext.active) {
+      p5._friendlyError(`It looks like you've called skewX outside of a shader's modify() function.`);
+      return;
+    }
+    const [t, angle] = args;
+    const k = this.tan(angle); // x' = x + tan(angle) * y
+    return transformStep(t,
+      [1, 0, 0,   k, 1, 0,   0, 0, 1],
+      [1, 0, 0, 0,   k, 1, 0, 0,   0, 0, 1, 0,   0, 0, 0, 1]);
+  });
+
+  augmentFn(fn, p5, 'skewY', function (...args) {
+    if (!strandsContext.active) {
+      p5._friendlyError(`It looks like you've called skewY outside of a shader's modify() function.`);
+      return;
+    }
+    const [t, angle] = args;
+    const k = this.tan(angle); // y' = y + tan(angle) * x
+    return transformStep(t,
+      [1, k, 0,   0, 1, 0,   0, 0, 1],
+      [1, k, 0, 0,   0, 1, 0, 0,   0, 0, 1, 0,   0, 0, 0, 1]);
+  });
+
+  augmentFn(fn, p5, 'rotateAxisAngle', function (...args) {
+    if (!strandsContext.active) {
+      p5._friendlyError(`It looks like you've called rotateAxisAngle outside of a shader's modify() function.`);
+      return;
+    }
+    const [t, axis, angle] = args;
+    if (!t?.isStrandsNode || t.typeInfo().baseType !== BaseType.MAT || t.dimension !== 4) {
+      FES.userError('type error',
+        'rotateAxisAngle() only works on a 3D transform created with transform3D().');
+    }
+    const n = this.normalize(axis);
+    const x = n.x, y = n.y, z = n.z;
+    const c = this.cos(angle);
+    const s = this.sin(angle);
+    const omc = p5.strandsNode(1).sub(c); // 1 - cos
+
+    // Column-major Rodrigues' rotation matrix.
+    const b00 = x.mult(x).mult(omc).add(c); // x^2 * (1 - cos) + cos
+    const b01 = y.mult(x).mult(omc).add(z.mult(s)); // y * x * (1 - cos) + z * sin
+    const b02 = z.mult(x).mult(omc).sub(y.mult(s)); // z * x * (1 - cos) - y * sin
+    const b10 = x.mult(y).mult(omc).sub(z.mult(s)); // x * y * (1 - cos) - z * sin
+    const b11 = y.mult(y).mult(omc).add(c); // y^2 * (1 - cos) + cos
+    const b12 = z.mult(y).mult(omc).add(x.mult(s)); // z * y * (1 - cos) + x * sin
+    const b20 = x.mult(z).mult(omc).add(y.mult(s)); // x * z * (1 - cos) + y * sin
+    const b21 = y.mult(z).mult(omc).sub(x.mult(s)); // y * z * (1 - cos) - x * sin
+    const b22 = z.mult(z).mult(omc).add(c); // z^2 * (1 - cos) + cos
+
+    const m = build.matrixConstructorNode(strandsContext, 4, [
+      b00, b01, b02, 0,
+      b10, b11, b12, 0,
+      b20, b21, b22, 0,
+      0,   0,   0,   1,
+    ]);
+    return t.mult(createStrandsNode(m.id, m.dimension, strandsContext));
+  });
+
+  const original3DRotations = {
+    rotateX: fn.rotateX,
+    rotateY: fn.rotateY,
+    rotateZ: fn.rotateZ,
+  };
+  const registerAxisRotation = (name, valuesFor) => {
+    const original = original3DRotations[name];
+    augmentFn(fn, p5, name, function (...args) {
+      const t = args[0];
+      if (!isStrandsTransform(t)) {
+        return original ? original.apply(this, args) : undefined;
+      }
+      if (t.dimension !== 4) {
+        FES.userError('type error', `${name}() needs a 3D transform created with transform3D().`);
+      }
+      const angle = args[1];
+      const c = this.cos(angle);
+      const s = this.sin(angle);
+      const ns = s.mult(-1);
+      const m = build.matrixConstructorNode(strandsContext, 4, valuesFor(c, s, ns));
+      return t.mult(createStrandsNode(m.id, m.dimension, strandsContext));
+    });
+  };
+  registerAxisRotation('rotateX', (c, s, ns) =>
+    [1, 0, 0, 0,   0, c, s, 0,   0, ns, c, 0,   0, 0, 0, 1]);
+  registerAxisRotation('rotateY', (c, s, ns) =>
+    [c, 0, ns, 0,   0, 1, 0, 0,   s, 0, c, 0,   0, 0, 0, 1]);
+  registerAxisRotation('rotateZ', (c, s, ns) =>
+    [c, s, 0, 0,   ns, c, 0, 0,   0, 0, 1, 0,   0, 0, 0, 1]);
+
+  augmentFn(fn, p5, 'transformPoint', function (...args) {
+    if (!strandsContext.active) {
+      p5._friendlyError(`It looks like you've called transformPoint outside of a shader's modify() function.`);
+      return;
+    }
+    const [t, point] = args;
+    if (!(t?.isStrandsNode && t.typeInfo().baseType === BaseType.MAT)) {
+      FES.userError('type error',
+        'transformPoint(t, point): the first argument must be a transform from transform2D()/transform3D().');
+    }
+    const p = p5.strandsNode(point);
+    if (t.dimension === 4) {
+      return t.mult(fn.vec4(p, 1)).xyz;
+    }
+    return t.mult(fn.vec3(p, 1)).xy;
+  });
+
+  augmentFn(fn, p5, 'transformNormal', function (...args) {
+    if (!strandsContext.active) {
+      p5._friendlyError(`It looks like you've called transformNormal outside of a shader's modify() function.`);
+      return;
+    }
+    const [t, normal] = args;
+    if (!(t?.isStrandsNode && t.typeInfo().baseType === BaseType.MAT)) {
+      FES.userError('type error',
+        'transformNormal(t, normal): the first argument must be a transform from transform2D()/transform3D().');
+    }
+    const n = p5.strandsNode(normal);
+    // Normals ignore translation, so we use the transform's upper-left block.
+    // Its inverse-transpose is the correct normal matrix, staying accurate even
+    // under non-uniform scale.
+    const linear = fn[`mat${t.dimension - 1}`](t);
+    return fn.normalize(fn.transpose(fn.inverse(linear)).mult(n));
+  });
+
   // Storage buffer uniform function for compute shaders
   fn.uniformStorage = function(name, bufferOrSchema) {
     let schema = null;
