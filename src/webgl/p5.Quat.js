@@ -34,7 +34,7 @@ class Quat {
 
   /**
    * Multiplies a quaternion with other quaternion.
-   * @method mult
+   * @method multiply
    * @param  {p5.Quat} [quat] quaternion to multiply with the quaternion calling the method.
    * @chainable
    */
