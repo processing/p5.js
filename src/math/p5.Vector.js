@@ -2828,14 +2828,7 @@ class Vector {
       values = args;
     }
 
-    const minDimension = Math.min(this.values.length, values.length);
-    if (this.values.length !== values.length) {
-      console.warn(
-        'When comparing two vectors of different sizes, the smaller dimension is used. Both vectors will be treated as ' +
-          minDimension +
-          'D vectors, and any additional values of the longer vector will be ignored.'
-      );
-    }
+    const minDimension = prioritizeSmallerDimension(this.values.length, values);
 
     for (let i = 0; i < minDimension; i++) {
       if (this.values[i] !== values[i]) {
