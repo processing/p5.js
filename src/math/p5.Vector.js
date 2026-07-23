@@ -13,7 +13,7 @@ const prioritizeSmallerDimension = function (currentVectorDimension, args) {
   const resultDimension = Math.min(currentVectorDimension, args.length);
   if (Array.isArray(args) && currentVectorDimension !== args.length) {
     console.warn(
-      'When working with two vectors of different sizes, the smaller dimension is used. In this operation, both vector will be treated as ' + resultDimension + 'D vectors, and any additional values of the linger vector will be ignored.'
+      'When working with two vectors of different sizes, the smaller dimension is used. In this operation, both vectors will be treated as ' + resultDimension + 'D vectors, and any additional values of the longer vector will be ignored.'
     );
   }
   return resultDimension;
