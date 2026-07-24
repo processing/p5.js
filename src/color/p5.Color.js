@@ -4,7 +4,7 @@
  * @for p5
  */
 
-import { RGB, RGBHDR, HSL, HSB, HWB, LAB, LCH, OKLAB, OKLCH } from './creating_reading';
+import { RGB, RGBP3, HSL, HSB, HWB, LAB, LCH, OKLAB, OKLCH } from './creating_reading';
 
 
 import {
@@ -563,7 +563,7 @@ class Color {
     const colorjsMax = Color.#colorjsMaxes[RGB][0];
     const newval = map(new_red, max[0], max[1], colorjsMax[0], colorjsMax[1]);
 
-    if(this.mode === RGB || this.mode === RGBHDR){
+    if(this.mode === RGB || this.mode === RGBP3){
       this._color.coords[0] = newval;
       this.#invalidateRGBACache();
     }else{
@@ -616,7 +616,7 @@ class Color {
     const colorjsMax = Color.#colorjsMaxes[RGB][1];
     const newval = map(new_green, max[0], max[1], colorjsMax[0], colorjsMax[1]);
 
-    if(this.mode === RGB || this.mode === RGBHDR){
+    if(this.mode === RGB || this.mode === RGBP3){
       this._color.coords[1] = newval;
       this.#invalidateRGBACache();
     }else{
@@ -669,7 +669,7 @@ class Color {
     const colorjsMax = Color.#colorjsMaxes[RGB][2];
     const newval = map(new_blue, max[0], max[1], colorjsMax[0], colorjsMax[1]);
 
-    if(this.mode === RGB || this.mode === RGBHDR){
+    if(this.mode === RGB || this.mode === RGBP3){
       this._color.coords[2] = newval;
       this.#invalidateRGBACache();
     }else{
@@ -774,7 +774,7 @@ class Color {
       max = [0, max];
     }
 
-    if(this.mode === RGB || this.mode === RGBHDR){
+    if(this.mode === RGB || this.mode === RGBP3){
       const colorjsMax = Color.#colorjsMaxes[this.mode][0];
       return map(
         this._color.coords[0],
@@ -798,7 +798,7 @@ class Color {
       max = [0, max];
     }
 
-    if(this.mode === RGB || this.mode === RGBHDR){
+    if(this.mode === RGB || this.mode === RGBP3){
       const colorjsMax = Color.#colorjsMaxes[this.mode][1];
       return map(
         this._color.coords[1],
@@ -817,7 +817,7 @@ class Color {
       max = [0, max];
     }
 
-    if(this.mode === RGB || this.mode === RGBHDR){
+    if(this.mode === RGB || this.mode === RGBP3){
       const colorjsMax = Color.#colorjsMaxes[this.mode][2];
       return map(
         this._color.coords[2],
@@ -1043,7 +1043,7 @@ function color(p5, fn, lifecycles){
 
   // Register color modes and initialize Color maxes to what p5 has set for itself
   p5.Color.addColorMode(RGB, sRGB);
-  p5.Color.addColorMode(RGBHDR, P3);
+  p5.Color.addColorMode(RGBP3, P3);
   p5.Color.addColorMode(HSB, HSBSpace);
   p5.Color.addColorMode(HSL, HSLSpace);
   p5.Color.addColorMode(HWB, HWBSpace);
@@ -1089,19 +1089,19 @@ function color(p5, fn, lifecycles){
 
     decorateGet('Red', {
       [RGB]: 0,
-      [RGBHDR]: 0
+      [RGBP3]: 0
     });
     decorateGet('Green', {
       [RGB]: 1,
-      [RGBHDR]: 1
+      [RGBP3]: 1
     });
     decorateGet('Blue', {
       [RGB]: 2,
-      [RGBHDR]: 2
+      [RGBP3]: 2
     });
     decorateGet('Alpha', {
       [RGB]: 3,
-      [RGBHDR]: 3,
+      [RGBP3]: 3,
       [HSB]: 3,
       [HSL]: 3,
       [HWB]: 3,
