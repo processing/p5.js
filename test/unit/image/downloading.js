@@ -142,6 +142,19 @@ suite('Downloading', () => {
       assert.typeOf(mockP5Prototype.saveFrames, 'function');
     });
 
+    test('should capture duration x frames', async () => {
+      return new Promise(resolve => {
+        // 0.4s x 7.93fps -> totalFrames = 3.172, so 4 frames are captured.
+        // Ticks land every 1000/7.93 = 126ms, so the old wall-clock cutoff at
+        // 400ms stopped after only 3.
+        mockP5Prototype.saveFrames('aaa', 'png', 0.4, 7.93, function cb1(arr) {
+          assert.typeOf(arr, 'array');
+          assert.equal(arr.length, 4);
+          resolve();
+        });
+      });
+    });
+
     test('should get frames in callback (png)', async () => {
       return new Promise(resolve => {
         mockP5Prototype.saveFrames('aaa', 'png', 0.5, 25, function cb1(arr) {
