@@ -1,15 +1,24 @@
 import p5 from '../../../src/app.js';
-import { vi } from 'vitest';
+import { beforeEach, vi } from 'vitest';
 
 const mockUserError = vi.fn();
-vi.mock('../../../src/strands/strands_FES', () => ({
-  userError: (...args) => {
+vi.mock('../../../src/strands/strands_FES', () => {
+  const userError = (...args) => {
     mockUserError(...args);
     const prefixedMessage = `[p5.strands ${args[0]}]: ${args[1]}`;
     throw new Error(prefixedMessage);
-  },
-  internalError: (msg) => { throw new Error(`[p5.strands internal error]: ${msg}`); }
-}));
+  };
+  return {
+    userError,
+    internalError: (msg) => { throw new Error(`[p5.strands internal error]: ${msg}`); },
+    dimensionMismatchError: (declaredDim, actualDim, varName) => {
+      userError(
+        'dimension mismatch',
+        `Cannot assign a value of dimension ${actualDim} to \`${varName}\`, which expects dimension ${declaredDim}.`
+      );
+    },
+  };
+});
 
 suite('p5.Shader', function() {
   var myp5;
@@ -532,6 +541,22 @@ test('returns numbers for builtin globals outside hooks and a strandNode when ca
   assert.strictEqual(w, myp5.width);
 });
 
+    test('instanceIndex is a value and instanceID() is a compatibility alias', () => {
+      myp5.createCanvas(5, 5, myp5.WEBGL);
+      myp5.baseMaterialShader().modify(() => {
+        myp5.getWorldInputs(inputs => {
+          // instanceIndex is a property — no parentheses
+          const idx = myp5.instanceIndex;
+          assert.isTrue(idx.isStrandsNode);
+
+          // instanceID() is a function kept for compatibility
+          const idxCompat = myp5.instanceID();
+          assert.isTrue(idxCompat.isStrandsNode);
+
+          return inputs;
+        });
+      }, { myp5 });
+    });
     test('map() works inside a strands modify callback', () => {
       myp5.createCanvas(50, 50, myp5.WEBGL);
       const testShader = myp5.baseMaterialShader().modify(() => {
@@ -2734,6 +2759,62 @@ test('returns numbers for builtin globals outside hooks and a strandNode when ca
       assert.approximately(pixelColor[1], 0, 5);
       assert.approximately(pixelColor[2], 0, 5);
     });
+
+    test('allows scalar broadcast when assigning a scalar to a sharedVec3 (bridge)', async () => {
+  await myp5.createCanvas(5, 5, myp5.WEBGL);
+
+  expect(() => {
+    myp5.baseMaterialShader().modify(() => {
+      let worldPosX = myp5.sharedVec3();
+      myp5.getWorldInputs(inputs => {
+        worldPosX = inputs.position.x;   // scalar → vec3, valid broadcast
+        return inputs;
+      });
+    },{myp5});
+  }).not.toThrow();
+});
+
+test('reports a friendly error when assigning a vec2 to a sharedVec3 (bridge)', async () => {
+  await myp5.createCanvas(5, 5, myp5.WEBGL);
+
+  expect(() => {
+    myp5.baseMaterialShader().modify(() => {
+      let myVec = myp5.sharedVec3();
+      myp5.getWorldInputs(inputs => {
+        myVec = inputs.position.xy;   // vec2 → vec3 mismatch
+        return inputs;
+      });
+    },{myp5});
+  }).toThrow(/dimension mismatch/);
+});
+
+test('reports a friendly error on dimension mismatch via swizzle write (bridgeSwizzle)', async () => {
+  await myp5.createCanvas(5, 5, myp5.WEBGL);
+
+  expect(() => {
+    myp5.baseMaterialShader().modify(() => {
+      let myVec = myp5.sharedVec3();
+      myp5.getWorldInputs(inputs => {
+        myVec.xy = inputs.position;      // vec3 → 2-component swizzle mismatch
+        return inputs;
+      });
+    },{myp5});
+  }).toThrow(/dimension mismatch/);
+});
+
+test('does not error when shared variable assignment dimensions match', async () => {
+  await myp5.createCanvas(5, 5, myp5.WEBGL);
+
+  expect(() => {
+    myp5.baseMaterialShader().modify(() => {
+      let myVec = myp5.sharedVec3();
+      myp5.getWorldInputs(inputs => {
+        myVec = inputs.position;         // vec3 → vec3, OK
+        return inputs;
+      });
+    },{myp5});
+  }).not.toThrow();
+});
   });
 
   suite('p5.strands error messages', () => {
@@ -2751,7 +2832,7 @@ test('returns numbers for builtin globals outside hooks and a strandNode when ca
       assert.include(err.message, '// noprotect');
     };
 
-    afterEach(() => {
+    beforeEach(() => {
       mockUserError.mockClear();
     });
 

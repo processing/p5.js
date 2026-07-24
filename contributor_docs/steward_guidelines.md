@@ -64,7 +64,7 @@ There are different areas of work that stewards can be responsible for. These ar
 - **DevOps**: Refers to build process, unit testing, and other aspects of the development experience
 - **Documentation**: Includes both reference in the core codebase that is exposed on the website, the contributor docs, and other website content
 - i18n (Internationalization / **Translation**): Includes reviewing translations, particularly for `es`, `hi`, `ko`, `zh`
-- **Graphics**: Contains subareas of WebGL and [p5.strands](https://beta.p5js.org/tutorials/intro-to-p5-strands/)
+- **Graphics**: Contains subareas of WebGL and [p5.strands](https://p5js.org/tutorials/intro-to-p5-strands/)
 - **Color**: Includes Color, ColorMode, accessibility improvements around color usage
 - **Typography**: Refers to all topics on handling text and font
 - **Math**: Includes both external Math API and internal performance improvements
