@@ -181,7 +181,7 @@ function rendererWebGPU(p5, fn) {
      * Copies data from the GPU to the CPU using a temporary buffer,
      * so it must be awaited. Returns a `Float32Array` for number
      * buffers, or an array of plain objects for struct buffers.
-     * 
+     *
      * Note: This is a GPU -> CPU read, so calling it often (like every frame)
      * can be slow.
      *
@@ -519,10 +519,7 @@ function rendererWebGPU(p5, fn) {
 
       if (!this._pInst._setupDone) {
         if (this.geometryBufferCache.numCached() > 0) {
-          p5._friendlyError(
-            "Sorry, Could not set the attributes, you need to call setAttributes() " +
-            "before calling the other drawing methods in setup()"
-          );
+          p5.FES.log`Sorry, Could not set the attributes, you need to call setAttributes() before calling the other drawing methods in setup()`();
           return;
         }
       }

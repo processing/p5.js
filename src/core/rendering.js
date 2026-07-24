@@ -137,9 +137,9 @@ function rendering(p5, fn){
 
     if (!renderers[selectedRenderer]) {
       if (selectedRenderer === constants.WEBGPU) {
-        p5._friendlyError(`To create a WEBGPU canvas, remember to add the WebGPU add-on to your project.`);
+        p5.FES.log`To create a WEBGPU canvas, remember to add the WebGPU add-on to your project.`();
       } else {
-        p5._friendlyError(`We weren't able to find a renderer called ${selectedRenderer}.`);
+        p5.FES.log`We weren't able to find a renderer called ${selectedRenderer}.`();
       }
     }
 
