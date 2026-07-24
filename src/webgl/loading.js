@@ -1247,7 +1247,7 @@ function loading(p5, fn){
         if (failureCallback) {
           failureCallback(error);
         } else {
-          p5._friendlyError('Error during parsing: ' + error.message);
+          p5.FES.log`Error during parsing: ${error.message}`();
         }
         return;
       }
@@ -1259,7 +1259,7 @@ function loading(p5, fn){
         if (failureCallback) {
           failureCallback(error);
         } else {
-          p5._friendlyError('Error during parsing: ' + error.message);
+          p5.FES.log`Error during parsing: ${error.message}`();
         }
         return;
       }
@@ -1268,9 +1268,7 @@ function loading(p5, fn){
       if (failureCallback) {
         failureCallback();
       } else {
-        p5._friendlyError(
-          'Sorry, the file type is invalid. Only OBJ and STL files are supported.'
-        );
+        p5.FES.log`Sorry, the file type is invalid. Only OBJ and STL files are supported.`();
       }
     }
     if (normalize) {

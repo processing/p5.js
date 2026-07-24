@@ -187,9 +187,7 @@ function fesCore(p5, fn, lifecycles){
       if (context.preload && !p5.isPreloadSupported()) {
         // Print a message but don't stop execution, it is reasonable
         // for someone to have their own `function preload()` if they want.
-        p5._friendlyError(
-          FES.log`The preload() function has been removed in p5.js 2.0. Please load assets in setup() using async / await keywords or callbacks instead. See https://github.com/processing/p5.js-compatibility for more information about 2.0 and compatibility, or https://dev.to/limzykenneth/asynchronous-p5js-20-458f for more information about promises and async/await.`
-        );
+        FES.log`The preload() function has been removed in p5.js 2.0. Please load assets in setup() using async / await keywords or callbacks instead. See https://github.com/processing/p5.js-compatibility for more information about 2.0 and compatibility, or https://dev.to/limzykenneth/asynchronous-p5js-20-458f for more information about promises and async/await.`();
       }
 
       const fxns = {};
@@ -209,9 +207,9 @@ function fesCore(p5, fn, lifecycles){
           !context[fxns[lowercase]] &&
           typeof context[prop] === 'function'
         ) {
-          const msg = FES.log`It seems that you may have accidentally written ${prop} instead of ${fxns[lowercase]}. Please correct it if it's not intentional.`;
-
-          p5._friendlyError(msg, fxns[lowercase]);
+          FES.log`It seems that you may have accidentally written ${prop} instead of ${fxns[lowercase]}. Please correct it if it's not intentional.`({
+            reference: fxns[lowercase]
+          });
         }
       }
     };
@@ -291,10 +289,10 @@ function fesCore(p5, fn, lifecycles){
         // a link to the reference documentation. In case of multiple matches,
         // this is already done in the suggestions variable, one link for each
         // suggestion.
-        p5._friendlyError(
-          msg,
-          matchedSymbols.length === 1 ? matchedSymbols[0].name : undefined
-        );
+        msg({
+          reference: matchedSymbols.length === 1 ?
+            matchedSymbols[0].name : undefined
+        });
         return true;
       }
       return false;
@@ -439,9 +437,7 @@ function fesCore(p5, fn, lifecycles){
               //let x = “not a string”; -> string not in proper quotes
               let url =
                 'https://developer.mozilla.org/docs/Web/JavaScript/Reference/Errors/Illegal_character#What_went_wrong';
-              p5._friendlyError(
-                FES.log`\nSyntax Error - Found a symbol that JavaScript doesn't recognize or didn't expect at it's place.\n\n+ More info: ${url}`
-              );
+              FES.log`Syntax Error - Found a symbol that JavaScript doesn't recognize or didn't expect at its place.\n\n+ More info: ${url}`();
               break;
             }
             case 'UNEXPECTEDTOKEN': {
@@ -449,9 +445,7 @@ function fesCore(p5, fn, lifecycles){
               //for (let i = 0; i < 5,; ++i) -> a comma after i<5 instead of a semicolon
               let url =
                 'https://developer.mozilla.org/docs/Web/JavaScript/Reference/Errors/Unexpected_token#What_went_wrong';
-              p5._friendlyError(
-                FES.log`\nSyntax Error - Symbol present at a place that wasn't expected.\nUsually this is due to a typo. Check the line number in the error for anything missing/extra.\n\n+ More info: ${url}`
-              );
+              FES.log`Syntax Error - Symbol present at a place that wasn't expected.\nUsually this is due to a typo. Check the line number in the error for anything missing/extra.\n\n+ More info: ${url}`();
               break;
             }
             case 'REDECLAREDVARIABLE': {
@@ -461,9 +455,7 @@ function fesCore(p5, fn, lifecycles){
               let errSym = matchedError.match[1];
               let url =
                 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Errors/Redeclared_parameter#what_went_wrong';
-              p5._friendlyError(
-                FES.log`\nSyntax Error - "${errSym}" is being redeclared. JavaScript doesn't allow declaring a variable more than once. Check the line number in error for redeclaration of the variable.\n\n+ More info: ${url}`
-              );
+              FES.log`Syntax Error - "${errSym}" is being redeclared. JavaScript doesn't allow declaring a variable more than once. Check the line number in error for redeclaration of the variable.\n\n+ More info: ${url}`();
               break;
             }
             case 'MISSINGINITIALIZER': {
@@ -471,9 +463,7 @@ function fesCore(p5, fn, lifecycles){
               //Example => const a;
               let url =
                 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Errors/Missing_initializer_in_const#what_went_wrong';
-              p5._friendlyError(
-                FES.log`\nSyntax Error - A const variable is declared but not initialized. In JavaScript, an initializer for a const is required. A value must be specified in the same statement in which the variable is declared. Check the line number in the error and assign the const variable a value.\n\n+ More info: ${url}`
-              );
+              FES.log`Syntax Error - A const variable is declared but not initialized. In JavaScript, an initializer for a const is required. A value must be specified in the same statement in which the variable is declared. Check the line number in the error and assign the const variable a value.\n\n+ More info: ${url}`();
               break;
             }
             case 'BADRETURNORYIELD': {
@@ -484,9 +474,7 @@ function fesCore(p5, fn, lifecycles){
               //  return; -> misplaced return statement
               let url =
                 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Errors/Bad_return_or_yield#what_went_wrong';
-              p5._friendlyError(
-                FES.log`\nSyntax Error - return lies outside of a function. Make sure you’re not missing any brackets, so that return lies inside a function.\n\n+ More info: ${url}`
-              );
+              FES.log`Syntax Error - return lies outside of a function. Make sure you’re not missing any brackets, so that return lies inside a function.\n\n+ More info: ${url}`();
               break;
             }
           }
@@ -509,9 +497,7 @@ function fesCore(p5, fn, lifecycles){
               // if the flow gets this far, this is likely not a misspelling
               // of a p5 property/function
               let url = 'https://p5js.org/examples/data-variable-scope.html';
-              p5._friendlyError(
-                FES.log`${locationStr} "${errSym}" is not defined in the current scope. If you have defined it in your code, you should check its scope, spelling, and letter-casing (JavaScript is case-sensitive).\n\n+ More info: ${url}`
-              );
+              FES.log`${locationStr} "${errSym}" is not defined in the current scope. If you have defined it in your code, you should check its scope, spelling, and letter-casing (JavaScript is case-sensitive).\n\n+ More info: ${url}`();
 
               if (friendlyStack) {
                 const msg = getFriendlyStack(friendlyStack);
@@ -528,9 +514,7 @@ function fesCore(p5, fn, lifecycles){
               let errSym = matchedError.match[1];
               let url =
                 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Errors/Cant_access_lexical_declaration_before_init#what_went_wrong';
-              p5._friendlyError(
-                FES.log`\n${locationStr} "${errSym} is used before declaration. Make sure you have declared the variable before using it.\n\n+ More info: ${url}`
-              );
+              FES.log`${locationStr} "${errSym} is used before declaration. Make sure you have declared the variable before using it.\n\n+ More info: ${url}`();
 
               if (friendlyStack) printFriendlyStack(friendlyStack);
               break;
@@ -560,13 +544,9 @@ function fesCore(p5, fn, lifecycles){
               // as a property of an object and when it's called independently.
               // Both have different explanations.
               if (splitSym.length > 1) {
-                p5._friendlyError(
-                  FES.log`\n${locationStr} "${translationObj.symbol}" could not be called as a function.\nVerify whether "${translationObj.obj}" has "${translationObj.symbol}" in it and check the spelling, letter-casing (JavaScript is case-sensitive) and its type.\n\n+ More info: ${url}`
-                );
+                FES.log`${locationStr} "${translationObj.symbol}" could not be called as a function.\nVerify whether "${translationObj.obj}" has "${translationObj.symbol}" in it and check the spelling, letter-casing (JavaScript is case-sensitive) and its type.\n\n+ More info: ${url}`();
               } else {
-                p5._friendlyError(
-                  FES.log`\n${locationStr} "${translationObj.symbol}" could not be called as a function.\nCheck the spelling, letter-casing (JavaScript is case-sensitive) and its type.\n\n+ More info: ${url}`
-                );
+                FES.log`${locationStr} "${translationObj.symbol}" could not be called as a function.\nCheck the spelling, letter-casing (JavaScript is case-sensitive) and its type.\n\n+ More info: ${url}`();
               }
 
               if (friendlyStack) printFriendlyStack(friendlyStack);
@@ -578,9 +558,7 @@ function fesCore(p5, fn, lifecycles){
               //console.log(a.property); -> a is null
               let url =
                 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Errors/Cant_access_property#what_went_wrong';
-              p5._friendlyError(
-                FES.log`\n${locationStr} The property of null can't be read. In javascript the value null indicates that an object has no value.\n\n+ More info: ${url}`
-              );
+              FES.log`${locationStr} The property of null can't be read. In javascript the value null indicates that an object has no value.\n\n+ More info: ${url}`();
 
               if (friendlyStack) printFriendlyStack(friendlyStack);
               break;
@@ -591,9 +569,7 @@ function fesCore(p5, fn, lifecycles){
               //console.log(a.property); -> a is undefined
               let url =
                 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Errors/Cant_access_property#what_went_wrong';
-              p5._friendlyError(
-                FES.log`\n${locationStr} Cannot read property of undefined. Check the line number in error and make sure the variable which is being operated is not undefined.\n\n + More info: ${url}`
-              );
+              FES.log`${locationStr} Cannot read property of undefined. Check the line number in error and make sure the variable which is being operated is not undefined.\n\n + More info: ${url}`();
 
               if (friendlyStack) printFriendlyStack(friendlyStack);
               break;
@@ -604,9 +580,7 @@ function fesCore(p5, fn, lifecycles){
               //a=10;
               let url =
                 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Errors/Invalid_const_assignment#what_went_wrong';
-              p5._friendlyError(
-                FES.log`\n${locationStr} A const variable is being re-assigned. In javascript, re-assigning a value to a constant is not allowed. If you want to re-assign new values to a variable, make sure it is declared as var or let.\n\n+ More info: ${url}`
-              );
+              FES.log`${locationStr} A const variable is being re-assigned. In javascript, re-assigning a value to a constant is not allowed. If you want to re-assign new values to a variable, make sure it is declared as var or let.\n\n+ More info: ${url}`();
 
               if (friendlyStack) printFriendlyStack(friendlyStack);
               break;

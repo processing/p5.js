@@ -337,9 +337,7 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
           const { id, dimension } = build.functionCallNode(strandsContext, functionName, args);
           return createStrandsNode(id, dimension, strandsContext);
         } else {
-          p5._friendlyError(
-            `It looks like you've called ${functionName} outside of a shader's modify() function.`
-          )
+          p5.FES.log`It looks like you've called ${functionName} outside of a shader's modify() function.`();
         }
       });
     }
@@ -510,9 +508,7 @@ const _rgb2hsl = (instance, colorNode) => {
       const { id, dimension } = strandsContext.backend.createGetTextureCall(strandsContext, rawArgs);
       return createStrandsNode(id, dimension, strandsContext);
     } else {
-      p5._friendlyError(
-        `It looks like you've called getTexture outside of a shader's modify() function.`
-      )
+      p5.FES.log`It looks like you've called getTexture outside of a shader's modify() function.`();
     }
   });
 
@@ -572,9 +568,7 @@ const _rgb2hsl = (instance, colorNode) => {
         nodeArgs = [fn.vec3(strandsArgs[0], 0, 0)];
       }
     } else {
-      p5._friendlyError(
-        `It looks like you've called noise() with ${args.length} arguments. It only supports 1D to 3D input.`
-      );
+      p5.FES.log`It looks like you've called noise() with ${args.length} arguments. It only supports 1D to 3D input.`();
     }
 
     const octaves = strandsContext._noiseOctaves !== null
@@ -668,9 +662,7 @@ const _rgb2hsl = (instance, colorNode) => {
       // min + raw * (max - min)
       return rawStrandsNode.mult(maxNode.sub(minNode)).add(minNode);
     } else {
-      p5._friendlyError(
-        `It looks like you've called random() with ${args.length} arguments. In strands, random() supports 0, 1, or 2 numeric arguments.`
-      );
+      p5.FES.log`It looks like you've called random() with ${args.length} arguments. In strands, random() supports 0, 1, or 2 numeric arguments.`();
     }
   });
 
@@ -793,9 +785,7 @@ const _rgb2hsl = (instance, colorNode) => {
       } else if (originalp5Fn) {
         return originalp5Fn.apply(this, args);
       } else {
-        p5._friendlyError(
-          `It looks like you've called ${typeInfo.fnName} outside of a shader's modify() function.`
-        );
+        p5.FES.log`It looks like you've called ${typeInfo.fnName} outside of a shader's modify() function.`()
       }
     });
   }

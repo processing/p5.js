@@ -381,10 +381,7 @@ class RendererGL extends Renderer3D {
 
     if (!this._pInst._setupDone) {
       if (this.geometryBufferCache.numCached() > 0) {
-        p5._friendlyError(
-          "Sorry, Could not set the attributes, you need to call setAttributes() " +
-            "before calling the other drawing methods in setup()"
-        );
+        p5.FES.log`Sorry, Could not set the attributes, you need to call setAttributes() before calling the other drawing methods in setup()`();
         return;
       }
     }

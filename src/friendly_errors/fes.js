@@ -41,11 +41,13 @@ if (localTranslation) {
 export class FES {
   static languageCode = navigator.languages;
   static translationPromise = translationPromise;
+  static disableFriendlyErrors = false;
 
   // Rather than logging directly, provide an interface to
   // compose a message
   // This static method is not used directly, other methods curry it
   static #printMessage(method, strings, ...values) {
+    if (FES.disableFriendlyErrors) return;
     const styleStrings = [];
     const translation = TL.tl(strings, ...values.map(
       value => {
@@ -68,15 +70,20 @@ export class FES {
         prefix: TL.tl`🌸 p5.js says: `
       }, options);
 
+      let footer = '';
+      if (options?.reference) {
+        footer += mapToReference(results, options.reference);
+      }
+
       if (prefix instanceof TL) {
         console[method](
-          prefix.toString(FES.languageCode) + results,
+          prefix.toString(FES.languageCode) + results + footer,
           ...styleStrings
         );
       } else if (prefix === false) {
-        console[method](results, ...styleStrings);
+        console[method](results + footer, ...styleStrings);
       } else {
-        console[method](prefix + results, ...styleStrings);
+        console[method](prefix + results + footer, ...styleStrings);
       }
     };
 
@@ -173,9 +180,45 @@ export function underline(message) {
   return style(message, { 'text-decoration': 'underline' });
 }
 
+/**
+  * Takes a message and a p5 function func, and adds a link pointing to
+  * the reference documentation of func at the end of the message
+  *
+  * @method mapToReference
+  * @private
+  * @param {String}  message   the words to be said
+  * @param {String}  [func]    the name of function
+  *
+  * @returns {String}
+  */
+function mapToReference(message, func) {
+  let msgWithReference = '';
+  if (func == null || func.substring(0, 4) === 'load') {
+    msgWithReference = message;
+  } else {
+    const methodParts = func.split('.');
+    const referenceSection =
+      methodParts.length > 1 ? `${methodParts[0]}.${methodParts[1]}` : 'p5';
+
+    const funcName =
+      methodParts.length === 1 ? func : methodParts.slice(2).join('/');
+
+    //Whenever func having p5.[Class] is encountered, we need to have the error link as mentioned below else different link
+    if(funcName.startsWith('p5.')){
+      msgWithReference = ` (https://p5js.org/reference/${referenceSection}.${funcName})`;
+    }else{
+      msgWithReference = ` (https://p5js.org/reference/${referenceSection}/${funcName})`;
+    }
+  }
+  return msgWithReference;
+};
+
 // Re-export TL
 export { TL };
 
 export default function (p5, fn, lifecycles) {
   p5.FES = FES;
+  Object.defineProperty(p5.FES, 'disableFriendlyErrors', {
+    get: () => p5.disableFriendlyErrors
+  });
 }
