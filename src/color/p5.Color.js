@@ -65,6 +65,11 @@ class Color {
   // where if we `import { Color }` directly, it will be a separate copy of the
   // Color class from the one imported in the main p5.js bundle.
   isColor = true;
+  #rgbaCache = new Map();
+
+  #invalidateRGBACache() {
+    this.#rgbaCache.clear();
+  }
 
   // Used to add additional color modes to p5.js
   // Uses underlying library's definition
@@ -241,6 +246,7 @@ class Color {
       this._initialize();
       this._initialize = undefined;
     }
+    this.#invalidateRGBACache();
     this._cachedColor = newColor;
   }
 
@@ -559,6 +565,7 @@ class Color {
 
     if(this.mode === RGB || this.mode === RGBHDR){
       this._color.coords[0] = newval;
+      this.#invalidateRGBACache();
     }else{
       // Will do an imprecise conversion to 'srgb', not recommended
       const space = this._color.space.id;
@@ -611,6 +618,7 @@ class Color {
 
     if(this.mode === RGB || this.mode === RGBHDR){
       this._color.coords[1] = newval;
+      this.#invalidateRGBACache();
     }else{
       // Will do an imprecise conversion to 'srgb', not recommended
       const space = this._color.space.id;
@@ -663,6 +671,7 @@ class Color {
 
     if(this.mode === RGB || this.mode === RGBHDR){
       this._color.coords[2] = newval;
+      this.#invalidateRGBACache();
     }else{
       // Will do an imprecise conversion to 'srgb', not recommended
       const space = this._color.space.id;
@@ -715,17 +724,19 @@ class Color {
     const newval = map(new_alpha, max[0], max[1], colorjsMax[0], colorjsMax[1]);
 
     this._color.alpha = newval;
+    this.#invalidateRGBACache();
   }
 
   _getRGBA(maxes=[1, 1, 1, 1]) {
+    const cacheKey = maxes.join(',');
+    if (this.#rgbaCache.has(cacheKey)) {
+      return [...this.#rgbaCache.get(cacheKey)];
+    }
+
     // Get colorjs maxes
     const colorjsMaxes = Color.#colorjsMaxes[RGB];
 
-    // Normalize everything to 0,1 or the provided range (map)
-    let coords = structuredClone(to(this._color, 'srgb').coords);
-    coords.push(this._color.alpha);
-
-    const rangeMaxes = maxes.map((v) => {
+    const rangeMaxes = maxes.map(v => {
       if(!Array.isArray(v)){
         return [0, v];
       }else{
@@ -733,7 +744,16 @@ class Color {
       }
     });
 
-    coords = coords.map((coord, i) => {
+    let coords;
+    if (this.mode === RGB) {
+      coords = [...this._color.coords, this._color.alpha];
+    } else {
+      // Normalize everything to 0,1 or the provided range (map)
+      coords = structuredClone(to(this._color, 'srgb').coords);
+      coords.push(this._color.alpha);
+    }
+
+    const result = coords.map((coord, i) => {
       return map(
         coord,
         colorjsMaxes[i][0], colorjsMaxes[i][1],
@@ -741,7 +761,8 @@ class Color {
       );
     });
 
-    return coords;
+    this.#rgbaCache.set(cacheKey, result);
+    return result;
   }
 
   _getMode() {
