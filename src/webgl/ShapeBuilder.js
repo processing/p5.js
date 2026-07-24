@@ -190,6 +190,15 @@ export class ShapeBuilder {
     }
 
     if (
+      !this.renderer.geometryBuilder &&
+      this.shapeMode === constants.TRIANGLE_FAN &&
+      !this.renderer.supportsTriangleFan()
+    ) {
+      this._convertFanToTriangles();
+      this.shapeMode = constants.TRIANGLES;
+    }
+
+    if (
       this.renderer.states.textureMode === constants.IMAGE &&
       this.renderer.states._tex !== null &&
       this.renderer.states._tex.width > 0 &&
@@ -203,6 +212,46 @@ export class ShapeBuilder {
         }
       });
     }
+  }
+
+  _remapVertices(newIndices) {
+    this.geometry.vertices = newIndices.map(i => this.geometry.vertices[i]);
+    this.geometry.vertexNormals = newIndices.map(i => this.geometry.vertexNormals[i]);
+
+    const remapFlat = (arr, stride) => {
+      const result = [];
+      for (const i of newIndices) {
+        for (let j = 0; j < stride; j++) {
+          result.push(arr[i * stride + j]);
+        }
+      }
+      return result;
+    };
+
+    this.geometry.uvs = remapFlat(this.geometry.uvs, 2);
+    this.geometry.vertexColors = remapFlat(this.geometry.vertexColors, 4);
+    this.geometry.vertexStrokeColors = remapFlat(this.geometry.vertexStrokeColors, 4);
+
+    for (const propName in this.geometry.userVertexProperties) {
+      const prop = this.geometry.userVertexProperties[propName];
+      const size = prop.getDataSize();
+      const oldData = prop.getSrcArray();
+      prop.resetSrcArray();
+      for (const i of newIndices) {
+        prop.setCurrentData(oldData.slice(i * size, i * size + size));
+        prop.pushCurrentData();
+      }
+    }
+  }
+
+  _convertFanToTriangles() {
+    const n = this.geometry.vertices.length;
+    if (n < 3) return;
+    const newIndices = [];
+    for (let i = 2; i < n; i++) {
+      newIndices.push(0, i - 1, i);
+    }
+    this._remapVertices(newIndices);
   }
 
   _resetUserVertexProperties() {

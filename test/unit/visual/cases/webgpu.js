@@ -382,7 +382,7 @@ visualSuite("WebGPU", function () {
       p5.shader(shader);
       p5.plane(20, 20);
       await screenshot();
-    }, { focus: true });
+    });
   });
 
   visualTest('randomGaussian() colors a basic shader (WebGPU)', async function(p5, screenshot) {
@@ -1662,6 +1662,74 @@ visualTest('randomGaussian() in a fragment loop averages to the mean (WebGPU)', 
         await screenshot();
       }
     );
+  });
+
+  visualSuite('2D Shapes', function() {
+    visualTest('TRIANGLE_FAN with per-vertex fills', async function(p5, screenshot) {
+      await p5.createCanvas(50, 50, p5.WEBGPU);
+      p5.background(255);
+      p5.beginShape(p5.TRIANGLE_FAN);
+      p5.fill('red');
+      p5.vertex(0, 0);
+      const n = 10;
+      const r = 20;
+      p5.fill('blue');
+      for (let i = 0; i <= n; i++) {
+        const angle = i/n * p5.TWO_PI;
+        p5.vertex(r*p5.cos(angle), r*p5.sin(angle));
+      }
+      p5.endShape();
+      await screenshot();
+    });
+
+    visualTest('TRIANGLE_FAN in p5.Geometry with per-vertex fills', async function(p5, screenshot) {
+      await p5.createCanvas(50, 50, p5.WEBGPU);
+      p5.background(255);
+      const geom = p5.buildGeometry(() => {
+        p5.beginShape(p5.TRIANGLE_FAN);
+        p5.fill('red');
+        p5.vertex(0, 0);
+        const n = 10;
+        const r = 20;
+        p5.fill('blue');
+        for (let i = 0; i <= n; i++) {
+          const angle = i/n * p5.TWO_PI;
+          p5.vertex(r*p5.cos(angle), r*p5.sin(angle));
+        }
+        p5.endShape();
+      });
+      p5.model(geom);
+      await screenshot();
+    });
+
+    visualTest('TRIANGLE_STRIP with per-vertex fills', async function(p5, screenshot) {
+      await p5.createCanvas(50, 50, p5.WEBGPU);
+      p5.background(255);
+      p5.beginShape(p5.TRIANGLE_STRIP);
+      const n = 6;
+      for (let i = 0; i < n; i++) {
+        p5.fill(i % 2 === 0 ? 'red' : 'blue');
+        p5.vertex(p5.map(i, 0, n - 1, -20, 20), i % 2 === 0 ? -10 : 10);
+      }
+      p5.endShape();
+      await screenshot();
+    });
+
+    visualTest('TRIANGLE_STRIP in p5.Geometry with per-vertex fills', async function(p5, screenshot) {
+      await p5.createCanvas(50, 50, p5.WEBGPU);
+      p5.background(255);
+      const geom = p5.buildGeometry(() => {
+        p5.beginShape(p5.TRIANGLE_STRIP);
+        const n = 6;
+        for (let i = 0; i < n; i++) {
+          p5.fill(i % 2 === 0 ? 'red' : 'blue');
+          p5.vertex(p5.map(i, 0, n - 1, -20, 20), i % 2 === 0 ? -10 : 10);
+        }
+        p5.endShape();
+      });
+      p5.model(geom);
+      await screenshot();
+    });
   });
 
   visualSuite('Feedback', function() {
