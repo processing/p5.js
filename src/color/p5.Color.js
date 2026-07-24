@@ -302,15 +302,18 @@ class Color {
   }
 
   lerp(color, amt, mode){
+    const source = mode ? this.#toColorMode(mode)._color : this._color;
+    const target = mode ? color.#toColorMode(mode)._color : color._color;
+
     // Find the closest common ancestor color space
     let spaceIndex = -1;
     while(
       (
-        spaceIndex+1 < this._color.space.path.length ||
-        spaceIndex+1 < color._color.space.path.length
+        spaceIndex+1 < source.space.path.length ||
+        spaceIndex+1 < target.space.path.length
       ) &&
-      this._color.space.path[spaceIndex+1] ===
-        color._color.space.path[spaceIndex+1]
+      source.space.path[spaceIndex+1] ===
+        target.space.path[spaceIndex+1]
     ){
       spaceIndex += 1;
     }
@@ -320,8 +323,8 @@ class Color {
       throw new Error('Cannot lerp colors. No common color space found');
     }
 
-    const obj = range(this._color, color._color, {
-      space: this._color.space.path[spaceIndex].id
+    const obj = range(source, target, {
+      space: source.space.path[spaceIndex].id
     })(amt);
 
     return new Color(obj, mode || this.mode);
