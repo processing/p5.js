@@ -93,7 +93,7 @@ jobs:
         uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3
         with:
           repository: processing/p5.js-website
-          ref: '2.0'
+          ref: 'main'
           path: website
           fetch-depth: 0
           token: ${{ secrets.ACCESS_TOKEN }}
@@ -121,6 +121,6 @@ jobs:
         uses: ad-m/github-push-action@40bf560936a8022e68a3c00e7d2abefaf01305a6 # v0.6.0
         with:
           github_token: ${{ secrets.ACCESS_TOKEN }}
-          branch: '2.0'
+          branch: 'main'
           directory: website/
           repository: processing/p5.js-website
