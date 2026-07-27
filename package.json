@@ -46,7 +46,7 @@
     "@rollup/plugin-json": "^6.1.0",
     "@rollup/plugin-node-resolve": "^15.2.3",
     "@rollup/plugin-replace": "^5.0.7",
-    "@rollup/plugin-terser": "^0.4.4",
+    "@rollup/plugin-terser": "^1.0.0",
     "@stylistic/eslint-plugin": "^4.4.1",
     "@vitest/browser": "^4.0.16",
     "@vitest/browser-webdriverio": "^4.0.16",
