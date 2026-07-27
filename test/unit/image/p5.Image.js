@@ -1,29 +1,29 @@
 import p5 from '../../../src/app.js';
 
-suite('p5.Image', function() {
+suite('p5.Image', function () {
   var myp5;
 
-  beforeAll(function() {
-    new p5(function(p) {
-      p.setup = function() {
+  beforeAll(function () {
+    new p5(function (p) {
+      p.setup = function () {
         myp5 = p;
       };
     });
   });
 
-  afterAll(function() {
+  afterAll(function () {
     myp5.remove();
   });
 
-  suite('p5.prototype.createImage', function() {
-    test('it creates an image', function() {
+  suite('p5.prototype.createImage', function () {
+    test('it creates an image', function () {
       let img = myp5.createImage(10, 17);
       assert.isObject(img);
     });
   });
 
-  suite('p5.Image', function() {
-    test('it has necessary properties', function() {
+  suite('p5.Image', function () {
+    test('it has necessary properties', function () {
       let img = new p5.Image(100, 100);
       assert.property(img, 'width');
       assert.property(img, 'height');
@@ -33,7 +33,7 @@ suite('p5.Image', function() {
       assert.property(img, 'updatePixels');
     });
 
-    test('height and width are correct', function() {
+    test('height and width are correct', function () {
       let img = new p5.Image(100, 100);
       myp5.pixelDensity(1);
       assert.strictEqual(img.width, 100);
@@ -41,8 +41,8 @@ suite('p5.Image', function() {
     });
   });
 
-  suite('p5.Image.prototype.resize', function() {
-    test('it should resize the image', function() {
+  suite('p5.Image.prototype.resize', function () {
+    test('it should resize the image', function () {
       let img = myp5.createImage(10, 17);
       myp5.pixelDensity(1);
       img.resize(10, 30);
@@ -51,9 +51,9 @@ suite('p5.Image', function() {
     });
   });
 
-  suite.todo('p5.Image.prototype.mask', function() {
+  suite.todo('p5.Image.prototype.mask', function () {
     for (const density of [1, 2]) {
-      test(`it should mask the image at pixel density ${density}`, function() {
+      test(`it should mask the image at pixel density ${density}`, function () {
         let img = myp5.createImage(10, 10);
         img.pixelDensity(density);
         img.loadPixels();
@@ -87,7 +87,7 @@ suite('p5.Image', function() {
       });
     }
 
-    test('it should mask images of different density', function() {
+    test('it should mask images of different density', function () {
       let img = myp5.createImage(10, 10);
       img.pixelDensity(1);
       img.loadPixels();
@@ -120,15 +120,15 @@ suite('p5.Image', function() {
       }
     });
 
-    test('it should mask images from createGraphics', function() {
-      myp5.createCanvas(10,10);
+    test('it should mask images from createGraphics', function () {
+      myp5.createCanvas(10, 10);
       myp5.pixelDensity(2);
-      let img = myp5.createGraphics(10,10);
+      let img = myp5.createGraphics(10, 10);
       img.noStroke();
-      img.rect(0,0,10,10);
-      let mask = myp5.createGraphics(10,10);
+      img.rect(0, 0, 10, 10);
+      let mask = myp5.createGraphics(10, 10);
       mask.noStroke();
-      mask.rect(0,0,5,5);
+      mask.rect(0, 0, 5, 5);
       let masked = img.get();
       masked.mask(mask.get());
 
@@ -140,11 +140,11 @@ suite('p5.Image', function() {
       }
     });
 
-    test('it should mask the animated gif image', function() {
+    test('it should mask the animated gif image', function () {
       const imagePath = 'unit/assets/nyan_cat.gif';
-      return new Promise(function(resolve, reject) {
+      return new Promise(function (resolve, reject) {
         myp5.loadImage(imagePath, resolve, reject);
-      }).then(function(img) {
+      }).then(function (img) {
         let mask = myp5.createImage(img.width, img.height);
         mask.loadPixels();
         for (let i = 0; i < mask.width; i++) {
@@ -181,9 +181,9 @@ suite('p5.Image', function() {
     });
   });
 
-  suite.todo('p5.Graphics.get()', function() {
+  suite.todo('p5.Graphics.get()', function () {
     for (const density of [1, 2]) {
-      test(`width and height match at pixel density ${density}`, function() {
+      test(`width and height match at pixel density ${density}`, function () {
         const g = myp5.createGraphics(10, 10);
         g.pixelDensity(density);
         g.rect(2, 2, 5, 5);

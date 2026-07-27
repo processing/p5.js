@@ -4,21 +4,21 @@
  * @for p5
  */
 
-import { transpileStrandsToJS } from "./strands_transpiler";
-import { BlockType } from "./ir_types";
+import { transpileStrandsToJS } from './strands_transpiler';
+import { BlockType } from './ir_types';
 
-import { createDirectedAcyclicGraph } from "./ir_dag";
+import { createDirectedAcyclicGraph } from './ir_dag';
 import {
   createControlFlowGraph,
   createBasicBlock,
   pushBlock,
-  popBlock,
-} from "./ir_cfg";
-import { generateShaderCode } from "./strands_codegen";
+  popBlock
+} from './ir_cfg';
+import { generateShaderCode } from './strands_codegen';
 import {
   initGlobalStrandsAPI,
-  createShaderHooksFunctions,
-} from "./strands_api";
+  createShaderHooksFunctions
+} from './strands_api';
 
 function strands(p5, fn) {
   // Whether or not strands callbacks should be forced to be executed in global mode.
@@ -32,7 +32,7 @@ function strands(p5, fn) {
   function initStrandsContext(
     ctx,
     backend,
-    { active = false, renderer = null, baseShader = null } = {},
+    { active = false, renderer = null, baseShader = null } = {}
   ) {
     ctx.dag = createDirectedAcyclicGraph();
     ctx.cfg = createControlFlowGraph();
@@ -96,7 +96,7 @@ function strands(p5, fn) {
     const prev = {};
     for (const key of Object.getOwnPropertyNames(fn)) {
       const descriptor = Object.getOwnPropertyDescriptor(fn, key);
-      if (descriptor && !descriptor.get && typeof fn[key] === "function") {
+      if (descriptor && !descriptor.get && typeof fn[key] === 'function') {
         prev[key] = window[key];
         window[key] = fn[key].bind(pInst);
       }
@@ -116,21 +116,25 @@ function strands(p5, fn) {
   //////////////////////////////////////////////
   const oldModify = p5.Shader.prototype.modify;
 
-  p5.Shader.prototype.modify = function (shaderModifier, scope = {}, options = {}) {
+  p5.Shader.prototype.modify = function (
+    shaderModifier,
+    scope = {},
+    options = {}
+  ) {
     const fnOverrides = {};
     const windowOverrides = {};
     const graphicsOverrides = {};
     try {
       if (
         shaderModifier instanceof Function ||
-        typeof shaderModifier === "string"
+        typeof shaderModifier === 'string'
       ) {
         // Reset the context object every time modify is called;
         // const backend = glslBackend;
         initStrandsContext(strandsContext, this._renderer.strandsBackend, {
           active: true,
           renderer: this._renderer,
-          baseShader: this,
+          baseShader: this
         });
         createShaderHooksFunctions(strandsContext, fn, this);
         // TODO: expose this, is internal for debugging for now.
@@ -143,14 +147,14 @@ function strands(p5, fn) {
           // #7955 Wrap function declaration code in brackets so anonymous functions are not top level statements, which causes an error in acorn when parsing
           // https://github.com/acornjs/acorn/issues/1385
           const sourceString =
-            typeof shaderModifier === "string"
+            typeof shaderModifier === 'string'
               ? `(${shaderModifier})`
               : `(${shaderModifier.toString()})`;
           strandsCallback = transpileStrandsToJS(
             p5,
             sourceString,
             options.srcLocations,
-            scope,
+            scope
           );
         } else {
           strandsCallback = shaderModifier;
@@ -159,12 +163,13 @@ function strands(p5, fn) {
         // 2. Build the IR from JavaScript API
         const globalScope = createBasicBlock(
           strandsContext.cfg,
-          BlockType.GLOBAL,
+          BlockType.GLOBAL
         );
         pushBlock(strandsContext.cfg, globalScope);
         if (options.hook) {
           strandsContext.renderer._pInst[options.hook].begin();
-          for (const key of strandsContext.renderer._pInst[options.hook]._properties) {
+          for (const key of strandsContext.renderer._pInst[options.hook]
+            ._properties) {
             const hookProp = strandsContext.renderer._pInst[options.hook][key];
             fnOverrides[key] = fn[key];
             fn[key] = hookProp;
@@ -209,7 +214,7 @@ function strands(p5, fn) {
 
 export default strands;
 
-if (typeof p5 !== "undefined") {
+if (typeof p5 !== 'undefined') {
   p5.registerAddon(strands);
 }
 

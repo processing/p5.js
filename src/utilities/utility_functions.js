@@ -4,7 +4,7 @@
  * @for p5
  */
 
-function utilityFunctions(p5, fn){
+function utilityFunctions(p5, fn) {
   /**
    * Converts a `Number` into a `String` with a given number of digits.
    *
@@ -85,7 +85,7 @@ function utilityFunctions(p5, fn){
    * @param {Integer|String} [right]
    * @return {String[]} formatted strings.
    */
-  fn.nf = function(nums, left, right) {
+  fn.nf = function (nums, left, right) {
     // p5._validateParameters('nf', arguments);
     if (nums instanceof Array) {
       return nums.map(x => doNf(x, left, right));
@@ -118,7 +118,10 @@ function utilityFunctions(p5, fn){
       let roundedOff = num.toFixed(right);
       [leftPart, rightPart] = roundedOff.toString().split('.');
       leftPart = leftPart.padStart(left, '0');
-      let result = typeof rightPart === 'undefined' ? leftPart : leftPart + '.' + rightPart;
+      let result =
+        typeof rightPart === 'undefined'
+          ? leftPart
+          : leftPart + '.' + rightPart;
       return isNegative ? '-' + result : result;
     }
   }
@@ -211,7 +214,7 @@ function utilityFunctions(p5, fn){
    * @param  {Integer|String} [right]
    * @return {String[]} formatted strings.
    */
-  fn.nfc = function(num, right) {
+  fn.nfc = function (num, right) {
     // p5._validateParameters('nfc', arguments);
     if (num instanceof Array) {
       return num.map(x => doNfc(x, right));
@@ -346,7 +349,7 @@ function utilityFunctions(p5, fn){
    * @param {Integer} [right]
    * @return {String[]} formatted strings.
    */
-  fn.nfp = function(...args) {
+  fn.nfp = function (...args) {
     // p5._validateParameters('nfp', args);
     const nfRes = fn.nf.apply(this, args);
     if (nfRes instanceof Array) {
@@ -456,7 +459,7 @@ function utilityFunctions(p5, fn){
    * @param {Integer} [right]
    * @return {String[]} formatted strings.
    */
-  fn.nfs = function(...args) {
+  fn.nfs = function (...args) {
     // p5._validateParameters('nfs', args);
     const nfRes = fn.nf.apply(this, args);
     if (nfRes instanceof Array) {
@@ -599,7 +602,7 @@ function utilityFunctions(p5, fn){
    *   );
    * }
    */
-  fn.splitTokens = function(value, delims) {
+  fn.splitTokens = function (value, delims) {
     // p5._validateParameters('splitTokens', arguments);
     let d;
     if (typeof delims !== 'undefined') {
@@ -737,6 +740,6 @@ function utilityFunctions(p5, fn){
 
 export default utilityFunctions;
 
-if(typeof p5 !== 'undefined'){
+if (typeof p5 !== 'undefined') {
   utilityFunctions(p5, p5.prototype);
 }

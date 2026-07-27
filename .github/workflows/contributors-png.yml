@@ -37,9 +37,9 @@ jobs:
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@22a9089034f40e5a961c8808d113e2c98fb63676 # v7.0.11
         with:
-          commit-message: "Update contributors.png from .all-contributorsrc"
+          commit-message: 'Update contributors.png from .all-contributorsrc'
           branch: update-contributors-png
-          title: "chore: update contributors.png from .all-contributorsrc"
-          body: "This PR updates the contributors.png to reflect changes in .all-contributorsrc"
+          title: 'chore: update contributors.png from .all-contributorsrc'
+          body: 'This PR updates the contributors.png to reflect changes in .all-contributorsrc'
           add-paths: contributors.png
           token: ${{ secrets.ACCESS_TOKEN }}

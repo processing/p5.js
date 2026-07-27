@@ -12,9 +12,9 @@ class Shader {
 
     // Detect compute shader: first arg is STRING and second is undefined OR an options object
     if (
-      typeof vertSrc === 'string' && (
-        fragSrc === undefined || (typeof fragSrc === 'object' && !Array.isArray(fragSrc))
-      )
+      typeof vertSrc === 'string' &&
+      (fragSrc === undefined ||
+        (typeof fragSrc === 'object' && !Array.isArray(fragSrc)))
     ) {
       // Compute shader
       this.shaderType = 'compute';
@@ -76,7 +76,7 @@ class Shader {
       modified: {
         vertex: (options.modified && options.modified.vertex) || {},
         fragment: (options.modified && options.modified.fragment) || {},
-        compute: (options.modified && options.modified.compute) || {},
+        compute: (options.modified && options.modified.compute) || {}
       }
     };
   }
@@ -470,18 +470,29 @@ class Shader {
       declarations:
         (this.hooks.declarations || '') + '\n' + (hooks.declarations || ''),
       uniforms: Object.assign({}, this.hooks.uniforms, hooks.uniforms || {}),
-      storageUniforms: Object.assign({}, this.hooks.storageUniforms, hooks.storageUniforms || {}),
-      varyingVariables: (hooks.varyingVariables || []).concat(this.hooks.varyingVariables || []),
-      instanceIDVarying: hooks.instanceIDVarying || this.hooks.instanceIDVarying || null,
+      storageUniforms: Object.assign(
+        {},
+        this.hooks.storageUniforms,
+        hooks.storageUniforms || {}
+      ),
+      varyingVariables: (hooks.varyingVariables || []).concat(
+        this.hooks.varyingVariables || []
+      ),
+      instanceIDVarying:
+        hooks.instanceIDVarying || this.hooks.instanceIDVarying || null,
       fragment: Object.assign({}, this.hooks.fragment, newHooks.fragment || {}),
       vertex: Object.assign({}, this.hooks.vertex, newHooks.vertex || {}),
       compute: Object.assign({}, this.hooks.compute, newHooks.compute || {}),
       helpers: Object.assign({}, this.hooks.helpers, newHooks.helpers || {}),
-      hookAliases: Object.assign({}, this.hooks.hookAliases, newHooks.hookAliases || {}),
+      hookAliases: Object.assign(
+        {},
+        this.hooks.hookAliases,
+        newHooks.hookAliases || {}
+      ),
       modified: {
         vertex: modifiedVertex,
         fragment: modifiedFragment,
-        compute: modifiedCompute,
+        compute: modifiedCompute
       }
     });
 
@@ -539,7 +550,8 @@ class Shader {
     }
     for (const name in this.hooks.storageUniforms) {
       const initializer = this.hooks.storageUniforms[name];
-      const value = initializer instanceof Function ? initializer() : initializer;
+      const value =
+        initializer instanceof Function ? initializer() : initializer;
       if (value !== undefined && value !== null) {
         this.setUniform(name, value);
       }
@@ -776,7 +788,7 @@ class Shader {
     for (const meta of uniformMetadata) {
       const uniform = {
         ...meta,
-        _cachedData: undefined,
+        _cachedData: undefined
       };
 
       if (uniform.isSampler) {
@@ -830,14 +842,12 @@ class Shader {
       let tex = uniform.texture;
       if (
         tex === undefined ||
-        (
-          // Make sure we unbind a framebuffer uniform if it's the same
-          // framebuffer that is actvely being drawn to in order to
-          // prevent a feedback cycle
-          tex.isFramebufferTexture &&
+        // Make sure we unbind a framebuffer uniform if it's the same
+        // framebuffer that is actvely being drawn to in order to
+        // prevent a feedback cycle
+        (tex.isFramebufferTexture &&
           !tex.src.framebuffer.antialias &&
-          tex.src.framebuffer === this._renderer.activeFramebuffer()
-        )
+          tex.src.framebuffer === this._renderer.activeFramebuffer())
       ) {
         // user hasn't yet supplied a texture for this slot.
         // (or there may not be one--maybe just lighting),
@@ -1112,7 +1122,10 @@ class Shader {
     // duck typing instead of instanceof to avoid accidentally importing
     // and comparing against a separate copy of p5 classes
     if (data?.isVector) {
-      data = data.values.length !== data.dimensions ? data.values.slice(0, data.dimensions) : data.values;
+      data =
+        data.values.length !== data.dimensions
+          ? data.values.slice(0, data.dimensions)
+          : data.values;
     } else if (data?.isColor) {
       data = data._getRGBA([1, 1, 1, 1]);
     }
@@ -1130,7 +1143,10 @@ class Shader {
       return;
     } else {
       if (Array.isArray(data) || data instanceof TypedArray) {
-        if (uniform._cachedData && this._renderer._arraysEqual(uniform._cachedData, data)) {
+        if (
+          uniform._cachedData &&
+          this._renderer._arraysEqual(uniform._cachedData, data)
+        ) {
           return;
         }
         uniform._cachedData = data.slice(0);
@@ -1159,14 +1175,22 @@ class Shader {
       }
 
       if (attr.location !== -1) {
-        this._renderer._enableAttrib(this, attr, size, type, normalized, stride, offset);
+        this._renderer._enableAttrib(
+          this,
+          attr,
+          size,
+          type,
+          normalized,
+          stride,
+          offset
+        );
       }
     }
     return this;
   }
-};
+}
 
-function shader(p5, fn){
+function shader(p5, fn) {
   /**
    * A class to describe a shader program.
    *
@@ -1306,6 +1330,6 @@ function shader(p5, fn){
 export default shader;
 export { Shader };
 
-if(typeof p5 !== 'undefined'){
+if (typeof p5 !== 'undefined') {
   shader(p5, p5.prototype);
 }

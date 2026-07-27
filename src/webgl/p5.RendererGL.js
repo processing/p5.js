@@ -20,24 +20,24 @@ import { glslBackend } from './strands_glslBackend';
 import { TypeInfoFromGLSLName } from '../strands/ir_types.js';
 import { getShaderHookTypes } from './shaderHookUtils';
 
-import filterBaseVert from "./shaders/filters/base.vert";
-import lightingShader from "./shaders/lighting.glsl";
-import webgl2CompatibilityShader from "./shaders/webgl2Compatibility.glsl";
-import normalVert from "./shaders/normal.vert";
-import normalFrag from "./shaders/normal.frag";
-import basicFrag from "./shaders/basic.frag";
-import lightVert from "./shaders/light.vert";
-import lightTextureFrag from "./shaders/light_texture.frag";
-import phongVert from "./shaders/phong.vert";
-import phongFrag from "./shaders/phong.frag";
-import fontVert from "./shaders/font.vert";
-import fontFrag from "./shaders/font.frag";
-import lineVert from "./shaders/line.vert";
-import lineFrag from "./shaders/line.frag";
-import imageLightVert from "./shaders/imageLight.vert";
-import imageLightDiffusedFrag from "./shaders/imageLightDiffused.frag";
-import imageLightSpecularFrag from "./shaders/imageLightSpecular.frag";
-import filterBaseFrag from "./shaders/filters/base.frag";
+import filterBaseVert from './shaders/filters/base.vert';
+import lightingShader from './shaders/lighting.glsl';
+import webgl2CompatibilityShader from './shaders/webgl2Compatibility.glsl';
+import normalVert from './shaders/normal.vert';
+import normalFrag from './shaders/normal.frag';
+import basicFrag from './shaders/basic.frag';
+import lightVert from './shaders/light.vert';
+import lightTextureFrag from './shaders/light_texture.frag';
+import phongVert from './shaders/phong.vert';
+import phongFrag from './shaders/phong.frag';
+import fontVert from './shaders/font.vert';
+import fontFrag from './shaders/font.frag';
+import lineVert from './shaders/line.vert';
+import lineFrag from './shaders/line.frag';
+import imageLightVert from './shaders/imageLight.vert';
+import imageLightDiffusedFrag from './shaders/imageLightDiffused.frag';
+import imageLightSpecularFrag from './shaders/imageLightSpecular.frag';
+import filterBaseFrag from './shaders/filters/base.frag';
 
 const { lineDefs } = getStrokeDefs((n, v) => `#define ${n} ${v}\n`);
 
@@ -57,7 +57,7 @@ const defaultShaders = {
   imageLightDiffusedFrag,
   imageLightSpecularFrag,
   filterBaseVert,
-  filterBaseFrag,
+  filterBaseFrag
 };
 for (const key in defaultShaders) {
   defaultShaders[key] = webgl2CompatibilityShader + defaultShaders[key];
@@ -78,7 +78,7 @@ class RendererGL extends Renderer3D {
     if (this.webglVersion === constants.WEBGL2) {
       this.blendExt = this.GL;
     } else {
-      this.blendExt = this.GL.getExtension("EXT_blend_minmax");
+      this.blendExt = this.GL.getExtension('EXT_blend_minmax');
     }
 
     this._userEnabledStencil = false;
@@ -87,7 +87,7 @@ class RendererGL extends Renderer3D {
     this._internalDisable = this.drawingContext.disable;
 
     // Override WebGL enable function
-    this.drawingContext.enable = (key) => {
+    this.drawingContext.enable = key => {
       if (key === this.drawingContext.STENCIL_TEST) {
         if (!this._clipping) {
           this._userEnabledStencil = true;
@@ -97,9 +97,9 @@ class RendererGL extends Renderer3D {
     };
 
     // Override WebGL disable function
-    this.drawingContext.disable = (key) => {
+    this.drawingContext.disable = key => {
       if (key === this.drawingContext.STENCIL_TEST) {
-          this._userEnabledStencil = false;
+        this._userEnabledStencil = false;
       }
       return this._internalDisable.call(this.drawingContext, key);
     };
@@ -125,7 +125,7 @@ class RendererGL extends Renderer3D {
    * @param  {Number[]} color [description]
    * @return {Number[]}  Normalized numbers array
    */
-  _applyBlendMode () {
+  _applyBlendMode() {
     if (this._cachedBlendMode === this.states.curBlendMode) {
       return;
     }
@@ -237,23 +237,23 @@ class RendererGL extends Renderer3D {
 
     if (!glBuffers) return;
 
-    if (this._curShader.shaderType === 'stroke'){
+    if (this._curShader.shaderType === 'stroke') {
       if (count === 1) {
         gl.drawArrays(gl.TRIANGLES, 0, geometry.lineVertices.length / 3);
-       } else {
-       try {
+      } else {
+        try {
           gl.drawArraysInstanced(
-          gl.TRIANGLES,
+            gl.TRIANGLES,
             0,
             geometry.lineVertices.length / 3,
             count
           );
         } catch (e) {
           console.log(
-            "🌸 p5.js says: Instancing is only supported in WebGL2 mode"
+            '🌸 p5.js says: Instancing is only supported in WebGL2 mode'
           );
         }
-       }
+      }
     } else if (this._curShader.shaderType === 'text') {
       // Text rendering uses a fixed quad geometry with 6 indices
       this._bindBuffer(glBuffers.indexBuffer, gl.ELEMENT_ARRAY_BUFFER);
@@ -267,9 +267,9 @@ class RendererGL extends Renderer3D {
         this._pInst.webglVersion !== constants.WEBGL2 &&
         glBuffers.indexBufferType === gl.UNSIGNED_INT
       ) {
-        if (!gl.getExtension("OES_element_index_uint")) {
+        if (!gl.getExtension('OES_element_index_uint')) {
           throw new Error(
-            "Unable to render a 3d model with > 65535 triangles. Your web browser does not support the WebGL Extension OES_element_index_uint."
+            'Unable to render a 3d model with > 65535 triangles. Your web browser does not support the WebGL Extension OES_element_index_uint.'
           );
         }
       }
@@ -292,7 +292,7 @@ class RendererGL extends Renderer3D {
           );
         } catch (e) {
           console.log(
-            "🌸 p5.js says: Instancing is only supported in WebGL2 mode"
+            '🌸 p5.js says: Instancing is only supported in WebGL2 mode'
           );
         }
       }
@@ -312,7 +312,7 @@ class RendererGL extends Renderer3D {
           gl.drawArraysInstanced(glMode, 0, geometry.vertices.length, count);
         } catch (e) {
           console.log(
-            "🌸 p5.js says: Instancing is only supported in WebGL2 mode"
+            '🌸 p5.js says: Instancing is only supported in WebGL2 mode'
           );
         }
       }
@@ -336,7 +336,7 @@ class RendererGL extends Renderer3D {
 
   _setAttributeDefaults(pInst) {
     // See issue #3850, safer to enable AA in Safari
-    const applyAA = navigator.userAgent.toLowerCase().includes("safari");
+    const applyAA = navigator.userAgent.toLowerCase().includes('safari');
     const defaults = {
       alpha: true,
       depth: true,
@@ -345,7 +345,7 @@ class RendererGL extends Renderer3D {
       premultipliedAlpha: true,
       preserveDrawingBuffer: true,
       perPixelLighting: true,
-      version: 2,
+      version: 2
     };
     if (pInst._glAttributes === null) {
       pInst._glAttributes = defaults;
@@ -356,15 +356,15 @@ class RendererGL extends Renderer3D {
   }
 
   _setAttributes(key, value) {
-    if (typeof this._pInst._glAttributes === "undefined") {
+    if (typeof this._pInst._glAttributes === 'undefined') {
       console.log(
-        "You are trying to use setAttributes on a p5.Graphics object " +
-          "that does not use a WEBGL renderer."
+        'You are trying to use setAttributes on a p5.Graphics object ' +
+          'that does not use a WEBGL renderer.'
       );
       return;
     }
     let unchanged = true;
-    if (typeof value !== "undefined") {
+    if (typeof value !== 'undefined') {
       //first time modifying the attributes
       if (this._pInst._glAttributes === null) {
         this._pInst._glAttributes = {};
@@ -388,7 +388,8 @@ class RendererGL extends Renderer3D {
 
     if (!this._pInst._setupDone) {
       if (this.geometryBufferCache.numCached() > 0) {
-        p5.FES.log`Sorry, Could not set the attributes, you need to call setAttributes() before calling the other drawing methods in setup()`();
+        p5.FES
+          .log`Sorry, Could not set the attributes, you need to call setAttributes() before calling the other drawing methods in setup()`();
         return;
       }
     }
@@ -404,7 +405,7 @@ class RendererGL extends Renderer3D {
     if (this._pInst._glAttributes?.version !== 1) {
       // Unless WebGL1 is explicitly asked for, try to create a WebGL2 context
       this.drawingContext = this.canvas.getContext(
-        "webgl2",
+        'webgl2',
         this._pInst._glAttributes
       );
     }
@@ -418,11 +419,11 @@ class RendererGL extends Renderer3D {
       // disabled via `setAttributes({ version: 1 })` or because the device
       // doesn't support it), fall back to a WebGL1 context
       this.drawingContext =
-        this.canvas.getContext("webgl", this._pInst._glAttributes) ||
-        this.canvas.getContext("experimental-webgl", this._pInst._glAttributes);
+        this.canvas.getContext('webgl', this._pInst._glAttributes) ||
+        this.canvas.getContext('experimental-webgl', this._pInst._glAttributes);
     }
     if (this.drawingContext === null) {
-      throw new Error("Error creating webgl context");
+      throw new Error('Error creating webgl context');
     } else {
       const gl = this.drawingContext;
       gl.enable(gl.DEPTH_TEST);
@@ -451,15 +452,13 @@ class RendererGL extends Renderer3D {
     }
     let maxTextureSize = this._maxTextureSize;
 
-    let maxAllowedPixelDimensions = Math.floor(
-      maxTextureSize / density
-    );
+    let maxAllowedPixelDimensions = Math.floor(maxTextureSize / density);
     let adjustedWidth = Math.min(width, maxAllowedPixelDimensions);
     let adjustedHeight = Math.min(height, maxAllowedPixelDimensions);
 
     if (adjustedWidth !== width || adjustedHeight !== height) {
       console.warn(
-        "Warning: The requested width/height exceeds hardware limits. " +
+        'Warning: The requested width/height exceeds hardware limits. ' +
           `Adjusting dimensions to width: ${adjustedWidth}, height: ${adjustedHeight}.`
       );
     }
@@ -542,8 +541,8 @@ class RendererGL extends Renderer3D {
     //@todo_FES
     if (this._pInst._glAttributes.preserveDrawingBuffer !== true) {
       console.log(
-        "loadPixels only works in WebGL when preserveDrawingBuffer " +
-          "is true."
+        'loadPixels only works in WebGL when preserveDrawingBuffer ' +
+          'is true.'
       );
       return;
     }
@@ -572,7 +571,7 @@ class RendererGL extends Renderer3D {
     this.push();
     this.resetMatrix();
     this.clear();
-    this.states.setValue("imageMode", constants.CORNER);
+    this.states.setValue('imageMode', constants.CORNER);
     this.image(
       fbo,
       0,
@@ -611,7 +610,7 @@ class RendererGL extends Renderer3D {
   _updateViewport() {
     this._origViewport = {
       width: this.GL.drawingBufferWidth,
-      height: this.GL.drawingBufferHeight,
+      height: this.GL.drawingBufferHeight
     };
     this.viewport(this._origViewport.width, this._origViewport.height);
   }
@@ -681,7 +680,6 @@ class RendererGL extends Renderer3D {
     }
   }
 
-
   //////////////////////////////////////////////
   // SHADER
   //////////////////////////////////////////////
@@ -695,7 +693,7 @@ class RendererGL extends Renderer3D {
   baseMaterialShader() {
     if (!this._pInst._glAttributes.perPixelLighting) {
       throw new Error(
-        "The material shader does not support hooks without perPixelLighting. Try turning it back on."
+        'The material shader does not support hooks without perPixelLighting. Try turning it back on.'
       );
     }
     return super.baseMaterialShader();
@@ -706,22 +704,22 @@ class RendererGL extends Renderer3D {
       if (this._pInst._glAttributes.perPixelLighting) {
         this._defaultLightShader = new Shader(
           this,
-          this._webGL2CompatibilityPrefix("vert", "highp") +
+          this._webGL2CompatibilityPrefix('vert', 'highp') +
             defaultShaders.phongVert,
-          this._webGL2CompatibilityPrefix("frag", "highp") +
+          this._webGL2CompatibilityPrefix('frag', 'highp') +
             defaultShaders.phongFrag,
           {
             vertex: {
-              "void beforeVertex": "() {}",
-              "Vertex getObjectInputs": "(Vertex inputs) { return inputs; }",
-              "Vertex getWorldInputs": "(Vertex inputs) { return inputs; }",
-              "Vertex getCameraInputs": "(Vertex inputs) { return inputs; }",
-              "void afterVertex": "() {}",
+              'void beforeVertex': '() {}',
+              'Vertex getObjectInputs': '(Vertex inputs) { return inputs; }',
+              'Vertex getWorldInputs': '(Vertex inputs) { return inputs; }',
+              'Vertex getCameraInputs': '(Vertex inputs) { return inputs; }',
+              'void afterVertex': '() {}'
             },
             fragment: {
-              "void beforeFragment": "() {}",
-              "Inputs getPixelInputs": "(Inputs inputs) { return inputs; }",
-              "vec4 combineColors": `(ColorComponents components) {
+              'void beforeFragment': '() {}',
+              'Inputs getPixelInputs': '(Inputs inputs) { return inputs; }',
+              'vec4 combineColors': `(ColorComponents components) {
                 vec4 color = vec4(0.);
                 color.rgb += components.diffuse * components.baseColor;
                 color.rgb += components.ambient * components.ambientColor;
@@ -730,17 +728,18 @@ class RendererGL extends Renderer3D {
                 color.a = components.opacity;
                 return color;
               }`,
-              "vec4 getFinalColor": "(vec4 color, vec2 texCoord) { return color; }",
-              "void afterFragment": "() {}",
-            },
+              'vec4 getFinalColor':
+                '(vec4 color, vec2 texCoord) { return color; }',
+              'void afterFragment': '() {}'
+            }
           }
         );
       } else {
         this._defaultLightShader = new Shader(
           this,
-          this._webGL2CompatibilityPrefix("vert", "highp") +
+          this._webGL2CompatibilityPrefix('vert', 'highp') +
             defaultShaders.lightVert,
-          this._webGL2CompatibilityPrefix("frag", "highp") +
+          this._webGL2CompatibilityPrefix('frag', 'highp') +
             defaultShaders.lightTextureFrag
         );
       }
@@ -753,23 +752,24 @@ class RendererGL extends Renderer3D {
     if (!this._defaultNormalShader) {
       this._defaultNormalShader = new Shader(
         this,
-        this._webGL2CompatibilityPrefix("vert", "highp") +
+        this._webGL2CompatibilityPrefix('vert', 'highp') +
           defaultShaders.normalVert,
-        this._webGL2CompatibilityPrefix("frag", "highp") +
+        this._webGL2CompatibilityPrefix('frag', 'highp') +
           defaultShaders.normalFrag,
         {
           vertex: {
-            "void beforeVertex": "() {}",
-            "Vertex getObjectInputs": "(Vertex inputs) { return inputs; }",
-            "Vertex getWorldInputs": "(Vertex inputs) { return inputs; }",
-            "Vertex getCameraInputs": "(Vertex inputs) { return inputs; }",
-            "void afterVertex": "() {}",
+            'void beforeVertex': '() {}',
+            'Vertex getObjectInputs': '(Vertex inputs) { return inputs; }',
+            'Vertex getWorldInputs': '(Vertex inputs) { return inputs; }',
+            'Vertex getCameraInputs': '(Vertex inputs) { return inputs; }',
+            'void afterVertex': '() {}'
           },
           fragment: {
-            "void beforeFragment": "() {}",
-            "vec4 getFinalColor": "(vec4 color, vec2 texCoord) { return color; }",
-            "void afterFragment": "() {}",
-          },
+            'void beforeFragment': '() {}',
+            'vec4 getFinalColor':
+              '(vec4 color, vec2 texCoord) { return color; }',
+            'void afterFragment': '() {}'
+          }
         }
       );
     }
@@ -781,23 +781,24 @@ class RendererGL extends Renderer3D {
     if (!this._defaultColorShader) {
       this._defaultColorShader = new Shader(
         this,
-        this._webGL2CompatibilityPrefix("vert", "highp") +
+        this._webGL2CompatibilityPrefix('vert', 'highp') +
           defaultShaders.normalVert,
-        this._webGL2CompatibilityPrefix("frag", "highp") +
+        this._webGL2CompatibilityPrefix('frag', 'highp') +
           defaultShaders.basicFrag,
         {
           vertex: {
-            "void beforeVertex": "() {}",
-            "Vertex getObjectInputs": "(Vertex inputs) { return inputs; }",
-            "Vertex getWorldInputs": "(Vertex inputs) { return inputs; }",
-            "Vertex getCameraInputs": "(Vertex inputs) { return inputs; }",
-            "void afterVertex": "() {}",
+            'void beforeVertex': '() {}',
+            'Vertex getObjectInputs': '(Vertex inputs) { return inputs; }',
+            'Vertex getWorldInputs': '(Vertex inputs) { return inputs; }',
+            'Vertex getCameraInputs': '(Vertex inputs) { return inputs; }',
+            'void afterVertex': '() {}'
           },
           fragment: {
-            "void beforeFragment": "() {}",
-            "vec4 getFinalColor": "(vec4 color, vec2 texCoord) { return color; }",
-            "void afterFragment": "() {}",
-          },
+            'void beforeFragment': '() {}',
+            'vec4 getFinalColor':
+              '(vec4 color, vec2 texCoord) { return color; }',
+            'void afterFragment': '() {}'
+          }
         }
       );
     }
@@ -809,28 +810,29 @@ class RendererGL extends Renderer3D {
     if (!this._defaultLineShader) {
       this._defaultLineShader = new Shader(
         this,
-        this._webGL2CompatibilityPrefix("vert", "highp") +
+        this._webGL2CompatibilityPrefix('vert', 'highp') +
           defaultShaders.lineVert,
-        this._webGL2CompatibilityPrefix("frag", "highp") +
+        this._webGL2CompatibilityPrefix('frag', 'highp') +
           defaultShaders.lineFrag,
         {
           vertex: {
-            "void beforeVertex": "() {}",
-            "StrokeVertex getObjectInputs":
-              "(StrokeVertex inputs) { return inputs; }",
-            "StrokeVertex getWorldInputs":
-              "(StrokeVertex inputs) { return inputs; }",
-            "StrokeVertex getCameraInputs":
-              "(StrokeVertex inputs) { return inputs; }",
-            "void afterVertex": "() {}",
+            'void beforeVertex': '() {}',
+            'StrokeVertex getObjectInputs':
+              '(StrokeVertex inputs) { return inputs; }',
+            'StrokeVertex getWorldInputs':
+              '(StrokeVertex inputs) { return inputs; }',
+            'StrokeVertex getCameraInputs':
+              '(StrokeVertex inputs) { return inputs; }',
+            'void afterVertex': '() {}'
           },
           fragment: {
-            "void beforeFragment": "() {}",
-            "Inputs getPixelInputs": "(Inputs inputs) { return inputs; }",
-            "vec4 getFinalColor": "(vec4 color, vec2 texCoord) { return color; }",
-            "bool shouldDiscard": "(bool outside) { return outside; }",
-            "void afterFragment": "() {}",
-          },
+            'void beforeFragment': '() {}',
+            'Inputs getPixelInputs': '(Inputs inputs) { return inputs; }',
+            'vec4 getFinalColor':
+              '(vec4 color, vec2 texCoord) { return color; }',
+            'bool shouldDiscard': '(bool outside) { return outside; }',
+            'void afterFragment': '() {}'
+          }
         }
       );
     }
@@ -841,13 +843,13 @@ class RendererGL extends Renderer3D {
   _getFontShader() {
     if (!this._defaultFontShader) {
       if (this.webglVersion === constants.WEBGL) {
-        this.GL.getExtension("OES_standard_derivatives");
+        this.GL.getExtension('OES_standard_derivatives');
       }
       this._defaultFontShader = new Shader(
         this,
-        this._webGL2CompatibilityPrefix("vert", "highp") +
+        this._webGL2CompatibilityPrefix('vert', 'highp') +
           defaultShaders.fontVert,
-        this._webGL2CompatibilityPrefix("frag", "highp") +
+        this._webGL2CompatibilityPrefix('frag', 'highp') +
           defaultShaders.fontFrag
       );
     }
@@ -858,20 +860,20 @@ class RendererGL extends Renderer3D {
     if (!this._baseFilterShader) {
       this._baseFilterShader = new Shader(
         this,
-        this._webGL2CompatibilityPrefix("vert", "highp") +
+        this._webGL2CompatibilityPrefix('vert', 'highp') +
           defaultShaders.filterBaseVert,
-        this._webGL2CompatibilityPrefix("frag", "highp") +
+        this._webGL2CompatibilityPrefix('frag', 'highp') +
           defaultShaders.filterBaseFrag,
         {
           vertex: {},
           fragment: {
-            "vec4 getColor": `(FilterInputs inputs, in sampler2D canvasContent) {
+            'vec4 getColor': `(FilterInputs inputs, in sampler2D canvasContent) {
               return getTexture(canvasContent, inputs.texCoord);
-            }`,
+            }`
           },
           hookAliases: {
-            'getColor': ['filterColor'],
-          },
+            getColor: ['filterColor']
+          }
         }
       );
     }
@@ -879,14 +881,14 @@ class RendererGL extends Renderer3D {
   }
 
   _webGL2CompatibilityPrefix(shaderType, floatPrecision) {
-    let code = "";
+    let code = '';
     if (this.webglVersion === constants.WEBGL2) {
-      code += "#version 300 es\n#define WEBGL2\n";
+      code += '#version 300 es\n#define WEBGL2\n';
     }
-    if (shaderType === "vert") {
-      code += "#define VERTEX_SHADER\n";
-    } else if (shaderType === "frag") {
-      code += "#define FRAGMENT_SHADER\n";
+    if (shaderType === 'vert') {
+      code += '#define VERTEX_SHADER\n';
+    } else if (shaderType === 'frag') {
+      code += '#define FRAGMENT_SHADER\n';
     }
     if (floatPrecision) {
       code += `precision ${floatPrecision} float;\n`;
@@ -901,23 +903,22 @@ class RendererGL extends Renderer3D {
     if (type === 'diffused') {
       return new Shader(
         this,
-        this._webGL2CompatibilityPrefix("vert", "highp") +
+        this._webGL2CompatibilityPrefix('vert', 'highp') +
           defaultShaders.imageLightVert,
-        this._webGL2CompatibilityPrefix("frag", "highp") +
+        this._webGL2CompatibilityPrefix('frag', 'highp') +
           defaultShaders.imageLightDiffusedFrag
       );
     } else if (type === 'specular') {
       return new Shader(
         this,
-        this._webGL2CompatibilityPrefix("vert", "highp") +
+        this._webGL2CompatibilityPrefix('vert', 'highp') +
           defaultShaders.imageLightVert,
-        this._webGL2CompatibilityPrefix("frag", "highp") +
+        this._webGL2CompatibilityPrefix('frag', 'highp') +
           defaultShaders.imageLightSpecularFrag
       );
     }
     throw new Error(`Unknown imageLight shader type: ${type}`);
   }
-
 
   /*
    * WebGL-specific implementation of mipmap texture creation
@@ -937,7 +938,9 @@ class RendererGL extends Renderer3D {
    * Accumulate ImageData from framebuffer for WebGL
    */
   _accumulateMipLevel(framebuffer, mipmapData, mipLevel, width, height) {
-    const imageData = framebuffer.get().drawingContext.getImageData(0, 0, width, height);
+    const imageData = framebuffer
+      .get()
+      .drawingContext.getImageData(0, 0, width, height);
     mipmapData.levels.push(imageData);
   }
 
@@ -947,7 +950,7 @@ class RendererGL extends Renderer3D {
   _finalizeMipmapTexture(mipmapData) {
     return new MipmapTexture(this, mipmapData.levels, {
       minFilter: constants.LINEAR_MIPMAP,
-      magFilter: constants.LINEAR,
+      magFilter: constants.LINEAR
     });
   }
 
@@ -974,7 +977,11 @@ class RendererGL extends Renderer3D {
 
     // Set mipmap-appropriate filtering
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
+    gl.texParameteri(
+      gl.TEXTURE_2D,
+      gl.TEXTURE_MIN_FILTER,
+      gl.LINEAR_MIPMAP_LINEAR
+    );
 
     gl.bindTexture(gl.TEXTURE_2D, null);
 
@@ -1075,7 +1082,8 @@ class RendererGL extends Renderer3D {
       // If we're using a Uint32Array for our indexBuffer we will need to pass a
       // different enum value to WebGL draw triangles. This happens in
       // the _drawElements function.
-      buffers.indexBufferType = indexType === Uint32Array ? gl.UNSIGNED_INT : gl.UNSIGNED_SHORT;
+      buffers.indexBufferType =
+        indexType === Uint32Array ? gl.UNSIGNED_INT : gl.UNSIGNED_SHORT;
     } else if (buffers.indexBuffer) {
       // the index buffer is unused, remove it
       gl.deleteBuffer(buffers.indexBuffer);
@@ -1111,18 +1119,22 @@ class RendererGL extends Renderer3D {
     gl.shaderSource(vertShader, shader.vertSrc());
     gl.compileShader(vertShader);
     if (!gl.getShaderParameter(vertShader, gl.COMPILE_STATUS)) {
-      throw new Error(`Yikes! An error occurred compiling the vertex shader: ${
-        gl.getShaderInfoLog(vertShader)
-      } in:\n\n${shader.vertSrc()}`);
+      throw new Error(
+        `Yikes! An error occurred compiling the vertex shader: ${gl.getShaderInfoLog(
+          vertShader
+        )} in:\n\n${shader.vertSrc()}`
+      );
     }
 
     const fragShader = gl.createShader(gl.FRAGMENT_SHADER);
     gl.shaderSource(fragShader, shader.fragSrc());
     gl.compileShader(fragShader);
     if (!gl.getShaderParameter(fragShader, gl.COMPILE_STATUS)) {
-      throw new Error(`Darn! An error occurred compiling the fragment shader: ${
-        gl.getShaderInfoLog(fragShader)
-      }`);
+      throw new Error(
+        `Darn! An error occurred compiling the fragment shader: ${gl.getShaderInfoLog(
+          fragShader
+        )}`
+      );
     }
 
     const program = gl.createProgram();
@@ -1157,7 +1169,7 @@ class RendererGL extends Renderer3D {
       shader,
       uniform,
       data,
-      (tex) => this.getTexture(tex),
+      tex => this.getTexture(tex),
       this.GL
     );
   }
@@ -1196,8 +1208,17 @@ class RendererGL extends Renderer3D {
     const gl = this.GL;
     const tex = gl.createTexture();
     gl.bindTexture(gl.TEXTURE_2D, tex);
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width, height, 0,
-                       gl.RGBA, gl.UNSIGNED_BYTE, null);
+    gl.texImage2D(
+      gl.TEXTURE_2D,
+      0,
+      gl.RGBA,
+      width,
+      height,
+      0,
+      gl.RGBA,
+      gl.UNSIGNED_BYTE,
+      null
+    );
     // TODO use format and data type
     return { texture: tex, glFormat: gl.RGBA, glDataType: gl.UNSIGNED_BYTE };
   }
@@ -1212,7 +1233,12 @@ class RendererGL extends Renderer3D {
     gl.texImage2D(gl.TEXTURE_2D, 0, glFormat, glFormat, glDataType, source);
   }
 
-  uploadTextureFromData({ texture, glFormat, glDataType }, data, width, height) {
+  uploadTextureFromData(
+    { texture, glFormat, glDataType },
+    data,
+    width,
+    height
+  ) {
     const gl = this.GL;
     gl.texImage2D(
       gl.TEXTURE_2D,
@@ -1246,7 +1272,6 @@ class RendererGL extends Renderer3D {
   deleteTexture({ texture }) {
     this.GL.deleteTexture(texture);
   }
-
 
   /**
    * @private blends colors according to color components.
@@ -1362,11 +1387,13 @@ class RendererGL extends Renderer3D {
       framebuffer.depthFormat = constants.UNSIGNED_INT;
     }
 
-    if (![
-      constants.UNSIGNED_BYTE,
-      constants.FLOAT,
-      constants.HALF_FLOAT
-    ].includes(framebuffer.format)) {
+    if (
+      ![
+        constants.UNSIGNED_BYTE,
+        constants.FLOAT,
+        constants.HALF_FLOAT
+      ].includes(framebuffer.format)
+    ) {
       console.warn(
         'Unknown Framebuffer format. ' +
           'Please use UNSIGNED_BYTE, FLOAT, or HALF_FLOAT. ' +
@@ -1374,10 +1401,12 @@ class RendererGL extends Renderer3D {
       );
       framebuffer.format = constants.UNSIGNED_BYTE;
     }
-    if (framebuffer.useDepth && ![
-      constants.UNSIGNED_INT,
-      constants.FLOAT
-    ].includes(framebuffer.depthFormat)) {
+    if (
+      framebuffer.useDepth &&
+      ![constants.UNSIGNED_INT, constants.FLOAT].includes(
+        framebuffer.depthFormat
+      )
+    ) {
       console.warn(
         'Unknown Framebuffer depth format. ' +
           'Please use UNSIGNED_INT or FLOAT. Defaulting to FLOAT.'
@@ -1479,7 +1508,9 @@ class RendererGL extends Renderer3D {
 
       gl.framebufferTexture2D(
         gl.FRAMEBUFFER,
-        framebuffer.useStencil ? gl.DEPTH_STENCIL_ATTACHMENT : gl.DEPTH_ATTACHMENT,
+        framebuffer.useStencil
+          ? gl.DEPTH_STENCIL_ATTACHMENT
+          : gl.DEPTH_ATTACHMENT,
         gl.TEXTURE_2D,
         depthTexture,
         0
@@ -1495,7 +1526,10 @@ class RendererGL extends Renderer3D {
         gl.RENDERBUFFER,
         Math.max(
           0,
-          Math.min(framebuffer.antialiasSamples, gl.getParameter(gl.MAX_SAMPLES))
+          Math.min(
+            framebuffer.antialiasSamples,
+            gl.getParameter(gl.MAX_SAMPLES)
+          )
         ),
         colorFormat.internalFormat,
         framebuffer.width * framebuffer.density,
@@ -1510,7 +1544,10 @@ class RendererGL extends Renderer3D {
           gl.RENDERBUFFER,
           Math.max(
             0,
-            Math.min(framebuffer.antialiasSamples, gl.getParameter(gl.MAX_SAMPLES))
+            Math.min(
+              framebuffer.antialiasSamples,
+              gl.getParameter(gl.MAX_SAMPLES)
+            )
           ),
           depthFormat.internalFormat,
           framebuffer.width * framebuffer.density,
@@ -1528,7 +1565,9 @@ class RendererGL extends Renderer3D {
       if (framebuffer.useDepth) {
         gl.framebufferRenderbuffer(
           gl.FRAMEBUFFER,
-          framebuffer.useStencil ? gl.DEPTH_STENCIL_ATTACHMENT : gl.DEPTH_ATTACHMENT,
+          framebuffer.useStencil
+            ? gl.DEPTH_STENCIL_ATTACHMENT
+            : gl.DEPTH_ATTACHMENT,
           gl.RENDERBUFFER,
           framebuffer.depthRenderbuffer
         );
@@ -1561,9 +1600,10 @@ class RendererGL extends Renderer3D {
     if (framebuffer.format === constants.FLOAT) {
       type = gl.FLOAT;
     } else if (framebuffer.format === constants.HALF_FLOAT) {
-      type = this.webglVersion === constants.WEBGL2
-        ? gl.HALF_FLOAT
-        : gl.getExtension('OES_texture_half_float').HALF_FLOAT_OES;
+      type =
+        this.webglVersion === constants.WEBGL2
+          ? gl.HALF_FLOAT
+          : gl.getExtension('OES_texture_half_float').HALF_FLOAT_OES;
     } else {
       type = gl.UNSIGNED_BYTE;
     }
@@ -1668,11 +1708,13 @@ class RendererGL extends Renderer3D {
   }
 
   deleteFramebufferTextures(framebuffer) {
-    this._deleteFramebufferTexture(framebuffer.color)
+    this._deleteFramebufferTexture(framebuffer.color);
     if (framebuffer.depth) this._deleteFramebufferTexture(framebuffer.depth);
     const gl = this.GL;
-    if (framebuffer.colorRenderbuffer) gl.deleteRenderbuffer(framebuffer.colorRenderbuffer);
-    if (framebuffer.depthRenderbuffer) gl.deleteRenderbuffer(framebuffer.depthRenderbuffer);
+    if (framebuffer.colorRenderbuffer)
+      gl.deleteRenderbuffer(framebuffer.colorRenderbuffer);
+    if (framebuffer.depthRenderbuffer)
+      gl.deleteRenderbuffer(framebuffer.depthRenderbuffer);
   }
 
   deleteFramebufferResources(framebuffer) {
@@ -1705,13 +1747,17 @@ class RendererGL extends Renderer3D {
       const partsToCopy = {
         colorTexture: [
           gl.COLOR_BUFFER_BIT,
-          framebuffer.colorP5Texture.magFilter === constants.LINEAR ? gl.LINEAR : gl.NEAREST
-        ],
+          framebuffer.colorP5Texture.magFilter === constants.LINEAR
+            ? gl.LINEAR
+            : gl.NEAREST
+        ]
       };
       if (framebuffer.useDepth) {
         partsToCopy.depthTexture = [
           gl.DEPTH_BUFFER_BIT,
-          framebuffer.depthP5Texture.magFilter === constants.LINEAR ? gl.LINEAR : gl.NEAREST
+          framebuffer.depthP5Texture.magFilter === constants.LINEAR
+            ? gl.LINEAR
+            : gl.NEAREST
         ];
       }
       const [flag, filter] = partsToCopy[property];
@@ -1737,9 +1783,7 @@ class RendererGL extends Renderer3D {
     const gl = this.GL;
     gl.bindFramebuffer(
       gl.FRAMEBUFFER,
-      framebuffer
-        ? this.getFramebufferToBind(framebuffer)
-        : null
+      framebuffer ? this.getFramebufferToBind(framebuffer) : null
     );
   }
 
@@ -1818,9 +1862,10 @@ class RendererGL extends Renderer3D {
           if (channel < channels) {
             // Find the index of this pixel in `rawData`, which might have a
             // different number of channels
-            const rawDataIdx = channels === 4
-              ? idx
-              : (yPos * w * framebuffer.density + xPos) * channels + channel;
+            const rawDataIdx =
+              channels === 4
+                ? idx
+                : (yPos * w * framebuffer.density + xPos) * channels + channel;
             fullData[idx] = rawData[rawDataIdx];
           }
         }
@@ -1829,10 +1874,9 @@ class RendererGL extends Renderer3D {
 
     // Create image from data
     const region = new Image(w * framebuffer.density, h * framebuffer.density);
-    region.imageData = region.canvas.getContext('2d').createImageData(
-      region.width,
-      region.height
-    );
+    region.imageData = region.canvas
+      .getContext('2d')
+      .createImageData(region.width, region.height);
     region.imageData.data.set(fullData);
     region.pixels = region.imageData.data;
     region.updatePixels();
@@ -1848,10 +1892,19 @@ class RendererGL extends Renderer3D {
     const colorFormat = this._getFramebufferColorFormat(framebuffer);
 
     const channels = colorFormat.format === gl.RGBA ? 4 : 3;
-    const len = framebuffer.width * framebuffer.height * framebuffer.density * framebuffer.density * channels;
-    const TypedArrayClass = colorFormat.type === gl.UNSIGNED_BYTE ? Uint8Array : Float32Array;
+    const len =
+      framebuffer.width *
+      framebuffer.height *
+      framebuffer.density *
+      framebuffer.density *
+      channels;
+    const TypedArrayClass =
+      colorFormat.type === gl.UNSIGNED_BYTE ? Uint8Array : Float32Array;
 
-    if (!(framebuffer.pixels instanceof TypedArrayClass) || framebuffer.pixels.length !== len) {
+    if (
+      !(framebuffer.pixels instanceof TypedArrayClass) ||
+      framebuffer.pixels.length !== len
+    ) {
       throw new Error(
         'The pixels array has not been set correctly. Please call loadPixels() before updatePixels().'
       );
@@ -1890,10 +1943,14 @@ class RendererGL extends Renderer3D {
       this._drawingFilter = true;
       this.image(
         framebuffer,
-        0, 0,
-        framebuffer.width, framebuffer.height,
-        -this.width / 2, -this.height / 2,
-        this.width, this.height
+        0,
+        0,
+        framebuffer.width,
+        framebuffer.height,
+        -this.width / 2,
+        -this.height / 2,
+        this.width,
+        this.height
       );
       this._drawingFilter = false;
       this.pop();
@@ -1911,7 +1968,6 @@ class RendererGL extends Renderer3D {
       this.bindFramebuffer(prevFramebuffer);
     }
   }
-
 }
 
 function rendererGL(p5, fn) {
@@ -2081,6 +2137,6 @@ function rendererGL(p5, fn) {
 export default rendererGL;
 export { RendererGL };
 
-if (typeof p5 !== "undefined") {
+if (typeof p5 !== 'undefined') {
   rendererGL(p5, p5.prototype);
 }

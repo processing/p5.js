@@ -2,9 +2,9 @@ name: 💭 Discussion
 description: This template is for starting a discussion.
 labels: [Discussion]
 body:
-- type: textarea
-  attributes:
-    label: Topic
-    description: What do you want to discuss with the group?
-  validations:
-    required: true
+  - type: textarea
+    attributes:
+      label: Topic
+      description: What do you want to discuss with the group?
+    validations:
+      required: true

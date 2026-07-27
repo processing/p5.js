@@ -28,7 +28,7 @@ class Renderer2D extends Renderer {
       this.canvas.style.display = 'none';
     }
 
-    if(!this.elt.id){
+    if (!this.elt.id) {
       this.elt.id = `defaultCanvas${p5.sketchCount++}`;
     }
     this.elt.classList.add('p5Canvas');
@@ -66,7 +66,7 @@ class Renderer2D extends Renderer {
 
     // Get and store drawing context
     this.drawingContext = this.canvas.getContext('2d', attributes);
-    if(attributes.colorSpace === 'display-p3'){
+    if (attributes.colorSpace === 'display-p3') {
       this.states.colorMode = RGBP3;
     }
     this.scale(this._pixelDensity, this._pixelDensity);
@@ -83,7 +83,7 @@ class Renderer2D extends Renderer {
     return this._filterRenderer;
   }
 
-  remove(){
+  remove() {
     this.wrappedElt.remove();
     this.wrappedElt = null;
     this.canvas = null;
@@ -96,13 +96,12 @@ class Renderer2D extends Renderer {
       const pInst = this._pInst;
 
       // create secondary layer
-      this.filterGraphicsLayer =
-        new Graphics(
-          this.width,
-          this.height,
-          constants.WEBGL,
-          pInst
-        );
+      this.filterGraphicsLayer = new Graphics(
+        this.width,
+        this.height,
+        constants.WEBGL,
+        pInst
+      );
     }
     if (
       this.filterGraphicsLayer.width !== this.width ||
@@ -146,10 +145,7 @@ class Renderer2D extends Renderer {
     this.canvas.height = h * this._pixelDensity;
     this.canvas.style.width = `${w}px`;
     this.canvas.style.height = `${h}px`;
-    this.drawingContext.scale(
-      this._pixelDensity,
-      this._pixelDensity
-    );
+    this.drawingContext.scale(this._pixelDensity, this._pixelDensity);
 
     // reset canvas properties
     for (const savedKey in props) {
@@ -167,7 +163,7 @@ class Renderer2D extends Renderer {
 
   background(...args) {
     if (args.length === 0) {
-      return this;// setter with no args does nothing
+      return this; // setter with no args does nothing
     }
     this.push();
     this.resetMatrix();
@@ -224,7 +220,10 @@ class Renderer2D extends Renderer {
     // Add accessible outputs if the method exists; on success,
     // set the accessible output background to white.
     if (this._pInst._addAccsOutput?.()) {
-      this._pInst._accsCanvasColors?.('fill', color._getRGBA([255, 255, 255, 255]));
+      this._pInst._accsCanvasColors?.(
+        'fill',
+        color._getRGBA([255, 255, 255, 255])
+      );
     }
   }
 
@@ -239,7 +238,10 @@ class Renderer2D extends Renderer {
     // Add accessible outputs if the method exists; on success,
     // set the accessible output background to white.
     if (this._pInst._addAccsOutput?.()) {
-      this._pInst._accsCanvasColors?.('stroke', color._getRGBA([255, 255, 255, 255]));
+      this._pInst._accsCanvasColors?.(
+        'stroke',
+        color._getRGBA([255, 255, 255, 255])
+      );
     }
   }
 
@@ -251,7 +253,10 @@ class Renderer2D extends Renderer {
       this.drawingContext.fillStyle = newFill;
 
       // cache the stroke style
-      this.states.setValue('_cachedStrokeStyle', this.drawingContext.strokeStyle);
+      this.states.setValue(
+        '_cachedStrokeStyle',
+        this.drawingContext.strokeStyle
+      );
       const newStroke = this._pInst.color(255, opacityStroke).toString();
       this.drawingContext.strokeStyle = newStroke;
 
@@ -322,22 +327,10 @@ class Renderer2D extends Renderer {
     if (this._clipInvert) {
       // Slight hack: draw a big rectangle over everything with reverse winding
       // order. This is hopefully large enough to cover most things.
-      this.clipPath.moveTo(
-        -2 * this.width,
-        -2 * this.height
-      );
-      this.clipPath.lineTo(
-        -2 * this.width,
-        2 * this.height
-      );
-      this.clipPath.lineTo(
-        2 * this.width,
-        2 * this.height
-      );
-      this.clipPath.lineTo(
-        2 * this.width,
-        -2 * this.height
-      );
+      this.clipPath.moveTo(-2 * this.width, -2 * this.height);
+      this.clipPath.lineTo(-2 * this.width, 2 * this.height);
+      this.clipPath.lineTo(2 * this.width, 2 * this.height);
+      this.clipPath.lineTo(2 * this.width, -2 * this.height);
       this.clipPath.closePath();
     }
   }
@@ -362,17 +355,7 @@ class Renderer2D extends Renderer {
   // IMAGE | Loading & Displaying
   //////////////////////////////////////////////
 
-  image(
-    img,
-    sx,
-    sy,
-    sWidth,
-    sHeight,
-    dx,
-    dy,
-    dWidth,
-    dHeight
-  ) {
+  image(img, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight) {
     let cnv;
     if (img.gifProperties) {
       img._animateGif(this._pInst);
@@ -446,11 +429,7 @@ class Renderer2D extends Renderer {
 
     const tint = this.states.tint._getRGBA([255, 255, 255, 255]);
 
-    if (
-      tint[0] < 255 ||
-      tint[1] < 255 ||
-      tint[2] < 255
-    ) {
+    if (tint[0] < 255 || tint[1] < 255 || tint[2] < 255) {
       // Color tint: we need to use the multiply blend mode to change the colors.
       // However, the canvas implementation of this destroys the alpha channel of
       // the image. To accommodate, we first get a version of the image with full
@@ -494,7 +473,8 @@ class Renderer2D extends Renderer {
   //////////////////////////////////////////////
 
   blendMode(mode) {
-    if (typeof mode === 'undefined') { // getter
+    if (typeof mode === 'undefined') {
+      // getter
       return this._cachedBlendMode;
     }
     if (mode === constants.SUBTRACT) {
@@ -570,10 +550,7 @@ class Renderer2D extends Renderer {
     if (imgOrCol instanceof Graphics || imgOrCol instanceof Image) {
       this.drawingContext.save();
       this.drawingContext.setTransform(1, 0, 0, 1, 0, 0);
-      this.drawingContext.scale(
-        this._pixelDensity,
-        this._pixelDensity
-      );
+      this.drawingContext.scale(this._pixelDensity, this._pixelDensity);
       const width = imgOrCol.width;
       const height = imgOrCol.height;
       this.drawingContext.clearRect(x, y, width, height);
@@ -585,9 +562,7 @@ class Renderer2D extends Renderer {
         a = 0;
       let idx =
         4 *
-        (y *
-          this._pixelDensity *
-          (this.width * this._pixelDensity) +
+        (y * this._pixelDensity * (this.width * this._pixelDensity) +
           x * this._pixelDensity);
       if (!this.imageData) {
         this.loadPixels();
@@ -623,9 +598,7 @@ class Renderer2D extends Renderer {
           // loop over
           idx =
             4 *
-            ((y * this._pixelDensity + j) *
-              this.width *
-              this._pixelDensity +
+            ((y * this._pixelDensity + j) * this.width * this._pixelDensity +
               (x * this._pixelDensity + i));
           this.pixels[idx] = r;
           this.pixels[idx + 1] = g;
@@ -676,20 +649,11 @@ class Renderer2D extends Renderer {
   arc(x, y, w, h, start, stop, mode) {
     const shape = new p5.Shape({ position: new p5.Vector(0, 0) });
     shape.beginShape();
-    shape.arcPrimitive(
-      x,
-      y,
-      w,
-      h,
-      start,
-      stop,
-      mode
-    );
+    shape.arcPrimitive(x, y, w, h, start, stop, mode);
     shape.endShape();
     this.drawShape(shape);
 
     return this;
-
   }
 
   ellipse(args) {
@@ -700,7 +664,7 @@ class Renderer2D extends Renderer {
 
     const shape = new p5.Shape({ position: new p5.Vector(0, 0) });
     shape.beginShape();
-    shape.ellipsePrimitive(x,y,w,h);
+    shape.ellipsePrimitive(x, y, w, h);
     shape.endShape();
     this.drawShape(shape);
     return this;
@@ -777,7 +741,8 @@ class Renderer2D extends Renderer {
   //////////////////////////////////////////////
 
   strokeCap(cap) {
-    if (typeof cap === 'undefined') { // getter
+    if (typeof cap === 'undefined') {
+      // getter
       return this.drawingContext.lineCap;
     }
     if (
@@ -791,7 +756,8 @@ class Renderer2D extends Renderer {
   }
 
   strokeJoin(join) {
-    if (typeof join === 'undefined') { // getter
+    if (typeof join === 'undefined') {
+      // getter
       return this.drawingContext.lineJoin;
     }
     if (
@@ -834,7 +800,10 @@ class Renderer2D extends Renderer {
 
   _getStroke() {
     if (!this.states._cachedStrokeStyle) {
-      this.states.setValue('_cachedStrokeStyle', this.drawingContext.strokeStyle);
+      this.states.setValue(
+        '_cachedStrokeStyle',
+        this.drawingContext.strokeStyle
+      );
     }
     return this.states._cachedStrokeStyle;
   }
@@ -863,10 +832,7 @@ class Renderer2D extends Renderer {
 
   resetMatrix() {
     this.drawingContext.setTransform(1, 0, 0, 1, 0, 0);
-    this.drawingContext.scale(
-      this._pixelDensity,
-      this._pixelDensity
-    );
+    this.drawingContext.scale(this._pixelDensity, this._pixelDensity);
     return this;
   }
 
@@ -951,7 +917,6 @@ class Renderer2D extends Renderer {
     }
 
     if (!this._clipping && states.fillColor) {
-
       // if fill hasn't been set by user, use default text fill
       if (!states.fillSet) {
         this._setFill(DefaultFill);
@@ -967,7 +932,8 @@ class Renderer2D extends Renderer {
   */
   _positionLines(x, y, width, height, lines) {
     let { textLeading, textAlign } = this.states;
-    let adjustedX, lineData = new Array(lines.length);
+    let adjustedX,
+      lineData = new Array(lines.length);
     let adjustedW = typeof width === 'undefined' ? 0 : width;
     let adjustedH = typeof height === 'undefined' ? 0 : height;
 
@@ -1002,10 +968,13 @@ class Renderer2D extends Renderer {
     }
 
     let { textLeading, textBaseline } = this.states;
-    let yOff = 0, numLines = dataArr.length;
-    let ydiff = height - (textLeading * (numLines - 1));
+    let yOff = 0,
+      numLines = dataArr.length;
+    let ydiff = height - textLeading * (numLines - 1);
 
-    switch (textBaseline) { // drawingContext ?
+    switch (
+      textBaseline // drawingContext ?
+    ) {
       case constants.TOP:
         break; // ??
       case constants.BASELINE:
@@ -1017,19 +986,21 @@ class Renderer2D extends Renderer {
         yOff = ydiff;
         break;
       case textCoreConstants.IDEOGRAPHIC:
-        console.warn('textBounds: IDEOGRAPHIC not yet supported for textBaseline'); // FES?
+        console.warn(
+          'textBounds: IDEOGRAPHIC not yet supported for textBaseline'
+        ); // FES?
         break;
       case textCoreConstants.HANGING:
         console.warn('textBounds: HANGING not yet supported for textBaseline'); // FES?
         break;
     }
 
-    dataArr.forEach(ele => ele.y += yOff);
+    dataArr.forEach(ele => (ele.y += yOff));
     return dataArr;
   }
 }
 
-function renderer2D(p5, fn){
+function renderer2D(p5, fn) {
   /**
    * p5.Renderer2D
    * The 2D graphics canvas renderer class.
@@ -1039,8 +1010,10 @@ function renderer2D(p5, fn){
   p5.Renderer2D = Renderer2D;
   p5.renderers[constants.P2D] = Renderer2D;
   p5.renderers['p2d-p3'] = new Proxy(Renderer2D, {
-    construct(target, [pInst, w, h, isMainCanvas, elt]){
-      return new target(pInst, w, h, isMainCanvas, elt, { colorSpace: 'display-p3' });
+    construct(target, [pInst, w, h, isMainCanvas, elt]) {
+      return new target(pInst, w, h, isMainCanvas, elt, {
+        colorSpace: 'display-p3'
+      });
     }
   });
 }

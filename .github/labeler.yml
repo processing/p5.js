@@ -1,39 +1,39 @@
-"Area:Accessibility":
+'Area:Accessibility':
   - '\[[xX]\]\s*Accessibility'
-"Area:Color":
+'Area:Color':
   - '\[[xX]\]\s*Color'
-"Area:Core":
+'Area:Core':
   - '\[[xX]\]\s*Core'
-"Area:Data":
+'Area:Data':
   - '\[[xX]\]\s*Data'
-"Area:DOM":
+'Area:DOM':
   - '\[[xX]\]\s*DOM'
-"Area:Events":
+'Area:Events':
   - '\[[xX]\]\s*Events'
-"Area:Image":
+'Area:Image':
   - '\[[xX]\]\s*Image'
-"Area:IO":
+'Area:IO':
   - '\[[xX]\]\s*IO'
-"Area:Math":
+'Area:Math':
   - '\[[xX]\]\s*Math'
-"Area:Typography":
+'Area:Typography':
   - '\[[xX]\]\s*Typography'
-"Area:Utilities":
+'Area:Utilities':
   - '\[[xX]\]\s*Utilities'
-"Area:WebGL":
+'Area:WebGL':
   - '\[[xX]\]\s*WebGL'
-"Internationalization":
+'Internationalization':
   - '\[[xX]\]\s*Internationalization'
-"DevOps":
+'DevOps':
   - '\[[xX]\]\s*Build Process'
   - '\[[xX]\]\s*Unit Testing'
-"Build Process":
+'Build Process':
   - '\[[xX]\]\s*Build Process'
-"Unit Testing":
+'Unit Testing':
   - '\[[xX]\]\s*Unit Testing'
-"Friendly Errors":
+'Friendly Errors':
   - '\[[xX]\]\s*Friendly Errors'
-"p5.strands":
+'p5.strands':
   - '\[[xX]\]\s*p5.strands'
-"Area:WebGPU":
+'Area:WebGPU':
   - '\[[xX]\]\s*WebGPU'

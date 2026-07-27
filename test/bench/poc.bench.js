@@ -1,20 +1,20 @@
-import { bench, describe } from "vitest";
+import { bench, describe } from 'vitest';
 
-describe.only("sort", () => {
+describe.only('sort', () => {
   bench(
-    "normal",
+    'normal',
     () => {
       const x = [1, 5, 4, 2, 3];
       x.sort((a, b) => {
         return a - b;
       });
-      throw new Error("error");
+      throw new Error('error');
     },
     { iterations: 100 }
   );
 
   bench(
-    "reverse",
+    'reverse',
     () => {
       const x = [1, 5, 4, 2, 3];
       x.reverse()

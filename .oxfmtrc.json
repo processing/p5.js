@@ -1,0 +1,18 @@
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "ignorePatterns": [
+    "test/manual-test-examples/*",
+    "lib/*",
+    ".all-contributorsrc",
+    "test/mockServiceWorker.js",
+    "contributor_docs/project_wrapups/*",
+    "*.json"
+  ],
+  "printWidth": 80,
+  "tabWidth": 2,
+  "useTabs": false,
+  "semi": true,
+  "singleQuote": true,
+  "trailingComma":"none",
+  "arrowParens": "avoid"
+}

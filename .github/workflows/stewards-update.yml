@@ -40,8 +40,8 @@ jobs:
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@22a9089034f40e5a961c8808d113e2c98fb63676
         with:
-          commit-message: "Update README table from stewards.yml"
+          commit-message: 'Update README table from stewards.yml'
           branch: update-readme-table
-          title: "chore: update README table from stewards.yml"
-          body: "This PR updates the README.md table to reflect changes in stewards.yml."
+          title: 'chore: update README table from stewards.yml'
+          body: 'This PR updates the README.md table to reflect changes in stewards.yml.'
           add-paths: README.md

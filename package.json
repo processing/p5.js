@@ -38,7 +38,7 @@
   "devDependencies": {
     "@eslint/compat": "^1.2.9",
     "@eslint/js": "^9.28.0",
-    "@eslint/markdown": "^6.5.0",
+    "@eslint/markdown": "^6.6.0",
     "@playwright/browser-chromium": "^1.62.0",
     "@rollup/plugin-alias": "^6.0.0",
     "@stylistic/eslint-plugin": "^4.4.1",
@@ -53,6 +53,8 @@
     "husky": "^4.2.3",
     "lint-staged": "^15.1.0",
     "msw": "^2.15.0",
+    "oxfmt": "^0.60.0",
+    "oxlint": "^1.75.0",
     "pixelmatch": "^7.2.0",
     "pkg-pr-new": "^0.0.80",
     "rolldown": "^1.2.0",

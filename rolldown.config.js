@@ -14,7 +14,7 @@ const plugins = [
   }),
   replacePlugin(
     {
-      'VERSION_WILL_BE_REPLACED_BY_BUILD': pkg.version
+      VERSION_WILL_BE_REPLACED_BY_BUILD: pkg.version
     },
     {
       preventAssignment: true
@@ -64,7 +64,7 @@ export default defineConfig([
       }),
       replacePlugin({
         IS_MINIFIED: true
-      }),
+      })
       // bundleAnalyzerPlugin({
       //   format: 'md'
       // })

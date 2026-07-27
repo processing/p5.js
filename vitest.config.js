@@ -1,12 +1,10 @@
 import { defineConfig, configDefaults } from 'vitest/config';
 import { string } from 'rollup-plugin-string';
-import { playwright } from '@vitest/browser-playwright'
+import { playwright } from '@vitest/browser-playwright';
 
 const plugins = [
   string({
-    include: [
-      'src/webgl/shaders/**/*'
-    ]
+    include: ['src/webgl/shaders/**/*']
   })
 ];
 
@@ -18,17 +16,13 @@ export default defineConfig({
         bench: {
           name: 'bench',
           root: './',
-          include: [
-            './test/bench/**/*.js'
-          ]
+          include: ['./test/bench/**/*.js']
         },
         test: {
           name: 'unit-tests',
           publicDir: './test',
           root: './',
-          include: [
-            './test/unit/**/*.js'
-          ],
+          include: ['./test/unit/**/*.js'],
           exclude: [
             './test/unit/spec.js',
             './test/unit/assets/**/*',
@@ -42,22 +36,22 @@ export default defineConfig({
           browser: {
             enabled: true,
             provider: playwright({
-              capabilities: process.env.CI ? {
-                'goog:chromeOptions': {
-                  args: [
-                    '--headless=new',
-                    '--no-sandbox',
-                    '--enable-webgl',
-                    '--use-gl=angle',
-                    '--use-angle=swiftshader-webgl',
-                    '--enable-unsafe-swiftshader'
-                  ]
-                }
-              } : undefined
+              capabilities: process.env.CI
+                ? {
+                    'goog:chromeOptions': {
+                      args: [
+                        '--headless=new',
+                        '--no-sandbox',
+                        '--enable-webgl',
+                        '--use-gl=angle',
+                        '--use-angle=swiftshader-webgl',
+                        '--enable-unsafe-swiftshader'
+                      ]
+                    }
+                  }
+                : undefined
             }),
-            instances: [
-              { browser: 'chromium' }
-            ],
+            instances: [{ browser: 'chromium' }],
             screenshotFailures: false
           },
           fakeTimers: {
@@ -70,9 +64,7 @@ export default defineConfig({
         bench: {
           name: 'bench',
           root: './',
-          include: [
-            './test/bench/**/*.js'
-          ]
+          include: ['./test/bench/**/*.js']
         },
         test: {
           name: 'unit-tests-webgpu',
@@ -94,22 +86,22 @@ export default defineConfig({
           browser: {
             enabled: true,
             provider: playwright({
-              capabilities: process.env.CI ? {
-                'goog:chromeOptions': {
-                  args: [
-                    '--no-sandbox',
-                    '--headless=new',
-                    '--enable-unsafe-webgpu',
-                    '--use-vulkan=swiftshader',
-                    '--use-webgpu-adapter=swiftshader',
-                    '--use-angle=vulkan'
-                  ]
-                }
-              } : undefined
+              capabilities: process.env.CI
+                ? {
+                    'goog:chromeOptions': {
+                      args: [
+                        '--no-sandbox',
+                        '--headless=new',
+                        '--enable-unsafe-webgpu',
+                        '--use-vulkan=swiftshader',
+                        '--use-webgpu-adapter=swiftshader',
+                        '--use-angle=vulkan'
+                      ]
+                    }
+                  }
+                : undefined
             }),
-            instances: [
-              { browser: 'chromium' }
-            ],
+            instances: [{ browser: 'chromium' }],
             screenshotFailures: false
           },
           fakeTimers: {
