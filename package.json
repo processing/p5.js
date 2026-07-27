@@ -34,13 +34,14 @@
     "libtess": "^1.2.2",
     "omggif": "^1.0.10",
     "pako": "^2.1.0",
-    "zod": "^4.2.1",
-    "tl-util": "npm:@limzykenneth/tl-util@0.0.1"
+    "tl-util": "npm:@limzykenneth/tl-util@0.0.1",
+    "zod": "^4.2.1"
   },
   "devDependencies": {
     "@eslint/compat": "^1.2.9",
     "@eslint/js": "^9.28.0",
     "@eslint/markdown": "^6.5.0",
+    "@playwright/browser-chromium": "^1.62.0",
     "@rollup/plugin-alias": "^5.1.1",
     "@rollup/plugin-commonjs": "^25.0.7",
     "@rollup/plugin-json": "^6.1.0",
@@ -48,8 +49,8 @@
     "@rollup/plugin-replace": "^5.0.7",
     "@rollup/plugin-terser": "^0.4.4",
     "@stylistic/eslint-plugin": "^4.4.1",
-    "@vitest/browser": "^4.0.16",
-    "@vitest/browser-webdriverio": "^4.0.16",
+    "@vitest/browser": "^4.1.10",
+    "@vitest/browser-playwright": "^4.1.10",
     "concurrently": "^8.2.2",
     "documentation": "^14.0.3",
     "eslint": "^9.28.0",
@@ -67,7 +68,7 @@
     "rollup-plugin-visualizer": "^5.12.0",
     "typescript": "^5.9.2",
     "vite": "^8.1.5",
-    "vitest": "^4.0.16",
+    "vitest": "^4.1.10",
     "webdriverio": "^9.0.7"
   },
   "license": "LGPL-2.1",

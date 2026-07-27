@@ -1,6 +1,6 @@
 import { defineConfig, configDefaults } from 'vitest/config';
 import { string } from 'rollup-plugin-string';
-import { webdriverio } from '@vitest/browser-webdriverio';
+import { playwright } from '@vitest/browser-playwright'
 
 const plugins = [
   string({
@@ -41,7 +41,7 @@ export default defineConfig({
           globals: true,
           browser: {
             enabled: true,
-            provider: webdriverio({
+            provider: playwright({
               capabilities: process.env.CI ? {
                 'goog:chromeOptions': {
                   args: [
@@ -56,7 +56,7 @@ export default defineConfig({
               } : undefined
             }),
             instances: [
-              { browser: 'chrome' }
+              { browser: 'chromium' }
             ],
             screenshotFailures: false
           },
@@ -93,7 +93,7 @@ export default defineConfig({
           globals: true,
           browser: {
             enabled: true,
-            provider: webdriverio({
+            provider: playwright({
               capabilities: process.env.CI ? {
                 'goog:chromeOptions': {
                   args: [
@@ -108,7 +108,7 @@ export default defineConfig({
               } : undefined
             }),
             instances: [
-              { browser: 'chrome' }
+              { browser: 'chromium' }
             ],
             screenshotFailures: false
           },
