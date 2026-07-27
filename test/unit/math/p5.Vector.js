@@ -1,7 +1,7 @@
 import { default as vector, Vector } from '../../../src/math/p5.Vector.js';
 import { default as math } from '../../../src/math/math.js';
 import { _defaultEmptyVector, _validatedVectorOperation } from '../../../src/math/patch-vector.js';
-import { assert, vi } from 'vitest';
+import { vi } from 'vitest';
 
 
 suite('p5.Vector', function () {
@@ -2188,8 +2188,7 @@ suite('p5.Vector', function () {
     test('should show a value change for x with toString() for 1d Vector', function(){
       v = new Vector(1);
       v.x = 2;
-      let output = v.toString();
-      assert.equal(output, 'vector[2]');
+      expect(v.toString()).toBe('vector[2]');
     })
   });
 
