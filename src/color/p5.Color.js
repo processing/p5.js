@@ -65,10 +65,10 @@ class Color {
   // where if we `import { Color }` directly, it will be a separate copy of the
   // Color class from the one imported in the main p5.js bundle.
   isColor = true;
-  #rgbaCache = new Map();
+  #srgbCoords = null;
 
-  #invalidateRGBACache() {
-    this.#rgbaCache.clear();
+  #invalidateSrgbCache() {
+    this.#srgbCoords = null;
   }
 
   // Used to add additional color modes to p5.js
@@ -246,7 +246,7 @@ class Color {
       this._initialize();
       this._initialize = undefined;
     }
-    this.#invalidateRGBACache();
+    this.#invalidateSrgbCache();
     this._cachedColor = newColor;
   }
 
@@ -565,7 +565,7 @@ class Color {
 
     if(this.mode === RGB || this.mode === RGBP3){
       this._color.coords[0] = newval;
-      this.#invalidateRGBACache();
+      this.#invalidateSrgbCache();
     }else{
       // Will do an imprecise conversion to 'srgb', not recommended
       const space = this._color.space.id;
@@ -618,7 +618,7 @@ class Color {
 
     if(this.mode === RGB || this.mode === RGBP3){
       this._color.coords[1] = newval;
-      this.#invalidateRGBACache();
+      this.#invalidateSrgbCache();
     }else{
       // Will do an imprecise conversion to 'srgb', not recommended
       const space = this._color.space.id;
@@ -671,7 +671,7 @@ class Color {
 
     if(this.mode === RGB || this.mode === RGBP3){
       this._color.coords[2] = newval;
-      this.#invalidateRGBACache();
+      this.#invalidateSrgbCache();
     }else{
       // Will do an imprecise conversion to 'srgb', not recommended
       const space = this._color.space.id;
@@ -724,18 +724,20 @@ class Color {
     const newval = map(new_alpha, max[0], max[1], colorjsMax[0], colorjsMax[1]);
 
     this._color.alpha = newval;
-    this.#invalidateRGBACache();
+    this.#invalidateSrgbCache();
   }
 
   _getRGBA(maxes=[1, 1, 1, 1]) {
-    const cacheKey = maxes.join(',');
-    if (this.#rgbaCache.has(cacheKey)) {
-      return [...this.#rgbaCache.get(cacheKey)];
+    // Cache the srgb conversion (the expensive step)
+    if (!this.#srgbCoords) {
+      if (this.mode === RGB || this._color.space.id === 'srgb') {
+        this.#srgbCoords = [...this._color.coords, this._color.alpha];
+      } else {
+        this.#srgbCoords = [...to(this._color, 'srgb').coords, this._color.alpha];
+      }
     }
 
-    // Get colorjs maxes
     const colorjsMaxes = Color.#colorjsMaxes[RGB];
-
     const rangeMaxes = maxes.map(v => {
       if(!Array.isArray(v)){
         return [0, v];
@@ -744,25 +746,13 @@ class Color {
       }
     });
 
-    let coords;
-    if (this.mode === RGB) {
-      coords = [...this._color.coords, this._color.alpha];
-    } else {
-      // Normalize everything to 0,1 or the provided range (map)
-      coords = structuredClone(to(this._color, 'srgb').coords);
-      coords.push(this._color.alpha);
-    }
-
-    const result = coords.map((coord, i) => {
+    return this.#srgbCoords.map((coord, i) => {
       return map(
         coord,
         colorjsMaxes[i][0], colorjsMaxes[i][1],
         rangeMaxes[i][0], rangeMaxes[i][1]
       );
     });
-
-    this.#rgbaCache.set(cacheKey, result);
-    return result;
   }
 
   _getMode() {
