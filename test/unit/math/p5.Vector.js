@@ -2034,6 +2034,25 @@ suite('p5.Vector', function () {
         const v1 = new Vector(0, -1, 1);
         expect(v1.equals(0, -1, 1)).to.be.true;
       });
+
+      test('should be symmetric when dimensions differ', function () {
+        const v3d = new Vector(1, 2, 3);
+        const v4d = new Vector(1, 2, 3, 4);
+        expect(v3d.equals(v4d)).to.equal(v4d.equals(v3d));
+      });
+
+      test('should compare up to the shorter length when dimensions differ', function () {
+        const v3d = new Vector(1, 2, 3);
+        const v4d = new Vector(1, 2, 3, 4);
+        expect(v3d.equals(v4d)).to.be.true;
+      });
+
+      test('should return false when values differ within the shorter length', function () {
+        const v3d = new Vector(1, 2, 3);
+        const v4d = new Vector(1, 2, 9, 4);
+        expect(v3d.equals(v4d)).to.be.false;
+        expect(v4d.equals(v3d)).to.be.false;
+      });
     });
 
     suite('p5.Vector.equals() [CLASS]', function () {
@@ -2063,6 +2082,18 @@ suite('p5.Vector', function () {
         const a1 = [0, -1, 1];
         const a2 = [0, -1, 1];
         expect(Vector.equals(a1, a2)).to.be.true;
+      });
+
+      test('should be symmetric when dimensions differ', function () {
+        const v3d = new Vector(1, 2, 3);
+        const v4d = new Vector(1, 2, 3, 4);
+        expect(Vector.equals(v3d, v4d)).to.equal(Vector.equals(v4d, v3d));
+      });
+
+      test('should compare up to the shorter length when dimensions differ', function () {
+        const v3d = new Vector(1, 2, 3);
+        const v4d = new Vector(1, 2, 3, 4);
+        expect(Vector.equals(v3d, v4d)).to.be.true;
       });
     });
   });
