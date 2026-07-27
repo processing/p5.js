@@ -3,9 +3,9 @@
   "repository": "processing/p5.js",
   "type": "module",
   "scripts": {
-    "build": "rollup -c",
+    "build": "rolldown -c",
     "dev": "vite preview/",
-    "dev:global": "concurrently -n build,server \"rollup -c -w\" \"npx vite preview/global/\"",
+    "dev:global": "concurrently -n build,server \"rolldown -c -w\" \"npx vite preview/global/\"",
     "docs": "documentation build ./src/**/*.js ./src/**/**/*.js --shallow -o ./docs/data.json && node ./utils/convert.mjs",
     "bench": "vitest bench",
     "bench:report": "vitest bench --reporter=verbose",

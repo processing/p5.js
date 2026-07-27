@@ -1,4 +1,4 @@
-import { inflate } from 'pako';
+import { inflate } from 'pako/lib/inflate';
 // Mocking the pako module to just have inflate for a smaller package size
 const pako = { inflate };
 

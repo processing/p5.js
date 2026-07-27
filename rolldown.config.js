@@ -5,6 +5,8 @@ import pkg from './package.json' with { type: 'json' };
 import { globSync } from 'glob';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import alias from '@rollup/plugin-alias';
+// import { bundleAnalyzerPlugin } from 'rolldown/experimental';
 
 const plugins = [
   string({
@@ -31,14 +33,6 @@ export default defineConfig([
         banner
       },
       {
-        file: './lib/p5.min.js',
-        format: 'iife',
-        name: 'p5',
-        banner,
-        minify: true,
-        plugins: []
-      },
-      {
         file: './lib/p5.esm.js',
         format: 'esm',
         banner
@@ -51,6 +45,30 @@ export default defineConfig([
       }
     ],
     plugins
+  },
+  {
+    input: 'src/app.js',
+    output: {
+      file: './lib/p5.min.js',
+      format: 'iife',
+      name: 'p5',
+      banner,
+      minify: true
+    },
+    plugins: [
+      ...plugins,
+      alias({
+        entries: [
+          { find: './core/friendly_errors', replacement: './core/noop' }
+        ]
+      }),
+      replacePlugin({
+        IS_MINIFIED: true
+      }),
+      // bundleAnalyzerPlugin({
+      //   format: 'md'
+      // })
+    ]
   },
   //// ESM source build ////
   {
