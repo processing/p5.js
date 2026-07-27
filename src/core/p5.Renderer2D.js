@@ -5,7 +5,7 @@ import { Graphics } from './p5.Graphics';
 import { Image } from '../image/p5.Image';
 import { Element } from '../dom/p5.Element';
 import { MediaElement } from '../dom/p5.MediaElement';
-import { RGBHDR } from '../color/creating_reading';
+import { RGBP3 } from '../color/creating_reading';
 import FilterRenderer2D from '../image/filterRenderer2D';
 import { Matrix } from '../math/p5.Matrix';
 import { PrimitiveToPath2DConverter } from '../shape/custom_shapes';
@@ -67,7 +67,7 @@ class Renderer2D extends Renderer {
     // Get and store drawing context
     this.drawingContext = this.canvas.getContext('2d', attributes);
     if(attributes.colorSpace === 'display-p3'){
-      this.states.colorMode = RGBHDR;
+      this.states.colorMode = RGBP3;
     }
     this.scale(this._pixelDensity, this._pixelDensity);
 
@@ -444,10 +444,12 @@ class Renderer2D extends Renderer {
     ctx.save();
     ctx.clearRect(0, 0, img.canvas.width, img.canvas.height);
 
+    const tint = this.states.tint._getRGBA([255, 255, 255, 255]);
+
     if (
-      this.states.tint[0] < 255 ||
-      this.states.tint[1] < 255 ||
-      this.states.tint[2] < 255
+      tint[0] < 255 ||
+      tint[1] < 255 ||
+      tint[2] < 255
     ) {
       // Color tint: we need to use the multiply blend mode to change the colors.
       // However, the canvas implementation of this destroys the alpha channel of
@@ -470,16 +472,16 @@ class Renderer2D extends Renderer {
 
       // Apply color tint
       ctx.globalCompositeOperation = 'multiply';
-      ctx.fillStyle = `rgb(${this.states.tint.slice(0, 3).join(', ')})`;
+      ctx.fillStyle = `rgb(${tint.slice(0, 3).join(', ')})`;
       ctx.fillRect(0, 0, img.canvas.width, img.canvas.height);
 
       // Replace the alpha channel with the original alpha * the alpha tint
       ctx.globalCompositeOperation = 'destination-in';
-      ctx.globalAlpha = this.states.tint[3] / 255;
+      ctx.globalAlpha = tint[3] / 255;
       ctx.drawImage(img.canvas, 0, 0);
     } else {
       // If we only need to change the alpha, we can skip all the extra work!
-      ctx.globalAlpha = this.states.tint[3] / 255;
+      ctx.globalAlpha = tint[3] / 255;
       ctx.drawImage(img.canvas, 0, 0);
     }
 
@@ -1036,7 +1038,7 @@ function renderer2D(p5, fn){
    */
   p5.Renderer2D = Renderer2D;
   p5.renderers[constants.P2D] = Renderer2D;
-  p5.renderers['p2d-hdr'] = new Proxy(Renderer2D, {
+  p5.renderers['p2d-p3'] = new Proxy(Renderer2D, {
     construct(target, [pInst, w, h, isMainCanvas, elt]){
       return new target(pInst, w, h, isMainCanvas, elt, { colorSpace: 'display-p3' });
     }

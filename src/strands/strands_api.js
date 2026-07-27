@@ -176,6 +176,43 @@ function installBuiltinGlobalAccessors(strandsContext) {
   strandsContext._builtinGlobalsAccessorsInstalled = true
 }
 
+function installInstanceIndexAccessor(strandsContext) {
+  if (strandsContext._instanceIndexAccessorInstalled) return;
+
+  const getRuntimeP5Instance = () => strandsContext.renderer?._pInst || strandsContext.p5?.instance;
+
+  const instanceIndexGetter = function() {
+    if (strandsContext.active) {
+      const node = build.variableNode(strandsContext, { baseType: BaseType.INT, dimension: 1 }, strandsContext.backend.instanceIdReference());
+      return createStrandsNode(node.id, node.dimension, strandsContext);
+    }
+    return undefined;
+  };
+
+  const inst = getRuntimeP5Instance();
+  if (inst?._isGlobal) {
+    Object.defineProperty(window, 'instanceIndex', {
+      get: instanceIndexGetter,
+      configurable: true,
+    });
+  }
+
+  Object.defineProperty(strandsContext.p5.prototype, 'instanceIndex', {
+    get: instanceIndexGetter,
+    configurable: true,
+  });
+
+  const GraphicsProto = strandsContext.p5?.Graphics?.prototype;
+  if (GraphicsProto) {
+    Object.defineProperty(GraphicsProto, 'instanceIndex', {
+      get: instanceIndexGetter,
+      configurable: true,
+    });
+  }
+
+  strandsContext._instanceIndexAccessorInstalled = true;
+}
+
 //////////////////////////////////////////////
 // Prototype mirroring helpers
 //////////////////////////////////////////////
@@ -337,9 +374,7 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
           const { id, dimension } = build.functionCallNode(strandsContext, functionName, args);
           return createStrandsNode(id, dimension, strandsContext);
         } else {
-          p5._friendlyError(
-            `It looks like you've called ${functionName} outside of a shader's modify() function.`
-          )
+          p5.FES.log`It looks like you've called ${functionName} outside of a shader's modify() function.`();
         }
       });
     }
@@ -510,9 +545,7 @@ const _rgb2hsl = (instance, colorNode) => {
       const { id, dimension } = strandsContext.backend.createGetTextureCall(strandsContext, rawArgs);
       return createStrandsNode(id, dimension, strandsContext);
     } else {
-      p5._friendlyError(
-        `It looks like you've called getTexture outside of a shader's modify() function.`
-      )
+      p5.FES.log`It looks like you've called getTexture outside of a shader's modify() function.`();
     }
   });
 
@@ -572,9 +605,7 @@ const _rgb2hsl = (instance, colorNode) => {
         nodeArgs = [fn.vec3(strandsArgs[0], 0, 0)];
       }
     } else {
-      p5._friendlyError(
-        `It looks like you've called noise() with ${args.length} arguments. It only supports 1D to 3D input.`
-      );
+      p5.FES.log`It looks like you've called noise() with ${args.length} arguments. It only supports 1D to 3D input.`();
     }
 
     const octaves = strandsContext._noiseOctaves !== null
@@ -668,9 +699,7 @@ const _rgb2hsl = (instance, colorNode) => {
       // min + raw * (max - min)
       return rawStrandsNode.mult(maxNode.sub(minNode)).add(minNode);
     } else {
-      p5._friendlyError(
-        `It looks like you've called random() with ${args.length} arguments. In strands, random() supports 0, 1, or 2 numeric arguments.`
-      );
+      p5.FES.log`It looks like you've called random() with ${args.length} arguments. In strands, random() supports 0, 1, or 2 numeric arguments.`();
     }
   });
 
@@ -793,9 +822,7 @@ const _rgb2hsl = (instance, colorNode) => {
       } else if (originalp5Fn) {
         return originalp5Fn.apply(this, args);
       } else {
-        p5._friendlyError(
-          `It looks like you've called ${typeInfo.fnName} outside of a shader's modify() function.`
-        );
+        p5.FES.log`It looks like you've called ${typeInfo.fnName} outside of a shader's modify() function.`()
       }
     });
   }
@@ -967,6 +994,7 @@ function enforceReturnTypeMatch(strandsContext, expectedType, returned, hookName
 }
 export function createShaderHooksFunctions(strandsContext, fn, shader) {
   installBuiltinGlobalAccessors(strandsContext)
+  installInstanceIndexAccessor(strandsContext)
 
   // Add shader context to hooks before spreading
   const vertexHooksWithContext = Object.fromEntries(
