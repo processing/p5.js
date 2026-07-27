@@ -1521,6 +1521,24 @@ visualTest('randomGaussian() in a fragment loop averages to the mean', (p5, scre
     });
   });
 
+  visualSuite('setUniform', () => {
+    visualTest('mat2 uniforms are uploaded', (p5, screenshot) => {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      const myShader = p5.createFilterShader(`
+        precision highp float;
+        uniform mat2 uMatrix;
+        void main() {
+          // Diagonal drives red & green: expect (1.0, 0.5, 0.0)
+          gl_FragColor = vec4(uMatrix[0][0], uMatrix[1][1], 0.0, 1.0);
+         }
+      `);
+      p5.background(200);
+      myShader.setUniform('uMatrix', [1.0, 0.0, 0.0, 0.5]);
+      p5.filter(myShader);
+      screenshot();
+    });
+  });
+
   visualSuite('background()', function () {
     visualTest('background(image) works in WEBGL', function (p5, screenshot) {
       p5.createCanvas(50, 50, p5.WEBGL);
