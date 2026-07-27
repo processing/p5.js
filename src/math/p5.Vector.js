@@ -2023,9 +2023,9 @@ class Vector {
    */
   setHeading(a) {
     if (this.dimensions < 2 || (
-      this._values instanceof Array && this._values.slice(2).some(v => v !== 0))
+      this.values instanceof Array && this.values.slice(2).some(v => v !== 0))
     ) {
-      p5._friendlyError(
+      this._friendlyError(
         'p5.Vector.setHeading() only supports 2D vectors (z === 0). ' +
         'For 3D or higher-dimensional vectors, use rotate() or another ' +
         'appropriate method instead.',

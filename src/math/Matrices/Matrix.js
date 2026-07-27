@@ -246,7 +246,7 @@ export class Matrix extends MatrixInterface {
       refArray = GLMAT_ARRAY_TYPE.from(inMatrix);
     }
     if (refArray.length !== this.matrix.length) {
-      p5._friendlyError(
+      this._friendlyError(
         `Expected same dimensions values but received different ${refArray.length}.`,
         'p5.Matrix.set'
       );
