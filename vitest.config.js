@@ -1,13 +1,12 @@
 import { defineConfig, configDefaults } from 'vitest/config';
-import vitePluginString from 'vite-plugin-string';
+import { string } from 'rollup-plugin-string';
 import { webdriverio } from '@vitest/browser-webdriverio';
 
 const plugins = [
-  vitePluginString({
+  string({
     include: [
       'src/webgl/shaders/**/*'
-    ],
-    compress: false
+    ]
   })
 ];
 

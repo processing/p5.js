@@ -1,10 +1,10 @@
 import { defineConfig } from 'vitest/config';
-import vitePluginString from 'vite-plugin-string';
+import { string } from 'rollup-plugin-string';
 
 export default defineConfig({
   root: './',
   plugins: [
-    vitePluginString({
+    string({
       include: [
         'src/webgl/shaders/**/*'
       ]
