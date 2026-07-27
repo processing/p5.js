@@ -1,6 +1,6 @@
 import {
   verifierUtils
-} from '../../../src/core/friendly_errors/sketch_verifier.js';
+} from '../../../src/friendly_errors/sketch_verifier.js';
 
 suite('Sketch Verifier', function () {
   const mockP5 = {
@@ -209,7 +209,7 @@ suite('Sketch Verifier', function () {
 
     test('Detects conflict with p5.js constant', function () {
       const userDefinitions = {
-        variables: [{ name: 'PI', line: 1 }],
+        variables: [{ name: 'PI', line: 0 }],
         functions: []
       };
       const result = verifierUtils.checkForConstsAndFuncs(
@@ -220,7 +220,7 @@ suite('Sketch Verifier', function () {
       expect(result).toBe(true);
       expect(consoleSpy).toHaveBeenCalledWith(
         expect.stringContaining(
-          'Constant "PI" on line 1 is being redeclared and conflicts with a p5.js constant'
+          'constant "PI" on line 1 is being redeclared and conflicts with a p5.js constant'
         )
       );
     });
@@ -228,7 +228,7 @@ suite('Sketch Verifier', function () {
     test('Detects conflict with p5.js global function', function () {
       const userDefinitions = {
         variables: [],
-        functions: [{ name: 'rect', line: 2 }]
+        functions: [{ name: 'rect', line: 1 }]
       };
       const result = verifierUtils.checkForConstsAndFuncs(
         userDefinitions,
@@ -238,7 +238,7 @@ suite('Sketch Verifier', function () {
       expect(result).toBe(true);
       expect(consoleSpy).toHaveBeenCalledWith(
         expect.stringContaining(
-          'Function "rect" on line 2 is being redeclared and conflicts with a p5.js function'
+          'function "rect" on line 2 is being redeclared and conflicts with a p5.js function'
         )
       );
     });
