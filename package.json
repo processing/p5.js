@@ -11,14 +11,14 @@
     "bench:report": "vitest bench --reporter=verbose",
     "test": "vitest",
     "test:types": "tsc test/types/*.ts --noEmit --lib es2022,dom",
-    "lint": "eslint .",
-    "lint:fix": "eslint --fix .",
+    "lint": "oxlint .",
+    "lint:fix": "oxlint --fix .",
     "generate-types": "npm run docs && node utils/typescript.mjs"
   },
   "lint-staged": {
-    "src/**/*.js": "eslint",
-    "test/**/*.js": "eslint",
-    "utils/**/*.{js,mjs}": "eslint"
+    "src/**/*.js": "oxlint",
+    "test/**/*.js": "oxlint",
+    "utils/**/*.{js,mjs}": "oxlint"
   },
   "version": "2.3.1",
   "dependencies": {
@@ -36,18 +36,12 @@
     "zod": "^4.2.1"
   },
   "devDependencies": {
-    "@eslint/compat": "^1.2.9",
-    "@eslint/js": "^9.28.0",
-    "@eslint/markdown": "^6.6.0",
     "@playwright/browser-chromium": "^1.62.0",
     "@rollup/plugin-alias": "^6.0.0",
-    "@stylistic/eslint-plugin": "^4.4.1",
     "@vitest/browser": "^4.1.10",
     "@vitest/browser-playwright": "^4.1.10",
     "concurrently": "^8.2.2",
     "documentation": "^14.0.3",
-    "eslint": "^9.28.0",
-    "eslint-plugin-jsdoc": "^50.8.0",
     "glob": "^13.0.6",
     "globals": "^16.2.0",
     "husky": "^4.2.3",
