@@ -40,7 +40,7 @@
     "@eslint/js": "^9.28.0",
     "@eslint/markdown": "^6.5.0",
     "@playwright/browser-chromium": "^1.62.0",
-    "@rollup/plugin-alias": "^5.1.1",
+    "@rollup/plugin-alias": "^6.0.0",
     "@stylistic/eslint-plugin": "^4.4.1",
     "@vitest/browser": "^4.1.10",
     "@vitest/browser-playwright": "^4.1.10",
@@ -48,14 +48,14 @@
     "documentation": "^14.0.3",
     "eslint": "^9.28.0",
     "eslint-plugin-jsdoc": "^50.8.0",
-    "glob": "^11.0.1",
+    "glob": "^13.0.6",
     "globals": "^16.2.0",
     "husky": "^4.2.3",
     "lint-staged": "^15.1.0",
-    "msw": "^2.6.3",
-    "pixelmatch": "^7.1.0",
-    "pkg-pr-new": "^0.0.65",
-    "rolldown": "^1.1.0",
+    "msw": "^2.15.0",
+    "pixelmatch": "^7.2.0",
+    "pkg-pr-new": "^0.0.80",
+    "rolldown": "^1.2.0",
     "rollup-plugin-string": "^3.0.0",
     "typescript": "^5.9.2",
     "vite": "^8.1.5",
@@ -125,5 +125,9 @@
       "test"
     ]
   },
-  "types": "./types/p5.d.ts"
+  "types": "./types/p5.d.ts",
+  "allowScripts": {
+    "@playwright/browser-chromium@1.62.0": true,
+    "msw@2.15.0": true
+  }
 }
