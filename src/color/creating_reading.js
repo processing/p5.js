@@ -1735,7 +1735,7 @@ function creatingReading(p5, fn){
    *   // Create p5.Color objects to interpolate between.
    *   colorMode(HSL);
    *   let from = color(240, 100, 25);
-   *   let to = color("white");
+   *   let to = color('white');
    *
    *   // Create intermediate colors
    *   let interA = lerpColor(from, to, 0.33);
