@@ -17,7 +17,9 @@
  */
 export default function loading(p5, fn, lifecycles) {
   lifecycles.presetup = function() {
-    if (typeof window === 'undefined' || this._loadingIndicator) return;
+    if (typeof window === 'undefined' || this._loadingIndicator) {
+      return;
+    }
 
     const canvasParent = this.canvas?.parentElement;
     let container = this._userNode || canvasParent || document.body;

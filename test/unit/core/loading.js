@@ -16,8 +16,6 @@ suite('Loading indicator', function() {
   });
 
   afterEach(function() {
-    lifecycles.postsetup?.();
-
     if (container) {
       container.remove();
       container = null;
@@ -52,7 +50,7 @@ suite('Loading indicator', function() {
       try {
         p.createCanvas(400, 400);
 
-        await load(7000);
+        await load(2000);
 
         p.background('#EB5580');
         p.fill(255);
@@ -77,5 +75,80 @@ suite('Loading indicator', function() {
     assert.deepEqual(p.background.mock.calls, [['#EB5580']]);
     assert.deepEqual(p.fill.mock.calls, [[255]]);
     assert.deepEqual(p.circle.mock.calls, [[200, 200, 100], [12, 34, 20]]);
+  });
+
+  test('test the loading indicator in an instance', function() {
+    const p = {
+      _userNode: container
+    };
+
+    lifecycles.presetup.call(p);
+    assert.exists(container.querySelector('.loading-indicator'));
+
+    lifecycles.postsetup.call(p);
+    assert.isNull(container.querySelector('.loading-indicator'));
+  });
+
+  test('test multiple indicators for multiple instances', async function() {
+    const instance1 = document.createElement('div');
+    const instance2 = document.createElement('div');
+    document.body.appendChild(instance1);
+    document.body.appendChild(instance2);
+
+
+    let resolveLoad1;
+    let resolveLoad2;
+
+    const load1 = async delay => {
+      await new Promise(resolve => {
+        resolveLoad1 = resolve;
+      });
+    };
+
+    const load2 = async delay => {
+      await new Promise(resolve => {
+        resolveLoad2 = resolve;
+      });
+    };
+
+    const p1 = { _userNode: instance1 };
+    const p2 = { _userNode: instance2 };
+
+    const setup1 = (async function() {
+      lifecycles.presetup.call(p1);
+      try {
+        await load1(2000);
+      }
+      finally {
+        lifecycles.postsetup.call(p1);
+      }
+    })();
+
+    const setup2 = (async function() {
+      lifecycles.presetup.call(p2);
+      try {
+        await load2(4000);
+      }
+      finally {
+        lifecycles.postsetup.call(p2);
+      }
+    })();
+
+    assert.exists(instance1.querySelector('.loading-indicator'), 'Container 1 should have a spinner');
+    assert.exists(instance2.querySelector('.loading-indicator'), 'Container 2 should have a spinner');
+
+    resolveLoad1();
+    await setup1;
+
+    assert.isNull(instance1.querySelector('.loading-indicator'), 'Container 1 spinner should be removed');
+    assert.exists(instance2.querySelector('.loading-indicator'), 'Container 2 spinner MUST still exist');
+
+    resolveLoad2();
+    await setup2;
+
+    assert.isNull(instance2.querySelector('.loading-indicator'), 'Container 2 spinner should now be removed');
+
+    instance1.remove();
+    instance2.remove();
   });
 });
