@@ -1756,8 +1756,22 @@ function creatingReading(p5, fn) {
    * @return {p5.Color}     interpolated color.
    */
   fn.lerpColor = function (c1, c2, amt) {
+    let outputMode = this._renderer.states.colorMode;
+    let lerpMode = outputMode;
+
+    if (typeof amt === 'object') {
+      // Passing in options object
+      outputMode = amt.outputMode ?? outputMode;
+      lerpMode = amt.lerpMode ?? lerpMode;
+      amt = amt.amount;
+    }
+
     // p5._validateParameters('lerpColor', arguments);
-    return c1.lerp(c2, amt, this._renderer.states.colorMode);
+    return c1.lerp(c2, {
+      amount: amt,
+      lerpMode,
+      outputMode
+    });
   };
 
   /**
