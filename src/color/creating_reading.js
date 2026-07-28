@@ -1757,6 +1757,15 @@ function creatingReading(p5, fn){
    * @param  {Number}   amt number between 0 and 1.
    * @return {p5.Color}     interpolated color.
    */
+  /**
+   * @method lerpColor
+   * @param  {p5.Color} c1  interpolate from this color.
+   * @param  {p5.Color} c2  interpolate to this color.
+   * @param  {Object} options interpolation options.
+   * @param  {RGB|HSB|HSL|RGBP3|HWB|LAB|LCH|OKLAB|OKLCH} [options.outputMode] the desired output color mode.
+   * @param  {RGB|HSB|HSL|RGBP3|HWB|LAB|LCH|OKLAB|OKLCH} [options.lerpMode] the color mode (space) to perform the interpolation in.
+   * @return  {p5.Color}     interpolated color.
+   */
   fn.lerpColor = function(c1, c2, amt) {
     let outputMode = this._renderer.states.colorMode;
     let lerpMode = outputMode;
