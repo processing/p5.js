@@ -303,7 +303,7 @@ class Color {
 
   lerp(color, amt, mode){
     let lerpMode = mode;
-    if (typeof amt === "object") {
+    if (typeof amt === 'object') {
       // Passing in options object
       mode = amt.outputMode;
       lerpMode = amt.lerpMode;

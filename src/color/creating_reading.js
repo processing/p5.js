@@ -1771,7 +1771,7 @@ function creatingReading(p5, fn){
     let outputMode = this._renderer.states.colorMode;
     let lerpMode = outputMode;
 
-    if (typeof amt === "object") {
+    if (typeof amt === 'object') {
       // Passing in options object
       outputMode = amt.outputMode;
       lerpMode = amt.lerpMode;
@@ -1782,7 +1782,7 @@ function creatingReading(p5, fn){
     return c1.lerp(c2, {
       amount: amt,
       lerpMode,
-      outputMode,
+      outputMode
     });
   };
 
