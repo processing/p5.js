@@ -21,8 +21,7 @@ export default function loading(p5, fn, lifecycles) {
       return;
     }
 
-    const canvasParent = this.canvas?.parentElement;
-    let container = this._userNode || canvasParent || document.body;
+    let container = this._userNode || document.body;
 
     if (typeof container === 'string') {
       container = document.getElementById(container) || document.body;
@@ -58,7 +57,7 @@ function createLoadingIndicator(container) {
   const indicator = document.createElement('div');
   indicator.className = 'loading-indicator';
   indicator.style.cssText = `
-    position: fixed;
+    position: absolute;
     inset: 0;
     margin: auto;
     width: 30px;
