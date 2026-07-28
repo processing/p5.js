@@ -7,8 +7,6 @@
  * Currently, the loading indicator is basic and can be extended in the future.
  */
 
-let loadingIndicator = null;
-
 /**
  * Creates a loading indicator when the sketch's setup() function is running.
  * It is called and removed automatically using the presetup and postsetup lifecycles hooks.
@@ -19,15 +17,23 @@ let loadingIndicator = null;
  */
 export default function loading(p5, fn, lifecycles) {
   lifecycles.presetup = function() {
-    if (typeof window === 'undefined' || loadingIndicator) return;
+    if (typeof window === 'undefined' || this._loadingIndicator) return;
 
-    const container = this.canvas?.parentElement || document.body;
-    loadingIndicator = createLoadingIndicator(container);
+    const canvasParent = this.canvas?.parentElement;
+    let container = this._userNode || canvasParent || document.body;
+
+    if (typeof container === 'string') {
+      container = document.getElementById(container) || document.body;
+    }
+
+    this._loadingIndicator = createLoadingIndicator(container);
   };
 
   lifecycles.postsetup = function() {
-    loadingIndicator?.remove();
-    loadingIndicator = null;
+    if (this._loadingIndicator) {
+      this._loadingIndicator.remove();
+      this._loadingIndicator = null;
+    }
   };
 }
 
@@ -40,10 +46,10 @@ export default function loading(p5, fn, lifecycles) {
  * @returns {HTMLElement} The loading indicator div element
  */
 function createLoadingIndicator(container) {
-  if (!document.getElementById('loading-style')) {
+  if (!document.getElementById('p5-loading-style')) {
     const loadingStyle = document.createElement('style');
-    loadingStyle.id = 'loading-style';
-    loadingStyle.textContent = '@keyframes loading-spin { to { transform: rotate(360deg); } }';
+    loadingStyle.id = 'p5-loading-style';
+    loadingStyle.textContent = '@keyframes p5-loading-spin { to { transform: rotate(360deg); } }';
     document.head.appendChild(loadingStyle);
   }
 
@@ -59,7 +65,8 @@ function createLoadingIndicator(container) {
 
     border: 3px solid rgba(0, 0, 0, 0.1);
     border-top-color: rgba(0, 0, 0, 0.8);
-    animation: loading-spin 1s linear infinite;
+    animation: p5-loading-spin 1s linear infinite;
+    z-index: 9999;
   `;
 
   container.appendChild(indicator);
