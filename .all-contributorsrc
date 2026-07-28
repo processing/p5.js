@@ -7592,6 +7592,17 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "Ryan-z-Feng-ccsf",
+      "name": "Ryan",
+      "avatar_url": "https://avatars.githubusercontent.com/u/228774593?v=4",
+      "profile": "https://github.com/Ryan-z-Feng-ccsf",
+      "contributions": [
+        "bug",
+        "test",
+        "doc"
+      ]
     }
   ],
   "repoType": "github",
