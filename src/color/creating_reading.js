@@ -1683,7 +1683,7 @@ function creatingReading(p5, fn){
    * interval [0, 1] will produce strange and unexpected colors.
    *
    * The way that colors are interpolated depends on the current
-   * <a href="#/p5/colorMode">colorMode()</a>.
+   * <a href="#/p5/colorMode">colorMode()</a> or on the passed `options` object.
    *
    * ```js example
    * function setup() {
@@ -1718,6 +1718,63 @@ function creatingReading(p5, fn){
    *
    *   describe(
    *     'Four rectangles. From left to right, the rectangles are tan, brown, brownish purple, and purple.'
+   *   );
+   * }
+   * ```
+   *
+   * Normally, colors are interpolated according to the current `colorMode()`. But you can override this by
+   * specifying a different color space to perform the interpolation in. Different color spaces will blend
+   * colors differently.
+   *
+   * ```js example
+   * function setup() {
+   *   createCanvas(100, 100);
+   *
+   *   background(200);
+   *
+   *   // Create p5.Color objects to interpolate between.
+   *   colorMode(HSL);
+   *   let from = color(240, 100, 25);
+   *   let to = color("white");
+   *
+   *   // Create intermediate colors
+   *   let interA = lerpColor(from, to, 0.33);
+   *   let interB = lerpColor(from, to, 0.66);
+   *
+   *   let inter1 = lerpColor(from, to, {
+   *     amount: 0.33,
+   *     lerpMode: HSB // interpolate in the HSB color space
+   *   });
+   *   let inter2 = lerpColor(from, to, {
+   *     amount: 0.66,
+   *     lerpMode: HSB
+   *   });
+   *
+   *   // Draw the left rectangle.
+   *   noStroke();
+   *   fill(from);
+   *   rect(10, 20, 20, 60);
+   *
+   *   // Draw the left-center rectangles.
+   *   fill(interA);
+   *   rect(30, 20, 20, 40);
+   *
+   *   fill(inter1);
+   *   rect(30, 40, 20, 60);
+   *
+   *   // Draw the right-center rectangles.
+   *   fill(interB);
+   *   rect(50, 20, 20, 40);
+   *
+   *   fill(inter2);
+   *   rect(50, 40, 20, 60);
+   *
+   *   // Draw the right rectangle.
+   *   fill(to);
+   *   rect(70, 20, 20, 60);
+   *
+   *   describe(
+   *     'Two strips of four colors each. From left to right, the top strip begins with dark blue, followed by a lighter blue, a light blue and finally white. Meanwhile, the bottom strip begins with a dark blue, followed by purple, then pink and finally white.'
    *   );
    * }
    * ```
