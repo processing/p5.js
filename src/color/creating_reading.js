@@ -1830,8 +1830,8 @@ function creatingReading(p5, fn){
 
     if (typeof amt === 'object') {
       // Passing in options object
-      outputMode = amt.outputMode;
-      lerpMode = amt.lerpMode;
+      outputMode = amt.outputMode ?? outputMode;
+      lerpMode = amt.lerpMode ?? lerpMode;
       amt = amt.amount;
     }
 
