@@ -1390,7 +1390,7 @@ class PrimitiveToPath2DConverter extends PrimitiveVisitor {
       }
     }
 
-    // Still maintain base path just in case
+    // Clipping uses the base path rather than the specialized paint paths.
     this.path.moveTo(startX, startY);
     this.path.ellipse(centerX, centerY, radiusX, radiusY,
       0, arc.start, arc.stop);
