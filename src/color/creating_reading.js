@@ -1757,17 +1757,17 @@ function creatingReading(p5, fn){
    *
    *   // Draw the left-center rectangles.
    *   fill(interA);
-   *   rect(30, 20, 20, 40);
+   *   rect(30, 20, 20, 30);
    *
    *   fill(inter1);
-   *   rect(30, 40, 20, 60);
+   *   rect(30, 50, 20, 30);
    *
    *   // Draw the right-center rectangles.
    *   fill(interB);
-   *   rect(50, 20, 20, 40);
+   *   rect(50, 20, 20, 30);
    *
    *   fill(inter2);
-   *   rect(50, 40, 20, 60);
+   *   rect(50, 50, 20, 30);
    *
    *   // Draw the right rectangle.
    *   fill(to);
