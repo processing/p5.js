@@ -1,9 +1,14 @@
 /**
  * @for p5
  */
-import * as constants from '../constants.js';
-import { z } from 'zod/v4';
-import dataDoc from '../../../docs/parameterData.json';
+import * as constants from '../core/constants.js';
+import * as z from 'zod/mini';
+import dataDoc from '../../docs/parameterData.json';
+import { FES } from './fes.js';
+import { errorStackParser, processStack, getFriendlyStack } from './stacktrace.js';
+
+z.config(z.locales.en());
+let documentationData = dataDoc;
 
 function validateParams(p5, fn, lifecycles) {
   // Cache for Zod schemas
@@ -62,7 +67,7 @@ function validateParams(p5, fn, lifecycles) {
     'Array': z.array(z.any()),
     'Boolean': z.boolean(),
     'Function': z.function(),
-    'Integer': z.number().int(),
+    'Integer': z.number().check(z.int()),
     'Number': z.union([z.number(), z.literal(Infinity), z.literal(-Infinity)]),
     'Object': z.object({}),
     'String': z.string()
@@ -142,7 +147,7 @@ function validateParams(p5, fn, lifecycles) {
    */
   const generateZodSchemasForFunc = function (func) {
     const { funcName, funcClass } = extractFuncNameAndClass(func);
-    let funcInfo = dataDoc[funcClass][funcName];
+    let funcInfo = documentationData[funcClass][funcName];
 
     if(!funcInfo) return;
 
@@ -237,7 +242,7 @@ function validateParams(p5, fn, lifecycles) {
       }
 
       if (isOptional) {
-        schema = schema.optional();
+        schema = z.optional(schema);
       }
       return { schema, rest: isRest };
     };
@@ -283,10 +288,10 @@ function validateParams(p5, fn, lifecycles) {
           rest = params.pop();
         }
 
-        let combined = z.tuple(params.map(s => s.schema));
-        if (rest) {
-          combined = combined.rest(rest.schema);
-        }
+        let combined = z.tuple(params.map(s => s.schema), rest?.schema);
+        // if (rest) {
+        //   combined = combined.rest(rest.schema);
+        // }
         return combined;
       });
     });
@@ -309,7 +314,7 @@ function validateParams(p5, fn, lifecycles) {
    * @returns {z.ZodSchema} Closest schema matching the input arguments.
    */
   const findClosestSchema = function (schema, args) {
-    if (!(schema instanceof z.ZodUnion)) {
+    if (!(schema instanceof z.ZodMiniUnion)) {
       return schema;
     }
 
@@ -317,7 +322,7 @@ function validateParams(p5, fn, lifecycles) {
     // Lower score means closer match.
     const scoreSchema = schema => {
       let score = Infinity;
-      if (!(schema instanceof z.ZodTuple)) {
+      if (!(schema instanceof z.ZodMiniTuple)) {
         console.warn('Schema below is not a tuple: ');
         printZodSchema(schema);
         return score;
@@ -327,7 +332,7 @@ function validateParams(p5, fn, lifecycles) {
       const schemaItems = schema.def.items;
       const numSchemaItems = schemaItems.length;
       const numRequiredSchemaItems = schemaItems
-        .filter(item => !item.isOptional())
+        .filter(item => !item.safeParse(undefined).success)
         .length;
 
       if (numArgs >= numRequiredSchemaItems && numArgs <= numSchemaItems) {
@@ -390,7 +395,8 @@ function validateParams(p5, fn, lifecycles) {
    * @returns {String} The friendly error message.
    */
   const friendlyParamError = function (zodErrorObj, func, args) {
-    let message = '🌸 p5.js says: ';
+    let message = '';
+
     let isVersionError = false;
     // The `zodErrorObj` might contain multiple errors of equal importance
     // (after scoring the schema closeness in `findClosestSchema`). Here, we
@@ -401,9 +407,9 @@ function validateParams(p5, fn, lifecycles) {
     // Helper function to build a type mismatch message.
     const buildTypeMismatchMessage =
       (actualType, expectedTypeStr, position) => {
-        const positionStr = position ? `at the ${ordinals[position]} parameter` : '';
-        const actualTypeStr = actualType ? `, but received ${actualType}` : '';
-        return `Expected ${expectedTypeStr} ${positionStr}${actualTypeStr}`;
+        const positionStr = position ? FES.log`at the ${ordinals[position]} parameter` : '';
+        const actualTypeStr = actualType ? FES.log`, but received ${actualType}` : '';
+        return FES.log`Expected ${expectedTypeStr} ${positionStr}${actualTypeStr}`;
       };
 
     // Union errors occur when a parameter can be of multiple types but is not
@@ -413,7 +419,7 @@ function validateParams(p5, fn, lifecycles) {
 
     const processUnionError = error => {
       const expectedTypes = new Set();
-      let actualType;
+      let actualType, message = '';
 
       const collectIssue = issue => {
         if (!issue) return;
@@ -429,7 +435,10 @@ function validateParams(p5, fn, lifecycles) {
         // constant values in the error message, the error message will
         // direct users to the documentation.
         else if (issue.code === 'invalid_value') {
-          if (Array.isArray(issue.values) && issue.values.every(v => v === Infinity || v === -Infinity)) {
+          if (
+            Array.isArray(issue.values) &&
+            issue.values.every(v => v === Infinity || v === -Infinity)
+          ) {
             expectedTypes.add('number');
           } else {
             expectedTypes.add('constant (please refer to documentation for allowed values)');
@@ -452,53 +461,21 @@ function validateParams(p5, fn, lifecycles) {
 
       if (expectedTypes.size > 0) {
         if (error.path?.length > 0 && args[error.path[0]] instanceof Promise)  {
-          message += 'Did you mean to put `await` before a loading function? ' +
-            'An unexpected Promise was found. ';
-          isVersionError = true;
+          message = FES.log`Did you mean to put \`await\` before a loading function? An unexpected Promise was found. `;
         }
 
         const expectedTypesStr = Array.from(expectedTypes).join(' or ');
         const position = error.path.join('.');
 
-        message += buildTypeMismatchMessage(
+        message = FES.log`${message}${buildTypeMismatchMessage(
           actualType, expectedTypesStr, position
-        );
+        )} in ${func + '()'}.`;
       }
 
       return message;
     };
 
-
-    switch (currentError.code) {
-      case 'invalid_union': {
-        processUnionError(currentError);
-        break;
-      }
-      case 'too_small': {
-        const minArgs = currentError.minimum;
-        message += `Expected at least ${minArgs} argument${minArgs > 1 ? 's' : ''}, but received fewer`;
-        break;
-      }
-      case 'invalid_type': {
-        message += buildTypeMismatchMessage(currentError.message.split(', received ')[1], currentError.expected, currentError.path.join('.'));
-        break;
-      }
-      case 'too_big': {
-        const maxArgs = currentError.maximum;
-        message += `Expected at most ${maxArgs} argument${maxArgs > 1 ? 's' : ''}, but received more`;
-        break;
-      }
-      default: {
-        console.log('Zod error object', currentError);
-      }
-    }
-
-    // Let the user know which function is generating the error.
-    message += ` in ${func}().`;
-
     // Generates a link to the documentation based on the given function name.
-    // TODO: Check if the link is reachable before appending it to the error
-    // message.
     const generateDocumentationLink = func => {
       const { funcName, funcClass } = extractFuncNameAndClass(func);
       const p5BaseUrl = 'https://p5js.org/reference';
@@ -507,15 +484,54 @@ function validateParams(p5, fn, lifecycles) {
       return url;
     };
 
-    if (currentError.code === 'too_big' || currentError.code === 'too_small') {
-      const documentationLink = generateDocumentationLink(func);
-      message += ` For more information, see ${documentationLink}.`;
+    switch (currentError.code) {
+      case 'invalid_union': {
+        message = processUnionError(currentError);
+        break;
+      }
+      case 'too_small': {
+        const minArgs = currentError.minimum;
+        const documentationLink = generateDocumentationLink(func);
+        const referenceLink = FES.log`For more information, see ${documentationLink}.`;
+        message = FES.log`Expected at least ${minArgs} argument, but received fewer in ${func}(). ${referenceLink}`;
+        break;
+      }
+      case 'invalid_type': {
+        const position = FES.premade.ordinals[currentError.path.join('.')];
+        const expectedType = FES.premade.types[currentError.expected];
+        // NOTE: need type info
+        message = FES.log`Expected ${expectedType} at the ${position} parameter in ${func + '()'}.`
+        break;
+      }
+      case 'too_big': {
+        const maxArgs = currentError.maximum;
+        const documentationLink = generateDocumentationLink(func);
+        const referenceLink = FES.log`For more information, see ${documentationLink}.`;
+        message = FES.log`Expected at most ${maxArgs} arguments, but received more in ${func}(). ${referenceLink}`;
+        break;
+      }
+      case 'custom': {
+        const position = FES.premade.ordinals[currentError.path.join('.')];
+        const match = currentError.message.match(/Input not instance of (\w+)/);
+        if (match) {
+          message = FES.log`Expected ${match[1]} at the ${position} parameter in ${func + '()'}.`
+          break;
+        }
+      }
+      default: {
+        console.log('Zod error object', currentError);
+      }
     }
 
     if (isVersionError) {
-      p5._error(this, message);
+      FES.log`${message}`();
     } else {
-      console.log(message);
+      const [_null, stacktrace] = processStack(
+        null,
+        errorStackParser.parse(Error()).slice(3)
+      );
+      const locationStr = getFriendlyStack(stacktrace, true);
+      FES.log`${locationStr} ${message}`();
     }
     return message;
   };
@@ -550,7 +566,7 @@ function validateParams(p5, fn, lifecycles) {
       args.length > 0 &&
       args.every(arg => arg === undefined)
     ) {
-      const undefinedErrorMessage = `🌸 p5.js says: All arguments for ${func}() are undefined. There is likely an error in the code.`;
+      const undefinedErrorMessage = `All arguments for ${func}() are undefined. There is likely an error in the code.`;
 
       return {
         success: false,
@@ -624,9 +640,36 @@ function validateParams(p5, fn, lifecycles) {
     }
   );
 
+  p5.extendParameterValidation = (data) => {
+    documentationData = mergeDeep(documentationData, data);
+  };
+
   lifecycles.presetup = function(){
     loadP5Constructors();
   };
+}
+
+function isObject(item) {
+  return (item && typeof item === 'object' && !Array.isArray(item));
+}
+
+// Deep merge implementation: https://stackoverflow.com/questions/27936772/how-to-deep-merge-instead-of-shallow-merge
+function mergeDeep(target, ...sources) {
+  if (!sources.length) return target;
+  const source = sources.shift();
+
+  if (isObject(target) && isObject(source)) {
+    for (const key in source) {
+      if (isObject(source[key])) {
+        if (!target[key]) Object.assign(target, { [key]: {} });
+        mergeDeep(target[key], source[key]);
+      } else {
+        Object.assign(target, { [key]: source[key] });
+      }
+    }
+  }
+
+  return mergeDeep(target, ...sources);
 }
 
 export default validateParams;

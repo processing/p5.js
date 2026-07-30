@@ -7530,6 +7530,16 @@
       ]
     },
     {
+      "login": "luciawang0901",
+      "name": "lucia",
+      "avatar_url": "https://avatars.githubusercontent.com/u/283304259?v=4",
+      "profile": "https://github.com/luciawang0901",
+      "contributions": [
+        "translation",
+        "bug"
+      ]
+    },
+    {
       "login": "XiaoPingArchive",
       "name": "xiaoping",
       "avatar_url": "https://avatars.githubusercontent.com/u/36060644?v=4",
@@ -7572,6 +7582,15 @@
       "profile": "https://github.com/Theresa-Em",
       "contributions": [
         "translation"
+      ]
+    },
+    {
+      "login": "colemanliyah",
+      "name": "colemanliyah",
+      "avatar_url": "https://avatars.githubusercontent.com/u/47500854?v=4",
+      "profile": "https://github.com/colemanliyah",
+      "contributions": [
+        "code"
       ]
     }
   ],

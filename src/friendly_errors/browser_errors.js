@@ -7,7 +7,7 @@
 // them into types and extract the required information.
 // The FES can use the extracted info to generate a friendly error message
 // for the matching error.
-const strings = {
+export const errorTable = {
   ReferenceError: [
     {
       msg: '{{}} is not defined',
@@ -126,4 +126,24 @@ const strings = {
   ]
 };
 
-export default strings;
+export const entryPoints = [
+  'setup',
+  'draw',
+  'deviceMoved',
+  'deviceTurned',
+  'deviceShaken',
+  'doubleClicked',
+  'mousePressed',
+  'mouseReleased',
+  'mouseMoved',
+  'mouseDragged',
+  'mouseClicked',
+  'mouseWheel',
+  'touchStarted',
+  'touchMoved',
+  'touchEnded',
+  'keyPressed',
+  'keyReleased',
+  'keyTyped',
+  'windowResized'
+];
