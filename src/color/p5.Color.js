@@ -50,6 +50,7 @@ const toHexComponent = (v) => {
 }
 
 const serializationMap = new Map();
+const srgbCoordsCache = new Map();
 
 
 
@@ -65,11 +66,6 @@ class Color {
   // where if we `import { Color }` directly, it will be a separate copy of the
   // Color class from the one imported in the main p5.js bundle.
   isColor = true;
-  #srgbCoords = null;
-
-  #invalidateSrgbCache() {
-    this.#srgbCoords = null;
-  }
 
   // Used to add additional color modes to p5.js
   // Uses underlying library's definition
@@ -246,7 +242,6 @@ class Color {
       this._initialize();
       this._initialize = undefined;
     }
-    this.#invalidateSrgbCache();
     this._cachedColor = newColor;
   }
 
@@ -565,7 +560,6 @@ class Color {
 
     if(this.mode === RGB || this.mode === RGBP3){
       this._color.coords[0] = newval;
-      this.#invalidateSrgbCache();
     }else{
       // Will do an imprecise conversion to 'srgb', not recommended
       const space = this._color.space.id;
@@ -618,7 +612,6 @@ class Color {
 
     if(this.mode === RGB || this.mode === RGBP3){
       this._color.coords[1] = newval;
-      this.#invalidateSrgbCache();
     }else{
       // Will do an imprecise conversion to 'srgb', not recommended
       const space = this._color.space.id;
@@ -671,7 +664,6 @@ class Color {
 
     if(this.mode === RGB || this.mode === RGBP3){
       this._color.coords[2] = newval;
-      this.#invalidateSrgbCache();
     }else{
       // Will do an imprecise conversion to 'srgb', not recommended
       const space = this._color.space.id;
@@ -724,17 +716,23 @@ class Color {
     const newval = map(new_alpha, max[0], max[1], colorjsMax[0], colorjsMax[1]);
 
     this._color.alpha = newval;
-    this.#invalidateSrgbCache();
   }
 
   _getRGBA(maxes=[1, 1, 1, 1]) {
-    // Cache the srgb conversion (the expensive step)
-    if (!this.#srgbCoords) {
+    const key = `${this._color.space.id}-${this._color.coords.join(',')}-${this._color.alpha}`;
+    let srgbCoords = srgbCoordsCache.get(key);
+
+    if (srgbCoords === undefined) {
       if (this.mode === RGB || this._color.space.id === 'srgb') {
-        this.#srgbCoords = [...this._color.coords, this._color.alpha];
+        srgbCoords = [...this._color.coords, this._color.alpha];
       } else {
-        this.#srgbCoords = [...to(this._color, 'srgb').coords, this._color.alpha];
+        srgbCoords = [...to(this._color, 'srgb').coords, this._color.alpha];
       }
+
+      if (srgbCoordsCache.size > 1000) {
+        srgbCoordsCache.delete(srgbCoordsCache.keys().next().value);
+      }
+      srgbCoordsCache.set(key, srgbCoords);
     }
 
     const colorjsMaxes = Color.#colorjsMaxes[RGB];
@@ -746,7 +744,7 @@ class Color {
       }
     });
 
-    return this.#srgbCoords.map((coord, i) => {
+    return srgbCoords.map((coord, i) => {
       return map(
         coord,
         colorjsMaxes[i][0], colorjsMaxes[i][1],
