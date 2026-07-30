@@ -45,6 +45,38 @@ suite('Rendering', function() {
     });
   });
 
+  suite('2D primitive Shape lifetime', function() {
+    test('passes a fresh Shape to drawShape for each primitive', function() {
+      myp5.createCanvas(50, 50);
+      const renderer = myp5._renderer;
+      const originalDrawShape = renderer.drawShape;
+      const retainedShapes = [];
+
+      renderer.drawShape = function(shape) {
+        retainedShapes.push(shape);
+        return originalDrawShape.call(this, shape);
+      };
+
+      try {
+        myp5.line(0, 0, 10, 10);
+        myp5.line(20, 20, 30, 30);
+      } finally {
+        renderer.drawShape = originalDrawShape;
+      }
+
+      assert.lengthOf(retainedShapes, 2);
+      assert.notStrictEqual(retainedShapes[0], retainedShapes[1]);
+      assert.equal(
+        retainedShapes[0].contours[0].primitives[0].vertices[0].position.x,
+        0
+      );
+      assert.equal(
+        retainedShapes[1].contours[0].primitives[0].vertices[0].position.x,
+        20
+      );
+    });
+  });
+
   suite('p5.prototype.resizeCanvas', function() {
     let glStub;
 
