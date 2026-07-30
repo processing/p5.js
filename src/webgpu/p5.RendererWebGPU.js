@@ -58,7 +58,6 @@ function rendererWebGPU(p5, fn) {
      * let particles;
      * let computeShader;
      * let displayShader;
-     * let instance;
      * const numParticles = 100;
      *
      * async function setup() {
@@ -66,7 +65,6 @@ function rendererWebGPU(p5, fn) {
      *   particles = createStorage(makeParticles(width / 2, height / 2));
      *   computeShader = buildComputeShader(simulate);
      *   displayShader = buildMaterialShader(display);
-     *   instance = buildGeometry(drawParticle);
      *   describe('100 orange particles shooting outward.');
      * }
      *
@@ -83,10 +81,6 @@ function rendererWebGPU(p5, fn) {
      *   return data;
      * }
      *
-     * function drawParticle() {
-     *   sphere(2);
-     * }
-     *
      * function simulate() {
      *   let data = uniformStorage(particles);
      *   let idx = index.x;
@@ -96,7 +90,7 @@ function rendererWebGPU(p5, fn) {
      * function display() {
      *   let data = uniformStorage(particles);
      *   worldInputs.begin();
-     *   let pos = data[instanceID()].position;
+     *   let pos = data[instanceIndex].position;
      *   worldInputs.position.xy += pos - [width / 2, height / 2];
      *   worldInputs.end();
      * }
@@ -110,7 +104,7 @@ function rendererWebGPU(p5, fn) {
      *   noStroke();
      *   fill(255, 200, 50);
      *   shader(displayShader);
-     *   model(instance, numParticles);
+     *   instances(numParticles).sphere(2);
      * }
      * ```
      *
