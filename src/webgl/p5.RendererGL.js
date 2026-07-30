@@ -330,7 +330,14 @@ class RendererGL extends Renderer3D {
         }
       }
     } else {
-      const glMode = mode === constants.TRIANGLES ? gl.TRIANGLES : gl.TRIANGLE_STRIP;
+      let glMode;
+      if (mode === constants.TRIANGLES) {
+        glMode = gl.TRIANGLES;
+      } else if (mode === constants.TRIANGLE_FAN) {
+        glMode = gl.TRIANGLE_FAN;
+      } else {
+        glMode = gl.TRIANGLE_STRIP;
+      }
       if (count === 1) {
         gl.drawArrays(glMode, 0, geometry.vertices.length);
       } else {
@@ -414,10 +421,7 @@ class RendererGL extends Renderer3D {
 
     if (!this._pInst._setupDone) {
       if (this.geometryBufferCache.numCached() > 0) {
-        p5._friendlyError(
-          "Sorry, Could not set the attributes, you need to call setAttributes() " +
-            "before calling the other drawing methods in setup()"
-        );
+        p5.FES.log`Sorry, Could not set the attributes, you need to call setAttributes() before calling the other drawing methods in setup()`();
         return;
       }
     }
@@ -474,14 +478,14 @@ class RendererGL extends Renderer3D {
     return gl.getParameter(gl.MAX_TEXTURE_SIZE);
   }
 
-  _adjustDimensions(width, height) {
+  _adjustDimensions(width, height, density = this._pixelDensity) {
     if (!this._maxTextureSize) {
       this._maxTextureSize = this._getMaxTextureSize();
     }
     let maxTextureSize = this._maxTextureSize;
 
     let maxAllowedPixelDimensions = Math.floor(
-      maxTextureSize / this._pixelDensity
+      maxTextureSize / density
     );
     let adjustedWidth = Math.min(width, maxAllowedPixelDimensions);
     let adjustedHeight = Math.min(height, maxAllowedPixelDimensions);
@@ -626,6 +630,10 @@ class RendererGL extends Renderer3D {
   }
   defaultFarScale() {
     return 10;
+  }
+
+  supportsTriangleFan() {
+    return true;
   }
 
   viewport(w, h) {

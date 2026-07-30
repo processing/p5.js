@@ -222,6 +222,9 @@ export function setWebGLUniformValue(shader, uniform, data, getTexture, gl) {
         gl.uniform1f(location, data);
       }
       break;
+    case gl.FLOAT_MAT2:
+      gl.uniformMatrix2fv(location, false, data);
+      break;
     case gl.FLOAT_MAT3:
       gl.uniformMatrix3fv(location, false, data);
       break;
@@ -360,6 +363,7 @@ export function getWebGLUniformMetadata(shader, gl) {
 
     uniform.isArray =
       uniformInfo.size > 1 ||
+      uniform.type === gl.FLOAT_MAT2 ||
       uniform.type === gl.FLOAT_MAT3 ||
       uniform.type === gl.FLOAT_MAT4 ||
       uniform.type === gl.FLOAT_VEC2 ||

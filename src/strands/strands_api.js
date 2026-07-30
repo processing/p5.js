@@ -181,6 +181,43 @@ function installBuiltinGlobalAccessors(strandsContext) {
   strandsContext._builtinGlobalsAccessorsInstalled = true
 }
 
+function installInstanceIndexAccessor(strandsContext) {
+  if (strandsContext._instanceIndexAccessorInstalled) return;
+
+  const getRuntimeP5Instance = () => strandsContext.renderer?._pInst || strandsContext.p5?.instance;
+
+  const instanceIndexGetter = function() {
+    if (strandsContext.active) {
+      const node = build.variableNode(strandsContext, { baseType: BaseType.INT, dimension: 1 }, strandsContext.backend.instanceIdReference());
+      return createStrandsNode(node.id, node.dimension, strandsContext);
+    }
+    return undefined;
+  };
+
+  const inst = getRuntimeP5Instance();
+  if (inst?._isGlobal) {
+    Object.defineProperty(window, 'instanceIndex', {
+      get: instanceIndexGetter,
+      configurable: true,
+    });
+  }
+
+  Object.defineProperty(strandsContext.p5.prototype, 'instanceIndex', {
+    get: instanceIndexGetter,
+    configurable: true,
+  });
+
+  const GraphicsProto = strandsContext.p5?.Graphics?.prototype;
+  if (GraphicsProto) {
+    Object.defineProperty(GraphicsProto, 'instanceIndex', {
+      get: instanceIndexGetter,
+      configurable: true,
+    });
+  }
+
+  strandsContext._instanceIndexAccessorInstalled = true;
+}
+
 //////////////////////////////////////////////
 // Prototype mirroring helpers
 //////////////////////////////////////////////
@@ -389,9 +426,7 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
           const { id, dimension } = build.functionCallNode(strandsContext, functionName, args);
           return createStrandsNode(id, dimension, strandsContext);
         } else {
-          p5._friendlyError(
-            `It looks like you've called ${functionName} outside of a shader's modify() function.`
-          )
+          p5.FES.log`It looks like you've called ${functionName} outside of a shader's modify() function.`();
         }
       });
     }
@@ -401,7 +436,7 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
   const originalLerp = fn.lerp;
   augmentFn(fn, p5, 'lerp', function (...args) {
     if (strandsContext.active) {
-      return fn.mix(...args);
+      return this.mix(...args);
     } else {
       return originalLerp.apply(this, args);
     }
@@ -424,14 +459,145 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
     return result;
   });
 
+  const originalColor = fn.color;
+  augmentFn(fn, p5, 'color', function (...args) {
+    if (!strandsContext.active) {
+      return originalColor.apply(this, args);
+    }
+    // Reuse p5's parser - handles hex strings, rgb(), CSS named colors, numerics
+    const c = originalColor.apply(this, args);
+    // _getRGBA() returns [r, g, b, a] normalized to 0-1
+    const rgba = c._getRGBA();
+    const { id, dimension } = build.primitiveConstructorNode(
+      strandsContext,
+      { baseType: BaseType.FLOAT, dimension: null },
+      rgba
+    );
+    return createStrandsNode(id, dimension, strandsContext);
+  });
+  const originalLerpColor = fn.lerpColor;
+  augmentFn(fn, p5, 'lerpColor', function (...args) {
+    if (!strandsContext.active) {
+      return originalLerpColor.apply(this, args);
+    }
+    // In strands, colors are vec4s - lerpColor maps directly to GLSL mix()
+    return this.mix(...args);
+  });
+  // Component accessors: extract scalar channels from a vec4 color
+  const originalRed = fn.red;
+  augmentFn(fn, p5, 'red', function (...args) {
+    if (!strandsContext.active) {
+      return originalRed.apply(this, args);
+    }
+    return p5.strandsNode(args[0]).x;
+  });
+
+  const originalGreen = fn.green;
+  augmentFn(fn, p5, 'green', function (...args) {
+    if (!strandsContext.active) {
+      return originalGreen.apply(this, args);
+    }
+    return p5.strandsNode(args[0]).y;
+  });
+
+  const originalBlue = fn.blue;
+  augmentFn(fn, p5, 'blue', function (...args) {
+    if (!strandsContext.active) {
+      return originalBlue.apply(this, args);
+    }
+    return p5.strandsNode(args[0]).z;
+  });
+
+  const originalAlpha = fn.alpha;
+  augmentFn(fn, p5, 'alpha', function (...args) {
+    if (!strandsContext.active) {
+      return originalAlpha.apply(this, args);
+    }
+    return p5.strandsNode(args[0]).w;
+  });
+
+  // RGB to HSB conversion based on:
+  // https://en.wikipedia.org/wiki/HSL_and_HSV#From_RGB
+  // Using mix/step to avoid branching, via the compact form from:
+  // http://lolengine.net/blog/2013/07/27/rgb-to-hsv-in-glsl
+  const _rgb2hsb = (instance, colorNode) => {
+  const r = colorNode.x;
+  const g = colorNode.y;
+  const b = colorNode.z;
+  const K = instance.vec4(0, -1/3, 2/3, -1);
+  const p = instance.mix(
+    instance.vec4(b, g, K.w, K.z),
+    instance.vec4(g, b, K.x, K.y),
+    instance.step(b, g)
+  );
+  const q = instance.mix(
+    instance.vec4(p.x, p.y, p.w, r),
+    instance.vec4(r, p.y, p.z, p.x),
+    instance.step(p.x, r)
+  );
+  const d = q.x.sub(instance.min(q.w, q.y));
+  const e = p5.strandsNode(1e-10);
+  const h = instance.abs(q.z.add(q.w.sub(q.y).div(d.mult(6).add(e))));
+  const s = d.div(q.x.add(e));
+  return instance.vec3(h, s, q.x);
+};
+
+const _rgb2hsl = (instance, colorNode) => {
+  const r = colorNode.x;
+  const g = colorNode.y;
+  const b = colorNode.z;
+  const maxC = instance.max(r, instance.max(g, b));
+  const minC = instance.min(r, instance.min(g, b));
+  const l = maxC.add(minC).div(2);
+  const d = maxC.sub(minC);
+  const e = p5.strandsNode(1e-10);
+  const s = instance.mix(
+    p5.strandsNode(0),
+    d.div(p5.strandsNode(1).sub(instance.abs(l.mult(2).sub(1)))),
+    instance.step(e, d)
+  );
+  const h_rg = instance.mod(g.sub(b).div(d.add(e)), p5.strandsNode(6)).div(6);
+  const h_gb = b.sub(r).div(d.add(e)).add(2).div(6);
+  const h_br = r.sub(g).div(d.add(e)).add(4).div(6);
+  const isR = instance.step(maxC.sub(e), r).mult(instance.step(r.sub(e), maxC));
+  const isG = instance.step(maxC.sub(e), g).mult(instance.step(g.sub(e), maxC));
+  const h = instance.mix(instance.mix(h_br, h_gb, isG), h_rg, isR);
+  return instance.vec3(h, s, l);
+};
+  const originalHue = fn.hue;
+  augmentFn(fn, p5, 'hue', function (...args) {
+    if (!strandsContext.active) return originalHue.apply(this, args);
+    const colorNode = p5.strandsNode(args[0]);
+    return _rgb2hsl(this, this.vec3(colorNode.x, colorNode.y, colorNode.z)).x;
+  });
+
+  const originalSaturation = fn.saturation;
+  augmentFn(fn, p5, 'saturation', function (...args) {
+    if (!strandsContext.active) return originalSaturation.apply(this, args);
+    const colorNode = p5.strandsNode(args[0]);
+    return _rgb2hsl(this, this.vec3(colorNode.x, colorNode.y, colorNode.z)).y;
+  });
+
+  const originalBrightness = fn.brightness;
+  augmentFn(fn, p5, 'brightness', function (...args) {
+    if (!strandsContext.active) return originalBrightness.apply(this, args);
+    const colorNode = p5.strandsNode(args[0]);
+    return _rgb2hsb(this, this.vec3(colorNode.x, colorNode.y, colorNode.z)).z;
+  });
+
+  const originalLightness = fn.lightness;
+  augmentFn(fn, p5, 'lightness', function (...args) {
+    if (!strandsContext.active) return originalLightness.apply(this, args);
+    const colorNode = p5.strandsNode(args[0]);
+    return _rgb2hsl(this, this.vec3(colorNode.x, colorNode.y, colorNode.z)).z;
+  });
+
   augmentFn(fn, p5, 'getTexture', function (...rawArgs) {
     if (strandsContext.active) {
       const { id, dimension } = strandsContext.backend.createGetTextureCall(strandsContext, rawArgs);
       return createStrandsNode(id, dimension, strandsContext);
     } else {
-      p5._friendlyError(
-        `It looks like you've called getTexture outside of a shader's modify() function.`
-      )
+      p5.FES.log`It looks like you've called getTexture outside of a shader's modify() function.`();
     }
   });
 
@@ -488,9 +654,7 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
         nodeArgs = [fn.vec3(strandsArgs[0], 0, 0)];
       }
     } else {
-      p5._friendlyError(
-        `It looks like you've called noise() with ${args.length} arguments. It only supports 1D to 3D input.`
-      );
+      p5.FES.log`It looks like you've called noise() with ${args.length} arguments. It only supports 1D to 3D input.`();
     }
 
     const octaves = strandsContext._noiseOctaves !== null
@@ -582,9 +746,7 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
       // min + raw * (max - min)
       return rawStrandsNode.mult(maxNode.sub(minNode)).add(minNode);
     } else {
-      p5._friendlyError(
-        `It looks like you've called random() with ${args.length} arguments. In strands, random() supports 0, 1, or 2 numeric arguments.`
-      );
+      p5.FES.log`It looks like you've called random() with ${args.length} arguments. In strands, random() supports 0, 1, or 2 numeric arguments.`();
     }
   });
 
@@ -724,9 +886,7 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
       } else if (originalp5Fn) {
         return originalp5Fn.apply(this, args);
       } else {
-        p5._friendlyError(
-          `It looks like you've called ${typeInfo.fnName} outside of a shader's modify() function.`
-        );
+        p5.FES.log`It looks like you've called ${typeInfo.fnName} outside of a shader's modify() function.`()
       }
     });
   }
@@ -811,6 +971,17 @@ function createHookArguments(strandsContext, parameters){
             return createStrandsNode(propNode.id, propNode.dimension, strandsContext, onRebind);
           },
           set(val) {
+            const valDim = val?.isStrandsNode
+              ? val.dimension
+              : (Array.isArray(val) ? val.length : 1);
+            if( valDim !== propertyType.dataType.dimension && valDim !== 1){
+              FES.dimensionMismatchError(
+                propertyType.dataType.dimension,
+                valDim,
+                `${param.name}.${propertyType.name}`
+              );
+            }
+
             const oldDependsOn = dag.dependsOn[structNode.id];
             const newDependsOn = [...oldDependsOn];
             let newValueID;
@@ -891,6 +1062,7 @@ export function createShaderHooksFunctions(strandsContext, fn, shader) {
   // shader.hooks.vertex/fragment/compute mix callable hook entries with stage
   // metadata such as `declarations` carried over from earlier modify() calls.
   const isHookEntry = ([name]) => name !== 'declarations';
+  installInstanceIndexAccessor(strandsContext)
 
   // Add shader context to hooks before spreading
   const vertexHooksWithContext = Object.fromEntries(
