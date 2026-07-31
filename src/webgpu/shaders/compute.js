@@ -5,6 +5,14 @@ struct ComputeUniforms {
 }
 @group(0) @binding(0) var<uniform> uniforms: ComputeUniforms;
 
+struct ComputeInputs {
+  index: vec3<i32>,
+  globalID: vec3<i32>,
+  localIndex: i32,
+  localID: vec3<i32>,
+  workgroupID: vec3<i32>,
+}
+
 @compute @workgroup_size(8, 8, 1)
 fn main(
   @builtin(global_invocation_id) globalId: vec3<u32>,
@@ -19,12 +27,20 @@ fn main(
     return;
   }
 
+  var inputs: ComputeInputs;
+
   var index = vec3<i32>(0);
   index.x = i32(physicalId % u32(uniforms.uTotalCount.x));
   let remainingY = physicalId / u32(uniforms.uTotalCount.x);
   index.y = i32(remainingY % u32(uniforms.uTotalCount.y));
   index.z = i32(remainingY / u32(uniforms.uTotalCount.y));
 
-  HOOK_iteration(index);
+  inputs.index = index;
+  inputs.localID = vec3<i32>(localId);
+  inputs.workgroupID = vec3<i32>(workgroupId);
+  inputs.localIndex = i32(localIndex);
+  inputs.globalID = vec3<i32>(globalId);
+
+  HOOK_computeIteration(inputs);
 }
 `;
