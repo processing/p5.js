@@ -276,7 +276,9 @@ class Renderer2D extends Renderer {
 
   drawShape(shape) {
     const visitor = new PrimitiveToPath2DConverter({
-      strokeWeight: this.states.strokeWeight
+      strokeWeight: this.states.strokeWeight,
+      hasFill: !this._clipping && !!this.states.fillColor,
+      hasStroke: !this._clipping && !!this.states.strokeColor
     });
     shape.accept(visitor);
     if (this._clipping) {
