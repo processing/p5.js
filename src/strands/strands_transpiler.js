@@ -1,5 +1,5 @@
 import { parse } from 'acorn';
-import { ancestor, recursive } from 'acorn-walk';
+import { walk } from 'zimmerframe';
 import escodegen from 'escodegen';
 import { UnarySymbolToName } from './ir_types';
 import * as FES from './strands_FES';
@@ -61,7 +61,7 @@ function nodeIsUniformCallbackFn(node, names) {
 function collectUniformCallbackNames(ast) {
   // Sub-pass 1: collect all named function definitions
   const namedFunctions = new Set();
-  ancestor(ast, {
+  walk(ast, null, {
     FunctionDeclaration(node) {
       if (node.id) namedFunctions.add(node.id.name);
     },
@@ -76,7 +76,7 @@ function collectUniformCallbackNames(ast) {
   });
   // Sub-pass 2: find which of those names are passed as uniform call arguments
   const names = new Set();
-  ancestor(ast, {
+  walk(ast, null, {
     CallExpression(node) {
       if (nodeIsUniform(node)) {
         for (const arg of node.arguments) {
@@ -139,7 +139,7 @@ function isLoopProtectionCall(node) {
 function throwIfLoopProtectionInserted(ast) {
   let found = false;
 
-  ancestor(ast, {
+  walk(ast, null, {
     CallExpression(node) {
       if (isLoopProtectionCall(node)) {
         found = true;
@@ -324,8 +324,14 @@ function replaceIdentifierReferences(node, oldName, newName) {
 
 // Shared handler for both BinaryExpression and LogicalExpression —
 // both follow the same operator-to-method-call transformation pattern.
-function transformBinaryOrLogical(node, state, ancestors) {
-  if (ancestors.some(a => nodeIsUniform(a) || nodeIsUniformCallbackFn(a, state.uniformCallbackNames))) {
+function transformBinaryOrLogical(node, { state, path: ancestors }) {
+  if (
+    ancestors.some(
+      a =>
+        nodeIsUniform(a) ||
+        nodeIsUniformCallbackFn(a, state.uniformCallbackNames)
+    )
+  ) {
     return;
   }
   node.left = {
@@ -346,6 +352,8 @@ function transformBinaryOrLogical(node, state, ancestors) {
     },
   };
   node.arguments = [node.right];
+
+  return { ...node };
 }
 
 // Shared helper used by both IfStatement and ForStatement handlers.
@@ -422,8 +430,14 @@ function addCopyingAndReturn(functionBody, varsToReturn, sourcePrefix = null) {
 }
 
 const ASTCallbacks = {
-  UnaryExpression(node, state, ancestors) {
-    if (ancestors.some(a => nodeIsUniform(a) || nodeIsUniformCallbackFn(a, state.uniformCallbackNames))) {
+  UnaryExpression(node, { state, path: ancestors }) {
+    if (
+      ancestors.some(
+        a =>
+          nodeIsUniform(a) ||
+          nodeIsUniformCallbackFn(a, state.uniformCallbackNames)
+      )
+    ) {
       return;
     }
     const unaryFnName = UnarySymbolToName[node.operator];
@@ -468,8 +482,14 @@ const ASTCallbacks = {
     delete node.argument;
     delete node.operator;
   },
-  BreakStatement(node, state, ancestors) {
-    if (ancestors.some(a => nodeIsUniform(a) || nodeIsUniformCallbackFn(a, state.uniformCallbackNames))) {
+  BreakStatement(node, { state, path: ancestors }) {
+    if (
+      ancestors.some(
+        a =>
+          nodeIsUniform(a) ||
+          nodeIsUniformCallbackFn(a, state.uniformCallbackNames)
+      )
+    ) {
       return;
     }
     node.callee = {
@@ -479,8 +499,14 @@ const ASTCallbacks = {
     node.arguments = [];
     node.type = 'CallExpression';
   },
-  MemberExpression(node, state, ancestors) {
-    if (ancestors.some(a => nodeIsUniform(a) || nodeIsUniformCallbackFn(a, state.uniformCallbackNames))) {
+  MemberExpression(node, { state, path: ancestors }) {
+    if (
+      ancestors.some(
+        a =>
+          nodeIsUniform(a) ||
+          nodeIsUniformCallbackFn(a, state.uniformCallbackNames)
+      )
+    ) {
       return;
     }
     // Skip sets -- these will be converted to .set() method
@@ -508,8 +534,14 @@ const ASTCallbacks = {
       node.type = 'CallExpression';
     }
   },
-  VariableDeclarator(node, state, ancestors) {
-    if (ancestors.some(a => nodeIsUniform(a) || nodeIsUniformCallbackFn(a, state.uniformCallbackNames))) {
+  VariableDeclarator(node, { state, path: ancestors }) {
+    if (
+      ancestors.some(
+        a =>
+          nodeIsUniform(a) ||
+          nodeIsUniformCallbackFn(a, state.uniformCallbackNames)
+      )
+    ) {
       return;
     }
     if (nodeIsUniform(node.init)) {
@@ -553,8 +585,14 @@ const ASTCallbacks = {
       }
     }
   },
-  Identifier(node, state, ancestors) {
-    if (ancestors.some(a => nodeIsUniform(a) || nodeIsUniformCallbackFn(a, state.uniformCallbackNames))) {
+  Identifier(node, { state, path: ancestors }) {
+    if (
+      ancestors.some(
+        a =>
+          nodeIsUniform(a) ||
+          nodeIsUniformCallbackFn(a, state.uniformCallbackNames)
+      )
+    ) {
       return;
     }
     if (state.varyings[node.name]
@@ -577,8 +615,14 @@ const ASTCallbacks = {
   },
   // The callbacks for AssignmentExpression and BinaryExpression handle
   // operator overloading including +=, *= assignment expressions
-  ArrayExpression(node, state, ancestors) {
-    if (ancestors.some(a => nodeIsUniform(a) || nodeIsUniformCallbackFn(a, state.uniformCallbackNames))) {
+  ArrayExpression(node, { state, path: ancestors }) {
+    if (
+      ancestors.some(
+        a =>
+          nodeIsUniform(a) ||
+          nodeIsUniformCallbackFn(a, state.uniformCallbackNames)
+      )
+    ) {
       return;
     }
 
@@ -597,8 +641,14 @@ const ASTCallbacks = {
     };
     node.arguments = [original];
   },
-  AssignmentExpression(node, state, ancestors) {
-    if (ancestors.some(a => nodeIsUniform(a) || nodeIsUniformCallbackFn(a, state.uniformCallbackNames))) {
+  AssignmentExpression(node, { state, path: ancestors }) {
+    if (
+      ancestors.some(
+        a =>
+          nodeIsUniform(a) ||
+          nodeIsUniformCallbackFn(a, state.uniformCallbackNames)
+      )
+    ) {
       return;
     }
     const unsafeTypes = ['Literal', 'ArrayExpression', 'Identifier'];
@@ -716,9 +766,14 @@ const ASTCallbacks = {
   BinaryExpression: transformBinaryOrLogical,
   LogicalExpression: transformBinaryOrLogical,
 
-
-  ConditionalExpression(node, state, ancestors) {
-    if (ancestors.some(a => nodeIsUniform(a) || nodeIsUniformCallbackFn(a, state.uniformCallbackNames))) {
+  ConditionalExpression(node, { state, path: ancestors }) {
+    if (
+      ancestors.some(
+        a =>
+          nodeIsUniform(a) ||
+          nodeIsUniformCallbackFn(a, state.uniformCallbackNames)
+      )
+    ) {
       return;
     }
     // Transform condition ? consequent : alternate
@@ -733,8 +788,14 @@ const ASTCallbacks = {
     delete node.consequent;
     delete node.alternate;
   },
-  IfStatement(node, state, ancestors) {
-    if (ancestors.some(a => nodeIsUniform(a) || nodeIsUniformCallbackFn(a, state.uniformCallbackNames))) {
+  IfStatement(node, { state, path: ancestors }) {
+    if (
+      ancestors.some(
+        a =>
+          nodeIsUniform(a) ||
+          nodeIsUniformCallbackFn(a, state.uniformCallbackNames)
+      )
+    ) {
       return;
     }
     // Transform if statement into strandsIf() call
@@ -800,7 +861,7 @@ const ASTCallbacks = {
     const analyzeBranch = (functionBody) => {
       // First pass: collect all variable declarations in the branch
       const localVars = new Set();
-      ancestor(functionBody, {
+      walk(functionBody, null, {
         VariableDeclarator(node, ancestors) {
           // Skip if we're inside a block that contains strands control flow
           if (ancestors.some(statementContainsStrandsControlFlow)) return;
@@ -810,8 +871,8 @@ const ASTCallbacks = {
         }
       });
 
-      // Second pass: find assignments to non-local variables using acorn-walk
-      ancestor(functionBody, {
+      // Second pass: find assignments to non-local variables using zimmerframe
+      walk(functionBody, null, {
         AssignmentExpression(node, ancestors) {
           // Skip if we're inside a block that contains strands control flow
           if (ancestors.some(statementContainsStrandsControlFlow)) return;
@@ -940,8 +1001,14 @@ const ASTCallbacks = {
     delete node.consequent;
     delete node.alternate;
   },
-  UpdateExpression(node, state, ancestors) {
-    if (ancestors.some(a => nodeIsUniform(a) || nodeIsUniformCallbackFn(a, state.uniformCallbackNames))) {
+  UpdateExpression(node, { state, path: ancestors }) {
+    if (
+      ancestors.some(
+        a =>
+          nodeIsUniform(a) ||
+          nodeIsUniformCallbackFn(a, state.uniformCallbackNames)
+      )
+    ) {
       return;
     }
 
@@ -977,8 +1044,14 @@ const ASTCallbacks = {
     ASTCallbacks.BinaryExpression(node.right, state, [...ancestors, node]);
     ASTCallbacks.AssignmentExpression(node, state, ancestors);
   },
-  ForStatement(node, state, ancestors) {
-    if (ancestors.some(a => nodeIsUniform(a) || nodeIsUniformCallbackFn(a, state.uniformCallbackNames))) {
+  ForStatement(node, { state, path: ancestors }) {
+    if (
+      ancestors.some(
+        a =>
+          nodeIsUniform(a) ||
+          nodeIsUniformCallbackFn(a, state.uniformCallbackNames)
+      )
+    ) {
       return;
     }
 
@@ -1106,7 +1179,7 @@ const ASTCallbacks = {
 
     // First pass: collect all variable declarations in the body
     const localVars = new Set();
-    ancestor(bodyFunction.body, {
+    walk(bodyFunction.body, null, {
       VariableDeclarator(node, ancestors) {
         // Skip if we're inside a block that contains strands control flow
         if (ancestors.some(statementContainsStrandsControlFlow)) return;
@@ -1116,8 +1189,8 @@ const ASTCallbacks = {
       }
     });
 
-    // Second pass: find assignments to non-local variables using acorn-walk
-    ancestor(bodyFunction.body, {
+    // Second pass: find assignments to non-local variables using zimmerframe
+    walk(bodyFunction.body, null, {
       AssignmentExpression(node, ancestors) {
         // Skip if we're inside a block that contains strands control flow
         if (ancestors.some(statementContainsStrandsControlFlow)) {
@@ -1293,7 +1366,7 @@ function functionHasEarlyReturns(functionNode) {
   };
 
   if (functionNode.body && functionNode.body.type === 'BlockStatement') {
-    recursive(functionNode.body, {}, checkForEarlyReturns);
+    walk(functionNode.body, {}, checkForEarlyReturns);
   }
 
   return hasEarlyReturn;
@@ -1308,7 +1381,7 @@ function blockContainsReturn(block) {
     }
   };
   if (block) {
-    recursive(block, {}, findReturn);
+    walk(block, {}, findReturn);
   }
   return hasReturn;
 }
@@ -1395,7 +1468,7 @@ function transformHelperFunction(functionNode) {
     }
   };
 
-  recursive(functionNode.body, {}, transformReturns);
+  walk(functionNode.body, {}, transformReturns);
 
   // 4. Add final return statement
   const finalReturn = {
@@ -1438,7 +1511,7 @@ function functionHasSetInControlFlow(functionNode) {
   };
 
   if (functionNode.body && functionNode.body.type === 'BlockStatement') {
-    recursive(functionNode.body, {}, checkForSetCalls);
+    walk(functionNode.body, {}, checkForSetCalls);
   }
 
   return hasSetInControlFlow;
@@ -1469,7 +1542,7 @@ function transformFunctionSetCalls(functionNode) {
     }
   };
 
-  recursive(functionNode.body, {}, findSetCalls);
+  walk(functionNode.body, {}, findSetCalls);
 
   if (hooksWithSetCalls.size === 0) {
     return; // No .set() calls to transform
@@ -1547,7 +1620,7 @@ function transformFunctionSetCalls(functionNode) {
       }
     };
 
-    ancestor(functionNode.body, transformSetToAssignment);
+    walk(functionNode.body, null, transformSetToAssignment);
 
     // 3. Find the .end() call and insert final .set() call right before it
     const finalSetCall = {
@@ -1601,24 +1674,36 @@ function transformSetCallsInControlFlow(ast, names) {
 
   // Collect functions that have .set() calls in control flow
   const collectFunctions = {
-    ArrowFunctionExpression(node, ancestors) {
-      if (ancestors.some(a => nodeIsUniform(a) || nodeIsUniformCallbackFn(a, names))) {
+    ArrowFunctionExpression(node, { path: ancestors }) {
+      if (
+        ancestors.some(
+          a => nodeIsUniform(a) || nodeIsUniformCallbackFn(a, names)
+        )
+      ) {
         return;
       }
       if (functionHasSetInControlFlow(node)) {
         functionsToTransform.push(node);
       }
     },
-    FunctionExpression(node, ancestors) {
-      if (ancestors.some(a => nodeIsUniform(a) || nodeIsUniformCallbackFn(a, names))) {
+    FunctionExpression(node, { path: ancestors }) {
+      if (
+        ancestors.some(
+          a => nodeIsUniform(a) || nodeIsUniformCallbackFn(a, names)
+        )
+      ) {
         return;
       }
       if (functionHasSetInControlFlow(node)) {
         functionsToTransform.push(node);
       }
     },
-    FunctionDeclaration(node, ancestors) {
-      if (ancestors.some(a => nodeIsUniform(a) || nodeIsUniformCallbackFn(a, names))) {
+    FunctionDeclaration(node, { path: ancestors }) {
+      if (
+        ancestors.some(
+          a => nodeIsUniform(a) || nodeIsUniformCallbackFn(a, names)
+        )
+      ) {
         return;
       }
       if (functionHasSetInControlFlow(node)) {
@@ -1627,7 +1712,7 @@ function transformSetCallsInControlFlow(ast, names) {
     }
   };
 
-  ancestor(ast, collectFunctions);
+  walk(ast, null, collectFunctions);
 
   // Transform each collected function
   for (const funcNode of functionsToTransform) {
@@ -1641,8 +1726,12 @@ function transformHelperFunctionEarlyReturns(ast, names) {
 
   // Collect helper functions that need transformation
   const collectHelperFunctions = {
-    VariableDeclarator(node, ancestors) {
-      if (ancestors.some(a => nodeIsUniform(a) || nodeIsUniformCallbackFn(a, names))) {
+    VariableDeclarator(node, { path: ancestors }) {
+      if (
+        ancestors.some(
+          a => nodeIsUniform(a) || nodeIsUniformCallbackFn(a, names)
+        )
+      ) {
         return;
       }
       const init = node.init;
@@ -1652,8 +1741,12 @@ function transformHelperFunctionEarlyReturns(ast, names) {
         }
       }
     },
-    FunctionDeclaration(node, ancestors) {
-      if (ancestors.some(a => nodeIsUniform(a) || nodeIsUniformCallbackFn(a, names))) {
+    FunctionDeclaration(node, { path: ancestors }) {
+      if (
+        ancestors.some(
+          a => nodeIsUniform(a) || nodeIsUniformCallbackFn(a, names)
+        )
+      ) {
         return;
       }
       if (functionHasEarlyReturns(node)) {
@@ -1661,13 +1754,13 @@ function transformHelperFunctionEarlyReturns(ast, names) {
       }
     },
     // Don't transform functions that are direct arguments to call expressions
-    CallExpression(node, ancestors) {
+    CallExpression(node, { path: ancestors }) {
       // Arguments to CallExpressions are base callbacks, not helpers
       // We skip them by not adding them to the transformation list
     }
   };
 
-  ancestor(ast, collectHelperFunctions);
+  walk(ast, null, collectHelperFunctions);
 
   // Transform each collected helper function
   for (const funcNode of helperFunctionsToTransform) {
@@ -1737,7 +1830,9 @@ function runNonControlFlowPass(
       initialShaderNameState?.nextSuffix || 0
     )
   };
-  ancestor(ast, nonControlFlowCallbacks, undefined, state);
+
+  walk(ast, state, nonControlFlowCallbacks);
+
   return {
     shaderNameMap: state.shaderNameMap,
     shaderNameState: state.shaderNameState
@@ -1746,23 +1841,25 @@ function runNonControlFlowPass(
 
 function runControlFlowPass(ast, uniformCallbackNames) {
   const postOrderControlFlowTransform = {
-    CallExpression(node, state, c) {
-      if (nodeIsUniform(node)) { return; }
+    CallExpression(node, { state, visit: c }) {
+      if (nodeIsUniform(node)) {
+        return;
+      }
       if (node.callee) c(node.callee, state);
       for (const arg of node.arguments) c(arg, state);
     },
-    FunctionDeclaration(node, state, c) {
+    FunctionDeclaration(node, { state, visit: c }) {
       if (state.uniformCallbackNames?.has(node.id?.name)) return;
       if (node.body) c(node.body, state);
     },
-    VariableDeclarator(node, state, c) {
+    VariableDeclarator(node, { state, visit: c }) {
       if (
         state.uniformCallbackNames?.has(node.id?.name) &&
         (node.init?.type === 'FunctionExpression' || node.init?.type === 'ArrowFunctionExpression')
       ) { return; }
       if (node.init) c(node.init, state);
     },
-    IfStatement(node, state, c) {
+    IfStatement(node, { state, visit: c }) {
       state.inControlFlow++;
       if (node.test) c(node.test, state);
       if (node.consequent) c(node.consequent, state);
@@ -1770,7 +1867,7 @@ function runControlFlowPass(ast, uniformCallbackNames) {
       ASTCallbacks.IfStatement(node, state, []);
       state.inControlFlow--;
     },
-    ForStatement(node, state, c) {
+    ForStatement(node, { state, visit: c }) {
       state.inControlFlow++;
       if (node.init) c(node.init, state);
       if (node.test) c(node.test, state);
@@ -1779,7 +1876,7 @@ function runControlFlowPass(ast, uniformCallbackNames) {
       ASTCallbacks.ForStatement(node, state, []);
       state.inControlFlow--;
     },
-    ReturnStatement(node, state, c) {
+    ReturnStatement(node, { state, visit: c }) {
       if (!state.inControlFlow) return;
       node.type = 'ExpressionStatement';
       node.expression = {
@@ -1790,7 +1887,11 @@ function runControlFlowPass(ast, uniformCallbackNames) {
       delete node.argument;
     }
   };
-  recursive(ast, { varyings: {}, inControlFlow: 0, uniformCallbackNames }, postOrderControlFlowTransform);
+  walk(
+    ast,
+    { varyings: {}, inControlFlow: 0, uniformCallbackNames },
+    postOrderControlFlowTransform
+  );
 }
 
 function buildStrandsCallback(p5, ast, scope) {

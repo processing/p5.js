@@ -1,5 +1,5 @@
 import { parse } from 'acorn';
-import { simple as walk } from 'acorn-walk';
+import { walk } from 'zimmerframe';
 import * as constants from '../core/constants';
 import { FES } from './fes';
 
@@ -85,7 +85,7 @@ export const verifierUtils = {
         locations: true // This helps us get the line number.
       });
 
-      walk(ast, {
+      walk(ast, null, {
         VariableDeclarator(node) {
           if (node.id.type === 'Identifier') {
             const category =
