@@ -6,7 +6,7 @@
 
 import Filters from './filters';
 
-function pixels(p5, fn){
+function pixels(p5, fn) {
   /**
    * Copies a region of pixels from one image to another.
    *
@@ -122,7 +122,7 @@ function pixels(p5, fn){
    * @param  {Integer} dh
    * @param  {(BLEND|DARKEST|LIGHTEST|DIFFERENCE|MULTIPLY|EXCLUSION|SCREEN|REPLACE|OVERLAY|HARD_LIGHT|SOFT_LIGHT|DODGE|BURN|ADD|NORMAL)} blendMode
    */
-  fn.blend = function(...args) {
+  fn.blend = function (...args) {
     // p5._validateParameters('blend', args);
     if (this._renderer) {
       this._renderer.blend(...args);
@@ -193,7 +193,7 @@ function pixels(p5, fn){
    * @param  {Integer} dw
    * @param  {Integer} dh
    */
-  fn.copy = function(...args) {
+  fn.copy = function (...args) {
     let srcImage, sx, sy, sw, sh, dx, dy, dw, dh;
     if (args.length === 9) {
       srcImage = args[0];
@@ -222,18 +222,7 @@ function pixels(p5, fn){
     fn._copyHelper(this, srcImage, sx, sy, sw, sh, dx, dy, dw, dh);
   };
 
-  fn._copyHelper = (
-    dstImage,
-    srcImage,
-    sx,
-    sy,
-    sw,
-    sh,
-    dx,
-    dy,
-    dw,
-    dh
-  ) => {
+  fn._copyHelper = (dstImage, srcImage, sx, sy, sw, sh, dx, dy, dw, dh) => {
     const s = srcImage.canvas.width / srcImage.width;
     // adjust coord system for 3D when renderer
     // ie top-left = -width/2, -height/2
@@ -499,7 +488,7 @@ function pixels(p5, fn){
    * @private
    * @returns {p5.Graphics}
    */
-  fn.getFilterGraphicsLayer = function() {
+  fn.getFilterGraphicsLayer = function () {
     return this._renderer.getFilterGraphicsLayer();
   };
 
@@ -514,7 +503,7 @@ function pixels(p5, fn){
    * @param {p5.Shader}  shaderFilter  shader that's been loaded, with the
    *                                   frag shader using a `tex0` uniform.
    */
-  fn.filter = function(...args) {
+  fn.filter = function (...args) {
     // p5._validateParameters('filter', args);
 
     let { shader, operation, value, useWebGL } = parseFilterArgs(...args);
@@ -535,7 +524,7 @@ function pixels(p5, fn){
       return;
     }
 
-    if(!useWebGL && this._renderer.isP3D) {
+    if (!useWebGL && this._renderer.isP3D) {
       console.warn('filter() with useWebGL=false is not supported in WEBGL');
     }
 
@@ -546,7 +535,6 @@ function pixels(p5, fn){
 
     // when this is P2D renderer, create/use hidden webgl renderer
     else {
-
       if (shader) {
         this._renderer.filterRenderer.setOperation(operation, value, shader);
       } else {
@@ -573,8 +561,7 @@ function pixels(p5, fn){
     if (args[0] instanceof p5.Shader) {
       result.shader = args[0];
       return result;
-    }
-    else {
+    } else {
       result.operation = args[0];
     }
 
@@ -582,7 +569,7 @@ function pixels(p5, fn){
       result.value = args[1];
     }
 
-    if (args[args.length-1] === false) {
+    if (args[args.length - 1] === false) {
       result.useWebGL = false;
     }
     return result;
@@ -693,7 +680,7 @@ function pixels(p5, fn){
    * @param  {Number}        y
    * @return {Number[]}      color of the pixel at (x, y) in array format `[R, G, B, A]`.
    */
-  fn.get = function(x, y, w, h) {
+  fn.get = function (x, y, w, h) {
     // p5._validateParameters('get', arguments);
     return this._renderer.get(...arguments);
   };
@@ -738,7 +725,7 @@ function pixels(p5, fn){
    *   describe('Two identical images of mountain landscapes, one on top of the other.');
    * }
    */
-  fn.loadPixels = function(...args) {
+  fn.loadPixels = function (...args) {
     // p5._validateParameters('loadPixels', args);
     return this._renderer.loadPixels();
   };
@@ -845,7 +832,7 @@ function pixels(p5, fn){
    *   describe('An image of a mountain landscape.');
    * }
    */
-  fn.set = function(x, y, imgOrCol) {
+  fn.set = function (x, y, imgOrCol) {
     this._renderer.set(x, y, imgOrCol);
   };
 
@@ -897,7 +884,7 @@ function pixels(p5, fn){
    *   describe('Two identical images of mountain landscapes, one on top of the other.');
    * }
    */
-  fn.updatePixels = function(x, y, w, h) {
+  fn.updatePixels = function (x, y, w, h) {
     // p5._validateParameters('updatePixels', arguments);
     // graceful fail - if loadPixels() or set() has not been called, pixel
     // array will be empty, ignore call to updatePixels()
@@ -1036,6 +1023,6 @@ function pixels(p5, fn){
 
 export default pixels;
 
-if(typeof p5 !== 'undefined'){
+if (typeof p5 !== 'undefined') {
   pixels(p5, p5.prototype);
 }

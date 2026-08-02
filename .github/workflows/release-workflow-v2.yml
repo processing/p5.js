@@ -86,7 +86,7 @@ jobs:
         with:
           token: ${{ secrets.NPM_TOKEN }}
           tag: ${{ steps.semver.outputs.is-prerelease != 'true' && 'latest' || 'beta' }}
-          
+
       # 4. Update p5.js website
       - name: Clone p5.js website
         if: ${{ steps.semver.outputs.is-prerelease != 'true' }}

@@ -1,13 +1,10 @@
 import { defineConfig, configDefaults } from 'vitest/config';
-import vitePluginString from 'vite-plugin-string';
-import { webdriverio } from '@vitest/browser-webdriverio';
+import { string } from 'rollup-plugin-string';
+import { playwright } from '@vitest/browser-playwright';
 
 const plugins = [
-  vitePluginString({
-    include: [
-      'src/webgl/shaders/**/*'
-    ],
-    compress: false
+  string({
+    include: ['src/webgl/shaders/**/*']
   })
 ];
 
@@ -19,17 +16,13 @@ export default defineConfig({
         bench: {
           name: 'bench',
           root: './',
-          include: [
-            './test/bench/**/*.js'
-          ]
+          include: ['./test/bench/**/*.js']
         },
         test: {
           name: 'unit-tests',
           publicDir: './test',
           root: './',
-          include: [
-            './test/unit/**/*.js'
-          ],
+          include: ['./test/unit/**/*.js'],
           exclude: [
             './test/unit/spec.js',
             './test/unit/assets/**/*',
@@ -42,23 +35,12 @@ export default defineConfig({
           globals: true,
           browser: {
             enabled: true,
-            provider: webdriverio({
-              capabilities: process.env.CI ? {
-                'goog:chromeOptions': {
-                  args: [
-                    '--headless=new',
-                    '--no-sandbox',
-                    '--enable-webgl',
-                    '--use-gl=angle',
-                    '--use-angle=swiftshader-webgl',
-                    '--enable-unsafe-swiftshader'
-                  ]
-                }
-              } : undefined
+            provider: playwright({
+              launchOptions: {
+                channel: 'chromium'
+              }
             }),
-            instances: [
-              { browser: 'chrome' }
-            ],
+            instances: [{ browser: 'chromium' }],
             screenshotFailures: false
           },
           fakeTimers: {
@@ -71,9 +53,7 @@ export default defineConfig({
         bench: {
           name: 'bench',
           root: './',
-          include: [
-            './test/bench/**/*.js'
-          ]
+          include: ['./test/bench/**/*.js']
         },
         test: {
           name: 'unit-tests-webgpu',
@@ -94,9 +74,10 @@ export default defineConfig({
           globals: true,
           browser: {
             enabled: true,
-            provider: webdriverio({
-              capabilities: process.env.CI ? {
-                'goog:chromeOptions': {
+            provider: playwright({
+              launchOptions: process.env.CI
+                ? {
+                  channel: 'chromium',
                   args: [
                     '--no-sandbox',
                     '--headless=new',
@@ -106,11 +87,9 @@ export default defineConfig({
                     '--use-angle=vulkan'
                   ]
                 }
-              } : undefined
+                : { channel: 'chromium' }
             }),
-            instances: [
-              { browser: 'chrome' }
-            ],
+            instances: [{ browser: 'chromium' }],
             screenshotFailures: false
           },
           fakeTimers: {

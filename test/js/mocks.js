@@ -8,10 +8,10 @@ const httpMocks = [
   http.get('404file', () => {
     return new HttpResponse('Not Found', {
       status: 404,
-      statusText: 'Not Found',
+      statusText: 'Not Found'
     });
   }),
-  http.all('*', ({request}) => {
+  http.all('*', ({ request }) => {
     return passthrough();
   })
 ];
@@ -32,7 +32,7 @@ Object.assign(mockP5, {
 
 const mockCanvas = document.createElement('canvas');
 mockCanvas.id = 'myCanvasID';
-document.getElementsByTagName("body")[0].appendChild(mockCanvas);
+document.getElementsByTagName('body')[0].appendChild(mockCanvas);
 
 export const mockP5Prototype = {
   saveCanvas: vi.fn(),

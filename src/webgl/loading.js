@@ -17,7 +17,7 @@ async function fileExists(url) {
   }
 }
 
-function loading(p5, fn){
+function loading(p5, fn) {
   /**
    * Loads a 3D model to create a
    * <a href="#/p5.Geometry">p5.Geometry</a> object.
@@ -337,32 +337,32 @@ function loading(p5, fn){
       fileType = fileType.fileType || fileType;
       flipU = fileType.flipU || false;
       flipV = fileType.flipV || false;
-
     } else {
       // Passing in individual parameters
-      if(typeof arguments[arguments.length-1] === 'function'){
-        if(typeof arguments[arguments.length-2] === 'function'){
-          successCallback = arguments[arguments.length-2];
-          failureCallback = arguments[arguments.length-1];
-        }else{
-          successCallback = arguments[arguments.length-1];
+      if (typeof arguments[arguments.length - 1] === 'function') {
+        if (typeof arguments[arguments.length - 2] === 'function') {
+          successCallback = arguments[arguments.length - 2];
+          failureCallback = arguments[arguments.length - 1];
+        } else {
+          successCallback = arguments[arguments.length - 1];
         }
       }
 
       if (typeof fileType === 'string') {
-        if(typeof normalize !== 'boolean') normalize = false;
-
+        if (typeof normalize !== 'boolean') normalize = false;
       } else if (typeof fileType === 'boolean') {
         normalize = fileType;
         fileType = path.slice(-4);
-
       } else {
         fileType = path.slice(-4);
         normalize = false;
       }
     }
 
-    if (fileType.toLowerCase() !== '.obj' && fileType.toLowerCase() !== '.stl') {
+    if (
+      fileType.toLowerCase() !== '.obj' &&
+      fileType.toLowerCase() !== '.stl'
+    ) {
       fileType = '.obj';
     }
 
@@ -389,18 +389,21 @@ function loading(p5, fn){
           }
 
           parsedMaterialPromises.push(
-            fileExists(mtlPath).then(exists => {
-              if (exists) {
-                return parseMtl(mtlPath);
-              } else {
-                console.warn(`MTL file not found or error in parsing; proceeding without materials: ${mtlPath}`);
+            fileExists(mtlPath)
+              .then(exists => {
+                if (exists) {
+                  return parseMtl(mtlPath);
+                } else {
+                  console.warn(
+                    `MTL file not found or error in parsing; proceeding without materials: ${mtlPath}`
+                  );
+                  return {};
+                }
+              })
+              .catch(error => {
+                console.warn(`Error loading MTL file: ${mtlPath}`, error);
                 return {};
-
-              }
-            }).catch(error => {
-              console.warn(`Error loading MTL file: ${mtlPath}`, error);
-              return {};
-            })
+              })
           );
         }
       }
@@ -414,7 +417,7 @@ function loading(p5, fn){
       }
     }
 
-    try{
+    try {
       if (fileType.match(/\.stl$/i)) {
         const { data } = await request(path, 'arrayBuffer');
         const cb = () => {
@@ -440,7 +443,6 @@ function loading(p5, fn){
           }
         };
         return this._internal ? this._internal(cb) : cb();
-
       } else if (fileType.match(/\.obj$/i)) {
         const { data } = await request(path, 'text');
         const lines = data.split('\n');
@@ -468,9 +470,9 @@ function loading(p5, fn){
         };
         return this._internal ? this._internal(cb) : cb();
       }
-    } catch(err) {
+    } catch (err) {
       // p5._friendlyFileLoadError(3, path);
-      if(failureCallback) {
+      if (failureCallback) {
         return failureCallback(err);
       } else {
         throw err;
@@ -515,7 +517,6 @@ function loading(p5, fn){
           parseFloat(tokens[2]),
           parseFloat(tokens[3])
         ];
-
       } else if (tokens[0] === 'map_Kd') {
         //Texture path
         materials[currentMaterial].texturePath = tokens[1];
@@ -552,7 +553,6 @@ function loading(p5, fn){
       vt: [],
       vn: []
     };
-
 
     // Map from source index → Map of material → destination index
     const usedVerts = {}; // Track colored vertices
@@ -610,16 +610,24 @@ function loading(p5, fn){
               if (usedVerts[vertString][currentMaterial] === undefined) {
                 const vertIndex = model.vertices.length;
                 model.vertices.push(loadedVerts.v.at(vertParts[0]).copy());
-                model.uvs.push(loadedVerts.vt.at(vertParts[1]) ?
-                  loadedVerts.vt.at(vertParts[1]).slice() : [0, 0]);
-                model.vertexNormals.push(loadedVerts.vn.at(vertParts[2]) ?
-                  loadedVerts.vn.at(vertParts[2]).copy() : new Vector(0, 0, 0));
+                model.uvs.push(
+                  loadedVerts.vt.at(vertParts[1])
+                    ? loadedVerts.vt.at(vertParts[1]).slice()
+                    : [0, 0]
+                );
+                model.vertexNormals.push(
+                  loadedVerts.vn.at(vertParts[2])
+                    ? loadedVerts.vn.at(vertParts[2]).copy()
+                    : new Vector(0, 0, 0)
+                );
 
                 usedVerts[vertString][currentMaterial] = vertIndex;
                 face.push(vertIndex);
-                if (currentMaterial
-                  && materials[currentMaterial]
-                  && materials[currentMaterial].diffuseColor) {
+                if (
+                  currentMaterial &&
+                  materials[currentMaterial] &&
+                  materials[currentMaterial].diffuseColor
+                ) {
                   hasColoredVertices = true;
                   const materialDiffuseColor =
                     materials[currentMaterial].diffuseColor;
@@ -888,7 +896,9 @@ function loading(p5, fn){
           if (parts[0] !== 'outer' || parts[1] !== 'loop') {
             // Invalid State
             console.error(line);
-            console.error(`Invalid state "${parts[0]}", should be "outer loop"`);
+            console.error(
+              `Invalid state "${parts[0]}", should be "outer loop"`
+            );
             return;
           } else {
             // Next should be vertices
@@ -949,7 +959,8 @@ function loading(p5, fn){
             // Invalid State
             console.error(line);
             console.error(
-              `Invalid state "${parts[0]
+              `Invalid state "${
+                parts[0]
               }", should be "endsolid" or "facet normal"`
             );
             return;
@@ -1208,9 +1219,9 @@ function loading(p5, fn){
    * @return {p5.Geometry} the <a href="#/p5.Geometry">p5.Geometry</a> object
    */
   let modelCounter = 0;
-  fn.createModel = function(modelString, fileType=' ', options) {
+  fn.createModel = function (modelString, fileType = ' ', options) {
     // p5._validateParameters('createModel', arguments);
-    let normalize= false;
+    let normalize = false;
     let successCallback;
     let failureCallback;
     let flipU = false;
@@ -1226,7 +1237,8 @@ function loading(p5, fn){
       successCallback = arguments[3];
       failureCallback = arguments[4];
     } else {
-      successCallback = typeof arguments[2] === 'function' ? arguments[2] : undefined;
+      successCallback =
+        typeof arguments[2] === 'function' ? arguments[2] : undefined;
       failureCallback = arguments[3];
     }
     const model = new p5.Geometry();
@@ -1262,7 +1274,8 @@ function loading(p5, fn){
       if (failureCallback) {
         failureCallback();
       } else {
-        p5.FES.log`Sorry, the file type is invalid. Only OBJ and STL files are supported.`();
+        p5.FES
+          .log`Sorry, the file type is invalid. Only OBJ and STL files are supported.`();
       }
     }
     if (normalize) {
@@ -1289,6 +1302,6 @@ function loading(p5, fn){
 
 export default loading;
 
-if(typeof p5 !== 'undefined'){
+if (typeof p5 !== 'undefined') {
   loading(p5, p5.prototype);
 }

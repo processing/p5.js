@@ -1,6 +1,6 @@
 name: 🐛 p5.js 2.0+ Bug Report
 description: This template is for reporting bugs (broken or incorrect behaviour). If you have questions about your own code, please visit our forum discourse.processing.org instead.
-title: "[p5.js 2.0+ Bug Report]: "
+title: '[p5.js 2.0+ Bug Report]: '
 labels: [p5.js 2.0+]
 body:
   - type: markdown
@@ -16,25 +16,25 @@ body:
       label: Most appropriate sub-area of p5.js?
       description: You may select more than one.
       options:
-          - label: Accessibility
-          - label: Color
-          - label: Core/Environment/Rendering
-          - label: Data
-          - label: DOM
-          - label: Events
-          - label: Image
-          - label: IO
-          - label: Math
-          - label: Typography
-          - label: Utilities
-          - label: WebGL
-          - label: WebGPU
-          - label: p5.strands
-          - label: Build process
-          - label: Unit testing
-          - label: Internationalization
-          - label: Friendly errors
-          - label: Other (specify if possible)
+        - label: Accessibility
+        - label: Color
+        - label: Core/Environment/Rendering
+        - label: Data
+        - label: DOM
+        - label: Events
+        - label: Image
+        - label: IO
+        - label: Math
+        - label: Typography
+        - label: Utilities
+        - label: WebGL
+        - label: WebGPU
+        - label: p5.strands
+        - label: Build process
+        - label: Unit testing
+        - label: Internationalization
+        - label: Friendly errors
+        - label: Other (specify if possible)
   - type: input
     attributes:
       label: p5.js version
@@ -50,14 +50,14 @@ body:
   - type: input
     attributes:
       label: Operating system
-      description: "Ex: Windows/MacOSX/Linux/Android/iOS along with version"
+      description: 'Ex: Windows/MacOSX/Linux/Android/iOS along with version'
     validations:
       required: false
   - type: textarea
     attributes:
       label: Steps to reproduce this
       description: Include a simple code snippet that demonstrates the problem, along with any console errors produced. If this isn't possible, then simply describe the issue as best you can!
-      value: "### Steps:
+      value: '### Steps:
 
         1.
 
@@ -72,9 +72,9 @@ body:
         ```js
 
 
-          // Paste your code here :)
+        // Paste your code here :)
 
 
-        ```"
+        ```'
     validations:
       required: true
