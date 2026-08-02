@@ -348,6 +348,15 @@ suite('p5.Vector', function () {
         v2 = new Vector(-219, -560);
         expect(v1.angleBetween(v2)).to.be.closeTo(Math.PI, 0.0000001);
       });
+
+      test('should not surface cross()\'s 3D warning for genuine 2D vectors', function () {
+      // angleBetween supports 2D vectors and calls this.cross(v) internally.
+      // It should not leak cross()'s 3D friendly error to the user.
+      // RED until #8926 decouples angleBetween from cross().
+        FESCalled = false;
+        new Vector(-11, -20).angleBetween(new Vector(-5.5, -10));
+        assert.equal(FESCalled, false);
+      });
     });
 
     suite('p5.Vector.angleBetween() [CLASS]', function () {
@@ -1157,6 +1166,23 @@ suite('p5.Vector', function () {
         expect(res.z).to.eql(-3);
       });
     });
+    test('should trigger a friendly error when either vector is not 3D', function () {
+    // 2D inputs
+      FESCalled = false;
+      new Vector(1, 0).cross(new Vector(0, 1));
+      assert.equal(FESCalled, true);
+
+      // >3D inputs
+      FESCalled = false;
+      new Vector(1, 0, 0, 2).cross(new Vector(0, 0, 1, -1));
+      assert.equal(FESCalled, true);
+    });
+
+    test('should not trigger a friendly error for two 3D vectors', function () {
+      FESCalled = false;
+      new Vector(1, 0, 0).cross(new Vector(0, 1, 0));
+      assert.equal(FESCalled, false);
+    });
   });
 
   suite('dist', function () {
@@ -1606,6 +1632,15 @@ suite('p5.Vector', function () {
       expect(v.x).to.eql(10);
       expect(v.y).to.eql(22);
       expect(v.z).to.eql(32);
+    });
+
+    test('should not surface cross()\'s 3D warning for genuine 2D vectors', function () {
+    // slerp uses this.cross(v) to find the rotation axis. Calling it with
+    // genuine 2-component vectors should not leak cross()'s 3D friendly error.
+    // RED until #8928 decouples slerp from cross().
+      FESCalled = false;
+      new Vector(2, 3).slerp(new Vector(3, -2), 0.3);
+      assert.equal(FESCalled, false);
     });
   });
 

@@ -1419,13 +1419,13 @@ class Vector {
    * // META:norender
    * function setup() {
    *   // Create p5.Vector objects.
-   *   let v1 = createVector(1, 0);
-   *   let v2 = createVector(3, 4);
+   *   let v1 = createVector(1, 0, 0);
+   *   let v2 = createVector(0, 1, 0);
    *
    *   // Calculate the cross product.
    *   let cp = v1.cross(v2);
    *
-   *   // Prints "p5.Vector Object : [0, 0, 4]" to the console.
+   *   // Prints "vector[0, 0, 1]" to the console.
    *   print(cp.toString());
    * }
    *
@@ -1433,17 +1433,23 @@ class Vector {
    * // META:norender
    * function setup() {
    *   // Create p5.Vector objects.
-   *   let v1 = createVector(1, 0);
-   *   let v2 = createVector(3, 4);
+   *   let v1 = createVector(1, 0, 0);
+   *   let v2 = createVector(0, 1, 0);
    *
    *   // Calculate the cross product.
    *   let cp = p5.Vector.cross(v1, v2);
    *
-   *   // Prints "p5.Vector Object : [0, 0, 4]" to the console.
+   *   // Prints "vector[0, 0, 1]" to the console.
    *   print(cp.toString());
    * }
    */
   cross(v) {
+    if (this.dimensions !== 3 || v.dimensions !== 3){
+      this._friendlyError(
+        'cross() is designed for 3D vectors. It uses only the x, y, and z components, so the result may not be meaningful when either vector is not 3D.',
+        'p5.Vector.cross'
+      );
+    }
     const x = this.y * v.z - this.z * v.y;
     const y = this.z * v.x - this.x * v.z;
     const z = this.x * v.y - this.y * v.x;
