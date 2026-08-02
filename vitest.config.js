@@ -36,20 +36,9 @@ export default defineConfig({
           browser: {
             enabled: true,
             provider: playwright({
-              capabilities: process.env.CI
-                ? {
-                    'goog:chromeOptions': {
-                      args: [
-                        '--headless=new',
-                        '--no-sandbox',
-                        '--enable-webgl',
-                        '--use-gl=angle',
-                        '--use-angle=swiftshader-webgl',
-                        '--enable-unsafe-swiftshader'
-                      ]
-                    }
-                  }
-                : undefined
+              launchOptions: {
+                channel: 'chromium'
+              }
             }),
             instances: [{ browser: 'chromium' }],
             screenshotFailures: false
@@ -86,20 +75,19 @@ export default defineConfig({
           browser: {
             enabled: true,
             provider: playwright({
-              capabilities: process.env.CI
+              launchOptions: process.env.CI
                 ? {
-                    'goog:chromeOptions': {
-                      args: [
-                        '--no-sandbox',
-                        '--headless=new',
-                        '--enable-unsafe-webgpu',
-                        '--use-vulkan=swiftshader',
-                        '--use-webgpu-adapter=swiftshader',
-                        '--use-angle=vulkan'
-                      ]
-                    }
-                  }
-                : undefined
+                  channel: 'chromium',
+                  args: [
+                    '--no-sandbox',
+                    '--headless=new',
+                    '--enable-unsafe-webgpu',
+                    '--use-vulkan=swiftshader',
+                    '--use-webgpu-adapter=swiftshader',
+                    '--use-angle=vulkan'
+                  ]
+                }
+                : { channel: 'chromium' }
             }),
             instances: [{ browser: 'chromium' }],
             screenshotFailures: false
