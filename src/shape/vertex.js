@@ -4,7 +4,7 @@
  * @for p5
  */
 
-function vertex(p5, fn) {
+function vertex(p5, fn){
   /**
    * Begins adding vertices to a custom shape.
    *
@@ -355,7 +355,7 @@ function vertex(p5, fn) {
    *   endShape(CLOSE);
    * }
    */
-  fn.beginShape = function (kind) {
+  fn.beginShape = function(kind) {
     // p5._validateParameters('beginShape', arguments);
     this._renderer.beginShape(...arguments);
   };
@@ -625,7 +625,7 @@ function vertex(p5, fn) {
    * @param  {Number} [u]
    * @param  {Number} [v]
    */
-  fn.bezierVertex = function (...args) {
+  fn.bezierVertex = function(...args) {
     this._renderer.bezierVertex(...args);
   };
 
@@ -833,11 +833,20 @@ function vertex(p5, fn) {
    *   describe('A row of four squares. Their colors transition from purple on the left to red on the right');
    * }
    */
-  fn.endShape = function (mode, count = 1) {
+  fn.endShape = function(mode, count) {
     // p5._validateParameters('endShape', arguments);
-    if (count < 1) {
-      console.log('🌸 p5.js says: You can not have less than one instance');
-      count = 1;
+    if (typeof mode === 'number') {
+      count = mode;
+      mode = undefined;
+    }
+
+    if (count !== undefined) {
+      if (count < 1) {
+        console.log('🌸 p5.js says: You can not have less than one instance');
+        count = 1;
+      } else {
+        count = Math.round(count);
+      }
     }
 
     this._renderer.endShape(mode, count);
@@ -1014,7 +1023,7 @@ function vertex(p5, fn) {
    * @param  {Number} z z-component of the vertex normal.
    * @chainable
    */
-  fn.normal = function (x, y, z) {
+  fn.normal = function(x, y, z) {
     this._assert3d('normal');
     // p5._validateParameters('normal', arguments);
     this._renderer.normal(...arguments);
@@ -1183,7 +1192,7 @@ function vertex(p5, fn) {
    *   endShape();
    * }
    */
-  fn.vertexProperty = function (attributeName, data) {
+  fn.vertexProperty = function(attributeName, data){
     // this._assert3d('vertexProperty');
     // p5._validateParameters('vertexProperty', arguments);
     this._renderer.vertexProperty(attributeName, data);
@@ -1192,6 +1201,6 @@ function vertex(p5, fn) {
 
 export default vertex;
 
-if (typeof p5 !== 'undefined') {
+if(typeof p5 !== 'undefined'){
   vertex(p5, p5.prototype);
 }

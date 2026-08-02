@@ -103,6 +103,12 @@ class Renderer {
     this._clipInvert = false;
 
     this._currentShape = undefined; // Lazily generate current shape
+
+    // Lazily cached by _individualTextureCoordinates(); initialized here
+    // (rather than computed) so subclasses can rely on their own
+    // constructor state when getSupportedIndividualVertexProperties()
+    // is first consulted.
+    this._supportsIndividualTextureCoordinates = undefined;
   }
 
   get currentShape() {
@@ -155,12 +161,22 @@ class Renderer {
     }
   }
 
-  bezierVertex(x, y, z = 0, u = 0, v = 0) {
-    const position = new Vector(x, y, z);
-    const textureCoordinates = this.getSupportedIndividualVertexProperties()
-      .textureCoordinates
+  // Builds the per-vertex texture-coordinates argument, caching whether
+  // the renderer supports them so the descriptor object isn't rebuilt on
+  // every vertex call.
+  _individualTextureCoordinates(u, v) {
+    if (this._supportsIndividualTextureCoordinates === undefined) {
+      this._supportsIndividualTextureCoordinates =
+        this.getSupportedIndividualVertexProperties().textureCoordinates;
+    }
+    return this._supportsIndividualTextureCoordinates
       ? new Vector(u, v)
       : undefined;
+  }
+
+  bezierVertex(x, y, z = 0, u = 0, v = 0) {
+    const position = new Vector(x, y, z);
+    const textureCoordinates = this._individualTextureCoordinates(u, v);
     this.currentShape.bezierVertex(position, textureCoordinates);
   }
 
@@ -189,10 +205,7 @@ class Renderer {
 
   splineVertex(x, y, z = 0, u = 0, v = 0) {
     const position = new Vector(x, y, z);
-    const textureCoordinates = this.getSupportedIndividualVertexProperties()
-      .textureCoordinates
-      ? new Vector(u, v)
-      : undefined;
+    const textureCoordinates = this._individualTextureCoordinates(u, v);
     this.currentShape.splineVertex(position, textureCoordinates);
   }
 
@@ -229,10 +242,7 @@ class Renderer {
 
   vertex(x, y, z = 0, u = 0, v = 0) {
     const position = new Vector(x, y, z);
-    const textureCoordinates = this.getSupportedIndividualVertexProperties()
-      .textureCoordinates
-      ? new Vector(u, v)
-      : undefined;
+    const textureCoordinates = this._individualTextureCoordinates(u, v);
     this.currentShape.vertex(position, textureCoordinates);
   }
 
