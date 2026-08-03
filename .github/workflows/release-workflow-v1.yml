@@ -18,7 +18,7 @@ jobs:
       INPUT_TOKEN: ${{ secrets.NPM_TOKEN }}
     steps:
       # 1. Setup
-      - uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3.6.0
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
           persist-credentials: false
       - uses: actions/setup-node@3235b876344d2a9aa001b8d1453c930bba69e610 # v3.9.1
@@ -84,7 +84,7 @@ jobs:
       # 4. Update p5.js website
       - name: Clone p5.js website
         if: ${{ steps.semver.outputs.is-prerelease != 'true' }}
-        uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3.6.0
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
           repository: processing/p5.js-website
           path: website
@@ -121,7 +121,7 @@ jobs:
       # 5. Update Bower files
       - name: Checkout Bower repo
         if: ${{ steps.semver.outputs.is-prerelease != 'true' }}
-        uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3.6.0
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
           repository: processing/p5.js-release
           path: bower
