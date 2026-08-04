@@ -1,0 +1,4 @@
+newmtl mat0
+Kd 1 1 1
+Ns 50
+map_Kd cat.jpg

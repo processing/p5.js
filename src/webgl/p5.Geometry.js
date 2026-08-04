@@ -8,6 +8,7 @@
 
 import * as constants from '../core/constants';
 import { DataArray } from './p5.DataArray';
+import { GeometryPart } from './p5.GeometryPart';
 import { Vector } from '../math/p5.Vector';
 import { downloadFile } from '../io/utilities';
 
@@ -63,9 +64,50 @@ class Geometry {
 
     this.gid = `_p5_Geometry_${Geometry.nextId}`;
     Geometry.nextId++;
+
+    // every geometry is one or more parts (see p5.GeometryPart). loaders that
+    // know about materials fill parts themselves; anything built the old way
+    // gets wrapped in a single part below.
+    this.parts = [];
+
     if (callback instanceof Function) {
       callback.call(this);
     }
+
+    if (this.parts.length === 0) {
+      this._wrapInSinglePart();
+    }
+  }
+
+  // wrap this geometry's own buffers in one part, for anything built the old way
+  // (primitives, new p5.Geometry(cb)). the part is a live view onto our arrays,
+  // not a copy, so reassigning an array or changing gid later can't desync it.
+  _wrapInSinglePart() {
+    const geometry = this;
+    const part = new GeometryPart(`${this.gid}|part0`);
+    for (const field of [
+      'vertices',
+      'vertexNormals',
+      'faces',
+      'uvs',
+      'vertexColors'
+    ]) {
+      Object.defineProperty(part, field, {
+        get() {
+          return geometry[field];
+        },
+        enumerable: true,
+        configurable: true
+      });
+    }
+    Object.defineProperty(part, 'gid', {
+      get() {
+        return `${geometry.gid}|part0`;
+      },
+      enumerable: true,
+      configurable: true
+    });
+    this.parts = [part];
   }
 
   /**
@@ -2114,6 +2156,7 @@ function geometry(p5, fn){
    * @property vertices
    * @for p5.Geometry
    * @name vertices
+   * @deprecated planned for removal in 3.0, access geometry data through `parts` instead
    *
    * @example
    * // Click and drag the mouse to view the scene from different angles.
@@ -2211,6 +2254,7 @@ function geometry(p5, fn){
    * @property vertexNormals
    * @name vertexNormals
    * @for p5.Geometry
+   * @deprecated planned for removal in 3.0, access geometry data through `parts` instead
    *
    * @example
    * // Click and drag the mouse to view the scene from different angles.
@@ -2351,6 +2395,7 @@ function geometry(p5, fn){
    * @property faces
    * @name faces
    * @for p5.Geometry
+   * @deprecated planned for removal in 3.0, access geometry data through `parts` instead
    *
    * @example
    * // Click and drag the mouse to view the scene from different angles.
@@ -2422,6 +2467,7 @@ function geometry(p5, fn){
    * @property uvs
    * @name uvs
    * @for p5.Geometry
+   * @deprecated planned for removal in 3.0, access geometry data through `parts` instead
    *
    * @example
    * let img;
