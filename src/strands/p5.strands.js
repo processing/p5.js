@@ -19,6 +19,10 @@ import {
   initGlobalStrandsAPI,
   createShaderHooksFunctions,
 } from "./strands_api";
+import {
+  createStrandsShaderNameMap,
+  createStrandsShaderNameState
+} from './strands_names';
 
 function strands(p5, fn) {
   // Whether or not strands callbacks should be forced to be executed in global mode.
@@ -29,14 +33,83 @@ function strands(p5, fn) {
   //////////////////////////////////////////////
   // Global Runtime
   //////////////////////////////////////////////
+
+  /**
+   * @private
+   * @typedef {Object} StrandsContext
+   * @property {Object} p5 Reference to the p5 class.
+   * @property {Boolean} _builtinGlobalsAccessorsInstalled Whether builtin global accessors have been installed on `window`, `p5.prototype`, and `p5.Graphics.prototype` as needed.
+   * @property {Object} dag DAG for the current strands IR.
+   * @property {Object} cfg CFG for the current strands IR.
+   * @property {Array} uniforms Collected uniforms and their default value providers.
+   * @property {Object} shaderNameMap Bidirectional name map used to translate between user-facing and generated internal shader variable names.
+   * @property {Object} shaderNameState Numeric suffix counter used when generating internal shader names.
+   * @property {Set} vertexDeclarations Declarations outside the generated hook functions to prepend to vertex shader code.
+   * @property {Set} fragmentDeclarations Declarations outside the generated hook functions to prepend to fragment shader code.
+   * @property {Set} computeDeclarations Declarations outside the generated hook functions to prepend to compute shader code.
+   * @property {Array} hooks Collected hook IR entries to turn into shader hook source.
+   * @property {Object} backend Active shader backend used for code generation and backend-specific helpers.
+   * @property {Boolean} active Whether strands interception is currently active.
+   * @property {Object} renderer Renderer whose shader is being modified.
+   * @property {Object} baseShader Base shader being modified in the current pass.
+   * @property {Boolean} previousFES Previous value of `p5.disableFriendlyErrors`, restored after the pass.
+   * @property {Object} windowOverrides Original temporary hook targets saved from `window`.
+   * @property {Object} fnOverrides Original temporary hook targets saved from `p5.prototype`.
+   * @property {Object} graphicsOverrides Original temporary hook targets saved from `p5.Graphics.prototype`.
+   * @property {Number} _noiseOctaves Noise octave override captured by `noiseDetail()`.
+   * @property {Number} _noiseAmpFalloff Noise falloff override captured by `noiseDetail()`.
+   * @property {Number} _randomSeed Random seed override captured by `randomSeed()`.
+   * @property {Object} _builtinGlobals Cache of builtin-global uniform nodes for the current DAG.
+   * @property {Map} sharedVariables Shared variable metadata that tracks vertex/fragment usage to decide whether each variable becomes a local declaration or a varying.
+   * @property {Object} activeHook Hook currently being recorded, if any.
+   * @property {Boolean} _instanceIDUsedInFragment Whether fragment-stage code referenced `instanceID`, requiring it to be passed from the vertex shader to the fragment shader.
+   */
+
+  /**
+   * Initializes the persistent strands context.
+   *
+   * Some strands context fields should persist across multiple shader `modify()` calls.
+   * e.g. there is no need to set p5 class reference multiple times,
+   * and the builtin globals accessors should only be installed once.
+   *
+   * @private
+   * @param {StrandsContext} ctx The strands context object.
+   */
+  function initPersistentStrandsContext(ctx) {
+    ctx.p5 = p5;
+    ctx._builtinGlobalsAccessorsInstalled = false;
+    resetTransientStrandsContext(ctx);
+  }
+
+  function createBuiltinGlobalsCache(dag) {
+    return {
+      dag,
+      nodes: new Map(),
+      uniformsAdded: new Set()
+    };
+  }
+
+  /**
+   * Initializes the transient strands context for one active shader `modify()` pass.
+   *
+   * @private
+   * @param {StrandsContext} ctx The strands context object.
+   * @param {Object} backend The backend to use for shader execution.
+   * @param {Object} [options] Options for initializing the context.
+   * @param {Boolean} [options.active] Whether the context is active.
+   * @param {Object} [options.renderer] The renderer to use.
+   * @param {Object} [options.baseShader] The base shader to use.
+   */
   function initStrandsContext(
     ctx,
     backend,
-    { active = false, renderer = null, baseShader = null } = {},
+    { active = false, renderer = null, baseShader = null } = {}
   ) {
     ctx.dag = createDirectedAcyclicGraph();
     ctx.cfg = createControlFlowGraph();
     ctx.uniforms = [];
+    ctx.shaderNameMap = createStrandsShaderNameMap();
+    ctx.shaderNameState = createStrandsShaderNameState();
     ctx.vertexDeclarations = new Set();
     ctx.fragmentDeclarations = new Set();
     ctx.computeDeclarations = new Set();
@@ -49,23 +122,58 @@ function strands(p5, fn) {
     ctx.windowOverrides = {};
     ctx.fnOverrides = {};
     ctx.graphicsOverrides = {};
+    ctx._noiseOctaves = null;
+    ctx._noiseAmpFalloff = null;
     ctx._randomSeed = null;
+    ctx._builtinGlobals = createBuiltinGlobalsCache(ctx.dag);
+    ctx.sharedVariables = new Map();
+    ctx.activeHook = undefined;
+    ctx._instanceIDUsedInFragment = false;
     if (active) {
       p5.disableFriendlyErrors = true;
     }
-    ctx.p5 = p5;
   }
 
-  function deinitStrandsContext(ctx) {
+  /**
+   * Resets the transient fields of the strands context.
+   *
+   * @private
+   * @param {StrandsContext} ctx The strands context object.
+   */
+  function resetTransientStrandsContext(ctx) {
     ctx.dag = createDirectedAcyclicGraph();
     ctx.cfg = createControlFlowGraph();
     ctx.uniforms = [];
+    ctx.shaderNameMap = createStrandsShaderNameMap();
+    ctx.shaderNameState = createStrandsShaderNameState();
     ctx.vertexDeclarations = new Set();
     ctx.fragmentDeclarations = new Set();
     ctx.computeDeclarations = new Set();
     ctx.hooks = [];
+    ctx.backend = undefined;
     ctx.active = false;
+    ctx.renderer = null;
+    ctx.baseShader = null;
+    ctx.previousFES = p5.disableFriendlyErrors;
+    ctx.windowOverrides = {};
+    ctx.fnOverrides = {};
+    ctx.graphicsOverrides = {};
+    ctx._noiseOctaves = null;
+    ctx._noiseAmpFalloff = null;
     ctx._randomSeed = null;
+    ctx._builtinGlobals = createBuiltinGlobalsCache(ctx.dag);
+    ctx.sharedVariables = new Map();
+    ctx.activeHook = undefined;
+    ctx._instanceIDUsedInFragment = false;
+  }
+
+  /**
+   * Deinitializes the strands context after a shader `modify()` pass is complete.
+   *
+   * @private
+   * @param {StrandsContext} ctx The strands context object.
+   */
+  function deinitStrandsContext(ctx) {
     p5.disableFriendlyErrors = ctx.previousFES;
     for (const key in ctx.windowOverrides) {
       window[key] = ctx.windowOverrides[key];
@@ -84,10 +192,11 @@ function strands(p5, fn) {
         }
       }
     }
+    resetTransientStrandsContext(ctx);
   }
 
   const strandsContext = {};
-  initStrandsContext(strandsContext);
+  initPersistentStrandsContext(strandsContext);
   initGlobalStrandsAPI(p5, fn, strandsContext);
 
   function withTempGlobalMode(pInst, callback) {
@@ -146,12 +255,16 @@ function strands(p5, fn) {
             typeof shaderModifier === "string"
               ? `(${shaderModifier})`
               : `(${shaderModifier.toString()})`;
-          strandsCallback = transpileStrandsToJS(
+          const transpiledStrands = transpileStrandsToJS(
             p5,
             sourceString,
             options.srcLocations,
             scope,
+            this.hooks.shaderNameState
           );
+          strandsCallback = transpiledStrands.callback;
+          strandsContext.shaderNameMap = transpiledStrands.shaderNameMap;
+          strandsContext.shaderNameState = transpiledStrands.shaderNameState;
         } else {
           strandsCallback = shaderModifier;
         }

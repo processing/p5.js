@@ -247,6 +247,8 @@ export class Renderer3D extends Renderer {
 
     this._curShader = undefined;
     this.drawShapeCount = 1;
+    // Set by the instances() wrapper; undefined means "no instancing".
+    this._instanceCount = undefined;
 
     this.scratchMat3 = new Matrix(3);
 
@@ -530,7 +532,7 @@ export class Renderer3D extends Renderer {
   }
 
   endShape(mode, count) {
-    this.drawShapeCount = count;
+    this.drawShapeCount = count ?? this._instanceCount ?? 1;
     super.endShape(mode, count);
   }
 
@@ -547,7 +549,8 @@ export class Renderer3D extends Renderer {
     this.updateShapeVertexProperties();
   }
 
-  model(model, count = 1) {
+  model(model, count) {
+    count = count ?? this._instanceCount ?? 1;
     if (model.vertices.length > 0) {
       if (this.geometryBuilder) {
         this.geometryBuilder.addRetained(model);
@@ -679,6 +682,7 @@ export class Renderer3D extends Renderer {
   }
 
   _drawGeometryScaled(model, scaleX, scaleY, scaleZ) {
+    const count = this._instanceCount || 1;
     let originalModelMatrix = this.states.uModelMatrix;
     this.states.setValue("uModelMatrix", this.states.uModelMatrix.clone());
     try {
@@ -687,7 +691,7 @@ export class Renderer3D extends Renderer {
       if (this.geometryBuilder) {
         this.geometryBuilder.addRetained(model);
       } else {
-        this._drawGeometry(model);
+        this._drawGeometry(model, { count });
       }
     } finally {
       this.states.setValue("uModelMatrix", originalModelMatrix);
@@ -2034,61 +2038,55 @@ function renderer3D(p5, fn) {
    * item is accessed by index, and its properties are available by name.
    *
    * ```js example
-   * let instanceData;
-   * let instancesShader;
-   * let instance;
-   * let count = 5;
-   *
-   * async function setup() {
-   *   await createCanvas(200, 200, WEBGPU);
-   *
-   *   let data = [];
-   *   for (let i = 0; i < count; i++) {
-   *     data.push({
-   *       position: createVector(
-   *         random(-1, 1) * width / 2,
-   *         random(-1, 1) * height / 2,
-   *         0,
-   *       ),
-   *       color: color(
-   *         random(255),
-   *         random(255),
-   *         random(255)
-   *       )
-   *     });
-   *   }
-   *   instanceData = createStorage(data);
-   *   instance = buildGeometry(drawInstance);
-   *   instancesShader = buildMaterialShader(drawInstances);
-   *   describe('Five spheres at random positions, each a different random color.');
-   * }
-   *
-   * function drawInstance() {
-   *   sphere(15);
-   * }
-   *
-   * function drawInstances() {
-   *   let data = uniformStorage(instanceData);
-   *   let itemColor = sharedVec4();
-   *
-   *   worldInputs.begin();
-   *   let item = data[instanceID()];
-   *   itemColor = item.color;
-   *   worldInputs.position += item.position;
-   *   worldInputs.end();
-   *
-   *   finalColor.begin();
-   *   finalColor.set(itemColor);
-   *   finalColor.end();
-   * }
-   *
-   * function draw() {
-   *   background(220);
-   *   lights();
-   *   noStroke();
-   *   shader(instancesShader);
-   *   model(instance, count);
-   * }
+    * let instanceData;
+    * let instancesShader;
+    * let count = 5;
+    *
+    * async function setup() {
+    *   await createCanvas(200, 200, WEBGPU);
+    *
+    *   let data = [];
+    *   for (let i = 0; i < count; i++) {
+    *     data.push({
+    *       position: createVector(
+    *         random(-1, 1) * width / 2,
+    *         random(-1, 1) * height / 2,
+    *         0,
+    *       ),
+    *       color: color(
+    *         random(255),
+    *         random(255),
+    *         random(255)
+    *       )
+    *     });
+    *   }
+    *   instanceData = createStorage(data);
+    *   instancesShader = buildMaterialShader(drawInstances);
+    *   describe('Five spheres at random positions, each a different random color.');
+    * }
+    *
+    * function drawInstances() {
+    *   let data = uniformStorage(instanceData);
+    *   let itemColor = sharedVec4();
+    *
+    *   worldInputs.begin();
+    *   let item = data[instanceIndex];
+    *   itemColor = item.color;
+    *   worldInputs.position += item.position;
+    *   worldInputs.end();
+    *
+    *   finalColor.begin();
+    *   finalColor.set(itemColor);
+    *   finalColor.end();
+    * }
+    *
+    * function draw() {
+    *   background(220);
+    *   lights();
+    *   noStroke();
+    *   shader(instancesShader);
+    *   instances(count).sphere(15);
+    * }
    * ```
    *
    * You can also store a plain list of numbers by passing an array of numbers.
@@ -2242,15 +2240,14 @@ function renderer3D(p5, fn) {
    * initial data. Connect your iteration function to the storage by passing the storage
    * into <a href="#/p5/uniformStorage">`uniformStorage`</a>.
    *
-   * Often, compute shaders are paired with <a href="#/p5/model">`model(myGeometry, count)`</a>
+   * Often, compute shaders are paired with <a href="#/p5/instances">`instances(count)`</a>
    * to draw one instance per object in the storage, and a shader that uses
-   * <a href="#/p5/instanceID">`instanceID()`</a> to position each instance.
+   * <a href="#/p5/instanceIndex">`instanceIndex`</a> to position each instance.
    *
    * ```js example
    * let particles;
    * let computeShader;
    * let displayShader;
-   * let instance;
    * const numParticles = 100;
    *
    * async function setup() {
@@ -2258,7 +2255,6 @@ function renderer3D(p5, fn) {
    *   particles = createStorage(makeParticles(width / 2, height / 2));
    *   computeShader = buildComputeShader(simulate);
    *   displayShader = buildMaterialShader(display);
-   *   instance = buildGeometry(drawParticle);
    *   describe('100 orange particles shooting outward.');
    * }
    *
@@ -2275,10 +2271,6 @@ function renderer3D(p5, fn) {
    *   return data;
    * }
    *
-   * function drawParticle() {
-   *   sphere(2);
-   * }
-   *
    * function simulate() {
    *   let data = uniformStorage(particles);
    *   let idx = index.x;
@@ -2288,7 +2280,7 @@ function renderer3D(p5, fn) {
    * function display() {
    *   let data = uniformStorage(particles);
    *   worldInputs.begin();
-   *   let pos = data[instanceID()].position;
+   *   let pos = data[instanceIndex].position;
    *   worldInputs.position.xy += pos - [width / 2, height / 2];
    *   worldInputs.end();
    * }
@@ -2302,7 +2294,7 @@ function renderer3D(p5, fn) {
    *   noStroke();
    *   fill(255, 200, 50);
    *   shader(displayShader);
-   *   model(instance, numParticles);
+   *   instances(numParticles).sphere(2);
    * }
    * ```
    *
@@ -2310,7 +2302,6 @@ function renderer3D(p5, fn) {
    * let particles;
    * let computeShader;
    * let displayShader;
-   * let instance;
    * const numParticles = 50;
    *
    * async function setup() {
@@ -2333,12 +2324,7 @@ function renderer3D(p5, fn) {
    *
    *   computeShader = buildComputeShader(simulate);
    *   displayShader = buildMaterialShader(display);
-   *   instance = buildGeometry(drawParticle);
    *   describe('50 white spheres bouncing around the canvas.');
-   * }
-   *
-   * function drawParticle() {
-   *   sphere(3);
    * }
    *
    * function simulate() {
@@ -2363,7 +2349,7 @@ function renderer3D(p5, fn) {
    * function display() {
    *   let data = uniformStorage(particles);
    *   worldInputs.begin();
-   *   let pos = data[instanceID()].position;
+   *   let pos = data[instanceIndex].position;
    *   worldInputs.position.xy += pos;
    *   worldInputs.end();
    * }
@@ -2375,7 +2361,7 @@ function renderer3D(p5, fn) {
    *   fill(255);
    *   lights();
    *   shader(displayShader);
-   *   model(instance, numParticles);
+   *   instances(numParticles).sphere(3);
    * }
    * ```
    *
@@ -2412,7 +2398,6 @@ function renderer3D(p5, fn) {
    * let particles;
    * let computeShader;
    * let displayShader;
-   * let instance;
    * const numParticles = 50;
    *
    * async function setup() {
@@ -2435,12 +2420,7 @@ function renderer3D(p5, fn) {
    *
    *   computeShader = buildComputeShader(simulate);
    *   displayShader = buildMaterialShader(display);
-   *   instance = buildGeometry(drawParticle);
    *   describe('50 white spheres bouncing around the canvas.');
-   * }
-   *
-   * function drawParticle() {
-   *   sphere(3);
    * }
    *
    * function simulate() {
@@ -2465,7 +2445,7 @@ function renderer3D(p5, fn) {
    * function display() {
    *   let data = uniformStorage(particles);
    *   worldInputs.begin();
-   *   let pos = data[instanceID()].position;
+   *   let pos = data[instanceIndex].position;
    *   worldInputs.position.xy += pos;
    *   worldInputs.end();
    * }
@@ -2477,7 +2457,7 @@ function renderer3D(p5, fn) {
    *   fill(255);
    *   lights();
    *   shader(displayShader);
-   *   model(instance, numParticles);
+   *   instances(numParticles).sphere(3);
    * }
    * ```
    *
