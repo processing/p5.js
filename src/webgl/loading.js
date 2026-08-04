@@ -619,7 +619,7 @@ function loading(p5, fn){
         return this._internal ? this._internal(cb) : cb();
       }
     } catch(err) {
-      p5._friendlyFileLoadError(3, path);
+      // p5._friendlyFileLoadError(3, path);
       if(failureCallback) {
         return failureCallback(err);
       } else {
@@ -1194,23 +1194,17 @@ function loading(p5, fn){
    * }
    * ```
    *
-   * Multiple instances can be drawn at once with `model(geometry, count)`. On its own,
+   * Multiple instances can be drawn at once with `instances(count)`. On its own,
    * all the instances get drawn to the same spot, but you can use
-   * <a href="#/p5/instanceID">`instanceID()`</a> inside of a shader to handle each instance.
+   * <a href="#/p5/instanceIndex">`instanceIndex`</a> inside of a shader to handle each instance.
    * At large counts, this often runs faster than using a `for` loop.
    *
    * ```js example
    * let instancesShader;
-   * let instance;
    * let count = 5;
-   *
-   * function drawInstance() {
-   *   sphere(15);
-   * }
    *
    * function setup() {
    *   createCanvas(200, 200, WEBGL);
-   *   instance = buildGeometry(drawInstance);
    *   instancesShader = buildMaterialShader(drawSpaced);
    * }
    *
@@ -1219,7 +1213,7 @@ function loading(p5, fn){
    *   // Spread spheres evenly across the canvas based on their index
    *   let spacing = width / count;
    *   worldInputs.position.x +=
-   *     (instanceID() - (count - 1) / 2) * spacing;
+   *     (instanceIndex - (count - 1) / 2) * spacing;
    *   worldInputs.end();
    * }
    *
@@ -1229,7 +1223,7 @@ function loading(p5, fn){
    *   noStroke();
    *   fill('red');
    *   shader(instancesShader);
-   *   model(instance, count);
+   *   instances(count).sphere(15);
    * }
    * ```
    *
@@ -1364,7 +1358,7 @@ function loading(p5, fn){
         if (failureCallback) {
           failureCallback(error);
         } else {
-          p5._friendlyError('Error during parsing: ' + error.message);
+          p5.FES.log`Error during parsing: ${error.message}`();
         }
         return;
       }
@@ -1376,18 +1370,16 @@ function loading(p5, fn){
         if (failureCallback) {
           failureCallback(error);
         } else {
-          p5._friendlyError('Error during parsing: ' + error.message);
+          p5.FES.log`Error during parsing: ${error.message}`();
         }
         return;
       }
     } else {
-      p5._friendlyFileLoadError(3, modelString);
+      // p5._friendlyFileLoadError(3, modelString);
       if (failureCallback) {
         failureCallback();
       } else {
-        p5._friendlyError(
-          'Sorry, the file type is invalid. Only OBJ and STL files are supported.'
-        );
+        p5.FES.log`Sorry, the file type is invalid. Only OBJ and STL files are supported.`();
       }
     }
     if (normalize) {
