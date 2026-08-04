@@ -89,7 +89,11 @@ function parseMtlData(data) {
 function mtlToPartState(material) {
   const state = createPartState();
   if (!material) return state;
-  if (material.diffuseColor) state.fill = material.diffuseColor;
+  if (material.diffuseColor) {
+    // fill is always [r, g, b, a] in 0..1. the mtl d/Tr becomes the alpha, and
+    // opaque materials default to 1 so the format stays consistent either way.
+    state.fill = [...material.diffuseColor, material.opacity ?? 1];
+  }
   if (material.ambientColor) state.ambientColor = material.ambientColor;
   if (material.specularColor) state.specularColor = material.specularColor;
   if (material.shininess !== undefined) state.shininess = material.shininess;
@@ -131,10 +135,11 @@ async function loadMaterialTextures(materials, modelPath, instance) {
 // as the aggregate; each part gets its own localised verts with faces re-indexed
 // against them, plus its material's state.
 function buildMaterialParts(model, faceMaterials, materials) {
-  // one group per material, plus a null group for faces before any usemtl so
-  // none get dropped. no materials at all -> keep the default wrap.
+  // only split when there are genuinely multiple materials. a single material
+  // (or none) stays as the geometry's own part and renders as before. one group
+  // per material, plus a null group for faces before any usemtl so none drop.
   const names = [...new Set(faceMaterials)];
-  if (!names.some(name => name != null)) return;
+  if (names.filter(name => name != null).length < 2) return;
 
   const hasUvs = model.uvs.length > 0;
   const hasNormals = model.vertexNormals.length > 0;

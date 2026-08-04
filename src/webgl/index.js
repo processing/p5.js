@@ -8,7 +8,6 @@ import renderBuffer from './p5.RenderBuffer';
 import quat from './p5.Quat';
 import matrix from '../math/p5.Matrix';
 import geometry from './p5.Geometry';
-import geometryPart from './p5.GeometryPart';
 import framebuffer from './p5.Framebuffer';
 import dataArray from './p5.DataArray';
 import camera from './p5.Camera';
@@ -29,7 +28,6 @@ export default function(p5){
   p5.registerAddon(quat);
   p5.registerAddon(matrix);
   p5.registerAddon(geometry);
-  p5.registerAddon(geometryPart);
   p5.registerAddon(camera);
   p5.registerAddon(framebuffer);
   p5.registerAddon(dataArray);

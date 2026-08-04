@@ -2,3 +2,6 @@ newmtl mat0
 Kd 1 1 1
 Ns 50
 map_Kd cat.jpg
+
+newmtl mat1
+Kd 1 0 0
