@@ -22,6 +22,41 @@ suite('WebGPU p5.Shader', function() {
   });
 
   suite('p5.strands', () => {
+    test('builtin global accessors remain usable across modify calls and after failures', async () => {
+      await myp5.createCanvas(5, 5, myp5.WEBGPU);
+
+      myp5.baseMaterialShader().modify(() => {
+        myp5.getPixelInputs(inputs => {
+          inputs.color = [myp5.mouseX / myp5.width, 0, 0, 1];
+          return inputs;
+        });
+      }, { myp5 });
+
+      expect(() => {
+        myp5.baseMaterialShader().modify(() => {
+          throw new Error('intentional failure');
+        }, { myp5 });
+      }).toThrowError('intentional failure');
+
+      myp5.baseMaterialShader().modify(() => {
+        myp5.getPixelInputs(inputs => {
+          // global accessors are still usable
+          // meaning _builtinGlobalsAccessorsInstalled is not accidentally reset
+          const mxInHook = myp5.mouseX;
+          const wInHook = myp5.width;
+          // inside modify hooks, global accessors return strands nodes
+          assert.isTrue(mxInHook.isStrandsNode);
+          assert.isTrue(wInHook.isStrandsNode);
+          inputs.color = [1, 0, 0, 1];
+          return inputs;
+        });
+      }, { myp5 });
+
+      // after modify finishes, global accessors go back to ordinary p5 values
+      assert.isNumber(myp5.mouseX);
+      assert.isNumber(myp5.width);
+    });
+
     test('does not break when arrays are in uniform callbacks', async () => {
       await myp5.createCanvas(5, 5, myp5.WEBGPU);
       const myShader = myp5.baseMaterialShader().modify(() => {
@@ -39,6 +74,183 @@ suite('WebGPU p5.Shader', function() {
         myp5.shader(myShader);
         myp5.plane(myp5.width, myp5.height);
       }).not.toThrowError();
+    });
+
+    test('does not leak shared variable metadata into later shaders', async () => {
+      await myp5.createCanvas(50, 50, myp5.WEBGPU);
+
+      const firstShader = myp5.baseMaterialShader().modify(() => {
+        let __worldPos = myp5.varyingVec3();
+        myp5.getWorldInputs(inputs => {
+          __worldPos = inputs.position.xyz;
+          return inputs;
+        });
+        myp5.getFinalColor(() => [myp5.abs(__worldPos / 25), 1]);
+      }, { myp5 });
+
+      const secondShader = myp5.baseMaterialShader().modify(() => {
+        myp5.getFinalColor(() => [1, 0, 0, 1]);
+      }, { myp5 });
+
+      assert.deepEqual(
+        firstShader.hooks.varyingVariables,
+        [`${firstShader.hooks.shaderNameMap.externalToInternal.__worldPos}: vec3<f32>`]
+      );
+      assert.deepEqual(secondShader.hooks.varyingVariables, []);
+      assert.notInclude(secondShader.vertSrc(), '__worldPos');
+      assert.notInclude(secondShader.fragSrc(), '__worldPos');
+    });
+
+    test('renames only problematic inferred uniform names', async () => {
+      await myp5.createCanvas(50, 50, myp5.WEBGPU);
+      const testShader = myp5.baseMaterialShader().modify(() => {
+        // Names containing two underscores are treated as problematic because of GLSL
+        // naming constraints, so p5.strands remaps them through a shared naming layer.
+        // WGSL itself would allow this name, but we still test the behavior in WebGPU
+        // because the remapping logic is shared across transpiler, strands API, codegen,
+        // and runtime shader handling.
+        const __val = myp5.uniformFloat(() => 0.8);
+        const brightness = myp5.uniformFloat(() => 0.2);
+        myp5.getPixelInputs(inputs => {
+          inputs.color = [__val, brightness, brightness, 1.0];
+          return inputs;
+        });
+      }, { myp5 });
+
+      assert.strictEqual(
+        testShader.hooks.shaderNameMap.externalToInternal.__val,
+        '_p5_strands_0'
+      );
+      assert.strictEqual(
+        testShader.hooks.shaderNameMap.internalToExternal._p5_strands_0,
+        '__val'
+      );
+      assert.strictEqual(
+        testShader.hooks.shaderNameMap.externalToInternal.brightness,
+        undefined
+      );
+
+      myp5.noStroke();
+      myp5.shader(testShader);
+      myp5.plane(myp5.width, myp5.height);
+
+      const pixelColor = await myp5.get(25, 25);
+      assert.approximately(pixelColor[0], 204, 5); // Red channel should be ~204 (0.8 * 255)
+      assert.approximately(pixelColor[1], 51, 5); // Green channel should be ~51 (0.2 * 255)
+      assert.approximately(pixelColor[2], 51, 5); // Blue channel should be ~51 (0.2 * 255)
+    });
+
+    test('handles implicit uniform names containing two underscores', async () => {
+      await myp5.createCanvas(50, 50, myp5.WEBGPU);
+      myp5.pixelDensity(1);
+      const testShader = myp5.baseMaterialShader().modify(() => {
+        // using implicit uniform name with two underscores, which should be remapped
+        const __val = myp5.uniformFloat();
+        myp5.getPixelInputs(inputs => {
+          inputs.color = [__val, __val, __val, 1.0];
+          return inputs;
+        });
+      }, { myp5 });
+
+      // setting the uniform using the original name
+      testShader.setUniform('__val', 0.6);
+
+      myp5.noStroke();
+      myp5.shader(testShader);
+      myp5.plane(myp5.width, myp5.height);
+
+      const pixelColor = await myp5.get(25, 25);
+      assert.approximately(pixelColor[0], 153, 5); // Red channel should be ~153 (0.6 * 255)
+      assert.approximately(pixelColor[1], 153, 5); // Green channel should be ~153 (0.6 * 255)
+      assert.approximately(pixelColor[2], 153, 5); // Blue channel should be ~153 (0.6 * 255)
+    });
+
+    test('handles explicit uniform names containing two underscores', async () => {
+      await myp5.createCanvas(50, 50, myp5.WEBGPU);
+      myp5.pixelDensity(1);
+      const testShader = myp5.baseMaterialShader().modify(() => {
+        // using explicit uniform name with two underscores, which should be remapped
+        const val = myp5.uniformFloat('__val');
+        myp5.getPixelInputs(inputs => {
+          inputs.color = [val, val, val, 1.0];
+          return inputs;
+        });
+      }, { myp5 });
+
+      // setting the uniform using the original name
+      testShader.setUniform('__val', 0.6);
+
+      myp5.noStroke();
+      myp5.shader(testShader);
+      myp5.plane(myp5.width, myp5.height);
+
+      const pixelColor = await myp5.get(25, 25);
+      assert.approximately(pixelColor[0], 153, 5); // Red channel should be ~153 (0.6 * 255)
+      assert.approximately(pixelColor[1], 153, 5); // Green channel should be ~153 (0.6 * 255)
+      assert.approximately(pixelColor[2], 153, 5); // Blue channel should be ~153 (0.6 * 255)
+    });
+
+    test('continues inferred uniform suffixes across chained modify calls', async () => {
+      await myp5.createCanvas(50, 50, myp5.WEBGPU);
+      const shader1 = myp5.baseMaterialShader().modify(() => {
+        const __first = myp5.uniformFloat(() => 0.2);
+        myp5.getPixelInputs(inputs => {
+          inputs.color.r = __first;
+          return inputs;
+        });
+      }, { myp5 });
+
+      const shader2 = shader1.modify(() => {
+        const __second = myp5.uniformFloat(() => 0.8);
+        myp5.getWorldInputs(inputs => {
+          inputs.position.y += __second * 0.0;
+          return inputs;
+        });
+      }, { myp5 });
+
+      assert.strictEqual(
+        shader2.hooks.shaderNameMap.externalToInternal.__first,
+        '_p5_strands_0'
+      );
+      assert.strictEqual(
+        shader2.hooks.shaderNameMap.externalToInternal.__second,
+        '_p5_strands_1'
+      );
+      assert.strictEqual(
+        shader2.hooks.shaderNameState.nextSuffix,
+        2
+      );
+    });
+
+    test('does not leak shared/varying state into later modify calls', async () => {
+      await myp5.createCanvas(50, 50, myp5.WEBGPU);
+
+      const firstShader = myp5.baseMaterialShader().modify(() => {
+        let __worldPos = myp5.varyingVec3();
+        myp5.getWorldInputs(inputs => {
+          __worldPos = inputs.position.xyz;
+          return inputs;
+        });
+        myp5.getFinalColor(() => {
+          return [myp5.abs(__worldPos / 25), 1];
+        });
+      }, { myp5 });
+
+      assert.deepEqual(
+        firstShader.hooks.varyingVariables,
+        [`${firstShader.hooks.shaderNameMap.externalToInternal.__worldPos}: vec3<f32>`]
+      );
+
+      const secondShader = myp5.baseFilterShader().modify(() => {
+        myp5.filterColor.begin();
+        myp5.filterColor.set([1, 0, 0, 1]);
+        myp5.filterColor.end();
+      }, { myp5 });
+
+      assert.deepEqual(
+        secondShader.hooks.varyingVariables,
+        []
+      );
     });
 
     suite('if statement conditionals', () => {
@@ -963,6 +1175,70 @@ suite('WebGPU p5.Shader', function() {
         assert.approximately(cornerColor[2], 0, 5);
       });
 
+      test('handles inferred varying names containing two underscores', async () => {
+        await myp5.createCanvas(50, 50, myp5.WEBGPU);
+        myp5.pixelDensity(1);
+
+        const testShader = myp5.baseMaterialShader().modify(() => {
+          // using implicit varying name with two underscores, which should be remapped
+          let __worldPos = myp5.varyingVec3();
+          myp5.getWorldInputs(inputs => {
+            __worldPos = inputs.position.xyz;
+            return inputs;
+          });
+          myp5.getFinalColor(() => {
+            return [myp5.abs(__worldPos / 25), 1];
+          });
+        }, { myp5 });
+
+        myp5.background(0, 0, 255);
+        myp5.noStroke();
+        myp5.shader(testShader);
+        myp5.plane(myp5.width, myp5.height);
+
+        const midColor = await myp5.get(25, 25);
+        assert.approximately(midColor[0], 0, 5); // Red channel should be ~0
+        assert.approximately(midColor[1], 0, 5); // Green channel should be ~0
+        assert.approximately(midColor[2], 0, 5); // Blue channel should be ~0
+
+        const cornerColor = await myp5.get(0, 0);
+        assert.approximately(cornerColor[0], 255, 5); // Red channel should be ~255
+        assert.approximately(cornerColor[1], 255, 5); // Green channel should be ~255
+        assert.approximately(cornerColor[2], 0, 5); // Blue channel should be ~0
+      });
+
+      test('handles explicit varying names containing two underscores', async () => {
+        await myp5.createCanvas(50, 50, myp5.WEBGPU);
+        myp5.pixelDensity(1);
+
+        const testShader = myp5.baseMaterialShader().modify(() => {
+          // using explicit varying name with two underscores, which should be remapped
+          let worldPos = myp5.varyingVec3('__worldPos');
+          myp5.getWorldInputs(inputs => {
+            worldPos = inputs.position.xyz;
+            return inputs;
+          });
+          myp5.getFinalColor(() => {
+            return [myp5.abs(worldPos / 25), 1];
+          });
+        }, { myp5 });
+
+        myp5.background(0, 0, 255);
+        myp5.noStroke();
+        myp5.shader(testShader);
+        myp5.plane(myp5.width, myp5.height);
+
+        const midColor = await myp5.get(25, 25);
+        assert.approximately(midColor[0], 0, 5); // Red channel should be ~0
+        assert.approximately(midColor[1], 0, 5); // Green channel should be ~0
+        assert.approximately(midColor[2], 0, 5); // Blue channel should be ~0
+
+        const cornerColor = await myp5.get(0, 0);
+        assert.approximately(cornerColor[0], 255, 5); // Red channel should be ~255
+        assert.approximately(cornerColor[1], 255, 5); // Green channel should be ~255
+        assert.approximately(cornerColor[2], 0, 5); // Blue channel should be ~0
+      });
+
       test('handle passing a value from a vertex hook to a fragment hook as part of hook output', async () => {
         await myp5.createCanvas(50, 50, myp5.WEBGPU);
         myp5.pixelDensity(1);
@@ -1056,6 +1332,58 @@ suite('WebGPU p5.Shader', function() {
         assert.approximately(centerColor[0], 0, 5);   // Red component
         assert.approximately(centerColor[1], 0, 5);   // Green component
         assert.approximately(centerColor[2], 255, 5); // Blue component
+      });
+
+      test('handles inferred shared names containing two underscores', async () => {
+        await myp5.createCanvas(50, 50, myp5.WEBGPU);
+        myp5.pixelDensity(1);
+
+        const testShader = myp5.baseMaterialShader().modify(() => {
+          let __processedNormal = myp5.sharedVec3();
+          myp5.getPixelInputs(inputs => {
+            __processedNormal = myp5.normalize(inputs.normal);
+            return inputs;
+          });
+          myp5.getFinalColor(() => {
+            return [myp5.abs(__processedNormal), 1];
+          });
+        }, { myp5 });
+
+        myp5.background(255, 0, 0);
+        myp5.noStroke();
+        myp5.shader(testShader);
+        myp5.plane(myp5.width, myp5.height);
+
+        const centerColor = await myp5.get(25, 25);
+        assert.approximately(centerColor[0], 0, 5);
+        assert.approximately(centerColor[1], 0, 5);
+        assert.approximately(centerColor[2], 255, 5);
+      });
+
+      test('handles explicit shared names containing two underscores', async () => {
+        await myp5.createCanvas(50, 50, myp5.WEBGPU);
+        myp5.pixelDensity(1);
+
+        const testShader = myp5.baseMaterialShader().modify(() => {
+          let processedNormal = myp5.sharedVec3('__processedNormal');
+          myp5.getPixelInputs(inputs => {
+            processedNormal = myp5.normalize(inputs.normal);
+            return inputs;
+          });
+          myp5.getFinalColor(() => {
+            return [myp5.abs(processedNormal), 1];
+          });
+        }, { myp5 });
+
+        myp5.background(255, 0, 0);
+        myp5.noStroke();
+        myp5.shader(testShader);
+        myp5.plane(myp5.width, myp5.height);
+
+        const centerColor = await myp5.get(25, 25);
+        assert.approximately(centerColor[0], 0, 5);
+        assert.approximately(centerColor[1], 0, 5);
+        assert.approximately(centerColor[2], 255, 5);
       });
 
       test('handle passing a value from a vertex hook to a fragment hook using shared*', async () => {
@@ -1168,6 +1496,37 @@ suite('WebGPU p5.Shader', function() {
     });
 
     suite('noise()', () => {
+      test('noiseDetail state does not leak across modify calls', async () => {
+        await myp5.createCanvas(50, 50, myp5.WEBGPU);
+
+        const firstShader = myp5.baseFilterShader().modify(() => {
+          myp5.noiseDetail(7, 0.2);
+          myp5.getColor(() => {
+            return [myp5.noise(10), 0, 0, 1];
+          });
+        }, { myp5 });
+
+        const secondShader = myp5.baseFilterShader().modify(() => {
+          myp5.getColor(() => {
+            return [myp5.noise(10), 0, 0, 1];
+          });
+        }, { myp5 });
+
+        const explicitDefaultShader = myp5.baseFilterShader().modify(() => {
+          myp5.noiseDetail(4, 0.5);
+          myp5.getColor(() => {
+            return [myp5.noise(10), 0, 0, 1];
+          });
+        }, { myp5 });
+
+        const firstHook = firstShader.hooks.fragment['vec4<f32> getColor'];
+        const secondHook = secondShader.hooks.fragment['vec4<f32> getColor'];
+        const defaultHook = explicitDefaultShader.hooks.fragment['vec4<f32> getColor'];
+
+        assert.notStrictEqual(firstHook, secondHook);
+        assert.strictEqual(secondHook, defaultHook);
+      });
+
       for (let i = 1; i <= 3; i++) {
         test(`works with ${i}D vectors`, async () => {
           await expect((async () => {
@@ -1229,6 +1588,40 @@ suite('WebGPU p5.Shader', function() {
       }
     });
 
+    test('randomSeed state does not leak across modify calls', async () => {
+      await myp5.createCanvas(50, 50, myp5.WEBGPU);
+
+      const firstShader = myp5.baseFilterShader().modify(() => {
+        myp5.randomSeed(12);
+        myp5.getColor(() => [myp5.random(), 0, 0, 1]);
+      }, { myp5 });
+
+      const secondShader = myp5.baseFilterShader().modify(() => {
+        myp5.getColor(() => [myp5.random(), 0, 0, 1]);
+      }, { myp5 });
+
+      assert.strictEqual(firstShader.hooks.uniforms['_p5_randomSeed: f32'](), 12);
+      assert.notStrictEqual(secondShader.hooks.uniforms['_p5_randomSeed: f32'](), 12);
+    });
+
+    test('instanceID varying does not leak across modify calls', async () => {
+      await myp5.createCanvas(50, 50, myp5.WEBGPU);
+
+      const firstShader = myp5.baseMaterialShader().modify(() => {
+        myp5.getFinalColor(() => {
+          const id = myp5.instanceID();
+          return [id / 10, 0, 0, 1];
+        });
+      }, { myp5 });
+
+      const secondShader = myp5.baseMaterialShader().modify(() => {
+        myp5.getFinalColor(() => [1, 0, 0, 1]);
+      }, { myp5 });
+
+      assert.isDefined(firstShader.hooks.instanceIDVarying);
+      assert.isNull(secondShader.hooks.instanceIDVarying);
+    });
+
     suite('compute shaders', () => {
       test('handle early return in void compute hook', async () => {
         await myp5.createCanvas(5, 5, myp5.WEBGPU);
@@ -1267,6 +1660,50 @@ suite('WebGPU p5.Shader', function() {
         expect(() => {
           myp5.compute(computeShader, 1);
         }).not.toThrow();
+      });
+
+      test('handles inferred storage uniform names containing two underscores', async () => {
+        await myp5.createCanvas(5, 5, myp5.WEBGPU);
+        const input = new Float32Array([1, 2, 3, 4]);
+        const buf = myp5.createStorage(input);
+
+        const computeShader = myp5.buildComputeShader(() => {
+          // using implicit uniform storage name with two underscores, which should be remapped
+          const __data = myp5.uniformStorage();
+          const idx = myp5.index.x;
+          __data[idx] = __data[idx] * 2;
+        }, { myp5 });
+
+        // setting the uniform using the original name
+        computeShader.setUniform('__data', buf);
+        myp5.compute(computeShader, 4);
+
+        const result = await buf.read();
+        for (let i = 0; i < input.length; i++) {
+          expect(result[i]).to.be.closeTo(input[i] * 2, 0.001);
+        }
+      });
+
+      test('handles explicit storage uniform names containing two underscores', async () => {
+        await myp5.createCanvas(5, 5, myp5.WEBGPU);
+        const input = new Float32Array([1, 2, 3, 4]);
+        const buf = myp5.createStorage(input);
+
+        const computeShader = myp5.buildComputeShader(() => {
+          // using explicit uniform storage name with two underscores, which should be remapped
+          const data = myp5.uniformStorage('__data');
+          const idx = myp5.index.x;
+          data[idx] = data[idx] * 2;
+        }, { myp5 });
+
+        // setting the uniform using the original name
+        computeShader.setUniform('__data', buf);
+        myp5.compute(computeShader, 4);
+
+        const result = await buf.read();
+        for (let i = 0; i < input.length; i++) {
+          expect(result[i]).to.be.closeTo(input[i] * 2, 0.001);
+        }
       });
     });
 

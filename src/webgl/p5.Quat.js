@@ -34,14 +34,14 @@ class Quat {
 
   /**
    * Multiplies a quaternion with other quaternion.
-   * @method mult
+   * @method multiply
    * @param  {p5.Quat} [quat] quaternion to multiply with the quaternion calling the method.
    * @chainable
    */
   multiply(quat) {
 
     return new Quat(
-      this.w * quat.w - this.vec.x * quat.vec.x - this.vec.y * quat.vec.y - this.vec.z - quat.vec.z,
+      this.w * quat.w - this.vec.x * quat.vec.x - this.vec.y * quat.vec.y - this.vec.z * quat.vec.z,
       this.w * quat.vec.x + this.vec.x * quat.w + this.vec.y * quat.vec.z - this.vec.z * quat.vec.y,
       this.w * quat.vec.y - this.vec.x * quat.vec.z + this.vec.y * quat.w + this.vec.z * quat.vec.x,
       this.w * quat.vec.z + this.vec.x * quat.vec.y - this.vec.y * quat.vec.x + this.vec.z * quat.w

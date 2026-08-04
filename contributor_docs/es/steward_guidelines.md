@@ -63,7 +63,7 @@ Existen diferentes áreas de trabajo de las cuales los stewards pueden ser respo
 - **DevOps**: Se refiere al proceso de compilación (build process), pruebas unitarias (unit testing) y otros aspectos de la experiencia de desarrollo
 - **Documentación**: Incluye tanto la referencia en el código base central que se expone en el sitio web, los documentos para contribuidores y otro contenido del sitio web
 - **i18n (Internacionalización / Traducción)**: Incluye la revisión de traducciones, particularmente para `es`, `hi`, `ko`, `zh`
-- **Gráficos**: Contiene subáreas de WebGL y [p5.strands](https://beta.p5js.org/tutorials/intro-to-p5-strands/)
+- **Gráficos**: Contiene subáreas de WebGL y [p5.strands](https://p5js.org/tutorials/intro-to-p5-strands/)
 - **Color**: Incluye Color, ColorMode, mejoras de accesibilidad relacionadas con el uso del color
 - **Tipografía**: Se refiere a todos los temas sobre el manejo de texto y fuentes
 - **Matemáticas**: Incluye tanto la Math API externa como mejoras internas de rendimiento
