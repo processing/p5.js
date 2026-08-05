@@ -1182,7 +1182,7 @@ Steps:
 1. Commit your changes to a local branch of your fork of the p5.js repo.  The changes don't need to be pushed to github for this purpose, but they do need to be committed on a branch.
 1. Clone [the p5.js-website repo](https://github.com/processing/p5.js-website/tree/2.0) locally.
 1. Open a terminal in your new p5.js-website repo
-1. Check out the branch "2.0"
+1. Check out the "main" branch
 1. Run `npm install`
 1. Run the following command, using the path to **your** local p5.js repo before the `#`, and the name of **your** branch after the `#`:
 
