@@ -177,6 +177,11 @@ suite('Downloading', () => {
       assert.typeOf(mockP5Prototype.saveGif, 'function');
     });
 
+    test('should reject a non-positive duration', async () => {
+      await expect(mockP5Prototype.saveGif('myGif', 0)).rejects.toThrow();
+      await expect(mockP5Prototype.saveGif('myGif', -3)).rejects.toThrow();
+    });
+
     // TODO: this implementation need refactoring
     test.todo('should not throw an error', async () => {
       await mockP5Prototype.saveGif('myGif', 3);
