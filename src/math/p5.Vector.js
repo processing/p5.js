@@ -2023,9 +2023,9 @@ class Vector {
    */
   setHeading(a) {
     if (this.dimensions < 2 || (
-      this._values instanceof Array && this._values.slice(2).some(v => v !== 0))
+      this.values instanceof Array && this.values.slice(2).some(v => v !== 0))
     ) {
-      p5._friendlyError(
+      this._friendlyError(
         'p5.Vector.setHeading() only supports 2D vectors (z === 0). ' +
         'For 3D or higher-dimensional vectors, use rotate() or another ' +
         'appropriate method instead.',
@@ -3575,6 +3575,7 @@ class Vector {
         'The v1 parameter should be of type Array or p5.Vector',
         'p5.Vector.equals'
       );
+      return false;
     }
     return v.equals(v2);
   }
@@ -3661,6 +3662,11 @@ function vector(p5, fn) {
 
   Vector.prototype._friendlyError = p5._friendlyError;
   Vector.prototype.friendlyErrorsDisabled = function() {
+    return p5.disableFriendlyErrors;
+  };
+
+  Vector._friendlyError = p5._friendlyError;
+  Vector.friendlyErrorsDisabled = function() {
     return p5.disableFriendlyErrors;
   };
 
