@@ -3,8 +3,6 @@ import p5 from "../../src/app";
 import { WEBGL, WEBGPU } from "../../src/core/constants";
 import rendererWebGPU from "../../src/webgpu/p5.RendererWebGPU";
 
-p5.registerAddon(rendererWebGPU);
-
 const fontFile = "../../test/manual-test-examples/type/font/LiberationSans-Bold.ttf";
 
 const strs = {
@@ -36,6 +34,7 @@ const TO_MODEL_CASES = [
 async function bootstrap(w = 400, h = 400, renderer = undefined) {
   var myp5;
   var font;
+
   new p5(function (p) {
     p.setup = async function () {
       myp5 = p;
@@ -131,6 +130,7 @@ describe("Typography: bench WebGL", function() {
 });
 
 describe("Typography: bench WebGPU", function() {
+  p5.registerAddon(rendererWebGPU);
   var myp5, font;
 
   for (let testCase of TO_POINTS_CASES) {
