@@ -190,7 +190,7 @@ The most straightforward way to run the tests is by using the `npm test` command
 
 This screenshot shows how the test executes on the website and in the terminal.
 
-<img src="./images/unit-visual-test.png" width="300" alt="Web test" /> | <img src="./images/unit-visual-test-terminal.png" width="250" alt="Terminal test" /> 
+![Web test](../images/unit-visual-test.png) | ![Terminal test](../images/unit-visual-test-terminal.png)
 
 
 - You can also mark certain test suites to be skipped or be the only suite that is run with the `.skip` and `.only` syntax.

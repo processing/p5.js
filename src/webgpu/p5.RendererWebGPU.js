@@ -58,7 +58,6 @@ function rendererWebGPU(p5, fn) {
      * let particles;
      * let computeShader;
      * let displayShader;
-     * let instance;
      * const numParticles = 100;
      *
      * async function setup() {
@@ -66,7 +65,6 @@ function rendererWebGPU(p5, fn) {
      *   particles = createStorage(makeParticles(width / 2, height / 2));
      *   computeShader = buildComputeShader(simulate);
      *   displayShader = buildMaterialShader(display);
-     *   instance = buildGeometry(drawParticle);
      *   describe('100 orange particles shooting outward.');
      * }
      *
@@ -83,10 +81,6 @@ function rendererWebGPU(p5, fn) {
      *   return data;
      * }
      *
-     * function drawParticle() {
-     *   sphere(2);
-     * }
-     *
      * function simulate() {
      *   let data = uniformStorage(particles);
      *   let idx = index.x;
@@ -96,7 +90,7 @@ function rendererWebGPU(p5, fn) {
      * function display() {
      *   let data = uniformStorage(particles);
      *   worldInputs.begin();
-     *   let pos = data[instanceID()].position;
+     *   let pos = data[instanceIndex].position;
      *   worldInputs.position.xy += pos - [width / 2, height / 2];
      *   worldInputs.end();
      * }
@@ -110,7 +104,7 @@ function rendererWebGPU(p5, fn) {
      *   noStroke();
      *   fill(255, 200, 50);
      *   shader(displayShader);
-     *   model(instance, numParticles);
+     *   instances(numParticles).sphere(2);
      * }
      * ```
      *
@@ -519,10 +513,7 @@ function rendererWebGPU(p5, fn) {
 
       if (!this._pInst._setupDone) {
         if (this.geometryBufferCache.numCached() > 0) {
-          p5._friendlyError(
-            "Sorry, Could not set the attributes, you need to call setAttributes() " +
-            "before calling the other drawing methods in setup()"
-          );
+          p5.FES.log`Sorry, Could not set the attributes, you need to call setAttributes() before calling the other drawing methods in setup()`();
           return;
         }
       }
@@ -1323,6 +1314,10 @@ function rendererWebGPU(p5, fn) {
       this.pixels = new Uint8Array(
         this.width * this.pixelDensity() * this.height * this.pixelDensity() * 4
       );
+    }
+
+    supportsTriangleFan() {
+      return false;
     }
 
     viewport() {}

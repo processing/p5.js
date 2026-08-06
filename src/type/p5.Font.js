@@ -290,7 +290,7 @@ export class Font {
    * coordinates of the bounding box's bottom-left corner. See
    * <a href="#/p5/textAlign">textAlign()</a> for more ways to align text.
    *
-   * The fourth parameter, `options`, is also optional. `font.textToPoints()`
+   * The fourth parameter, `options`, is also optional. `font.textToContours()`
    * expects an object with the following properties:
    *
    * `sampleFactor` is the ratio of the text's path length to the number of
@@ -373,6 +373,15 @@ export class Font {
    *
    * The generated model (a Geometry object) can be manipulated further—rotated, scaled,
    * or styled with shaders—to create engaging, interactive visual art.
+   * 
+   * The `options` parameter is also optional. `font.textToModel()` expects an object 
+   * with the following properties:
+   * 
+   * `extrude` is the depth to extrude the text. It defaults to 0. A value of 0 produces
+   * flat text; higher values create thicker, 3D models.
+   * 
+   * `sampleFactor` is a factor controlling the level of detail for the text contours.
+   * It defaults to 1. Higher values result in smoother curves.
    *
    * @param {String} str The text string to convert into a 3D model.
    * @param {Number} x The x-coordinate for the starting position of the text.

@@ -105,12 +105,7 @@ function random(p5, fn){
    * For example, calling `random(-5, 10.2)` returns values from -5 up to but
    * not including 10.2.
    *
-   * @method random
-   * @param  {Number} [min]   lower bound (inclusive).
-   * @param  {Number} [max]   upper bound (exclusive).
-   * @return {Number} random number.
-   *
-   * @example
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -126,8 +121,9 @@ function random(p5, fn){
    *
    *   describe('A black dot appears in a random position on a gray square.');
    * }
+   * ```
    *
-   * @example
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -143,8 +139,9 @@ function random(p5, fn){
    *
    *   describe('A black dot appears in a random position on a gray square.');
    * }
+   * ```
    *
-   * @example
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -165,8 +162,9 @@ function random(p5, fn){
    *
    *   describe('An animal face is displayed at random. Either a lion, tiger, or bear.');
    * }
+   * ```
    *
-   * @example
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -187,8 +185,9 @@ function random(p5, fn){
    *   strokeWeight(5);
    *   point(x, y);
    * }
+   * ```
    *
-   * @example
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -209,8 +208,9 @@ function random(p5, fn){
    *   strokeWeight(5);
    *   point(x, y);
    * }
+   * ```
    *
-   * @example
+   * ```js example
    * let x = 50;
    * let y = 50;
    *
@@ -230,6 +230,7 @@ function random(p5, fn){
    *   // Draw the point.
    *   point(x, y);
    * }
+   * ```
    *
    * `random()` can also be used in shaders with p5.strands. The following example
    * uses `random()` to create varying colors on a shape.
@@ -259,6 +260,11 @@ function random(p5, fn){
    *   sphere(30);
    * }
    * ```
+   *
+   * @method random
+   * @param  {Number} [min]   lower bound (inclusive).
+   * @param  {Number} [max]   upper bound (exclusive).
+   * @return {Number} random number.
    */
   /**
    * @method random

@@ -645,6 +645,15 @@ visualSuite('WebGL', function() {
       p5.circle(0, 0, 50);
       screenshot();
     });
+
+    visualTest('noTint() before image() does not throw', async (p5, screenshot) => {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      const img = await p5.loadImage('/test/unit/assets/cat.jpg');
+      p5.noTint();
+      p5.imageMode(p5.CENTER);
+      p5.image(img, 0, 0, 50, 50);
+      screenshot();
+    });
   });
 
   visualSuite('Hooks coordinate spaces', () => {
@@ -963,7 +972,7 @@ visualSuite('WebGL', function() {
       const sh = p5.baseMaterialShader().modify(() => {
         const data = p5.uniformTexture(() => positionData);
         p5.getWorldInputs((inputs) => {
-          const angle = p5.getTexture(data, [p5.instanceID()/3, 0]).r * p5.TWO_PI;
+          const angle = p5.getTexture(data, [p5.instanceIndex/3, 0]).r * p5.TWO_PI;
           inputs.position.xy += [p5.cos(angle) * 10, p5.sin(angle) * 10];
           return inputs;
         });
@@ -1022,7 +1031,7 @@ visualSuite('WebGL', function() {
       p5.createCanvas(50, 50, p5.WEBGL);
       const shader = p5.baseMaterialShader().modify(() => {
         p5.getWorldInputs((inputs) => {
-          const id = p5.instanceID();
+          const id = p5.instanceIndex;
           const gridSize = 5;
           const row = p5.floor(id / gridSize);
           const col = id - row * gridSize;
@@ -1046,7 +1055,7 @@ visualSuite('WebGL', function() {
       p5.createCanvas(50, 50, p5.WEBGL);
       const shader = p5.baseMaterialShader().modify(() => {
         p5.getWorldInputs((inputs) => {
-          const id = p5.instanceID();
+          const id = p5.instanceIndex;
           const gridSize = 5;
           const row = p5.int(id / gridSize);
           const col = id - row * gridSize;
@@ -1071,7 +1080,7 @@ visualSuite('WebGL', function() {
       const shader = p5.baseMaterialShader().modify(() => {
         // Vertex hook: position instances in a horizontal row
         p5.getWorldInputs((inputs) => {
-          const id = p5.instanceID();
+          const id = p5.instanceIndex;
           const spacing = 12;
           const offset = (id - (numInstances - 1) / 2.0) * spacing;
           inputs.position.x += offset;
@@ -1079,7 +1088,7 @@ visualSuite('WebGL', function() {
         });
         // Fragment hook: color each instance based on instanceID
         p5.getFinalColor((color) => {
-          const id = p5.instanceID();
+          const id = p5.instanceIndex;
           const t = id / (numInstances - 1.0);
           color = [t, t, t, 1];
           return color;
@@ -1090,6 +1099,88 @@ visualSuite('WebGL', function() {
       p5.shader(shader);
       const obj = p5.buildGeometry(() => p5.circle(0, 0, 10));
       p5.model(obj, numInstances);
+      screenshot();
+    });
+
+    visualTest('instances() API draws multiple spaced primitives', (p5, screenshot) => {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      const count = 5;
+      const shader = p5.baseMaterialShader().modify(() => {
+        p5.getWorldInputs((inputs) => {
+          let spacing = p5.width / count;
+          inputs.position.x += (p5.instanceIndex - (count - 1) / 2.0) * spacing;
+          return inputs;
+        });
+      }, { p5, count });
+      p5.background(220);
+      p5.lights();
+      p5.noStroke();
+      p5.fill('red');
+      p5.shader(shader);
+      p5.instances(count).sphere(7);
+      screenshot();
+    });
+
+    visualTest('instances() API draws multiple spaced 2D rects', (p5, screenshot) => {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      const count = 3;
+      const shader = p5.baseMaterialShader().modify(() => {
+        p5.getWorldInputs(inputs => {
+          let spacing = p5.width / count;
+          inputs.position.x += (p5.instanceIndex - (count - 1) / 2.0) * spacing;
+          return inputs;
+        });
+      }, { p5, count });
+      p5.background(220);
+      p5.noStroke();
+      p5.fill('blue');
+      p5.shader(shader);
+      p5.instances(count).rect(-5, -5, 10, 10);
+      screenshot();
+    });
+
+    visualTest('instances() API draws instanced lines and points', (p5, screenshot) => {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      const count = 3;
+      const spaceFn = () => {
+        p5.getWorldInputs(inputs => {
+          let spacing = p5.width / count;
+          inputs.position.x += (p5.instanceIndex - (count - 1) / 2.0) * spacing;
+          return inputs;
+        });
+      };
+      const matShader = p5.buildMaterialShader(spaceFn, { p5, count });
+      const strShader = p5.buildStrokeShader(spaceFn, { p5, count });
+      p5.background(220);
+      p5.stroke(0);
+      p5.strokeWeight(3);
+      p5.shader(matShader);
+      p5.strokeShader(strShader);
+      p5.instances(count).line(0, -15, 0, 0, 15, 0);
+      p5.instances(count).point(0, 0, 0);
+      screenshot();
+    });
+
+    visualTest('instances() API draws instanced curves', (p5, screenshot) => {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      const count = 3;
+      const spaceFn = () => {
+        p5.getWorldInputs(inputs => {
+          let spacing = p5.width / count;
+          inputs.position.x += (p5.instanceIndex - (count - 1) / 2.0) * spacing;
+          return inputs;
+        });
+      };
+      const matShader = p5.buildMaterialShader(spaceFn, { p5, count });
+      const strShader = p5.buildStrokeShader(spaceFn, { p5, count });
+      p5.background(220);
+      p5.stroke(0);
+      p5.strokeWeight(2);
+      p5.noFill();
+      p5.shader(matShader);
+      p5.strokeShader(strShader);
+      p5.instances(count).bezier(-5, -5, 0, -2, 5, 0, 2, -5, 0, 5, 5, 0);
+      p5.instances(count).spline(-5, 5, 0, -2, -5, 0, 2, 5, 0, 5, -5, 0);
       screenshot();
     });
   });
@@ -1124,17 +1215,53 @@ visualSuite('WebGL', function() {
       screenshot();
     });
 
-    visualTest('uses width/height in getFinalColor', (p5, screenshot) => {
-      let firstShader;
-      function firstShaderCallback() {
-        getFinalColor((color) => {
-          color = [width / 60, height / 60, 0, 1];
-          return color;
-        });
+    visualTest('randomGaussian() colors a basic shader', (p5, screenshot) => {
+  p5.createCanvas(50, 50, p5.WEBGL);
+  const shader = p5.baseColorShader().modify(() => {
+    p5.randomSeed(12);
+    p5.getFinalColor((color) => {
+      const value = p5.randomGaussian(0.5, 0.1);
+      color = [value, value, value, 1];
+      return color;
+    });
+  }, { p5 });
+  p5.background(0);
+  p5.noStroke();
+  p5.shader(shader);
+  p5.plane(50, 50);
+  screenshot();
+});
+
+visualTest('randomGaussian() in a fragment loop averages to the mean', (p5, screenshot) => {
+  p5.createCanvas(50, 50, p5.WEBGL);
+  const shader = p5.baseMaterialShader().modify(() => {
+    p5.randomSeed(7);
+    p5.getPixelInputs(inputs => {
+      let sum = p5.float(0.0);
+      for (let i = 0; i < 20; i++) {
+        sum = sum + p5.randomGaussian(0.5, 0.2);
       }
+      const avg = sum / 20;
+      inputs.color = [avg, avg, avg, 1.0];
+      return inputs;
+    });
+  }, { p5 });
+  p5.background(0);
+  p5.noStroke();
+  p5.shader(shader);
+  p5.plane(50, 50);
+  screenshot();
+});
+
+    visualTest('uses width/height in getFinalColor', (p5, screenshot) => {
       p5.createCanvas(60, 60, p5.WEBGL);
       p5.pixelDensity(1);
-      firstShader = p5.baseColorShader().modify(firstShaderCallback);
+      const firstShader = p5.baseColorShader().modify(() => {
+        p5.getFinalColor((color) => {
+          color = [p5.width / 60, p5.height / 60, 0, 1];
+          return color;
+        });
+      }, { p5 });
       p5.background(0);
       p5.shader(firstShader);
       p5.noStroke();
@@ -1314,7 +1441,7 @@ visualSuite('WebGL', function() {
         }
 
         function semiSphere() {
-          let id = p5.instanceID();
+          let id = p5.instanceIndex;
           let theta = rand2([id, 0.1234])  * p5.TWO_PI + time / 100000;
           let phi = rand2([id, 3.321]) * p5.PI + time / 50000;
 
@@ -1332,7 +1459,7 @@ visualSuite('WebGL', function() {
         });
 
         p5.getObjectInputs((inputs) => {
-          let size = 1 + 0.5 * p5.sin(time * 0.002 + p5.instanceID());
+          let size = 1 + 0.5 * p5.sin(time * 0.002 + p5.instanceIndex);
           inputs.position *= size;
           return inputs;
         });
@@ -1455,6 +1582,43 @@ visualSuite('WebGL', function() {
       p5.circle(0, 0, 30);
       screenshot();
     });
+
+    visualTest('hook returning a fresh struct (not the struct argument) applies modifications', (p5, screenshot) => {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      const shader = p5.baseMaterialShader().modify(() => {
+        p5.worldInputs.begin();
+        p5.worldInputs.set({
+          position: p5.worldInputs.position.add([10, 0, 0]),
+          normal: p5.worldInputs.normal,
+          texCoord: p5.worldInputs.texCoord,
+          color: [1, 0, 0, 1],
+        });
+        p5.worldInputs.end();
+      }, { p5 });
+      p5.background(0);
+      p5.noStroke();
+      p5.shader(shader);
+      p5.plane(20, 20);
+      screenshot();
+    });
+  });
+
+  visualSuite('setUniform', () => {
+    visualTest('mat2 uniforms are uploaded', (p5, screenshot) => {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      const myShader = p5.createFilterShader(`
+        precision highp float;
+        uniform mat2 uMatrix;
+        void main() {
+          // Diagonal drives red & green: expect (1.0, 0.5, 0.0)
+          gl_FragColor = vec4(uMatrix[0][0], uMatrix[1][1], 0.0, 1.0);
+         }
+      `);
+      p5.background(200);
+      myShader.setUniform('uMatrix', [1.0, 0.0, 0.0, 0.5]);
+      p5.filter(myShader);
+      screenshot();
+    });
   });
 
   visualSuite('background()', function () {
@@ -1561,6 +1725,72 @@ visualSuite('WebGL', function() {
       p5.noStroke();
       p5.fill('red');
       p5.rect(-20, -20, 40, 40, 20);
+      screenshot();
+    });
+
+    visualTest('TRIANGLE_FAN with per-vertex fills', function(p5, screenshot) {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      p5.background(255);
+      p5.beginShape(p5.TRIANGLE_FAN);
+      p5.fill('red');
+      p5.vertex(0, 0);
+      const n = 10;
+      const r = 20;
+      p5.fill('blue');
+      for (let i = 0; i <= n; i++) {
+        const angle = i/n * p5.TWO_PI;
+        p5.vertex(r*p5.cos(angle), r*p5.sin(angle));
+      }
+      p5.endShape();
+      screenshot();
+    });
+
+    visualTest('TRIANGLE_FAN in p5.Geometry with per-vertex fills', function(p5, screenshot) {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      p5.background(255);
+      const geom = p5.buildGeometry(() => {
+        p5.beginShape(p5.TRIANGLE_FAN);
+        p5.fill('red');
+        p5.vertex(0, 0);
+        const n = 10;
+        const r = 20;
+        p5.fill('blue');
+        for (let i = 0; i <= n; i++) {
+          const angle = i/n * p5.TWO_PI;
+          p5.vertex(r*p5.cos(angle), r*p5.sin(angle));
+        }
+        p5.endShape();
+      });
+      p5.model(geom);
+      screenshot();
+    });
+
+    visualTest('TRIANGLE_STRIP with per-vertex fills', function(p5, screenshot) {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      p5.background(255);
+      p5.beginShape(p5.TRIANGLE_STRIP);
+      const n = 6;
+      for (let i = 0; i < n; i++) {
+        p5.fill(i % 2 === 0 ? 'red' : 'blue');
+        p5.vertex(p5.map(i, 0, n - 1, -20, 20), i % 2 === 0 ? -10 : 10);
+      }
+      p5.endShape();
+      screenshot();
+    });
+
+    visualTest('TRIANGLE_STRIP in p5.Geometry with per-vertex fills', function(p5, screenshot) {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      p5.background(255);
+      const geom = p5.buildGeometry(() => {
+        p5.beginShape(p5.TRIANGLE_STRIP);
+        const n = 6;
+        for (let i = 0; i < n; i++) {
+          p5.fill(i % 2 === 0 ? 'red' : 'blue');
+          p5.vertex(p5.map(i, 0, n - 1, -20, 20), i % 2 === 0 ? -10 : 10);
+        }
+        p5.endShape();
+      });
+      p5.model(geom);
       screenshot();
     });
   });
@@ -1707,4 +1937,28 @@ visualSuite('WebGL', function() {
       screenshot();
     });
   });
+
+  visualTest(
+    'user-set uSampler on custom shader is not overridden',
+    function(p5, screenshot) {
+      p5.createCanvas(50, 50, p5.WEBGL);
+
+      const myShader = p5.createFilterShader(`precision highp float;
+uniform sampler2D uSampler;
+varying vec2 vTexCoord;
+void main() {
+  gl_FragColor = texture2D(uSampler, vTexCoord);
+}`);
+
+      const fbo = p5.createFramebuffer();
+      fbo.draw(() => p5.background(255, 0, 0));
+
+      p5.shader(myShader);
+      p5.noStroke();
+      myShader.setUniform('uSampler', fbo);
+      p5.plane(p5.width, p5.height);
+
+      screenshot();
+    }
+  );
 });

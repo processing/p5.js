@@ -9,6 +9,7 @@ function pointer(p5, fn, lifecycles){
     const events = [
       'pointerdown',
       'pointerup',
+      'pointercancel',
       'pointermove',
       'dragend',
       'dragover',
@@ -1068,6 +1069,10 @@ function pointer(p5, fn, lifecycles){
     this._activePointers.set(e.pointerId, e);
     this._setMouseButton(e);
 
+    if (this.mouseIsPressed && e.buttons === 0) {
+      this._onpointerup(e);
+    }
+
     if (
       !this.mouseIsPressed &&
       typeof this._customActions.mouseMoved === 'function'
@@ -1393,6 +1398,16 @@ function pointer(p5, fn, lifecycles){
 
   fn._ondragend = fn._onpointerup;
   fn._ondragover = fn._onpointermove;
+
+  fn._onpointercancel = function(e) {
+    this._activePointers.delete(e.pointerId);
+    this._setMouseButton(e);
+    this._updatePointerCoords(e);
+
+    if (this._activePointers.size === 0) {
+      this.mouseIsPressed = false;
+    }
+  };
 
   /**
    * A function that's called once after a mouse button is pressed and released.

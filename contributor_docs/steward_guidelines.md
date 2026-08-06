@@ -20,7 +20,7 @@ Whether you are new to p5.js contribution, are already active on the p5.js GitHu
 - [Pull Requests](#pull-requests)
   - [Simple fix](#simple-fix)
   - [Bug fix](#bug-fix)
-  - [New feature/feature enhancement](#new-featurefeature-enhancement)
+  - [New feature/feature enhancement](#new-feature-feature-enhancement)
   - [Dependabot](#dependabot)
 - [Build Process](#build-process)
   - [Main build task](#main-build-task)
@@ -64,7 +64,7 @@ There are different areas of work that stewards can be responsible for. These ar
 - **DevOps**: Refers to build process, unit testing, and other aspects of the development experience
 - **Documentation**: Includes both reference in the core codebase that is exposed on the website, the contributor docs, and other website content
 - i18n (Internationalization / **Translation**): Includes reviewing translations, particularly for `es`, `hi`, `ko`, `zh`
-- **Graphics**: Contains subareas of WebGL and [p5.strands](https://beta.p5js.org/tutorials/intro-to-p5-strands/)
+- **Graphics**: Contains subareas of WebGL and [p5.strands](https://p5js.org/tutorials/intro-to-p5-strands/)
 - **Color**: Includes Color, ColorMode, accessibility improvements around color usage
 - **Typography**: Refers to all topics on handling text and font
 - **Math**: Includes both external Math API and internal performance improvements
@@ -72,6 +72,7 @@ There are different areas of work that stewards can be responsible for. These ar
 - **Maintainers**: This group can merge PRs
 - **p5.sound.js**: The [new p5.sound.js](https://github.com/processing/p5.sound.js) add-on library
 - **p5.js-website**: Non-content aspects of the [reference website](https://p5js.org/) - for example, its structure, automations, technical improvements and so on.
+- **p5.js-web-editor**: The [p5.js Web Editor](https://github.com/processing/p5.js-web-editor/)
 
 These focus areas may change over time depending on the needs of the project - so if you are going through the process of applying to be a steward, you are welcome to proposals new areas!
 

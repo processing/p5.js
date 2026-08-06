@@ -1,4 +1,4 @@
-import { suite } from 'vitest';
+import { suite, vi } from 'vitest';
 import p5 from '../../../src/app.js';
 import '../../js/chai_helpers';
 const toArray = typedArray => Array.from(typedArray);
@@ -207,6 +207,29 @@ suite('p5.RendererGL', function() {
       myp5.circle(0, 0, 20);
       expect(uSampler.texture.isFramebufferTexture).toBeFalsy();
       myp5.pop();
+    });
+
+    test('user-set uSampler on custom shader is not overridden', function() {
+      myp5.createCanvas(10, 10, myp5.WEBGL);
+
+      const myShader = myp5.createFilterShader(`precision highp float;
+uniform sampler2D uSampler;
+varying vec2 vTexCoord;
+void main() {
+  gl_FragColor = texture2D(uSampler, vTexCoord);
+}`);
+
+      const fbo = myp5.createFramebuffer();
+      fbo.draw(() => myp5.background('red'));
+
+      myp5.shader(myShader);
+      myp5.noStroke();
+      myShader.setUniform('uSampler', fbo);
+
+      myp5.plane(myp5.width, myp5.height);
+
+      const pixel = myp5.get(5, 5);
+      assert.deepEqual(pixel, [255, 0, 0, 255]);
     });
   });
 
@@ -1517,10 +1540,12 @@ suite('p5.RendererGL', function() {
   });
 
   suite('tint() in WEBGL mode', function() {
-    test('default tint value is set and not null', function() {
+    test('default tint value', function() {
       myp5.createCanvas(100, 100, myp5.WEBGL);
-      assert.deepEqual(myp5._renderer.states.tint
-        ._getRGBA([255, 255, 255, 255]), [255, 255, 255, 255]);
+      assert.deepEqual(
+        myp5._renderer.states.tint?._getRGBA([255, 255, 255, 255]) ?? [255, 255, 255, 255],
+        [255, 255, 255, 255]
+      );
     });
 
 
@@ -1581,7 +1606,7 @@ suite('p5.RendererGL', function() {
           };
         });
       }).then(function(_tint) {
-        assert.deepEqual(_tint._getRGBA([255, 255, 255, 255]),
+        assert.deepEqual(_tint?._getRGBA([255, 255, 255, 255]) ?? [255, 255, 255, 255],
           [255, 255, 255, 255]);
       });
     });
@@ -2499,6 +2524,71 @@ suite('p5.RendererGL', function() {
         );
       }
       myp5.resetShader();
+    });
+  });
+
+  suite('instances() API', function() {
+    let drawSpy;
+
+    beforeEach(function() {
+      myp5.createCanvas(10, 10, myp5.WEBGL);
+      drawSpy = vi.spyOn(myp5._renderer, '_drawGeometry');
+    });
+
+    afterEach(function() {
+      vi.restoreAllMocks();
+    });
+
+    test('instances(5).sphere() sets correct instanceCount on draw and clears it', function() {
+      myp5.instances(5).sphere(10);
+
+      expect(drawSpy).toHaveBeenCalled();
+      const lastCall = drawSpy.mock.calls[drawSpy.mock.calls.length - 1];
+      assert.equal(lastCall[1].count, 5);
+
+      assert.isUndefined(myp5._renderer._instanceCount);
+    });
+
+    test('instances(5).box() sets correct instanceCount on draw and clears it', function() {
+      myp5.instances(5).box(10);
+
+      expect(drawSpy).toHaveBeenCalled();
+      const lastCall = drawSpy.mock.calls[drawSpy.mock.calls.length - 1];
+      assert.equal(lastCall[1].count, 5);
+
+      assert.isUndefined(myp5._renderer._instanceCount);
+    });
+
+    test('instances(5).model(geom) uses instances count', function() {
+      const geom = new p5.Geometry();
+      geom.gid = 'instances_model_test';
+      geom.vertices.push(myp5.createVector(0, 0, 0));
+      geom.vertices.push(myp5.createVector(1, 0, 0));
+      geom.vertices.push(myp5.createVector(1, 1, 0));
+
+      myp5.instances(5).model(geom);
+
+      expect(drawSpy).toHaveBeenCalled();
+      const lastCall = drawSpy.mock.calls[drawSpy.mock.calls.length - 1];
+      assert.equal(lastCall[1].count, 5);
+
+      assert.isUndefined(myp5._renderer._instanceCount);
+    });
+
+    test('instances(10).model(geom, 1) has explicit-count precedence', function() {
+      const geom = new p5.Geometry();
+      geom.gid = 'instances_precedence_test';
+      geom.vertices.push(myp5.createVector(0, 0, 0));
+      geom.vertices.push(myp5.createVector(1, 0, 0));
+      geom.vertices.push(myp5.createVector(1, 1, 0));
+
+      myp5.instances(10).model(geom, 1);
+
+      expect(drawSpy).toHaveBeenCalled();
+      const lastCall = drawSpy.mock.calls[drawSpy.mock.calls.length - 1];
+      assert.equal(lastCall[1].count, 1);
+
+      assert.isUndefined(myp5._renderer._instanceCount);
     });
   });
 

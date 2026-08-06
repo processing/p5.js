@@ -65,13 +65,7 @@ function noise(p5, fn){
    * three dimensions. These dimensions can be thought of as space, as in
    * `noise(x, y, z)`, or space and time, as in `noise(x, y, t)`.
    *
-   * @method noise
-   * @param  {Number} x   x-coordinate in noise space.
-   * @param  {Number} [y] y-coordinate in noise space.
-   * @param  {Number} [z] z-coordinate in noise space.
-   * @return {Number}     Perlin noise value at specified coordinates.
-   *
-   * @example
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -89,8 +83,9 @@ function noise(p5, fn){
    *   strokeWeight(5);
    *   point(x, y);
    * }
+   * ```
    *
-   * @example
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -115,8 +110,9 @@ function noise(p5, fn){
    *   strokeWeight(5);
    *   point(x, y);
    * }
+   * ```
    *
-   * @example
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -138,8 +134,9 @@ function noise(p5, fn){
    *   // Draw the line.
    *   line(x, 0, x, y);
    * }
+   * ```
    *
-   * @example
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -166,8 +163,9 @@ function noise(p5, fn){
    *     line(x, 0, x, y);
    *   }
    * }
+   * ```
    *
-   * @example
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -196,8 +194,9 @@ function noise(p5, fn){
    *
    *   describe('A gray cloudy pattern.');
    * }
+   * ```
    *
-   * @example
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -227,10 +226,11 @@ function noise(p5, fn){
    *     }
    *   }
    * }
+   * ```
    *
    * `noise()` can also be used in shaders with p5.strands, where it returns
-   * values in the range 0 to 1. The following example uses `noise()` to create
-   * a cloud-like texture effect in a filter shader.
+   * values in the range 0 to 1. The example below uses `noise()` inside a
+   * filter shader to create a cloud-like texture effect:
    *
    * ```js example
    * let myFilter;
@@ -257,6 +257,12 @@ function noise(p5, fn){
    *   filter(myFilter);
    * }
    * ```
+   *
+   * @method noise
+   * @param  {Number} x   x-coordinate in noise space.
+   * @param  {Number} [y] y-coordinate in noise space.
+   * @param  {Number} [z] z-coordinate in noise space.
+   * @return {Number}     Perlin noise value at specified coordinates.
    */
   fn.noise = function(x, y = 0, z = 0) {
     if (perlin == null) {

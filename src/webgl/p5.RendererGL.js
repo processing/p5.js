@@ -207,6 +207,39 @@ class RendererGL extends Renderer3D {
     return undefined;
   }
 
+
+  /**
+   * Restores the original shader variable names in a given text using
+   * the provided shader name map.
+   *
+   * @private
+   * @param {String} text The text in which to restore original shader names.
+   * @param {Object} shaderNameMap The shader name map object containing internal
+   *   to external name mappings.
+   * @return {String} The text with original shader names restored.
+   */
+  _restoreOriginalShaderNames(text, shaderNameMap) {
+    if (!text || !shaderNameMap?.internalToExternal) {
+      return text;
+    }
+
+    let restored = text;
+    for (const [internalName, originalName] of Object.entries(
+      shaderNameMap.internalToExternal
+    )) {
+      // Restore only whole identifier matches. This assumes the internal shader
+      // name appears as an identifier with word boundaries in WebGL error text/source. If we
+      // later derive new identifiers from it by appending or prepending extra word
+      // characters (for example `prefix_${internalName}`, `${internalName}_suffix`),
+      // this regex will not match those and the restoration logic will need to be
+      // updated.
+      const pattern = new RegExp(`\\b${internalName}\\b`, 'g');
+      restored = restored.replace(pattern, originalName);
+    }
+
+    return restored;
+  }
+
   _useShader(shader) {
     const gl = this.GL;
     gl.useProgram(shader._glProgram);
@@ -297,7 +330,14 @@ class RendererGL extends Renderer3D {
         }
       }
     } else {
-      const glMode = mode === constants.TRIANGLES ? gl.TRIANGLES : gl.TRIANGLE_STRIP;
+      let glMode;
+      if (mode === constants.TRIANGLES) {
+        glMode = gl.TRIANGLES;
+      } else if (mode === constants.TRIANGLE_FAN) {
+        glMode = gl.TRIANGLE_FAN;
+      } else {
+        glMode = gl.TRIANGLE_STRIP;
+      }
       if (count === 1) {
         gl.drawArrays(glMode, 0, geometry.vertices.length);
       } else {
@@ -381,10 +421,7 @@ class RendererGL extends Renderer3D {
 
     if (!this._pInst._setupDone) {
       if (this.geometryBufferCache.numCached() > 0) {
-        p5._friendlyError(
-          "Sorry, Could not set the attributes, you need to call setAttributes() " +
-            "before calling the other drawing methods in setup()"
-        );
+        p5.FES.log`Sorry, Could not set the attributes, you need to call setAttributes() before calling the other drawing methods in setup()`();
         return;
       }
     }
@@ -441,14 +478,14 @@ class RendererGL extends Renderer3D {
     return gl.getParameter(gl.MAX_TEXTURE_SIZE);
   }
 
-  _adjustDimensions(width, height) {
+  _adjustDimensions(width, height, density = this._pixelDensity) {
     if (!this._maxTextureSize) {
       this._maxTextureSize = this._getMaxTextureSize();
     }
     let maxTextureSize = this._maxTextureSize;
 
     let maxAllowedPixelDimensions = Math.floor(
-      maxTextureSize / this._pixelDensity
+      maxTextureSize / density
     );
     let adjustedWidth = Math.min(width, maxAllowedPixelDimensions);
     let adjustedHeight = Math.min(height, maxAllowedPixelDimensions);
@@ -593,6 +630,10 @@ class RendererGL extends Renderer3D {
   }
   defaultFarScale() {
     return 10;
+  }
+
+  supportsTriangleFan() {
+    return true;
   }
 
   viewport(w, h) {
@@ -1098,23 +1139,42 @@ class RendererGL extends Renderer3D {
 
   _initShader(shader) {
     const gl = this.GL;
+    const shaderNameMap = shader.hooks?.shaderNameMap;
 
     const vertShader = gl.createShader(gl.VERTEX_SHADER);
     gl.shaderSource(vertShader, shader.vertSrc());
     gl.compileShader(vertShader);
     if (!gl.getShaderParameter(vertShader, gl.COMPILE_STATUS)) {
+      // restore original shader names in the info log and source for easier debugging
+      const vertexInfoLog = this._restoreOriginalShaderNames(
+        gl.getShaderInfoLog(vertShader),
+        shaderNameMap
+      );
+      const vertexSource = this._restoreOriginalShaderNames(
+        shader.vertSrc(),
+        shaderNameMap
+      );
       throw new Error(`Yikes! An error occurred compiling the vertex shader: ${
-        gl.getShaderInfoLog(vertShader)
-      } in:\n\n${shader.vertSrc()}`);
+        vertexInfoLog
+      } in:\n\n${vertexSource}`);
     }
 
     const fragShader = gl.createShader(gl.FRAGMENT_SHADER);
     gl.shaderSource(fragShader, shader.fragSrc());
     gl.compileShader(fragShader);
     if (!gl.getShaderParameter(fragShader, gl.COMPILE_STATUS)) {
+      // restore original shader names in the info log and source for easier debugging
+      const fragmentInfoLog = this._restoreOriginalShaderNames(
+        gl.getShaderInfoLog(fragShader),
+        shaderNameMap
+      );
+      const fragmentSource = this._restoreOriginalShaderNames(
+        shader.fragSrc(),
+        shaderNameMap
+      );
       throw new Error(`Darn! An error occurred compiling the fragment shader: ${
-        gl.getShaderInfoLog(fragShader)
-      }`);
+        fragmentInfoLog
+      } in:\n\n${fragmentSource}`);
     }
 
     const program = gl.createProgram();

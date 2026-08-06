@@ -2,6 +2,7 @@ import { swizzleTrap, primitiveConstructorNode, variableNode, arrayAccessNode, a
 import { BaseType, NodeType, OpCode } from './ir_types';
 import { getNodeDataFromID, createNodeData, getOrCreateNode } from './ir_dag';
 import { recordInBasicBlock } from './ir_cfg';
+import { dimensionMismatchError } from './strands_FES';
 export class StrandsNode {
   constructor(id, dimension, strandsContext) {
     this.id = id;
@@ -56,6 +57,16 @@ export class StrandsNode {
 
     // For varying variables, we need both assignment generation AND a way to reference by identifier
     if (this._originalIdentifier) {
+      const valueDim = value?.isStrandsNode
+        ? value.dimension
+        : (Array.isArray(value) ? value.length : 1);
+      if (valueDim !== this._originalDimension && valueDim !== 1){
+        dimensionMismatchError(
+          this._originalDimension,
+          valueDim,
+          this._originalIdentifier
+        );
+      }
       // Create a variable node for the target (the varying variable)
       const { id: targetVarID } = variableNode(
         this.strandsContext,
@@ -108,6 +119,16 @@ export class StrandsNode {
 
     // For varying variables, create swizzle assignment
     if (this._originalIdentifier) {
+      const valueDim = value?.isStrandsNode
+        ? value.dimension
+        : (Array.isArray(value) ? value.length : 1);
+      if (valueDim !== swizzlePattern.length && valueDim !== 1){
+        dimensionMismatchError(
+          swizzlePattern.length,
+          valueDim,
+          `${this._originalIdentifier}.${swizzlePattern}`
+        );
+      }
       // Create a variable node for the target with swizzle
       const { id: targetVarID } = variableNode(
         this.strandsContext,

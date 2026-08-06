@@ -120,7 +120,7 @@ visualSuite("WebGPU", function () {
       const model = p5.buildGeometry(() => p5.sphere(5));
       const shader = p5.baseMaterialShader().modify(() => {
         p5.getWorldInputs((inputs) => {
-          inputs.position += (p5.instanceID() - 1) * 15
+          inputs.position += (p5.instanceIndex - 1) * 15
           return inputs;
         });
       }, { p5 });
@@ -144,7 +144,7 @@ visualSuite("WebGPU", function () {
         }
 
         function semiSphere() {
-          let id = p5.instanceID();
+          let id = p5.instanceIndex;
           let theta = rand2([id, 0.1234])  * p5.TWO_PI + time / 100000;
           let phi = rand2([id, 3.321]) * p5.PI + time / 50000;
 
@@ -162,7 +162,7 @@ visualSuite("WebGPU", function () {
         });
 
         p5.getObjectInputs((inputs) => {
-          let size = 1 + 0.5 * p5.sin(time * 0.002 + p5.instanceID());
+          let size = 1 + 0.5 * p5.sin(time * 0.002 + p5.instanceIndex);
           inputs.position *= size;
           return inputs;
         });
@@ -304,7 +304,7 @@ visualSuite("WebGPU", function () {
       const shader = p5.baseMaterialShader().modify(() => {
         // Vertex hook: position instances in a horizontal row
         p5.getWorldInputs((inputs) => {
-          const id = p5.instanceID();
+          const id = p5.instanceIndex;
           const spacing = 12;
           const offset = (id - (numInstances - 1) / 2.0) * spacing;
           inputs.position.x += offset;
@@ -312,7 +312,7 @@ visualSuite("WebGPU", function () {
         });
         // Fragment hook: color each instance based on instanceID
         p5.getFinalColor((color) => {
-          const id = p5.instanceID();
+          const id = p5.instanceIndex;
           const t = id / (numInstances - 1.0);
           color = [t, t, t, 1];
           return color;
@@ -323,6 +323,88 @@ visualSuite("WebGPU", function () {
       p5.shader(shader);
       const obj = p5.buildGeometry(() => p5.circle(0, 0, 10));
       p5.model(obj, numInstances);
+      await screenshot();
+    });
+
+    visualTest('instances() API draws multiple spaced primitives (WebGPU)', async function(p5, screenshot) {
+      await p5.createCanvas(50, 50, p5.WEBGPU);
+      const count = 5;
+      const shader = p5.baseMaterialShader().modify(() => {
+        p5.getWorldInputs((inputs) => {
+          let spacing = p5.width / count;
+          inputs.position.x += (p5.instanceIndex - (count - 1) / 2.0) * spacing;
+          return inputs;
+        });
+      }, { p5, count });
+      p5.background(220);
+      p5.lights();
+      p5.noStroke();
+      p5.fill('red');
+      p5.shader(shader);
+      p5.instances(count).sphere(7);
+      await screenshot();
+    });
+
+    visualTest('instances() API draws multiple spaced 2D rects (WebGPU)', async function(p5, screenshot) {
+      await p5.createCanvas(50, 50, p5.WEBGPU);
+      const count = 3;
+      const shader = p5.baseMaterialShader().modify(() => {
+        p5.getWorldInputs(inputs => {
+          let spacing = p5.width / count;
+          inputs.position.x += (p5.instanceIndex - (count - 1) / 2.0) * spacing;
+          return inputs;
+        });
+      }, { p5, count });
+      p5.background(220);
+      p5.noStroke();
+      p5.fill('blue');
+      p5.shader(shader);
+      p5.instances(count).rect(-5, -5, 10, 10);
+      await screenshot();
+    });
+
+    visualTest('instances() API draws instanced lines and points (WebGPU)', async function(p5, screenshot) {
+      await p5.createCanvas(50, 50, p5.WEBGPU);
+      const count = 3;
+      const spaceFn = () => {
+        p5.getWorldInputs(inputs => {
+          let spacing = p5.width / count;
+          inputs.position.x += (p5.instanceIndex - (count - 1) / 2.0) * spacing;
+          return inputs;
+        });
+      };
+      const matShader = p5.buildMaterialShader(spaceFn, { p5, count });
+      const strShader = p5.buildStrokeShader(spaceFn, { p5, count });
+      p5.background(220);
+      p5.stroke(0);
+      p5.strokeWeight(3);
+      p5.shader(matShader);
+      p5.strokeShader(strShader);
+      p5.instances(count).line(0, -15, 0, 0, 15, 0);
+      p5.instances(count).point(0, 0, 0);
+      await screenshot();
+    });
+
+    visualTest('instances() API draws instanced curves (WebGPU)', async function(p5, screenshot) {
+      await p5.createCanvas(50, 50, p5.WEBGPU);
+      const count = 3;
+      const spaceFn = () => {
+        p5.getWorldInputs(inputs => {
+          let spacing = p5.width / count;
+          inputs.position.x += (p5.instanceIndex - (count - 1) / 2.0) * spacing;
+          return inputs;
+        });
+      };
+      const matShader = p5.buildMaterialShader(spaceFn, { p5, count });
+      const strShader = p5.buildStrokeShader(spaceFn, { p5, count });
+      p5.background(220);
+      p5.stroke(0);
+      p5.strokeWeight(2);
+      p5.noFill();
+      p5.shader(matShader);
+      p5.strokeShader(strShader);
+      p5.instances(count).bezier(-5, -5, 0, -2, 5, 0, 2, -5, 0, 5, 5, 0);
+      p5.instances(count).spline(-5, 5, 0, -2, -5, 0, 2, 5, 0, 5, -5, 0);
       await screenshot();
     });
 
@@ -364,7 +446,64 @@ visualSuite("WebGPU", function () {
       p5.plane(50, 50);
       await screenshot();
     });
+
+    visualTest('hook returning a fresh struct (not the struct argument) applies modifications', async function(p5, screenshot) {
+      await p5.createCanvas(50, 50, p5.WEBGPU);
+      const shader = p5.baseMaterialShader().modify(() => {
+        p5.worldInputs.begin();
+        p5.worldInputs.set({
+          position: p5.worldInputs.position.add([10, 0, 0]),
+          normal: p5.worldInputs.normal,
+          texCoord: p5.worldInputs.texCoord,
+          color: [1, 0, 0, 1],
+        });
+        p5.worldInputs.end();
+      }, { p5 });
+      p5.background(0);
+      p5.noStroke();
+      p5.shader(shader);
+      p5.plane(20, 20);
+      await screenshot();
+    });
   });
+
+  visualTest('randomGaussian() colors a basic shader (WebGPU)', async function(p5, screenshot) {
+  await p5.createCanvas(50, 50, p5.WEBGPU);
+  const shader = p5.baseColorShader().modify(() => {
+    p5.randomSeed(12);
+    p5.getFinalColor((color) => {
+      const value = p5.randomGaussian(0.5, 0.1);
+      color = [value, value, value, 1];
+      return color;
+    });
+  }, { p5 });
+  p5.background(0);
+  p5.noStroke();
+  p5.shader(shader);
+  p5.plane(50, 50);
+  await screenshot();
+});
+
+visualTest('randomGaussian() in a fragment loop averages to the mean (WebGPU)', async function(p5, screenshot) {
+  await p5.createCanvas(50, 50, p5.WEBGPU);
+  const shader = p5.baseMaterialShader().modify(() => {
+    p5.randomSeed(7);
+    p5.getPixelInputs(inputs => {
+      let sum = p5.float(0.0);
+      for (let i = 0; i < 20; i++) {
+        sum = sum + p5.randomGaussian(0.5, 0.2);
+      }
+      const avg = sum / 20;
+      inputs.color = [avg, avg, avg, 1.0];
+      return inputs;
+    });
+  }, { p5 });
+  p5.background(0);
+  p5.noStroke();
+  p5.shader(shader);
+  p5.plane(50, 50);
+  await screenshot();
+});
 
 
   visualSuite('filters', function() {
@@ -1139,7 +1278,7 @@ visualSuite("WebGPU", function () {
         const sphereShader = p5.baseMaterialShader().modify(() => {
           const posData = p5.uniformStorage();
           p5.getWorldInputs((inputs) => {
-            const idx = p5.instanceID();
+            const idx = p5.instanceIndex;
             inputs.position.x += posData[idx * 2];
             inputs.position.y += posData[idx * 2 + 1];
             return inputs;
@@ -1247,7 +1386,7 @@ visualSuite("WebGPU", function () {
         const sphereShader = p5.baseMaterialShader().modify(() => {
           const buf = p5.uniformStorage('buf', particles);
           p5.getWorldInputs((inputs) => {
-            const p = buf[p5.instanceID()].position;
+            const p = buf[p5.instanceIndex].position;
             inputs.position.x += p.x;
             inputs.position.y += p.y;
             return inputs;
@@ -1280,7 +1419,7 @@ visualSuite("WebGPU", function () {
         const sphereShader = p5.baseMaterialShader().modify(() => {
           const buf = p5.uniformStorage('buf', particles);
           p5.getWorldInputs((inputs) => {
-            const p = buf[p5.instanceID()].position;
+            const p = buf[p5.instanceIndex].position;
             inputs.position.x += p.x;
             inputs.position.y += p.y;
             return inputs;
@@ -1313,7 +1452,7 @@ visualSuite("WebGPU", function () {
         const sphereShader = p5.baseMaterialShader().modify(() => {
           const buf = p5.uniformStorage('buf', { position: [0, 0] });
           p5.getWorldInputs((inputs) => {
-            const p = buf[p5.instanceID()].position;
+            const p = buf[p5.instanceIndex].position;
             inputs.position.x += p.x;
             inputs.position.y += p.y;
             return inputs;
@@ -1605,6 +1744,74 @@ visualSuite("WebGPU", function () {
         await screenshot();
       }
     );
+  });
+
+  visualSuite('2D Shapes', function() {
+    visualTest('TRIANGLE_FAN with per-vertex fills', async function(p5, screenshot) {
+      await p5.createCanvas(50, 50, p5.WEBGPU);
+      p5.background(255);
+      p5.beginShape(p5.TRIANGLE_FAN);
+      p5.fill('red');
+      p5.vertex(0, 0);
+      const n = 10;
+      const r = 20;
+      p5.fill('blue');
+      for (let i = 0; i <= n; i++) {
+        const angle = i/n * p5.TWO_PI;
+        p5.vertex(r*p5.cos(angle), r*p5.sin(angle));
+      }
+      p5.endShape();
+      await screenshot();
+    });
+
+    visualTest('TRIANGLE_FAN in p5.Geometry with per-vertex fills', async function(p5, screenshot) {
+      await p5.createCanvas(50, 50, p5.WEBGPU);
+      p5.background(255);
+      const geom = p5.buildGeometry(() => {
+        p5.beginShape(p5.TRIANGLE_FAN);
+        p5.fill('red');
+        p5.vertex(0, 0);
+        const n = 10;
+        const r = 20;
+        p5.fill('blue');
+        for (let i = 0; i <= n; i++) {
+          const angle = i/n * p5.TWO_PI;
+          p5.vertex(r*p5.cos(angle), r*p5.sin(angle));
+        }
+        p5.endShape();
+      });
+      p5.model(geom);
+      await screenshot();
+    });
+
+    visualTest('TRIANGLE_STRIP with per-vertex fills', async function(p5, screenshot) {
+      await p5.createCanvas(50, 50, p5.WEBGPU);
+      p5.background(255);
+      p5.beginShape(p5.TRIANGLE_STRIP);
+      const n = 6;
+      for (let i = 0; i < n; i++) {
+        p5.fill(i % 2 === 0 ? 'red' : 'blue');
+        p5.vertex(p5.map(i, 0, n - 1, -20, 20), i % 2 === 0 ? -10 : 10);
+      }
+      p5.endShape();
+      await screenshot();
+    });
+
+    visualTest('TRIANGLE_STRIP in p5.Geometry with per-vertex fills', async function(p5, screenshot) {
+      await p5.createCanvas(50, 50, p5.WEBGPU);
+      p5.background(255);
+      const geom = p5.buildGeometry(() => {
+        p5.beginShape(p5.TRIANGLE_STRIP);
+        const n = 6;
+        for (let i = 0; i < n; i++) {
+          p5.fill(i % 2 === 0 ? 'red' : 'blue');
+          p5.vertex(p5.map(i, 0, n - 1, -20, 20), i % 2 === 0 ? -10 : 10);
+        }
+        p5.endShape();
+      });
+      p5.model(geom);
+      await screenshot();
+    });
   });
 
   visualSuite('Feedback', function() {

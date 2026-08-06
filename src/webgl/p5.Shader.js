@@ -51,6 +51,17 @@ class Shader {
       // Compute shader storage uniforms + default values
       storageUniforms: options.storageUniforms || {},
 
+      // Maps user-facing inferred names to internal shader-facing names.
+      shaderNameMap: options.shaderNameMap || {
+        externalToInternal: {},
+        internalToExternal: {}
+      },
+
+      // Tracks the next auto-generated internal shader-name suffix for chained modify() calls.
+      shaderNameState: options.shaderNameState || {
+        nextSuffix: 0
+      },
+
       // Stores custom uniform + helper declarations as a string.
       declarations: options.declarations,
 
@@ -99,7 +110,7 @@ class Shader {
    * @returns {String} The GLSL version used by the shader.
    */
   version() {
-    const match = /#version (.+)$/.exec(this.vertSrc());
+    const match = /#version (.+)$/m.exec(this.vertSrc());
     if (match) {
       return match[1];
     } else {
@@ -423,6 +434,8 @@ class Shader {
       if (key === 'declarations') continue;
       if (key === 'uniforms') continue;
       if (key === 'storageUniforms') continue;
+      if (key === 'shaderNameMap') continue;
+      if (key === 'shaderNameState') continue;
       if (key === 'varyingVariables') continue;
       if (key === 'instanceIDVarying') continue;
       if (key === 'vertexDeclarations') {
@@ -471,6 +484,26 @@ class Shader {
         (this.hooks.declarations || '') + '\n' + (hooks.declarations || ''),
       uniforms: Object.assign({}, this.hooks.uniforms, hooks.uniforms || {}),
       storageUniforms: Object.assign({}, this.hooks.storageUniforms, hooks.storageUniforms || {}),
+      // Preserve shader name remapping and suffix state across chained modify()
+      // calls so later passes keep earlier internal names and keep incrementing.
+      shaderNameMap: {
+        externalToInternal: Object.assign(
+          {},
+          this.hooks.shaderNameMap?.externalToInternal ?? {},
+          hooks.shaderNameMap?.externalToInternal ?? {}
+        ),
+        internalToExternal: Object.assign(
+          {},
+          this.hooks.shaderNameMap?.internalToExternal ?? {},
+          hooks.shaderNameMap?.internalToExternal ?? {}
+        )
+      },
+      shaderNameState: {
+        nextSuffix:
+          hooks.shaderNameState?.nextSuffix ??
+          this.hooks.shaderNameState?.nextSuffix ??
+          0
+      },
       varyingVariables: (hooks.varyingVariables || []).concat(this.hooks.varyingVariables || []),
       instanceIDVarying: hooks.instanceIDVarying || this.hooks.instanceIDVarying || null,
       fragment: Object.assign({}, this.hooks.fragment, newHooks.fragment || {}),
@@ -1098,9 +1131,16 @@ class Shader {
   setUniform(uniformName, data) {
     this.init();
 
-    const uniform = this.uniforms[uniformName];
+    const resolvedName =
+      this.hooks.shaderNameMap?.externalToInternal?.[uniformName] ??
+      uniformName;
+    const uniform = this.uniforms[resolvedName];
     if (!uniform) {
       return;
+    }
+
+    if (uniformName === 'uSampler' && !this._renderer._settingFillUniforms) {
+      this._userSetSampler = true;
     }
 
     // In p5.strands-related code, where some of the code may be in

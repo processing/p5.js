@@ -410,7 +410,7 @@ export const wgslBackend = {
     }
     const dag = strandsContext.dag;
     const rootNode = getNodeDataFromID(dag, rootNodeID);
-    if (isStructType(returnType)) {
+    if (isStructType(returnType) && rootNode.identifier) {
       const structTypeInfo = returnType;
       for (let i = 0; i < structTypeInfo.properties.length; i++) {
         const prop = structTypeInfo.properties[i];
