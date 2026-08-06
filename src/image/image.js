@@ -642,22 +642,22 @@ function image(p5, fn){
     const makeFrame = fn._makeFrame;
     const cnv = this._curElement.elt;
     let frames = [];
+    const totalFrames = (duration * fps) / 1000;
     const frameFactory = setInterval(() => {
       frames.push(makeFrame(fName + count, ext, cnv));
       count++;
-    }, 1000 / fps);
-
-    setTimeout(() => {
-      clearInterval(frameFactory);
-      if (callback) {
-        callback(frames);
-      } else {
-        for (const f of frames) {
-          fn.downloadFile(f.imageData, f.filename, f.ext);
+      if (count >= totalFrames) {
+        clearInterval(frameFactory);
+        if (callback) {
+          callback(frames);
+        } else {
+          for (const f of frames) {
+            fn.downloadFile(f.imageData, f.filename, f.ext);
+          }
         }
+        frames = [];
       }
-      frames = []; // clear frames
-    }, duration + 0.01);
+    }, 1000 / fps);
   };
 
   fn._makeFrame = function(filename, extension, _cnv) {
