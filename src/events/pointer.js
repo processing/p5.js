@@ -1381,9 +1381,13 @@ function pointer(p5, fn, lifecycles){
    */
   fn._onpointerup = function(e) {
     let executeDefault;
-    this.mouseIsPressed = false;
 
     this._activePointers.delete(e.pointerId);
+
+    if (this._activePointers.size === 0) {
+      this.mouseIsPressed = false;
+    }
+
     this._setMouseButton(e);
 
     this._updatePointerCoords(e);
