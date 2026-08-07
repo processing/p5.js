@@ -122,9 +122,8 @@ class Color {
           });
           this._cachedMode = mode;
           this._cachedColor = to(this._cachedColor, this._cachedColor.spaceId);
-        }catch(err){
-          // TODO: Invalid color string
-          throw new Error('Invalid color string');
+         }catch(err){
+          throw new Error(`Invalid color string: '${vals[0]}'`);
         }
       };
 
