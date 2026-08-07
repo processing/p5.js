@@ -56,6 +56,36 @@ suite('Touch Events', function() {
     });
   });
 
+  suite('p5.prototype._onpointerup', function() {
+    test('should reset mouseIsPressed only once all pointers are released', function() {
+      window.dispatchEvent(touchEvent1);
+      window.dispatchEvent(touchEvent2);
+      assert.strictEqual(myp5.mouseIsPressed, true);
+
+      const upEvent1 = new PointerEvent('pointerup', {
+        pointerId: 1,
+        clientX: 100,
+        clientY: 100,
+        pointerType: 'touch'
+      });
+      window.dispatchEvent(upEvent1);
+
+      assert.strictEqual(myp5.touches.length, 1);
+      assert.strictEqual(myp5.mouseIsPressed, true);
+
+      const upEvent2 = new PointerEvent('pointerup', {
+        pointerId: 2,
+        clientX: 200,
+        clientY: 200,
+        pointerType: 'touch'
+      });
+      window.dispatchEvent(upEvent2);
+
+      assert.strictEqual(myp5.touches.length, 0);
+      assert.strictEqual(myp5.mouseIsPressed, false);
+    });
+  });
+
   suite('p5.prototype._onpointercancel', function() {
     test('should remove the cancelled touch from touches', function() {
       window.dispatchEvent(touchEvent1);
