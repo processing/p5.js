@@ -76,7 +76,7 @@ describe.sequential("Dave bench test", () => {
           // Flattens into a single buffer
           const shape = myp5.buildGeometry(drawCircles);
           myp5.model(shape);
-          myp5.freeGeometry(myp5.model);
+          myp5.freeGeometry(shape);
         } else {
           drawCircles();
         }
