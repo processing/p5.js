@@ -6,6 +6,17 @@ const mockAnchorElement = vi.mockObject({
   download: null,
   click: () => {}
 });
+
+let onDownload = null;
+mockAnchorElement.click.mockImplementation(() => {
+  if(onDownload) onDownload();
+});
+
+const downloadHappened = () =>
+  new Promise(resolve => {
+    onDownload = resolve;
+  });
+
 const originalCreateElement = document.createElement;
 vi.spyOn(document, 'createElement').mockImplementation((...args) => {
   if(args[0] !== 'a'){
@@ -51,6 +62,10 @@ suite('p5.Framebuffer', function() {
 
   afterEach(function(){
     vi.clearAllMocks();
+  });
+
+  beforeEach(function(){
+    onDownload = null;
   });
 
   suite('formats and channels', function() {
@@ -674,9 +689,10 @@ suite('p5.Framebuffer', function() {
       myp5.createCanvas(100, 100, myp5.WEBGL);
       const fbo = myp5.createFramebuffer();
       fbo.draw(() => myp5.background('red'));
-      myp5.saveCanvas(fbo);
 
-      await new Promise(res => setTimeout(res, 500));
+      const downloaded = downloadHappened();
+      myp5.saveCanvas(fbo);
+      await downloaded;
 
       expect(document.createElement).toHaveBeenCalledWith('a');
       expect(mockAnchorElement.click).toHaveBeenCalledTimes(1);
