@@ -952,6 +952,10 @@ function keyboard(p5, fn, lifecycles){
    */
   fn._onblur = function(e) {
     this._downKeys = {};
+    this._downKeyCodes = {};
+    this.keyIsPressed = false;
+    this.key = '';
+    this.code = '';
   };
 
   /**
