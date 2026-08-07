@@ -228,5 +228,15 @@ suite('Keyboard Events', function() {
       assert.strictEqual(myp5.keyIsDown('z'), false);
 
     });
+
+    test('keyIsDown should return false after window loses focus', function() {
+      window.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', code: 'ArrowRight' }));
+      assert.strictEqual(myp5.keyIsDown('ArrowRight'), true);
+
+      window.dispatchEvent(new Event('blur'));
+
+      assert.strictEqual(myp5.keyIsDown('ArrowRight'), false);
+      assert.strictEqual(myp5.keyIsPressed, false);
+    });
   });
 });
