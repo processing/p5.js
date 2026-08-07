@@ -674,7 +674,7 @@ function text(p5, fn) {
 
   Renderer3D.prototype._renderText = function (line, x, y, maxY, minY) {
     if (!this.states.textFont || typeof this.states.textFont === 'string') {
-      console.log(
+      p5._friendlyError(
         'WEBGL: you must load and set a font before drawing text. See `loadFont` and `textFont` for more details.'
       );
       return;
@@ -684,7 +684,7 @@ function text(p5, fn) {
     }
 
     if (!p5.Font.hasGlyphData(this.states.textFont)) {
-      console.log(
+      p5._friendlyError(
         'WEBGL: only Opentype (.otf) and Truetype (.ttf) fonts with glyph data are supported. Make sure to set the font using textFont() before drawing text.'
       );
       return;
