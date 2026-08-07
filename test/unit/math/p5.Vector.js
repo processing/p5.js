@@ -2184,6 +2184,12 @@ suite('p5.Vector', function () {
       v = new Vector(1, 2, 3, 4);
       expect(v.toString()).toBe('vector[1, 2, 3, 4]');
     });
+
+    test('should show a value change for x with toString() for 1d Vector', function(){
+      v = new Vector(1);
+      v.x = 2;
+      expect(v.toString()).toBe('vector[2]');
+    })
   });
 
   describe('set heading', () => {
