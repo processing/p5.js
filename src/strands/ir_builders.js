@@ -72,6 +72,56 @@ export function unaryOpNode(strandsContext, nodeOrValue, opCode) {
   return { id, dimension: node.dimension };
 }
 
+function isMatrixArithmeticOp(opCode) {
+  return (
+    opCode === OpCode.Binary.ADD ||
+    opCode === OpCode.Binary.SUBTRACT ||
+    opCode === OpCode.Binary.MULTIPLY ||
+    opCode === OpCode.Binary.DIVIDE
+  );
+}
+
+function resolveMatrixBinaryOpType(leftType, rightType, opCode) {
+  const leftIsMat = leftType.baseType === BaseType.MAT;
+  const rightIsMat = rightType.baseType === BaseType.MAT;
+  const matType = leftIsMat ? leftType : rightType;
+  const leftIsVector = !leftIsMat && leftType.dimension > 1;
+  const rightIsVector = !rightIsMat && rightType.dimension > 1;
+
+  if (opCode === OpCode.Binary.MULTIPLY) {
+    if (leftIsMat && rightIsMat) {
+      if (leftType.dimension !== rightType.dimension) {
+        FES.userError('type error',
+          `You can only multiply two matrices of the same size, but got mat${leftType.dimension} * mat${rightType.dimension}.`);
+      }
+      return { baseType: BaseType.MAT, dimension: matType.dimension };
+    }
+    if ((leftIsMat && rightIsVector) || (rightIsMat && leftIsVector)) {
+      const vectorType = leftIsMat ? rightType : leftType;
+      if (vectorType.dimension !== matType.dimension) {
+        FES.userError('type error',
+          `A mat${matType.dimension} can only be multiplied with a vector of length ${matType.dimension}, but got a vector of length ${vectorType.dimension}.`);
+      }
+      return { baseType: BaseType.FLOAT, dimension: matType.dimension };
+    }
+    return { baseType: BaseType.MAT, dimension: matType.dimension };
+  }
+
+  if (leftIsMat && rightIsMat) {
+    if (leftType.dimension !== rightType.dimension) {
+      FES.userError('type error',
+        `You can only combine two matrices of the same size, but got mat${leftType.dimension} ${OpCodeToSymbol[opCode]} mat${rightType.dimension}.`);
+    }
+    return { baseType: BaseType.MAT, dimension: matType.dimension };
+  }
+  if ((leftIsMat && !rightIsVector) || (rightIsMat && !leftIsVector)) {
+    return { baseType: BaseType.MAT, dimension: matType.dimension };
+  }
+  FES.userError('type error',
+    `A matrix can't be combined with a vector using '${OpCodeToSymbol[opCode]}'. ` +
+    `Use matrix multiplication (*) to transform a vector by a matrix.`);
+}
+
 export function binaryOpNode(strandsContext, leftStrandsNode, rightArg, opCode) {
   const { dag, cfg } = strandsContext;
   // Construct a node for right if its just an array or number etc.
@@ -97,6 +147,24 @@ export function binaryOpNode(strandsContext, leftStrandsNode, rightArg, opCode) 
     DAG.propagateTypeToAssignOnUse(dag, rightStrandsNode.id, leftType.baseType, leftType.dimension);
     rightType = DAG.extractNodeTypeInfo(dag, rightStrandsNode.id);
   }
+
+  if (
+    (leftType.baseType === BaseType.MAT || rightType.baseType === BaseType.MAT) &&
+    isMatrixArithmeticOp(opCode)
+  ) {
+    const resultType = resolveMatrixBinaryOpType(leftType, rightType, opCode);
+    const nodeData = DAG.createNodeData({
+      nodeType: NodeType.OPERATION,
+      opCode,
+      dependsOn: [finalLeftNodeID, finalRightNodeID],
+      baseType: resultType.baseType,
+      dimension: resultType.dimension,
+    });
+    const id = DAG.getOrCreateNode(dag, nodeData);
+    CFG.recordInBasicBlock(cfg, cfg.currentBlock, id);
+    return { id, dimension: nodeData.dimension };
+  }
+
   const cast = { node: null, toType: leftType };
   const bothDeferred = leftType.baseType === rightType.baseType && leftType.baseType === BaseType.DEFER;
   if (bothDeferred) {
@@ -288,6 +356,157 @@ export function constructTypeFromIDs(strandsContext, typeInfo, strandsNodesArray
   });
   const id = DAG.getOrCreateNode(strandsContext.dag, nodeData);
   return id;
+}
+
+export function matrixConstructorNode(strandsContext, dimension, values) {
+  const { cfg } = strandsContext;
+  const componentIDs = values.map((value) => {
+    if (value?.isStrandsNode) {
+      return value.id;
+    }
+    const { id } = scalarLiteralNode(
+      strandsContext,
+      { dimension: 1, baseType: BaseType.FLOAT },
+      value
+    );
+    return id;
+  });
+  const id = constructTypeFromIDs(
+    strandsContext,
+    { baseType: BaseType.MAT, dimension },
+    componentIDs
+  );
+  CFG.recordInBasicBlock(cfg, cfg.currentBlock, id);
+  return { id, dimension };
+}
+
+export function diagonalMatrixNode(strandsContext, dimension, value) {
+  const values = [];
+  for (let col = 0; col < dimension; col++) {
+    for (let row = 0; row < dimension; row++) {
+      values.push(row === col ? value : 0);
+    }
+  }
+  return matrixConstructorNode(strandsContext, dimension, values);
+}
+
+export function identityMatrixNode(strandsContext, dimension) {
+  return diagonalMatrixNode(strandsContext, dimension, 1);
+}
+
+// Convert a matrix into one of a different size, mirroring GLSL's mat3(m4) /
+// mat4(m3). Truncation keeps the upper-left submatrix; extension pads the extra
+// rows and columns with the identity matrix. This is built from column access +
+// swizzles so the GLSL and WGSL backends emit the same code (WGSL has no
+// matrix-resizing constructor of its own).
+export function matrixResizeNode(strandsContext, srcNode, srcDim, dstDim) {
+  const { dag, cfg } = strandsContext;
+
+  const sourceColumn = (colIndex) => {
+    const { id: indexID } = scalarLiteralNode(
+      strandsContext,
+      { dimension: 1, baseType: BaseType.INT },
+      colIndex
+    );
+    const nodeData = DAG.createNodeData({
+      nodeType: NodeType.OPERATION,
+      opCode: OpCode.Binary.ARRAY_ACCESS,
+      dependsOn: [srcNode.id, indexID],
+      dimension: srcDim,
+      baseType: BaseType.FLOAT,
+    });
+    const id = DAG.getOrCreateNode(dag, nodeData);
+    CFG.recordInBasicBlock(cfg, cfg.currentBlock, id);
+    return createStrandsNode(id, srcDim, strandsContext);
+  };
+
+  const columns = [];
+  for (let col = 0; col < dstDim; col++) {
+    if (col < srcDim && dstDim < srcDim) {
+      // Truncate: keep the first dstDim components of the source column.
+      const { id, dimension } = swizzleNode(
+        strandsContext, sourceColumn(col), 'xyzw'.slice(0, dstDim)
+      );
+      columns.push(createStrandsNode(id, dimension, strandsContext));
+    } else if (col < srcDim) {
+      // Extend: keep the source column, padding the extra rows with zeros.
+      const pad = Array(dstDim - srcDim).fill(0);
+      const { id, dimension } = primitiveConstructorNode(
+        strandsContext,
+        { baseType: BaseType.FLOAT, dimension: dstDim },
+        [sourceColumn(col), ...pad]
+      );
+      columns.push(createStrandsNode(id, dimension, strandsContext));
+    } else {
+      // Identity column for indices beyond the source matrix.
+      const comps = Array.from({ length: dstDim }, (_, row) => (row === col ? 1 : 0));
+      const { id, dimension } = primitiveConstructorNode(
+        strandsContext,
+        { baseType: BaseType.FLOAT, dimension: dstDim },
+        comps
+      );
+      columns.push(createStrandsNode(id, dimension, strandsContext));
+    }
+  }
+
+  return matrixConstructorNode(strandsContext, dstDim, columns);
+}
+
+export function matrixNode(strandsContext, dimension, args) {
+  const dag = strandsContext.dag;
+  const componentCount = dimension * dimension;
+  const baseTypeOf = (a) => DAG.extractNodeTypeInfo(dag, a.id).baseType;
+
+  // No arguments -> identity.
+  if (args.length === 0) {
+    return identityMatrixNode(strandsContext, dimension);
+  }
+
+  if (args.length === 1) {
+    const arg = args[0];
+    const isNode = !!arg?.isStrandsNode;
+
+    // A matrix of the same size -> copy it.
+    if (isNode && baseTypeOf(arg) === BaseType.MAT && arg.dimension === dimension) {
+      return { id: arg.id, dimension };
+    }
+
+    // A matrix of a different size -> resize conversion. mat3(someMat4) keeps the
+    // upper-left 3x3, and mat4(someMat3) extends it with the identity matrix.
+    // WGSL has no matrix-resizing constructor, so we build the result from
+    // explicit column swizzles at the IR level, which both backends emit
+    // identically (e.g. m[0].xyz).
+    if (isNode && baseTypeOf(arg) === BaseType.MAT) {
+      return matrixResizeNode(strandsContext, arg, arg.dimension, dimension);
+    }
+
+    // A single scalar -> diagonal matrix (GLSL's matN(s) idiom, e.g. mat4(1.0)).
+    const isScalar = typeof arg === 'number' ||
+      (isNode && arg.dimension === 1 && baseTypeOf(arg) !== BaseType.MAT);
+    if (isScalar) {
+      return diagonalMatrixNode(strandsContext, dimension, arg);
+    }
+  }
+
+  // N column vectors, each of length N.
+  if (
+    args.length === dimension &&
+    args.every((a) => a?.isStrandsNode && a.dimension === dimension && baseTypeOf(a) !== BaseType.MAT)
+  ) {
+    return matrixConstructorNode(strandsContext, dimension, args);
+  }
+
+  // N*N individual components (numbers or scalar nodes), column-major.
+  if (args.length === componentCount) {
+    return matrixConstructorNode(strandsContext, dimension, args);
+  }
+
+  FES.userError(
+    'parameter validation',
+    `A mat${dimension} constructor expects no arguments (identity), a single number ` +
+    `(diagonal), a single mat${dimension}, ${dimension} column vectors, or ` +
+    `${componentCount} values — but got ${args.length} argument(s).`
+  );
 }
 
 export function primitiveConstructorNode(strandsContext, typeInfo, dependsOn) {
