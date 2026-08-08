@@ -50,6 +50,7 @@ const toHexComponent = (v) => {
 }
 
 const serializationMap = new Map();
+const srgbCoordsCache = new Map();
 
 
 
@@ -718,14 +719,24 @@ class Color {
   }
 
   _getRGBA(maxes=[1, 1, 1, 1]) {
-    // Get colorjs maxes
+    const key = `${this._color.space.id}-${this._color.coords.join(',')}-${this._color.alpha}`;
+    let srgbCoords = srgbCoordsCache.get(key);
+
+    if (srgbCoords === undefined) {
+      if (this.mode === RGB || this._color.space.id === 'srgb') {
+        srgbCoords = [...this._color.coords, this._color.alpha];
+      } else {
+        srgbCoords = [...to(this._color, 'srgb').coords, this._color.alpha];
+      }
+
+      if (srgbCoordsCache.size > 1000) {
+        srgbCoordsCache.delete(srgbCoordsCache.keys().next().value);
+      }
+      srgbCoordsCache.set(key, srgbCoords);
+    }
+
     const colorjsMaxes = Color.#colorjsMaxes[RGB];
-
-    // Normalize everything to 0,1 or the provided range (map)
-    let coords = structuredClone(to(this._color, 'srgb').coords);
-    coords.push(this._color.alpha);
-
-    const rangeMaxes = maxes.map((v) => {
+    const rangeMaxes = maxes.map(v => {
       if(!Array.isArray(v)){
         return [0, v];
       }else{
@@ -733,15 +744,13 @@ class Color {
       }
     });
 
-    coords = coords.map((coord, i) => {
+    return srgbCoords.map((coord, i) => {
       return map(
         coord,
         colorjsMaxes[i][0], colorjsMaxes[i][1],
         rangeMaxes[i][0], rangeMaxes[i][1]
       );
     });
-
-    return coords;
   }
 
   _getMode() {
