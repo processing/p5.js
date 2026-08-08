@@ -157,6 +157,10 @@ function interaction(p5, fn){
     sensitivityZ,
     options
   ) {
+    // p5.Graphics objects don't receive pointer events; their interaction
+    // state is tracked on the parent sketch instance (#9048).
+    const pInst = this instanceof p5.Graphics ? this._pInst : this;
+
     this._assert3d('orbitControl');
     // p5._validateParameters('orbitControl', arguments);
 
@@ -181,24 +185,24 @@ function interaction(p5, fn){
 
     // disable context menu for canvas element and add 'contextMenuDisabled'
     // flag to p5 instance
-    if (this.contextMenuDisabled !== true) {
-      this.canvas.oncontextmenu = () => false;
-      this.contextMenuDisabled = true;
+    if (pInst.contextMenuDisabled !== true) {
+      pInst.canvas.oncontextmenu = () => false;
+      pInst.contextMenuDisabled = true;
     }
 
     // disable default scrolling behavior on the canvas element and add
     // 'wheelDefaultDisabled' flag to p5 instance
-    if (this.wheelDefaultDisabled !== true) {
-      this.canvas.onwheel = () => false;
-      this.wheelDefaultDisabled = true;
+    if (pInst.wheelDefaultDisabled !== true) {
+      pInst.canvas.onwheel = () => false;
+      pInst.wheelDefaultDisabled = true;
     }
 
     // disable default touch behavior on the canvas element and add
     // 'touchActionsDisabled' flag to p5 instance
     const { disableTouchActions = true } = options;
-    if (this.touchActionsDisabled !== true && disableTouchActions) {
-      this.canvas.style['touch-action'] = 'none';
-      this.touchActionsDisabled = true;
+    if (pInst.touchActionsDisabled !== true && disableTouchActions) {
+      pInst.canvas.style['touch-action'] = 'none';
+      pInst.touchActionsDisabled = true;
     }
 
     // If option.freeRotation is true, the camera always rotates freely in the direction
@@ -208,7 +212,7 @@ function interaction(p5, fn){
     // get moved touches.
     const movedTouches = [];
 
-    this.touches.forEach(curTouch => {
+    pInst.touches.forEach(curTouch => {
       this._renderer.prevTouches.forEach(prevTouch => {
         if (curTouch.id === prevTouch.id) {
           const movedTouch = {
@@ -222,7 +226,7 @@ function interaction(p5, fn){
       });
     });
 
-    this._renderer.prevTouches = this.touches;
+    this._renderer.prevTouches = pInst.touches;
 
     // The idea of using damping is based on the following website. thank you.
     // https://github.com/freshfork/p5.EasyCam/blob/9782964680f6a5c4c9bee825c475d9f2021d5134/p5.easycam.js#L1124
@@ -253,8 +257,8 @@ function interaction(p5, fn){
 
       // for touch, it is calculated based on one moved touch pointer position.
       pointersInCanvas =
-        movedTouches[0].x > 0 && movedTouches[0].x < this.width &&
-        movedTouches[0].y > 0 && movedTouches[0].y < this.height;
+        movedTouches[0].x > 0 && movedTouches[0].x < pInst.width &&
+        movedTouches[0].y > 0 && movedTouches[0].y < pInst.height;
 
       if (movedTouches.length === 1) {
         const t = movedTouches[0];
@@ -274,7 +278,7 @@ function interaction(p5, fn){
         moveDeltaX = 0.5 * (t0.x + t1.x) - 0.5 * (t0.px + t1.px);
         moveDeltaY = 0.5 * (t0.y + t1.y) - 0.5 * (t0.py + t1.py);
       }
-      if (this.touches.length > 0) {
+      if (pInst.touches.length > 0) {
         if (pointersInCanvas) {
           // Initiate an interaction if touched in the canvas
           this._renderer.executeRotateAndMove = true;
@@ -293,28 +297,28 @@ function interaction(p5, fn){
 
       // For mouse, it is calculated based on the mouse position.
       pointersInCanvas =
-        (this.mouseX > 0 && this.mouseX < this.width) &&
-        (this.mouseY > 0 && this.mouseY < this.height);
+        (pInst.mouseX > 0 && pInst.mouseX < pInst.width) &&
+        (pInst.mouseY > 0 && pInst.mouseY < pInst.height);
 
-      if (this._mouseWheelDeltaY !== 0) {
+      if (pInst._mouseWheelDeltaY !== 0) {
         // zoom the camera depending on the value of _mouseWheelDeltaY.
         // move away if positive, move closer if negative
-        deltaRadius = Math.sign(this._mouseWheelDeltaY) * sensitivityZ;
+        deltaRadius = Math.sign(pInst._mouseWheelDeltaY) * sensitivityZ;
         deltaRadius *= mouseZoomScaleFactor;
-        this._mouseWheelDeltaY = 0;
+        pInst._mouseWheelDeltaY = 0;
         // start zoom when the mouse is wheeled within the canvas.
         if (pointersInCanvas) this._renderer.executeZoom = true;
       } else {
         // quit zoom when you stop wheeling.
         this._renderer.executeZoom = false;
       }
-      if (this.mouseIsPressed) {
-        if (this.mouseButton.left) {
-          deltaTheta = -sensitivityX * this.movedX / scaleFactor;
-          deltaPhi = sensitivityY * this.movedY / scaleFactor;
-        } else if (this.mouseButton.right) {
-          moveDeltaX = this.movedX;
-          moveDeltaY =  this.movedY * cam.yScale;
+      if (pInst.mouseIsPressed) {
+        if (pInst.mouseButton.left) {
+          deltaTheta = -sensitivityX * pInst.movedX / scaleFactor;
+          deltaPhi = sensitivityY * pInst.movedY / scaleFactor;
+        } else if (pInst.mouseButton.right) {
+          moveDeltaX = pInst.movedX;
+          moveDeltaY =  pInst.movedY * cam.yScale;
         }
         // start rotate and move when mouse is pressed within the canvas.
         if (pointersInCanvas) this._renderer.executeRotateAndMove = true;
@@ -865,6 +869,11 @@ function interaction(p5, fn){
 
 export default interaction;
 
+// orbitControl reads its camera from this._renderer and pointer state from the
+// parent instance, so it is safe on offscreen WEBGL buffers too (#9048).
 if(typeof p5 !== 'undefined'){
   interaction(p5, p5.prototype);
+  if (p5.Graphics) {
+    p5.Graphics.prototype.orbitControl = p5.prototype.orbitControl;
+  }
 }
