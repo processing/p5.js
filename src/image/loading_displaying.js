@@ -327,16 +327,15 @@ function loadingDisplaying(p5, fn){
     const nFramesDelay = units === 'seconds' ? delay * _frameRate : delay;
 
     // initialize variables for the frames processing
-    let frameIterator;
-    let totalNumberOfFrames;
+    // frameIterator starts at 0 so the first nFramesDelay frames are
+    // rendered as un-captured warmup before recording begins
+    let frameIterator = 0;
+    const totalNumberOfFrames = nFrames + nFramesDelay;
 
     if (resetAnimation) {
-      frameIterator = nFramesDelay;
-      this.frameCount = frameIterator;
-      totalNumberOfFrames = nFrames + nFramesDelay;
-    } else {
-      frameIterator = this.frameCount + nFramesDelay;
-      totalNumberOfFrames = frameIterator + nFrames;
+      // restart the animation from the beginning so the gif
+      // captures the first frames of the animation
+      this.frameCount = 0;
     }
 
     const lastPixelDensity = this._renderer._pixelDensity;
@@ -415,7 +414,10 @@ function loadingDisplaying(p5, fn){
           .data;
       }
 
-      frames.push(data);
+      // only capture frames once the delay/warmup phase has passed
+      if (frameIterator >= nFramesDelay) {
+        frames.push(data);
+      }
       frameIterator++;
 
       if (!silent) {
