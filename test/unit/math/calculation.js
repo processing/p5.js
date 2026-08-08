@@ -307,6 +307,14 @@ suite('Calculation', function() {
       result = mockP5Prototype.max(-Infinity, 42);
       assert.equal(result, 42);
     });
+    test('should return larger value from variadic arguments', function() {
+      result = mockP5Prototype.max(1, 2, 3, 4, 5);
+      assert.equal(result, 5);
+    });
+    test('should return larger value from three variadic arguments', function() {
+      result = mockP5Prototype.max(-5, 0, 3);
+      assert.equal(result, 3);
+    });
   });
 
   suite('p5.prototype.min', function() {
@@ -346,6 +354,14 @@ suite('Calculation', function() {
     test('should handle -Infinity as a valid argument', function() {
       result = mockP5Prototype.min(-Infinity, 42);
       assert.equal(result, -Infinity);
+    });
+    test('should return smaller value from variadic arguments', function() {
+      result = mockP5Prototype.min(1, 2, 3, 4, 5);
+      assert.equal(result, 1);
+    });
+    test('should return smaller value from three variadic arguments', function() {
+      result = mockP5Prototype.min(7, 2, 9);
+      assert.equal(result, 2);
     });
   });
 
