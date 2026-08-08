@@ -26,7 +26,7 @@ jobs:
         run: npm install canvas
 
       - name: Run contributors-png generator
-        run: node utils/contributors-png.js
+        run: node utils/contributors-png.mjs
 
       - name: Reset all changes except contributors.png
         run: |
