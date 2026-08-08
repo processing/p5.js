@@ -780,16 +780,18 @@ function keyboard(p5, fn, lifecycles){
    * }
    */
   fn._onkeyup = function(e) {
+    this.key = e.key;
+    this.code = e.code;
+
+    delete this._downKeyCodes[e.code];
+    delete this._downKeys[e.key];
+
     if (typeof this._customActions.keyReleased === 'function') {
       const executeDefault = this._customActions.keyReleased(e);
       if (executeDefault === false) {
         e.preventDefault();
       }
     }
-
-    delete this._downKeyCodes[e.code];
-    delete this._downKeys[e.key];
-
 
     if (!this._areDownKeys()) {
       this.keyIsPressed = false;
@@ -802,7 +804,6 @@ function keyboard(p5, fn, lifecycles){
       const lastPressedKey = Object.keys(this._downKeys).pop();
       this.key = lastPressedKey;
     }
-
   };
 
   /**
