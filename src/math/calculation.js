@@ -863,6 +863,9 @@ function calculation(p5, fn){
    */
   fn.map = function(n, start1, stop1, start2, stop2, withinBounds) {
     // p5._validateParameters('map', arguments);
+    if (stop1 === start1) {
+      return start2;
+    }
     const newval = (n - start1) / (stop1 - start1) * (stop2 - start2) + start2;
     if (!withinBounds) {
       return newval;
