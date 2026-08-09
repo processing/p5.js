@@ -1823,8 +1823,10 @@ function creatingReading(p5, fn) {
    * @return  {p5.Color}     interpolated color.
    */
   fn.lerpColor = function (c1, c2, amt) {
-    let outputMode = this._renderer.states.colorMode;
-    let lerpMode = outputMode;
+    const defaultMode = this._renderer.states.colorMode;
+
+    let outputMode = defaultMode;
+    let lerpMode = defaultMode;
 
     if (typeof amt === 'object') {
       // Passing in options object
