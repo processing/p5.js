@@ -21,12 +21,10 @@ Here are some examples of why you may want to create an addon library:
   - [número](https://github.com/nickmcintyre/numero)
   - [p5.cmyk.js](https://github.com/jtnimoy/p5.cmyk.js)
 
-
 ## Prerequisites
 
 - p5.js foundation
 - Prototype-based object orientation in Javascript
-
 
 ## Step 1
 
@@ -35,23 +33,21 @@ First, let’s create a blank JavaScript file for the addon library. We’ll cal
 The main way to extend p5.js is to pass an addon function to the static `p5.registerAddon()` function. An addon function is any function that takes three arguments which are usually named `p5`, `fn`, and `lifecycles` respectively. To start writing our addon, put the following code into p5.loadcsv.js.
 
 ```js
-function loadCSVAddon(p5, fn, lifecycles){
-
-}
+function loadCSVAddon(p5, fn, lifecycles) {}
 ```
 
 Before we implement our `loadCSV()` function, let's have a look at what the three function arguments are starting with the first two and we will introduce the third later in this article.
 
-* `p5` - This is the `p5` object/constructor. You will use this to access any static `p5` object member or define any static `p5` object member. For example to access `p5.Vector` or `p5.Renderer`.
-* `fn` - This is an alias to `p5.prototype`. For any variable or functions that you wish for p5.js to expose to the `window` in global mode or to the `p5` instance in instance mode, it must be assigned as a member of `fn`. We will look into the usage of `fn` below in more detail as it is likely one of the most used feature of the addon API.
+- `p5` - This is the `p5` object/constructor. You will use this to access any static `p5` object member or define any static `p5` object member. For example to access `p5.Vector` or `p5.Renderer`.
+- `fn` - This is an alias to `p5.prototype`. For any variable or functions that you wish for p5.js to expose to the `window` in global mode or to the `p5` instance in instance mode, it must be assigned as a member of `fn`. We will look into the usage of `fn` below in more detail as it is likely one of the most used feature of the addon API.
 
 Now let's add a `loadCSV()` function to our addon, we do this by defining an object member named `loadCSV` within `fn`:
 
 ```js
-function loadCSVAddon(p5, fn, lifecycles){
-  fn.loadCSV = function(){
+function loadCSVAddon(p5, fn, lifecycles) {
+  fn.loadCSV = function () {
     console.log('I will load a CSV file soon!');
-  }
+  };
 }
 ```
 
@@ -66,13 +62,12 @@ When someone includes your p5.loadcsv.js file in a project as a script tag, they
 You can also extend p5.js classes such as` p5.Element` or` p5.Graphics` by adding methods to their prototypes. In the example below, `p5.Element.prototype` is extended with the `shout()` method. It adds an exclamation mark to the end of the element’s inner HTML.
 
 ```js
-function loadCSVAddon(p5, fn, lifecycles){
+function loadCSVAddon(p5, fn, lifecycles) {
   p5.Element.prototype.shout = function () {
     this.elt.innerHTML += '<span>!</span>';
   };
 }
 ```
-
 
 ## Step 2
 
@@ -97,19 +92,17 @@ function setup() {
   </head>
 
   <!-- Other tags -->
-
 </html>
 ```
 
 Running the sketch should print a single message in the console saying “I will load a CSV file soon!”.
-
 
 ## Step 3
 
 To load a CSV file with your `loadCSV()` function, the function needs to accept an argument. This can be defined in the same way as any other function parameter.
 
 ```js
-function loadCSVAddon(p5, fn, lifecycles){
+function loadCSVAddon(p5, fn, lifecycles) {
   fn.loadCSV = function (filename) {
     console.log(`I will load the CSV file ${filename} soon!`);
   };
@@ -127,7 +120,6 @@ function setup() {
 }
 ```
 
-
 ## Step 4
 
 You can access p5.js functions and variables such as `circle()` and `PI` in your addon code using the “`this`” object. We’ll use the `hour()` and `minute()` functions to further customize the `loadCSV()` function’s console message. This will give us some information about when the function is called.
@@ -137,8 +129,8 @@ You can access p5.js functions and variables such as `circle()` and `PI` in your
 </details>
 
 ```js
-function loadCSVAddon(p5, fn, lifecycles){
-  fn.loadCSV = (filename) => {
+function loadCSVAddon(p5, fn, lifecycles) {
+  fn.loadCSV = filename => {
     // this === window is true because
     // "this" refers to the window object.
     // This is almost never what you want.
@@ -146,16 +138,18 @@ function loadCSVAddon(p5, fn, lifecycles){
   };
 }
 ```
+
 ```js
-function loadCSVAddon(p5, fn, lifecycles){
+function loadCSVAddon(p5, fn, lifecycles) {
   fn.loadCSV = function (filename) {
     // Prints 'I will load the CSV file data.csv at 10:30'
     // to the console.
-    console.log(`I will load the CSV file ${filename} at ${this.hour()}:${this.minute()}!`);
+    console.log(
+      `I will load the CSV file ${filename} at ${this.hour()}:${this.minute()}!`
+    );
   };
 }
 ```
-
 
 ## Step 5
 
@@ -166,13 +160,15 @@ However, we have not made our `loadCSV()` function load any CSV file yet! To be 
 First make the following changes to your `loadCSV()` method:
 
 ```js
-function loadCSVAddon(p5, fn, lifecycles){
-  fn.loadCSV = async function(filename){
-    console.log(`I will load the CSV file ${filename} at ${this.hour()}:${this.minute()}!`);
+function loadCSVAddon(p5, fn, lifecycles) {
+  fn.loadCSV = async function (filename) {
+    console.log(
+      `I will load the CSV file ${filename} at ${this.hour()}:${this.minute()}!`
+    );
 
     let res = await fetch(filename);
     let data = await res.text();
-    return data.split('\n').map((line) => {
+    return data.split('\n').map(line => {
       return line.split(',');
     });
   };
@@ -186,7 +182,7 @@ The function now uses the Fetch API to fetch a CSV file according to the filenam
 Now, when you run the sketch, pass a file path to a simple CSV file to your `loadCSV()` function and log the output:
 
 ```js
-function setup(){
+function setup() {
   createCanvas(400, 400);
   let myCSV = loadCSV('data.csv');
   print(myCSV);
@@ -196,13 +192,12 @@ function setup(){
 You will notice that it is logging something called a Promise instead of the array you containing data you have in your CSV file. This is because of the same reason why we need to use an `async function setup()` with `loadJSON()` or `loadStrings()`, we need to `await` our asynchronous function in an `async` setup function:
 
 ```js
-async function setup(){
+async function setup() {
   createCanvas(400, 400);
   let myCSV = await loadCSV('data.csv');
   print(myCSV);
 }
 ```
-
 
 ## Step 6
 
@@ -221,15 +216,15 @@ The available hooks, in order of execution, are:
 You may have noticed that we have not yet introduced the third parameter to our `loadCSVAddon()` which is called `lifecycles`, this is where you will define the lifecycle hooks your addon wish to use, see the snippet below.
 
 ```js
-function loadCSVAddon(p5, fn, lifecycles){
-  lifecycles.predraw = function(){
+function loadCSVAddon(p5, fn, lifecycles) {
+  lifecycles.predraw = function () {
     // Set background to be p5 pink by default
-    this.background("#ed225d");
+    this.background('#ed225d');
   };
 
-  lifecycles.remove = function(){
+  lifecycles.remove = function () {
     // Addon library related cleanup
-  }
+  };
 }
 ```
 
@@ -238,40 +233,43 @@ Notice that in the lifecycle functions you have access to `this` which refers to
 Here is what your p5.loadcsv.js file should look like at this point in the tutorial:
 
 ```js
-function loadCSVAddon(p5, fn, lifecycles){
-  fn.loadCSV = async function(filename){
-    console.log(`I will load the CSV file ${filename} at ${this.hour()}:${this.minute()}!`);
+function loadCSVAddon(p5, fn, lifecycles) {
+  fn.loadCSV = async function (filename) {
+    console.log(
+      `I will load the CSV file ${filename} at ${this.hour()}:${this.minute()}!`
+    );
 
     let res = await fetch(filename);
     let data = await res.text();
-    return data.split('\n').map((line) => {
+    return data.split('\n').map(line => {
       return line.split(',');
     });
   };
 
-  lifecycles.predraw = function(){
+  lifecycles.predraw = function () {
     // Set background to be p5 pink by default
-    this.background("#ed225d");
+    this.background('#ed225d');
   };
 
-  lifecycles.remove = function(){
+  lifecycles.remove = function () {
     // Addon library related cleanup
-  }
+  };
 }
 
 p5.registerAddon(loadCSVAddon);
 ```
 
 ## Step 7
+
 As a final step, we will add a few more changes to our addon to prepare it for distribution. There are a few options you may wish to distribute your addon:
 
-* As a single JavaScript file which your users will include in their HTML with a `<script>` tag.
-* As an ESM module that your users can use with `<script type="module">`, install from NPM, or any other ESM module usage.
+- As a single JavaScript file which your users will include in their HTML with a `<script>` tag.
+- As an ESM module that your users can use with `<script type="module">`, install from NPM, or any other ESM module usage.
 
 Either of the above may also be passed through a build tool to be bundled into a different format. As we can see, there are many different options and below will be a recommendation which is the pattern that p5.js itself uses, you may choose another option that fits your addon.
 
 ```js
-export function loadCSVAddon(p5, fn, lifecycles){
+export function loadCSVAddon(p5, fn, lifecycles) {
   // Addon code ...
 }
 
@@ -283,25 +281,31 @@ if (typeof p5 !== undefined) {
 In the above snippet, an additional `if` condition is added around the call to `p5.registerAddon()`. This is done to support both direct usage in ESM modules (where users can directly import your addon function then call `p5.registerAddon()` themselves) and after bundling support regular `<script>` tag usage without your users needing to call `p5.registerAddon()` directly as long as they have included the addon `<script>` tag after the `<script>` tag including p5.js itself.
 
 ## Accessing custom actions
+
 In certain circumstances, such as when you have a library that listens to a certain browser event, you may wish to run a function that your user defined on the global scope, much like how a `click` event triggers a user defined `mouseClicked()` function. We call these functions "custom actions" and your addon can access any of them through `this._customActions` object.
 
 The following addon snippet listens to the `click` event on a custom button element.
+
 ```js
-function myAddon(p5, fn, lifecycles){
-  lifecycles.presetup = function(){
+function myAddon(p5, fn, lifecycles) {
+  lifecycles.presetup = function () {
     let customButton = this.createButton('click me');
-    customButton.elt.addEventListener('click', this._customActions.myAddonButtonClicked);
+    customButton.elt.addEventListener(
+      'click',
+      this._customActions.myAddonButtonClicked
+    );
   };
 }
 ```
 
 In a sketch that uses the above addon, a user can define the following:
+
 ```js
-function setup(){
+function setup() {
   createCanvas(400, 400);
 }
 
-function myAddonButtonClicked(){
+function myAddonButtonClicked() {
   // This function will be run each time the button created by the addon is clicked
 }
 ```
@@ -328,31 +332,30 @@ Your addon library may or may not extend p5 or p5 classes at all, but instead ju
 
 ```js
 // Do not do this
-fn.p5.MyClass = class {
-};
+fn.p5.MyClass = class {};
 
 // Do this
-fn.myAddon.MyClass = class {
-};
+fn.myAddon.MyClass = class {};
 
 // Or this
-fn.myMethod = function(){
-};
+fn.myMethod = function () {};
 ```
 
 **p5.js library filenames are also prefixed with p5, but the next word is lowercase** to distinguish them from classes. For example, p5.sound.js. You are encouraged to follow this format for naming your file.
 
 **In some cases, you will need to make sure your addon cleans up after itself after a p5.js sketch is removed** by the user calling `remove()`. This means adding relevant clean up code in the `lifecycles.remove` hook. In most circumstances, you don't need to do this with the main exception being cleaning up event handlers: if you are using event handlers (ie. calling `addEventListeners`), you will need to make sure those event handlers are also removed when a sketch is removed. p5.js provides a handy method to automatically remove any registered event handlers with and internal property `this._removeSignal`. When registering an event handler, include `this._removeSignal` as follow:
+
 ```js
-function myAddon(p5, fn, lifecycles){
-  lifecycles.presetup = function(){
+function myAddon(p5, fn, lifecycles) {
+  lifecycles.presetup = function () {
     // ... Define `target` ...
-    target.addEventListener('click', function() { }, {
+    target.addEventListener('click', function () {}, {
       signal: this._removeSignal
     });
   };
 }
 ```
+
 With this you will not need to manually define a clean up actions for event handlers in `lifecycles.remove` and all event handlers associated with the `this._removeSignal` property as above will be automtically cleaned up on sketch removal.
 
 **Packaging**

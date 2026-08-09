@@ -7,23 +7,46 @@ import { descriptionString, typeObject } from './shared-helpers.mjs';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const data = JSON.parse(fs.readFileSync(path.join(__dirname, '../docs/data.json')));
+const data = JSON.parse(
+  fs.readFileSync(path.join(__dirname, '../docs/data.json'))
+);
 
 // Generate documentation used in the p5.js reference. This data will get read in
 // the p5.js-website repo: https://github.com/processing/p5.js-website/
 const htmlStrategy = {
-  shouldSkipEntry: (entry) =>
+  shouldSkipEntry: entry =>
     // Skip static methods on p5.Vector for now because the names clash with
     // the non static versions
     entry.scope === 'static' &&
     entry.memberof === 'Vector' &&
-    ['add', 'sub', 'mult', 'div', 'copy', 'rem', 'rotate', 'dot', 'cross', 'dist', 'lerp', 'slerp',
-    'mag', 'magSq', 'normalize', 'limit', 'setMag', 'heading', 'angleBetween', 'reflect',
-    'array', 'equals'].includes(entry.name),
-  
-  processDescription: (desc) => descriptionString(desc),
-  
-  processType: (type) => typeObject(type)
+    [
+      'add',
+      'sub',
+      'mult',
+      'div',
+      'copy',
+      'rem',
+      'rotate',
+      'dot',
+      'cross',
+      'dist',
+      'lerp',
+      'slerp',
+      'mag',
+      'magSq',
+      'normalize',
+      'limit',
+      'setMag',
+      'heading',
+      'angleBetween',
+      'reflect',
+      'array',
+      'equals'
+    ].includes(entry.name),
+
+  processDescription: desc => descriptionString(desc),
+
+  processType: type => typeObject(type)
 };
 
 const processed = processData(data, htmlStrategy);
@@ -37,7 +60,6 @@ const converted = {
   warnings: [], // Intentionally unimplemented
   consts: processed.consts
 };
-
 
 // Register constant usage for the original convert.mjs functionality
 const constUsage = {};
@@ -64,7 +86,12 @@ function registerConstantUsage(name, memberof, node) {
 
 // Register constant usage from processed data
 for (const item of converted.classitems) {
-  if (item.itemtype === 'property' && (item.name in converted.consts || item.kind === 'constant' || item.kind === 'typedef')) {
+  if (
+    item.itemtype === 'property' &&
+    (item.name in converted.consts ||
+      item.kind === 'constant' ||
+      item.kind === 'typedef')
+  ) {
     constUsage[item.name] = constUsage[item.name] || new Set();
   }
   if (item.itemtype === 'method') {
@@ -83,7 +110,6 @@ for (const item of converted.classitems) {
 for (const key in constUsage) {
   converted.consts[key] = [...constUsage[key]];
 }
-
 
 // ============================================================================
 // parameterData.json
@@ -173,7 +199,11 @@ function buildParamDocs(docs) {
 
   for (let classitem of docs.classitems) {
     // If `classitem` doesn't have overloads, then it's not a function—skip processing in this case
-    if (classitem.name && classitem.class && classitem.hasOwnProperty('overloads')) {
+    if (
+      classitem.name &&
+      classitem.class &&
+      classitem.hasOwnProperty('overloads')
+    ) {
       // Skip if the item already exists in newClassItems
       if (
         newClassItems[classitem.class] &&
@@ -215,7 +245,12 @@ function buildParamDocs(docs) {
 }
 
 fs.mkdirSync(path.join(__dirname, '../docs/reference'), { recursive: true });
-fs.writeFileSync(path.join(__dirname, '../docs/reference/data.json'), JSON.stringify(converted, null, 2));
-fs.writeFileSync(path.join(__dirname, '../docs/reference/data.min.json'), JSON.stringify(converted));
+fs.writeFileSync(
+  path.join(__dirname, '../docs/reference/data.json'),
+  JSON.stringify(converted, null, 2)
+);
+fs.writeFileSync(
+  path.join(__dirname, '../docs/reference/data.min.json'),
+  JSON.stringify(converted)
+);
 buildParamDocs(JSON.parse(JSON.stringify(converted)));
-

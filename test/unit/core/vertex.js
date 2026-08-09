@@ -1,59 +1,59 @@
 import p5 from '../../../src/app.js';
 import { vi } from 'vitest';
 
-suite('Vertex', function() {
+suite('Vertex', function () {
   var myp5;
 
-  beforeEach(function() {
-    new p5(function(p) {
-      p.setup = function() {
+  beforeEach(function () {
+    new p5(function (p) {
+      p.setup = function () {
         myp5 = p;
       };
     });
   });
 
-  afterEach(function() {
+  afterEach(function () {
     vi.restoreAllMocks();
     myp5.remove();
   });
 
-  suite('p5.prototype.beginShape', function() {
-    test('should be a function', function() {
+  suite('p5.prototype.beginShape', function () {
+    test('should be a function', function () {
       assert.ok(myp5.beginShape);
       assert.typeOf(myp5.beginShape, 'function');
     });
   });
 
-  suite('p5.prototype.bezierVertex', function() {
-    test('should be a function', function() {
+  suite('p5.prototype.bezierVertex', function () {
+    test('should be a function', function () {
       assert.ok(myp5.bezierVertex);
       assert.typeOf(myp5.bezierVertex, 'function');
     });
   });
 
-  suite('p5.prototype.splineVertex', function() {
-    test('should be a function', function() {
+  suite('p5.prototype.splineVertex', function () {
+    test('should be a function', function () {
       assert.ok(myp5.splineVertex);
       assert.typeOf(myp5.splineVertex, 'function');
     });
   });
 
-  suite('p5.prototype.endShape', function() {
-    test('should be a function', function() {
+  suite('p5.prototype.endShape', function () {
+    test('should be a function', function () {
       assert.ok(myp5.endShape);
       assert.typeOf(myp5.endShape, 'function');
     });
   });
 
-  suite('p5.prototype.vertex', function() {
-    test('should be a function', function() {
+  suite('p5.prototype.vertex', function () {
+    test('should be a function', function () {
       assert.ok(myp5.vertex);
       assert.typeOf(myp5.vertex, 'function');
     });
   });
 
-  suite('path segment batching', function() {
-    test('consecutive line vertices batch into one segment', function() {
+  suite('path segment batching', function () {
+    test('consecutive line vertices batch into one segment', function () {
       myp5.createCanvas(50, 50);
       myp5.beginShape();
       for (let i = 0; i < 5; i++) {
@@ -66,7 +66,7 @@ suite('Vertex', function() {
       myp5.endShape();
     });
 
-    test('endShape(CLOSE) keeps the closing vertex in its own segment', function() {
+    test('endShape(CLOSE) keeps the closing vertex in its own segment', function () {
       myp5.createCanvas(50, 50);
       myp5.beginShape();
       myp5.vertex(0, 0);
@@ -82,7 +82,7 @@ suite('Vertex', function() {
       assert.isTrue(primitives[2].isClosing);
     });
 
-    test('line vertices after a spline segment start a new segment', function() {
+    test('line vertices after a spline segment start a new segment', function () {
       myp5.createCanvas(50, 50);
       myp5.beginShape();
       myp5.vertex(0, 0);
@@ -96,7 +96,7 @@ suite('Vertex', function() {
       myp5.endShape();
     });
 
-    test('beginContour() batches independently per contour', function() {
+    test('beginContour() batches independently per contour', function () {
       myp5.createCanvas(50, 50);
       myp5.beginShape();
       myp5.vertex(0, 0);
@@ -116,7 +116,7 @@ suite('Vertex', function() {
       myp5.endShape();
     });
 
-    test('non-PATH shapes keep using primitive capacity', function() {
+    test('non-PATH shapes keep using primitive capacity', function () {
       myp5.createCanvas(50, 50);
       myp5.beginShape(myp5.TRIANGLES);
       for (let i = 0; i < 6; i++) {

@@ -9,11 +9,11 @@
 // channel is 0..1 (same range as the renderer's curFillColor), not 0..255.
 function createPartState() {
   return {
-    fill: null,           // Kd + d -> [r, g, b, a] | null, each 0..1
-    ambientColor: null,   // Ka -> [r, g, b] | null, each 0..1
-    specularColor: null,  // Ks -> [r, g, b] | null, each 0..1
-    shininess: null,      // Ns -> number | null
-    texture: null         // map_Kd -> p5.Image | null
+    fill: null, // Kd + d -> [r, g, b, a] | null, each 0..1
+    ambientColor: null, // Ka -> [r, g, b] | null, each 0..1
+    specularColor: null, // Ks -> [r, g, b] | null, each 0..1
+    shininess: null, // Ns -> number | null
+    texture: null // map_Kd -> p5.Image | null
   };
 }
 
