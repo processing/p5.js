@@ -131,6 +131,42 @@ suite('loadModel', function () {
     }
   });
 
+  test('a single-material OBJ stays one part', async function () {
+    // eg1.obj has one real material, so it is not split
+    const model = await mockP5Prototype.loadModel(inconsistentColorObjFile);
+    assert.equal(model.parts.length, 1);
+    assert.equal(model.parts[0], model, 'the geometry is its own single part');
+  });
+
+  test('parts get computed normals when the OBJ has none', async function () {
+    // textured.obj has no vn lines, so normals are computed before the split
+    const model = await mockP5Prototype.loadModel(
+      '/test/unit/assets/textured.obj'
+    );
+    assert.equal(model.parts.length, 2);
+    for (const part of model.parts) {
+      assert.equal(
+        part.vertexNormals.length,
+        part.vertices.length,
+        'each part has one computed normal per vertex'
+      );
+    }
+  });
+
+  test('each part carries its own localised uvs', async function () {
+    const model = await mockP5Prototype.loadModel(
+      '/test/unit/assets/textured.obj'
+    );
+    assert.equal(model.parts.length, 2);
+    for (const part of model.parts) {
+      assert.equal(
+        part.uvs.length,
+        part.vertices.length,
+        'each part has one uv per localised vertex'
+      );
+    }
+  });
+
   test('mixed material coloring loads model with sentinel colors for uncolored vertices', async function () {
     const model = await mockP5Prototype.loadModel(inconsistentColorObjFile);
     assert.instanceOf(model, Geometry);
