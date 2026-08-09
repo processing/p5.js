@@ -148,6 +148,7 @@ export class Renderer3D extends Renderer {
     this.states.drawMode = constants.FILL;
 
     this.states._tex = null;
+    this.states._specularTex = null;
     this.states.textureMode = constants.IMAGE;
     this.states.textureWrapX = constants.CLAMP;
     this.states.textureWrapY = constants.CLAMP;
@@ -678,6 +679,11 @@ export class Renderer3D extends Renderer {
     }
     if (partState.specularColor) {
       this.states.setValue('curSpecularColor', partState.specularColor);
+      this.states.setValue('_useSpecularMaterial', true);
+    }
+    if (partState.specularTexture) {
+      // a specular map modulates the specular term, so make sure that term is on
+      this.states.setValue('_specularTex', partState.specularTexture);
       this.states.setValue('_useSpecularMaterial', true);
     }
     if (partState.shininess != null) {
@@ -1567,6 +1573,10 @@ export class Renderer3D extends Renderer {
       fillShader.setUniform('uSampler', this.states._tex || empty);
     }
     this._settingFillUniforms = false;
+    // specular map (map_Ks): always bind so the sampler is valid; the bool gates
+    // whether the shader actually uses it, so untextured draws are unaffected.
+    fillShader.setUniform('uHasSpecularTex', !!this.states._specularTex);
+    fillShader.setUniform('uSpecularSampler', this.states._specularTex || empty);
     fillShader.setUniform(
       'uTint',
       this.states.tint?._getRGBA([255, 255, 255, 255]) ?? [255, 255, 255, 255]

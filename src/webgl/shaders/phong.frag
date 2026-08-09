@@ -10,6 +10,8 @@ uniform vec4 uEmissiveMatColor;
 uniform vec4 uTint;
 uniform sampler2D uSampler;
 uniform bool isTexture;
+uniform sampler2D uSpecularSampler;
+uniform bool uHasSpecularTex;
 
 IN vec3 vNormal;
 IN vec2 vTexCoord;
@@ -57,7 +59,9 @@ void main(void) {
   inputs.shininess = uShininess;
   inputs.metalness = uMetallic;
   inputs.ambientMaterial = uHasSetAmbient ? uAmbientMatColor.rgb : inputs.color.rgb;
-  inputs.specularMaterial = uSpecularMatColor.rgb;
+  inputs.specularMaterial = uHasSpecularTex
+      ? TEXTURE(uSpecularSampler, vTexCoord).rgb * uSpecularMatColor.rgb
+      : uSpecularMatColor.rgb;
   inputs.emissiveMaterial = uEmissiveMatColor.rgb;
   inputs = HOOK_getPixelInputs(inputs);
 

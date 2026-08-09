@@ -69,4 +69,23 @@ suite('mtlToPartState', function () {
     expect(state.fill).toBeNull();
     expect(state.texture).toBeNull();
   });
+
+  test('a specular map lands on the part state with a white base', function () {
+    const img = { width: 1, height: 1 };
+    const state = mtlToPartState({ specularTexture: img });
+    expect(state.specularTexture).toBe(img);
+    // with no explicit Ks, the base specular colour defaults to white so the
+    // map has something to modulate
+    expect(state.specularColor).toEqual([1, 1, 1]);
+  });
+
+  test('a specular map keeps an explicit Ks colour', function () {
+    const img = { width: 1, height: 1 };
+    const state = mtlToPartState({
+      specularColor: [0.5, 0.5, 0.5],
+      specularTexture: img
+    });
+    expect(state.specularTexture).toBe(img);
+    expect(state.specularColor).toEqual([0.5, 0.5, 0.5]);
+  });
 });
