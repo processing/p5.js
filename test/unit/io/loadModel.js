@@ -1,6 +1,7 @@
 import { mockP5, mockP5Prototype, httpMock } from '../../js/mocks';
 import loading from '../../../src/webgl/loading';
 import { Geometry } from '../../../src/webgl/p5.Geometry';
+import { vi } from 'vitest';
 
 suite('loadModel', function () {
   const invalidFile = '404file';
@@ -164,6 +165,27 @@ suite('loadModel', function () {
         part.vertices.length,
         'each part has one uv per localised vertex'
       );
+    }
+  });
+
+  test('a failed texture load warns instead of failing silently', async function () {
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    mockP5Prototype.loadImage = async () => {
+      throw new Error('Not Found');
+    };
+    try {
+      const model = await mockP5Prototype.loadModel(
+        '/test/unit/assets/textured.obj'
+      );
+      // the model still loads with both material parts
+      assert.equal(model.parts.length, 2);
+      // the failed texture is skipped, so no part carries it
+      assert.ok(model.parts.every(p => p.partState.texture == null));
+      // and the failure is surfaced, not silent
+      assert.ok(warnSpy.mock.calls.length > 0, 'a warning is emitted');
+    } finally {
+      delete mockP5Prototype.loadImage;
+      warnSpy.mockRestore();
     }
   });
 

@@ -428,6 +428,23 @@ visualSuite('WebGL', function () {
         screenshot();
       }
     );
+    visualTest(
+      'a slice with a missing texture falls back to its colour',
+      async function (p5, screenshot) {
+        p5.createCanvas(50, 50, p5.WEBGL);
+        // missing_texture.obj: m0 has a 404 map_Kd (falls back to red), m1 blue
+        const model = await new Promise(resolve =>
+          p5.loadModel('test/unit/assets/missing_texture.obj', resolve)
+        );
+        model.normalize();
+        p5.background(255);
+        p5.rotateX(0.4);
+        p5.rotateY(0.4);
+        p5.noStroke();
+        p5.model(model);
+        screenshot();
+      }
+    );
   });
 
   visualSuite('vertexProperty', function () {
