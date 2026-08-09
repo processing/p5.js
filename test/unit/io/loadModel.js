@@ -139,6 +139,16 @@ suite('loadModel', function () {
     assert.equal(model.parts[0], model, 'the geometry is its own single part');
   });
 
+  test('a 12-material OBJ splits into 12 parts', async function () {
+    const model = await mockP5Prototype.loadModel(
+      '/test/unit/assets/multi_material_12.obj'
+    );
+    assert.equal(model.parts.length, 12);
+    // every face still lands in exactly one part
+    const totalFaces = model.parts.reduce((s, p) => s + p.faces.length, 0);
+    assert.equal(totalFaces, model.faces.length);
+  });
+
   test('parts get computed normals when the OBJ has none', async function () {
     // textured.obj has no vn lines, so normals are computed before the split
     const model = await mockP5Prototype.loadModel(

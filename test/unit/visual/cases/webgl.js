@@ -445,6 +445,36 @@ visualSuite('WebGL', function () {
         screenshot();
       }
     );
+    visualTest(
+      'a 12-material OBJ renders every material',
+      async function (p5, screenshot) {
+        p5.createCanvas(50, 50, p5.WEBGL);
+        const model = await new Promise(resolve =>
+          p5.loadModel('test/unit/assets/multi_material_12.obj', resolve)
+        );
+        model.normalize();
+        p5.background(255);
+        p5.noStroke();
+        p5.model(model);
+        screenshot();
+      }
+    );
+    visualTest(
+      'a single-material OBJ renders through the part path',
+      async function (p5, screenshot) {
+        p5.createCanvas(50, 50, p5.WEBGL);
+        const model = await new Promise(resolve =>
+          p5.loadModel('test/unit/assets/single_material.obj', resolve)
+        );
+        model.normalize();
+        p5.background(255);
+        p5.rotateX(0.4);
+        p5.rotateY(0.4);
+        p5.noStroke();
+        p5.model(model);
+        screenshot();
+      }
+    );
   });
 
   visualSuite('vertexProperty', function () {
