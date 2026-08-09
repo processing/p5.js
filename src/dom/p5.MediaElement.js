@@ -55,7 +55,8 @@ class MediaElement extends Element {
     Object.defineProperty(self, 'src', {
       get() {
         const firstChildSrc = self.elt.children[0].src;
-        const srcVal = self.elt.src === window.location.href ? '' : self.elt.src;
+        const srcVal =
+          self.elt.src === window.location.href ? '' : self.elt.src;
         const ret =
           firstChildSrc === window.location.href ? srcVal : firstChildSrc;
         return ret;
@@ -73,12 +74,11 @@ class MediaElement extends Element {
     });
 
     // private _onended callback, set by the method: onended(callback)
-    self._onended = function () { };
+    self._onended = function () {};
     self.elt.onended = function () {
       self._onended(self);
     };
   }
-
 
   /**
    * Plays audio or video from a media element.
@@ -439,8 +439,8 @@ class MediaElement extends Element {
     // if we turned on autoplay
     if (val && !oldVal) {
       // bind method to this scope
-      const setupAutoplayFailDetection =
-        () => this._setupAutoplayFailDetection();
+      const setupAutoplayFailDetection = () =>
+        this._setupAutoplayFailDetection();
       // if media is ready to play, schedule check now
       if (this.elt.readyState === 4) {
         setupAutoplayFailDetection();
@@ -744,7 +744,11 @@ class MediaElement extends Element {
       }
 
       this.drawingContext.clearRect(
-        0, 0, this.canvas.width, this.canvas.height);
+        0,
+        0,
+        this.canvas.width,
+        this.canvas.height
+      );
 
       if (this.flipped === true) {
         this.drawingContext.save();
@@ -1261,16 +1265,14 @@ class MediaElement extends Element {
 // Cue inspired by JavaScript setTimeout, and the
 // Tone.js Transport Timeline Event, MIT License Yotam Mann 2015 tonejs.org
 
-function media(p5, fn){
+function media(p5, fn) {
   /**
    * Helpers for create methods.
    */
   function addElement(elt, pInst, media) {
     const node = pInst._userNode ? pInst._userNode : document.body;
     node.appendChild(elt);
-    const c = media
-      ? new MediaElement(elt, pInst)
-      : new Element(elt, pInst);
+    const c = media ? new MediaElement(elt, pInst) : new Element(elt, pInst);
     pInst._elements.push(c);
     return c;
   }
@@ -1618,8 +1620,7 @@ function media(p5, fn){
           delete arg.flipped;
         }
         constraints = Object.assign({}, constraints, arg);
-      }
-      else if (typeof arg === 'function') {
+      } else if (typeof arg === 'function') {
         callback = arg;
       }
     }
@@ -1629,25 +1630,27 @@ function media(p5, fn){
     const domElement = document.createElement(VIDEO);
     // required to work in iOS 11 & up:
     domElement.setAttribute('playsinline', '');
-    navigator.mediaDevices.getUserMedia(constraints).then(function (stream) {
-      try {
-        if ('srcObject' in domElement) {
-          domElement.srcObject = stream;
-        } else {
-          domElement.src = window.URL.createObjectURL(stream);
+    navigator.mediaDevices
+      .getUserMedia(constraints)
+      .then(function (stream) {
+        try {
+          if ('srcObject' in domElement) {
+            domElement.srcObject = stream;
+          } else {
+            domElement.src = window.URL.createObjectURL(stream);
+          }
+        } catch (err) {
+          domElement.src = stream;
         }
-      }
-      catch (err) {
-        domElement.src = stream;
-      }
-    }).catch(e => {
-      if (e.name === 'NotFoundError')
-        p5._friendlyError('No webcam found on this device', 'createCapture');
-      if (e.name === 'NotAllowedError')
-        p5._friendlyError('Access to the camera was denied', 'createCapture');
+      })
+      .catch(e => {
+        if (e.name === 'NotFoundError')
+          p5._friendlyError('No webcam found on this device', 'createCapture');
+        if (e.name === 'NotAllowedError')
+          p5._friendlyError('Access to the camera was denied', 'createCapture');
 
-      console.error(e);
-    });
+        console.error(e);
+      });
 
     const videoEl = addElement(domElement, this, true);
     videoEl.loadedmetadata = false;
@@ -1712,10 +1715,10 @@ function media(p5, fn){
 
   // Patch MediaElement to give it access to fn, which p5.sound may attach things to
   // if present in a sketch
-  MediaElement.prototype._getSoundOut = function() {
+  MediaElement.prototype._getSoundOut = function () {
     return p5.soundOut;
   };
-  MediaElement.prototype._getAudioContext = function() {
+  MediaElement.prototype._getAudioContext = function () {
     if (typeof fn.getAudioContext === 'function') {
       return fn.getAudioContext();
     } else {
@@ -1753,6 +1756,6 @@ function media(p5, fn){
 export default media;
 export { MediaElement };
 
-if(typeof p5 !== 'undefined'){
+if (typeof p5 !== 'undefined') {
   media(p5, p5.prototype);
 }

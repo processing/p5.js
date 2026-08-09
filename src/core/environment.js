@@ -7,9 +7,10 @@
 import * as C from './constants';
 // import { Vector } from '../math/p5.Vector';
 
-function environment(p5, fn, lifecycles){
+function environment(p5, fn, lifecycles) {
   const standardCursors = [C.ARROW, C.CROSS, C.HAND, C.MOVE, C.TEXT, C.WAIT];
-  const isBrowser = typeof window !== 'undefined' && typeof document !== 'undefined';
+  const isBrowser =
+    typeof window !== 'undefined' && typeof document !== 'undefined';
 
   fn._frameRate = 0;
   fn._lastFrameTime = globalThis.performance.now();
@@ -18,13 +19,11 @@ function environment(p5, fn, lifecycles){
   const windowPrint = isBrowser ? window.print : null;
   let windowPrintDisabled = false;
 
-  lifecycles.presetup = function(){
-    const events = [
-      'resize'
-    ];
+  lifecycles.presetup = function () {
+    const events = ['resize'];
 
-    if(isBrowser){
-      for(const event of events){
+    if (isBrowser) {
+      for (const event of events) {
         window.addEventListener(event, this[`_on${event}`].bind(this), {
           passive: false,
           signal: this._removeSignal
@@ -59,7 +58,7 @@ function environment(p5, fn, lifecycles){
    *   print(`hello, ${name}`);
    * }
    */
-  fn.print = function(...args) {
+  fn.print = function (...args) {
     if (!args.length && windowPrint !== null) {
       if (!windowPrintDisabled) {
         windowPrint();
@@ -288,7 +287,7 @@ function environment(p5, fn, lifecycles){
    * @method cursor
    * @return {(ARROW|CROSS|HAND|MOVE|TEXT|WAIT|String)} the current cursor type
    */
-  fn.cursor = function(type, x, y) {
+  fn.cursor = function (type, x, y) {
     let cursor = 'auto';
     const canvas = this._curElement.elt;
     if (typeof type === 'undefined') {
@@ -300,7 +299,8 @@ function environment(p5, fn, lifecycles){
       cursor = type;
     } else if (typeof type === 'string') {
       let coords = '';
-      if (typeof x === 'number') { // fix for #8323
+      if (typeof x === 'number') {
+        // fix for #8323
         y = typeof y === 'number' ? y : 0;
         // Note that x and y values must be unit-less positive integers < 32
         // https://developer.mozilla.org/en-US/docs/Web/CSS/cursor
@@ -394,7 +394,7 @@ function environment(p5, fn, lifecycles){
    * @method frameRate
    * @return {Number}       current frame rate.
    */
-  fn.frameRate = function(fps) {
+  fn.frameRate = function (fps) {
     // p5._validateParameters('frameRate', arguments);
     if (typeof fps !== 'number' || fps < 0) {
       return this._frameRate;
@@ -413,7 +413,7 @@ function environment(p5, fn, lifecycles){
    * @private
    * @return {Number} current frameRate
    */
-  fn.getFrameRate = function() {
+  fn.getFrameRate = function () {
     return this.frameRate();
   };
 
@@ -429,7 +429,7 @@ function environment(p5, fn, lifecycles){
    * @private
    * @param {Number} [fps] number of frames to be displayed every second
    */
-  fn.setFrameRate = function(fps) {
+  fn.setFrameRate = function (fps) {
     return this.frameRate(fps);
   };
 
@@ -460,7 +460,7 @@ function environment(p5, fn, lifecycles){
    *   text(fps, 43, 54);
    * }
    */
-  fn.getTargetFrameRate = function() {
+  fn.getTargetFrameRate = function () {
     return this._targetFrameRate;
   };
 
@@ -482,7 +482,7 @@ function environment(p5, fn, lifecycles){
    *   describe('A white circle on a gray background. The circle follows the mouse as it moves. The cursor is hidden.');
    * }
    */
-  fn.noCursor = function() {
+  fn.noCursor = function () {
     this._curElement.elt.style.cursor = 'none';
   };
 
@@ -722,7 +722,7 @@ function environment(p5, fn, lifecycles){
    * @alt
    * This example does not render anything.
    */
-  fn._onresize = function(e) {
+  fn._onresize = function (e) {
     this.windowWidth = getWindowWidth();
     this.windowHeight = getWindowHeight();
     let executeDefault;
@@ -746,7 +746,7 @@ function environment(p5, fn, lifecycles){
    * Called upon each p5 instantiation instead of module import due to the
    * possibility of the window being resized when no sketch is active.
    */
-  fn._updateWindowSize = function() {
+  fn._updateWindowSize = function () {
     this.windowWidth = getWindowWidth();
     this.windowHeight = getWindowHeight();
   };
@@ -754,7 +754,7 @@ function environment(p5, fn, lifecycles){
   Object.defineProperty(fn, 'width', {
     configurable: true,
     enumerable: true,
-    get(){
+    get() {
       return this._renderer?.width;
     }
   });
@@ -762,7 +762,7 @@ function environment(p5, fn, lifecycles){
   Object.defineProperty(fn, 'height', {
     configurable: true,
     enumerable: true,
-    get(){
+    get() {
       return this._renderer?.height;
     }
   });
@@ -798,7 +798,7 @@ function environment(p5, fn, lifecycles){
    *   }
    * }
    */
-  fn.fullscreen = function(val) {
+  fn.fullscreen = function (val) {
     // no arguments, return fullscreen or not
     if (typeof val === 'undefined') {
       return (
@@ -868,7 +868,7 @@ function environment(p5, fn, lifecycles){
    * @method pixelDensity
    * @returns {Number} current pixel density of the sketch.
    */
-  fn.pixelDensity = function(val) {
+  fn.pixelDensity = function (val) {
     let returnValue;
     if (typeof val === 'number') {
       if (val !== this._renderer._pixelDensity) {
@@ -997,8 +997,7 @@ function environment(p5, fn, lifecycles){
    *   describe('The word "reference" written in black on a gray background.');
    * }
    */
-  fn.getURLPath = () =>
-    location.pathname.split('/').filter(v => v !== '');
+  fn.getURLPath = () => location.pathname.split('/').filter(v => v !== '');
 
   /**
    * Returns the current
@@ -1033,7 +1032,7 @@ function environment(p5, fn, lifecycles){
    * @alt
    * This example does not render anything.
    */
-  fn.getURLParams = function() {
+  fn.getURLParams = function () {
     const re = /[?&]([^&=]+)(?:[&=])([^&=]+)/gim;
     let m;
     const v = {};
@@ -1158,7 +1157,7 @@ function environment(p5, fn, lifecycles){
    *   });
    * }
    */
-  fn.worldToScreen = function(worldPosition) {
+  fn.worldToScreen = function (worldPosition) {
     if (typeof worldPosition === 'number') {
       // We got passed numbers, convert to vector
       worldPosition = this.createVector(...arguments);
@@ -1205,7 +1204,7 @@ function environment(p5, fn, lifecycles){
    *   line(localMouse.x, -30, localMouse.x, 30);
    * }
    */
-  fn.screenToWorld = function(screenPosition) {
+  fn.screenToWorld = function (screenPosition) {
     if (typeof screenPosition === 'number') {
       // We got passed numbers, convert to vector
       screenPosition = this.createVector(...arguments);
@@ -1222,8 +1221,8 @@ function environment(p5, fn, lifecycles){
 
     const matrixInverse = matrix.invert(matrix);
 
-    const worldPosition = matrixInverse
-      .multiplyAndNormalizePoint(screenPosition);
+    const worldPosition =
+      matrixInverse.multiplyAndNormalizePoint(screenPosition);
     return worldPosition;
   };
 
@@ -1346,6 +1345,6 @@ function environment(p5, fn, lifecycles){
 
 export default environment;
 
-if(typeof p5 !== 'undefined'){
+if (typeof p5 !== 'undefined') {
   environment(p5, p5.prototype);
 }

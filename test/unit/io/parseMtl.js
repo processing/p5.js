@@ -1,7 +1,7 @@
 import { parseMtlData, mtlToPartState } from '../../../src/webgl/loading';
 
-suite('parseMtlData', function() {
-  test('parses a full set of material tokens', function() {
+suite('parseMtlData', function () {
+  test('parses a full set of material tokens', function () {
     const mtl = [
       'newmtl shiny',
       'Kd 0.1 0.2 0.3',
@@ -32,28 +32,26 @@ suite('parseMtlData', function() {
     expect(m.bumpTexturePath).toEqual('bump.png');
   });
 
-  test('Tr is read as the inverse of d', function() {
+  test('Tr is read as the inverse of d', function () {
     const materials = parseMtlData('newmtl glass\nTr 0.25');
     expect(materials.glass.opacity).toEqual(0.75);
   });
 
-  test('keeps each material separate', function() {
-    const materials = parseMtlData(
-      'newmtl a\nKd 1 0 0\nnewmtl b\nKd 0 1 0'
-    );
+  test('keeps each material separate', function () {
+    const materials = parseMtlData('newmtl a\nKd 1 0 0\nnewmtl b\nKd 0 1 0');
     expect(materials.a.diffuseColor).toEqual([1, 0, 0]);
     expect(materials.b.diffuseColor).toEqual([0, 1, 0]);
   });
 
-  test('ignores lines before any newmtl', function() {
+  test('ignores lines before any newmtl', function () {
     const materials = parseMtlData('Kd 1 1 1\nnewmtl a\nKd 0 0 0');
     expect(materials.a.diffuseColor).toEqual([0, 0, 0]);
     expect(Object.keys(materials)).toEqual(['a']);
   });
 });
 
-suite('mtlToPartState', function() {
-  test('maps mtl fields onto p5 part-state vocabulary', function() {
+suite('mtlToPartState', function () {
+  test('maps mtl fields onto p5 part-state vocabulary', function () {
     const state = mtlToPartState({
       diffuseColor: [1, 0, 0],
       ambientColor: [0, 1, 0],
@@ -66,7 +64,7 @@ suite('mtlToPartState', function() {
     expect(state.shininess).toEqual(32);
   });
 
-  test('returns an all-null state for a missing material', function() {
+  test('returns an all-null state for a missing material', function () {
     const state = mtlToPartState(undefined);
     expect(state.fill).toBeNull();
     expect(state.texture).toBeNull();

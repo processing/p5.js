@@ -4,14 +4,12 @@
 
 Si estás leyendo esta página, probablemente estés interesado en ayudar a trabajar en el modo WebGL. ¡Gracias, agradecemos tu ayuda! Esta página existe para ayudar a explicar cómo estructuramos las contribuciones de WebGL y ofrecer algunos consejos para realizar cambios.
 
-
 ## Recursos
 
 - Lee nuestra [visión general de la arquitectura WebGL de p5.js](webgl_mode_architecture.md) para entender cómo difiere el modo WebGL del modo 2D. Esta será una referencia valiosa para algunos detalles de implementación para shaders, trazos y más.
 - Lee nuestras [instrucciones para contribuidores](https://p5js.org/contributor-docs/#/./contributor_guidelines) para obtener información sobre cómo crear issues, configurar el código base y probar cambios.
 - Puede ser útil conocer un poco sobre la API WebGL del navegador, en la que se basa el modo WebGL de p5.js:[WebGL Fundamentals](https://webglfundamentals.org/) repasa muchos conceptos básicos de renderización.
   - [The Book of Shaders](https://thebookofshaders.com/) explica muchas técnicas utilizadas en shaders de WebGL.
-
 
 ## Planificación
 
@@ -26,7 +24,6 @@ Organizamos <em>issues</em> abiertos [en un Proyecto de GitHub](https://github.c
 - Las **solicitudes de funcionalidad** son todas las demás solicitudes de cambios de código. Estos necesitan un poco de discusión para asegurarnos de que sean cosas que encajen en la hoja de ruta del modo WebGL.
 - <em>Issues</em> de **documentación** son aquellos que no necesitan un cambio de código, sino una mejor documentación del comportamiento de p5.js.
 
-
 ## Dónde Colocar el Código
 
 Todo lo relacionado con WebGL está en el subdirectorio `src/webgl`. Dentro de ese directorio, las funciones principales de p5.js se dividen en archivos según el área temática: los comandos para configurar la luz se encuentran en `lighting.js`; los comandos para configurar materiales se encuentran en `materials.js`.
@@ -35,36 +32,29 @@ Al implementar clases orientadas al usuario, generalmente intentamos tener un ar
 
 `p5.RendererGL` es una clase grande que maneja una gran cantidad de comportamientos. Por esta razón, en lugar de tener un archivo de clase grande, su funcionalidad se divide en muchos archivos según el área temática. Aquí hay una descripción de los archivos en los que dividimos `p5.RendererGL`, y qué poner en cada uno:
 
-
 #### `p5.RendererGL.js`
 
 Inicialización y funcionalidad principal.
-
 
 #### `p5.RendererGL.Immediate.js`
 
 Funcionalidad relacionada con el dibujo de **modo inmediato** (formas que no se almacenarán ni se reutilizarán, como `beginShape()` y `endShape()`)
 
-
 #### `p5.RendererGL.Retained.js`
 
 Funcionalidad relacionada con el dibujo de **modo retenido** (formas que se han almacenado para su reutilización, como `sphere()`)
-
 
 #### `material.js`
 
 Gestión de modos de mezcla.
 
-
 #### `3d_primitives.js`
 
 Funciones orientadas al usuario que dibujan formas, como `triangle()`. Estos definen la geometría de las formas. El renderizado de esas formas luego ocurre en `p5.RendererGL.Retained.js` o `p5.RendererGL.Immediate.js`, tratando la entrada de geometría como una forma genérica.
 
-
 #### `Text.js`
 
 Funcionalidad y clases con utilidades para renderizar texto.
-
 
 ## Pruebas de Cambios en WebGL
 
@@ -75,15 +65,15 @@ Hay muchas formas de usar las funciones en p5.js. Es difícil verificar manualme
 Al agregar una nueva prueba, si la función es algo que también funciona en el modo 2D, una de las mejores formas de verificar la consistencia es verificar que los píxeles resultantes sean iguales en ambos modos. Aquí hay un ejemplo en una prueba unitaria:
 
 ```js
-test('coplanar strokes match 2D', function() {
-  const getColors = function(mode) {
+test('coplanar strokes match 2D', function () {
+  const getColors = function (mode) {
     myp5.createCanvas(20, 20, mode);
     myp5.pixelDensity(1);
     myp5.background(255);
     myp5.strokeCap(myp5.SQUARE);
     myp5.strokeJoin(myp5.MITER);
     if (mode === myp5.WEBGL) {
-      myp5.translate(-myp5.width/2, -myp5.height/2);
+      myp5.translate(-myp5.width / 2, -myp5.height / 2);
     }
     myp5.stroke('black');
     myp5.strokeWeight(4);
@@ -103,7 +93,7 @@ Esto no siempre funciona porque no se puede desactivar el <em>antialiasing</em> 
 Si una funcionalidad es exclusiva de WebGL, en lugar de comparar píxeles con el modo 2D, a menudo verificamos algunos píxeles para asegurarnos de que su color sea el esperado. Algún día, podríamos convertir esto en un sistema más robusto que compare con instantáneas de imagen completas de nuestros resultados esperados en lugar de algunos píxeles, pero por ahora, aquí tienes un ejemplo de verificación de color de píxeles:
 
 ```js
-test('color interpolation', function() {
+test('color interpolation', function () {
   const renderer = myp5.createCanvas(256, 256, myp5.WEBGL);
   // upper color: (200, 0, 0, 255);
   // lower color: (0, 0, 200, 255);
@@ -122,7 +112,6 @@ test('color interpolation', function() {
   assert.deepEqual(myp5.get(128, 128), [100, 0, 100, 255]);
 });
 ```
-
 
 ### Pruebas de rendimiento
 

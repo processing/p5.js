@@ -4,8 +4,17 @@
  * @for p5
  */
 
-import { RGB, RGBP3, HSL, HSB, HWB, LAB, LCH, OKLAB, OKLCH } from './creating_reading';
-
+import {
+  RGB,
+  RGBP3,
+  HSL,
+  HSB,
+  HWB,
+  LAB,
+  LCH,
+  OKLAB,
+  OKLCH
+} from './creating_reading';
 
 import {
   ColorSpace,
@@ -14,14 +23,11 @@ import {
   serialize,
   parse,
   range,
-
   sRGB,
   HSL as HSLSpace,
   HWB as HWBSpace,
-
   Lab,
   LCH as LCHSpace,
-
   OKLab,
   OKLCH as OKLCHSpace,
   contrastWCAG21,
@@ -31,28 +37,25 @@ import {
 import HSBSpace from './color_spaces/hsb.js';
 
 const map = (n, start1, stop1, start2, stop2, clamp) => {
-  let result = ((n - start1) / (stop1 - start1) * (stop2 - start2) + start2);
+  let result = ((n - start1) / (stop1 - start1)) * (stop2 - start2) + start2;
   if (clamp) {
     result = Math.max(result, Math.min(start2, stop2));
     result = Math.min(result, Math.max(start2, stop2));
   }
   return result;
-}
+};
 
-const toHexComponent = (v) => {
+const toHexComponent = v => {
   const vInt = ~~(v * 255);
-  const hex = vInt.toString(16)
+  const hex = vInt.toString(16);
   if (hex.length < 2) {
-    return '0' + hex
+    return '0' + hex;
   } else {
-    return hex
+    return hex;
   }
-}
+};
 
 const serializationMap = new Map();
-
-
-
 
 class Color {
   static colorMap = {};
@@ -68,16 +71,18 @@ class Color {
 
   // Used to add additional color modes to p5.js
   // Uses underlying library's definition
-  static addColorMode(mode, definition){
+  static addColorMode(mode, definition) {
     ColorSpace.register(definition);
     Color.colorMap[mode] = definition.id;
 
     // Get colorjs maxes
-    Color.#colorjsMaxes[mode] = Object.values(definition.coords)
-      .reduce((acc, v) => {
+    Color.#colorjsMaxes[mode] = Object.values(definition.coords).reduce(
+      (acc, v) => {
         acc.push(v.refRange || v.range);
         return acc;
-      }, []);
+      },
+      []
+    );
     Color.#colorjsMaxes[mode].push([0, 1]);
 
     // Get grayscale mapping
@@ -88,55 +93,60 @@ class Color {
     // This changes with the color object
     this._cachedMode = colorMode || RGB;
 
-    if(vals instanceof Color){
+    if (vals instanceof Color) {
       // Received Color object to be used for color mode conversion
-      const mode = colorMode ?
-        Color.colorMap[colorMode] :
-        Color.colorMap[vals.mode];
+      const mode = colorMode
+        ? Color.colorMap[colorMode]
+        : Color.colorMap[vals.mode];
       this._initialize = () => {
         this._cachedColor = to(vals._color, mode);
         this._cachedMode = mode;
       };
-
-    }else if (typeof vals === 'object' && !Array.isArray(vals) && vals !== null){
+    } else if (
+      typeof vals === 'object' &&
+      !Array.isArray(vals) &&
+      vals !== null
+    ) {
       // Received color.js object to be used internally
-      const mode = colorMode ?
-        Color.colorMap[colorMode] :
-        vals.spaceId;
+      const mode = colorMode ? Color.colorMap[colorMode] : vals.spaceId;
       this._initialize = () => {
         this._cachedColor = to(vals, mode);
-        this._cachedMode = colorMode || Object.entries(Color.colorMap)
-          .find(([key, val]) => {
+        this._cachedMode =
+          colorMode ||
+          Object.entries(Color.colorMap).find(([key, val]) => {
             return val === this._cachedColor.spaceId;
           });
       };
-
-    } else if(typeof vals[0] === 'string') {
+    } else if (typeof vals[0] === 'string') {
       // Received string
       this._defaultStringValue = vals[0];
       this._initialize = () => {
-        try{
+        try {
           this._cachedColor = parse(vals[0]);
           const [mode] = Object.entries(Color.colorMap).find(([key, val]) => {
             return val === this._cachedColor.spaceId;
           });
           this._cachedMode = mode;
           this._cachedColor = to(this._cachedColor, this._cachedColor.spaceId);
-        }catch(err){
+        } catch (err) {
           // TODO: Invalid color string
           throw new Error('Invalid color string');
         }
       };
-
-    }else{
+    } else {
       // Received individual channel values
       let mappedVals;
 
-      if(colorMaxes){
+      if (colorMaxes) {
         // NOTE: need to consider different number of arguments (eg. CMYK)
-        if(vals.length === 4){
-          mappedVals = Color.mapColorRange(vals, this._cachedMode, colorMaxes, clamp);
-        }else if(vals.length === 3){
+        if (vals.length === 4) {
+          mappedVals = Color.mapColorRange(
+            vals,
+            this._cachedMode,
+            colorMaxes,
+            clamp
+          );
+        } else if (vals.length === 3) {
           mappedVals = Color.mapColorRange(
             [vals[0], vals[1], vals[2]],
             this._cachedMode,
@@ -144,15 +154,15 @@ class Color {
             clamp
           );
           mappedVals.push(1);
-        }else if(vals.length === 2){
+        } else if (vals.length === 2) {
           // Grayscale with alpha
-          if(Color.#grayscaleMap[this._cachedMode]){
+          if (Color.#grayscaleMap[this._cachedMode]) {
             mappedVals = Color.#grayscaleMap[this._cachedMode](
               vals[0],
               colorMaxes,
               clamp
             );
-          }else{
+          } else {
             mappedVals = Color.mapColorRange(
               [vals[0], vals[0], vals[0]],
               this._cachedMode,
@@ -160,28 +170,21 @@ class Color {
               clamp
             );
           }
-          const alphaMaxes = Array.isArray(colorMaxes[colorMaxes.length-1]) ?
-            colorMaxes[colorMaxes.length-1] :
-            [0, colorMaxes[colorMaxes.length-1]];
+          const alphaMaxes = Array.isArray(colorMaxes[colorMaxes.length - 1])
+            ? colorMaxes[colorMaxes.length - 1]
+            : [0, colorMaxes[colorMaxes.length - 1]];
           mappedVals.push(
-            map(
-              vals[1],
-              alphaMaxes[0],
-              alphaMaxes[1],
-              0,
-              1,
-              clamp
-            )
+            map(vals[1], alphaMaxes[0], alphaMaxes[1], 0, 1, clamp)
           );
-        }else if(vals.length === 1){
+        } else if (vals.length === 1) {
           // Grayscale only
-          if(Color.#grayscaleMap[this._cachedMode]){
+          if (Color.#grayscaleMap[this._cachedMode]) {
             mappedVals = Color.#grayscaleMap[this._cachedMode](
               vals[0],
               colorMaxes,
               clamp
             );
-          }else{
+          } else {
             mappedVals = Color.mapColorRange(
               [vals[0], vals[0], vals[0]],
               this._cachedMode,
@@ -190,23 +193,34 @@ class Color {
             );
           }
           mappedVals.push(1);
-        }else{
+        } else {
           throw new Error('Invalid color');
         }
-      }else{
+      } else {
         mappedVals = vals;
       }
       if (this._cachedMode === RGB) {
         if (mappedVals[3] === 1) {
           // Faster for the browser to parse than rgba
-          this._defaultStringValue = '#' + toHexComponent(mappedVals[0]) + toHexComponent(mappedVals[1]) + toHexComponent(mappedVals[2]);
+          this._defaultStringValue =
+            '#' +
+            toHexComponent(mappedVals[0]) +
+            toHexComponent(mappedVals[1]) +
+            toHexComponent(mappedVals[2]);
         } else {
-          this._defaultStringValue = '#' + toHexComponent(mappedVals[0]) + toHexComponent(mappedVals[1]) + toHexComponent(mappedVals[2]) + toHexComponent(mappedVals[3]);;
+          this._defaultStringValue =
+            '#' +
+            toHexComponent(mappedVals[0]) +
+            toHexComponent(mappedVals[1]) +
+            toHexComponent(mappedVals[2]) +
+            toHexComponent(mappedVals[3]);
         }
       }
 
       this._initialize = () => {
-        const space = Color.colorMap[this._cachedMode] || console.error('Invalid color mode');
+        const space =
+          Color.colorMap[this._cachedMode] ||
+          console.error('Invalid color mode');
         const coords = mappedVals.slice(0, 3);
 
         const color = {
@@ -245,11 +259,11 @@ class Color {
   }
 
   // Convert from p5 color range to color.js color range
-  static mapColorRange(origin, mode, maxes, clamp){
+  static mapColorRange(origin, mode, maxes, clamp) {
     const p5Maxes = maxes.map(max => {
-      if(!Array.isArray(max)){
+      if (!Array.isArray(max)) {
         return [0, max];
-      }else{
+      } else {
         return max;
       }
     });
@@ -258,8 +272,10 @@ class Color {
     return origin.map((channel, i) => {
       const newval = map(
         channel,
-        p5Maxes[i][0], p5Maxes[i][1],
-        colorjsMaxes[i][0], colorjsMaxes[i][1],
+        p5Maxes[i][0],
+        p5Maxes[i][1],
+        colorjsMaxes[i][0],
+        colorjsMaxes[i][1],
         clamp
       );
       return newval;
@@ -267,11 +283,11 @@ class Color {
   }
 
   // Convert from color.js color range to p5 color range
-  static unmapColorRange(origin, mode, maxes){
+  static unmapColorRange(origin, mode, maxes) {
     const p5Maxes = maxes.map(max => {
-      if(!Array.isArray(max)){
+      if (!Array.isArray(max)) {
         return [0, max];
-      }else{
+      } else {
         return max;
       }
     });
@@ -280,15 +296,17 @@ class Color {
     return origin.map((channel, i) => {
       const newval = map(
         channel,
-        colorjsMaxes[i][0], colorjsMaxes[i][1],
-        p5Maxes[i][0], p5Maxes[i][1]
+        colorjsMaxes[i][0],
+        colorjsMaxes[i][1],
+        p5Maxes[i][0],
+        p5Maxes[i][1]
       );
       return newval;
     });
   }
 
   // Will do conversion in-Gamut as out of Gamut conversion is only really useful for futher conversions
-  #toColorMode(mode){
+  #toColorMode(mode) {
     return new Color(this._color, mode);
   }
 
@@ -297,21 +315,19 @@ class Color {
     return this._getRGBA();
   }
 
-  array(){
+  array() {
     return this._array;
   }
 
-  lerp(color, amt, mode){
+  lerp(color, amt, mode) {
     // Find the closest common ancestor color space
     let spaceIndex = -1;
-    while(
-      (
-        spaceIndex+1 < this._color.space.path.length ||
-        spaceIndex+1 < color._color.space.path.length
-      ) &&
-      this._color.space.path[spaceIndex+1] ===
-        color._color.space.path[spaceIndex+1]
-    ){
+    while (
+      (spaceIndex + 1 < this._color.space.path.length ||
+        spaceIndex + 1 < color._color.space.path.length) &&
+      this._color.space.path[spaceIndex + 1] ===
+        color._color.space.path[spaceIndex + 1]
+    ) {
       spaceIndex += 1;
     }
 
@@ -365,10 +381,10 @@ class Color {
    *   describe('The text "#9932cc" written in purple on a gray background.');
    * }
    */
- toString(format) {
-   if (format === undefined && this._defaultStringValue !== undefined) {
+  toString(format) {
+    if (format === undefined && this._defaultStringValue !== undefined) {
       return this._defaultStringValue;
-   }
+    }
 
     let outputFormat = format;
     if (format === '#rrggbb') {
@@ -386,19 +402,19 @@ class Color {
       if (format === '#rrggbb') {
         colorString = String(colorString);
         if (colorString.length === 4) {
-            const r = colorString[1];
-            const g = colorString[2];
-            const b = colorString[3];
-            colorString = `#${r}${r}${g}${g}${b}${b}`;
+          const r = colorString[1];
+          const g = colorString[2];
+          const b = colorString[3];
+          colorString = `#${r}${r}${g}${g}${b}${b}`;
         }
         if (colorString.length > 7) {
-            colorString = colorString.slice(0, 7);
+          colorString = colorString.slice(0, 7);
         }
         colorString = colorString.toLowerCase();
       }
 
       if (serializationMap.size > 1000) {
-        serializationMap.delete(serializationMap.keys().next().value)
+        serializationMap.delete(serializationMap.keys().next().value);
       }
       serializationMap.set(key, colorString);
     }
@@ -482,10 +498,10 @@ class Color {
    *   text(nf(contrast.APCA.value, 0, 2), 10, 85);
    * }
    */
-  contrast(other_color, options='WCAG21') {
-    if(options !== 'all'){
+  contrast(other_color, options = 'WCAG21') {
+    if (options !== 'all') {
       let contrastVal, minimum;
-      switch(options){
+      switch (options) {
         case 'WCAG21':
           contrastVal = contrastWCAG21(this._color, other_color._color);
           minimum = 4.5;
@@ -499,7 +515,7 @@ class Color {
       }
 
       return contrastVal >= minimum;
-    }else{
+    } else {
       const wcag21Value = contrastWCAG21(this._color, other_color._color);
       const apcaValue = contrastAPCA(this._color, other_color._color);
       return {
@@ -514,7 +530,7 @@ class Color {
         }
       };
     }
-  };
+  }
 
   /**
    * Sets the red component of a color.
@@ -548,18 +564,18 @@ class Color {
    *   describe('Two rectangles. The left one is salmon pink and the right one is teal.');
    * }
    */
-  setRed(new_red, max=[0, 1]) {
+  setRed(new_red, max = [0, 1]) {
     this._defaultStringValue = undefined;
-    if(!Array.isArray(max)){
+    if (!Array.isArray(max)) {
       max = [0, max];
     }
 
     const colorjsMax = Color.#colorjsMaxes[RGB][0];
     const newval = map(new_red, max[0], max[1], colorjsMax[0], colorjsMax[1]);
 
-    if(this.mode === RGB || this.mode === RGBP3){
+    if (this.mode === RGB || this.mode === RGBP3) {
       this._color.coords[0] = newval;
-    }else{
+    } else {
       // Will do an imprecise conversion to 'srgb', not recommended
       const space = this._color.space.id;
       const representation = to(this._color, 'srgb');
@@ -600,18 +616,18 @@ class Color {
    *   describe('Two rectangles. The left one is salmon pink and the right one is yellow.');
    * }
    */
-  setGreen(new_green, max=[0, 1]) {
+  setGreen(new_green, max = [0, 1]) {
     this._defaultStringValue = undefined;
-    if(!Array.isArray(max)){
+    if (!Array.isArray(max)) {
       max = [0, max];
     }
 
     const colorjsMax = Color.#colorjsMaxes[RGB][1];
     const newval = map(new_green, max[0], max[1], colorjsMax[0], colorjsMax[1]);
 
-    if(this.mode === RGB || this.mode === RGBP3){
+    if (this.mode === RGB || this.mode === RGBP3) {
       this._color.coords[1] = newval;
-    }else{
+    } else {
       // Will do an imprecise conversion to 'srgb', not recommended
       const space = this._color.space.id;
       const representation = to(this._color, 'srgb');
@@ -652,18 +668,18 @@ class Color {
    *   describe('Two rectangles. The left one is salmon pink and the right one is pale fuchsia.');
    * }
    */
-  setBlue(new_blue, max=[0, 1]) {
+  setBlue(new_blue, max = [0, 1]) {
     this._defaultStringValue = undefined;
-    if(!Array.isArray(max)){
+    if (!Array.isArray(max)) {
       max = [0, max];
     }
 
     const colorjsMax = Color.#colorjsMaxes[RGB][2];
     const newval = map(new_blue, max[0], max[1], colorjsMax[0], colorjsMax[1]);
 
-    if(this.mode === RGB || this.mode === RGBP3){
+    if (this.mode === RGB || this.mode === RGBP3) {
       this._color.coords[2] = newval;
-    }else{
+    } else {
       // Will do an imprecise conversion to 'srgb', not recommended
       const space = this._color.space.id;
       const representation = to(this._color, 'srgb');
@@ -705,9 +721,9 @@ class Color {
    *   describe('Two rectangles. The left one is salmon pink and the right one is faded pink.');
    * }
    */
-  setAlpha(new_alpha, max=[0, 1]) {
+  setAlpha(new_alpha, max = [0, 1]) {
     this._defaultStringValue = undefined;
-    if(!Array.isArray(max)){
+    if (!Array.isArray(max)) {
       max = [0, max];
     }
 
@@ -717,7 +733,7 @@ class Color {
     this._color.alpha = newval;
   }
 
-  _getRGBA(maxes=[1, 1, 1, 1]) {
+  _getRGBA(maxes = [1, 1, 1, 1]) {
     // Get colorjs maxes
     const colorjsMaxes = Color.#colorjsMaxes[RGB];
 
@@ -725,10 +741,10 @@ class Color {
     let coords = structuredClone(to(this._color, 'srgb').coords);
     coords.push(this._color.alpha);
 
-    const rangeMaxes = maxes.map((v) => {
-      if(!Array.isArray(v)){
+    const rangeMaxes = maxes.map(v => {
+      if (!Array.isArray(v)) {
         return [0, v];
-      }else{
+      } else {
         return v;
       }
     });
@@ -736,8 +752,10 @@ class Color {
     coords = coords.map((coord, i) => {
       return map(
         coord,
-        colorjsMaxes[i][0], colorjsMaxes[i][1],
-        rangeMaxes[i][0], rangeMaxes[i][1]
+        colorjsMaxes[i][0],
+        colorjsMaxes[i][1],
+        rangeMaxes[i][0],
+        rangeMaxes[i][1]
       );
     });
 
@@ -748,22 +766,30 @@ class Color {
     return this.mode;
   }
 
-  _getRed(max=[0, 1]) {
-    if(!Array.isArray(max)){
+  _getRed(max = [0, 1]) {
+    if (!Array.isArray(max)) {
       max = [0, max];
     }
 
-    if(this.mode === RGB || this.mode === RGBP3){
+    if (this.mode === RGB || this.mode === RGBP3) {
       const colorjsMax = Color.#colorjsMaxes[this.mode][0];
       return map(
         this._color.coords[0],
-        colorjsMax[0], colorjsMax[1],
-        max[0], max[1]
+        colorjsMax[0],
+        colorjsMax[1],
+        max[0],
+        max[1]
       );
-    }else{
+    } else {
       // Will do an imprecise conversion to 'srgb', not recommended
       const colorjsMax = Color.#colorjsMaxes[RGB][0];
-      return map(to(this._color, 'srgb').coords[0], colorjsMax[0], colorjsMax[1], max[0], max[1]);
+      return map(
+        to(this._color, 'srgb').coords[0],
+        colorjsMax[0],
+        colorjsMax[1],
+        max[0],
+        max[1]
+      );
     }
   }
 
@@ -772,46 +798,62 @@ class Color {
    * returns it in the range 0–255 by default. When `colorMode()` is given to an
    * RBG value, the green value within the givin range is returned
    */
-  _getGreen(max=[0, 1]) {
-    if(!Array.isArray(max)){
+  _getGreen(max = [0, 1]) {
+    if (!Array.isArray(max)) {
       max = [0, max];
     }
 
-    if(this.mode === RGB || this.mode === RGBP3){
+    if (this.mode === RGB || this.mode === RGBP3) {
       const colorjsMax = Color.#colorjsMaxes[this.mode][1];
       return map(
         this._color.coords[1],
-        colorjsMax[0], colorjsMax[1],
-        max[0], max[1]
+        colorjsMax[0],
+        colorjsMax[1],
+        max[0],
+        max[1]
       );
-    }else{
+    } else {
       // Will do an imprecise conversion to 'srgb', not recommended
       const colorjsMax = Color.#colorjsMaxes[RGB][1];
-      return map(to(this._color, 'srgb').coords[1], colorjsMax[0], colorjsMax[1], max[0], max[1]);
+      return map(
+        to(this._color, 'srgb').coords[1],
+        colorjsMax[0],
+        colorjsMax[1],
+        max[0],
+        max[1]
+      );
     }
   }
 
-  _getBlue(max=[0, 1]) {
-    if(!Array.isArray(max)){
+  _getBlue(max = [0, 1]) {
+    if (!Array.isArray(max)) {
       max = [0, max];
     }
 
-    if(this.mode === RGB || this.mode === RGBP3){
+    if (this.mode === RGB || this.mode === RGBP3) {
       const colorjsMax = Color.#colorjsMaxes[this.mode][2];
       return map(
         this._color.coords[2],
-        colorjsMax[0], colorjsMax[1],
-        max[0], max[1]
+        colorjsMax[0],
+        colorjsMax[1],
+        max[0],
+        max[1]
       );
-    }else{
+    } else {
       // Will do an imprecise conversion to 'srgb', not recommended
       const colorjsMax = Color.#colorjsMaxes[RGB][2];
-      return map(to(this._color, 'srgb').coords[2], colorjsMax[0], colorjsMax[1], max[0], max[1]);
+      return map(
+        to(this._color, 'srgb').coords[2],
+        colorjsMax[0],
+        colorjsMax[1],
+        max[0],
+        max[1]
+      );
     }
   }
 
-  _getAlpha(max=[0, 1]) {
-    if(!Array.isArray(max)){
+  _getAlpha(max = [0, 1]) {
+    if (!Array.isArray(max)) {
       max = [0, max];
     }
 
@@ -825,22 +867,30 @@ class Color {
    * an HSB color object, but will default to the HSL-normalized saturation
    * otherwise.
    */
-  _getHue(max=[0, 360]) {
-    if(!Array.isArray(max)){
+  _getHue(max = [0, 360]) {
+    if (!Array.isArray(max)) {
       max = [0, max];
     }
 
-    if(this.mode === HSB || this.mode === HSL){
+    if (this.mode === HSB || this.mode === HSL) {
       const colorjsMax = Color.#colorjsMaxes[this.mode][0];
       return map(
         this._color.coords[0],
-        colorjsMax[0], colorjsMax[1],
-        max[0], max[1]
+        colorjsMax[0],
+        colorjsMax[1],
+        max[0],
+        max[1]
       );
-    }else{
+    } else {
       // Will do an imprecise conversion to 'HSL', not recommended
       const colorjsMax = Color.#colorjsMaxes[HSL][0];
-      return map(to(this._color, 'hsl').coords[0], colorjsMax[0], colorjsMax[1], max[0], max[1]);
+      return map(
+        to(this._color, 'hsl').coords[0],
+        colorjsMax[0],
+        colorjsMax[1],
+        max[0],
+        max[1]
+      );
     }
   }
 
@@ -849,22 +899,30 @@ class Color {
    * the HSB saturation when supplied with an HSB color object, but will default
    * to the HSL saturation otherwise.
    */
-  _getSaturation(max=[0, 100]) {
-    if(!Array.isArray(max)){
+  _getSaturation(max = [0, 100]) {
+    if (!Array.isArray(max)) {
       max = [0, max];
     }
 
-    if(this.mode === HSB || this.mode === HSL){
+    if (this.mode === HSB || this.mode === HSL) {
       const colorjsMax = Color.#colorjsMaxes[this.mode][1];
       return map(
         this._color.coords[1],
-        colorjsMax[0], colorjsMax[1],
-        max[0], max[1]
+        colorjsMax[0],
+        colorjsMax[1],
+        max[0],
+        max[1]
       );
-    }else{
+    } else {
       // Will do an imprecise conversion to 'HSL', not recommended
       const colorjsMax = Color.#colorjsMaxes[HSL][1];
-      return map(to(this._color, 'hsl').coords[1], colorjsMax[0], colorjsMax[1], max[0], max[1]);
+      return map(
+        to(this._color, 'hsl').coords[1],
+        colorjsMax[0],
+        colorjsMax[1],
+        max[0],
+        max[1]
+      );
     }
   }
 
@@ -875,46 +933,62 @@ class Color {
    * brightness value in the range. By default, this function will return
    * the HSB brightness within the range 0 - 100.
    */
-  _getBrightness(max=[0, 100]) {
-    if(!Array.isArray(max)){
+  _getBrightness(max = [0, 100]) {
+    if (!Array.isArray(max)) {
       max = [0, max];
     }
 
-    if(this.mode === HSB){
+    if (this.mode === HSB) {
       const colorjsMax = Color.#colorjsMaxes[this.mode][2];
       return map(
         this._color.coords[2],
-        colorjsMax[0], colorjsMax[1],
-        max[0], max[1]
+        colorjsMax[0],
+        colorjsMax[1],
+        max[0],
+        max[1]
       );
-    }else{
+    } else {
       // Will do an imprecise conversion to 'HSB', not recommended
       const colorjsMax = Color.#colorjsMaxes[HSB][2];
-      return map(to(this._color, 'hsb').coords[2], colorjsMax[0], colorjsMax[1], max[0], max[1]);
+      return map(
+        to(this._color, 'hsb').coords[2],
+        colorjsMax[0],
+        colorjsMax[1],
+        max[0],
+        max[1]
+      );
     }
   }
 
-  _getLightness(max=[0, 100]) {
-    if(!Array.isArray(max)){
+  _getLightness(max = [0, 100]) {
+    if (!Array.isArray(max)) {
       max = [0, max];
     }
 
-    if(this.mode === HSL){
+    if (this.mode === HSL) {
       const colorjsMax = Color.#colorjsMaxes[this.mode][2];
       return map(
         this._color.coords[2],
-        colorjsMax[0], colorjsMax[1],
-        max[0], max[1]
+        colorjsMax[0],
+        colorjsMax[1],
+        max[0],
+        max[1]
       );
-    }else{
+    } else {
       // Will do an imprecise conversion to 'HSL', not recommended
       const colorjsMax = Color.#colorjsMaxes[HSL][2];
-      return map(to(this._color, 'hsl').coords[2], colorjsMax[0], colorjsMax[1], max[0], max[1]);
+      return map(
+        to(this._color, 'hsl').coords[2],
+        colorjsMax[0],
+        colorjsMax[1],
+        max[0],
+        max[1]
+      );
     }
   }
 }
 
-function color(p5, fn, lifecycles){
+function color(p5, fn, lifecycles) {
   /**
    * A class to describe a color.
    *
@@ -948,12 +1022,12 @@ function color(p5, fn, lifecycles){
    */
   p5.Color = Color;
 
-  sRGB.fromGray = P3.fromGray = function(val, maxes, clamp){
+  sRGB.fromGray = P3.fromGray = function (val, maxes, clamp) {
     // Use blue max
     const p5Maxes = maxes.map(max => {
-      if(!Array.isArray(max)){
+      if (!Array.isArray(max)) {
         return [0, max];
-      }else{
+      } else {
         return max;
       }
     });
@@ -962,12 +1036,12 @@ function color(p5, fn, lifecycles){
     return [v, v, v];
   };
 
-  HSBSpace.fromGray = HSLSpace.fromGray = function(val, maxes, clamp){
+  HSBSpace.fromGray = HSLSpace.fromGray = function (val, maxes, clamp) {
     // Use brightness max
     const p5Maxes = maxes.map(max => {
-      if(!Array.isArray(max)){
+      if (!Array.isArray(max)) {
         return [0, max];
-      }else{
+      } else {
         return max;
       }
     });
@@ -976,26 +1050,26 @@ function color(p5, fn, lifecycles){
     return [0, 0, v];
   };
 
-  HWBSpace.fromGray = function(val, maxes, clamp){
+  HWBSpace.fromGray = function (val, maxes, clamp) {
     // Use Whiteness and Blackness to create number line
     const p5Maxes = maxes.map(max => {
-      if(!Array.isArray(max)){
+      if (!Array.isArray(max)) {
         return [0, max];
-      }else{
+      } else {
         return max;
       }
     });
 
     const wbMax =
-      (Math.abs(p5Maxes[1][0] - p5Maxes[1][1])) / 2 +
-      (Math.abs(p5Maxes[2][0] - p5Maxes[2][1])) / 2;
+      Math.abs(p5Maxes[1][0] - p5Maxes[1][1]) / 2 +
+      Math.abs(p5Maxes[2][0] - p5Maxes[2][1]) / 2;
 
     const nVal = map(val, 0, wbMax, 0, 100);
     let white, black;
-    if(nVal < 50){
+    if (nVal < 50) {
       black = nVal;
       white = 100 - nVal;
-    }else if(nVal >= 50){
+    } else if (nVal >= 50) {
       white = nVal;
       black = 100 - nVal;
     }
@@ -1003,22 +1077,22 @@ function color(p5, fn, lifecycles){
   };
 
   Lab.fromGray =
-  LCHSpace.fromGray =
-  OKLab.fromGray =
-  OKLCHSpace.fromGray =
-  function(val, maxes, clamp){
-    // Use lightness max
-    const p5Maxes = maxes.map(max => {
-      if(!Array.isArray(max)){
-        return [0, max];
-      }else{
-        return max;
-      }
-    });
+    LCHSpace.fromGray =
+    OKLab.fromGray =
+    OKLCHSpace.fromGray =
+      function (val, maxes, clamp) {
+        // Use lightness max
+        const p5Maxes = maxes.map(max => {
+          if (!Array.isArray(max)) {
+            return [0, max];
+          } else {
+            return max;
+          }
+        });
 
-    const v = map(val, p5Maxes[0][0], p5Maxes[0][1], 0, 100, clamp);
-    return [v, 0, 0];
-  };
+        const v = map(val, p5Maxes[0][0], p5Maxes[0][1], 0, 100, clamp);
+        return [v, 0, 0];
+      };
 
   // Register color modes and initialize Color maxes to what p5 has set for itself
   p5.Color.addColorMode(RGB, sRGB);
@@ -1031,35 +1105,35 @@ function color(p5, fn, lifecycles){
   p5.Color.addColorMode(OKLAB, OKLab);
   p5.Color.addColorMode(OKLCH, OKLCHSpace);
 
-  lifecycles.presetup = function(){
+  lifecycles.presetup = function () {
     const pInst = this;
 
     // Decorate set methods
     const setMethods = ['Red', 'Green', 'Blue', 'Alpha'];
-    for(let i in setMethods){
+    for (let i in setMethods) {
       const method = setMethods[i];
       const setCopy = p5.Color.prototype['set' + method];
-      p5.Color.prototype['set' + method] = function(newval, max){
+      p5.Color.prototype['set' + method] = function (newval, max) {
         max = max || pInst?._renderer?.states?.colorMaxes?.[RGB][i];
         return setCopy.call(this, newval, max);
       };
     }
 
     // Decorate get methods
-    function decorateGet(channel, modes){
+    function decorateGet(channel, modes) {
       const getCopy = p5.Color.prototype['_get' + channel];
-      p5.Color.prototype['_get' + channel] = function(max){
-        if(Object.keys(modes).includes(this.mode)){
-          max = max ||
+      p5.Color.prototype['_get' + channel] = function (max) {
+        if (Object.keys(modes).includes(this.mode)) {
+          max =
+            max ||
             pInst?._renderer?.states?.colorMaxes?.[this.mode][modes[this.mode]];
-        }else{
+        } else {
           const defaultMode = Object.keys(modes)[0];
-          max = max ||
-            pInst
-              ?._renderer
-              ?.states
-              ?.colorMaxes
-              ?.[defaultMode][modes[defaultMode]];
+          max =
+            max ||
+            pInst?._renderer?.states?.colorMaxes?.[defaultMode][
+              modes[defaultMode]
+            ];
         }
 
         return getCopy.call(this, max);
@@ -1113,6 +1187,6 @@ function color(p5, fn, lifecycles){
 export default color;
 export { Color };
 
-if(typeof p5 !== 'undefined'){
+if (typeof p5 !== 'undefined') {
   color(p5, p5.prototype);
 }

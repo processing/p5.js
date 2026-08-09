@@ -14,12 +14,12 @@ p5.js is a free and open-source JavaScript library for [accessible](https://p5js
 
 ```js
 function setup() {
-  createCanvas(400, 400);
-  background(255);
+  createCanvas(400, 400);
+  background(255);
 }
 
 function draw() {
-  circle(mouseX, mouseY, 80);
+  circle(mouseX, mouseY, 80);
 }
 ```
 
@@ -61,7 +61,8 @@ p5.js is a collaborative project with many contributors, mostly volunteers, and 
 A quick Getting Started with the Build and setting up the repository could be found [here](https://p5js.org/contribute/contributor_guidelines/#quick-get-started-for-developers).
 
 ## AI Usage Policy
-This project does *not* accept fully AI-generated contributions. AI tools may be used assistively only. As a contributor, you should be able to understand and take responsibility for changes you make to the codebase.
+
+This project does _not_ accept fully AI-generated contributions. AI tools may be used assistively only. As a contributor, you should be able to understand and take responsibility for changes you make to the codebase.
 
 More details can be found in our [AI Usage Policy](./AI_USAGE_POLICY.md) and [AGENTS.md](./AGENTS.md).
 
@@ -74,35 +75,39 @@ Anyone interested can volunteer to be a steward! There are no specific requireme
 p5.js was created by [Lauren Lee McCarthy](https://github.com/lmccart) in 2013 as a new interpretation of Processing for the context of the web. Since then we have allowed ourselves space to deviate and grow, while drawing inspiration from Processing and our shared community. p5.js is sustained by a community of contributors, with support from the Processing Foundation. p5.js follows a rotating leadership model started in 2020. Learn more about the [people](https://p5js.org/people/) behind p5.js.
 
 Current Lead/Mentor
-* [@ksen0](https://github.com/ksen0) - p5.js Lead，2024-present
-* [@limzykenneth](https://github.com/limzykenneth) - p5.js Mentor，2023-present
+
+- [@ksen0](https://github.com/ksen0) - p5.js Lead，2024-present
+- [@limzykenneth](https://github.com/limzykenneth) - p5.js Mentor，2023-present
 
 Lead/Mentor Alumni
-* [@lmccart](https://github.com/lmccart) - p5.js Creator
-* [@qianqianye](https://github.com/qianqianye) - p5.js Lead，2021-2025
-* [@outofambit](https://github.com/outofambit) - p5.js Co-Lead 2021-22, Mentor 2022-2023
-* [@mcturner1995](https://github.com/mcturner1995) - p5.js Lead 2020
+
+- [@lmccart](https://github.com/lmccart) - p5.js Creator
+- [@qianqianye](https://github.com/qianqianye) - p5.js Lead，2021-2025
+- [@outofambit](https://github.com/outofambit) - p5.js Co-Lead 2021-22, Mentor 2022-2023
+- [@mcturner1995](https://github.com/mcturner1995) - p5.js Lead 2020
 
 <!-- STEWARDS-LIST:START - Do not remove or modify this section -->
-| Area | Steward(s) |
-|------|-------------|
-| Maintainers | [@davepagurek](https://github.com/davepagurek), [@doradocodes](https://github.com/doradocodes), [@ksen0](https://github.com/ksen0), [@limzykenneth](https://github.com/limzykenneth), [@perminder-17](https://github.com/perminder-17) |
-| Accessibility | [@calebfoss](https://github.com/calebfoss) |
-| Accessibility (p5.js-website) | [@coseeian](https://github.com/coseeian) |
-| Color | [@limzykenneth](https://github.com/limzykenneth) |
-| Core | [@davepagurek](https://github.com/davepagurek) |
-| DevOps | [@Vaivaswat2244](https://github.com/Vaivaswat2244), [@limzykenneth](https://github.com/limzykenneth), [@lirenjie95](https://github.com/lirenjie95) |
-| Documentation | [@limzykenneth](https://github.com/limzykenneth), [@perminder-17](https://github.com/perminder-17) |
-| Graphics (WebGL) | [@RandomGamingDev](https://github.com/RandomGamingDev), [@davepagurek](https://github.com/davepagurek), [@perminder-17](https://github.com/perminder-17) |
-| Graphics (WebGPU) | [@aashu2006](https://github.com/aashu2006), [@davepagurek](https://github.com/davepagurek), [@perminder-17](https://github.com/perminder-17) |
-| i18n (es) | [@marioguzzzman](https://github.com/marioguzzzman) |
-| i18n (hi) | [@Divyansh013](https://github.com/Divyansh013) |
-| i18n (ko) | [@eupthere](https://github.com/eupthere), [@JiwonHaam](https://github.com/JiwonHaam) |
-| i18n (zh) | [@limzykenneth](https://github.com/limzykenneth), [@lirenjie95](https://github.com/lirenjie95) |
-| p5.js-web-editor | [@kitlord](https://github.com/kitlord) |
-| p5.js-website | [@Nwakaego-Ego](https://github.com/Nwakaego-Ego), [@clairep94](https://github.com/clairep94), [@doradocodes](https://github.com/doradocodes), [@ksen0](https://github.com/ksen0) |
-| p5.sound.js | [@ogbabydiesal](https://github.com/ogbabydiesal) |
-| Typography | [@dhowe](https://github.com/dhowe) |
+
+| Area                          | Steward(s)                                                                                                                                                                                                                             |
+| ----------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Maintainers                   | [@davepagurek](https://github.com/davepagurek), [@doradocodes](https://github.com/doradocodes), [@ksen0](https://github.com/ksen0), [@limzykenneth](https://github.com/limzykenneth), [@perminder-17](https://github.com/perminder-17) |
+| Accessibility                 | [@calebfoss](https://github.com/calebfoss)                                                                                                                                                                                             |
+| Accessibility (p5.js-website) | [@coseeian](https://github.com/coseeian)                                                                                                                                                                                               |
+| Color                         | [@limzykenneth](https://github.com/limzykenneth)                                                                                                                                                                                       |
+| Core                          | [@davepagurek](https://github.com/davepagurek)                                                                                                                                                                                         |
+| DevOps                        | [@Vaivaswat2244](https://github.com/Vaivaswat2244), [@limzykenneth](https://github.com/limzykenneth), [@lirenjie95](https://github.com/lirenjie95)                                                                                     |
+| Documentation                 | [@limzykenneth](https://github.com/limzykenneth), [@perminder-17](https://github.com/perminder-17)                                                                                                                                     |
+| Graphics (WebGL)              | [@RandomGamingDev](https://github.com/RandomGamingDev), [@davepagurek](https://github.com/davepagurek), [@perminder-17](https://github.com/perminder-17)                                                                               |
+| Graphics (WebGPU)             | [@aashu2006](https://github.com/aashu2006), [@davepagurek](https://github.com/davepagurek), [@perminder-17](https://github.com/perminder-17)                                                                                           |
+| i18n (es)                     | [@marioguzzzman](https://github.com/marioguzzzman)                                                                                                                                                                                     |
+| i18n (hi)                     | [@Divyansh013](https://github.com/Divyansh013)                                                                                                                                                                                         |
+| i18n (ko)                     | [@eupthere](https://github.com/eupthere), [@JiwonHaam](https://github.com/JiwonHaam)                                                                                                                                                   |
+| i18n (zh)                     | [@limzykenneth](https://github.com/limzykenneth), [@lirenjie95](https://github.com/lirenjie95)                                                                                                                                         |
+| p5.js-web-editor              | [@kitlord](https://github.com/kitlord)                                                                                                                                                                                                 |
+| p5.js-website                 | [@Nwakaego-Ego](https://github.com/Nwakaego-Ego), [@clairep94](https://github.com/clairep94), [@doradocodes](https://github.com/doradocodes), [@ksen0](https://github.com/ksen0)                                                       |
+| p5.sound.js                   | [@ogbabydiesal](https://github.com/ogbabydiesal)                                                                                                                                                                                       |
+| Typography                    | [@dhowe](https://github.com/dhowe)                                                                                                                                                                                                     |
+
 <!-- STEWARDS-LIST:END -->
 
 ## Contributors

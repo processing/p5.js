@@ -62,8 +62,9 @@ class GeometryBuilder {
    * transformations.
    */
   addGeometry(input) {
-    this.hasTransform = !this.renderer.states.uModelMatrix.mat4
-      .every((v, i) => v === this.identityMatrix.mat4[i]);
+    this.hasTransform = !this.renderer.states.uModelMatrix.mat4.every(
+      (v, i) => v === this.identityMatrix.mat4[i]
+    );
 
     if (this.hasTransform) {
       this.renderer.scratchMat3.inverseTranspose4x4(
@@ -89,8 +90,8 @@ class GeometryBuilder {
     const numPreviousVertices =
       this.geometry.vertices.length - input.vertices.length;
 
-    for (const propName in builtUserVertexProps){
-      if (propName in inputUserVertexProps){
+    for (const propName in builtUserVertexProps) {
+      if (propName in inputUserVertexProps) {
         continue;
       }
       const prop = builtUserVertexProps[propName];
@@ -99,11 +100,11 @@ class GeometryBuilder {
       const missingValues = Array(numMissingValues).fill(0);
       prop.pushDirect(missingValues);
     }
-    for (const propName in inputUserVertexProps){
+    for (const propName in inputUserVertexProps) {
       const prop = inputUserVertexProps[propName];
       const data = prop.getSrcArray();
       const size = prop.getDataSize();
-      if (numPreviousVertices > 0 && !(propName in builtUserVertexProps)){
+      if (numPreviousVertices > 0 && !(propName in builtUserVertexProps)) {
         const numMissingValues = size * numPreviousVertices;
         const missingValues = Array(numMissingValues).fill(0);
         this.geometry.vertexProperty(propName, missingValues, size);
@@ -117,7 +118,9 @@ class GeometryBuilder {
       );
     }
     if (this.renderer.states.strokeColor) {
-      for (const edge of input.edges.map(edge => edge.map(idx => idx + startIdx))) {
+      for (const edge of input.edges.map(edge =>
+        edge.map(idx => idx + startIdx)
+      )) {
         this.geometry.edges.push(edge);
       }
     }
@@ -234,8 +237,10 @@ class GeometryBuilder {
         for (let i = 0; i < geometry.vertices.length; i += 3) {
           if (
             !validateFaces ||
-            geometry.vertices[i].copy().sub(geometry.vertices[i+1])
-              .cross(geometry.vertices[i].copy().sub(geometry.vertices[i+2]))
+            geometry.vertices[i]
+              .copy()
+              .sub(geometry.vertices[i + 1])
+              .cross(geometry.vertices[i].copy().sub(geometry.vertices[i + 2]))
               .magSq() > 0
           ) {
             faces.push([i, i + 1, i + 2]);
