@@ -2246,7 +2246,7 @@ function rendererWebGPU(p5, fn) {
     }
 
     _getShaderAttributes(shader) {
-      const mainMatch = /fn main\(.+:\s*([^\s\)]+)/.exec(shader._vertSrc);
+      const mainMatch = /fn main\(.+:\s*([^\s)]+)/.exec(shader._vertSrc);
       if (!mainMatch) throw new Error("Can't find `fn main` in vertex shader source");
       const inputType = mainMatch[1];
 
@@ -2982,7 +2982,7 @@ ${hookUniformFields}}
       }
       for (const hookDef in shader.hooks.helpers) {
         const [hookType, hookName] = hookDef.split(' ');
-        const [_, params, body] = /^(\([^\)]*\))((?:.|\n)*)$/.exec(shader.hooks.helpers[hookDef]);
+        const [_, params, body] = /^(\([^)]*\))((?:.|\n)*)$/.exec(shader.hooks.helpers[hookDef]);
         if (hookType === 'void') {
           hooks += `fn ${hookName}${params}${body}\n`;
         } else {
@@ -2999,7 +2999,7 @@ ${hookUniformFields}}
           shader.hooks.modified[shaderType][hookDef] ? 'true' : 'false'
         };\n`;
 
-        let [_, params, body] = /^(\([^\)]*\))((?:.|\n)*)$/.exec(shader.hooks[shaderType][hookDef]);
+        let [_, params, body] = /^(\([^)]*\))((?:.|\n)*)$/.exec(shader.hooks[shaderType][hookDef]);
 
         params = appendHookParams(params, hookExtraParams);
 
@@ -3118,7 +3118,7 @@ ${hookUniformFields}}
       const functionName = nameParts.pop();
       const returnType = nameParts.pop();
       const returnQualifiers = [...nameParts];
-      const parameterMatch = /\(([^\)]*)\)/.exec(body);
+      const parameterMatch = /\(([^)]*)\)/.exec(body);
       if (!parameterMatch) {
         throw new Error(`Couldn't find function parameters in hook body:\n${body}`);
       }

@@ -17,7 +17,7 @@ export function getShaderHookTypes(shader, hookName) {
   const functionName = nameParts.pop();
   const returnType = nameParts.pop();
   const returnQualifiers = [...nameParts];
-  const parameterMatch = /\(([^\)]*)\)/.exec(body);
+  const parameterMatch = /\(([^)]*)\)/.exec(body);
   if (!parameterMatch) {
     throw new Error(`Couldn't find function parameters in hook body:\n${body}`);
   }

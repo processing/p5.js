@@ -767,7 +767,7 @@ export class Font {
           // return renderer.states.fontStretch
           return 100;
         } else if (renderer.textCanvas().style.fontVariationSettings) {
-          const match = new RegExp(`\\b${tag}\s+(\d+)`)
+          const match = new RegExp(`\\b${tag}s+(d+)`)
             .exec(renderer.textCanvas().style.fontVariationSettings);
           if (match) {
             return parseInt(match[1]);
@@ -1480,7 +1480,7 @@ function font(p5, fn) {
             loadWithData: async () => {
               let fontData;
               try {
-                const urlMatch = /url\(([^\)]+)\)/.exec(src);
+                const urlMatch = /url\(([^)]+)\)/.exec(src);
                 if (urlMatch) {
                   let url = urlMatch[1];
                   if (/^['"]/.exec(url) && url.at(0) === url.at(-1)) {

@@ -107,7 +107,7 @@ export function applyPatches() {
   );
   replace(
     ['p5.d.ts', 'global.d.ts'],
-    /loadFont\((.+), successCallback\?: Function, (.+)\): Promise\<([pP]5)\.Font\>;/g,
+    /loadFont\((.+), successCallback\?: Function, (.+)\): Promise<([pP]5)\.Font>;/g,
     'loadFont($1, successCallback?: (font: $3.Font) => any, $2): Promise<$3.Font>;'
   );
 
