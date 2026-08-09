@@ -150,6 +150,7 @@ export class Renderer3D extends Renderer {
     this.states._tex = null;
     this.states._specularTex = null;
     this.states._ambientTex = null;
+    this.states._shininessTex = null;
     this.states.textureMode = constants.IMAGE;
     this.states.textureWrapX = constants.CLAMP;
     this.states.textureWrapY = constants.CLAMP;
@@ -694,6 +695,9 @@ export class Renderer3D extends Renderer {
     }
     if (partState.shininess != null) {
       this.states.setValue('_useShininess', partState.shininess);
+    }
+    if (partState.shininessTexture) {
+      this.states.setValue('_shininessTex', partState.shininessTexture);
     }
   }
 
@@ -1586,6 +1590,12 @@ export class Renderer3D extends Renderer {
     // ambient map (map_Ka): same always-bind + bool-gate pattern
     fillShader.setUniform('uHasAmbientTex', !!this.states._ambientTex);
     fillShader.setUniform('uAmbientSampler', this.states._ambientTex || empty);
+    // shininess map (map_Ns): scales the base shininess by the map's red channel
+    fillShader.setUniform('uHasShininessTex', !!this.states._shininessTex);
+    fillShader.setUniform(
+      'uShininessSampler',
+      this.states._shininessTex || empty
+    );
     fillShader.setUniform(
       'uTint',
       this.states.tint?._getRGBA([255, 255, 255, 255]) ?? [255, 255, 255, 255]

@@ -14,6 +14,8 @@ uniform sampler2D uSpecularSampler;
 uniform bool uHasSpecularTex;
 uniform sampler2D uAmbientSampler;
 uniform bool uHasAmbientTex;
+uniform sampler2D uShininessSampler;
+uniform bool uHasShininessTex;
 
 IN vec3 vNormal;
 IN vec2 vTexCoord;
@@ -58,7 +60,9 @@ void main(void) {
     // so hooks users don't have to think about premultiplied alpha.
     inputs.color.rgb /= inputs.color.a;
   }
-  inputs.shininess = uShininess;
+  inputs.shininess = uHasShininessTex
+      ? uShininess * TEXTURE(uShininessSampler, vTexCoord).r
+      : uShininess;
   inputs.metalness = uMetallic;
   inputs.ambientMaterial = uHasAmbientTex
       ? TEXTURE(uAmbientSampler, vTexCoord).rgb * uAmbientMatColor.rgb

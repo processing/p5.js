@@ -13,6 +13,7 @@ suite('parseMtlData', function () {
       'map_Kd diffuse.png',
       'map_Ka ambient.png',
       'map_Ks specular.png',
+      'map_Ns shininess.png',
       'map_Bump -bm 0.5 bump.png'
     ].join('\n');
 
@@ -28,6 +29,7 @@ suite('parseMtlData', function () {
     expect(m.texturePath).toEqual('diffuse.png');
     expect(m.ambientTexturePath).toEqual('ambient.png');
     expect(m.specularTexturePath).toEqual('specular.png');
+    expect(m.shininessTexturePath).toEqual('shininess.png');
     // bump options like -bm precede the path, so the path is the last token.
     expect(m.bumpTexturePath).toEqual('bump.png');
   });
@@ -94,5 +96,13 @@ suite('mtlToPartState', function () {
     const state = mtlToPartState({ ambientTexture: img });
     expect(state.ambientTexture).toBe(img);
     expect(state.ambientColor).toEqual([1, 1, 1]);
+  });
+
+  test('a shininess map lands on the part state', function () {
+    const img = { width: 1, height: 1 };
+    const state = mtlToPartState({ shininessTexture: img });
+    expect(state.shininessTexture).toBe(img);
+    // the map scales a base shininess, which defaults to 1
+    expect(state.shininess).toEqual(1);
   });
 });

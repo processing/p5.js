@@ -74,6 +74,9 @@ function parseMtlData(data) {
     } else if (tokens[0] === 'map_Ks') {
       //specular texture
       materials[currentMaterial].specularTexturePath = tokens[1];
+    } else if (tokens[0] === 'map_Ns') {
+      //shininess texture
+      materials[currentMaterial].shininessTexturePath = tokens[1];
     } else if (tokens[0] === 'map_Bump' || tokens[0] === 'bump') {
       //bump map. -bm etc can precede the path so take the last token. parsed
       //but not used until the renderer handles it.
@@ -109,6 +112,11 @@ function mtlToPartState(material) {
     // same idea as the specular map: default the base ambient colour to white
     if (!state.ambientColor) state.ambientColor = [1, 1, 1];
   }
+  if (material.shininessTexture) {
+    state.shininessTexture = material.shininessTexture;
+    // the map scales the base shininess; default the base to 1 when no Ns
+    if (state.shininess == null) state.shininess = 1;
+  }
   return state;
 }
 
@@ -117,7 +125,8 @@ function mtlToPartState(material) {
 const MATERIAL_TEXTURE_MAPS = [
   ['texturePath', 'texture'], // map_Kd (diffuse)
   ['specularTexturePath', 'specularTexture'], // map_Ks (specular)
-  ['ambientTexturePath', 'ambientTexture'] // map_Ka (ambient)
+  ['ambientTexturePath', 'ambientTexture'], // map_Ka (ambient)
+  ['shininessTexturePath', 'shininessTexture'] // map_Ns (shininess)
 ];
 
 // load each material's texture maps and hang them on the material so they land

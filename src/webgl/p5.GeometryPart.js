@@ -15,7 +15,8 @@ function createPartState() {
     shininess: null, // Ns -> number | null
     texture: null, // map_Kd -> p5.Image | null
     specularTexture: null, // map_Ks -> p5.Image | null
-    ambientTexture: null // map_Ka -> p5.Image | null
+    ambientTexture: null, // map_Ka -> p5.Image | null
+    shininessTexture: null // map_Ns -> p5.Image | null
   };
 }
 
