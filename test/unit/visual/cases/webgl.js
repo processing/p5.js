@@ -411,6 +411,23 @@ visualSuite('WebGL', function () {
         screenshot();
       }
     );
+    visualTest(
+      'multi-material OBJ renders each material part',
+      async function (p5, screenshot) {
+        p5.createCanvas(50, 50, p5.WEBGL);
+        // textured.obj has two materials: a cat texture and a plain colour
+        const model = await new Promise(resolve =>
+          p5.loadModel('test/unit/assets/textured.obj', resolve)
+        );
+        model.normalize();
+        p5.background(255);
+        p5.rotateX(0.4);
+        p5.rotateY(0.4);
+        p5.noStroke();
+        p5.model(model);
+        screenshot();
+      }
+    );
   });
 
   visualSuite('vertexProperty', function () {
