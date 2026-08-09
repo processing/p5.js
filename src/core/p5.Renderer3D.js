@@ -149,6 +149,7 @@ export class Renderer3D extends Renderer {
 
     this.states._tex = null;
     this.states._specularTex = null;
+    this.states._ambientTex = null;
     this.states.textureMode = constants.IMAGE;
     this.states.textureWrapX = constants.CLAMP;
     this.states.textureWrapY = constants.CLAMP;
@@ -675,6 +676,11 @@ export class Renderer3D extends Renderer {
     }
     if (partState.ambientColor) {
       this.states.setValue('curAmbientColor', partState.ambientColor);
+      this.states.setValue('_hasSetAmbient', true);
+    }
+    if (partState.ambientTexture) {
+      // an ambient map modulates the ambient term, so make sure it is on
+      this.states.setValue('_ambientTex', partState.ambientTexture);
       this.states.setValue('_hasSetAmbient', true);
     }
     if (partState.specularColor) {
@@ -1577,6 +1583,9 @@ export class Renderer3D extends Renderer {
     // whether the shader actually uses it, so untextured draws are unaffected.
     fillShader.setUniform('uHasSpecularTex', !!this.states._specularTex);
     fillShader.setUniform('uSpecularSampler', this.states._specularTex || empty);
+    // ambient map (map_Ka): same always-bind + bool-gate pattern
+    fillShader.setUniform('uHasAmbientTex', !!this.states._ambientTex);
+    fillShader.setUniform('uAmbientSampler', this.states._ambientTex || empty);
     fillShader.setUniform(
       'uTint',
       this.states.tint?._getRGBA([255, 255, 255, 255]) ?? [255, 255, 255, 255]

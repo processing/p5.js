@@ -14,7 +14,8 @@ function createPartState() {
     specularColor: null, // Ks -> [r, g, b] | null, each 0..1
     shininess: null, // Ns -> number | null
     texture: null, // map_Kd -> p5.Image | null
-    specularTexture: null // map_Ks -> p5.Image | null
+    specularTexture: null, // map_Ks -> p5.Image | null
+    ambientTexture: null // map_Ka -> p5.Image | null
   };
 }
 

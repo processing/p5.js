@@ -104,6 +104,11 @@ function mtlToPartState(material) {
     // map shows even when the mtl has a map_Ks but no explicit Ks colour.
     if (!state.specularColor) state.specularColor = [1, 1, 1];
   }
+  if (material.ambientTexture) {
+    state.ambientTexture = material.ambientTexture;
+    // same idea as the specular map: default the base ambient colour to white
+    if (!state.ambientColor) state.ambientColor = [1, 1, 1];
+  }
   return state;
 }
 
@@ -111,7 +116,8 @@ function mtlToPartState(material) {
 // and the image field we hang the loaded p5.Image on for mtlToPartState to read.
 const MATERIAL_TEXTURE_MAPS = [
   ['texturePath', 'texture'], // map_Kd (diffuse)
-  ['specularTexturePath', 'specularTexture'] // map_Ks (specular)
+  ['specularTexturePath', 'specularTexture'], // map_Ks (specular)
+  ['ambientTexturePath', 'ambientTexture'] // map_Ka (ambient)
 ];
 
 // load each material's texture maps and hang them on the material so they land

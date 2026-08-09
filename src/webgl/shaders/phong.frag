@@ -12,6 +12,8 @@ uniform sampler2D uSampler;
 uniform bool isTexture;
 uniform sampler2D uSpecularSampler;
 uniform bool uHasSpecularTex;
+uniform sampler2D uAmbientSampler;
+uniform bool uHasAmbientTex;
 
 IN vec3 vNormal;
 IN vec2 vTexCoord;
@@ -58,7 +60,9 @@ void main(void) {
   }
   inputs.shininess = uShininess;
   inputs.metalness = uMetallic;
-  inputs.ambientMaterial = uHasSetAmbient ? uAmbientMatColor.rgb : inputs.color.rgb;
+  inputs.ambientMaterial = uHasAmbientTex
+      ? TEXTURE(uAmbientSampler, vTexCoord).rgb * uAmbientMatColor.rgb
+      : (uHasSetAmbient ? uAmbientMatColor.rgb : inputs.color.rgb);
   inputs.specularMaterial = uHasSpecularTex
       ? TEXTURE(uSpecularSampler, vTexCoord).rgb * uSpecularMatColor.rgb
       : uSpecularMatColor.rgb;
