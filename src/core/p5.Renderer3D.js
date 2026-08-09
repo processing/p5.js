@@ -614,7 +614,10 @@ export class Renderer3D extends Renderer {
             state.texture != null ||
             state.ambientColor != null ||
             state.specularColor != null ||
-            state.shininess != null);
+            state.shininess != null ||
+            state.specularTexture != null ||
+            state.ambientTexture != null ||
+            state.shininessTexture != null);
         if (hasMaterial) {
           this.push();
           this._applyPartState(state);
