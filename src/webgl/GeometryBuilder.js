@@ -27,7 +27,7 @@ class GeometryBuilder {
     // material parts. when the material state (texture, specular, ambient,
     // shininess) changes between draws inside the callback, a new part is
     // opened, so model() renders the result per part like a multi-material obj.
-    // fill stays baked into vertexColors, so a plain colour change never splits.
+    // fill stays baked into vertexColors, so a plain fill change never splits.
     this.parts = [];
     this.currentPart = null;
   }
@@ -139,11 +139,9 @@ class GeometryBuilder {
 
   /**
    * @private
-   * Snapshots the renderer's current per-part material state. Only the material
-   * uniforms that cannot be stored per vertex are tracked here (texture,
-   * specular, ambient, shininess); fill stays baked into vertexColors, so a
-   * plain fill() change never opens a new part. Uses p5's own state names, the
-   * same vocabulary the .mtl importer translates into.
+   * snapshot the material state that can't live per vertex (texture, specular,
+   * ambient, shininess), in p5's own state names. fill stays in vertexColors, so
+   * a plain fill() change never opens a new part.
    */
   _snapshotPartState() {
     const s = this.renderer.states;
@@ -155,21 +153,12 @@ class GeometryBuilder {
     return state;
   }
 
-  /**
-   * @private
-   * Compares two colour arrays (or nulls) for equality.
-   */
   _sameColor(a, b) {
     if (a === b) return true;
     if (!a || !b) return false;
     return a.length === b.length && a.every((v, i) => v === b[i]);
   }
 
-  /**
-   * @private
-   * True when two part states describe the same material, so consecutive draws
-   * can share one part.
-   */
   _sameMaterial(a, b) {
     return a.texture === b.texture &&
       a.shininess === b.shininess &&
@@ -179,10 +168,9 @@ class GeometryBuilder {
 
   /**
    * @private
-   * Appends one draw's geometry to the current material part, opening a new
-   * part when the material state has changed since the last draw. Data is
-   * copied the same way as the combined geometry above (element by element, in
-   * vertex order) so the part's buffers stay aligned regardless of uv shape.
+   * append one draw to the current part, opening a new part when the material
+   * changed. copied element by element like the combined geometry above, so the
+   * part stays aligned whatever shape the uvs are.
    */
   _addToCurrentPart(input, vertices, normals, vertexColors) {
     // parts are made of fills; a stroke-only draw contributes no faces
