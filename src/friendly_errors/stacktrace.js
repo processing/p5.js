@@ -63,11 +63,11 @@ function ErrorStackParser() {
     },
 
     parseV8OrIE: function ErrorStackParser$$parseV8OrIE(error) {
-      let filtered = error.stack.split('\n').filter(function(line) {
+      let filtered = error.stack.split('\n').filter(function (line) {
         return !!line.match(CHROME_IE_STACK_REGEXP);
       }, this);
 
-      return filtered.map(function(line) {
+      return filtered.map(function (line) {
         if (line.indexOf('(eval ') > -1) {
           // Throw away eval information until we implement stacktrace.js/stackframe#8
           line = line
@@ -109,11 +109,11 @@ function ErrorStackParser() {
     },
 
     parseFFOrSafari: function ErrorStackParser$$parseFFOrSafari(error) {
-      let filtered = error.stack.split('\n').filter(function(line) {
+      let filtered = error.stack.split('\n').filter(function (line) {
         return !line.match(SAFARI_NATIVE_CODE_REGEXP);
       }, this);
 
-      return filtered.map(function(line) {
+      return filtered.map(function (line) {
         // Throw away eval information until we implement stacktrace.js/stackframe#8
         if (line.indexOf(' > eval') > -1) {
           line = line.replace(
@@ -201,14 +201,14 @@ function ErrorStackParser() {
 
     // Opera 10.65+ Error.stack very similar to FF/Safari
     parseOpera11: function ErrorStackParser$$parseOpera11(error) {
-      let filtered = error.stack.split('\n').filter(function(line) {
+      let filtered = error.stack.split('\n').filter(function (line) {
         return (
           !!line.match(FIREFOX_SAFARI_STACK_REGEXP) &&
           !line.match(/^Error created at/)
         );
       }, this);
 
-      return filtered.map(function(line) {
+      return filtered.map(function (line) {
         let tokens = line.split('@');
         let locationParts = this.extractLocation(tokens.pop());
         let functionCall = tokens.shift() || '';
@@ -395,7 +395,7 @@ export function printFriendlyStack(friendlyStack) {
       prefix: false
     });
   }
-};
+}
 
 export function getFriendlyStack(stacktrace, compact = false) {
   if (compact) {

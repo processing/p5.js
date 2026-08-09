@@ -14,7 +14,7 @@
 
 ## 計画
 
-  我々は [GitHub Project](https://github.com/orgs/processing/projects/5) を通じてissueを組織しており、以下のカテゴリーに分類しています：
+我々は [GitHub Project](https://github.com/orgs/processing/projects/5) を通じてissueを組織しており、以下のカテゴリーに分類しています：
 
 - **システムレベルの変更** は長期的な目標に関連し、コードに深刻な影響を与えます。実施する前に十分な議論と包括的な計画が必要です。
 - **解決策のないバグ** は、具体的な原因を特定するためにデバッグが必要なバグの報告です。具体的な原因が特定されるまで、これらのバグは修正に適していません。原因が明確になれば、最適な修正方法について話し合いを始めることができます。
@@ -24,6 +24,7 @@
 - **すべての状況で正常に機能しない機能** は、WebGL モードで
 
 利用可能だが、すべてのWebGL使用シナリオに適していない機能を指します。たとえば、あるp5.jsメソッドは2Dおよび3Dの両方の座標システムをサポートしていますが、他の方法は3D座標を使用すると失敗する可能性があります。通常、これらの機能は開発を開始することができます。
+
 - **機能リクエスト** は、他のすべてのコードに対する変更リクエストを指します。これらのリクエストは、WebGL モードの発展方向に適合するようにするために、いくつかの議論が必要です。
 - **文書** は、コードの変更が必要ないが、p5.js の動作をよりよく記録する必要がある問題を指します。
 
@@ -70,15 +71,15 @@ p5.jsでは、関数は複数の方法で使用されます。すべての方法
 新しいテストを追加する際に、その機能が2Dモードで有効である場合、2つのモードで生成されるピクセルが同じであるかを確認することが一貫性を確保するための最善の方法の1つです。以下は、単体テストの例です：
 
 ```js
-test('coplanar strokes match 2D', function() {
-  const getColors = function(mode) {
+test('coplanar strokes match 2D', function () {
+  const getColors = function (mode) {
     myp5.createCanvas(20, 20, mode);
     myp5.pixelDensity(1);
     myp5.background(255);
     myp5.strokeCap(myp5.SQUARE);
     myp5.strokeJoin(myp5.MITER);
     if (mode === myp5.WEBGL) {
-      myp5.translate(-myp5.width/2, -myp5.height/2);
+      myp5.translate(-myp5.width / 2, -myp5.height / 2);
     }
     myp5.stroke('black');
     myp5.strokeWeight(4);
@@ -98,7 +99,7 @@ test('coplanar strokes match 2D', function() {
 機能がWebGL専用の場合、通常は数ピクセルをチェックして、2Dモードの結果と比較するのではなく、それらの色が期待どおりであることを確認します。近い将来、我々はより強力で安定したシステムに改良する可能性があり、そのシステムでは数ピクセルではなく、期待される結果の完全なイメージスナップショットと比較することになるでしょう。しかし、現在の状況では、以下にピクセル色のチェックの例を示します：
 
 ```js
-test('color interpolation', function() {
+test('color interpolation', function () {
   const renderer = myp5.createCanvas(256, 256, myp5.WEBGL);
   // upper color: (200, 0, 0, 255);
   // lower color: (0, 0, 200, 255);
@@ -127,29 +128,29 @@ test('color interpolation', function() {
 - 描画の先頭で `p5.disableFriendlyErrors = true` を使用してフレンドリーエラーの提示を無効にします（または `p5.min.js` をテストします。このバージョンにはフレンドリーエラーシステムが含まれていません）。
 - 安定した状態でのフレームレートを理解するために平均フレームレートを表示します。
 
-
 ```js
 let frameRateP;
 let avgFrameRates = [];
 let frameRateSum = 0;
 const numSamples = 30;
 function setup() {
-  // ...
-  frameRateP = createP();
-  frameRateP.position(0, 0);
+  // ...
+  frameRateP = createP();
+  frameRateP.position(0, 0);
 }
 function draw() {
-  // ...
-  const rate = frameRate() / numSamples;
-  avgFrameRates.push(rate);
-  frameRateSum += rate;
-  if (avgFrameRates.length > numSamples) {
-    frameRateSum -= avgFrameRates.shift();
-  }
- 
-  frameRateP.html(round(frameRateSum) + ' avg fps');
+  // ...
+  const rate = frameRate() / numSamples;
+  avgFrameRates.push(rate);
+  frameRateSum += rate;
+  if (avgFrameRates.length > numSamples) {
+    frameRateSum -= avgFrameRates.shift();
+  }
+
+  frameRateP.html(round(frameRateSum) + ' avg fps');
 }
 ```
+
 以下は、レンダリングパイプラインの異なる部分にプレッシャーをかけるためにテストするいくつかのシナリオです：
 
 - 複雑な形状がいくつかある場合（例えば、大型の3Dモデルや長い曲線）

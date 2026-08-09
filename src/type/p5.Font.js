@@ -45,12 +45,14 @@ import Typr from './lib/Typr.js';
 import { createFromCommands } from '@davepagurek/bezier-path';
 
 const pathArgCounts = { M: 2, L: 2, C: 6, Q: 4 };
-const validFontTypes = ['ttf', 'otf', 'woff'];//, 'woff2'];
+const validFontTypes = ['ttf', 'otf', 'woff']; //, 'woff2'];
 const validFontTypesRe = new RegExp(`\\.(${validFontTypes.join('|')})`, 'i');
-const extractFontNameRe = new RegExp(`([^/]+)(\\.(?:${validFontTypes.join('|')}))`, 'i');
+const extractFontNameRe = new RegExp(
+  `([^/]+)(\\.(?:${validFontTypes.join('|')}))`,
+  'i'
+);
 const invalidFontError = 'Sorry, only TTF, OTF and WOFF files are supported.'; // and WOFF2
 const fontFaceVariations = ['weight', 'stretch', 'style'];
-
 
 export class Font {
   constructor(p, fontFace, name, path, data) {
@@ -191,12 +193,14 @@ export class Font {
    * }
    */
   textToPaths(str, x, y, width, height, options) {
-
     ({ width, height, options } = this._parseArgs(width, height, options));
 
     if (!this.data) {
-      throw Error('No font data available for "' + this.name
-        + '"\nTry downloading a local copy of the font file');
+      throw Error(
+        'No font data available for "' +
+          this.name +
+          '"\nTry downloading a local copy of the font file'
+      );
     }
 
     // lineate and get glyphs/paths for each line
@@ -266,8 +270,10 @@ export class Font {
     // By segmenting per contour, pointAtLength becomes much faster
     const contourPoints = this.textToContours(
       str,
-      x, y,
-      width, height,
+      x,
+      y,
+      width,
+      height,
       options
     );
     return contourPoints.reduce((acc, next) => {
@@ -373,13 +379,13 @@ export class Font {
    *
    * The generated model (a Geometry object) can be manipulated further—rotated, scaled,
    * or styled with shaders—to create engaging, interactive visual art.
-   * 
-   * The `options` parameter is also optional. `font.textToModel()` expects an object 
+   *
+   * The `options` parameter is also optional. `font.textToModel()` expects an object
    * with the following properties:
-   * 
+   *
    * `extrude` is the depth to extrude the text. It defaults to 0. A value of 0 produces
    * flat text; higher values create thicker, 3D models.
-   * 
+   *
    * `sampleFactor` is a factor controlling the level of detail for the text contours.
    * It defaults to 1. Higher values result in smoother curves.
    *
@@ -562,7 +568,8 @@ export class Font {
     // outer edges for extrusion.
 
     const vertexIndices = {};
-    const vertexId = v => `${v.x.toFixed(6)}-${v.y.toFixed(6)}-${v.z.toFixed(6)}`;
+    const vertexId = v =>
+      `${v.x.toFixed(6)}-${v.y.toFixed(6)}-${v.z.toFixed(6)}`;
     const newVertices = [];
     const newVertexIndex = [];
 
@@ -704,7 +711,8 @@ export class Font {
     return meta;
   }
 
-  static async list(log = false) { // tmp
+  static async list(log = false) {
+    // tmp
     if (log) {
       console.log('There are', document.fonts.size, 'font-faces\n');
       let loaded = 0;
@@ -729,15 +737,20 @@ export class Font {
     Returns an array of line objects, each containing { text, x, y, glyphs: [ {g, path} ] }
   */
   _lineateAndPathify(str, x, y, width, height, options = {}) {
-
     let renderer = options?.graphics?._renderer || this._pInst._renderer;
     renderer.push();
     renderer.textFont(this);
 
     // lineate and compute bounds for the text
-    let { lines, bounds } = renderer._computeBounds
-    (textCoreConstants._FONT_BOUNDS, str, x, y, width, height,
-      { ignoreRectMode: true, ...options });
+    let { lines, bounds } = renderer._computeBounds(
+      textCoreConstants._FONT_BOUNDS,
+      str,
+      x,
+      y,
+      width,
+      height,
+      { ignoreRectMode: true, ...options }
+    );
 
     // compute positions for each of the lines
     lines = this._position(renderer, lines, bounds, width, height);
@@ -767,8 +780,9 @@ export class Font {
           // return renderer.states.fontStretch
           return 100;
         } else if (renderer.textCanvas().style.fontVariationSettings) {
-          const match = new RegExp(`\\b${tag}s+(d+)`)
-            .exec(renderer.textCanvas().style.fontVariationSettings);
+          const match = new RegExp(`\\b${tag}s+(d+)`).exec(
+            renderer.textCanvas().style.fontVariationSettings
+          );
           if (match) {
             return parseInt(match[1]);
           } else {
@@ -783,7 +797,6 @@ export class Font {
   }
 
   _textToPathPoints(str, x, y, width, height, options) {
-
     ({ width, height, options } = this._parseArgs(width, height, options));
 
     // lineate and get the points for each line
@@ -819,12 +832,10 @@ export class Font {
   }
 
   _parseArgs(width, height, options = {}) {
-
     if (typeof width === 'object') {
       options = width;
       width = height = undefined;
-    }
-    else if (typeof height === 'object') {
+    } else if (typeof height === 'object') {
       options = height;
       height = undefined;
     }
@@ -832,20 +843,18 @@ export class Font {
   }
 
   _position(renderer, lines, bounds, width, height) {
-
     let { textAlign, textLeading, textSize } = renderer.states;
     let metrics = this._measureTextDefault(renderer, 'X');
     let ascent = metrics.fontBoundingBoxAscent;
 
     let coordify = (text, i) => {
       let x = bounds.x;
-      let y = bounds.y + (i * textLeading) + ascent;
+      let y = bounds.y + i * textLeading + ascent;
       let lineWidth = renderer._fontWidthSingle(text);
       if (textAlign === constants.CENTER) {
         x += (bounds.w - lineWidth) / 2;
-      }
-      else if (textAlign === constants.RIGHT) {
-        x += (bounds.w - lineWidth);
+      } else if (textAlign === constants.RIGHT) {
+        x += bounds.w - lineWidth;
       }
       if (typeof width !== 'undefined') {
         switch (renderer.states.rectMode) {
@@ -866,10 +875,12 @@ export class Font {
   }
 
   _lineToGlyphs(line, { scale = 1, axs } = {}) {
-
     if (!this.data) {
-      throw Error('No font data available for "' + this.name
-        + '"\nTry downloading a local copy of the font file');
+      throw Error(
+        'No font data available for "' +
+          this.name +
+          '"\nTry downloading a local copy of the font file'
+      );
     }
     let glyphShapes = Typr.U.shape(this.data, line.text, { axs });
     line.glyphShapes = glyphShapes;
@@ -892,14 +903,10 @@ export class Font {
     return positionedGlyphs;
   }
 
-  _singleShapeToPath(shape, {
-    scale = 1,
-    x = 0,
-    y = 0,
-    lineX = 0,
-    lineY = 0,
-    axs
-  } = {}) {
+  _singleShapeToPath(
+    shape,
+    { scale = 1, x = 0, y = 0, lineX = 0, lineY = 0, axs } = {}
+  ) {
     let font = this.data;
     let crdIdx = 0;
     let { g, ax, ay, dx, dy } = shape;
@@ -909,7 +916,8 @@ export class Font {
     let glyph = { /*g: line.text[i], points: [],*/ path: { commands: [] } };
 
     for (let j = 0; j < cmds.length; j++) {
-      let type = cmds[j], command = [type];
+      let type = cmds[j],
+        command = [type];
       if (type in pathArgCounts) {
         let argCount = pathArgCounts[type];
         for (let k = 0; k < argCount; k += 2) {
@@ -932,7 +940,9 @@ export class Font {
   }
 
   _shapeToPaths(glyphs, line, { scale = 1, axs } = {}) {
-    let x = 0, y = 0, paths = [];
+    let x = 0,
+      y = 0,
+      paths = [];
 
     if (glyphs.length !== line.text.length) {
       throw Error('Invalid shape data');
@@ -951,7 +961,8 @@ export class Font {
       });
 
       paths.push(glyph);
-      x += ax; y += ay;
+      x += ax;
+      y += ay;
     }
 
     return paths;
@@ -968,7 +979,8 @@ export class Font {
     return metrics;
   }
 
-  drawPaths(ctx, commands, opts) { // for debugging
+  drawPaths(ctx, commands, opts) {
+    // for debugging
     ctx.strokeStyle = opts?.stroke || ctx.strokeStyle;
     ctx.fillStyle = opts?.fill || ctx.fillStyle;
     ctx.beginPath();
@@ -998,23 +1010,24 @@ export class Font {
 
       // iterate over the path, storing each non-control point
       for (let c = 0, j = 0; j < cmds.length; j++) {
-        let cmd = cmds[j], obj = { type: cmd, data: [] };
+        let cmd = cmds[j],
+          obj = { type: cmd, data: [] };
         if (cmd === 'M' || cmd === 'L') {
           obj.data.push(x + crds[c] * scale, y + crds[c + 1] * -scale);
           c += 2;
-        }
-        else if (cmd === 'C') {
+        } else if (cmd === 'C') {
           for (let i = 0; i < 6; i += 2) {
             obj.data.push(
-              x + crds[c + i] * scale, y + crds[c + i + 1] * -scale
+              x + crds[c + i] * scale,
+              y + crds[c + i + 1] * -scale
             );
           }
           c += 6;
-        }
-        else if (cmd === 'Q') {
+        } else if (cmd === 'Q') {
           for (let i = 0; i < 4; i += 2) {
             obj.data.push(
-              x + crds[c + i] * scale, y + crds[c + i + 1] * -scale
+              x + crds[c + i] * scale,
+              y + crds[c + i + 1] * -scale
             );
           }
           c += 4;
@@ -1028,7 +1041,6 @@ export class Font {
 }
 
 async function create(pInst, name, path, descriptors, rawFont) {
-
   let face = createFontFace(name, path, descriptors, rawFont);
 
   // load if we need to
@@ -1044,7 +1056,6 @@ async function create(pInst, name, path, descriptors, rawFont) {
   return new Font(pInst, face, name, path, rawFont);
 }
 
-
 function sanitizeFontName(name) {
   if (!/^[A-Za-z][A-Za-z0-9_-]*$/.test(name)) {
     name = "'" + String(name).replace(/'/g, "\\'") + "'";
@@ -1053,7 +1064,6 @@ function sanitizeFontName(name) {
 }
 
 function createFontFace(name, path, descriptors, rawFont) {
-
   name = sanitizeFontName(name);
   let fontArg = rawFont?._compressedData ?? rawFont?._data;
   if (!fontArg) {
@@ -1068,9 +1078,8 @@ function createFontFace(name, path, descriptors, rawFont) {
 
   if ((rawFont?.fvar?.length ?? 0) > 0) {
     descriptors = descriptors || {};
-    for (const [
-      tag, minVal, defaultVal, maxVal, flags, name
-    ] of rawFont.fvar[0]) {
+    for (const [tag, minVal, defaultVal, maxVal, flags, name] of rawFont
+      .fvar[0]) {
       if (tag === 'wght') {
         descriptors.weight = `${minVal} ${maxVal}`;
       } else if (tag === 'wdth') {
@@ -1089,7 +1098,8 @@ function createFontFace(name, path, descriptors, rawFont) {
 }
 
 function extractFontName(font, path) {
-  let result, meta = font?.name;
+  let result,
+    meta = font?.name;
 
   // use the metadata if we have it
   if (meta) {
@@ -1102,13 +1112,11 @@ function extractFontName(font, path) {
   }
 
   if (!result) {
-
     // if not, try to extract the name from the path
     let matches = extractFontNameRe.exec(path);
     if (matches && matches.length >= 3) {
       result = matches[1];
-    }
-    else {
+    } else {
       // give up and return the full path
       result = path;
     }
@@ -1120,10 +1128,9 @@ function extractFontName(font, path) {
   }
 
   return result;
-};
+}
 
 function pathToPoints(cmds, options, font) {
-
   const parseOpts = (options, defaults) => {
     if (typeof options !== 'object') {
       options = defaults;
@@ -1139,7 +1146,7 @@ function pathToPoints(cmds, options, font) {
 
   const at = (v, i) => {
     const s = v.length;
-    return v[i < 0 ? i % s + s : i % s];
+    return v[i < 0 ? (i % s) + s : i % s];
   };
 
   const simplify = (pts, angle) => {
@@ -1198,17 +1205,14 @@ function pathToPoints(cmds, options, font) {
   const mode = font._pInst.angleMode();
   const DEGREES = font._pInst.DEGREES;
   for (let i = 0; i < totalPoints; i++) {
-    const length = path.getTotalLength() * (
-      totalPoints === 1
-        ? 0
-        : (i / (totalPoints - 1))
-    );
+    const length =
+      path.getTotalLength() * (totalPoints === 1 ? 0 : i / (totalPoints - 1));
     points.push({
       ...path.getPointAtLength(length),
       get angle() {
         const angle = path.getAngleAtLength(length);
         if (mode === DEGREES) {
-          return angle * 180 / Math.PI;
+          return (angle * 180) / Math.PI;
         } else {
           return angle;
         }
@@ -1229,14 +1233,16 @@ function pathToPoints(cmds, options, font) {
 
 function unquote(name) {
   // Unquote name from CSS
-  if ((name.startsWith('"') || name.startsWith("'")) && name.at(0) === name.at(-1)) {
+  if (
+    (name.startsWith('"') || name.startsWith("'")) &&
+    name.at(0) === name.at(-1)
+  ) {
     return name.slice(1, -1).replace(/\/(['"])/g, '$1');
   }
   return name;
 }
 
-function parseCreateArgs(...args/*path, name, onSuccess, onError*/) {
-
+function parseCreateArgs(...args /*path, name, onSuccess, onError*/) {
   // parse the path
   let path = args.shift();
   if (typeof path !== 'string' || path.length === 0) {
@@ -1259,8 +1265,7 @@ function parseCreateArgs(...args/*path, name, onSuccess, onError*/) {
       } else {
         error = arg;
       }
-    }
-    else if (typeof arg === 'object') {
+    } else if (typeof arg === 'object') {
       options = arg;
     }
   }
@@ -1269,7 +1274,6 @@ function parseCreateArgs(...args/*path, name, onSuccess, onError*/) {
 }
 
 function font(p5, fn) {
-
   /**
    * A class to describe fonts. Create through <a href="#/p5/loadFont">`loadFont()`</a>.
    *
@@ -1280,11 +1284,12 @@ function font(p5, fn) {
   /**
    * @private
    */
-  fn.parseFontData = async function(pathOrData) {
+  fn.parseFontData = async function (pathOrData) {
     // load the raw font bytes
-    let result = pathOrData instanceof Uint8Array
-      ? pathOrData
-      : await fn.loadBytes(pathOrData);
+    let result =
+      pathOrData instanceof Uint8Array
+        ? pathOrData
+        : await fn.loadBytes(pathOrData);
     //console.log('result:', result);
 
     if (!result) {
@@ -1447,7 +1452,9 @@ function font(p5, fn) {
         // for the likely case when we have to fetch the whole thing.
         info = await fetch(path);
       }
-      const isCSSFile = info.headers.get('content-type')?.startsWith('text/css');
+      const isCSSFile = info.headers
+        .get('content-type')
+        ?.startsWith('text/css');
       if (isCSSFile) {
         isCSS = true;
         path = await fetch(path).then(res => res.text());
@@ -1469,7 +1476,9 @@ function font(p5, fn) {
             const camelCaseKey = key
               .replace(/^font-/, '')
               .split('-')
-              .map((v, i) => i === 0 ? v : `${v[0].toUpperCase()}${v.slice(1)}`)
+              .map((v, i) =>
+                i === 0 ? v : `${v[0].toUpperCase()}${v.slice(1)}`
+              )
               .join('');
             fontDescriptors[camelCaseKey] = style.getPropertyValue(key);
           }
@@ -1498,15 +1507,18 @@ function font(p5, fn) {
 
       // TODO: handle multiple font faces?
       sets = sets || ['latin']; // Default to latin for now if omitted
-      const requestedGroups = (sets instanceof Array ? sets : [sets])
-        .map(s => s.toLowerCase());
+      const requestedGroups = (sets instanceof Array ? sets : [sets]).map(s =>
+        s.toLowerCase()
+      );
       // Grab thr named groups with names that include the requested keywords
-      const requestedCategories = unicodeRanges
-        .filter(r => requestedGroups.some(
-          g => r.category.includes(g) &&
+      const requestedCategories = unicodeRanges.filter(r =>
+        requestedGroups.some(
+          g =>
+            r.category.includes(g) &&
             // Only include extended character sets if specifically requested
             r.category.includes('ext') === g.includes('ext')
-        ));
+        )
+      );
       const requestedRanges = new Set(
         UnicodeRange.parse(
           requestedCategories.map(c => `U+${c.hexrange[0]}-${c.hexrange[1]}`)
@@ -1518,13 +1530,11 @@ function font(p5, fn) {
       for (const font of possibleFonts) {
         if (!font.fontDescriptors.unicodeRange) continue;
         const fontRange = new Set(
-          UnicodeRange.parse(
-            font.fontDescriptors.unicodeRange.split(/,\s*/g)
-          )
+          UnicodeRange.parse(font.fontDescriptors.unicodeRange.split(/,\s*/g))
         );
-        const rangeOverlap = [...fontRange.values()]
-          .filter(v => requestedRanges.has(v))
-          .length;
+        const rangeOverlap = [...fontRange.values()].filter(v =>
+          requestedRanges.has(v)
+        ).length;
 
         const targetDescriptors = {
           // Default to normal style at regular weight
@@ -1533,23 +1543,21 @@ function font(p5, fn) {
           // Override from anything else passed in
           ...descriptors
         };
-        const descriptorOverlap = Object.keys(font.fontDescriptors)
-          .filter(k => font.fontDescriptors[k] === targetDescriptors[k])
-          .length;
+        const descriptorOverlap = Object.keys(font.fontDescriptors).filter(
+          k => font.fontDescriptors[k] === targetDescriptors[k]
+        ).length;
 
         if (
           descriptorOverlap > closestDescriptorOverlap ||
-          (
-            descriptorOverlap === closestDescriptorOverlap &&
-            rangeOverlap >= closestRangeOverlap
-          )
+          (descriptorOverlap === closestDescriptorOverlap &&
+            rangeOverlap >= closestRangeOverlap)
         ) {
           closestDescriptorOverlap = descriptorOverlap;
           closestRangeOverlap = rangeOverlap;
           closestMatch = font;
         }
       }
-      const picked = (closestMatch || possibleFonts.at(-1));
+      const picked = closestMatch || possibleFonts.at(-1);
       for (const font of possibleFonts) {
         if (font !== picked) {
           // Load without parsing data with Typr so that it still can be accessed
@@ -1569,20 +1577,18 @@ function font(p5, fn) {
 
       // create a FontFace object and pass it to the p5.Font constructor
       pfont = await create(this, name, path, descriptors, fontData);
-
     } catch (err) {
       // failed to parse the font, load it as a simple FontFace
-      let ident = name || path
-        .substring(path.lastIndexOf('/') + 1)
-        .replace(/\.[^/.]+$/, '');
+      let ident =
+        name ||
+        path.substring(path.lastIndexOf('/') + 1).replace(/\.[^/.]+$/, '');
 
       console.warn(`WARN: No glyph data for '${ident}', retrying as FontFace`);
 
       try {
         // create a FontFace object and pass it to p5.Font
         pfont = await create(this, ident, path, descriptors);
-      }
-      catch (err) {
+      } catch (err) {
         if (error) return error(err);
         throw err;
       }
@@ -1593,33 +1599,34 @@ function font(p5, fn) {
     };
     return this._internal ? this._internal(cb) : cb();
   };
-};
+}
 
 // Convert arrays to named objects
-export const arrayCommandsToObjects = commands => commands.map(command => {
-  const type = command[0];
-  switch (type) {
-    case 'Z': {
-      return { type };
+export const arrayCommandsToObjects = commands =>
+  commands.map(command => {
+    const type = command[0];
+    switch (type) {
+      case 'Z': {
+        return { type };
+      }
+      case 'M':
+      case 'L': {
+        const [, x, y] = command;
+        return { type, x, y };
+      }
+      case 'Q': {
+        const [, x1, y1, x, y] = command;
+        return { type, x1, y1, x, y };
+      }
+      case 'C': {
+        const [, x1, y1, x2, y2, x, y] = command;
+        return { type, x1, y1, x2, y2, x, y };
+      }
+      default: {
+        throw new Error(`Unexpected path command: ${type}`);
+      }
     }
-    case 'M':
-    case 'L': {
-      const [, x, y] = command;
-      return { type, x, y };
-    }
-    case 'Q': {
-      const [, x1, y1, x, y] = command;
-      return { type, x1, y1, x, y };
-    }
-    case 'C': {
-      const [, x1, y1, x2, y2, x, y] = command;
-      return { type, x1, y1, x2, y2, x, y };
-    }
-    default: {
-      throw new Error(`Unexpected path command: ${type}`);
-    }
-  }
-});
+  });
 
 export { sanitizeFontName as _sanitizeFontName };
 export default font;

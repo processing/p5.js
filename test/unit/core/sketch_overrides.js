@@ -1,15 +1,13 @@
-import {
-  verifierUtils
-} from '../../../src/friendly_errors/sketch_verifier.js';
+import { verifierUtils } from '../../../src/friendly_errors/sketch_verifier.js';
 
 suite('Sketch Verifier', function () {
   const mockP5 = {
     _validateParameters: vi.fn(),
-    Color: function () { },
-    Vector: function () { },
+    Color: function () {},
+    Vector: function () {},
     prototype: {
-      rect: function () { },
-      ellipse: function () { }
+      rect: function () {},
+      ellipse: function () {}
     }
   };
 
@@ -55,13 +53,13 @@ suite('Sketch Verifier', function () {
         <script src="www.p5test.com/sketch.js"></script>
         <script>let c = p5.Color(20, 20, 20);</script>
       `;
-      vi.spyOn(document, 'querySelectorAll')
-        .mockImplementation((...args) =>
-          fakeDocument.querySelectorAll(...args)
-        );
+      vi.spyOn(document, 'querySelectorAll').mockImplementation((...args) =>
+        fakeDocument.querySelectorAll(...args)
+      );
 
-      vi.spyOn(verifierUtils, 'fetchScript')
-        .mockImplementation(() => Promise.resolve(userCode));
+      vi.spyOn(verifierUtils, 'fetchScript').mockImplementation(() =>
+        Promise.resolve(userCode)
+      );
 
       const result = await verifierUtils.getUserCode();
 
@@ -84,44 +82,44 @@ suite('Sketch Verifier', function () {
 
       const result = verifierUtils.extractUserDefinedVariablesAndFuncs(code);
       const expectedResult = {
-        'functions': [
+        functions: [
           {
-            'line': 5,
-            'name': 'foo'
+            line: 5,
+            name: 'foo'
           },
           {
-            'line': 6,
-            'name': 'bar'
+            line: 6,
+            name: 'bar'
           },
           {
-            'line': 7,
-            'name': 'baz'
+            line: 7,
+            name: 'baz'
           }
         ],
-        'variables': [
+        variables: [
           {
-            'line': 1,
-            'name': 'x'
+            line: 1,
+            name: 'x'
           },
           {
-            'line': 2,
-            'name': 'y'
+            line: 2,
+            name: 'y'
           },
           {
-            'line': 3,
-            'name': 'z'
+            line: 3,
+            name: 'z'
           },
           {
-            'line': 4,
-            'name': 'v1'
+            line: 4,
+            name: 'v1'
           },
           {
-            'line': 4,
-            'name': 'v2'
+            line: 4,
+            name: 'v2'
           },
           {
-            'line': 4,
-            'name': 'v3'
+            line: 4,
+            name: 'v3'
           }
         ]
       };
@@ -151,23 +149,23 @@ suite('Sketch Verifier', function () {
 
       const result = verifierUtils.extractUserDefinedVariablesAndFuncs(code);
       const expectedResult = {
-        'functions': [],
-        'variables': [
+        functions: [],
+        variables: [
           {
-            'line': 2,
-            'name': 'x'
+            line: 2,
+            name: 'x'
           },
           {
-            'line': 6,
-            'name': 'y'
+            line: 6,
+            name: 'y'
           },
           {
-            'line': 11,
-            'name': 'z'
+            line: 11,
+            name: 'z'
           },
           {
-            'line': 13,
-            'name': 'i'
+            line: 13,
+            name: 'i'
           }
         ]
       };
@@ -177,11 +175,12 @@ suite('Sketch Verifier', function () {
 
     test('Handles parsing errors', function () {
       const invalidCode = 'let x = ;';
-      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => { });
+      const consoleSpy = vi
+        .spyOn(console, 'error')
+        .mockImplementation(() => {});
 
-      const result = verifierUtils.extractUserDefinedVariablesAndFuncs(
-        invalidCode
-      );
+      const result =
+        verifierUtils.extractUserDefinedVariablesAndFuncs(invalidCode);
 
       expect(consoleSpy).toHaveBeenCalled();
       expect(result).toEqual({ variables: [], functions: [] });
@@ -200,7 +199,7 @@ suite('Sketch Verifier', function () {
     }
 
     beforeEach(function () {
-      consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => { });
+      consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
     });
 
     afterEach(function () {

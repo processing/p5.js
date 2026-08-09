@@ -1,6 +1,5 @@
 export const STRANDS_INTERNAL_NAME_PREFIX = '_p5_strands_';
 
-
 /**
  * @private
  * @typedef {Object} StrandsShaderNameMap
@@ -64,10 +63,7 @@ export function createStrandsShaderNameState(nextSuffix = 0) {
 export function isReservedStrandsName(name) {
   return (
     typeof name === 'string' &&
-    (
-      name.startsWith(STRANDS_INTERNAL_NAME_PREFIX) ||
-      name.startsWith('gl_')
-    )
+    (name.startsWith(STRANDS_INTERNAL_NAME_PREFIX) || name.startsWith('gl_'))
   );
 }
 

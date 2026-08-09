@@ -1,12 +1,25 @@
 import * as CFG from './ir_cfg';
 import * as DAG from './ir_dag';
-import { BlockType, NodeType, BaseType, StatementType, OpCode } from './ir_types';
+import {
+  BlockType,
+  NodeType,
+  BaseType,
+  StatementType,
+  OpCode
+} from './ir_types';
 import { StrandsNode, createStrandsNode } from './strands_node';
 import { primitiveConstructorNode } from './ir_builders';
 import { createPhiNode } from './strands_phi_utils';
 
 export class StrandsFor {
-  constructor(strandsContext, initialCb, conditionCb, updateCb, bodyCb, initialVars) {
+  constructor(
+    strandsContext,
+    initialCb,
+    conditionCb,
+    updateCb,
+    bodyCb,
+    initialVars
+  ) {
     this.strandsContext = strandsContext;
     this.initialCb = initialCb;
     this.conditionCb = conditionCb;
@@ -25,22 +38,49 @@ export class StrandsFor {
     CFG.addEdge(cfg, branchBlock, mergeBlock);
 
     // Initialize loop variable phi node
-    const { initialVar, phiNode } = this.initializeLoopVariable(cfg, branchBlock);
+    const { initialVar, phiNode } = this.initializeLoopVariable(
+      cfg,
+      branchBlock
+    );
 
     // Execute condition and update callbacks to get nodes for analysis
     CFG.pushBlock(cfg, cfg.currentBlock);
-    const loopVarNode = createStrandsNode(phiNode.id, phiNode.dimension, this.strandsContext);
+    const loopVarNode = createStrandsNode(
+      phiNode.id,
+      phiNode.dimension,
+      this.strandsContext
+    );
     const conditionNode = this.conditionCb(loopVarNode);
     const updateResult = this.updateCb(loopVarNode);
     CFG.popBlock(cfg);
 
     // Check if loop has bounded iteration count
-    const isBounded = this.loopIsBounded(initialVar, conditionNode, updateResult);
+    const isBounded = this.loopIsBounded(
+      initialVar,
+      conditionNode,
+      updateResult
+    );
 
     if (isBounded) {
-      this.buildBoundedLoop(cfg, branchBlock, mergeBlock, initialVar, phiNode, conditionNode, updateResult);
+      this.buildBoundedLoop(
+        cfg,
+        branchBlock,
+        mergeBlock,
+        initialVar,
+        phiNode,
+        conditionNode,
+        updateResult
+      );
     } else {
-      this.buildUnboundedLoop(cfg, branchBlock, mergeBlock, initialVar, phiNode, conditionNode, updateResult);
+      this.buildUnboundedLoop(
+        cfg,
+        branchBlock,
+        mergeBlock,
+        initialVar,
+        phiNode,
+        conditionNode,
+        updateResult
+      );
     }
 
     // Update the phi nodes created in buildBoundedLoop with actual body results
@@ -50,7 +90,10 @@ export class StrandsFor {
       if (varName !== 'loopVar' && finalPhiNodes[varName]) {
         // Update the phi node's second input to use the actual body result
         const phiNodeID = finalPhiNodes[varName].id;
-        const phiNodeData = DAG.getNodeDataFromID(this.strandsContext.dag, phiNodeID);
+        const phiNodeData = DAG.getNodeDataFromID(
+          this.strandsContext.dag,
+          phiNodeID
+        );
         // Update the dependsOn array to include the actual body result
         if (phiNodeData.dependsOn.length > 1) {
           phiNodeData.dependsOn[1] = resultNode.id;
@@ -64,7 +107,9 @@ export class StrandsFor {
 
     // Create assignment nodes in the branch block for initial values
     CFG.pushBlockForModification(cfg, branchBlock);
-    for (const [varName, initialValueNode] of Object.entries(this.initialVars)) {
+    for (const [varName, initialValueNode] of Object.entries(
+      this.initialVars
+    )) {
       if (varName !== 'loopVar' && finalPhiNodes[varName]) {
         // Create an assignment statement: phiNode = initialValue
         const phiNodeID = finalPhiNodes[varName].id;
@@ -75,7 +120,10 @@ export class StrandsFor {
           dependsOn: [phiNodeID, sourceNodeID],
           phiBlocks: []
         });
-        const assignmentID = DAG.getOrCreateNode(this.strandsContext.dag, assignmentNode);
+        const assignmentID = DAG.getOrCreateNode(
+          this.strandsContext.dag,
+          assignmentNode
+        );
         CFG.recordInBasicBlock(cfg, branchBlock, assignmentID);
       }
     }
@@ -97,7 +145,10 @@ export class StrandsFor {
           dependsOn: [phiNodeID, sourceNodeID],
           phiBlocks: []
         });
-        const assignmentID = DAG.getOrCreateNode(this.strandsContext.dag, assignmentNode);
+        const assignmentID = DAG.getOrCreateNode(
+          this.strandsContext.dag,
+          assignmentNode
+        );
         CFG.recordInBasicBlock(cfg, this.finalBodyBlock, assignmentID);
       }
     }
@@ -106,7 +157,11 @@ export class StrandsFor {
     // Convert phi nodes to StrandsNodes for the final result
     const finalBodyResults = {};
     for (const [varName, phiNode] of Object.entries(finalPhiNodes)) {
-      finalBodyResults[varName] = createStrandsNode(phiNode.id, phiNode.dimension, this.strandsContext);
+      finalBodyResults[varName] = createStrandsNode(
+        phiNode.id,
+        phiNode.dimension,
+        this.strandsContext
+      );
     }
 
     CFG.pushBlock(cfg, mergeBlock);
@@ -114,7 +169,15 @@ export class StrandsFor {
     return finalBodyResults;
   }
 
-  buildBoundedLoop(cfg, branchBlock, mergeBlock, initialVar, phiNode, conditionNode, updateResult) {
+  buildBoundedLoop(
+    cfg,
+    branchBlock,
+    mergeBlock,
+    initialVar,
+    phiNode,
+    conditionNode,
+    updateResult
+  ) {
     // For bounded loops, create FOR block with three statements: init, condition, update
     const forBlock = CFG.createBasicBlock(cfg, BlockType.FOR);
     CFG.addEdge(cfg, branchBlock, forBlock);
@@ -129,7 +192,10 @@ export class StrandsFor {
         dependsOn: [phiNode.id, initialVar.id],
         phiBlocks: []
       });
-      const initAssignmentID = DAG.getOrCreateNode(this.strandsContext.dag, initAssignmentNode);
+      const initAssignmentID = DAG.getOrCreateNode(
+        this.strandsContext.dag,
+        initAssignmentNode
+      );
       CFG.recordInBasicBlock(cfg, forBlock, initAssignmentID);
     }
 
@@ -140,7 +206,10 @@ export class StrandsFor {
       dependsOn: [conditionNode.id],
       phiBlocks: []
     });
-    const conditionStatementID = DAG.getOrCreateNode(this.strandsContext.dag, conditionStatementNode);
+    const conditionStatementID = DAG.getOrCreateNode(
+      this.strandsContext.dag,
+      conditionStatementNode
+    );
     CFG.recordInBasicBlock(cfg, forBlock, conditionStatementID);
 
     // 3. Update statement - create assignment of update result to phi node
@@ -149,7 +218,10 @@ export class StrandsFor {
       dependsOn: [phiNode.id, updateResult.id],
       phiBlocks: []
     });
-    const updateAssignmentID = DAG.getOrCreateNode(this.strandsContext.dag, updateAssignmentNode);
+    const updateAssignmentID = DAG.getOrCreateNode(
+      this.strandsContext.dag,
+      updateAssignmentNode
+    );
     CFG.recordInBasicBlock(cfg, forBlock, updateAssignmentID);
 
     CFG.popBlock(cfg);
@@ -158,7 +230,9 @@ export class StrandsFor {
     const instructions = cfg.blockInstructions[forBlock] || [];
     const expectedLength = initialVar ? 3 : 2;
     if (instructions.length !== expectedLength) {
-      throw new Error(`FOR block must have exactly ${expectedLength} statements, got ${instructions.length}`);
+      throw new Error(
+        `FOR block must have exactly ${expectedLength} statements, got ${instructions.length}`
+      );
     }
 
     const scopeStartBlock = CFG.createBasicBlock(cfg, BlockType.SCOPE_START);
@@ -175,7 +249,15 @@ export class StrandsFor {
     CFG.addEdge(cfg, scopeEndBlock, mergeBlock);
   }
 
-  buildUnboundedLoop(cfg, branchBlock, mergeBlock, initialVar, phiNode, conditionNode, updateResult) {
+  buildUnboundedLoop(
+    cfg,
+    branchBlock,
+    mergeBlock,
+    initialVar,
+    phiNode,
+    conditionNode,
+    updateResult
+  ) {
     // For unbounded loops, create FOR block with infinite loop and break condition
     const forBlock = CFG.createBasicBlock(cfg, BlockType.FOR);
     CFG.addEdge(cfg, branchBlock, forBlock);
@@ -190,7 +272,10 @@ export class StrandsFor {
         dependsOn: [phiNode.id, initialVar.id],
         phiBlocks: []
       });
-      const initAssignmentID = DAG.getOrCreateNode(this.strandsContext.dag, initAssignmentNode);
+      const initAssignmentID = DAG.getOrCreateNode(
+        this.strandsContext.dag,
+        initAssignmentNode
+      );
       CFG.recordInBasicBlock(cfg, forBlock, initAssignmentID);
     } else {
       // Create empty statement for init
@@ -200,7 +285,10 @@ export class StrandsFor {
         dependsOn: [],
         phiBlocks: []
       });
-      const emptyInitID = DAG.getOrCreateNode(this.strandsContext.dag, emptyInitNode);
+      const emptyInitID = DAG.getOrCreateNode(
+        this.strandsContext.dag,
+        emptyInitNode
+      );
       CFG.recordInBasicBlock(cfg, forBlock, emptyInitID);
     }
 
@@ -211,7 +299,10 @@ export class StrandsFor {
       dependsOn: [],
       phiBlocks: []
     });
-    const emptyConditionID = DAG.getOrCreateNode(this.strandsContext.dag, emptyConditionNode);
+    const emptyConditionID = DAG.getOrCreateNode(
+      this.strandsContext.dag,
+      emptyConditionNode
+    );
     CFG.recordInBasicBlock(cfg, forBlock, emptyConditionID);
 
     // 3. Update statement - empty for infinite loop
@@ -221,7 +312,10 @@ export class StrandsFor {
       dependsOn: [],
       phiBlocks: []
     });
-    const emptyUpdateID = DAG.getOrCreateNode(this.strandsContext.dag, emptyUpdateNode);
+    const emptyUpdateID = DAG.getOrCreateNode(
+      this.strandsContext.dag,
+      emptyUpdateNode
+    );
     CFG.recordInBasicBlock(cfg, forBlock, emptyUpdateID);
 
     CFG.popBlock(cfg);
@@ -247,7 +341,10 @@ export class StrandsFor {
     cfg.blockConditions[breakConditionBlock] = negatedCondition.id;
 
     // Add scope start block for break statement
-    const breakScopeStartBlock = CFG.createBasicBlock(cfg, BlockType.SCOPE_START);
+    const breakScopeStartBlock = CFG.createBasicBlock(
+      cfg,
+      BlockType.SCOPE_START
+    );
     CFG.addEdge(cfg, breakConditionBlock, breakScopeStartBlock);
 
     const breakStatementBlock = CFG.createBasicBlock(cfg, BlockType.DEFAULT);
@@ -261,7 +358,10 @@ export class StrandsFor {
       dependsOn: [],
       phiBlocks: []
     });
-    const breakStatementID = DAG.getOrCreateNode(this.strandsContext.dag, breakStatementNode);
+    const breakStatementID = DAG.getOrCreateNode(
+      this.strandsContext.dag,
+      breakStatementNode
+    );
     CFG.recordInBasicBlock(cfg, breakStatementBlock, breakStatementID);
     CFG.popBlock(cfg);
 
@@ -290,7 +390,10 @@ export class StrandsFor {
       dependsOn: [phiNode.id, updateResult.id],
       phiBlocks: []
     });
-    const updateAssignmentID = DAG.getOrCreateNode(this.strandsContext.dag, updateAssignmentNode);
+    const updateAssignmentID = DAG.getOrCreateNode(
+      this.strandsContext.dag,
+      updateAssignmentNode
+    );
     CFG.recordInBasicBlock(cfg, updateBlock, updateAssignmentID);
     CFG.popBlock(cfg);
 
@@ -309,16 +412,24 @@ export class StrandsFor {
     let initialVar = this.initialCb();
 
     // Convert to StrandsNode if it's not already one
-    if (!(initialVar?.isStrandsNode)) {
-      const { id, dimension } = primitiveConstructorNode(this.strandsContext, { baseType: BaseType.FLOAT, dimension: 1 }, initialVar);
+    if (!initialVar?.isStrandsNode) {
+      const { id, dimension } = primitiveConstructorNode(
+        this.strandsContext,
+        { baseType: BaseType.FLOAT, dimension: 1 },
+        initialVar
+      );
       initialVar = createStrandsNode(id, dimension, this.strandsContext);
     }
 
     // Create phi node for the loop variable in the BRANCH block
-    const phiNode = createPhiNode(this.strandsContext, [
-      { value: initialVar, blockId: branchBlock },
-      { value: initialVar, blockId: branchBlock } // Placeholder, will be updated later
-    ], 'loopVar');
+    const phiNode = createPhiNode(
+      this.strandsContext,
+      [
+        { value: initialVar, blockId: branchBlock },
+        { value: initialVar, blockId: branchBlock } // Placeholder, will be updated later
+      ],
+      'loopVar'
+    );
     CFG.popBlock(cfg);
 
     return { initialVar, phiNode };
@@ -334,7 +445,10 @@ export class StrandsFor {
       phiBlocks: [],
       usedBy: []
     });
-    const notOperationID = DAG.getOrCreateNode(this.strandsContext.dag, notOperationNode);
+    const notOperationID = DAG.getOrCreateNode(
+      this.strandsContext.dag,
+      notOperationNode
+    );
     return createStrandsNode(notOperationID, 1, this.strandsContext);
   }
 
@@ -345,23 +459,39 @@ export class StrandsFor {
     const phiVars = {};
     const phiNodesForBody = {};
     CFG.pushBlockForModification(cfg, branchBlock);
-    for (const [varName, initialValueNode] of Object.entries(this.initialVars)) {
+    for (const [varName, initialValueNode] of Object.entries(
+      this.initialVars
+    )) {
       if (varName !== 'loopVar') {
         // Create phi node that will be used for the final result
-        const varPhiNode = createPhiNode(this.strandsContext, [
-          { value: initialValueNode, blockId: branchBlock }, // Initial value
-          { value: initialValueNode, blockId: bodyBlock }     // Placeholder - will update after body execution
-        ], varName);
+        const varPhiNode = createPhiNode(
+          this.strandsContext,
+          [
+            { value: initialValueNode, blockId: branchBlock }, // Initial value
+            { value: initialValueNode, blockId: bodyBlock } // Placeholder - will update after body execution
+          ],
+          varName
+        );
         phiNodesForBody[varName] = varPhiNode;
-        phiVars[varName] = createStrandsNode(varPhiNode.id, varPhiNode.dimension, this.strandsContext);
+        phiVars[varName] = createStrandsNode(
+          varPhiNode.id,
+          varPhiNode.dimension,
+          this.strandsContext
+        );
       }
     }
     CFG.popBlock(cfg);
 
-    const loopVarNode = createStrandsNode(phiNode.id, phiNode.dimension, this.strandsContext);
+    const loopVarNode = createStrandsNode(
+      phiNode.id,
+      phiNode.dimension,
+      this.strandsContext
+    );
     this.bodyResults = this.bodyCb(loopVarNode, phiVars) || {};
     for (const key in this.bodyResults) {
-      this.bodyResults[key] = this.strandsContext.p5.strandsNode(this.bodyResults[key]);
+      this.bodyResults[key] = this.strandsContext.p5.strandsNode(
+        this.bodyResults[key]
+      );
     }
     this.phiNodesForBody = phiNodesForBody;
     // Capture the final block after body execution before popping
@@ -378,7 +508,10 @@ export class StrandsFor {
     if (!conditionNode) return false;
 
     // Analyze the condition node - it should be a comparison operation
-    const conditionData = DAG.getNodeDataFromID(this.strandsContext.dag, conditionNode.id);
+    const conditionData = DAG.getNodeDataFromID(
+      this.strandsContext.dag,
+      conditionNode.id
+    );
 
     if (conditionData.nodeType !== NodeType.OPERATION) {
       return false;
@@ -391,8 +524,16 @@ export class StrandsFor {
     }
 
     // Check if either operand uses only literals
-    const leftOperand = createStrandsNode(conditionData.dependsOn[0], 1, this.strandsContext);
-    const rightOperand = createStrandsNode(conditionData.dependsOn[1], 1, this.strandsContext);
+    const leftOperand = createStrandsNode(
+      conditionData.dependsOn[0],
+      1,
+      this.strandsContext
+    );
+    const rightOperand = createStrandsNode(
+      conditionData.dependsOn[1],
+      1,
+      this.strandsContext
+    );
 
     const leftUsesOnlyLiterals = this.nodeUsesOnlyLiterals(leftOperand);
     const rightUsesOnlyLiterals = this.nodeUsesOnlyLiterals(rightOperand);

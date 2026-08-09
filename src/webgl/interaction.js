@@ -7,7 +7,7 @@
 import * as constants from '../core/constants';
 import { Vector } from '../math/p5.Vector';
 
-function interaction(p5, fn){
+function interaction(p5, fn) {
   /**
    * Allows the user to orbit around a 3D sketch using a mouse, trackpad, or
    * touchscreen.
@@ -151,7 +151,7 @@ function interaction(p5, fn){
 
   // implementation based on three.js 'orbitControls':
   // https://github.com/mrdoob/three.js/blob/6afb8595c0bf8b2e72818e42b64e6fe22707d896/examples/jsm/controls/OrbitControls.js#L22
-  fn.orbitControl = function(
+  fn.orbitControl = function (
     sensitivityX,
     sensitivityY,
     sensitivityZ,
@@ -253,13 +253,15 @@ function interaction(p5, fn){
 
       // for touch, it is calculated based on one moved touch pointer position.
       pointersInCanvas =
-        movedTouches[0].x > 0 && movedTouches[0].x < this.width &&
-        movedTouches[0].y > 0 && movedTouches[0].y < this.height;
+        movedTouches[0].x > 0 &&
+        movedTouches[0].x < this.width &&
+        movedTouches[0].y > 0 &&
+        movedTouches[0].y < this.height;
 
       if (movedTouches.length === 1) {
         const t = movedTouches[0];
-        deltaTheta = -sensitivityX * (t.x - t.px) / scaleFactor;
-        deltaPhi = sensitivityY * (t.y - t.py) / scaleFactor;
+        deltaTheta = (-sensitivityX * (t.x - t.px)) / scaleFactor;
+        deltaPhi = (sensitivityY * (t.y - t.py)) / scaleFactor;
       } else {
         const t0 = movedTouches[0];
         const t1 = movedTouches[1];
@@ -293,8 +295,10 @@ function interaction(p5, fn){
 
       // For mouse, it is calculated based on the mouse position.
       pointersInCanvas =
-        (this.mouseX > 0 && this.mouseX < this.width) &&
-        (this.mouseY > 0 && this.mouseY < this.height);
+        this.mouseX > 0 &&
+        this.mouseX < this.width &&
+        this.mouseY > 0 &&
+        this.mouseY < this.height;
 
       if (this._mouseWheelDeltaY !== 0) {
         // zoom the camera depending on the value of _mouseWheelDeltaY.
@@ -310,11 +314,11 @@ function interaction(p5, fn){
       }
       if (this.mouseIsPressed) {
         if (this.mouseButton.left) {
-          deltaTheta = -sensitivityX * this.movedX / scaleFactor;
-          deltaPhi = sensitivityY * this.movedY / scaleFactor;
+          deltaTheta = (-sensitivityX * this.movedX) / scaleFactor;
+          deltaPhi = (sensitivityY * this.movedY) / scaleFactor;
         } else if (this.mouseButton.right) {
           moveDeltaX = this.movedX;
-          moveDeltaY =  this.movedY * cam.yScale;
+          moveDeltaY = this.movedY * cam.yScale;
         }
         // start rotate and move when mouse is pressed within the canvas.
         if (pointersInCanvas) this._renderer.executeRotateAndMove = true;
@@ -334,26 +338,21 @@ function interaction(p5, fn){
     if (Math.abs(this._renderer.zoomVelocity) > 0.001) {
       // if freeRotation is true, we use _orbitFree() instead of _orbit()
       if (freeRotation) {
-        cam._orbitFree(
-          0, 0, this._renderer.zoomVelocity
-        );
+        cam._orbitFree(0, 0, this._renderer.zoomVelocity);
       } else {
-        cam._orbit(
-          0, 0, this._renderer.zoomVelocity
-        );
+        cam._orbit(0, 0, this._renderer.zoomVelocity);
       }
       // In orthogonal projection, the scale does not change even if
       // the distance to the gaze point is changed, so the projection matrix
       // needs to be modified.
       if (cam.projMatrix.mat4[15] !== 0) {
-        cam.projMatrix.mat4[0] *= Math.pow(
-          10, -this._renderer.zoomVelocity
-        );
-        cam.projMatrix.mat4[5] *= Math.pow(
-          10, -this._renderer.zoomVelocity
-        );
+        cam.projMatrix.mat4[0] *= Math.pow(10, -this._renderer.zoomVelocity);
+        cam.projMatrix.mat4[5] *= Math.pow(10, -this._renderer.zoomVelocity);
         // modify uPMatrix
-        this._renderer.states.setValue('uPMatrix', this._renderer.states.uPMatrix.clone());
+        this._renderer.states.setValue(
+          'uPMatrix',
+          this._renderer.states.uPMatrix.clone()
+        );
         this._renderer.states.uPMatrix.mat4[0] = cam.projMatrix.mat4[0];
         this._renderer.states.uPMatrix.mat4[5] = cam.projMatrix.mat4[5];
       }
@@ -364,8 +363,10 @@ function interaction(p5, fn){
     }
 
     // rotate process
-    if ((deltaTheta !== 0 || deltaPhi !== 0) &&
-    this._renderer.executeRotateAndMove) {
+    if (
+      (deltaTheta !== 0 || deltaPhi !== 0) &&
+      this._renderer.executeRotateAndMove
+    ) {
       // accelerate rotate velocity
       this._renderer.rotateVelocity.add(
         deltaTheta * rotateAccelerationFactor,
@@ -393,17 +394,18 @@ function interaction(p5, fn){
       // damping
       this._renderer.rotateVelocity.mult(damping);
       //console.log("multiplied", damping,  this._renderer.rotateVelocity);
-
     } else {
       this._renderer.rotateVelocity.set(0, 0, 0);
     }
 
     // move process
-    if ((moveDeltaX !== 0 || moveDeltaY !== 0) &&
-    this._renderer.executeRotateAndMove) {
+    if (
+      (moveDeltaX !== 0 || moveDeltaY !== 0) &&
+      this._renderer.executeRotateAndMove
+    ) {
       // Normalize movement distance
-      const ndcX = moveDeltaX * 2/this.width;
-      const ndcY = -moveDeltaY * 2/this.height;
+      const ndcX = (moveDeltaX * 2) / this.width;
+      const ndcY = (-moveDeltaY * 2) / this.height;
       // accelerate move velocity
       this._renderer.moveVelocity.add(
         ndcX * moveAccelerationFactor,
@@ -441,11 +443,11 @@ function interaction(p5, fn){
       const uP = this._renderer.states.uPMatrix.mat4;
 
       if (uP[15] === 0) {
-        dx = ((uP[8] + cv.x)/uP[0]) * viewZ;
-        dy = ((uP[9] + cv.y)/uP[5]) * viewZ;
+        dx = ((uP[8] + cv.x) / uP[0]) * viewZ;
+        dy = ((uP[9] + cv.y) / uP[5]) * viewZ;
       } else {
-        dx = (cv.x - uP[12])/uP[0];
-        dy = (cv.y - uP[13])/uP[5];
+        dx = (cv.x - uP[12]) / uP[0];
+        dy = (cv.y - uP[13]) / uP[5];
       }
 
       // translate the camera.
@@ -462,7 +464,6 @@ function interaction(p5, fn){
 
     return this;
   };
-
 
   /**
    * Adds a grid and an axes icon to clarify orientation in 3D sketches.
@@ -667,7 +668,7 @@ function interaction(p5, fn){
    * @param {Number} [axesZOff] axes icon offset from the origin along the z-axis.
    */
 
-  fn.debugMode = function(...args) {
+  fn.debugMode = function (...args) {
     this._assert3d('debugMode');
     // p5._validateParameters('debugMode', args);
 
@@ -735,7 +736,7 @@ function interaction(p5, fn){
    *   noDebugMode();
    * }
    */
-  fn.noDebugMode = function() {
+  fn.noDebugMode = function () {
     this._assert3d('noDebugMode');
 
     // start by removing existing 'post' registered debug methods
@@ -760,7 +761,7 @@ function interaction(p5, fn){
    * @param {Number} [yOff] offset of grid center from origin in Y axis
    * @param {Number} [zOff] offset of grid center from origin in Z axis
    */
-  fn._grid = function(size, numDivs, xOff, yOff, zOff) {
+  fn._grid = function (size, numDivs, xOff, yOff, zOff) {
     if (typeof size === 'undefined') {
       size = this.width / 2;
     }
@@ -781,14 +782,17 @@ function interaction(p5, fn){
     const spacing = size / numDivs;
     const halfSize = size / 2;
 
-    return function() {
+    return function () {
       this.push();
       this.stroke(
         this._renderer.states.curStrokeColor[0] * 255,
         this._renderer.states.curStrokeColor[1] * 255,
         this._renderer.states.curStrokeColor[2] * 255
       );
-      this._renderer.states.setValue('uModelMatrix', this._renderer.states.uModelMatrix.clone());
+      this._renderer.states.setValue(
+        'uModelMatrix',
+        this._renderer.states.uModelMatrix.clone()
+      );
       this._renderer.states.uModelMatrix.reset();
 
       // Lines along X axis
@@ -820,7 +824,7 @@ function interaction(p5, fn){
    * @param {Number} [yOff] offset of icon from origin in Y axis
    * @param {Number} [zOff] offset of icon from origin in Z axis
    */
-  fn._axesIcon = function(size, xOff, yOff, zOff) {
+  fn._axesIcon = function (size, xOff, yOff, zOff) {
     if (typeof size === 'undefined') {
       size = this.width / 20 > 40 ? this.width / 20 : 40;
     }
@@ -836,7 +840,10 @@ function interaction(p5, fn){
 
     return () => {
       this.push();
-      this._renderer.states.setValue('uModelMatrix', this._renderer.states.uModelMatrix.clone());
+      this._renderer.states.setValue(
+        'uModelMatrix',
+        this._renderer.states.uModelMatrix.clone()
+      );
       this._renderer.states.uModelMatrix.reset();
 
       // X axis
@@ -865,6 +872,6 @@ function interaction(p5, fn){
 
 export default interaction;
 
-if(typeof p5 !== 'undefined'){
+if (typeof p5 !== 'undefined') {
   interaction(p5, p5.prototype);
 }

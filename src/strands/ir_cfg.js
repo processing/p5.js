@@ -1,5 +1,5 @@
-import { BlockTypeToName } from "./ir_types";
-import * as FES from './strands_FES'
+import { BlockTypeToName } from './ir_types';
+import * as FES from './strands_FES';
 
 // Todo: remove edges to simplify. Block order is always ordered already.
 
@@ -15,7 +15,7 @@ export function createControlFlowGraph() {
     blockStack: [],
     blockOrder: [],
     blockConditions: {},
-    currentBlock: -1,
+    currentBlock: -1
   };
 }
 
@@ -28,7 +28,7 @@ export function pushBlock(graph, blockID) {
 export function popBlock(graph) {
   graph.blockStack.pop();
   const len = graph.blockStack.length;
-  graph.currentBlock = graph.blockStack[len-1];
+  graph.currentBlock = graph.blockStack[len - 1];
 }
 
 export function pushBlockForModification(graph, blockID) {
@@ -41,7 +41,7 @@ export function createBasicBlock(graph, blockType) {
   graph.blockTypes[id] = blockType;
   graph.incomingEdges[id] = [];
   graph.outgoingEdges[id] = [];
-  graph.blockInstructions[id]= [];
+  graph.blockInstructions[id] = [];
   return id;
 }
 
@@ -67,8 +67,8 @@ export function getBlockDataFromID(graph, id) {
     blockType: graph.blockTypes[id],
     incomingEdges: graph.incomingEdges[id],
     outgoingEdges: graph.outgoingEdges[id],
-    blockInstructions: graph.blockInstructions[id],
-  }
+    blockInstructions: graph.blockInstructions[id]
+  };
 }
 
 export function printBlockData(graph, id) {
@@ -85,7 +85,7 @@ export function sortCFG(adjacencyList, start) {
       return;
     }
     visited.add(v);
-    for (let w of adjacencyList[v].sort((a, b) => b-a) || []) {
+    for (let w of adjacencyList[v].sort((a, b) => b - a) || []) {
       dfs(w);
     }
     postOrder.push(v);

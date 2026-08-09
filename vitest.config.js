@@ -77,16 +77,16 @@ export default defineConfig({
             provider: playwright({
               launchOptions: process.env.CI
                 ? {
-                  channel: 'chromium',
-                  args: [
-                    '--no-sandbox',
-                    '--headless=new',
-                    '--enable-unsafe-webgpu',
-                    '--use-vulkan=swiftshader',
-                    '--use-webgpu-adapter=swiftshader',
-                    '--use-angle=vulkan'
-                  ]
-                }
+                    channel: 'chromium',
+                    args: [
+                      '--no-sandbox',
+                      '--headless=new',
+                      '--enable-unsafe-webgpu',
+                      '--use-vulkan=swiftshader',
+                      '--use-webgpu-adapter=swiftshader',
+                      '--use-angle=vulkan'
+                    ]
+                  }
                 : { channel: 'chromium' }
             }),
             instances: [{ browser: 'chromium' }],

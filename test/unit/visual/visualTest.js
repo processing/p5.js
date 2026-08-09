@@ -129,7 +129,7 @@ export function visualSuite(
  */
 
 export function checkMatch(actual, expected, p5) {
-  let scale = Math.min(MAX_SIDE/expected.width, MAX_SIDE/expected.height);
+  let scale = Math.min(MAX_SIDE / expected.width, MAX_SIDE / expected.height);
   const ratio = expected.width / expected.height;
   const narrow = ratio !== 1;
   if (narrow) {
@@ -137,10 +137,7 @@ export function checkMatch(actual, expected, p5) {
   }
 
   for (const img of [actual, expected]) {
-    img.resize(
-      Math.ceil(img.width * scale),
-      Math.ceil(img.height * scale)
-    );
+    img.resize(Math.ceil(img.width * scale), Math.ceil(img.height * scale));
   }
 
   // Ensure both images have the same dimensions
@@ -208,8 +205,10 @@ export function checkMatch(actual, expected, p5) {
         // Find the connected cluster size using BFS
         const clusterSize = findClusterSize(
           diffCanvas.pixels,
-          x, y,
-          width, height,
+          x,
+          y,
+          width,
+          height,
           1,
           visited
         );
@@ -219,16 +218,19 @@ export function checkMatch(actual, expected, p5) {
   }
 
   // Define significance thresholds
-  const MIN_CLUSTER_SIZE = 4;  // Minimum pixels in a significant cluster
-  const MAX_TOTAL_DIFF_PIXELS = 40;  // Maximum total different pixels
+  const MIN_CLUSTER_SIZE = 4; // Minimum pixels in a significant cluster
+  const MAX_TOTAL_DIFF_PIXELS = 40; // Maximum total different pixels
 
   // Determine if the differences are significant
-  const nonLineShiftClusters = clusterSizes
-    .filter(c => !c.isLineShift && c.size >= MIN_CLUSTER_SIZE);
+  const nonLineShiftClusters = clusterSizes.filter(
+    c => !c.isLineShift && c.size >= MIN_CLUSTER_SIZE
+  );
 
   // Calculate significant differences excluding line shifts
-  const significantDiffPixels = nonLineShiftClusters
-    .reduce((sum, c) => sum + c.size, 0);
+  const significantDiffPixels = nonLineShiftClusters.reduce(
+    (sum, c) => sum + c.size,
+    0
+  );
 
   // Update the diff canvas
   diffCanvas.updatePixels();
@@ -238,16 +240,11 @@ export function checkMatch(actual, expected, p5) {
   expectedCanvas.remove();
 
   // Determine test result
-  const ok = (
+  const ok =
     diffCount === 0 ||
-    (
-      significantDiffPixels === 0 ||
-      (
-        (significantDiffPixels <= MAX_TOTAL_DIFF_PIXELS) &&
-        (nonLineShiftClusters.length <= 2)  // Not too many significant clusters
-      )
-    )
-  );
+    significantDiffPixels === 0 ||
+    (significantDiffPixels <= MAX_TOTAL_DIFF_PIXELS &&
+      nonLineShiftClusters.length <= 2); // Not too many significant clusters
 
   return {
     ok,
@@ -265,8 +262,10 @@ export function checkMatch(actual, expected, p5) {
  */
 function findClusterSize(
   pixels,
-  startX, startY,
-  width, height,
+  startX,
+  startY,
+  width,
+  height,
   radius,
   visited
 ) {
@@ -282,11 +281,8 @@ function findClusterSize(
     if (visited.has(pos)) continue;
 
     // Skip if not a diff pixel
-    if (
-      pixels[pos] !== 255 ||
-      pixels[pos + 1] !== 0 ||
-      pixels[pos + 2] !== 0
-    ) continue;
+    if (pixels[pos] !== 255 || pixels[pos + 1] !== 0 || pixels[pos + 2] !== 0)
+      continue;
 
     // Mark as visited
     visited.add(pos);
@@ -390,98 +386,104 @@ export function visualTest(
     suiteFn = suiteFn.skip;
   }
 
-  suiteFn(testName, function() {
+  suiteFn(testName, function () {
     let name;
     let myp5;
     let lastDeviceRatio = window.devicePixelRatio;
 
-    beforeAll(function() {
+    beforeAll(function () {
       name = namePrefix + escapeName(testName);
       // Force everything to be 1x
       window.devicePixelRatio = 1;
       return new Promise(res => {
-        myp5 = new p5(function(p) {
-          p.setup = function() {
+        myp5 = new p5(function (p) {
+          p.setup = function () {
             res();
           };
         });
       });
     });
 
-    afterAll(function() {
+    afterAll(function () {
       window.devicePixelRatio = lastDeviceRatio;
       myp5.remove();
     });
 
-    test('matches expected screenshots', async function() {
-      let expectedScreenshots;
-      try {
-        const metadata = JSON.parse(await readFile(
-          `./test/unit/visual/screenshots/${name}/metadata.json`
-        ));
-        expectedScreenshots = metadata.numScreenshots;
-      } catch (e) {
-        console.log(e);
-        expectedScreenshots = 0;
-      }
-
-      const actual = [];
-
-      // Generate screenshots
-      await callback(myp5, async () => {
-        const img = await myp5.get();
-        img.pixelDensity(1);
-        actual.push(img);
-      });
-
-
-      if (actual.length === 0) {
-        throw new Error('No screenshots were generated. Check if your test generates screenshots correctly. If the test includes asynchronous operations, ensure they complete before the test ends.');
-      }
-      if (expectedScreenshots && actual.length !== expectedScreenshots) {
-        throw new Error(
-          `Expected ${expectedScreenshots} screenshot(s) but generated ${actual.length}`
-        );
-      }
-      if (!expectedScreenshots) {
-        await writeFile(
-          `./test/unit/visual/screenshots/${name}/metadata.json`,
-          JSON.stringify({ numScreenshots: actual.length }, null, 2)
-        );
-      }
-
-      const expectedFilenames = actual.map(
-        (_, i) => `./test/unit/visual/screenshots/${name}/${i.toString().padStart(3, '0')}.png`
-      );
-      const expected = expectedScreenshots
-        ? (
-          await Promise.all(
-            expectedFilenames.map(path => myp5.loadImage(path.slice(2)))
-          )
-        )
-        : [];
-
-      for (let i = 0; i < actual.length; i++) {
-        const flatName = name.replace(/\//g, '-');
-        const actualFilename = `./test/unit/visual/actual-screenshots/${flatName}-${i.toString().padStart(3, '0')}.png`;
-        if (expected[i]) {
-          const result = checkMatch(actual[i], expected[i], myp5);
-          // Always save the actual image before potentially throwing an error
-          writeImageFile(actualFilename, toBase64(actual[i]));
-          if (!result.ok) {
-            const diffFilename = `./test/unit/visual/actual-screenshots/${flatName}-${i.toString().padStart(3, '0')}-diff.png`;
-            writeImageFile(diffFilename, toBase64(result.diff));
-            throw new Error(
-              `Screenshots do not match! Expected:\n${toBase64(expected[i])}\n\nReceived:\n${toBase64(actual[i])}\n\nDiff:\n${toBase64(result.diff)}\n\n` +
-              'If this is unexpected, paste these URLs into your browser to inspect them.\n\n' +
-              `If this change is expected, please delete the screenshots/${name} folder and run tests again to generate a new screenshot.`
-            );
-          }
-        } else {
-          writeImageFile(expectedFilenames[i], toBase64(actual[i]));
-          writeImageFile(actualFilename, toBase64(actual[i]));
+    test(
+      'matches expected screenshots',
+      async function () {
+        let expectedScreenshots;
+        try {
+          const metadata = JSON.parse(
+            await readFile(
+              `./test/unit/visual/screenshots/${name}/metadata.json`
+            )
+          );
+          expectedScreenshots = metadata.numScreenshots;
+        } catch (e) {
+          console.log(e);
+          expectedScreenshots = 0;
         }
-      }
-    }, timeout);
+
+        const actual = [];
+
+        // Generate screenshots
+        await callback(myp5, async () => {
+          const img = await myp5.get();
+          img.pixelDensity(1);
+          actual.push(img);
+        });
+
+        if (actual.length === 0) {
+          throw new Error(
+            'No screenshots were generated. Check if your test generates screenshots correctly. If the test includes asynchronous operations, ensure they complete before the test ends.'
+          );
+        }
+        if (expectedScreenshots && actual.length !== expectedScreenshots) {
+          throw new Error(
+            `Expected ${expectedScreenshots} screenshot(s) but generated ${actual.length}`
+          );
+        }
+        if (!expectedScreenshots) {
+          await writeFile(
+            `./test/unit/visual/screenshots/${name}/metadata.json`,
+            JSON.stringify({ numScreenshots: actual.length }, null, 2)
+          );
+        }
+
+        const expectedFilenames = actual.map(
+          (_, i) =>
+            `./test/unit/visual/screenshots/${name}/${i.toString().padStart(3, '0')}.png`
+        );
+        const expected = expectedScreenshots
+          ? await Promise.all(
+              expectedFilenames.map(path => myp5.loadImage(path.slice(2)))
+            )
+          : [];
+
+        for (let i = 0; i < actual.length; i++) {
+          const flatName = name.replace(/\//g, '-');
+          const actualFilename = `./test/unit/visual/actual-screenshots/${flatName}-${i.toString().padStart(3, '0')}.png`;
+          if (expected[i]) {
+            const result = checkMatch(actual[i], expected[i], myp5);
+            // Always save the actual image before potentially throwing an error
+            writeImageFile(actualFilename, toBase64(actual[i]));
+            if (!result.ok) {
+              const diffFilename = `./test/unit/visual/actual-screenshots/${flatName}-${i.toString().padStart(3, '0')}-diff.png`;
+              writeImageFile(diffFilename, toBase64(result.diff));
+              throw new Error(
+                `Screenshots do not match! Expected:\n${toBase64(expected[i])}\n\nReceived:\n${toBase64(actual[i])}\n\nDiff:\n${toBase64(result.diff)}\n\n` +
+                  'If this is unexpected, paste these URLs into your browser to inspect them.\n\n' +
+                  `If this change is expected, please delete the screenshots/${name} folder and run tests again to generate a new screenshot.`
+              );
+            }
+          } else {
+            writeImageFile(expectedFilenames[i], toBase64(actual[i]));
+            writeImageFile(actualFilename, toBase64(actual[i]));
+          }
+        }
+      },
+      timeout
+    );
   });
 }
