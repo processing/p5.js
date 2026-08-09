@@ -24,7 +24,6 @@ function textCore(p5, fn) {
   const CommaDelimRe = /,\s+/;
   const QuotedRe = /^".*"$/;
   const SpecialCharRe = /[^\x00-\x7F]/; // Non-ascii
-  const TabsRe = /\t/g;
 
   const FontVariationSettings = 'fontVariationSettings';
   const VariableAxes = ['wght', 'wdth', 'ital', 'slnt', 'opsz'];
@@ -2252,15 +2251,15 @@ function textCore(p5, fn) {
       words = lines[lidx].split(splitter);
       for (let widx = 0; widx < words.length; widx++) {
         testLine = `${line + words[widx]}` + splitter;
-        testWidth = this._textWidthSingle(testLine);
+        testWidth = this._textWidthSingle(testLine.replace(/\t/g, '  '));
         if (line.length > 0 && testWidth > maxWidth) {
-          newLines.push(line.trim());
+          newLines.push(line.replace(/\s+$/, ''));
           line = `${words[widx]}` + splitter;
         } else {
           line = testLine;
         }
       }
-      newLines.push(line.trim());
+      newLines.push(line.replace(/\s+$/, ''));
     }
     return newLines;
   };
@@ -2270,7 +2269,7 @@ function textCore(p5, fn) {
   */
   Renderer.prototype._splitOnBreaks = function (s) {
     if (!s || s.length === 0) return [''];
-    return s.replace(TabsRe, '  ').split(LinebreakRe);
+    return s.split(LinebreakRe);
   };
 
   /*
