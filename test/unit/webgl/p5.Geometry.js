@@ -378,5 +378,32 @@ suite('p5.Geometry', function() {
         }, [checkLights]);
       }
     );
+
+    test('instancing draws every material part with the instance count',
+      function() {
+        const renderer = myp5.createCanvas(50, 50, myp5.WEBGL);
+        const texA = myp5.createGraphics(10, 10);
+        const texB = myp5.createGraphics(10, 10);
+        const geom = myp5.buildGeometry(() => {
+          myp5.texture(texA);
+          myp5.box(8);
+          myp5.texture(texB);
+          myp5.sphere(8);
+        });
+        expect(geom.parts.length).toEqual(2);
+
+        const fillSpy = vi.spyOn(renderer, '_drawFills');
+        myp5.background(255);
+        myp5.fill(255);
+        myp5.model(geom, 4);
+
+        // one instanced draw per part, each carrying the same instance count
+        expect(fillSpy).toHaveBeenCalledTimes(geom.parts.length);
+        for (const call of fillSpy.mock.calls) {
+          expect(call[1].count).toEqual(4);
+        }
+        fillSpy.mockRestore();
+      }
+    );
   });
 });
