@@ -1,6 +1,7 @@
 import * as constants from '../core/constants';
 import { Matrix } from '../math/p5.Matrix';
 import { Geometry } from './p5.Geometry';
+import { GeometryPart, createPartState } from './p5.GeometryPart';
 
 /**
  * @private
@@ -22,6 +23,13 @@ class GeometryBuilder {
     this.geometry.gid = `_p5_GeometryBuilder_${GeometryBuilder.nextGeometryId}`;
     GeometryBuilder.nextGeometryId++;
     this.hasTransform = false;
+
+    // material parts. when the material state (texture, specular, ambient,
+    // shininess) changes between draws inside the callback, a new part is
+    // opened, so model() renders the result per part like a multi-material obj.
+    // fill stays baked into vertexColors, so a plain colour change never splits.
+    this.parts = [];
+    this.currentPart = null;
   }
 
   /**
@@ -63,11 +71,13 @@ class GeometryBuilder {
       );
     }
 
+    const transformedVertices = this.transformVertices(input.vertices);
+    const transformedNormals = this.transformNormals(input.vertexNormals);
     let startIdx = this.geometry.vertices.length;
-    for (const v of this.transformVertices(input.vertices)) {
+    for (const v of transformedVertices) {
       this.geometry.vertices.push(v);
     }
-    for (const vn of this.transformNormals(input.vertexNormals)) {
+    for (const vn of transformedNormals) {
       this.geometry.vertexNormals.push(vn);
     }
     for (const val of input.uvs) {
@@ -117,6 +127,95 @@ class GeometryBuilder {
     }
     for (const c of vertexColors) {
       this.geometry.vertexColors.push(c);
+    }
+
+    this._addToCurrentPart(
+      input,
+      transformedVertices,
+      transformedNormals,
+      vertexColors
+    );
+  }
+
+  /**
+   * @private
+   * Snapshots the renderer's current per-part material state. Only the material
+   * uniforms that cannot be stored per vertex are tracked here (texture,
+   * specular, ambient, shininess); fill stays baked into vertexColors, so a
+   * plain fill() change never opens a new part. Uses p5's own state names, the
+   * same vocabulary the .mtl importer translates into.
+   */
+  _snapshotPartState() {
+    const s = this.renderer.states;
+    const state = createPartState();
+    if (s._tex) state.texture = s._tex;
+    if (s._useSpecularMaterial) state.specularColor = s.curSpecularColor;
+    if (s._hasSetAmbient) state.ambientColor = s.curAmbientColor;
+    if (s._useShininess !== 1) state.shininess = s._useShininess;
+    return state;
+  }
+
+  /**
+   * @private
+   * Compares two colour arrays (or nulls) for equality.
+   */
+  _sameColor(a, b) {
+    if (a === b) return true;
+    if (!a || !b) return false;
+    return a.length === b.length && a.every((v, i) => v === b[i]);
+  }
+
+  /**
+   * @private
+   * True when two part states describe the same material, so consecutive draws
+   * can share one part.
+   */
+  _sameMaterial(a, b) {
+    return a.texture === b.texture &&
+      a.shininess === b.shininess &&
+      this._sameColor(a.specularColor, b.specularColor) &&
+      this._sameColor(a.ambientColor, b.ambientColor);
+  }
+
+  /**
+   * @private
+   * Appends one draw's geometry to the current material part, opening a new
+   * part when the material state has changed since the last draw. Data is
+   * copied the same way as the combined geometry above (element by element, in
+   * vertex order) so the part's buffers stay aligned regardless of uv shape.
+   */
+  _addToCurrentPart(input, vertices, normals, vertexColors) {
+    // parts are made of fills; a stroke-only draw contributes no faces
+    if (!this.renderer.states.fillColor) return;
+
+    const state = this._snapshotPartState();
+    if (
+      !this.currentPart ||
+      !this._sameMaterial(state, this.currentPart.partState)
+    ) {
+      this.currentPart = new GeometryPart(
+        `${this.geometry.gid}|part${this.parts.length}`,
+        state
+      );
+      this.parts.push(this.currentPart);
+    }
+
+    const part = this.currentPart;
+    const startIdx = part.vertices.length;
+    for (const v of vertices) {
+      part.vertices.push(v);
+    }
+    for (const vn of normals) {
+      part.vertexNormals.push(vn);
+    }
+    for (const val of input.uvs) {
+      part.uvs.push(val);
+    }
+    for (const c of vertexColors) {
+      part.vertexColors.push(c);
+    }
+    for (const f of input.faces) {
+      part.faces.push(f.map(idx => idx + startIdx));
     }
   }
 
@@ -174,6 +273,15 @@ class GeometryBuilder {
    */
   finish() {
     this.renderer._pInst.pop();
+    // expose the material parts only when there really are multiple materials,
+    // and not while custom per-vertex attributes are in play (those aren't
+    // split per part yet). single-material builds keep the geometry as its own
+    // part, so nothing changes for them (zero regression).
+    const hasUserProps =
+      Object.keys(this.geometry.userVertexProperties).length > 0;
+    if (this.parts.length >= 2 && !hasUserProps) {
+      this.geometry.parts = this.parts;
+    }
     return this.geometry;
   }
 }
