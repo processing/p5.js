@@ -1473,12 +1473,24 @@ export class Renderer3D extends Renderer {
     else if (this.states._useNormalMaterial) {
       return this._getNormalShader();
     }
-    // Use light shader if lighting or textures are enabled
+    // Use light shader if lighting or textures are enabled. only reach for the
+    // heavier map variant when the current part actually binds an mtl map.
     else if (this.states.enableLighting || this.states._tex) {
-      return this._getLightShader();
+      return this._getLightShader(this._hasActiveTextureMap());
     }
     // Default to color shader if no other conditions are met
     return this._getColorShader();
+  }
+
+  // true when the current material has any mtl texture map bound (specular,
+  // ambient or shininess). drives both shader-variant selection and whether
+  // the map uniforms are worth binding at all.
+  _hasActiveTextureMap() {
+    return !!(
+      this.states._specularTex ||
+      this.states._ambientTex ||
+      this.states._shininessTex
+    );
   }
 
   baseMaterialShader() {
@@ -1586,19 +1598,24 @@ export class Renderer3D extends Renderer {
       fillShader.setUniform('uSampler', this.states._tex || empty);
     }
     this._settingFillUniforms = false;
-    // specular map (map_Ks): always bind so the sampler is valid; the bool gates
-    // whether the shader actually uses it, so untextured draws are unaffected.
-    fillShader.setUniform('uHasSpecularTex', !!this.states._specularTex);
-    fillShader.setUniform('uSpecularSampler', this.states._specularTex || empty);
-    // ambient map (map_Ka): same always-bind + bool-gate pattern
-    fillShader.setUniform('uHasAmbientTex', !!this.states._ambientTex);
-    fillShader.setUniform('uAmbientSampler', this.states._ambientTex || empty);
-    // shininess map (map_Ns): scales the base shininess by the map's red channel
-    fillShader.setUniform('uHasShininessTex', !!this.states._shininessTex);
-    fillShader.setUniform(
-      'uShininessSampler',
-      this.states._shininessTex || empty
-    );
+    // mtl texture maps only exist in the USE_TEXTURE_MAPS shader variant, which
+    // is only selected when a part actually binds one. so for the common case
+    // (lit scene, no maps) we skip all of these setUniform calls entirely and
+    // the plain phong shader carries none of the map uniforms.
+    if (this._hasActiveTextureMap()) {
+      // specular map (map_Ks)
+      fillShader.setUniform('uHasSpecularTex', !!this.states._specularTex);
+      fillShader.setUniform('uSpecularSampler', this.states._specularTex || empty);
+      // ambient map (map_Ka)
+      fillShader.setUniform('uHasAmbientTex', !!this.states._ambientTex);
+      fillShader.setUniform('uAmbientSampler', this.states._ambientTex || empty);
+      // shininess map (map_Ns): scales base shininess by the map's red channel
+      fillShader.setUniform('uHasShininessTex', !!this.states._shininessTex);
+      fillShader.setUniform(
+        'uShininessSampler',
+        this.states._shininessTex || empty
+      );
+    }
     fillShader.setUniform(
       'uTint',
       this.states.tint?._getRGBA([255, 255, 255, 255]) ?? [255, 255, 255, 255]

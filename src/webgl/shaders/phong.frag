@@ -10,12 +10,19 @@ uniform vec4 uEmissiveMatColor;
 uniform vec4 uTint;
 uniform sampler2D uSampler;
 uniform bool isTexture;
+
+// the mtl texture maps only exist in the USE_TEXTURE_MAPS variant of this
+// shader. models that don't use any map get the plain phong shader instead,
+// so none of these samplers/branches are even compiled in for them. dave's
+// call: separate variant rather than branching in one shader that everyone pays for.
+#ifdef USE_TEXTURE_MAPS
 uniform sampler2D uSpecularSampler;
 uniform bool uHasSpecularTex;
 uniform sampler2D uAmbientSampler;
 uniform bool uHasAmbientTex;
 uniform sampler2D uShininessSampler;
 uniform bool uHasShininessTex;
+#endif
 
 IN vec3 vNormal;
 IN vec2 vTexCoord;
@@ -60,16 +67,24 @@ void main(void) {
     // so hooks users don't have to think about premultiplied alpha.
     inputs.color.rgb /= inputs.color.a;
   }
+  inputs.metalness = uMetallic;
+#ifdef USE_TEXTURE_MAPS
+  // map variant: shininess/ambient/specular can be modulated by their maps
   inputs.shininess = uHasShininessTex
       ? uShininess * TEXTURE(uShininessSampler, vTexCoord).r
       : uShininess;
-  inputs.metalness = uMetallic;
   inputs.ambientMaterial = uHasAmbientTex
       ? TEXTURE(uAmbientSampler, vTexCoord).rgb * uAmbientMatColor.rgb
       : (uHasSetAmbient ? uAmbientMatColor.rgb : inputs.color.rgb);
   inputs.specularMaterial = uHasSpecularTex
       ? TEXTURE(uSpecularSampler, vTexCoord).rgb * uSpecularMatColor.rgb
       : uSpecularMatColor.rgb;
+#else
+  // default variant: plain phong, exactly as before this feature existed
+  inputs.shininess = uShininess;
+  inputs.ambientMaterial = uHasSetAmbient ? uAmbientMatColor.rgb : inputs.color.rgb;
+  inputs.specularMaterial = uSpecularMatColor.rgb;
+#endif
   inputs.emissiveMaterial = uEmissiveMatColor.rgb;
   inputs = HOOK_getPixelInputs(inputs);
 
