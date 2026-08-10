@@ -189,10 +189,15 @@ function loading(p5, fn) {
    * URLs such as `'https://example.com/model.obj'` may be blocked due to browser
    * security. The `path` parameter can also be defined as a [`Request`](https://developer.mozilla.org/en-US/docs/Web/API/Request)
    * object for more advanced usage.
-   * Note: When loading a `.obj` file that references materials stored in
-   * `.mtl` files, p5.js will attempt to load and apply those materials.
-   * To ensure that the `.obj` file reads the `.mtl` file correctly include the
-   * `.mtl` file alongside it.
+   * note: when a `.obj` file references materials in a `.mtl` file, p5.js loads
+   * and applies them. a model with several materials is drawn with each material
+   * on its own part, so a multi-material model comes out looking the way it was
+   * exported instead of one flat grey shape. the texture maps a material can use
+   * are the diffuse (`map_Kd`), specular (`map_Ks`), ambient (`map_Ka`),
+   * shininess (`map_Ns`), and normal/bump (`map_Bump`) maps. keep the `.mtl`
+   * file and its texture images next to the `.obj` so the paths resolve. a
+   * texture that fails to load is skipped with a warning rather than failing the
+   * whole model.
    *
    * The first way to call `loadModel()` has three optional parameters after the
    * file path. The first optional parameter, `successCallback`, is a function
@@ -1109,6 +1114,13 @@ function loading(p5, fn) {
    * a file with <a href="#/p5/loadGeometry">loadGeometry()</a>.
    *
    * Note: `model()` can only be used in WebGL mode.
+   *
+   * the whole idea here is that you never have to think about how many materials
+   * a model has. if it was exported with several (say a character with skin, a
+   * shirt, and shoes), each one is drawn on its own part with its own colour and
+   * textures, and you still just call `model(shape)`. one material or twenty,
+   * the call is the same, so a model loaded from blender or sketchfab shows up
+   * looking the way its maker intended instead of one flat grey shape.
    *
    * ```js example
    * // Click and drag the mouse to view the scene from different angles.

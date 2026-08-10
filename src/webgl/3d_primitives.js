@@ -113,6 +113,15 @@ function primitives3D(p5, fn) {
    * once to create the new 3D shape.
    * Note: `buildGeometry()` can only be used in WebGL mode.
    *
+   * if you change the material partway through the callback, say
+   * `texture(wood)` then a `box()`, then `texture(metal)` then a `sphere()`,
+   * each switch starts a new part. the built geometry then draws with both
+   * materials, the same way a multi-material model loaded from a file does. the
+   * thinking is that building a shape in code and loading one from disk should
+   * feel identical, so you don't learn two different mental models for the same
+   * result. a plain `fill()` change does not split it, since a flat colour is
+   * kept per vertex.
+   *
    * @method buildGeometry
    * @param {Function} callback function that draws the shape.
    * @returns {p5.Geometry} new 3D shape.
