@@ -44,12 +44,22 @@ function rendererWebGPU(p5, fn) {
     p5;
 
   class StorageBuffer {
-    constructor(buffer, size, renderer, schema = null) {
+    constructor(
+      buffer,
+      size,
+      renderer,
+      schema = null,
+      arrayType = Float32Array
+    ) {
       this._isStorageBuffer = true;
       this.buffer = buffer;
       this.size = size;
       this._renderer = renderer;
       this._schema = schema;
+      // Struct buffers are always packed as floats
+      this._arrayType = schema !== null ? Float32Array : arrayType;
+      // Set once an element type mismatch has been reported for this buffer
+      this._warnedElementType = false;
     }
 
     /**
@@ -151,24 +161,25 @@ function rendererWebGPU(p5, fn) {
         }
         device.queue.writeBuffer(this.buffer, 0, packed);
       } else {
-        // Buffer was created with a float array
-        let floatData;
-        if (data instanceof Float32Array) {
-          floatData = data;
+        // Buffer was created with a number array
+        const ArrayType = this._arrayType;
+        let typedData;
+        if (data instanceof ArrayType) {
+          typedData = data;
         } else if (Array.isArray(data)) {
-          floatData = new Float32Array(data);
+          typedData = new ArrayType(data);
         } else {
           throw new Error(
-            'update() expects a Float32Array or array of numbers for this buffer'
+            `update() expects a ${ArrayType.name} or array of numbers for this buffer`
           );
         }
 
-        if (floatData.byteLength > this.size) {
+        if (typedData.byteLength > this.size) {
           throw new Error(
-            `update() data (${floatData.byteLength} bytes) exceeds buffer size (${this.size} bytes)`
+            `update() data (${typedData.byteLength} bytes) exceeds buffer size (${this.size} bytes)`
           );
         }
-        device.queue.writeBuffer(this.buffer, 0, floatData);
+        device.queue.writeBuffer(this.buffer, 0, typedData);
       }
     }
 
@@ -238,8 +249,11 @@ function rendererWebGPU(p5, fn) {
       const mappedRange = stagingBuffer.getMappedRange(0, this.size);
 
       // Copy before unmapping because mapped memory becomes invalid after unmap
-      const rawCopy = new Float32Array(mappedRange.byteLength / 4);
-      rawCopy.set(new Float32Array(mappedRange));
+      const ArrayType = this._arrayType;
+      const rawCopy = new ArrayType(
+        mappedRange.byteLength / ArrayType.BYTES_PER_ELEMENT
+      );
+      rawCopy.set(new ArrayType(mappedRange));
 
       stagingBuffer.unmap();
       stagingBuffer.destroy();
@@ -2134,6 +2148,7 @@ function rendererWebGPU(p5, fn) {
                   `Use shader.setUniform("${entry.storage.name}", storageBuffer)`
               );
             }
+            this._checkStorageElementType(entry.storage, uniform._cachedData);
             bgEntries.push({
               binding: entry.binding,
               resource: { buffer: uniform._cachedData.buffer }
@@ -2464,7 +2479,7 @@ function rendererWebGPU(p5, fn) {
       // Extract storage buffers
       const storageBuffers = {};
       const storageRegex =
-        /@group\((\d+)\)\s*@binding\((\d+)\)\s*var<storage,\s*(read|read_write)>\s+(\w+)\s*:\s*array<\w+>/g;
+        /@group\((\d+)\)\s*@binding\((\d+)\)\s*var<storage,\s*(read|read_write)>\s+(\w+)\s*:\s*array<(\w+|atomic<\w+>)>/g;
 
       // Track which bindings are taken by the struct properties we've parsed
       // (the rest should be textures/samplers)
@@ -2517,7 +2532,7 @@ function rendererWebGPU(p5, fn) {
 
         // Parse storage buffers
         while ((match = storageRegex.exec(src)) !== null) {
-          const [_, group, binding, accessMode, name] = match;
+          const [_, group, binding, accessMode, name, elementType] = match;
           const groupIndex = parseInt(group);
           const bindingIndex = parseInt(binding);
 
@@ -2536,7 +2551,8 @@ function rendererWebGPU(p5, fn) {
             name,
             accessMode: finalAccessMode, // 'read' or 'read_write'
             isStorage: true,
-            type: 'storage'
+            type: 'storage',
+            elementType // e.g. 'f32', 'u32', 'atomic<u32>'
           };
         }
       }
@@ -2583,6 +2599,13 @@ function rendererWebGPU(p5, fn) {
           uniform,
           uniform._cachedData
         );
+      } else if (shader._storageBuffers) {
+        // The shader has been parsed, so we know what element type it
+        // declares for this buffer and can check it early
+        const parsedStorage = shader._storageBuffers.find(
+          s => s.name === uniform.name
+        );
+        this._checkStorageElementType(parsedStorage, data);
       }
       shader.buffersDirty.add(uniform.group * 1000 + uniform.binding);
     }
@@ -3906,6 +3929,45 @@ ${hookUniformFields}}
       return result;
     }
 
+    /**
+     * Warns when the typed array a storage buffer was created with doesn't
+     * match the element type the shader declares for it, since the bytes
+     * would otherwise be silently reinterpreted.
+     *
+     * Both call sites can run every frame, so this warns at most once per
+     * buffer rather than spamming the console from inside a draw loop.
+     * @private
+     */
+    _checkStorageElementType(parsedStorage, storageBuffer) {
+      if (p5.disableFriendlyErrors) return;
+      if (storageBuffer._warnedElementType) return;
+      if (!parsedStorage || !parsedStorage.elementType) return;
+      // Struct buffers are always packed as floats
+      if (storageBuffer._schema !== null) return;
+
+      // atomic<u32> and friends store their underlying type
+      const elementType = parsedStorage.elementType.replace(
+        /^atomic<(\w+)>$/,
+        '$1'
+      );
+
+      const expected = {
+        f32: Float32Array,
+        u32: Uint32Array,
+        i32: Int32Array
+      }[elementType];
+      if (!expected || storageBuffer._arrayType === expected) return;
+
+      storageBuffer._warnedElementType = true;
+      p5._friendlyError(
+        `The storage buffer "${parsedStorage.name}" is declared as ` +
+          `array<${parsedStorage.elementType}> in the shader, but it was created ` +
+          `with a ${storageBuffer._arrayType.name}. Create it with a ` +
+          `${expected.name} instead so the values are read back correctly.`,
+        'createStorage'
+      );
+    }
+
     createStorage(dataOrCount) {
       const device = this.device;
 
@@ -3970,22 +4032,25 @@ ${hookUniformFields}}
       // Determine buffer size and initial data
       let size, initialData;
       if (typeof dataOrCount === 'number') {
-        // createStorage(count) - zero-initialized
+        // createStorage(count) - zero-initialized, nothing to infer a type from
         size = dataOrCount * 4; // floats are 4 bytes
         initialData = new Float32Array(dataOrCount);
       } else {
         // createStorage(array) - from data
-        if (dataOrCount instanceof Float32Array) {
+        if (
+          ArrayBuffer.isView(dataOrCount) &&
+          !(dataOrCount instanceof DataView)
+        ) {
           initialData = dataOrCount;
         } else if (Array.isArray(dataOrCount)) {
+          // Plain arrays default to floats for back compat
           initialData = new Float32Array(dataOrCount);
         } else {
-          throw new Error(
-            'createStorage expects a number or array/Float32Array'
-          );
+          throw new Error('createStorage expects a number or array/TypedArray');
         }
         size = initialData.byteLength;
       }
+      const ArrayType = initialData.constructor;
 
       // Align to 16 bytes (WGSL storage buffer alignment requirement)
       size = Math.ceil(size / 16) * 16;
@@ -4002,12 +4067,18 @@ ${hookUniformFields}}
 
       // Write initial data if provided
       if (initialData.length > 0) {
-        const mapping = new Float32Array(buffer.getMappedRange());
+        const mapping = new ArrayType(buffer.getMappedRange());
         mapping.set(initialData);
         buffer.unmap();
       }
 
-      const storageBuffer = new StorageBuffer(buffer, size, this);
+      const storageBuffer = new StorageBuffer(
+        buffer,
+        size,
+        this,
+        null,
+        ArrayType
+      );
 
       // Track for cleanup
       this._storageBuffers.add(storageBuffer);
