@@ -411,6 +411,23 @@ visualSuite('WebGL', function () {
         screenshot();
       }
     );
+    visualTest(
+      'a normal-mapped sphere shows surface detail under light',
+      async function (p5, screenshot) {
+        p5.createCanvas(50, 50, p5.WEBGL);
+        // bump_sphere.obj is a 2-material sphere with a normal map on both halves,
+        // so under a light the whole surface shows bump detail (baked tangents)
+        const model = await new Promise(resolve =>
+          p5.loadModel('test/unit/assets/bump_sphere.obj', resolve)
+        );
+        p5.background(255);
+        p5.pointLight(255, 255, 255, 100, -100, 200);
+        p5.noStroke();
+        p5.scale(22);
+        p5.model(model);
+        screenshot();
+      }
+    );
   });
 
   visualSuite('vertexProperty', function () {

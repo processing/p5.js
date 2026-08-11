@@ -105,4 +105,10 @@ suite('mtlToPartState', function () {
     // the map scales a base shininess, which defaults to 1
     expect(state.shininess).toEqual(1);
   });
+
+  test('a normal map lands on the part state', function () {
+    const img = { width: 1, height: 1 };
+    const state = mtlToPartState({ normalTexture: img });
+    expect(state.normalTexture).toBe(img);
+  });
 });

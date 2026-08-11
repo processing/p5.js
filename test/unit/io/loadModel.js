@@ -116,6 +116,24 @@ suite('loadModel', function () {
     }
   });
 
+  test('a normal-mapped OBJ carries the normal map on its part', async function () {
+    const fakeImage = { width: 1, height: 1 };
+    mockP5Prototype.loadImage = async () => fakeImage;
+    try {
+      const model = await mockP5Prototype.loadModel(
+        '/test/unit/assets/normal_mapped.obj'
+      );
+      // two materials, so two parts
+      assert.equal(model.parts.length, 2);
+      // the part with the normal map carries it
+      const normalMapped = model.parts.find(p => p.partState.normalTexture);
+      assert.ok(normalMapped, 'a part has the normal map');
+      assert.equal(normalMapped.partState.normalTexture, fakeImage);
+    } finally {
+      delete mockP5Prototype.loadImage;
+    }
+  });
+
   test('a texture that fails to load is skipped without failing the model', async function () {
     mockP5Prototype.loadImage = async () => {
       throw new Error('Not Found');

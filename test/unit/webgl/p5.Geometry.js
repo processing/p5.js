@@ -15,6 +15,56 @@ suite('p5.Geometry', function () {
     myp5.remove();
   });
 
+  suite('computeTangents', function () {
+    test('a uv-mapped triangle gets a +u tangent with correct handedness',
+      function () {
+        const geom = new p5.Geometry();
+        // triangle in the xy plane, facing +z, uvs aligned to x (u) and y (v)
+        geom.vertices.push(
+          myp5.createVector(0, 0, 0),
+          myp5.createVector(1, 0, 0),
+          myp5.createVector(0, 1, 0)
+        );
+        geom.uvs.push(0, 0, 1, 0, 0, 1);
+        geom.vertexNormals.push(
+          myp5.createVector(0, 0, 1),
+          myp5.createVector(0, 0, 1),
+          myp5.createVector(0, 0, 1)
+        );
+        geom.faces.push([0, 1, 2]);
+
+        geom.computeTangents();
+
+        // 4 components per vertex (x, y, z, handedness)
+        expect(geom.vertexTangents.length).toEqual(12);
+        // tangent points along +u (the +x direction here), handedness +1
+        for (let i = 0; i < 3; i++) {
+          expect(geom.vertexTangents[i * 4]).toBeCloseTo(1, 5);
+          expect(geom.vertexTangents[i * 4 + 1]).toBeCloseTo(0, 5);
+          expect(geom.vertexTangents[i * 4 + 2]).toBeCloseTo(0, 5);
+          expect(geom.vertexTangents[i * 4 + 3]).toEqual(1);
+        }
+      }
+    );
+
+    test('no uvs means no tangents', function () {
+      const geom = new p5.Geometry();
+      geom.vertices.push(
+        myp5.createVector(0, 0, 0),
+        myp5.createVector(1, 0, 0),
+        myp5.createVector(0, 1, 0)
+      );
+      geom.vertexNormals.push(
+        myp5.createVector(0, 0, 1),
+        myp5.createVector(0, 0, 1),
+        myp5.createVector(0, 0, 1)
+      );
+      geom.faces.push([0, 1, 2]);
+      geom.computeTangents();
+      expect(geom.vertexTangents.length).toEqual(0);
+    });
+  });
+
   suite('generating edge geometry', function () {
     let geom;
 

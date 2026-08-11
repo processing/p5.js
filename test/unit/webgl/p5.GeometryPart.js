@@ -43,7 +43,8 @@ suite('p5.GeometryPart', function () {
       texture: null,
       specularTexture: null,
       ambientTexture: null,
-      shininessTexture: null
+      shininessTexture: null,
+      normalTexture: null
     });
   });
 
