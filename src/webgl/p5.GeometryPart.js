@@ -16,7 +16,8 @@ function createPartState() {
     texture: null, // map_Kd -> p5.Image | null
     specularTexture: null, // map_Ks -> p5.Image | null
     ambientTexture: null, // map_Ka -> p5.Image | null
-    shininessTexture: null // map_Ns -> p5.Image | null
+    shininessTexture: null, // map_Ns -> p5.Image | null
+    normalTexture: null // map_Bump -> p5.Image | null
   };
 }
 
@@ -30,6 +31,8 @@ class GeometryPart {
 
     this.vertices = [];
     this.vertexNormals = [];
+    // surface tangents for normal mapping, flat [x, y, z, w] per vertex
+    this.vertexTangents = [];
     this.faces = [];
     this.uvs = [];
     this.vertexColors = [];
