@@ -17,7 +17,8 @@ function createPartState() {
     specularTexture: null, // map_Ks -> p5.Image | null
     ambientTexture: null, // map_Ka -> p5.Image | null
     shininessTexture: null, // map_Ns -> p5.Image | null
-    normalTexture: null // map_Bump -> p5.Image | null
+    normalTexture: null, // map_Bump -> p5.Image | null
+    normalScale: 1 // map_Bump -bm -> bump strength multiplier
   };
 }
 

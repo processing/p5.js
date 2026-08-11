@@ -152,6 +152,7 @@ export class Renderer3D extends Renderer {
     this.states._ambientTex = null;
     this.states._shininessTex = null;
     this.states._normalTex = null;
+    this.states._normalScale = 1;
     this.states.textureMode = constants.IMAGE;
     this.states.textureWrapX = constants.CLAMP;
     this.states.textureWrapY = constants.CLAMP;
@@ -651,6 +652,19 @@ export class Renderer3D extends Renderer {
     this._useVertexColor =
       geometry.vertexColors.length > 0 && !geometry.vertexColors.isDefault;
 
+    // a normal map needs per-vertex tangents. loaded models compute them at load,
+    // but geometry drawn with bumpTexture() (built shapes, immediate mode) won't
+    // have them, so build them on demand once (cached on the geometry).
+    if (
+      this.states._normalTex &&
+      geometry.computeTangents &&
+      (!geometry.vertexTangents || geometry.vertexTangents.length === 0) &&
+      geometry.uvs.length > 0 &&
+      geometry.vertexNormals.length > 0
+    ) {
+      geometry.computeTangents();
+    }
+
     const shader =
       !this._drawingFilter && this.states.userFillShader
         ? this.states.userFillShader
@@ -715,6 +729,9 @@ export class Renderer3D extends Renderer {
     }
     if (partState.normalTexture) {
       this.states.setValue('_normalTex', partState.normalTexture);
+      if (partState.normalScale != null) {
+        this.states.setValue('_normalScale', partState.normalScale);
+      }
     }
   }
 
@@ -1634,6 +1651,7 @@ export class Renderer3D extends Renderer {
       // normal map (map_Bump): perturbs the surface normal in tangent space
       fillShader.setUniform('uHasNormalMap', !!this.states._normalTex);
       fillShader.setUniform('uNormalSampler', this.states._normalTex || empty);
+      fillShader.setUniform('uNormalScale', this.states._normalScale);
     }
     fillShader.setUniform(
       'uTint',

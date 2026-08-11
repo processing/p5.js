@@ -24,6 +24,7 @@ uniform sampler2D uShininessSampler;
 uniform bool uHasShininessTex;
 uniform sampler2D uNormalSampler;
 uniform bool uHasNormalMap;
+uniform float uNormalScale;
 #endif
 
 IN vec3 vNormal;
@@ -71,6 +72,8 @@ void main(void) {
     T = normalize(T - N * dot(N, T));
     vec3 B = cross(N, T) * vTangent.w;
     vec3 mapN = TEXTURE(uNormalSampler, vTexCoord).rgb * 2.0 - 1.0;
+    // scale the tangent-space slope so the bump strength can be tuned (-bm)
+    mapN.xy *= uNormalScale;
     N = normalize(mat3(T, B, N) * mapN);
   }
 #endif

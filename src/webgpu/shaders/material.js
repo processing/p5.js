@@ -13,6 +13,7 @@ struct MaterialUniforms {
   uShininess: f32,
   uMetallic: f32,
   uHasNormalMap: u32,
+  uNormalScale: f32,
 }
 
 // Group 0: Lighting
@@ -395,7 +396,9 @@ ${useTextureMaps ? `  if (material.uHasNormalMap == 1) {
     var T = normalize(input.vTangent.xyz);
     T = normalize(T - N * dot(N, T));
     let B = cross(N, T) * input.vTangent.w;
-    let mapN = textureSample(uNormalSampler, uNormalSampler_sampler, input.vTexCoord).rgb * 2.0 - 1.0;
+    var mapN = textureSample(uNormalSampler, uNormalSampler_sampler, input.vTexCoord).rgb * 2.0 - 1.0;
+    // scale the tangent-space slope so the bump strength can be tuned (-bm)
+    mapN = vec3<f32>(mapN.xy * material.uNormalScale, mapN.z);
     N = normalize(mat3x3<f32>(T, B, N) * mapN);
   }
 ` : ''}  var inputs = Inputs(

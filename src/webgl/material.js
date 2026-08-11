@@ -2567,6 +2567,29 @@ function material(p5, fn) {
   };
 
   /**
+   * Sets a normal (bump) map to add surface detail to shapes under lighting.
+   *
+   * `bumpTexture()` works like <a href="#/p5/texture">texture()</a>, but for a
+   * tangent-space normal map. Call it before drawing a shape and its surface
+   * normals get perturbed by the map, so lights react to bumps that aren't
+   * actually in the geometry. Pass an optional `scale` to tune the bump strength.
+   *
+   * Call `bumpTexture(null)` to turn it off, or scope it between
+   * <a href="#/p5/push">push()</a> and <a href="#/p5/pop">pop()</a>.
+   *
+   * @method bumpTexture
+   * @param {p5.Image|p5.MediaElement|p5.Graphics|p5.Texture|p5.Framebuffer|p5.FramebufferTexture} tex normal map, or `null` to clear it.
+   * @param {Number} [scale] bump strength multiplier. Defaults to 1.
+   * @chainable
+   */
+  fn.bumpTexture = function (tex, scale) {
+    this._assert3d('bumpTexture');
+    this._renderer.bumpTexture(tex || null, scale);
+
+    return this;
+  };
+
+  /**
    * Changes the coordinate system used for textures when they’re applied to
    * custom shapes.
    *
@@ -3817,6 +3840,13 @@ function material(p5, fn) {
     this.states.setValue('_useNormalMaterial', false);
     this.states.setValue('_tex', tex);
     this.states.setValue('fillColor', new Color([1, 1, 1]));
+  };
+
+  Renderer3D.prototype.bumpTexture = function (tex, scale = 1) {
+    // null clears the map (back to the plain shader variant); a value sets the
+    // normal map + its strength. push()/pop() scopes it like any other state.
+    this.states.setValue('_normalTex', tex || null);
+    this.states.setValue('_normalScale', tex ? scale : 1);
   };
 
   Renderer3D.prototype.normalMaterial = function (...args) {
