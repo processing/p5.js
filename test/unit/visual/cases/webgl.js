@@ -932,6 +932,59 @@ visualSuite('WebGL', function () {
       p5.model(geom);
       screenshot();
     });
+
+    visualTest(
+      'a texture change splits into parts that each keep their texture',
+      async function (p5, screenshot) {
+        p5.createCanvas(50, 50, p5.WEBGL);
+        const texA = await p5.loadImage('test/unit/assets/cat.jpg');
+        const texB = await p5.loadImage('test/unit/assets/spheremap.jpg');
+        const geom = p5.buildGeometry(() => {
+          p5.push();
+          p5.translate(-12, 0, 0);
+          p5.texture(texA);
+          p5.box(12);
+          p5.pop();
+          p5.push();
+          p5.translate(12, 0, 0);
+          p5.texture(texB);
+          p5.box(12);
+          p5.pop();
+        });
+        p5.background(255);
+        p5.rotateX(0.4);
+        p5.rotateY(0.4);
+        p5.noStroke();
+        p5.model(geom);
+        screenshot();
+      }
+    );
+
+    visualTest(
+      'a textured part and an untextured part both render',
+      async function (p5, screenshot) {
+        p5.createCanvas(50, 50, p5.WEBGL);
+        const tex = await p5.loadImage('test/unit/assets/cat.jpg');
+        const geom = p5.buildGeometry(() => {
+          p5.push();
+          p5.translate(-12, 0, 0);
+          p5.texture(tex);
+          p5.box(12);
+          p5.pop();
+          p5.push();
+          p5.translate(12, 0, 0);
+          p5.fill('red');
+          p5.box(12);
+          p5.pop();
+        });
+        p5.background(255);
+        p5.rotateX(0.4);
+        p5.rotateY(0.4);
+        p5.noStroke();
+        p5.model(geom);
+        screenshot();
+      }
+    );
   });
 
   visualSuite('font data', () => {
