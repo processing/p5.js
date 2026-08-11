@@ -31,9 +31,3 @@ jobs:
         run: npm test
         env:
           CI: true
-      - name: report test coverage
-        if: always() && hashFiles('coverage/coverage-final.json') != ''
-        uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de # v5
-        with:
-          files: coverage/coverage-final.json
-          fail_ci_if_error: false
