@@ -428,6 +428,37 @@ visualSuite('WebGL', function () {
         screenshot();
       }
     );
+
+    visualTest(
+      'bumpTexture() adds surface detail to a built shape',
+      function (p5, screenshot) {
+        p5.createCanvas(50, 50, p5.WEBGL);
+        // a procedural tangent-space normal map with diagonal ridges
+        const nmap = p5.createImage(32, 32);
+        nmap.loadPixels();
+        for (let y = 0; y < nmap.height; y++) {
+          for (let x = 0; x < nmap.width; x++) {
+            const s = Math.sin(((x + y) / nmap.width) * Math.PI * 6) * 0.8;
+            const nx = s, ny = s, nz = 1;
+            const inv = 1 / Math.sqrt(nx * nx + ny * ny + nz * nz);
+            const off = (x + y * nmap.width) * 4;
+            nmap.pixels[off] = (nx * inv * 0.5 + 0.5) * 255;
+            nmap.pixels[off + 1] = (ny * inv * 0.5 + 0.5) * 255;
+            nmap.pixels[off + 2] = (nz * inv * 0.5 + 0.5) * 255;
+            nmap.pixels[off + 3] = 255;
+          }
+        }
+        nmap.updatePixels();
+        p5.background(255);
+        p5.pointLight(255, 255, 255, 50, -50, 200);
+        p5.noStroke();
+        p5.fill(200);
+        // tangents are built on demand for a shape that has none of its own
+        p5.bumpTexture(nmap);
+        p5.sphere(20);
+        screenshot();
+      }
+    );
   });
 
   visualSuite('vertexProperty', function () {

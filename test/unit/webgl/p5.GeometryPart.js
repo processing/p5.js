@@ -44,7 +44,8 @@ suite('p5.GeometryPart', function () {
       specularTexture: null,
       ambientTexture: null,
       shininessTexture: null,
-      normalTexture: null
+      normalTexture: null,
+      normalScale: 1
     });
   });
 
