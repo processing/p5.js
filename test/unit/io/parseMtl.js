@@ -48,6 +48,21 @@ suite('parseMtlData', function () {
     expect(materials.a.diffuseColor).toEqual([0, 0, 0]);
     expect(Object.keys(materials)).toEqual(['a']);
   });
+
+  test('a Kd-only material parses without error', function () {
+    // the common case: a material that only sets a diffuse colour
+    const materials = parseMtlData('newmtl plain\nKd 0.2 0.4 0.6');
+    expect(materials.plain.diffuseColor).toEqual([0.2, 0.4, 0.6]);
+    expect(materials.plain.texturePath).toBeUndefined();
+  });
+
+  test('a malformed mtl does not throw', function () {
+    // an unknown token, a token missing its value, and a blank line
+    const mtl = 'newmtl weird\nKd 1 0 0\nfoo bar baz\nNs\n\nsomething_else';
+    expect(() => parseMtlData(mtl)).not.toThrow();
+    // the valid tokens around the junk are still read
+    expect(parseMtlData(mtl).weird.diffuseColor).toEqual([1, 0, 0]);
+  });
 });
 
 suite('mtlToPartState', function () {
