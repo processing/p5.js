@@ -35,13 +35,13 @@ import { translator } from './internationalization';
 Without internationalization you might log a message with the text inline.
 
 ```js
-console.log('Loading your sketch right now!')
+console.log('Loading your sketch right now!');
 ```
 
 Instead, you use `translator`:
 
 ```js
-console.log(translator('sketch.loading'))
+console.log(translator('sketch.loading'));
 ```
 
 This tells the translator to get the "`sketch.loading`" message in whatever language we've detected that the user prefers.
@@ -57,7 +57,7 @@ console.log('I couldnt find ' + file.name + '. Are you sure it's there?')
 would become something like
 
 ```js
-console.log(translator('fileLoading.notFound', { fileName: file.name }))
+console.log(translator('fileLoading.notFound', { fileName: file.name }));
 ```
 
 Translations like this expect the variables it uses to have a certain name, so make sure you use that. Check a translation file (look in `translations/{YOUR_LANGUAGE}/`) to see what the variable name is. You'll find the translation under the object path in the translation key.
@@ -87,7 +87,8 @@ This will generate you a fresh translations file in `translations/{LANGUAGE_CODE
 You'll also need to add an entry for it in [`translations/index.js`](../translations/index.js) and [`translations/dev.js`](../translations/dev.js). You can follow the pattern used in that file for `en` and `es`.
 
 ### Testing changes
-The bulk of translations are not included in the final library, but are hosted online and are automatically downloaded by p5.js when it needs them. Updates to these only happen whenever a new version of p5.js is released. 
+
+The bulk of translations are not included in the final library, but are hosted online and are automatically downloaded by p5.js when it needs them. Updates to these only happen whenever a new version of p5.js is released.
 
 However, if you want to see your changes (or any other changes which aren't released yet), you can simply run `npm run dev` which will build p5.js configured to use the translation files present locally on your computer, instead of the ones on the internet.
 

@@ -1,25 +1,25 @@
 import p5 from '../../../src/app.js';
 import { vi } from 'vitest';
 
-suite('p5.GeometryPart', function() {
+suite('p5.GeometryPart', function () {
   let myp5;
 
-  beforeAll(function() {
-    myp5 = new p5(function(p) {
-      p.setup = function() {};
-      p.draw = function() {};
+  beforeAll(function () {
+    myp5 = new p5(function (p) {
+      p.setup = function () {};
+      p.draw = function () {};
     });
   });
 
-  afterAll(function() {
+  afterAll(function () {
     myp5.remove();
   });
 
-  test('is registered on p5', function() {
+  test('is registered on p5', function () {
     expect(p5.GeometryPart).toBeDefined();
   });
 
-  test('starts with empty buffers', function() {
+  test('starts with empty buffers', function () {
     const part = new p5.GeometryPart('_part_test');
     expect(part.vertices).toEqual([]);
     expect(part.vertexNormals).toEqual([]);
@@ -28,12 +28,12 @@ suite('p5.GeometryPart', function() {
     expect(part.vertexColors).toEqual([]);
   });
 
-  test('keeps the gid it was given', function() {
+  test('keeps the gid it was given', function () {
     const part = new p5.GeometryPart('parent|part0');
     expect(part.gid).toEqual('parent|part0');
   });
 
-  test('defaults part state to nulls', function() {
+  test('defaults part state to nulls', function () {
     const part = new p5.GeometryPart('_part_test');
     expect(part.partState).toEqual({
       fill: null,
@@ -44,52 +44,69 @@ suite('p5.GeometryPart', function() {
     });
   });
 
-  test('uses the part state it was given', function() {
+  test('uses the part state it was given', function () {
     const state = { fill: [255, 0, 0], opacity: 0.5 };
     const part = new p5.GeometryPart('_part_test', state);
     expect(part.partState).toBe(state);
   });
 
-  test('each part gets its own buffers', function() {
+  test('each part gets its own buffers', function () {
     const a = new p5.GeometryPart('a');
     const b = new p5.GeometryPart('b');
     a.vertices.push([0, 0, 0]);
     expect(b.vertices).toEqual([]);
   });
 
-  suite('single-part wrap on p5.Geometry', function() {
-    test('a plain geometry gets exactly one part', function() {
-      const geom = new p5.Geometry(undefined, undefined, undefined,
-        myp5._renderer);
+  suite('single-part wrap on p5.Geometry', function () {
+    test('a plain geometry gets exactly one part', function () {
+      const geom = new p5.Geometry(
+        undefined,
+        undefined,
+        undefined,
+        myp5._renderer
+      );
       expect(geom.parts.length).toEqual(1);
     });
 
-    test('the part is a live view onto the geometry buffers', function() {
-      const geom = new p5.Geometry(undefined, undefined, undefined,
-        myp5._renderer);
+    test('the part is a live view onto the geometry buffers', function () {
+      const geom = new p5.Geometry(
+        undefined,
+        undefined,
+        undefined,
+        myp5._renderer
+      );
       expect(geom.parts[0].vertices).toBe(geom.vertices);
       expect(geom.parts[0].faces).toBe(geom.faces);
     });
 
-    test('a single-material geometry is its own part', function() {
-      const geom = new p5.Geometry(undefined, undefined, undefined,
-        myp5._renderer);
+    test('a single-material geometry is its own part', function () {
+      const geom = new p5.Geometry(
+        undefined,
+        undefined,
+        undefined,
+        myp5._renderer
+      );
       geom.gid = 'my-model';
       expect(geom.parts[0]).toBe(geom);
       expect(geom.parts[0].gid).toEqual('my-model');
     });
 
-    test('a built-in primitive also gets one part', function() {
-      const geom = new p5.Geometry(1, 1, function() {
-        this.vertices.push(new p5.Vector(0, 0, 0));
-      }, myp5._renderer);
+    test('a built-in primitive also gets one part', function () {
+      const geom = new p5.Geometry(
+        1,
+        1,
+        function () {
+          this.vertices.push(new p5.Vector(0, 0, 0));
+        },
+        myp5._renderer
+      );
       expect(geom.parts.length).toEqual(1);
       expect(geom.parts[0].vertices.length).toEqual(1);
     });
   });
 
-  suite('multi-material rendering', function() {
-    test('draws a fill per part and a stroke for the model', async function() {
+  suite('multi-material rendering', function () {
+    test('draws a fill per part and a stroke for the model', async function () {
       const renderer = myp5.createCanvas(50, 50, myp5.WEBGL);
       const model = await myp5.loadModel('/test/unit/assets/octa-color.obj');
 

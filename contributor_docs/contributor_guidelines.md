@@ -10,7 +10,6 @@ This is a relatively long and comprehensive document but we will try to signpost
 
 **If you are a new contributor, you may want to start with the first section, “All about issues.” If you just want a step-by-step setup of the development process, you can look at the “Quick Get Started For Developers” section.**
 
-
 # Table of Contents
 
 - [All about issues](#all-about-issues)
@@ -48,11 +47,9 @@ This is a relatively long and comprehensive document but we will try to signpost
 
 ---
 
-
 # All about issues
 
 The majority of the activity on p5.js' GitHub repositories (repo for short) happens in issues, which is a great place to start your contribution journey.
-
 
 ## What are issues?
 
@@ -66,7 +63,6 @@ either on the [forum](https://discourse.processing.com) or on other platforms su
 
 We have created easy-to-use issue templates to aid you in deciding whether a topic should be a GitHub issue or posted elsewhere!
 
-
 ## Issue templates
 
 p5.js's issue templates make it easier for stewards and maintainers to understand and review issues. They also make it easier for you to file the relevant issue and receive a reply faster. 
@@ -77,16 +73,15 @@ To file a new issue, simply go to the "Issues" tab on the p5.js repo and click o
 
 ![Cropped screenshot of the GitHub repository's issue page with the green "New issue" button highlighted with a red box surrounding it.](images/new-issue.png)
 
+### ["Found a bug"](https://github.com/processing/p5.js/issues/new?assignees=&labels=Bug&projects=&template=found-a-bug.yml)
 
-### ["Found a bug"](https://github.com/processing/p5.js/issues/new?assignees=\&labels=Bug\&projects=\&template=found-a-bug.yml)
-
-When you encounter possible incorrect behavior in p5.js or something not behaving as described in the documentation, use [this template](https://github.com/processing/p5.js/issues/new?assignees=\&labels=Bug\&projects=\&template=found-a-bug.yml). Please note that if you are trying to debug your sketch and you think it may be a problem with your code, you should first ask on the [Discourse forum](https://discourse.processing.org) instead.
+When you encounter possible incorrect behavior in p5.js or something not behaving as described in the documentation, use [this template](https://github.com/processing/p5.js/issues/new?assignees=&labels=Bug&projects=&template=found-a-bug.yml). Please note that if you are trying to debug your sketch and you think it may be a problem with your code, you should first ask on the [Discourse forum](https://discourse.processing.org) instead.
 
 There are a few fields for you to fill in for this template:
 
-1. *Most appropriate sub-area of p5.js?* - This helps us identify and respond to your issue by automatically tagging the issue with the relevant [labels](https://github.com/processing/p5.js/labels).
-2. *p5.js version* - You can find the p5.js version number in either the `<script>` tag link or on the very first line of the p5.js/p5.min.js file. It will look something similar to `1.4.2` (three numbers separated by periods).
-3. *Web browser and version* - This helps us isolate different behaviors between browsers. To find the browser version number, follow the instructions in the table below for the browser you are using.
+1. _Most appropriate sub-area of p5.js?_ - This helps us identify and respond to your issue by automatically tagging the issue with the relevant [labels](https://github.com/processing/p5.js/labels).
+2. _p5.js version_ - You can find the p5.js version number in either the `<script>` tag link or on the very first line of the p5.js/p5.min.js file. It will look something similar to `1.4.2` (three numbers separated by periods).
+3. _Web browser and version_ - This helps us isolate different behaviors between browsers. To find the browser version number, follow the instructions in the table below for the browser you are using.
 
 <table>
 
@@ -136,8 +131,8 @@ Under the top bar “Safari” menu item, choose “About Safari”
 
 </table>
 
-4. *Operating System* - You should include the OS version number if possible, e.g., `macOS 12.5`. Some bugs can stem from OS behaviors.
-5. *Steps to reproduce this* - This is arguably the most important information to share. You should list out detailed steps for replicating the bug you are seeing. Sharing a basic sample code that demonstrates the issue can go a long way for anyone looking to replicate the bug you are facing and start formulating a solution.
+4. _Operating System_ - You should include the OS version number if possible, e.g., `macOS 12.5`. Some bugs can stem from OS behaviors.
+5. _Steps to reproduce this_ - This is arguably the most important information to share. You should list out detailed steps for replicating the bug you are seeing. Sharing a basic sample code that demonstrates the issue can go a long way for anyone looking to replicate the bug you are facing and start formulating a solution.
 
 **Replication is key!** Many of the fields in this template are aimed at replicating the bug. The more information you can provide us about your sketch's environment and how others can replicate what you are seeing, the easier it is for anyone to understand your issue and start looking into solutions. 
 
@@ -152,23 +147,21 @@ If you wish to contribute a fix to the bug you just reported, you can indicate s
 
 For bug reports to be accepted for fixing, they must be approved by at least one [area steward or maintainer](https://github.com/processing/p5.js#stewards) before work can begin on a pull request.
 
-
-### ["Existing Feature Enhancement"](https://github.com/processing/p5.js/issues/new?assignees=\&labels=Enhancement\&projects=\&template=existing-feature-enhancement.yml)
+### ["Existing Feature Enhancement"](https://github.com/processing/p5.js/issues/new?assignees=&labels=Enhancement&projects=&template=existing-feature-enhancement.yml)
 
 This template should be used if you wish to propose changes or add functionality to existing features of p5.js (functions, constants, rendering, etc). For example, if you want to add a new way to define a color to the `color()` function and other functions that accept colors, this is the template to use.
 
 There are a few fields for this template that you should fill in.
 
-1. *Increasing Access* - This required field is where you insert a statement about how adding the proposed feature enhancement will help p5.js [increase access](./access.md) for people historically marginalized in the field of creative arts or technology. **No proposals will be accepted without this**, although you can fill in "Not sure" and offer other members of the community to provide this argument if they can think of how it addresses the accessibility of p5.js.
-2. *Most appropriate sub-area of p5.js?* - This helps us identify and respond to your issue. This will automatically tag the issue with the relevant [labels](https://github.com/processing/p5.js/labels).
-3. *Feature enhancement details* - This is where you describe your proposal for the feature enhancement. A good feature enhancement proposal often includes a clear use case: what, when, how, and why this feature enhancement is needed.
+1. _Increasing Access_ - This required field is where you insert a statement about how adding the proposed feature enhancement will help p5.js [increase access](./access.md) for people historically marginalized in the field of creative arts or technology. **No proposals will be accepted without this**, although you can fill in "Not sure" and offer other members of the community to provide this argument if they can think of how it addresses the accessibility of p5.js.
+2. _Most appropriate sub-area of p5.js?_ - This helps us identify and respond to your issue. This will automatically tag the issue with the relevant [labels](https://github.com/processing/p5.js/labels).
+3. _Feature enhancement details_ - This is where you describe your proposal for the feature enhancement. A good feature enhancement proposal often includes a clear use case: what, when, how, and why this feature enhancement is needed.
 
 For feature enhancement proposals to be accepted they must be approved by at least 1 [area steward or maintainer](https://github.com/processing/p5.js#stewards) before work can begin on a pull request. 
 
 **You should not file a pull request (or start working on code changes) without a corresponding issue or before an issue has been approved for implementation**, because there is no guarantee that the proposal will be accepted. Any pull requests filed before a proposal has been approved will be closed until approval is given to the issue.
 
-
-### ["New Feature Request"](https://github.com/processing/p5.js/issues/new?assignees=\&labels=Feature+Request\&projects=\&template=feature-request.yml)
+### ["New Feature Request"](https://github.com/processing/p5.js/issues/new?assignees=&labels=Feature+Request&projects=&template=feature-request.yml)
 
 This template should be used if you wish to propose a new feature to be added to p5.js. For example to add support for drawing native HTML `<table>` elements with a new `createTable` function. Some proposals may overlap with existing feature enhancement proposals, in these cases you should just choose whichever template you feel is most appropriate.
 
@@ -178,8 +171,7 @@ For new feature request proposals to be accepted, they must be approved by at le
 
 **You should not file a pull request (or start working on code changes) without a corresponding issue or before an issue has been approved for implementation**, that is because there is no guarantee that the proposal will be accepted. Any pull requests filed before a proposal has been approved will be closed until approval is given to the issue.
 
-
-### ["Discussion"](https://github.com/processing/p5.js/issues/new?assignees=\&labels=Discussion\&projects=\&template=discussion.yml)
+### ["Discussion"](https://github.com/processing/p5.js/issues/new?assignees=&labels=Discussion&projects=&template=discussion.yml)
 
 This template is used when the issue you are filing does not fit into any of the above in any way. An issue not fitting into any of the above templates should be relatively rare in practice. For example, a discussion about whether to adopt a specific Web API feature in p5.js should be filed as a [new feature request](#new-feature-request); a discussion about adding an additional color mode to the various color functions should be filed as a [feature enchancement](#existing-feature-enchancement); an announcement about a local creative coding event that you are organizing should be posted on the forum and contacting the Processing Foundation if you are looking for support or publicity; etc.
 
@@ -189,13 +181,11 @@ When opening a discussion issue, you can use the "Labels" panel on the side pane
 
 ---
 
-
 # Working on the p5.js codebase
 
 ## Prerequisites
 
 To proceed you should be minimally familiar with working with the command line, git, node.js (at least v18 and up), and have a local development environment setup.
-
 
 ## Introduction
 
@@ -209,7 +199,6 @@ If you file a PR for an issue while someone else is still working on the same is
 
 Similarly, you should work at your own pace and be confident that there is no hard time limit on how long you can spend working on something. That being said, if you are having trouble with any aspect of your code contribution, do not hesitate to ask for help in the issue, the stewards and maintainers, as well as members of our community, will do our best to guide you!
 
-
 ## Quick Get Started For Developers
 
 If you want to work/contribute to p5.js'🌸 codebase as a developer, either directly for improving p5.js or for improving its sub-projects like [Friendly Error Systems](./friendly_error_system.md), you can follow the following steps:
@@ -218,37 +207,36 @@ If you want to work/contribute to p5.js'🌸 codebase as a developer, either dir
 2. [Clone your created fork to your computer.](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository)
 3. [Add upstream using the following command](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/configuring-a-remote-repository-for-a-fork):
 
-  ```
-  git remote add upstream https://github.com/processing/p5.js
-  ```
+```
+git remote add upstream https://github.com/processing/p5.js
+```
 
 4. Make sure your machine has [NodeJs](https://nodejs.org/en/download) installed; check it with the following command:
 
-  ```
-  node -v
-  ```
+```
+node -v
+```
 
 5. Install dependencies with:
 
-  ```
-  npm ci
-  ```
+```
+npm ci
+```
 
 6. Create a git branch of the `main` branch having a descriptive branch name using: 
 
-  ```
-  git checkout -b [branch_name]
-  ```
+```
+git checkout -b [branch_name]
+```
 
 7. As you start making changes to the codebase, frequently run the tests (it takes time, but it ensures that existing behaviors are not being broken).
 
-  ```
-  npm test
-  ```
+```
+npm test
+```
 
 8. Add any unit tests if you are working on adding new features or feature enhancement.
 9. Once done, you can commit the changes and create a [Pull Request](#pull-requests).
-
 
 ## Using the GitHub edit functionality
 
@@ -258,7 +246,6 @@ When viewing a file on the GitHub web interface, near the top of the content of 
 
 However, it is not recommended to use this feature other than for very simple changes. One of the main reasons for this is that for more complex changes to the source code, it should be built and tested locally before being filed as a PR. Using a local development environment is also often much more fluent for most as compared to the basic editing environment provided by this edit functionality.
 
-
 ## Forking p5.js and working from your fork
 
 The first step to work on the p5.js source code is to fork the p5.js repository. Forking has a specific meaning in open source, but for our purpose, it means creating a copy of the repository and storing it in your own GitHub account. To fork a repo, simply click on the "Fork" button near the top of the page, and GitHub will make a copy of the repo in your account.
@@ -266,7 +253,6 @@ The first step to work on the p5.js source code is to fork the p5.js repository.
 ![Screenshot of the main page of repository. A button, labeled with a fork icon and "Fork 59.3k," is outlined in dark orange.](images/fork.png)
 
 Working from your fork of the p5.js repository is necessary because you will likely not have direct write access to the official p5.js repository, and working on a fork allows you to make changes and later submit them back to the official repository.
-
 
 ### Using GitHub Desktop
 
@@ -279,7 +265,6 @@ First, [download and install GitHub Desktop.](https://desktop.github.com/) Once 
 Once cloned, it will ask how you plan to use your fork. Select the option to contribute to the parent project and click "Continue."
 
 ![The view after cloning a fork. It asks if you are planning to contribute to the parent project, or use it for your own purposes.](images/github-desktop-fork.png)
-
 
 ### Using the `git` command line interface
 
@@ -295,7 +280,6 @@ git clone [git_url]
 
 Replace `[git_url]` with the URL you just copied above. This can take several minutes, depending on the speed of your internet connection, a good time to make some coffee! Once the process is finished, you can open up the downloaded folder named `p5.js` in your preferred text editor and start looking around.
 
-
 ## Codebase breakdown
 
 Some of the key files and folders you will be in the p5.js folder are as follows:
@@ -307,7 +291,6 @@ Some of the key files and folders you will be in the p5.js folder are as follows
 
 The other files and folders are either configurations or other kinds of support files; in most cases, you shouldn't need to make any modifications.
 
-
 ## Build setup
 
 Before you do anything, you'll need to set up the local project folder so that you can build and run tests for p5.js. Assuming you have node.js installed, run:
@@ -317,7 +300,6 @@ npm ci
 ```
 
 This will likely take a while, as npm downloads all dependencies required. However, once done, that's it, you are all set up. Pretty simple, right?
-
 
 ## Git workflow
 
@@ -389,33 +371,27 @@ git commit -m "Add documentation example to circle() function"
 
 Repeat the above steps for all commits you will be making while making sure to run `npm test` periodically to make sure things are working.
 
-
 ### Source code
 
 If you are going to work on the source code, a good place to start, if you know which of p5.js features you are going to work on, is to visit the documentation and at the bottom of each documented functionality of p5.js will be a link to its source code.
 
 ![Cropped screenshot of a reference page on the p5.js website containing the sentence "Notice any errors or typos? Please let us know. Please feel free to edit src/core/shape/2d\_primitives.js and issue a pull request!". Part of the above sentence where it says "src/core/shape/2d\_primitives.js" is highlighted with a red underline and arrow pointing to it.](images/reference-code-link.png)
 
-
 ### Unit tests
 
 If you are going to work on unit tests, please see [here](./unit_testing.md). Note that for any feature enhancement, new features, and certain bug fix, unit tests covering the new implementations should be included in the PR.
-
 
 ### Inline documentation
 
 If you are going to work on the inline documentation, as known as p5.js reference, please see [here](./contributing_to_the_p5js_reference.md).
 
-
 ### Accessibility
 
 If you are going to work on accessibility features, please see [here](./web_accessibility.md). For a Friendly Error System, please see [here](./friendly_error_system.md).
 
-
 ## Code standard
 
 p5.js' code standard or code style is enforced by [ESLlint](https://eslint.org/). Any git commit and pull request must pass linting before it will be accepted. The easiest way for you to follow the right coding standard is to use the ESLint plugin available for your text editor with linting error highlighting (available for most popular text editors).
-
 
 ## Software Design principles
 
@@ -431,11 +407,9 @@ While working on any features of p5.js, it is important to keep in mind the desi
 
 ---
 
-
 # Pull requests
 
 Now that you have made the changes you need to make, including unit tests if applicable, `npm test` does not error, and you have committed the changes, you can start preparing pull requests to get your new commits merged into the official p5.js repository. A pull request, more formally, is a request to a repo (in this case, the official p5.js repo) to pull or merge changes from another repo (in this case, your forked p5.js repo) into its commit history.
-
 
 ## Creating a pull request
 
@@ -461,40 +435,33 @@ You may also see a button to open a pull request when you visit the p5.js Github
 
 ![Cropped screenshot of the main page of the p5.js GitHub repository web page. A section near the top of the page is a yellow call to action box containing a green button with the text "Compare & pull request".](images/recent-pushes.png)
 
-
 ### Pull request information
 
 ![Screenshot of an "Open a pull request" page on GitHub that is prepopulated with p5.js's pull request template.](images/new-pr.png)
 
 Before filing the pull request, you will need to fill out the pull request template. 
 
-
 ### Title
 
 The pull request title should briefly describe what the changes are, again avoid generic statements here.
-
 
 ### Resolves
 
 In the template, there is this line `Resolves #[Add issue number here]`, which you should replace `[Add issue number here]` with the issue number of the issue you are addressing/fixing [above](#all-about-issues) (e.g., `Resolves #1234`). This will make sure the issue is automatically closed after this PR is merged. If you do not wish to automatically close the issue after this PR is merged (maybe because there are more changes coming in a separate PR), change `Resolves` to `Addresses`.
 
-
 ### Changes
 
 You should clearly describe the changes you have made in this PR. Include any implementation details and decisions you made here that are relevant to whoever will review it.
 
-
 ### Screenshots of the change
 
 This is optional depending on circumstances and should be included when making changes related to how p5.js renders visuals on the canvas. Note that this is not a screenshot of the text editor but a screenshot of an example sketch's behavior after your changes.
-
 
 ### PR Checklist
 
 This contains some relevant checklist items that you should tick by replacing `[ ]` with `[x]` wherever relevant to your changes.
 
 Once done, click on "Create pull request."
-
 
 ### Rebase and resolve conflicts
 
@@ -539,7 +506,6 @@ git rebase --continue
 
 The checklist above may clear out after these steps but if not, we'll guide you through any fix necessary.
 
-
 ## Discuss and amend
 
 Now that your PR is opened, a steward or maintainer will review your PR. It may take several days before a steward is able to reply to your PR, so be patient. Why not use the time to check out some of the other open issues in the meantime?
@@ -549,4 +515,3 @@ Once a steward has reviewed your PR, one of two things may happen: 1. Your PR is
 If changes are requested of your PR and you are able to make those changes, follow the [same process as before](#git-workflow) but just continue from your local copy of the repo and relevant branch, make those changes, commit them into git, and push them to your forked remote repo. Once you have pushed additional commits to your forked remote repo, you will see that the new commits automatically show up in the PR. Leave a comment in the PR to let the reviewer know you have made the requested changes, and if no additional changes are needed, your PR will be merged!
 
 [**⬆ back to top**](#contributor-guidelines)
-

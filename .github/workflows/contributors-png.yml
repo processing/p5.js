@@ -20,13 +20,13 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
-          node-version: 20
+          node-version: 22
 
       - name: Install dependencies
         run: npm install canvas
 
       - name: Run contributors-png generator
-        run: node utils/contributors-png.js
+        run: node utils/contributors-png.mjs
 
       - name: Reset all changes except contributors.png
         run: |

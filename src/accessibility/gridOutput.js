@@ -4,11 +4,11 @@
  * @for p5
  */
 
-function gridOutput(p5, fn){
+function gridOutput(p5, fn) {
   //the functions in this file support updating the grid output
 
   //updates gridOutput
-  fn._updateGridOutput = function(idT) {
+  fn._updateGridOutput = function (idT) {
     if (this._renderer && this._renderer.isP3D) {
       if (!this._didOutputGridWebGLMessage) {
         this._didOutputGridWebGLMessage = true;
@@ -70,10 +70,10 @@ function gridOutput(p5, fn){
         }
 
         // Check if shape is in canvas, skip if not
-        if(
+        if (
           ingredients[x][y].loc.locY < cells.length &&
           ingredients[x][y].loc.locX < cells[ingredients[x][y].loc.locY].length
-        ){
+        ) {
           //if empty cell of location of shape is undefined
           if (!cells[ingredients[x][y].loc.locY][ingredients[x][y].loc.locX]) {
             //fill it with shape info
@@ -161,6 +161,6 @@ function gridOutput(p5, fn){
 
 export default gridOutput;
 
-if(typeof p5 !== 'undefined'){
+if (typeof p5 !== 'undefined') {
   gridOutput(p5, p5.prototype);
 }

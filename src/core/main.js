@@ -49,7 +49,7 @@ class p5 {
 
   constructor(sketch, node) {
     // Apply addon defined decorations
-    if(p5.decorations.size > 0){
+    if (p5.decorations.size > 0) {
       decorateClass(p5, p5.decorations, 'p5');
       p5.decorations.clear();
     }
@@ -70,8 +70,7 @@ class p5 {
     this._loop = true;
     this._startListener = null;
     this._initializeInstanceVariables();
-    this._events = {
-    };
+    this._events = {};
     this._removeAbortController = new AbortController();
     this._removeSignal = this._removeAbortController.signal;
     this._millisStart = -1;
@@ -97,7 +96,7 @@ class p5 {
       // Loop through methods on the prototype and attach them to the window
       // All methods and properties with name starting with '_' will be skipped
       for (const p of Object.getOwnPropertyNames(p5.prototype)) {
-        if(p[0] === '_') continue;
+        if (p[0] === '_') continue;
         bindGlobal(p);
       }
 
@@ -105,7 +104,7 @@ class p5 {
       // Attach its properties to the window
       for (const p in this) {
         if (this.hasOwnProperty(p)) {
-          if(p[0] === '_' || protectedProperties.includes(p)) continue;
+          if (p[0] === '_' || protectedProperties.includes(p)) continue;
           bindGlobal(p);
         }
       }
@@ -126,10 +125,10 @@ class p5 {
       this.focused = false;
     };
 
-    if(typeof window !== 'undefined'){
+    if (typeof window !== 'undefined') {
       window.addEventListener('focus', focusHandler);
       window.addEventListener('blur', blurHandler);
-      p5.lifecycleHooks.remove.push(function() {
+      p5.lifecycleHooks.remove.push(function () {
         window.removeEventListener('focus', focusHandler);
         window.removeEventListener('blur', blurHandler);
       });
@@ -141,16 +140,16 @@ class p5 {
         this._startListener = this.#_start.bind(this);
         window.addEventListener('load', this._startListener, false);
       }
-    }else{
+    } else {
       this.#_start();
     }
   }
 
-  get pixels(){
+  get pixels() {
     return this._renderer?.pixels;
   }
 
-  get drawingContext(){
+  get drawingContext() {
     return this._renderer?.drawingContext;
   }
 
@@ -167,43 +166,48 @@ class p5 {
     addon(p5, p5.prototype, lifecycles);
 
     const validLifecycles = Object.keys(p5.lifecycleHooks);
-    for(const name of validLifecycles){
-      if(typeof lifecycles[name] === 'function'){
+    for (const name of validLifecycles) {
+      if (typeof lifecycles[name] === 'function') {
         p5.lifecycleHooks[name].push(lifecycles[name]);
       }
     }
   }
 
   static decorations = new Map();
-  static registerDecorator(pattern, decoration){
-    if(typeof pattern === 'string'){
+  static registerDecorator(pattern, decoration) {
+    if (typeof pattern === 'string') {
       const patternStr = pattern;
       pattern = ({ path }) => patternStr === path;
-    }else if(
+    } else if (
       Array.isArray(pattern) &&
       pattern.every(value => typeof value === 'string')
-    ){
+    ) {
       const patternArray = pattern;
       pattern = ({ path }) => patternArray.includes(path);
-    }else if(typeof pattern !== 'function'){
-      throw new Error('Decorator matching pattern must be a function, a string, or an array of strings');
+    } else if (typeof pattern !== 'function') {
+      throw new Error(
+        'Decorator matching pattern must be a function, a string, or an array of strings'
+      );
     }
     p5.decorations.set(pattern, decoration);
   }
 
   #customActions = {};
-  _customActions = new Proxy({}, {
-    get: (target, prop) => {
-      if(!this.#customActions[prop]){
-        const context = this._isGlobal ? window : this;
-        if(typeof context[prop] === 'function'){
-          this.#customActions[prop] = context[prop].bind(this);
+  _customActions = new Proxy(
+    {},
+    {
+      get: (target, prop) => {
+        if (!this.#customActions[prop]) {
+          const context = this._isGlobal ? window : this;
+          if (typeof context[prop] === 'function') {
+            this.#customActions[prop] = context[prop].bind(this);
+          }
         }
-      }
 
-      return this.#customActions[prop];
+        return this.#customActions[prop];
+      }
     }
-  });
+  );
 
   async #_start() {
     if (this.hitCriticalError) return;
@@ -229,12 +233,8 @@ class p5 {
     // Always create a default canvas.
     // Later on if the user calls createCanvas, this default one
     // will be replaced
-    if(typeof window !== 'undefined'){
-      this.createCanvas(
-        100,
-        100,
-        constants.P2D
-      );
+    if (typeof window !== 'undefined') {
+      this.createCanvas(100, 100, constants.P2D);
     }
 
     // Record the time when setup starts. millis() will start at 0 within
@@ -247,7 +247,7 @@ class p5 {
     }
     if (this.hitCriticalError) return;
 
-    if(typeof document !== 'undefined'){
+    if (typeof document !== 'undefined') {
       const canvases = document.getElementsByTagName('canvas');
       for (const k of canvases) {
         // Apply touchAction = 'none' to canvases to prevent scrolling
@@ -305,8 +305,10 @@ class p5 {
       this.deltaTime = now - this._lastRealFrameTime;
       this._frameRate = 1000.0 / this.deltaTime;
       await this.redraw();
-      this._lastTargetFrameTime = Math.max(this._lastTargetFrameTime
-        + targetTimeBetweenFrames, now);
+      this._lastTargetFrameTime = Math.max(
+        this._lastTargetFrameTime + targetTimeBetweenFrames,
+        now
+      );
       this._lastRealFrameTime = now;
 
       // If the user is actually using mouse module, then update
@@ -327,9 +329,10 @@ class p5 {
     // an opportunity to draw.
     if (this._loop) {
       const boundDraw = this._draw.bind(this);
-      this._requestAnimId = typeof window !== 'undefined' ?
-        window.requestAnimationFrame(boundDraw) :
-        setImmediate(boundDraw);
+      this._requestAnimId =
+        typeof window !== 'undefined'
+          ? window.requestAnimationFrame(boundDraw)
+          : setImmediate(boundDraw);
     }
   }
 
@@ -367,7 +370,7 @@ class p5 {
    */
   async remove() {
     // Remove start listener to prevent orphan canvas being created
-    if(this._startListener){
+    if (this._startListener) {
       window.removeEventListener('load', this._startListener, false);
     }
 
@@ -415,9 +418,11 @@ class p5 {
   }
 
   async _runLifecycleHook(hookName) {
-    await Promise.all(p5.lifecycleHooks[hookName].map(hook => {
-      return hook.call(this);
-    }));
+    await Promise.all(
+      p5.lifecycleHooks[hookName].map(hook => {
+        return hook.call(this);
+      })
+    );
   }
 
   _initializeInstanceVariables() {
@@ -453,8 +458,9 @@ function createBindGlobal(instance) {
       p5.prototype,
       property
     );
-    const hasGetter = (instanceDescriptor && instanceDescriptor.get) ||
-                     (prototypeDescriptor && prototypeDescriptor.get);
+    const hasGetter =
+      (instanceDescriptor && instanceDescriptor.get) ||
+      (prototypeDescriptor && prototypeDescriptor.get);
 
     // Only check if it's a function if it doesn't have a getter
     // to avoid actually evaluating getters before things like the
@@ -530,70 +536,70 @@ function createBindGlobal(instance) {
 }
 
 // Generic function to decorate classes
-function decorateClass(Target, decorations, path){
+function decorateClass(Target, decorations, path) {
   // Static properties
-  for(const key in Target){
-    if(!key.startsWith('_')){
+  for (const key in Target) {
+    if (!key.startsWith('_')) {
       for (const [pattern, decorator] of decorations) {
-        if(pattern({ path: `${path}.${key}` })){
+        if (pattern({ path: `${path}.${key}` })) {
           // Check if method or accessor
-          if(typeof Target[key] === 'function'){
+          if (typeof Target[key] === 'function') {
             const result = decorator(Target[key], {
               kind: 'method',
               name: key,
               static: true
             });
-            if(result){
+            if (result) {
               Object.defineProperty(Target, key, {
                 enumerable: true,
                 writable: true,
                 value: result
               });
             }
-          }else{
+          } else {
             const result = decorator(undefined, {
               kind: 'field',
               name: key,
               static: true
             });
-            if(result && typeof result === 'function'){
+            if (result && typeof result === 'function') {
               Target[key] = result(Target[key]);
             }
           }
         }
       }
 
-      if(typeof Target[key] === 'function' && Target[key].prototype){
+      if (typeof Target[key] === 'function' && Target[key].prototype) {
         decorateClass(Target[key], decorations, `${path}.${key}`);
       }
     }
   }
 
   // Member properties
-  for(const member of Object.getOwnPropertyNames(Target.prototype)){
-    if(member !== 'constructor' && !member.startsWith('_')){
+  for (const member of Object.getOwnPropertyNames(Target.prototype)) {
+    if (member !== 'constructor' && !member.startsWith('_')) {
       for (const [pattern, decorator] of decorations) {
-        if(pattern({ path: `${path}.prototype.${member}` })){
+        if (pattern({ path: `${path}.prototype.${member}` })) {
           // Check if method or accessor
-          if(typeof Target.prototype[member] === 'function'){
+          if (typeof Target.prototype[member] === 'function') {
             const result = decorator(Target.prototype[member], {
               kind: 'method',
               name: member,
               static: false
             });
-            if(result) {
+            if (result) {
               Object.defineProperty(Target.prototype, member, {
                 enumerable: true,
                 writable: true,
                 value: result
               });
             }
-          }else{
+          } else {
             const descriptor = Object.getOwnPropertyDescriptor(
               Target.prototype,
               member
             );
-            if(descriptor.hasOwnProperty('value')){
+            if (descriptor.hasOwnProperty('value')) {
               const result = decorator(undefined, {
                 kind: 'field',
                 name: member,
@@ -602,11 +608,12 @@ function decorateClass(Target, decorations, path){
               Object.defineProperty(Target.prototype, member, {
                 enumerable: true,
                 writable: true,
-                value: result && typeof result === 'function' ?
-                  result(Target.prototype[member]) :
-                  Target.prototype[member]
+                value:
+                  result && typeof result === 'function'
+                    ? result(Target.prototype[member])
+                    : Target.prototype[member]
               });
-            }else{
+            } else {
               const { get, set } = descriptor;
               const getterResult = decorator(get, {
                 kind: 'getter',

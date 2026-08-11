@@ -6,7 +6,7 @@
 
 import color_conversion from '../color/color_conversion';
 
-function colorNamer(p5, fn){
+function colorNamer(p5, fn) {
   //stores the original hsb values
   let originalHSB;
 
@@ -702,7 +702,7 @@ function colorNamer(p5, fn){
   }
 
   //gets rgba and returs a color name
-  fn._rgbColorName = function(arg) {
+  fn._rgbColorName = function (arg) {
     //conversts rgba to hsb
     let hsb = color_conversion._rgbaToHSBA(arg);
     //stores hsb in global variable
@@ -714,6 +714,6 @@ function colorNamer(p5, fn){
 
 export default colorNamer;
 
-if(typeof p5 !== 'undefined'){
+if (typeof p5 !== 'undefined') {
   colorNamer(p5, p5.prototype);
 }

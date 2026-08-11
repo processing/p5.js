@@ -8,7 +8,6 @@ FES houses several functions responsible for generating Friendly Error messages 
 
 This document starts with an overview of FES's main functions and their locations. In the following reference section, you will find full information (description, syntax, parameters, location) about these individual functions. In the last part of the document, you will find notes from our previous contributors (Development Notes) outlining known limitations of FES and possible future directions. Please take a look at the [Development Notes](#-development-notes) if you are considering contributing to FES!
 
-
 ## Overview
 
 The main functions for generating the Friendly Error messages are:
@@ -30,7 +29,6 @@ Individual files contain the following main FES functions:
 - `browser_errors.js`: contains a list of browser errors that will be generated with the global error class of FES (`fes.globalErrors`).
 - `stacktrace.js`: contains the code to parse the error stack (borrowed from [stacktrace.js](https://github.com/stacktracejs/stacktrace.js)).
 
-
 ## 📚 Reference: FES Functions
 
 ### `_report()`
@@ -41,7 +39,6 @@ Individual files contain the following main FES functions:
 
 **Note:** If `p5._fesLogger` is set ( i.e., we are running tests ), it will be used instead of `console.log`. This can be useful when we are running tests via Mocha. In this case, `_fesLogger` will let `_report` to pass an error message to Mocha as a string, which will be tested against the asserted string.
 
-
 #### Syntax
 
 ```js
@@ -51,7 +48,6 @@ _report(message, func);
 
 _report(message, func, color);
 ```
-
 
 #### Parameters
 
@@ -64,7 +60,6 @@ _report(message, func, color);
 The `[func]` input is used to append a reference link to the end of the error message.
 
 The `[color]` input is used to set the color property of the error message. This is not used in the current version of Friendly Error messages.
-
 
 #### Location
 
@@ -93,13 +88,11 @@ _friendlyFileLoadError
   _report
 ```
 
-
 #### Syntax
 
 ```js
 _friendlyFileLoadError(errorType, filePath);
 ```
-
 
 #### Parameters
 
@@ -109,7 +102,6 @@ _friendlyFileLoadError(errorType, filePath);
 ```
 
 The `errorType` input refers to the specific type of file load error as enumerated in `core/friendly_errors/file_errors.js`. File load errors in p5.js are categorized into various distinct cases. This categorization is designed to facilitate the delivery of precise and informative error messages corresponding to different error scenarios. For example, when it can't read the data in a font file, it can show a different error than it would when it tries to load a file that is too large to read.
-
 
 #### Examples
 
@@ -138,11 +130,9 @@ FES will generate the following message in the console in addition to browser’
 + More info: https://github.com/processing/p5.js/wiki/Local-server
 ```
 
-
 #### Location
 
 /friendly\_errors/file\_errors.js
-
 
 ### `_friendlyAutoplayError()`
 
@@ -152,11 +142,9 @@ FES will generate the following message in the console in addition to browser’
 
 It calls `translator()` to generate and print a Friendly Error message using key `fes.autoplay`. You can see all the available keys at `translations/en/translation.json`.
 
-
 #### Location
 
 core/friendly\_errors/fes\_core.js
-
 
 ### `_validateParameters()`
 
@@ -218,13 +206,11 @@ validateParameters
         friendlyWelcome
 ```
 
-
 #### Syntax
 
 ```js
 _validateParameters(func, args);
 ```
-
 
 #### Parameters
 
@@ -232,7 +218,6 @@ _validateParameters(func, args);
 @param  {String}  func    Name of the function being called
 @param  {Array}   args    User input arguments
 ```
-
 
 #### Examples
 
@@ -260,17 +245,15 @@ FES will generate the following message in the console:
 🌸 p5.js says: [sketch.js, line 14] arc() was expecting Number for the first parameter, received string instead. (https://p5js.org/reference/p5/arc)
 ```
 
-
 #### Location
 
 core/friendly\_errors/validate\_params.js
-
 
 ### `fesErrorMonitor()`
 
 #### Description
 
-`fesErrorMonitor()` monitors browser error messages to guess the source of the error and provide additional guidance to the users. This includes the stack trace,  which is a sequential list of the functions called in a program leading up to the point of the thrown error. Stack traces are useful for determining if an error is internal or caused by something the user called directly.
+`fesErrorMonitor()` monitors browser error messages to guess the source of the error and provide additional guidance to the users. This includes the stack trace, which is a sequential list of the functions called in a program leading up to the point of the thrown error. Stack traces are useful for determining if an error is internal or caused by something the user called directly.
 
 It calls `translator()` to generate and print a Friendly Error message using key `fes.globalErrors.*`. You can see all the available keys at `translations/en/translation.json`.
 
@@ -284,7 +267,11 @@ Here is a comprehensive list of error messages generated through `fesErrorMonito
 `_fesErrorMonitor()` is automatically triggered by `error` events and unhandled promise rejections (`unhandledrejection` events) at `window`. However, it can be manually called in a catch block as follows:
 
 ```js
-try { someCode(); } catch(err) { p5._fesErrorMonitor(err); }
+try {
+  someCode();
+} catch (err) {
+  p5._fesErrorMonitor(err);
+}
 ```
 
 The function currently works with a subset of `ReferenceError`, `SyntaxError`, and `TypeError`. You can find the complete list of supported errors in `browser_errors.js`.
@@ -306,20 +293,17 @@ The call sequence for `_fesErrorMonitor` roughly looks something like this:
        printFriendlyStack
 ```
 
-
 #### Syntax
 
 ```js
 fesErrorMonitor(event);
 ```
 
-
 #### Parameters
 
 ```
 @param {*}  e     Error event
 ```
-
 
 #### Examples
 
@@ -389,11 +373,9 @@ FES will generate the following message in the console:
 🌸 p5.js says: [sketch.js, line 2] It seems that you may have accidentally written "xolor" instead of "color". Please correct it to color if you wish to use the function from p5.js. (https://p5js.org/reference/p5/color)
 ```
 
-
 #### Location
 
 core/friendly\_errors/fes\_core.js
-
 
 ### `checkForUserDefinedFunctions()`
 
@@ -403,13 +385,11 @@ Checks if any user-defined function (`setup()`, `draw()`, `mouseMoved()`, etc.) 
 
 It calls `translator()` to generate and print a Friendly Error message using key `fes.checkUserDefinedFns`. You can see all the available keys at `translations/en/translation.json`.
 
-
 #### Syntax
 
 ```js
 checkForUserDefinedFunctions(context);
 ```
-
 
 #### Parameters
 
@@ -418,7 +398,6 @@ checkForUserDefinedFunctions(context);
                     Set to window in "global mode" and
                     to a p5 instance in "instance mode"
 ```
-
 
 #### Examples
 
@@ -434,11 +413,9 @@ FES will generate the following message in the console:
 🌸 p5.js says: It seems that you may have accidentally written preLoad instead of preload. Please correct it if it's not intentional. (https://p5js.org/reference/p5/preload)
 ```
 
-
 #### Location
 
 /friendly\_errors/fes\_core.js
-
 
 ### `helpForMisusedAtTopLevelCode()`
 
@@ -448,7 +425,6 @@ FES will generate the following message in the console:
 
 It calls `translator()` to generate and print a Friendly Error message using the key `fes.misusedTopLevel`. You can see all the available keys at `translations/en/translation.json`.
 
-
 #### Parameters
 
 ```
@@ -456,11 +432,9 @@ It calls `translator()` to generate and print a Friendly Error message using the
 @param {Boolean}  log    false
 ```
 
-
 #### Location
 
 /friendly\_errors/fes\_core.js
-
 
 ## 💌 Development Notes
 
@@ -474,13 +448,11 @@ It's important to identify and fix these errors because they can save debugging 
 
 In certain less-than-ideal situations, the design of error handling may need to be chosen to eliminate either false positives or false negatives. If you have to choose, it’s usually better to eliminate false positives. This way, you avoid generating incorrect warnings that could distract or mislead our users.
 
-
 #### Limitations Related to `fes.GlobalErrors`
 
 FES can only detect overwritten global variables if they are declared using `const` or `var`. Variables declared with let go undetected. This limitation is due to the specific way `let` handles variable instantiation, and it currently cannot be resolved.
 
 The functionality described under `fesErrorMonitor()` currently only works on the web editor or if running on a local server. For more details, see pull request \[[#4730](https://github.com/processing/p5.js/pull/4730)].
-
 
 ### Performance Issue with the FES
 
@@ -500,16 +472,16 @@ function draw() {
 
 Please note that this action will disable certain features of the FES that are known to reduce performance, such as argument checking. However, Friendly Error messages that do not impact performance will still be enabled. This includes providing detailed error messages if a file fails to load or warnings if you attempt to override p5.js functions in the global space.
 
-
 ### Thoughts for Future Work
 
 - Decouple FES \[[#5629](https://github.com/processing/p5.js/issues/5629)]
 - Eliminate false positive cases
 - Identify false negative cases
 - Add more unit tests for comprehensive test coverage
-* More intuitive, clear, and translatable messages. For more discussion about the internationalization of Friendly Errors, please take a look at [Friendly Errors i18n Book](https://almchung.github.io/p5-fes-i18n-book/en/).
-- Identify more common error types and generalize with FES (e.g. `bezierVertex()`, `quadraticVertex()` - required object not initiated; checking Number parameters positive for `nf()`, `nfc()`, `nfp()`, `nfs()`)
 
+* More intuitive, clear, and translatable messages. For more discussion about the internationalization of Friendly Errors, please take a look at [Friendly Errors i18n Book](https://almchung.github.io/p5-fes-i18n-book/en/).
+
+- Identify more common error types and generalize with FES (e.g. `bezierVertex()`, `quadraticVertex()` - required object not initiated; checking Number parameters positive for `nf()`, `nfc()`, `nfp()`, `nfs()`)
 
 ## Conclusion
 

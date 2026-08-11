@@ -5,7 +5,11 @@ import * as constants from '../core/constants.js';
 import * as z from 'zod/mini';
 import dataDoc from '../../docs/parameterData.json';
 import { FES } from './fes.js';
-import { errorStackParser, processStack, getFriendlyStack } from './stacktrace.js';
+import {
+  errorStackParser,
+  processStack,
+  getFriendlyStack
+} from './stacktrace.js';
 
 z.config(z.locales.en());
 let documentationData = dataDoc;
@@ -63,14 +67,14 @@ function validateParams(p5, fn, lifecycles) {
   // Start initializing `schemaMap` with primitive types. `schemaMap` will
   // eventually contain both primitive types and web API objects.
   const schemaMap = {
-    'Any': z.any(),
-    'Array': z.array(z.any()),
-    'Boolean': z.boolean(),
-    'Function': z.function(),
-    'Integer': z.number().check(z.int()),
-    'Number': z.union([z.number(), z.literal(Infinity), z.literal(-Infinity)]),
-    'Object': z.object({}),
-    'String': z.string()
+    Any: z.any(),
+    Array: z.array(z.any()),
+    Boolean: z.boolean(),
+    Function: z.function(),
+    Integer: z.number().check(z.int()),
+    Number: z.union([z.number(), z.literal(Infinity), z.literal(-Infinity)]),
+    Object: z.object({}),
+    String: z.string()
   };
 
   const webAPIObjects = [
@@ -100,7 +104,18 @@ function validateParams(p5, fn, lifecycles) {
 
   // For mapping 0-indexed parameters to their ordinal representation, e.g.
   // "first" for 0, "second" for 1, "third" for 2, etc.
-  const ordinals = ['first', 'second', 'third', 'fourth', 'fifth', 'sixth', 'seventh', 'eighth', 'ninth', 'tenth'];
+  const ordinals = [
+    'first',
+    'second',
+    'third',
+    'fourth',
+    'fifth',
+    'sixth',
+    'seventh',
+    'eighth',
+    'ninth',
+    'tenth'
+  ];
 
   function extractFuncNameAndClass(func) {
     const ichDot = func.lastIndexOf('.');
@@ -149,7 +164,7 @@ function validateParams(p5, fn, lifecycles) {
     const { funcName, funcClass } = extractFuncNameAndClass(func);
     let funcInfo = documentationData[funcClass][funcName];
 
-    if(!funcInfo) return;
+    if (!funcInfo) return;
 
     let overloads = [];
     if (funcInfo.hasOwnProperty('overloads')) {
@@ -211,15 +226,20 @@ function validateParams(p5, fn, lifecycles) {
       // our constants sometimes have numeric or non-primitive values.
       // 2) In some cases, the type can be constants or strings, making z.enum()
       // insufficient for the use case.
-      else if (baseType.includes('|') && baseType.split('|').every(t => validBracketNesting(t))) {
+      else if (
+        baseType.includes('|') &&
+        baseType.split('|').every(t => validBracketNesting(t))
+      ) {
         const types = baseType.split('|');
-        typeSchema = z.union(types
-          .map(t => generateTypeSchema(t))
-          .filter(s => s !== undefined));
+        typeSchema = z.union(
+          types.map(t => generateTypeSchema(t)).filter(s => s !== undefined)
+        );
       } else if (baseType.endsWith('[]')) {
         typeSchema = z.array(generateTypeSchema(baseType.slice(0, -2)));
       } else {
-        throw new Error(`Unsupported type '${baseType}' in parameter validation. Please report this issue.`);
+        throw new Error(
+          `Unsupported type '${baseType}' in parameter validation. Please report this issue.`
+        );
       }
 
       return typeSchema;
@@ -264,7 +284,9 @@ function validateParams(p5, fn, lifecycles) {
         return [params];
       }
 
-      const requiredParamsCount = params.filter(p => p === null || !p.endsWith('?')).length;
+      const requiredParamsCount = params.filter(
+        p => p === null || !p.endsWith('?')
+      ).length;
       const result = [];
 
       for (let i = requiredParamsCount; i <= params.length; i++) {
@@ -288,7 +310,10 @@ function validateParams(p5, fn, lifecycles) {
           rest = params.pop();
         }
 
-        let combined = z.tuple(params.map(s => s.schema), rest?.schema);
+        let combined = z.tuple(
+          params.map(s => s.schema),
+          rest?.schema
+        );
         // if (rest) {
         //   combined = combined.rest(rest.schema);
         // }
@@ -331,9 +356,9 @@ function validateParams(p5, fn, lifecycles) {
       const numArgs = args.length;
       const schemaItems = schema.def.items;
       const numSchemaItems = schemaItems.length;
-      const numRequiredSchemaItems = schemaItems
-        .filter(item => !item.safeParse(undefined).success)
-        .length;
+      const numRequiredSchemaItems = schemaItems.filter(
+        item => !item.safeParse(undefined).success
+      ).length;
 
       if (numArgs >= numRequiredSchemaItems && numArgs <= numSchemaItems) {
         score = 0;
@@ -350,11 +375,12 @@ function validateParams(p5, fn, lifecycles) {
       // message will show that we're expecting at most 2 arguments, but more
       // are received.
       else {
-        score = Math.abs(
-          numArgs < numRequiredSchemaItems ?
-            numRequiredSchemaItems - numArgs :
-            numArgs - numSchemaItems
-        ) * 4;
+        score =
+          Math.abs(
+            numArgs < numRequiredSchemaItems
+              ? numRequiredSchemaItems - numArgs
+              : numArgs - numSchemaItems
+          ) * 4;
       }
 
       for (let i = 0; i < Math.min(schemaItems.length, args.length); i++) {
@@ -405,12 +431,19 @@ function validateParams(p5, fn, lifecycles) {
     let currentError = zodErrorObj.issues[0];
 
     // Helper function to build a type mismatch message.
-    const buildTypeMismatchMessage =
-      (actualType, expectedTypeStr, position) => {
-        const positionStr = position ? FES.log`at the ${ordinals[position]} parameter` : '';
-        const actualTypeStr = actualType ? FES.log`, but received ${actualType}` : '';
-        return FES.log`Expected ${expectedTypeStr} ${positionStr}${actualTypeStr}`;
-      };
+    const buildTypeMismatchMessage = (
+      actualType,
+      expectedTypeStr,
+      position
+    ) => {
+      const positionStr = position
+        ? FES.log`at the ${ordinals[position]} parameter`
+        : '';
+      const actualTypeStr = actualType
+        ? FES.log`, but received ${actualType}`
+        : '';
+      return FES.log`Expected ${expectedTypeStr} ${positionStr}${actualTypeStr}`;
+    };
 
     // Union errors occur when a parameter can be of multiple types but is not
     // of any of them. In this case, aggregate all possible types and print
@@ -419,7 +452,8 @@ function validateParams(p5, fn, lifecycles) {
 
     const processUnionError = error => {
       const expectedTypes = new Set();
-      let actualType, message = '';
+      let actualType,
+        message = '';
 
       const collectIssue = issue => {
         if (!issue) return;
@@ -441,7 +475,9 @@ function validateParams(p5, fn, lifecycles) {
           ) {
             expectedTypes.add('number');
           } else {
-            expectedTypes.add('constant (please refer to documentation for allowed values)');
+            expectedTypes.add(
+              'constant (please refer to documentation for allowed values)'
+            );
             actualType = args[error.path[0]];
           }
         } else if (issue.code === 'custom') {
@@ -460,7 +496,7 @@ function validateParams(p5, fn, lifecycles) {
       });
 
       if (expectedTypes.size > 0) {
-        if (error.path?.length > 0 && args[error.path[0]] instanceof Promise)  {
+        if (error.path?.length > 0 && args[error.path[0]] instanceof Promise) {
           message = FES.log`Did you mean to put \`await\` before a loading function? An unexpected Promise was found. `;
         }
 
@@ -468,7 +504,9 @@ function validateParams(p5, fn, lifecycles) {
         const position = error.path.join('.');
 
         message = FES.log`${message}${buildTypeMismatchMessage(
-          actualType, expectedTypesStr, position
+          actualType,
+          expectedTypesStr,
+          position
         )} in ${func + '()'}.`;
       }
 
@@ -500,7 +538,7 @@ function validateParams(p5, fn, lifecycles) {
         const position = FES.premade.ordinals[currentError.path.join('.')];
         const expectedType = FES.premade.types[currentError.expected];
         // NOTE: need type info
-        message = FES.log`Expected ${expectedType} at the ${position} parameter in ${func + '()'}.`
+        message = FES.log`Expected ${expectedType} at the ${position} parameter in ${func + '()'}.`;
         break;
       }
       case 'too_big': {
@@ -514,7 +552,7 @@ function validateParams(p5, fn, lifecycles) {
         const position = FES.premade.ordinals[currentError.path.join('.')];
         const match = currentError.message.match(/Input not instance of (\w+)/);
         if (match) {
-          message = FES.log`Expected ${match[1]} at the ${position} parameter in ${func + '()'}.`
+          message = FES.log`Expected ${match[1]} at the ${position} parameter in ${func + '()'}.`;
           break;
         }
       }
@@ -603,7 +641,7 @@ function validateParams(p5, fn, lifecycles) {
   // Suppress FES param checking for the duration of a callback.
   // Use this to wrap internal p5 calls that happen after an await.
   // NOTE: shares the same _isUserCall flag logic as the decorator below.
-  fn._internal = function(callback) {
+  fn._internal = function (callback) {
     const wasInternalCall = this._isUserCall;
     this._isUserCall = true;
     try {
@@ -619,16 +657,20 @@ function validateParams(p5, fn, lifecycles) {
     ({ path }) => {
       return path.startsWith('p5.prototype');
     },
-    function(target, { kind, name }){
-      if(kind === 'method'){
-        return function(...args){
+    function (target, { kind, name }) {
+      if (kind === 'method') {
+        return function (...args) {
           if (p5.disableFriendlyErrors) {
             return target.apply(this, args);
           }
           const wasInternalCall = this._isUserCall;
           this._isUserCall = true;
           try {
-            if (!wasInternalCall && !p5.disableFriendlyErrors && !p5.disableParameterValidator) {
+            if (
+              !wasInternalCall &&
+              !p5.disableFriendlyErrors &&
+              !p5.disableParameterValidator
+            ) {
               validate(name, args);
             }
             return target.apply(this, args);
@@ -640,17 +682,17 @@ function validateParams(p5, fn, lifecycles) {
     }
   );
 
-  p5.extendParameterValidation = (data) => {
+  p5.extendParameterValidation = data => {
     documentationData = mergeDeep(documentationData, data);
   };
 
-  lifecycles.presetup = function(){
+  lifecycles.presetup = function () {
     loadP5Constructors();
   };
 }
 
 function isObject(item) {
-  return (item && typeof item === 'object' && !Array.isArray(item));
+  return item && typeof item === 'object' && !Array.isArray(item);
 }
 
 // Deep merge implementation: https://stackoverflow.com/questions/27936772/how-to-deep-merge-instead-of-shallow-merge
