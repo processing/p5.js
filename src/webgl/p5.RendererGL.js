@@ -731,14 +731,22 @@ class RendererGL extends Renderer3D {
     return super.baseMaterialShader();
   }
 
-  _getLightShader() {
-    if (!this._defaultLightShader) {
+  // useTextureMaps compiles a second phong variant with the mtl texture-map
+  // code switched on via a #define. plain lit scenes keep getting the original
+  // shader with none of that compiled in, so they pay nothing for the feature.
+  _getLightShader(useTextureMaps = false) {
+    const cacheKey = useTextureMaps
+      ? '_defaultLightShaderWithMaps'
+      : '_defaultLightShader';
+    if (!this[cacheKey]) {
       if (this._pInst._glAttributes.perPixelLighting) {
-        this._defaultLightShader = new Shader(
+        const mapsDefine = useTextureMaps ? '#define USE_TEXTURE_MAPS\n' : '';
+        this[cacheKey] = new Shader(
           this,
           this._webGL2CompatibilityPrefix('vert', 'highp') +
             defaultShaders.phongVert,
           this._webGL2CompatibilityPrefix('frag', 'highp') +
+            mapsDefine +
             defaultShaders.phongFrag,
           {
             vertex: {
@@ -767,7 +775,9 @@ class RendererGL extends Renderer3D {
           }
         );
       } else {
-        this._defaultLightShader = new Shader(
+        // the non-per-pixel path uses lightTextureFrag, which has no map code,
+        // so both cache keys just resolve to the same plain shader here.
+        this[cacheKey] = new Shader(
           this,
           this._webGL2CompatibilityPrefix('vert', 'highp') +
             defaultShaders.lightVert,
@@ -777,7 +787,7 @@ class RendererGL extends Renderer3D {
       }
     }
 
-    return this._defaultLightShader;
+    return this[cacheKey];
   }
 
   _getNormalShader() {
