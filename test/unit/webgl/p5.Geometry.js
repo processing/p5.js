@@ -386,5 +386,82 @@ suite('p5.Geometry', function () {
       expect(geom.vertices.length).toBeGreaterThan(0);
       expect(geom.faces.length).toEqual(0);
     });
+
+    test('a texture change splits the build into parts', function() {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+      const texA = myp5.createGraphics(10, 10);
+      const texB = myp5.createGraphics(10, 10);
+      const geom = myp5.buildGeometry(() => {
+        myp5.texture(texA);
+        myp5.box(8);
+        myp5.texture(texB);
+        myp5.sphere(8);
+      });
+      // one part per material, in draw order
+      expect(geom.parts.length).toEqual(2);
+      expect(geom.parts[0].partState.texture).not.toBeNull();
+      expect(geom.parts[1].partState.texture).not.toBeNull();
+      expect(geom.parts[0].partState.texture)
+        .not.toEqual(geom.parts[1].partState.texture);
+    });
+
+    test('a fill change alone does not split the build', function() {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+      const geom = myp5.buildGeometry(() => {
+        myp5.fill('red');
+        myp5.box(8);
+        myp5.fill('blue');
+        myp5.sphere(8);
+      });
+      // fill bakes into vertexColors, so the geometry stays a single part
+      expect(geom.parts.length).toEqual(1);
+      expect(geom.vertexColors.length).toBeGreaterThan(0);
+    });
+
+    test('per-part materials render the same as drawing them directly',
+      function() {
+        assertGeometryRendersMatch(function() {
+          myp5.push();
+          myp5.translate(-10, 0);
+          myp5.specularMaterial(255, 0, 0);
+          myp5.shininess(50);
+          myp5.box(8);
+          myp5.pop();
+          myp5.push();
+          myp5.translate(10, 0);
+          myp5.specularMaterial(0, 0, 255);
+          myp5.shininess(200);
+          myp5.box(8);
+          myp5.pop();
+        }, [checkLights]);
+      }
+    );
+
+    test('instancing draws every material part with the instance count',
+      function() {
+        const renderer = myp5.createCanvas(50, 50, myp5.WEBGL);
+        const texA = myp5.createGraphics(10, 10);
+        const texB = myp5.createGraphics(10, 10);
+        const geom = myp5.buildGeometry(() => {
+          myp5.texture(texA);
+          myp5.box(8);
+          myp5.texture(texB);
+          myp5.sphere(8);
+        });
+        expect(geom.parts.length).toEqual(2);
+
+        const fillSpy = vi.spyOn(renderer, '_drawFills');
+        myp5.background(255);
+        myp5.fill(255);
+        myp5.model(geom, 4);
+
+        // one instanced draw per part, each carrying the same instance count
+        expect(fillSpy).toHaveBeenCalledTimes(geom.parts.length);
+        for (const call of fillSpy.mock.calls) {
+          expect(call[1].count).toEqual(4);
+        }
+        fillSpy.mockRestore();
+      }
+    );
   });
 });

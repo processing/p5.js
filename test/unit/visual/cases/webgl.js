@@ -428,6 +428,23 @@ visualSuite('WebGL', function () {
         screenshot();
       }
     );
+    visualTest(
+      'multi-material OBJ renders each material part',
+      async function (p5, screenshot) {
+        p5.createCanvas(50, 50, p5.WEBGL);
+        // textured.obj has two materials: a cat texture and a plain colour
+        const model = await new Promise(resolve =>
+          p5.loadModel('test/unit/assets/textured.obj', resolve)
+        );
+        model.normalize();
+        p5.background(255);
+        p5.rotateX(0.4);
+        p5.rotateY(0.4);
+        p5.noStroke();
+        p5.model(model);
+        screenshot();
+      }
+    );
 
     visualTest(
       'bumpTexture() adds surface detail to a built shape',
@@ -456,6 +473,56 @@ visualSuite('WebGL', function () {
         // tangents are built on demand for a shape that has none of its own
         p5.bumpTexture(nmap);
         p5.sphere(20);
+        screenshot();
+      }
+    );
+
+    visualTest(
+      'a slice with a missing texture falls back to its colour',
+      async function (p5, screenshot) {
+        p5.createCanvas(50, 50, p5.WEBGL);
+        // missing_texture.obj: m0 has a 404 map_Kd (falls back to red), m1 blue
+        const model = await new Promise(resolve =>
+          p5.loadModel('test/unit/assets/missing_texture.obj', resolve)
+        );
+        model.normalize();
+        p5.background(255);
+        p5.rotateX(0.4);
+        p5.rotateY(0.4);
+        p5.noStroke();
+        p5.model(model);
+        screenshot();
+      }
+    );
+
+    visualTest(
+      'a 12-material OBJ renders every material',
+      async function (p5, screenshot) {
+        p5.createCanvas(50, 50, p5.WEBGL);
+        const model = await new Promise(resolve =>
+          p5.loadModel('test/unit/assets/multi_material_12.obj', resolve)
+        );
+        model.normalize();
+        p5.background(255);
+        p5.noStroke();
+        p5.model(model);
+        screenshot();
+      }
+    );
+
+    visualTest(
+      'a single-material OBJ renders through the part path',
+      async function (p5, screenshot) {
+        p5.createCanvas(50, 50, p5.WEBGL);
+        const model = await new Promise(resolve =>
+          p5.loadModel('test/unit/assets/single_material.obj', resolve)
+        );
+        model.normalize();
+        p5.background(255);
+        p5.rotateX(0.4);
+        p5.rotateY(0.4);
+        p5.noStroke();
+        p5.model(model);
         screenshot();
       }
     );
@@ -980,6 +1047,59 @@ visualSuite('WebGL', function () {
       p5.model(geom);
       screenshot();
     });
+
+    visualTest(
+      'a texture change splits into parts that each keep their texture',
+      async function (p5, screenshot) {
+        p5.createCanvas(50, 50, p5.WEBGL);
+        const texA = await p5.loadImage('test/unit/assets/cat.jpg');
+        const texB = await p5.loadImage('test/unit/assets/spheremap.jpg');
+        const geom = p5.buildGeometry(() => {
+          p5.push();
+          p5.translate(-12, 0, 0);
+          p5.texture(texA);
+          p5.box(12);
+          p5.pop();
+          p5.push();
+          p5.translate(12, 0, 0);
+          p5.texture(texB);
+          p5.box(12);
+          p5.pop();
+        });
+        p5.background(255);
+        p5.rotateX(0.4);
+        p5.rotateY(0.4);
+        p5.noStroke();
+        p5.model(geom);
+        screenshot();
+      }
+    );
+
+    visualTest(
+      'a textured part and an untextured part both render',
+      async function (p5, screenshot) {
+        p5.createCanvas(50, 50, p5.WEBGL);
+        const tex = await p5.loadImage('test/unit/assets/cat.jpg');
+        const geom = p5.buildGeometry(() => {
+          p5.push();
+          p5.translate(-12, 0, 0);
+          p5.texture(tex);
+          p5.box(12);
+          p5.pop();
+          p5.push();
+          p5.translate(12, 0, 0);
+          p5.fill('red');
+          p5.box(12);
+          p5.pop();
+        });
+        p5.background(255);
+        p5.rotateX(0.4);
+        p5.rotateY(0.4);
+        p5.noStroke();
+        p5.model(geom);
+        screenshot();
+      }
+    );
   });
 
   visualSuite('font data', () => {
