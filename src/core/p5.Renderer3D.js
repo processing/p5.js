@@ -653,7 +653,7 @@ export class Renderer3D extends Renderer {
       geometry.vertexColors.length > 0 && !geometry.vertexColors.isDefault;
 
     // a normal map needs per-vertex tangents. loaded models compute them at load,
-    // but geometry drawn with bumpTexture() (built shapes, immediate mode) won't
+    // but geometry drawn with normalTexture() (built shapes, immediate mode) won't
     // have them, so build them on demand once (cached on the geometry).
     if (
       this.states._normalTex &&
