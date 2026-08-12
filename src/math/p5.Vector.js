@@ -13,7 +13,9 @@ const prioritizeSmallerDimension = function (currentVectorDimension, args) {
   const resultDimension = Math.min(currentVectorDimension, args.length);
   if (Array.isArray(args) && currentVectorDimension !== args.length) {
     console.warn(
-      'When working with two vectors of different sizes, the smaller dimension is used. In this operation, both vector will be treated as ' + resultDimension + 'D vectors, and any additional values of the linger vector will be ignored.'
+      'When working with two vectors of different sizes, the smaller dimension is used. In this operation, both vectors will be treated as ' +
+        resultDimension +
+        'D vectors, and any additional values of the longer vector will be ignored.'
     );
   }
   return resultDimension;
@@ -23,12 +25,11 @@ const prioritizeSmallerDimension = function (currentVectorDimension, args) {
  * @private
  * In-place, shrinks an array to a dimension.
  */
-const shrinkToDimension = function(arr, dim) {
+const shrinkToDimension = function (arr, dim) {
   while (arr.length > dim) {
     arr.pop();
   }
-}
-
+};
 
 class Vector {
   /**
@@ -70,11 +71,8 @@ class Vector {
   // This is how it comes in with createVector()
   // This check if the first argument is a function
   constructor(...args) {
-
     if (args.length === 0) {
-      this._friendlyError(
-        'Requires valid arguments.', 'p5.Vector'
-      );
+      this._friendlyError('Requires valid arguments.', 'p5.Vector');
     }
 
     if (typeof args[0] === 'function') {
@@ -113,13 +111,12 @@ class Vector {
   // This will get overwritten when exported as part of p5.
   _friendlyError(_e) {}
 
-
   /**
    * Gets how many dimensions the vector has.
    *
    * @returns {Number} The number of dimensions. Can be 1, 2, or 3.
    */
-  get dimensions(){
+  get dimensions() {
     return this.values.length;
   }
 
@@ -653,13 +650,13 @@ class Vector {
 
     shrinkToDimension(this.values, minDimension);
 
-    if(Array.isArray(args)){
+    if (Array.isArray(args)) {
       for (let i = 0; i < this.values.length; i++) {
         if (args[i] > 0) {
           this.values[i] = this.values[i] % args[i];
         }
       }
-    } else if(args > 0) {
+    } else if (args > 0) {
       for (let i = 0; i < this.values.length; i++) {
         this.values[i] = this.values[i] % args;
       }
@@ -982,7 +979,7 @@ class Vector {
     const minDimension = prioritizeSmallerDimension(this.dimensions, args);
     shrinkToDimension(this.values, minDimension);
 
-    if(Array.isArray(args)){
+    if (Array.isArray(args)) {
       for (let i = 0; i < this.values.length; i++) {
         this.values[i] *= args[i];
       }
@@ -1178,7 +1175,7 @@ class Vector {
 
     if (Array.isArray(args)) {
       for (let i = 0; i < minDimension; i++) {
-        if ((typeof args[i] !== 'number' || args[i] === 0)) {
+        if (typeof args[i] !== 'number' || args[i] === 0) {
           if (!this.friendlyErrorsDisabled()) {
             console.warn(
               'p5.Vector.prototype.div',
@@ -1188,7 +1185,7 @@ class Vector {
           return this;
         }
       }
-    } else if(typeof args !== 'number' || args === 0) {
+    } else if (typeof args !== 'number' || args === 0) {
       if (!this.friendlyErrorsDisabled()) {
         console.warn(
           'p5.Vector.prototype.div',
@@ -1200,7 +1197,7 @@ class Vector {
 
     shrinkToDimension(this.values, minDimension);
 
-    if(Array.isArray(args)){
+    if (Array.isArray(args)) {
       for (let i = 0; i < this.values.length; i++) {
         this.values[i] /= args[i];
       }
@@ -2022,13 +2019,15 @@ class Vector {
    * }
    */
   setHeading(a) {
-    if (this.dimensions < 2 || (
-      this._values instanceof Array && this._values.slice(2).some(v => v !== 0))
+    if (
+      this.dimensions < 2 ||
+      (this._values instanceof Array &&
+        this._values.slice(2).some(v => v !== 0))
     ) {
       p5._friendlyError(
         'p5.Vector.setHeading() only supports 2D vectors (z === 0). ' +
-        'For 3D or higher-dimensional vectors, use rotate() or another ' +
-        'appropriate method instead.',
+          'For 3D or higher-dimensional vectors, use rotate() or another ' +
+          'appropriate method instead.',
         'p5.Vector.setHeading'
       );
       return this;
@@ -2848,8 +2847,10 @@ class Vector {
    * <a href="#/p5.Vector">p5.Vector</a> object.
    *
    * The version of `equals()` with multiple parameters interprets them as the
-   * components of another vector. Any missing parameters are assigned the value
-   * 0.
+   * components of another vector.
+   *
+   * If the two vectors have different lengths, a warning is logged and only
+   * the components up to the shorter length are compared.
    *
    * The static version of `equals()`, as in `p5.Vector.equals(v0, v1)`,
    * interprets both parameters as <a href="#/p5.Vector">p5.Vector</a> objects.
@@ -2917,8 +2918,10 @@ class Vector {
       values = args;
     }
 
-    for (let i = 0; i < this.values.length; i++) {
-      if (this.values[i] !== (values[i] || 0)) {
+    const minDimension = prioritizeSmallerDimension(this.values.length, values);
+
+    for (let i = 0; i < minDimension; i++) {
+      if (this.values[i] !== values[i]) {
         return false;
       }
     }
@@ -3747,7 +3750,7 @@ function vector(p5, fn) {
   p5.Vector = Vector;
 
   Vector.prototype._friendlyError = p5._friendlyError;
-  Vector.prototype.friendlyErrorsDisabled = function() {
+  Vector.prototype.friendlyErrorsDisabled = function () {
     return p5.disableFriendlyErrors;
   };
 

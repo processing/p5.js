@@ -8,6 +8,7 @@
 
 import * as constants from '../core/constants';
 import { DataArray } from './p5.DataArray';
+import { GeometryPart, createPartState } from './p5.GeometryPart';
 import { Vector } from '../math/p5.Vector';
 import { downloadFile } from '../io/utilities';
 
@@ -17,7 +18,6 @@ class Geometry {
     this.vertices = [];
 
     this.boundingBoxCache = null;
-
 
     //an array containing every vertex for stroke drawing
     this.lineVertices = new DataArray();
@@ -63,9 +63,30 @@ class Geometry {
 
     this.gid = `_p5_Geometry_${Geometry.nextId}`;
     Geometry.nextId++;
+
+    // a geometry can act as its own single part: this is the default material
+    // state used when it is drawn that way (see _wrapInSinglePart).
+    this.partState = createPartState();
+
+    // every geometry is one or more parts (see p5.GeometryPart). loaders that
+    // know about materials fill parts themselves; anything built the old way
+    // becomes its own single part below.
+    this.parts = [];
+
     if (callback instanceof Function) {
       callback.call(this);
     }
+
+    if (this.parts.length === 0) {
+      this._wrapInSinglePart();
+    }
+  }
+
+  // a geometry with no material breakdown is its own single part. using the
+  // geometry itself (rather than a wrapper) means drawing the part is exactly
+  // drawing the geometry: same buffers, gid, dirty flags and custom attributes.
+  _wrapInSinglePart() {
+    this.parts = [this];
   }
 
   /**
@@ -168,9 +189,15 @@ class Geometry {
     }
 
     let minVertex = new Vector(
-      Number.MAX_VALUE, Number.MAX_VALUE, Number.MAX_VALUE);
+      Number.MAX_VALUE,
+      Number.MAX_VALUE,
+      Number.MAX_VALUE
+    );
     let maxVertex = new Vector(
-      Number.MIN_VALUE, Number.MIN_VALUE, Number.MIN_VALUE);
+      Number.MIN_VALUE,
+      Number.MIN_VALUE,
+      Number.MIN_VALUE
+    );
 
     for (let i = 0; i < this.vertices.length; i++) {
       let vertex = this.vertices[i];
@@ -183,10 +210,16 @@ class Geometry {
       maxVertex.z = Math.max(maxVertex.z, vertex.z);
     }
     // Calculate size and offset properties
-    let size = new Vector(maxVertex.x - minVertex.x,
-      maxVertex.y - minVertex.y, maxVertex.z - minVertex.z);
-    let offset = new Vector((minVertex.x + maxVertex.x) / 2,
-      (minVertex.y + maxVertex.y) / 2, (minVertex.z + maxVertex.z) / 2);
+    let size = new Vector(
+      maxVertex.x - minVertex.x,
+      maxVertex.y - minVertex.y,
+      maxVertex.z - minVertex.z
+    );
+    let offset = new Vector(
+      (minVertex.x + maxVertex.x) / 2,
+      (minVertex.y + maxVertex.y) / 2,
+      (minVertex.z + maxVertex.z) / 2
+    );
 
     // Cache the result for future access
     this.boundingBoxCache = {
@@ -219,7 +252,7 @@ class Geometry {
     this.vertexNormals.length = 0;
     this.uvs.length = 0;
 
-    for (const propName in this.userVertexProperties){
+    for (const propName in this.userVertexProperties) {
       this.userVertexProperties[propName].delete();
     }
     this.userVertexProperties = {};
@@ -357,8 +390,7 @@ class Geometry {
    * }
    */
   saveObj(fileName = 'model.obj') {
-    let objStr= '';
-
+    let objStr = '';
 
     // Vertices
     this.vertices.forEach(v => {
@@ -377,7 +409,6 @@ class Geometry {
       this.vertexNormals.forEach(n => {
         objStr += `vn ${n.x} ${n.y} ${n.z}\n`;
       });
-
     }
     // Faces, obj vertex indices begin with 1 and not 0
     // texture coordinate (uvs) and vertexNormal indices
@@ -385,7 +416,7 @@ class Geometry {
     // ex 1/1/1 or 2//2 for vertices without uvs
     this.faces.forEach(face => {
       let faceStr = 'f';
-      face.forEach(index =>{
+      face.forEach(index => {
         faceStr += ' ';
         faceStr += index + 1;
         if (this.vertexNormals.length > 0 || this.uvs.length > 0) {
@@ -403,8 +434,7 @@ class Geometry {
     });
 
     const blob = new Blob([objStr], { type: 'text/plain' });
-    downloadFile(blob, fileName , 'obj');
-
+    downloadFile(blob, fileName, 'obj');
   }
 
   /**
@@ -463,7 +493,7 @@ class Geometry {
    *   model(myModel);
    * }
    */
-  saveStl(fileName = 'model.stl', { binary = false } = {}){
+  saveStl(fileName = 'model.stl', { binary = false } = {}) {
     let modelOutput;
     let name = fileName.substring(0, fileName.lastIndexOf('.'));
     let faceNormals = [];
@@ -1374,30 +1404,30 @@ class Geometry {
       const isPoint = currEdge[0] === currEdge[1];
       const begin = this.vertices[currEdge[0]];
       const end = this.vertices[currEdge[1]];
-      const prevColor = (this.vertexStrokeColors.length > 0 && prevEdge)
-        ? this.vertexStrokeColors.slice(
-          prevEdge[1] * 4,
-          (prevEdge[1] + 1) * 4
-        )
-        : [0, 0, 0, 0];
-      const fromColor = this.vertexStrokeColors.length > 0
-        ? this.vertexStrokeColors.slice(
-          currEdge[0] * 4,
-          (currEdge[0] + 1) * 4
-        )
-        : [0, 0, 0, 0];
-      const toColor = this.vertexStrokeColors.length > 0
-        ? this.vertexStrokeColors.slice(
-          currEdge[1] * 4,
-          (currEdge[1] + 1) * 4
-        )
-        : [0, 0, 0, 0];
+      const prevColor =
+        this.vertexStrokeColors.length > 0 && prevEdge
+          ? this.vertexStrokeColors.slice(
+              prevEdge[1] * 4,
+              (prevEdge[1] + 1) * 4
+            )
+          : [0, 0, 0, 0];
+      const fromColor =
+        this.vertexStrokeColors.length > 0
+          ? this.vertexStrokeColors.slice(
+              currEdge[0] * 4,
+              (currEdge[0] + 1) * 4
+            )
+          : [0, 0, 0, 0];
+      const toColor =
+        this.vertexStrokeColors.length > 0
+          ? this.vertexStrokeColors.slice(
+              currEdge[1] * 4,
+              (currEdge[1] + 1) * 4
+            )
+          : [0, 0, 0, 0];
       const dir = isPoint
         ? new Vector(0, 1, 0)
-        : end
-          .copy()
-          .sub(begin)
-          .normalize();
+        : end.copy().sub(begin).normalize();
       const dirOK = dir.magSq() > 0;
       if (dirOK) {
         this._addSegment(begin, end, fromColor, toColor, dir);
@@ -1425,12 +1455,7 @@ class Geometry {
           if (dirOK && !connected.has(currEdge[0])) {
             const existingCap = potentialCaps.get(currEdge[0]);
             if (existingCap) {
-              this._addJoin(
-                begin,
-                existingCap.dir,
-                dir,
-                fromColor
-              );
+              this._addJoin(begin, existingCap.dir, dir, fromColor);
               potentialCaps.delete(currEdge[0]);
               connected.add(currEdge[0]);
             } else {
@@ -1467,12 +1492,7 @@ class Geometry {
         if (i === this.edges.length - 1 && !connected.has(currEdge[1])) {
           const existingCap = potentialCaps.get(currEdge[1]);
           if (existingCap) {
-            this._addJoin(
-              end,
-              dir,
-              existingCap.dir.copy().mult(-1),
-              toColor
-            );
+            this._addJoin(end, dir, existingCap.dir.copy().mult(-1), toColor);
             potentialCaps.delete(currEdge[1]);
             connected.add(currEdge[1]);
           } else {
@@ -1511,13 +1531,7 @@ class Geometry {
    * @private
    * @chainable
    */
-  _addSegment(
-    begin,
-    end,
-    fromColor,
-    toColor,
-    dir
-  ) {
+  _addSegment(begin, end, fromColor, toColor, dir) {
     const a = begin.array();
     const b = end.array();
     const dirArr = dir.array();
@@ -1594,12 +1608,7 @@ class Geometry {
    * @private
    * @chainable
    */
-  _addJoin(
-    point,
-    fromTangent,
-    toTangent,
-    color
-  ) {
+  _addJoin(point, fromTangent, toTangent, color) {
     const ptArray = point.array();
     const tanInArray = fromTangent.array();
     const tanOutArray = toTangent.array();
@@ -1789,32 +1798,32 @@ class Geometry {
    * @param {Number|Number[]} data the data tied to the vertex property.
    * @param {Number} [size] optional size of each unit of data.
    */
-  vertexProperty(propertyName, data, size){
+  vertexProperty(propertyName, data, size) {
     let prop;
-    if (!this.userVertexProperties[propertyName]){
+    if (!this.userVertexProperties[propertyName]) {
       prop = this.userVertexProperties[propertyName] =
         this._userVertexPropertyHelper(propertyName, data, size);
     }
     prop = this.userVertexProperties[propertyName];
-    if (size){
+    if (size) {
       prop.pushDirect(data);
-    } else{
+    } else {
       prop.setCurrentData(data);
       prop.pushCurrentData();
     }
   }
 
-  _userVertexPropertyHelper(propertyName, data, size){
+  _userVertexPropertyHelper(propertyName, data, size) {
     const geometryInstance = this;
-    const prop = this.userVertexProperties[propertyName] = {
+    const prop = (this.userVertexProperties[propertyName] = {
       name: propertyName,
       dataSize: size ? size : data.length ? data.length : 1,
       geometry: geometryInstance,
       // Getters
-      getName(){
+      getName() {
         return this.name;
       },
-      getCurrentData(){
+      getCurrentData() {
         if (this.currentData === undefined) {
           this.currentData = new Array(this.getDataSize()).fill(0);
         }
@@ -1844,18 +1853,18 @@ class Geometry {
         this.currentData = data;
       },
       // Utilities
-      pushCurrentData(){
+      pushCurrentData() {
         const data = this.getCurrentData();
         this.pushDirect(data);
       },
       pushDirect(data) {
-        if (data.length){
+        if (data.length) {
           this.getSrcArray().push(...data);
-        } else{
+        } else {
           this.getSrcArray().push(data);
         }
       },
-      resetSrcArray(){
+      resetSrcArray() {
         this.geometry[this.getSrcName()] = [];
       },
       delete() {
@@ -1863,11 +1872,11 @@ class Geometry {
         delete this.geometry[srcName];
         delete this;
       }
-    };
+    });
     this[prop.getSrcName()] = [];
     return this.userVertexProperties[propertyName];
   }
-};
+}
 
 /**
  * Keeps track of how many custom geometry objects have been made so that each
@@ -1875,7 +1884,7 @@ class Geometry {
  */
 Geometry.nextId = 0;
 
-function geometry(p5, fn){
+function geometry(p5, fn) {
   /**
    * A class to describe a 3D shape.
    *
@@ -2100,6 +2109,7 @@ function geometry(p5, fn){
    * }
    */
   p5.Geometry = Geometry;
+  p5.GeometryPart = GeometryPart;
 
   /**
    * An array with the geometry's vertices.
@@ -2114,6 +2124,7 @@ function geometry(p5, fn){
    * @property vertices
    * @for p5.Geometry
    * @name vertices
+   * @deprecated planned for removal in 3.0, access geometry data through `parts` instead
    *
    * @example
    * // Click and drag the mouse to view the scene from different angles.
@@ -2211,6 +2222,7 @@ function geometry(p5, fn){
    * @property vertexNormals
    * @name vertexNormals
    * @for p5.Geometry
+   * @deprecated planned for removal in 3.0, access geometry data through `parts` instead
    *
    * @example
    * // Click and drag the mouse to view the scene from different angles.
@@ -2351,6 +2363,7 @@ function geometry(p5, fn){
    * @property faces
    * @name faces
    * @for p5.Geometry
+   * @deprecated planned for removal in 3.0, access geometry data through `parts` instead
    *
    * @example
    * // Click and drag the mouse to view the scene from different angles.
@@ -2422,6 +2435,7 @@ function geometry(p5, fn){
    * @property uvs
    * @name uvs
    * @for p5.Geometry
+   * @deprecated planned for removal in 3.0, access geometry data through `parts` instead
    *
    * @example
    * let img;
@@ -2476,6 +2490,6 @@ function geometry(p5, fn){
 export default geometry;
 export { Geometry };
 
-if(typeof p5 !== 'undefined'){
+if (typeof p5 !== 'undefined') {
   geometry(p5, p5.prototype);
 }

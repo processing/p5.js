@@ -22,7 +22,6 @@ class File {
     this.data = undefined;
   }
 
-
   static _createLoader(theFile, callback) {
     const reader = new FileReader();
     reader.onload = function (e) {
@@ -58,7 +57,7 @@ class File {
   }
 }
 
-function file(p5, fn){
+function file(p5, fn) {
   /**
    * A class to describe a file.
    *
@@ -352,6 +351,6 @@ function file(p5, fn){
 export default file;
 export { File };
 
-if(typeof p5 !== 'undefined'){
+if (typeof p5 !== 'undefined') {
   file(p5, p5.prototype);
 }

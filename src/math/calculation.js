@@ -4,7 +4,7 @@
  * @for p5
  */
 
-function calculation(p5, fn){
+function calculation(p5, fn) {
   /**
    * Calculates the absolute value of a number.
    *
@@ -222,7 +222,7 @@ function calculation(p5, fn){
    *   circle(xc, 67, 9);
    * }
    */
-  fn.constrain = function(n, low, high) {
+  fn.constrain = function (n, low, high) {
     // p5._validateParameters('constrain', arguments);
     return Math.max(Math.min(n, high), low);
   };
@@ -287,7 +287,7 @@ function calculation(p5, fn){
    * @param  {Number} z2 z-coordinate of the second point.
    * @return {Number}    distance between the two points.
    */
-  fn.dist = function(...args) {
+  fn.dist = function (...args) {
     // p5._validateParameters('dist', args);
     if (args.length === 4) {
       //2D
@@ -295,7 +295,9 @@ function calculation(p5, fn){
     } else if (args.length === 6) {
       //3D
       return Math.hypot(
-        args[3] - args[0], args[4] - args[1], args[5] - args[2]
+        args[3] - args[0],
+        args[4] - args[1],
+        args[5] - args[2]
       );
     }
   };
@@ -604,7 +606,7 @@ function calculation(p5, fn){
    * @param  {Number} amt   number.
    * @return {Number}       lerped value.
    */
-  fn.lerp = function(start, stop, amt) {
+  fn.lerp = function (start, stop, amt) {
     // p5._validateParameters('lerp', arguments);
     return amt * (stop - start) + start;
   };
@@ -748,7 +750,7 @@ function calculation(p5, fn){
    *   describe('A diagonal line is drawn from the top left of the canvas. The number 50 is written at the end of the line.');
    * }
    */
-  fn.mag = function(x, y) {
+  fn.mag = function (x, y) {
     // p5._validateParameters('mag', arguments);
     return Math.hypot(x, y);
   };
@@ -861,9 +863,10 @@ function calculation(p5, fn){
    * @param  {Boolean} [withinBounds] constrain the value to the newly mapped range.
    * @return {Number}        remapped number.
    */
-  fn.map = function(n, start1, stop1, start2, stop2, withinBounds) {
+  fn.map = function (n, start1, stop1, start2, stop2, withinBounds) {
     // p5._validateParameters('map', arguments);
-    const newval = (n - start1) / (stop1 - start1) * (stop2 - start2) + start2;
+    const newval =
+      ((n - start1) / (stop1 - start1)) * (stop2 - start2) + start2;
     if (!withinBounds) {
       return newval;
     }
@@ -977,7 +980,7 @@ function calculation(p5, fn){
    * @param  {Number[]} nums numbers to compare.
    * @return {Number}
    */
-  fn.max = function(...args) {
+  fn.max = function (...args) {
     const findMax = arr => {
       let max = -Infinity;
       for (let x of arr) {
@@ -1096,7 +1099,7 @@ function calculation(p5, fn){
    * @param  {Number[]} nums numbers to compare.
    * @return {Number}
    */
-  fn.min = function(...args) {
+  fn.min = function (...args) {
     const findMin = arr => {
       let min = Infinity;
       for (let x of arr) {
@@ -1146,7 +1149,7 @@ function calculation(p5, fn){
    *   background(redValue, 0, 0);
    * }
    */
-  fn.norm = function(n, start, stop) {
+  fn.norm = function (n, start, stop) {
     // p5._validateParameters('norm', arguments);
     return this.map(n, start, stop, 0, 1);
   };
@@ -1333,7 +1336,7 @@ function calculation(p5, fn){
    * @param  {Number} [decimals] number of decimal places to round to, default is 0.
    * @return {Integer}  rounded number.
    */
-  fn.round = function(n, decimals) {
+  fn.round = function (n, decimals) {
     if (!decimals) {
       return Math.round(n);
     }
@@ -1575,7 +1578,7 @@ function calculation(p5, fn){
    * @param {Number} n number whose fractional part will be found.
    * @returns {Number} fractional part of n.
    */
-  fn.fract = function(toConvert) {
+  fn.fract = function (toConvert) {
     // p5._validateParameters('fract', arguments);
     let sign = 0;
     let num = Number(toConvert);
@@ -1599,6 +1602,6 @@ function calculation(p5, fn){
 
 export default calculation;
 
-if(typeof p5 !== 'undefined'){
+if (typeof p5 !== 'undefined') {
   calculation(p5, p5.prototype);
 }

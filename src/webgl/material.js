@@ -4,14 +4,14 @@
  * @for p5
  */
 
-import * as constants from "../core/constants";
-import { Renderer3D } from "../core/p5.Renderer3D";
-import { Shader } from "./p5.Shader";
-import { request } from "../io/files";
-import { Color } from "../color/p5.Color";
+import * as constants from '../core/constants';
+import { Renderer3D } from '../core/p5.Renderer3D';
+import { Shader } from './p5.Shader';
+import { request } from '../io/files';
+import { Color } from '../color/p5.Color';
 
 async function urlToStrandsCallback(url) {
-  const src = await fetch(url).then((res) => res.text());
+  const src = await fetch(url).then(res => res.text());
   return new Function(src);
 }
 
@@ -130,15 +130,15 @@ function material(p5, fn) {
     vertFilename,
     fragFilename,
     successCallback,
-    failureCallback,
+    failureCallback
   ) {
     // p5._validateParameters('loadShader', arguments);
 
     const loadedShader = new Shader();
 
     try {
-      loadedShader._vertSrc = (await request(vertFilename, "text")).data;
-      loadedShader._fragSrc = (await request(fragFilename, "text")).data;
+      loadedShader._vertSrc = (await request(vertFilename, 'text')).data;
+      loadedShader._fragSrc = (await request(fragFilename, 'text')).data;
 
       if (successCallback) {
         return successCallback(loadedShader) || loadedShader;
@@ -513,22 +513,26 @@ function material(p5, fn) {
   fn.loadFilterShader = async function (
     fragFilename,
     successCallback,
-    failureCallback,
+    failureCallback
   ) {
     // p5._validateParameters('loadFilterShader', arguments);
     try {
       // Load the fragment shader
       const fragSrc = await this.loadStrings(fragFilename);
-      const fragString = await fragSrc.join("\n");
+      const fragString = await fragSrc.join('\n');
 
       // Test if we've loaded GLSL or not by checking for the existence of `void main`
       let loadedShader;
       if (/void\s+main/.exec(fragString)) {
-        loadedShader = this._internal(() => this.createFilterShader(fragString, true));
+        loadedShader = this._internal(() =>
+          this.createFilterShader(fragString, true)
+        );
       } else {
-        loadedShader = this._internal(() => withGlobalStrands(this, () =>
-          this.baseFilterShader().modify(new Function(fragString)),
-        ));
+        loadedShader = this._internal(() =>
+          withGlobalStrands(this, () =>
+            this.baseFilterShader().modify(new Function(fragString))
+          )
+        );
       }
 
       if (successCallback) {
@@ -871,7 +875,7 @@ function material(p5, fn) {
         gl_Position = uProjectionMatrix * uModelViewMatrix * positionVec4;
       }
     `;
-    let vertSrc = fragSrc.includes("#version 300 es")
+    let vertSrc = fragSrc.includes('#version 300 es')
       ? defaultVertV2
       : defaultVertV1;
     const shader = new Shader(this._renderer, vertSrc, fragSrc);
@@ -1227,7 +1231,7 @@ function material(p5, fn) {
    * }
    */
   fn.strokeShader = function (s) {
-    this._assert3d("strokeShader");
+    this._assert3d('strokeShader');
     // p5._validateParameters('strokeShader', arguments);
 
     this._renderer.strokeShader(s);
@@ -1372,7 +1376,7 @@ function material(p5, fn) {
    * }
    */
   fn.imageShader = function (s) {
-    this._assert3d("imageShader");
+    this._assert3d('imageShader');
     // p5._validateParameters('imageShader', arguments);
 
     this._renderer.imageShader(s);
@@ -1630,7 +1634,9 @@ function material(p5, fn) {
   fn.loadMaterialShader = async function (url, onSuccess, onFail) {
     try {
       const cb = await urlToStrandsCallback(url);
-      let shader = this._internal(() => withGlobalStrands(this, () => this.buildMaterialShader(cb)));
+      let shader = this._internal(() =>
+        withGlobalStrands(this, () => this.buildMaterialShader(cb))
+      );
       if (onSuccess) {
         shader = onSuccess(shader) || shader;
       }
@@ -1659,7 +1665,7 @@ function material(p5, fn) {
    * @returns {p5.Shader} The base material shader.
    */
   fn.baseMaterialShader = function () {
-    this._assert3d("baseMaterialShader");
+    this._assert3d('baseMaterialShader');
     return this._renderer.baseMaterialShader();
   };
 
@@ -1847,9 +1853,9 @@ function material(p5, fn) {
   fn.loadNormalShader = async function (url, onSuccess, onFail) {
     try {
       const cb = await urlToStrandsCallback(url);
-      let shader = this._internal(() => this.withGlobalStrands(this, () =>
-        this.buildNormalShader(cb),
-      ));
+      let shader = this._internal(() =>
+        this.withGlobalStrands(this, () => this.buildNormalShader(cb))
+      );
       if (onSuccess) {
         shader = onSuccess(shader) || shader;
       }
@@ -1879,7 +1885,7 @@ function material(p5, fn) {
    * @returns {p5.Shader} The base material shader.
    */
   fn.baseNormalShader = function () {
-    this._assert3d("baseNormalShader");
+    this._assert3d('baseNormalShader');
     return this._renderer.baseNormalShader();
   };
 
@@ -2011,7 +2017,9 @@ function material(p5, fn) {
   fn.loadColorShader = async function (url, onSuccess, onFail) {
     try {
       const cb = await urlToStrandsCallback(url);
-      let shader = this._internal(() => withGlobalStrands(this, () => this.buildColorShader(cb)));
+      let shader = this._internal(() =>
+        withGlobalStrands(this, () => this.buildColorShader(cb))
+      );
       if (onSuccess) {
         shader = onSuccess(shader) || shader;
       }
@@ -2040,7 +2048,7 @@ function material(p5, fn) {
    * @returns {p5.Shader} The base color shader.
    */
   fn.baseColorShader = function () {
-    this._assert3d("baseColorShader");
+    this._assert3d('baseColorShader');
     return this._renderer.baseColorShader();
   };
 
@@ -2271,7 +2279,9 @@ function material(p5, fn) {
   fn.loadStrokeShader = async function (url, onSuccess, onFail) {
     try {
       const cb = await urlToStrandsCallback(url);
-      let shader = this._internal(() => withGlobalStrands(this, () => this.buildStrokeShader(cb)));
+      let shader = this._internal(() =>
+        withGlobalStrands(this, () => this.buildStrokeShader(cb))
+      );
       if (onSuccess) {
         shader = onSuccess(shader) || shader;
       }
@@ -2300,7 +2310,7 @@ function material(p5, fn) {
    * @returns {p5.Shader} The base material shader.
    */
   fn.baseStrokeShader = function () {
-    this._assert3d("baseStrokeShader");
+    this._assert3d('baseStrokeShader');
     return this._renderer.baseStrokeShader();
   };
 
@@ -2543,7 +2553,7 @@ function material(p5, fn) {
    * }
    */
   fn.texture = function (tex) {
-    this._assert3d("texture");
+    this._assert3d('texture');
     // p5._validateParameters('texture', arguments);
 
     // NOTE: make generic or remove need for
@@ -2721,15 +2731,16 @@ function material(p5, fn) {
    * @return {(IMAGE|NORMAL)} The current texture mode, either IMAGE or NORMAL.
    */
   fn.textureMode = function (mode) {
-    if (typeof mode === 'undefined') { // getter
+    if (typeof mode === 'undefined') {
+      // getter
       return this._renderer.states.textureMode;
     }
     if (mode !== constants.IMAGE && mode !== constants.NORMAL) {
       console.warn(
-        `You tried to set ${mode} textureMode only supports IMAGE & NORMAL `,
+        `You tried to set ${mode} textureMode only supports IMAGE & NORMAL `
       );
     } else {
-      this._renderer.states.setValue("textureMode", mode);
+      this._renderer.states.setValue('textureMode', mode);
     }
   };
 
@@ -2994,7 +3005,8 @@ function material(p5, fn) {
    * @return {{x: (CLAMP|REPEAT|MIRROR), y: (CLAMP|REPEAT|MIRROR)}} The current texture wrapping for x and y.
    */
   fn.textureWrap = function (wrapX, wrapY = wrapX) {
-    if (typeof wrapX === 'undefined') { // getter
+    if (typeof wrapX === 'undefined') {
+      // getter
       return {
         x: this._renderer.states.textureWrapX,
         y: this._renderer.states.textureWrapY
@@ -3051,7 +3063,7 @@ function material(p5, fn) {
    * }
    */
   fn.normalMaterial = function (...args) {
-    this._assert3d("normalMaterial");
+    this._assert3d('normalMaterial');
     // p5._validateParameters('normalMaterial', args);
 
     this._renderer.normalMaterial(...args);
@@ -3257,16 +3269,16 @@ function material(p5, fn) {
    * @chainable
    */
   fn.ambientMaterial = function (v1, v2, v3) {
-    this._assert3d("ambientMaterial");
+    this._assert3d('ambientMaterial');
     // p5._validateParameters('ambientMaterial', arguments);
 
     const color = fn.color.apply(this, arguments);
-    this._renderer.states.setValue("_hasSetAmbient", true);
-    this._renderer.states.setValue("curAmbientColor", color._array);
-    this._renderer.states.setValue("_useNormalMaterial", false);
-    this._renderer.states.setValue("enableLighting", true);
+    this._renderer.states.setValue('_hasSetAmbient', true);
+    this._renderer.states.setValue('curAmbientColor', color._array);
+    this._renderer.states.setValue('_useNormalMaterial', false);
+    this._renderer.states.setValue('enableLighting', true);
     if (!this._renderer.states.fillColor) {
-      this._renderer.states.setValue("fillColor", new Color([1, 1, 1]));
+      this._renderer.states.setValue('fillColor', new Color([1, 1, 1]));
     }
     return this;
   };
@@ -3349,14 +3361,14 @@ function material(p5, fn) {
    * @chainable
    */
   fn.emissiveMaterial = function (v1, v2, v3, a) {
-    this._assert3d("emissiveMaterial");
+    this._assert3d('emissiveMaterial');
     // p5._validateParameters('emissiveMaterial', arguments);
 
     const color = fn.color.apply(this, arguments);
-    this._renderer.states.setValue("curEmissiveColor", color._array);
-    this._renderer.states.setValue("_useEmissiveMaterial", true);
-    this._renderer.states.setValue("_useNormalMaterial", false);
-    this._renderer.states.setValue("enableLighting", true);
+    this._renderer.states.setValue('curEmissiveColor', color._array);
+    this._renderer.states.setValue('_useEmissiveMaterial', true);
+    this._renderer.states.setValue('_useNormalMaterial', false);
+    this._renderer.states.setValue('enableLighting', true);
 
     return this;
   };
@@ -3589,14 +3601,14 @@ function material(p5, fn) {
    * @chainable
    */
   fn.specularMaterial = function (v1, v2, v3, alpha) {
-    this._assert3d("specularMaterial");
+    this._assert3d('specularMaterial');
     // p5._validateParameters('specularMaterial', arguments);
 
     const color = fn.color.apply(this, arguments);
-    this._renderer.states.setValue("curSpecularColor", color._array);
-    this._renderer.states.setValue("_useSpecularMaterial", true);
-    this._renderer.states.setValue("_useNormalMaterial", false);
-    this._renderer.states.setValue("enableLighting", true);
+    this._renderer.states.setValue('curSpecularColor', color._array);
+    this._renderer.states.setValue('_useSpecularMaterial', true);
+    this._renderer.states.setValue('_useNormalMaterial', false);
+    this._renderer.states.setValue('enableLighting', true);
 
     return this;
   };
@@ -3658,7 +3670,7 @@ function material(p5, fn) {
    * }
    */
   fn.shininess = function (shine) {
-    this._assert3d("shininess");
+    this._assert3d('shininess');
     // p5._validateParameters('shininess', arguments);
 
     this._renderer.shininess(shine);
@@ -3767,7 +3779,7 @@ function material(p5, fn) {
    * }
    */
   fn.metalness = function (metallic) {
-    this._assert3d("metalness");
+    this._assert3d('metalness');
 
     this._renderer.metalness(metallic);
 
@@ -3776,45 +3788,45 @@ function material(p5, fn) {
 
   Renderer3D.prototype.shader = function (s) {
     // Always set the shader as a fill shader
-    this.states.setValue("userFillShader", s);
-    this.states.setValue("_useNormalMaterial", false);
+    this.states.setValue('userFillShader', s);
+    this.states.setValue('_useNormalMaterial', false);
     s.ensureCompiledOnContext(this);
     s.setDefaultUniforms();
   };
 
   Renderer3D.prototype.strokeShader = function (s) {
-    this.states.setValue("userStrokeShader", s);
+    this.states.setValue('userStrokeShader', s);
     s.ensureCompiledOnContext(this);
     s.setDefaultUniforms();
   };
 
   Renderer3D.prototype.imageShader = function (s) {
-    this.states.setValue("userImageShader", s);
+    this.states.setValue('userImageShader', s);
     s.ensureCompiledOnContext(this);
     s.setDefaultUniforms();
   };
 
   Renderer3D.prototype.resetShader = function () {
-    this.states.setValue("userFillShader", null);
-    this.states.setValue("userStrokeShader", null);
-    this.states.setValue("userImageShader", null);
+    this.states.setValue('userFillShader', null);
+    this.states.setValue('userStrokeShader', null);
+    this.states.setValue('userImageShader', null);
   };
 
   Renderer3D.prototype.texture = function (tex) {
-    this.states.setValue("drawMode", constants.TEXTURE);
-    this.states.setValue("_useNormalMaterial", false);
-    this.states.setValue("_tex", tex);
-    this.states.setValue("fillColor", new Color([1, 1, 1]));
+    this.states.setValue('drawMode', constants.TEXTURE);
+    this.states.setValue('_useNormalMaterial', false);
+    this.states.setValue('_tex', tex);
+    this.states.setValue('fillColor', new Color([1, 1, 1]));
   };
 
   Renderer3D.prototype.normalMaterial = function (...args) {
-    this.states.setValue("drawMode", constants.FILL);
-    this.states.setValue("_useSpecularMaterial", false);
-    this.states.setValue("_useEmissiveMaterial", false);
-    this.states.setValue("_useNormalMaterial", true);
-    this.states.setValue("curFillColor", [1, 1, 1, 1]);
-    this.states.setValue("fillColor", new Color([1, 1, 1]));
-    this.states.setValue("strokeColor", null);
+    this.states.setValue('drawMode', constants.FILL);
+    this.states.setValue('_useSpecularMaterial', false);
+    this.states.setValue('_useEmissiveMaterial', false);
+    this.states.setValue('_useNormalMaterial', true);
+    this.states.setValue('curFillColor', [1, 1, 1, 1]);
+    this.states.setValue('fillColor', new Color([1, 1, 1]));
+    this.states.setValue('strokeColor', null);
   };
 
   // Renderer3D.prototype.ambientMaterial = function(v1, v2, v3) {
@@ -3830,17 +3842,17 @@ function material(p5, fn) {
     if (shine < 1) {
       shine = 1;
     }
-    this.states.setValue("_useShininess", shine);
+    this.states.setValue('_useShininess', shine);
   };
 
   Renderer3D.prototype.metalness = function (metallic) {
     const metalMix = 1 - Math.exp(-metallic / 100);
-    this.states.setValue("_useMetalness", metalMix);
+    this.states.setValue('_useMetalness', metalMix);
   };
 }
 
 export default material;
 
-if (typeof p5 !== "undefined") {
+if (typeof p5 !== 'undefined') {
   loading(p5, p5.prototype);
 }

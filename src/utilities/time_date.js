@@ -4,7 +4,7 @@
  * @for p5
  */
 
-function timeDate(p5, fn){
+function timeDate(p5, fn) {
   /**
    * Returns the current day as a number from 1–31.
    *
@@ -31,7 +31,7 @@ function timeDate(p5, fn){
    *   describe(`The text 'Current day: ${d}' written in black on a gray background.`);
    * }
    */
-  fn.day = function() {
+  fn.day = function () {
     return new Date().getDate();
   };
 
@@ -61,7 +61,7 @@ function timeDate(p5, fn){
    *   describe(`The text 'Current hour: ${h}' written in black on a gray background.`);
    * }
    */
-  fn.hour = function() {
+  fn.hour = function () {
     return new Date().getHours();
   };
 
@@ -91,7 +91,7 @@ function timeDate(p5, fn){
    *   describe(`The text 'Current minute: ${m}' written in black on a gray background.`);
    * }
    */
-  fn.minute = function() {
+  fn.minute = function () {
     return new Date().getMinutes();
   };
 
@@ -234,7 +234,7 @@ function timeDate(p5, fn){
    * @method millis
    * @return {Number} number of milliseconds since starting the sketch.
    */
-  fn.millis = function() {
+  fn.millis = function () {
     if (this._millisStart === -1) {
       // Sketch has not started
       return 0;
@@ -269,7 +269,7 @@ function timeDate(p5, fn){
    *   describe(`The text 'Current month: ${m}' written in black on a gray background.`);
    * }
    */
-  fn.month = function() {
+  fn.month = function () {
     //January is 0!
     return new Date().getMonth() + 1;
   };
@@ -300,7 +300,7 @@ function timeDate(p5, fn){
    *   describe(`The text 'Current second: ${s}' written in black on a gray background.`);
    * }
    */
-  fn.second = function() {
+  fn.second = function () {
     return new Date().getSeconds();
   };
 
@@ -330,13 +330,13 @@ function timeDate(p5, fn){
    *   describe(`The text 'Current year: ${y}' written in black on a gray background.`);
    * }
    */
-  fn.year = function() {
+  fn.year = function () {
     return new Date().getFullYear();
   };
 }
 
 export default timeDate;
 
-if(typeof p5 !== 'undefined'){
+if (typeof p5 !== 'undefined') {
   timeDate(p5, p5.prototype);
 }
