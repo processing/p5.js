@@ -8,7 +8,11 @@
 
 import * as constants from '../core/constants';
 import { DataArray } from './p5.DataArray';
-import { GeometryPart, createPartState } from './p5.GeometryPart';
+import {
+  GeometryPart,
+  createPartState,
+  createUserVertexProperty
+} from './p5.GeometryPart';
 import { Vector } from '../math/p5.Vector';
 import { downloadFile } from '../io/utilities';
 
@@ -1814,67 +1818,8 @@ class Geometry {
   }
 
   _userVertexPropertyHelper(propertyName, data, size) {
-    const geometryInstance = this;
-    const prop = (this.userVertexProperties[propertyName] = {
-      name: propertyName,
-      dataSize: size ? size : data.length ? data.length : 1,
-      geometry: geometryInstance,
-      // Getters
-      getName() {
-        return this.name;
-      },
-      getCurrentData() {
-        if (this.currentData === undefined) {
-          this.currentData = new Array(this.getDataSize()).fill(0);
-        }
-        return this.currentData;
-      },
-      getDataSize() {
-        return this.dataSize;
-      },
-      getSrcName() {
-        const src = this.name.concat('Src');
-        return src;
-      },
-      getDstName() {
-        const dst = this.name.concat('Buffer');
-        return dst;
-      },
-      getSrcArray() {
-        const srcName = this.getSrcName();
-        return this.geometry[srcName];
-      },
-      //Setters
-      setCurrentData(data) {
-        const size = data.length ? data.length : 1;
-        // if (size != this.getDataSize()){
-        //   p5._friendlyError(`Custom vertex property '${this.name}' has been set with various data sizes. You can change it's name, or if it was an accident, set '${this.name}' to have the same number of inputs each time!`, 'vertexProperty()');
-        // }
-        this.currentData = data;
-      },
-      // Utilities
-      pushCurrentData() {
-        const data = this.getCurrentData();
-        this.pushDirect(data);
-      },
-      pushDirect(data) {
-        if (data.length) {
-          this.getSrcArray().push(...data);
-        } else {
-          this.getSrcArray().push(data);
-        }
-      },
-      resetSrcArray() {
-        this.geometry[this.getSrcName()] = [];
-      },
-      delete() {
-        const srcName = this.getSrcName();
-        delete this.geometry[srcName];
-        delete this;
-      }
-    });
-    this[prop.getSrcName()] = [];
-    return this.userVertexProperties[propertyName];
+    // shared with GeometryPart so parts carry custom attributes identically
+    return createUserVertexProperty(this, propertyName, data, size);
   }
 }
 
