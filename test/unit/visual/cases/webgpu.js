@@ -2048,7 +2048,7 @@ visualSuite('WebGPU', function () {
     );
 
     visualTest(
-      'bumpTexture() adds surface detail to a built shape',
+      'normalTexture() adds surface detail to a built shape',
       async function (p5, screenshot) {
         await p5.createCanvas(50, 50, p5.WEBGPU);
         const nmap = p5.createImage(32, 32);
@@ -2069,7 +2069,7 @@ visualSuite('WebGPU', function () {
         p5.pointLight(255, 255, 255, 50, -50, 200);
         p5.noStroke();
         p5.fill(200);
-        p5.bumpTexture(nmap);
+        p5.normalTexture(nmap);
         p5.sphere(20);
         await screenshot();
       }

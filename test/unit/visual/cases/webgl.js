@@ -447,7 +447,7 @@ visualSuite('WebGL', function () {
     );
 
     visualTest(
-      'bumpTexture() adds surface detail to a built shape',
+      'normalTexture() adds surface detail to a built shape',
       function (p5, screenshot) {
         p5.createCanvas(50, 50, p5.WEBGL);
         // a procedural tangent-space normal map with diagonal ridges
@@ -471,7 +471,7 @@ visualSuite('WebGL', function () {
         p5.noStroke();
         p5.fill(200);
         // tangents are built on demand for a shape that has none of its own
-        p5.bumpTexture(nmap);
+        p5.normalTexture(nmap);
         p5.sphere(20);
         screenshot();
       }
