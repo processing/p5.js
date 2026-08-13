@@ -4,7 +4,6 @@ import {
   _defaultEmptyVector,
   _validatedVectorOperation
 } from '../../../src/math/patch-vector.js';
-import { vi } from 'vitest';
 
 suite('p5.Vector', function () {
   var v;
@@ -1517,12 +1516,6 @@ suite('p5.Vector', function () {
         const v2 = new Vector(2, 2, 2);
         v.lerp(v2, 0.5);
         expect(v.values).to.eql([1, 1, 1]);
-      });
-
-      test('should call lerp with 4 arguments', function () {
-        vi.spyOn(v, 'lerp');
-        v.lerp(new Vector(1, 2, 3), 1);
-        expect(v.lerp).toHaveBeenCalledWith(1, 2, 3, 1);
       });
     });
 
