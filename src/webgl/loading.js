@@ -74,6 +74,9 @@ function parseMtlData(data) {
     } else if (tokens[0] === 'map_Ks') {
       //specular texture
       materials[currentMaterial].specularTexturePath = tokens[1];
+    } else if (tokens[0] === 'map_Ns') {
+      //shininess texture
+      materials[currentMaterial].shininessTexturePath = tokens[1];
     } else if (tokens[0] === 'map_Bump' || tokens[0] === 'bump') {
       //bump map. -bm etc can precede the path so take the last token. parsed
       //but not used until the renderer handles it.
@@ -98,13 +101,37 @@ function mtlToPartState(material) {
   if (material.specularColor) state.specularColor = material.specularColor;
   if (material.shininess !== undefined) state.shininess = material.shininess;
   if (material.texture) state.texture = material.texture;
+  if (material.specularTexture) {
+    state.specularTexture = material.specularTexture;
+    // a specular map modulates a base specular colour; default to white so the
+    // map shows even when the mtl has a map_Ks but no explicit Ks colour.
+    if (!state.specularColor) state.specularColor = [1, 1, 1];
+  }
+  if (material.ambientTexture) {
+    state.ambientTexture = material.ambientTexture;
+    // same idea as the specular map: default the base ambient colour to white
+    if (!state.ambientColor) state.ambientColor = [1, 1, 1];
+  }
+  if (material.shininessTexture) {
+    state.shininessTexture = material.shininessTexture;
+    // the map scales the base shininess; default the base to 1 when no Ns
+    if (state.shininess == null) state.shininess = 1;
+  }
   return state;
 }
 
-// load each material's diffuse texture (map_Kd) and hang it on the material so
-// it lands on the part state. paths resolve relative to the model file, a
-// texture that fails just gets skipped. no-op if there's no loadImage. only
-// map_Kd for now since that's all the renderer can use.
+// each texture map the renderer can use: the parsed path field on the material,
+// and the image field we hang the loaded p5.Image on for mtlToPartState to read.
+const MATERIAL_TEXTURE_MAPS = [
+  ['texturePath', 'texture'], // map_Kd (diffuse)
+  ['specularTexturePath', 'specularTexture'], // map_Ks (specular)
+  ['ambientTexturePath', 'ambientTexture'], // map_Ka (ambient)
+  ['shininessTexturePath', 'shininessTexture'] // map_Ns (shininess)
+];
+
+// load each material's texture maps and hang them on the material so they land
+// on the part state. paths resolve relative to the model file, a texture that
+// fails just gets skipped. no-op if there's no loadImage.
 async function loadMaterialTextures(materials, modelPath, instance) {
   if (!instance || typeof instance.loadImage !== 'function') return;
 
@@ -115,18 +142,20 @@ async function loadMaterialTextures(materials, modelPath, instance) {
   const jobs = [];
   for (const name in materials) {
     const material = materials[name];
-    if (!material.texturePath) continue;
-    const url = resolve(material.texturePath);
-    jobs.push(
-      instance
-        .loadImage(url)
-        .then(img => {
-          material.texture = img;
-        })
-        .catch(() => {
-          console.warn(`Texture not found, skipping: ${url}`);
-        })
-    );
+    for (const [pathField, imageField] of MATERIAL_TEXTURE_MAPS) {
+      if (!material[pathField]) continue;
+      const url = resolve(material[pathField]);
+      jobs.push(
+        instance
+          .loadImage(url)
+          .then(img => {
+            material[imageField] = img;
+          })
+          .catch(() => {
+            console.warn(`Texture not found, skipping: ${url}`);
+          })
+      );
+    }
   }
 
   await Promise.all(jobs);
