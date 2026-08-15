@@ -126,7 +126,7 @@ function rendererWebGPU(p5, fn) {
      * @beta
      * @webgpu
      * @webgpuOnly
-     * @param {Number[]|Float32Array|Object[]} data The new data to write into the buffer.
+     * @param {Number[]|Float32Array|Uint32Array|Int32Array|Object[]} data The new data to write into the buffer.
      */
     update(data) {
       const device = this._renderer.device;
@@ -187,8 +187,9 @@ function rendererWebGPU(p5, fn) {
      * Reads data from a storage buffer back into JavaScript.
      *
      * Copies data from the GPU to the CPU using a temporary buffer,
-     * so it must be awaited. Returns a `Float32Array` for number
-     * buffers, or an array of plain objects for struct buffers.
+     * so it must be awaited. Returns a typed array (such as `Float32Array` or
+     * `Uint32Array`) for number buffers, or an array of plain objects for
+     * struct buffers.
      *
      * Note: This is a GPU -> CPU read, so calling it often (like every frame)
      * can be slow.
@@ -219,12 +220,41 @@ function rendererWebGPU(p5, fn) {
      * }
      * ```
      *
+     * ```js example
+     * let data;
+     * let computeShader;
+     *
+     * async function setup() {
+     *   await createCanvas(100, 100, WEBGPU);
+     *
+     *   data = createStorage(new Uint32Array([10, 20, 30, 40]));
+     *   computeShader = baseComputeShader().modify({
+     *     computeDeclarations: `
+     *       @group(0) @binding(1) var<storage, read_write> counts: array<atomic<u32>>;
+     *     `,
+     *     'void iteration': `(index: vec3<i32>) {
+     *       let idx = index.x;
+     *       atomicAdd(&counts[idx], 5u);
+     *     }`
+     *   });
+     *   computeShader.setUniform('counts', data);
+     *   compute(computeShader, 4);
+     *
+     *   let result = await data.read();
+     *   // result is Uint32Array [15, 25, 35, 45]
+     *   for (let i = 0; i < result.length; i++) {
+     *     print(result[i]);
+     *   }
+     *   describe('Prints the values 15, 25, 35, 45 to the console.');
+     * }
+     * ```
+     *
      * @method read
      * @for p5.StorageBuffer
      * @beta
      * @webgpu
      * @webgpuOnly
-     * @returns {Promise<Float32Array|Object[]>}
+     * @returns {Promise<Float32Array|Uint32Array|Int32Array|Object[]>}
      */
     async read() {
       const device = this._renderer.device;
