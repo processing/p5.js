@@ -79,12 +79,12 @@ suite('color/CreatingReading', function () {
       var interA = mockP5Prototype.lerpColor(fromColor, toColor, 0.33);
       var interB = mockP5Prototype.lerpColor(fromColor, toColor, 0.66);
 
-      assert.closeTo(interA._color.coords[0], 37, 1);
-      assert.closeTo(interA._color.coords[1], 43, 1);
+      assert.closeTo(interA._color.coords[0], 352, 1);
+      assert.closeTo(interA._color.coords[1], 63, 1);
       assert.closeTo(interA._color.coords[2], 46, 1);
 
-      assert.closeTo(interB._color.coords[0], 345, 1);
-      assert.closeTo(interB._color.coords[1], 12, 1);
+      assert.closeTo(interB._color.coords[0], 301, 1);
+      assert.closeTo(interB._color.coords[1], 51, 1);
       assert.closeTo(interB._color.coords[2], 43, 1);
     });
 
@@ -94,13 +94,13 @@ suite('color/CreatingReading', function () {
       var interA = mockP5Prototype.lerpColor(fromColor, toColor, 0.33);
       var interB = mockP5Prototype.lerpColor(fromColor, toColor, 0.66);
 
-      assert.closeTo(interA._color.coords[0], 37, 1);
-      assert.closeTo(interA._color.coords[1], 60, 1);
-      assert.closeTo(interA._color.coords[2], 66, 1);
+      assert.closeTo(interA._color.coords[0], 352, 1);
+      assert.closeTo(interA._color.coords[1], 76, 1);
+      assert.closeTo(interA._color.coords[2], 75, 1);
 
-      assert.closeTo(interB._color.coords[0], 345, 1);
-      assert.closeTo(interB._color.coords[1], 20, 1);
-      assert.closeTo(interB._color.coords[2], 47, 1);
+      assert.closeTo(interB._color.coords[0], 301, 1);
+      assert.closeTo(interB._color.coords[1], 66, 1);
+      assert.closeTo(interB._color.coords[2], 65, 1);
     });
 
     test.todo('should not extrapolate', function () {
@@ -139,14 +139,14 @@ suite('color/CreatingReading', function () {
       var interA = mockP5Prototype.lerpColor(fromColor, toColor, 0.33);
       var interB = mockP5Prototype.lerpColor(fromColor, toColor, 0.66);
 
-      assert.closeTo(interA._color.coords[0], 37, 1);
-      assert.closeTo(interA._color.coords[1], 43, 1);
+      assert.closeTo(interA._color.coords[0], 352, 1);
+      assert.closeTo(interA._color.coords[1], 63, 1);
       assert.closeTo(interA._color.coords[2], 46, 1);
-      assert.closeTo(interA._color.alpha, 0.38, 0.01);
+      assert.closeTo(interA._color.alpha, 0.39, 0.01);
 
-      assert.closeTo(interB._color.coords[0], 345, 1);
-      assert.closeTo(interB._color.coords[1], 11, 1);
-      assert.closeTo(interB._color.coords[2], 42, 1);
+      assert.closeTo(interB._color.coords[0], 301, 1);
+      assert.closeTo(interB._color.coords[1], 51, 1);
+      assert.closeTo(interB._color.coords[2], 43, 1);
       assert.closeTo(interB._color.alpha, 0.58, 0.01);
     });
 
@@ -155,14 +155,14 @@ suite('color/CreatingReading', function () {
       var interA = mockP5Prototype.lerpColor(fromColor, toColor, 0.33);
       var interB = mockP5Prototype.lerpColor(fromColor, toColor, 0.66);
 
-      assert.closeTo(interA._color.coords[0], 37, 1);
-      assert.closeTo(interA._color.coords[1], 60, 1);
-      assert.closeTo(interA._color.coords[2], 66, 1);
-      assert.closeTo(interA._color.alpha, 0.38, 0.01);
+      assert.closeTo(interA._color.coords[0], 352, 1);
+      assert.closeTo(interA._color.coords[1], 76, 1);
+      assert.closeTo(interA._color.coords[2], 75, 1);
+      assert.closeTo(interA._color.alpha, 0.39, 0.01);
 
-      assert.closeTo(interB._color.coords[0], 345, 1);
-      assert.closeTo(interB._color.coords[1], 20, 1);
-      assert.closeTo(interB._color.coords[2], 47, 1);
+      assert.closeTo(interB._color.coords[0], 301, 1);
+      assert.closeTo(interB._color.coords[1], 66, 1);
+      assert.closeTo(interB._color.coords[2], 65, 1);
       assert.closeTo(interB._color.alpha, 0.58, 0.01);
     });
 

@@ -1681,7 +1681,7 @@ function creatingReading(p5, fn) {
    * interval [0, 1] will produce strange and unexpected colors.
    *
    * The way that colors are interpolated depends on the current
-   * <a href="#/p5/colorMode">colorMode()</a>.
+   * <a href="#/p5/colorMode">colorMode()</a> or on the passed `options` object.
    *
    * ```js example
    * function setup() {
@@ -1716,6 +1716,63 @@ function creatingReading(p5, fn) {
    *
    *   describe(
    *     'Four rectangles. From left to right, the rectangles are tan, brown, brownish purple, and purple.'
+   *   );
+   * }
+   * ```
+   *
+   * Normally, colors are interpolated according to the current `colorMode()`. But you can override this by
+   * specifying a different color space to perform the interpolation in. Different color spaces will blend
+   * colors differently.
+   *
+   * ```js example
+   * function setup() {
+   *   createCanvas(100, 100);
+   *
+   *   background(200);
+   *
+   *   // Create p5.Color objects to interpolate between.
+   *   colorMode(HSL);
+   *   let from = color(240, 100, 25);
+   *   let to = color('white');
+   *
+   *   // Create intermediate colors
+   *   let interA = lerpColor(from, to, 0.33);
+   *   let interB = lerpColor(from, to, 0.66);
+   *
+   *   let inter1 = lerpColor(from, to, {
+   *     amount: 0.33,
+   *     lerpMode: HSB // interpolate in the HSB color space
+   *   });
+   *   let inter2 = lerpColor(from, to, {
+   *     amount: 0.66,
+   *     lerpMode: HSB
+   *   });
+   *
+   *   // Draw the left rectangle.
+   *   noStroke();
+   *   fill(from);
+   *   rect(10, 20, 20, 60);
+   *
+   *   // Draw the left-center rectangles.
+   *   fill(interA);
+   *   rect(30, 20, 20, 30);
+   *
+   *   fill(inter1);
+   *   rect(30, 50, 20, 30);
+   *
+   *   // Draw the right-center rectangles.
+   *   fill(interB);
+   *   rect(50, 20, 20, 30);
+   *
+   *   fill(inter2);
+   *   rect(50, 50, 20, 30);
+   *
+   *   // Draw the right rectangle.
+   *   fill(to);
+   *   rect(70, 20, 20, 60);
+   *
+   *   describe(
+   *     'Two strips of four colors each. From left to right, the top strip begins with dark blue, followed by a lighter blue, a light blue and finally white. Meanwhile, the bottom strip begins with a dark blue, followed by purple, then pink and finally white.'
    *   );
    * }
    * ```
@@ -1755,9 +1812,35 @@ function creatingReading(p5, fn) {
    * @param  {Number}   amt number between 0 and 1.
    * @return {p5.Color}     interpolated color.
    */
+  /**
+   * @method lerpColor
+   * @param  {p5.Color} c1  interpolate from this color.
+   * @param  {p5.Color} c2  interpolate to this color.
+   * @param  {Object} options interpolation options.
+   * @param  {number} [options.amount] a number between 0 and 1.
+   * @param  {RGB|HSB|HSL|RGBP3|HWB|LAB|LCH|OKLAB|OKLCH} [options.outputMode] the desired output color mode.
+   * @param  {RGB|HSB|HSL|RGBP3|HWB|LAB|LCH|OKLAB|OKLCH} [options.lerpMode] the color mode (space) to perform the interpolation in.
+   * @return  {p5.Color}     interpolated color.
+   */
   fn.lerpColor = function (c1, c2, amt) {
+    const defaultMode = this._renderer.states.colorMode;
+
+    let outputMode = defaultMode;
+    let lerpMode = defaultMode;
+
+    if (typeof amt === 'object') {
+      // Passing in options object
+      outputMode = amt.outputMode ?? outputMode;
+      lerpMode = amt.lerpMode ?? lerpMode;
+      amt = amt.amount;
+    }
+
     // p5._validateParameters('lerpColor', arguments);
-    return c1.lerp(c2, amt, this._renderer.states.colorMode);
+    return c1.lerp(c2, {
+      amount: amt,
+      lerpMode,
+      outputMode
+    });
   };
 
   /**
