@@ -355,6 +355,50 @@ suite('p5.Geometry', function () {
         .not.toEqual(geom.parts[1].partState.texture);
     });
 
+    test('custom vertex attributes survive the multi-material part split',
+      function() {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+        const texA = myp5.createGraphics(10, 10);
+        const texB = myp5.createGraphics(10, 10);
+        const geom = myp5.buildGeometry(() => {
+          // first material: aCustom values in 1..3
+          myp5.texture(texA);
+          myp5.beginShape(myp5.TRIANGLES);
+          myp5.vertexProperty('aCustom', 1);
+          myp5.vertex(-10, -10, 0);
+          myp5.vertexProperty('aCustom', 2);
+          myp5.vertex(10, -10, 0);
+          myp5.vertexProperty('aCustom', 3);
+          myp5.vertex(0, 10, 0);
+          myp5.endShape();
+          // second material: aCustom values in 4..6
+          myp5.texture(texB);
+          myp5.beginShape(myp5.TRIANGLES);
+          myp5.vertexProperty('aCustom', 4);
+          myp5.vertex(-10, -10, 0);
+          myp5.vertexProperty('aCustom', 5);
+          myp5.vertex(10, -10, 0);
+          myp5.vertexProperty('aCustom', 6);
+          myp5.vertex(0, 10, 0);
+          myp5.endShape();
+        });
+
+        // the texture change still splits into two parts even with a custom attr
+        expect(geom.parts.length).toEqual(2);
+
+        const a0 = geom.parts[0].userVertexProperties.aCustom;
+        const a1 = geom.parts[1].userVertexProperties.aCustom;
+        expect(a0).toBeTruthy();
+        expect(a1).toBeTruthy();
+        // one value per vertex, aligned to each part
+        expect(a0.getSrcArray().length).toEqual(geom.parts[0].vertices.length);
+        expect(a1.getSrcArray().length).toEqual(geom.parts[1].vertices.length);
+        // and each part only carries its own draw's values
+        expect(a0.getSrcArray().every(v => v >= 1 && v <= 3)).toBe(true);
+        expect(a1.getSrcArray().every(v => v >= 4 && v <= 6)).toBe(true);
+      }
+    );
+
     test('a fill change alone does not split the build', function() {
       myp5.createCanvas(50, 50, myp5.WEBGL);
       const geom = myp5.buildGeometry(() => {

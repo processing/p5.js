@@ -20,6 +20,62 @@ function createPartState() {
   };
 }
 
+// build a custom vertex-property accessor bound to `owner` (a p5.Geometry or a
+// GeometryPart). the raw data lives on owner[name + 'Src'] and the renderer
+// reads it back through getSrcArray()/getDataSize(). shared between geometries
+// and parts so a per-material part carries custom attributes the same way the
+// whole geometry does.
+function createUserVertexProperty(owner, propertyName, data, size) {
+  const prop = (owner.userVertexProperties[propertyName] = {
+    name: propertyName,
+    dataSize: size ? size : data.length ? data.length : 1,
+    geometry: owner,
+    getName() {
+      return this.name;
+    },
+    getCurrentData() {
+      if (this.currentData === undefined) {
+        this.currentData = new Array(this.getDataSize()).fill(0);
+      }
+      return this.currentData;
+    },
+    getDataSize() {
+      return this.dataSize;
+    },
+    getSrcName() {
+      return this.name.concat('Src');
+    },
+    getDstName() {
+      return this.name.concat('Buffer');
+    },
+    getSrcArray() {
+      return this.geometry[this.getSrcName()];
+    },
+    setCurrentData(data) {
+      this.currentData = data;
+    },
+    pushCurrentData() {
+      this.pushDirect(this.getCurrentData());
+    },
+    pushDirect(data) {
+      if (data.length) {
+        this.getSrcArray().push(...data);
+      } else {
+        this.getSrcArray().push(data);
+      }
+    },
+    resetSrcArray() {
+      this.geometry[this.getSrcName()] = [];
+    },
+    delete() {
+      delete this.geometry[this.getSrcName()];
+      delete this;
+    }
+  });
+  owner[prop.getSrcName()] = [];
+  return owner.userVertexProperties[propertyName];
+}
+
 // one part of a geometry. a multi-material model is a p5.Geometry made of
 // several parts, each holding the verts/faces/uvs for one material plus the
 // state to draw them. single-material models are just one part.
@@ -42,6 +98,21 @@ class GeometryPart {
     this.userVertexProperties = {};
   }
 
+  // append custom per-vertex attribute data to this part, same shape as
+  // p5.Geometry.vertexProperty so the renderer binds it identically.
+  vertexProperty(propertyName, data, size) {
+    let prop = this.userVertexProperties[propertyName];
+    if (!prop) {
+      prop = createUserVertexProperty(this, propertyName, data, size);
+    }
+    if (size) {
+      prop.pushDirect(data);
+    } else {
+      prop.setCurrentData(data);
+      prop.pushCurrentData();
+    }
+  }
+
   // the renderer needs this to pick a blend mode. a part is transparent if its
   // fill has alpha below 1, or any of its vertex colors does.
   hasFillTransparency() {
@@ -54,4 +125,4 @@ class GeometryPart {
   }
 }
 
-export { GeometryPart, createPartState };
+export { GeometryPart, createPartState, createUserVertexProperty };
