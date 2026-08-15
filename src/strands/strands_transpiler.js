@@ -218,7 +218,7 @@ function buildPropertyPath(memberExpr) {
     const propName = current.property.name || current.property.value;
     if (isSwizzle(propName)) {
       current = current.object;
-      break;
+      continue;
     }
     parts.unshift(propName);
     current = current.object;
