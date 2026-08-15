@@ -533,6 +533,38 @@ visualSuite('WebGPU', function () {
         await screenshot();
       }
     );
+
+    visualTest(
+      'conditional swizzle assignment inside of branching',
+      async function (p5, screenshot) {
+        await p5.createCanvas(50, 50, p5.WEBGPU);
+        const shader = p5.baseMaterialShader().modify(
+          () => {
+            p5.worldInputs.begin();
+            // For the first instance, bump the circle vertices out to +/- 15
+            // to turn it into a square. The second instance remains a circle
+            if (p5.instanceIndex < 1) {
+              p5.worldInputs.position.x = p5.sign(p5.worldInputs.position.x) * 15;
+              p5.worldInputs.position.y = p5.sign(p5.worldInputs.position.y) * 15;
+            }
+            // Spread the instances out horizontally to be side by side
+            p5.worldInputs.position += [
+              (p5.instanceIndex - 0.5) * 30,
+              0,
+              0
+            ];
+            p5.worldInputs.end();
+          },
+          { p5 }
+        );
+        p5.background(200);
+        p5.noStroke();
+        p5.fill(255, 0, 0);
+        p5.shader(shader);
+        p5.instances(2).circle(0, 0, 20);
+        await screenshot();
+      }
+    );
   });
 
   visualTest(
