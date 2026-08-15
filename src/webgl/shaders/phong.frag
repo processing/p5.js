@@ -22,12 +22,18 @@ uniform sampler2D uAmbientSampler;
 uniform bool uHasAmbientTex;
 uniform sampler2D uShininessSampler;
 uniform bool uHasShininessTex;
+uniform sampler2D uNormalSampler;
+uniform bool uHasNormalMap;
+uniform float uNormalScale;
 #endif
 
 IN vec3 vNormal;
 IN vec2 vTexCoord;
 IN vec3 vViewPosition;
 IN vec4 vColor;
+#ifdef USE_TEXTURE_MAPS
+IN vec4 vTangent;
+#endif
 
 struct ColorComponents {
   vec3 baseColor;
@@ -56,7 +62,22 @@ void main(void) {
   HOOK_beforeFragment();
 
   Inputs inputs;
-  inputs.normal = normalize(vNormal);
+  vec3 N = normalize(vNormal);
+#ifdef USE_TEXTURE_MAPS
+  if (uHasNormalMap) {
+    // rebuild the tangent basis (TBN) from the smooth per-vertex tangent and
+    // perturb the normal by the map. gram-schmidt keeps T perpendicular to the
+    // interpolated normal so the frame stays smooth across triangles (no facets).
+    vec3 T = normalize(vTangent.xyz);
+    T = normalize(T - N * dot(N, T));
+    vec3 B = cross(N, T) * vTangent.w;
+    vec3 mapN = TEXTURE(uNormalSampler, vTexCoord).rgb * 2.0 - 1.0;
+    // scale the tangent-space slope so the bump strength can be tuned (-bm)
+    mapN.xy *= uNormalScale;
+    N = normalize(mat3(T, B, N) * mapN);
+  }
+#endif
+  inputs.normal = N;
   inputs.texCoord = vTexCoord;
   inputs.ambientLight = uAmbientColor;
   inputs.color = isTexture

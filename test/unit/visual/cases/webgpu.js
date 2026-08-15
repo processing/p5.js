@@ -2029,4 +2029,50 @@ visualSuite('WebGPU', function () {
       }
     );
   });
+
+  visualSuite('3D Materials', function () {
+    visualTest(
+      'a normal-mapped sphere shows surface detail under light',
+      async function (p5, screenshot) {
+        await p5.createCanvas(50, 50, p5.WEBGPU);
+        // bump_sphere.obj carries a normal map on both halves, so the maps shader
+        // variant (tangent attribute + normal sampling) is exercised end to end
+        const model = await p5.loadModel('test/unit/assets/bump_sphere.obj');
+        p5.background(255);
+        p5.pointLight(255, 255, 255, 100, -100, 200);
+        p5.noStroke();
+        p5.scale(22);
+        p5.model(model);
+        await screenshot();
+      }
+    );
+
+    visualTest(
+      'normalTexture() adds surface detail to a built shape',
+      async function (p5, screenshot) {
+        await p5.createCanvas(50, 50, p5.WEBGPU);
+        const nmap = p5.createImage(32, 32);
+        nmap.loadPixels();
+        for (let y = 0; y < nmap.height; y++) {
+          for (let x = 0; x < nmap.width; x++) {
+            const s = Math.sin(((x + y) / nmap.width) * Math.PI * 6) * 0.8;
+            const inv = 1 / Math.sqrt(s * s + s * s + 1);
+            const off = (x + y * nmap.width) * 4;
+            nmap.pixels[off] = (s * inv * 0.5 + 0.5) * 255;
+            nmap.pixels[off + 1] = (s * inv * 0.5 + 0.5) * 255;
+            nmap.pixels[off + 2] = (inv * 0.5 + 0.5) * 255;
+            nmap.pixels[off + 3] = 255;
+          }
+        }
+        nmap.updatePixels();
+        p5.background(255);
+        p5.pointLight(255, 255, 255, 50, -50, 200);
+        p5.noStroke();
+        p5.fill(200);
+        p5.normalTexture(nmap);
+        p5.sphere(20);
+        await screenshot();
+      }
+    );
+  });
 });

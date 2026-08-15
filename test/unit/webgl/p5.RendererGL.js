@@ -3242,4 +3242,48 @@ void main() {
       expect(widthAfterPop).toBeLessThan(widthAt20);
     });
   });
+
+  suite('material map setters', function () {
+    const img = { width: 1, height: 1 };
+
+    test('normalTexture() sets the normal map + strength and null clears it',
+      function () {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+        myp5.normalTexture(img, 2);
+        expect(myp5._renderer.states._normalTex).toBe(img);
+        expect(myp5._renderer.states._normalScale).toEqual(2);
+        myp5.normalTexture(null);
+        expect(myp5._renderer.states._normalTex).toBeNull();
+        expect(myp5._renderer.states._normalScale).toEqual(1);
+      }
+    );
+
+    test('specularTexture() sets the map and turns on the specular term',
+      function () {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+        myp5.specularTexture(img);
+        expect(myp5._renderer.states._specularTex).toBe(img);
+        expect(myp5._renderer.states._useSpecularMaterial).toBe(true);
+        myp5.specularTexture(null);
+        expect(myp5._renderer.states._specularTex).toBeNull();
+      }
+    );
+
+    test('ambientTexture() sets the map and marks ambient as set', function () {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+      myp5.ambientTexture(img);
+      expect(myp5._renderer.states._ambientTex).toBe(img);
+      expect(myp5._renderer.states._hasSetAmbient).toBe(true);
+      myp5.ambientTexture(null);
+      expect(myp5._renderer.states._ambientTex).toBeNull();
+    });
+
+    test('shininessTexture() sets and clears the map', function () {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+      myp5.shininessTexture(img);
+      expect(myp5._renderer.states._shininessTex).toBe(img);
+      myp5.shininessTexture(null);
+      expect(myp5._renderer.states._shininessTex).toBeNull();
+    });
+  });
 });

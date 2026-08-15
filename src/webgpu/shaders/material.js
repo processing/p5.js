@@ -12,6 +12,8 @@ struct MaterialUniforms {
   uSpecular: u32,
   uShininess: f32,
   uMetallic: f32,
+  uHasNormalMap: u32,
+  uNormalScale: f32,
 }
 
 // Group 0: Lighting
@@ -59,12 +61,15 @@ struct CameraUniforms {
 }
 `;
 
-export const materialVertexShader = `
+// webgpu has no preprocessor, so the shaders are functions of a flag. with a
+// normal map we compile a variant that carries the tangent attribute + varying;
+// without one nothing extra is declared, matching the webgl #define variant.
+export const materialVertexShader = ({ useTextureMaps = false } = {}) => `
 struct VertexInput {
   @location(0) aPosition: vec3<f32>,
   @location(1) aNormal: vec3<f32>,
   @location(2) aTexCoord: vec2<f32>,
-  @location(3) aVertexColor: vec4<f32>,
+  @location(3) aVertexColor: vec4<f32>,${useTextureMaps ? '\n  @location(4) aTangent: vec4<f32>,' : ''}
 };
 
 struct VertexOutput {
@@ -72,7 +77,7 @@ struct VertexOutput {
   @location(0) vNormal: vec3<f32>,
   @location(1) vTexCoord: vec2<f32>,
   @location(2) vViewPosition: vec3<f32>,
-  @location(4) vColor: vec4<f32>,
+  @location(4) vColor: vec4<f32>,${useTextureMaps ? '\n  @location(5) vTangent: vec4<f32>,' : ''}
 };
 
 ${uniforms}
@@ -100,7 +105,7 @@ fn main(input: VertexInput) -> VertexOutput {
     input.aTexCoord,
     select(model.uMaterialColor, input.aVertexColor, useVertexColor)
   );
-
+${useTextureMaps ? '  var tangent = input.aTangent.xyz;\n' : ''}
 // @p5 ifdef Vertex getObjectInputs
   inputs = HOOK_getObjectInputs(inputs);
 // @p5 endif
@@ -108,19 +113,19 @@ fn main(input: VertexInput) -> VertexOutput {
 // @p5 ifdef Vertex getWorldInputs
   inputs.position = (model.uModelMatrix * vec4<f32>(inputs.position, 1.0)).xyz;
   inputs.normal = model.uModelNormalMatrix * inputs.normal;
-  inputs = HOOK_getWorldInputs(inputs);
+${useTextureMaps ? '  tangent = model.uModelNormalMatrix * tangent;\n' : ''}  inputs = HOOK_getWorldInputs(inputs);
 // @p5 endif
 
 // @p5 ifdef Vertex getWorldInputs
   // Already multiplied by the model matrix, just apply view
   inputs.position = (camera.uViewMatrix * vec4<f32>(inputs.position, 1.0)).xyz;
   inputs.normal = camera.uCameraNormalMatrix * inputs.normal;
-// @p5 endif
+${useTextureMaps ? '  tangent = camera.uCameraNormalMatrix * tangent;\n' : ''}// @p5 endif
 // @p5 ifndef Vertex getWorldInputs
   // Apply both at once
   inputs.position = (model.uModelViewMatrix * vec4<f32>(inputs.position, 1.0)).xyz;
   inputs.normal = model.uNormalMatrix * inputs.normal;
-// @p5 endif
+${useTextureMaps ? '  tangent = model.uNormalMatrix * tangent;\n' : ''}// @p5 endif
 
 // @p5 ifdef Vertex getCameraInputs
   inputs = HOOK_getCameraInputs(inputs);
@@ -130,7 +135,7 @@ fn main(input: VertexInput) -> VertexOutput {
   output.vTexCoord = inputs.texCoord;
   output.vNormal = normalize(inputs.normal);
   output.vColor = inputs.color;
-
+${useTextureMaps ? '  output.vTangent = vec4<f32>(tangent, input.aTangent.w);\n' : ''}
   output.Position = camera.uProjectionMatrix * vec4<f32>(inputs.position, 1.0);
 
   HOOK_afterVertex();
@@ -138,12 +143,12 @@ fn main(input: VertexInput) -> VertexOutput {
 }
 `;
 
-export const materialFragmentShader = `
+export const materialFragmentShader = ({ useTextureMaps = false } = {}) => `
 struct FragmentInput {
   @location(0) vNormal: vec3<f32>,
   @location(1) vTexCoord: vec2<f32>,
   @location(2) vViewPosition: vec3<f32>,
-  @location(4) vColor: vec4<f32>,
+  @location(4) vColor: vec4<f32>,${useTextureMaps ? '\n  @location(5) vTangent: vec4<f32>,' : ''}
 };
 
 ${uniforms}
@@ -155,7 +160,7 @@ ${uniforms}
 @group(0) @binding(5) var environmentMapDiffused_sampler: sampler;
 @group(0) @binding(6) var environmentMapSpecular: texture_2d<f32>;
 @group(0) @binding(7) var environmentMapSpecular_sampler: sampler;
-@group(1) @binding(0) var<uniform> model: ModelUniforms;
+${useTextureMaps ? '@group(0) @binding(8) var uNormalSampler: texture_2d<f32>;\n@group(0) @binding(9) var uNormalSampler_sampler: sampler;\n' : ''}@group(1) @binding(0) var<uniform> model: ModelUniforms;
 @group(2) @binding(0) var<uniform> camera: CameraUniforms;
 
 struct ColorComponents {
@@ -384,8 +389,20 @@ fn main(input: FragmentInput) -> @location(0) vec4<f32> {
     textureSample(uSampler, uSampler_sampler, input.vTexCoord) * (material.uTint/255.0),
     material.isTexture == 1
   ); // TODO: check isTexture and apply tint
-  var inputs = Inputs(
-    normalize(input.vNormal),
+  var N = normalize(input.vNormal);
+${useTextureMaps ? `  if (material.uHasNormalMap == 1) {
+    // rebuild the tangent basis from the smooth per-vertex tangent (gram-schmidt
+    // keeps it perpendicular to the interpolated normal) and perturb by the map.
+    var T = normalize(input.vTangent.xyz);
+    T = normalize(T - N * dot(N, T));
+    let B = cross(N, T) * input.vTangent.w;
+    var mapN = textureSample(uNormalSampler, uNormalSampler_sampler, input.vTexCoord).rgb * 2.0 - 1.0;
+    // scale the tangent-space slope so the bump strength can be tuned (-bm)
+    mapN = vec3<f32>(mapN.xy * material.uNormalScale, mapN.z);
+    N = normalize(mat3x3<f32>(T, B, N) * mapN);
+  }
+` : ''}  var inputs = Inputs(
+    N,
     input.vTexCoord,
     material.uAmbientColor,
     select(color.rgb, material.uAmbientMatColor.rgb, material.uHasSetAmbient == 1),
