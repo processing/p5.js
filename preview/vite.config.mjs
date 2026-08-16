@@ -8,7 +8,8 @@ export default defineConfig({
     string({
       include: [
         'src/webgl/shaders/**/*'
-      ]
+      ],
+      compress: false
     })
   ]
 });
