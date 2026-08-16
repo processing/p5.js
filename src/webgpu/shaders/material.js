@@ -14,6 +14,8 @@ struct MaterialUniforms {
   uMetallic: f32,
   uHasNormalMap: u32,
   uNormalScale: f32,
+  uNormalMapMode: u32,
+  uNormalTexelSize: vec2<f32>,
 }
 
 // Group 0: Lighting
@@ -396,8 +398,20 @@ ${useTextureMaps ? `  if (material.uHasNormalMap == 1) {
     var T = normalize(input.vTangent.xyz);
     T = normalize(T - N * dot(N, T));
     let B = cross(N, T) * input.vTangent.w;
-    var mapN = textureSample(uNormalSampler, uNormalSampler_sampler, input.vTexCoord).rgb * 2.0 - 1.0;
-    // scale the tangent-space slope so the bump strength can be tuned (-bm)
+    var mapN: vec3<f32>;
+    if (material.uNormalMapMode == 1u) {
+      // bump map: brightness is height, so the tangent-space normal comes from
+      // how fast that height changes between neighbouring texels.
+      let h = textureSample(uNormalSampler, uNormalSampler_sampler, input.vTexCoord).r;
+      let hu = textureSample(uNormalSampler, uNormalSampler_sampler, input.vTexCoord + vec2<f32>(material.uNormalTexelSize.x, 0.0)).r;
+      let hv = textureSample(uNormalSampler, uNormalSampler_sampler, input.vTexCoord + vec2<f32>(0.0, material.uNormalTexelSize.y)).r;
+      // the surface leans away from the direction height increases in
+      mapN = normalize(vec3<f32>(h - hu, h - hv, 1.0));
+    } else {
+      // normal map: rgb already holds the tangent-space normal
+      mapN = textureSample(uNormalSampler, uNormalSampler_sampler, input.vTexCoord).rgb * 2.0 - 1.0;
+    }
+    // scale the tangent-space slope so the strength can be tuned (-bm)
     mapN = vec3<f32>(mapN.xy * material.uNormalScale, mapN.z);
     N = normalize(mat3x3<f32>(T, B, N) * mapN);
   }
