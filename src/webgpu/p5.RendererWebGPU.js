@@ -1908,10 +1908,15 @@ function rendererWebGPU(p5, fn) {
         // Submit the commands
         this.queue.submit(commandsToSubmit);
 
-        for (const buf of this._tempBuffers) {
-          buf.destroy();
-        }
+        const tempBuffers = this._tempBuffers;
         this._tempBuffers = [];
+        if (tempBuffers.length > 0) {
+          this._postSubmitCallbacks.push(() => {
+            for (const buf of tempBuffers) {
+              buf.destroy();
+            }
+          });
+        }
 
         for (const buf of this.activeUniformBuffers) {
           // buf.buffer = this.device.createBuffer({
