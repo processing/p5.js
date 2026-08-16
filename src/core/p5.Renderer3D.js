@@ -2364,73 +2364,6 @@ function renderer3D(p5, fn) {
    * to draw one instance per item in the list:
    *
    * ```js example
-   * let cellLocs, circleIndices, squareIndices;
-   * let updateCells, drawParticles;
-   * const COLS = 10, ROWS = 10;
-   *
-   * async function setup() {
-   *   await createCanvas(200, 200, WEBGPU);
-   *
-   *   let locs = [];
-   *   for (let x = 0; x < COLS; x++) {
-   *     for (let y = 0; y < ROWS; y++) {
-   *       locs.push({ position: createVector(x * 20 - 90, y * 20 - 90) });
-   *     }
-   *   }
-   *   cellLocs = createStorage(locs);
-   *   circleIndices = createStorageList(locs.length);
-   *   squareIndices = createStorageList(locs.length);
-   *
-   *   updateCells = buildComputeShader(() => {
-   *     let locs = uniformStorage(cellLocs);
-   *     let circles = uniformStorage(circleIndices);
-   *     let squares = uniformStorage(squareIndices);
-   *     let loc = locs[index.x].position;
-   *     let r = 50 + 30 * sin(millis() * 0.004);
-   *     if (distance(loc, [mouseX, mouseY] - [width, height] / 2) < r) {
-   *       circles.push(index.x);
-   *     } else {
-   *       squares.push(index.x);
-   *     }
-   *   });
-   *
-   *   drawParticles = buildMaterialShader(() => {
-   *     let data = uniformStorage(cellLocs);
-   *     let indices = uniformStorage(0);
-   *     worldInputs.begin();
-   *     worldInputs.position.xy += data[indices[instanceIndex]].position;
-   *     worldInputs.end();
-   *   });
-   *
-   *   describe('A 10x10 grid of cells that switch between circles and squares based on mouse proximity.');
-   * }
-   *
-   * function draw() {
-   *   background(255);
-   *   noStroke();
-   *
-   *   circleIndices.clear();
-   *   squareIndices.clear();
-   *   compute(updateCells, cellLocs.length);
-   *
-   *   shader(drawParticles);
-   *
-   *   fill('blue');
-   *   drawParticles.setUniform('indices', circleIndices);
-   *   instances(circleIndices).circle(0, 0, 12);
-   *
-   *   fill('red');
-   *   drawParticles.setUniform('indices', squareIndices);
-   *   rectMode(CENTER);
-   *   instances(squareIndices).rect(0, 0, 10, 10);
-   * }
-   * ```
-   *
-   * Another thing you might want to do is draw a different number of instances of a shape
-   * every frame, but where you calculate the instances in a compute shader for speed, where
-   * it can happen in parallel:
-   *
-   * ```js example
    * let particles, nextParticles; // Data
    * let removeOld, emitNew; // Compute
    * let drawParticles; // Rendering
@@ -2503,8 +2436,75 @@ function renderer3D(p5, fn) {
    * }
    * ```
    *
+   * Another thing you might want to do is draw a different number of instances of a shape
+   * every frame, but where you calculate the instances in a compute shader for speed, where
+   * it can happen in parallel:
+   *
+   * ```js example
+   * let cellLocs, circleIndices, squareIndices;
+   * let updateCells, drawParticles;
+   * const COLS = 10, ROWS = 10;
+   *
+   * async function setup() {
+   *   await createCanvas(200, 200, WEBGPU);
+   *
+   *   let locs = [];
+   *   for (let x = 0; x < COLS; x++) {
+   *     for (let y = 0; y < ROWS; y++) {
+   *       locs.push({ position: createVector(x * 20 - 90, y * 20 - 90) });
+   *     }
+   *   }
+   *   cellLocs = createStorage(locs);
+   *   circleIndices = createStorageList(locs.length);
+   *   squareIndices = createStorageList(locs.length);
+   *
+   *   updateCells = buildComputeShader(() => {
+   *     let locs = uniformStorage(cellLocs);
+   *     let circles = uniformStorage(circleIndices);
+   *     let squares = uniformStorage(squareIndices);
+   *     let loc = locs[index.x].position;
+   *     let r = 50 + 30 * sin(millis() * 0.004);
+   *     if (distance(loc, [mouseX, mouseY] - [width, height] / 2) < r) {
+   *       circles.push(index.x);
+   *     } else {
+   *       squares.push(index.x);
+   *     }
+   *   });
+   *
+   *   drawParticles = buildMaterialShader(() => {
+   *     let data = uniformStorage(cellLocs);
+   *     let indices = uniformStorage(0);
+   *     worldInputs.begin();
+   *     worldInputs.position.xy += data[indices[instanceIndex]].position;
+   *     worldInputs.end();
+   *   });
+   *
+   *   describe('A 10x10 grid of cells that switch between circles and squares based on mouse proximity.');
+   * }
+   *
+   * function draw() {
+   *   background(255);
+   *   noStroke();
+   *
+   *   circleIndices.clear();
+   *   squareIndices.clear();
+   *   compute(updateCells, cellLocs.length);
+   *
+   *   shader(drawParticles);
+   *
+   *   fill('blue');
+   *   drawParticles.setUniform('indices', circleIndices);
+   *   instances(circleIndices).circle(0, 0, 12);
+   *
+   *   fill('red');
+   *   drawParticles.setUniform('indices', squareIndices);
+   *   rectMode(CENTER);
+   *   instances(squareIndices).rect(0, 0, 10, 10);
+   * }
+   * ```
+   *
    * @method createStorageList
-   * @for p5
+   * @submodule p5.strands
    * @beta
    * @webgpu
    * @webgpuOnly
