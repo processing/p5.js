@@ -412,11 +412,11 @@ visualSuite('WebGL', function () {
       }
     );
     visualTest(
-      'a normal-mapped sphere shows surface detail under light',
+      'a bump-mapped sphere shows surface detail under light',
       async function (p5, screenshot) {
         p5.createCanvas(50, 50, p5.WEBGL);
-        // bump_sphere.obj is a 2-material sphere with a normal map on both halves,
-        // so under a light the whole surface shows bump detail (baked tangents)
+        // bump_sphere.obj is a 2-material sphere using map_Bump on both halves, so
+        // under a light the whole surface shows bump detail
         const model = await new Promise(resolve =>
           p5.loadModel('test/unit/assets/bump_sphere.obj', resolve)
         );

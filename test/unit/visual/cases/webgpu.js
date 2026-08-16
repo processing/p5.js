@@ -2064,10 +2064,10 @@ visualSuite('WebGPU', function () {
 
   visualSuite('3D Materials', function () {
     visualTest(
-      'a normal-mapped sphere shows surface detail under light',
+      'a bump-mapped sphere shows surface detail under light',
       async function (p5, screenshot) {
         await p5.createCanvas(50, 50, p5.WEBGPU);
-        // bump_sphere.obj carries a normal map on both halves, so the maps shader
+        // bump_sphere.obj uses map_Bump on both halves, so the maps shader
         // variant (tangent attribute + normal sampling) is exercised end to end
         const model = await p5.loadModel('test/unit/assets/bump_sphere.obj');
         p5.background(255);

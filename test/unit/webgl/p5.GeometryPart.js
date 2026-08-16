@@ -45,7 +45,8 @@ suite('p5.GeometryPart', function () {
       ambientTexture: null,
       shininessTexture: null,
       normalTexture: null,
-      normalScale: 1
+      normalScale: 1,
+      normalMapMode: 0
     });
   });
 

@@ -1,6 +1,6 @@
 newmtl m0
 Kd 0.8 0.8 0.8
-map_Bump spheremap.jpg
+norm spheremap.jpg
 
 newmtl m1
 Kd 0.5 0.5 0.5
