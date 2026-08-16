@@ -239,15 +239,14 @@ function loading(p5, fn) {
    * URLs such as `'https://example.com/model.obj'` may be blocked due to browser
    * security. The `path` parameter can also be defined as a [`Request`](https://developer.mozilla.org/en-US/docs/Web/API/Request)
    * object for more advanced usage.
-   * note: when a `.obj` file references materials in a `.mtl` file, p5.js loads
-   * and applies them. a model with several materials is drawn with each material
-   * on its own part, so a multi-material model comes out looking the way it was
-   * exported instead of one flat grey shape. the texture maps a material can use
-   * are the diffuse (`map_Kd`), specular (`map_Ks`), ambient (`map_Ka`),
-   * shininess (`map_Ns`), and normal/bump (`map_Bump`) maps. keep the `.mtl`
-   * file and its texture images next to the `.obj` so the paths resolve. a
-   * texture that fails to load is skipped with a warning rather than failing the
-   * whole model.
+   * Note: When a `.obj` file references materials stored in a `.mtl` file,
+   * p5.js loads and applies them. A model with several materials is drawn one
+   * part per material, so it appears the way it was exported instead of as a
+   * single flat gray shape. Each material can use diffuse (`map_Kd`), specular
+   * (`map_Ks`), ambient (`map_Ka`), shininess (`map_Ns`), and normal
+   * (`map_Bump`) texture maps. Keep the `.mtl` file and its images alongside
+   * the `.obj` file so their paths resolve. A texture that fails to load is
+   * skipped with a warning instead of failing the whole model.
    *
    * The first way to call `loadModel()` has three optional parameters after the
    * file path. The first optional parameter, `successCallback`, is a function
@@ -1176,12 +1175,11 @@ function loading(p5, fn) {
    *
    * Note: `model()` can only be used in WebGL mode.
    *
-   * the whole idea here is that you never have to think about how many materials
-   * a model has. if it was exported with several (say a character with skin, a
-   * shirt, and shoes), each one is drawn on its own part with its own colour and
-   * textures, and you still just call `model(shape)`. one material or twenty,
-   * the call is the same, so a model loaded from blender or sketchfab shows up
-   * looking the way its maker intended instead of one flat grey shape.
+   * A model with several materials, such as a character with separate skin,
+   * shirt, and shoe materials, is drawn one part per material, each with its own
+   * colors and textures. The call to `model()` is the same whether the model has
+   * one material or many, so a model made in software such as Blender appears
+   * the way it was exported.
    *
    * ```js example
    * // Click and drag the mouse to view the scene from different angles.
