@@ -269,6 +269,37 @@ suite('WebGPU p5.RendererWebGPU', function () {
     });
   });
 
+  suite('Compute dispatch', function () {
+    test('auto-spreading dispatches each index exactly once', async function () {
+      // 2500 > 1024 triggers 2D spreading (ceil(sqrt(2500))=50; so 50x50.)
+      // Each workgroup dimension is rounded up to the nearest multiple of 8,
+      // so extra threads are launched beyond px=50. The physicalId stride must
+      // use the actual dispatch width (56), not px (50), or threads wrap and
+      // collide, causing some indices to be written twice and others never.
+      const N = 2500;
+      const buf = myp5.createStorage(new Float32Array(N));
+
+      const shader = myp5.buildComputeShader(
+        () => {
+          const d = myp5.uniformStorage();
+          d[myp5.index.x] = myp5.index.x;
+        },
+        { myp5 }
+      );
+
+      shader.setUniform('d', buf);
+      myp5.compute(shader, N);
+
+      const result = await buf.read();
+
+      expect(result).to.be.instanceOf(Float32Array);
+      for (let i = 0; i < N; i++) {
+        expect(result[i]).to.be.closeTo(i, 0.001,
+          `index ${i} was not written exactly once`);
+      }
+    });
+  });
+
   suite('StorageBuffer.set()', function () {
     test('updates a single float value at the given index', async function () {
       const buf = myp5.createStorage(new Float32Array([1, 2, 3, 4]));

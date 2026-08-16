@@ -44,10 +44,11 @@ function rendererWebGPU(p5, fn) {
     p5;
 
   class StorageBuffer {
-    constructor(buffer, size, renderer, schema = null) {
+    constructor(buffer, size, renderer, schema = null, length = null) {
       this._isStorageBuffer = true;
       this.buffer = buffer;
       this.size = size;
+      this.length = length;
       this._renderer = renderer;
       this._schema = schema;
     }
@@ -4176,7 +4177,7 @@ ${hookUniformFields}}
         });
         new Float32Array(buffer.getMappedRange()).set(packed);
         buffer.unmap();
-        const storageBuffer = new StorageBuffer(buffer, size, this, schema);
+        const storageBuffer = new StorageBuffer(buffer, size, this, schema, dataOrCount.length);
         this._storageBuffers.add(storageBuffer);
         return storageBuffer;
       }
@@ -4221,7 +4222,7 @@ ${hookUniformFields}}
         buffer.unmap();
       }
 
-      const storageBuffer = new StorageBuffer(buffer, size, this);
+      const storageBuffer = new StorageBuffer(buffer, size, this, null, initialData.length);
 
       // Track for cleanup
       this._storageBuffers.add(storageBuffer);
