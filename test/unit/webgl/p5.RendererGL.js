@@ -3258,6 +3258,39 @@ void main() {
       }
     );
 
+    test('bumpTexture() sets the map in height mode and null clears it',
+      function () {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+        myp5.bumpTexture(img, 3);
+        expect(myp5._renderer.states._normalTex).toBe(img);
+        expect(myp5._renderer.states._normalScale).toEqual(3);
+        // mode 1 tells the shader to read the map as heights
+        expect(myp5._renderer.states._normalMapMode).toEqual(1);
+        myp5.bumpTexture(null);
+        expect(myp5._renderer.states._normalTex).toBeNull();
+        expect(myp5._renderer.states._normalMapMode).toEqual(0);
+      }
+    );
+
+    test('bump and normal maps share one slot, so setting one replaces the other',
+      function () {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+        const other = { width: 1, height: 1 };
+
+        myp5.bumpTexture(img);
+        expect(myp5._renderer.states._normalMapMode).toEqual(1);
+
+        // switching to a normal map keeps a single active map, in mode 0
+        myp5.normalTexture(other);
+        expect(myp5._renderer.states._normalTex).toBe(other);
+        expect(myp5._renderer.states._normalMapMode).toEqual(0);
+
+        myp5.bumpTexture(img);
+        expect(myp5._renderer.states._normalTex).toBe(img);
+        expect(myp5._renderer.states._normalMapMode).toEqual(1);
+      }
+    );
+
     test('specularTexture() sets the map and turns on the specular term',
       function () {
         myp5.createCanvas(50, 50, myp5.WEBGL);
