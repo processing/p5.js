@@ -336,6 +336,86 @@ suite('WebGPU p5.RendererWebGPU', function () {
     });
   });
 
+  suite('StorageList', function () {
+    test('reads back float values pushed by a compute shader', async function () {
+      const src = myp5.createStorage(new Float32Array([10, 20, 30]));
+      const list = myp5.createStorageList(10);
+
+      const shader = myp5.buildComputeShader(
+        () => {
+          const s = myp5.uniformStorage('s', src);
+          const l = myp5.uniformStorage('l', list);
+          l.push(s[myp5.index.x]);
+        },
+        { myp5, src, list }
+      );
+      myp5.compute(shader, 3);
+
+      const result = await list.read();
+
+      expect(result).to.be.instanceOf(Float32Array);
+      expect(result.length).to.equal(3);
+      const values = new Set(Array.from(result).map(v => Math.round(v)));
+      expect(values.has(10)).to.be.true;
+      expect(values.has(20)).to.be.true;
+      expect(values.has(30)).to.be.true;
+    });
+
+    test('reads back struct values pushed by a compute shader', async function () {
+      const list = myp5.createStorageList(10, { x: 0.0 });
+
+      const shader = myp5.buildComputeShader(
+        () => {
+          const l = myp5.uniformStorage('l', list);
+          l.push({ x: 7.0 });
+        },
+        { myp5, list }
+      );
+      myp5.compute(shader, 4);
+
+      const result = await list.read();
+
+      expect(result).to.be.an('array');
+      expect(result.length).to.equal(4);
+      result.forEach(e => expect(e.x).to.be.closeTo(7.0, 0.001));
+    });
+
+    test('clear() resets the list length to zero', async function () {
+      const list = myp5.createStorageList(10);
+
+      const shader = myp5.buildComputeShader(
+        () => {
+          const l = myp5.uniformStorage('l', list);
+          l.push(1.0);
+        },
+        { myp5, list }
+      );
+      myp5.compute(shader, 5);
+      list.clear();
+
+      const result = await list.read();
+
+      expect(result.length).to.equal(0);
+    });
+
+    test('push beyond maxCapacity is silently clamped', async function () {
+      const list = myp5.createStorageList(3);
+
+      const shader = myp5.buildComputeShader(
+        () => {
+          const l = myp5.uniformStorage('l', list);
+          l.push(1.0);
+        },
+        { myp5, list }
+      );
+      myp5.compute(shader, 10);
+
+      const result = await list.read();
+
+      expect(result.length).to.equal(3);
+    });
+  });
+
   suite('p5.strands', function () {
     test('a uniform whose name matches a hook parameter name does not break', async function () {
       myp5.pixelDensity(1);
