@@ -1092,7 +1092,13 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
         // Float list
         const val = element;
         if (val?.isStrandsNode) {
-          argID = val.id;
+          const nodeData = getNodeDataFromID(dag, val.id);
+          if (nodeData.baseType !== BaseType.FLOAT) {
+            // Non-float node (e.g. index.x is i32): cast via the backend's type name so the cast is platform-independent
+            argID = build.castToFloat(ctx, val).id;
+          } else {
+            argID = val.id;
+          }
         } else {
           const { id: primID } = build.primitiveConstructorNode(
             ctx,

@@ -414,6 +414,27 @@ suite('WebGPU p5.RendererWebGPU', function () {
 
       expect(result.length).to.equal(3);
     });
+
+    test('pushing an integer-typed value (index.x) into a float list works', async function () {
+      const list = myp5.createStorageList(5);
+
+      const shader = myp5.buildComputeShader(
+        () => {
+          const l = myp5.uniformStorage('l', list);
+          l.push(myp5.index.x);
+        },
+        { myp5, list }
+      );
+      myp5.compute(shader, 3);
+
+      const result = await list.read();
+
+      expect(result.length).to.equal(3);
+      const values = new Set(Array.from(result).map(v => Math.round(v)));
+      expect(values.has(0)).to.be.true;
+      expect(values.has(1)).to.be.true;
+      expect(values.has(2)).to.be.true;
+    });
   });
 
   suite('p5.strands', function () {
