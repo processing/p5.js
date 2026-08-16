@@ -2569,7 +2569,7 @@ function material(p5, fn) {
   /**
    * Sets a normal map to add surface detail to shapes under lighting.
    *
-   * `normalTexture()` works like <a href="#/p5/texture">texture()</a>, but for a
+   * `normalTexture()` works like <a href="#/p5/texture">`texture()`</a>, but for a
    * tangent-space normal map: an image whose red, green, and blue channels
    * encode the direction of the surface normal (not brightness). Call it before
    * drawing a shape and its surface normals get perturbed by the map, so lights
@@ -2591,6 +2591,8 @@ function material(p5, fn) {
    * @chainable
    *
    * @example
+   * // Click and drag the mouse to view the scene from different angles.
+   *
    * let normalMap;
    *
    * function setup() {
@@ -2621,6 +2623,12 @@ function material(p5, fn) {
    * function draw() {
    *   background(0);
    *
+   *   // Enable orbiting with the mouse.
+   *   orbitControl();
+   *
+   *   // Rock the shape so the lighting shifts across it.
+   *   rotateY(sin(millis() * 0.002) * PI * 0.1);
+   *
    *   // Light the sphere from the upper left.
    *   ambientLight(60);
    *   pointLight(255, 255, 255, -80, -80, 150);
@@ -2643,17 +2651,17 @@ function material(p5, fn) {
    * Sets an image that controls where a shape looks glossy.
    *
    * A specular map lets one shape mix polished and worn surfaces. It works like
-   * <a href="#/p5/texture">texture()</a>, but instead of setting the base color,
+   * <a href="#/p5/texture">`texture()`</a>, but instead of setting the base color,
    * the map's color at each point scales the highlight set by
-   * <a href="#/p5/specularMaterial">specularMaterial()</a>. Bright parts of the
+   * <a href="#/p5/specularMaterial">`specularMaterial()`</a>. Bright parts of the
    * map stay shiny and dark parts look matte.
    *
    * The parameter, `tex`, is the image to use as the specular map. Passing
    * `null` clears it, as in `specularTexture(null)`. The map can also be scoped
-   * between <a href="#/p5/push">push()</a> and <a href="#/p5/pop">pop()</a>.
+   * between <a href="#/p5/push">`push()`</a> and <a href="#/p5/pop">`pop()`</a>.
    *
    * A light source is needed to see the effect. Models loaded with
-   * <a href="#/p5/loadModel">loadModel()</a> apply their own specular map from
+   * <a href="#/p5/loadModel">`loadModel()`</a> apply their own specular map from
    * the `.mtl` file's `map_Ks`.
    *
    * Note: `specularTexture()` can only be used in WebGL mode.
@@ -2663,6 +2671,8 @@ function material(p5, fn) {
    * @chainable
    *
    * @example
+   * // Click and drag the mouse to view the scene from different angles.
+   *
    * let specularMap;
    *
    * function setup() {
@@ -2691,6 +2701,12 @@ function material(p5, fn) {
    * function draw() {
    *   background(0);
    *
+   *   // Enable orbiting with the mouse.
+   *   orbitControl();
+   *
+   *   // Rock the shape so the lighting shifts across it.
+   *   rotateY(sin(millis() * 0.002) * PI * 0.1);
+   *
    *   // Light the surface head on so the highlight spreads across it.
    *   ambientLight(50);
    *   pointLight(255, 255, 255, 0, 0, 300);
@@ -2715,17 +2731,17 @@ function material(p5, fn) {
    * Sets an image that controls the color a shape reflects from ambient light.
    *
    * An ambient map varies the color set by
-   * <a href="#/p5/ambientMaterial">ambientMaterial()</a> across a surface, so
+   * <a href="#/p5/ambientMaterial">`ambientMaterial()`</a> across a surface, so
    * different parts of one shape can pick up ambient light differently. It works
-   * like <a href="#/p5/texture">texture()</a>, but the map's color is applied to
+   * like <a href="#/p5/texture">`texture()`</a>, but the map's color is applied to
    * the ambient term rather than the base color.
    *
    * The parameter, `tex`, is the image to use as the ambient map. Passing `null`
    * clears it, as in `ambientTexture(null)`. The map can also be scoped between
-   * <a href="#/p5/push">push()</a> and <a href="#/p5/pop">pop()</a>.
+   * <a href="#/p5/push">`push()`</a> and <a href="#/p5/pop">`pop()`</a>.
    *
-   * An <a href="#/p5/ambientLight">ambientLight()</a> is needed to see the
-   * effect. Models loaded with <a href="#/p5/loadModel">loadModel()</a> apply
+   * An <a href="#/p5/ambientLight">`ambientLight()`</a> is needed to see the
+   * effect. Models loaded with <a href="#/p5/loadModel">`loadModel()`</a> apply
    * their own ambient map from the `.mtl` file's `map_Ka`.
    *
    * Note: `ambientTexture()` can only be used in WebGL mode.
@@ -2735,6 +2751,8 @@ function material(p5, fn) {
    * @chainable
    *
    * @example
+   * // Click and drag the mouse to view the scene from different angles.
+   *
    * let ambientMap;
    *
    * function setup() {
@@ -2761,6 +2779,12 @@ function material(p5, fn) {
    * function draw() {
    *   background(0);
    *
+   *   // Enable orbiting with the mouse.
+   *   orbitControl();
+   *
+   *   // Rock the shape so the lighting shifts across it.
+   *   rotateY(sin(millis() * 0.002) * PI * 0.1);
+   *
    *   // Ambient light reveals the map's colors.
    *   ambientLight(200);
    *   noStroke();
@@ -2780,18 +2804,18 @@ function material(p5, fn) {
    * Sets an image that controls how tight a shape's highlights are.
    *
    * A shininess map varies the value set by
-   * <a href="#/p5/shininess">shininess()</a> across a surface. Only the map's
+   * <a href="#/p5/shininess">`shininess()`</a> across a surface. Only the map's
    * red channel is read, and it scales the base shininess, so bright areas get
    * a small, sharp highlight and dark areas get a broad, soft one. This lets a
    * single shape look polished in some places and dull in others.
    *
    * The parameter, `tex`, is the image to use as the shininess map. Passing
    * `null` clears it, as in `shininessTexture(null)`. The map can also be scoped
-   * between <a href="#/p5/push">push()</a> and <a href="#/p5/pop">pop()</a>.
+   * between <a href="#/p5/push">`push()`</a> and <a href="#/p5/pop">`pop()`</a>.
    *
    * A light source and
-   * <a href="#/p5/specularMaterial">specularMaterial()</a> are needed to see the
-   * effect. Models loaded with <a href="#/p5/loadModel">loadModel()</a> apply
+   * <a href="#/p5/specularMaterial">`specularMaterial()`</a> are needed to see the
+   * effect. Models loaded with <a href="#/p5/loadModel">`loadModel()`</a> apply
    * their own shininess map from the `.mtl` file's `map_Ns`.
    *
    * Note: `shininessTexture()` can only be used in WebGL mode.
@@ -2801,6 +2825,8 @@ function material(p5, fn) {
    * @chainable
    *
    * @example
+   * // Click and drag the mouse to view the scene from different angles.
+   *
    * let shininessMap;
    *
    * function setup() {
@@ -2829,6 +2855,12 @@ function material(p5, fn) {
    *
    * function draw() {
    *   background(0);
+   *
+   *   // Enable orbiting with the mouse.
+   *   orbitControl();
+   *
+   *   // Rock the shape so the lighting shifts across it.
+   *   rotateY(sin(millis() * 0.002) * PI * 0.1);
    *
    *   // Light the surface from the upper left.
    *   ambientLight(40);
