@@ -153,6 +153,9 @@ export class Renderer3D extends Renderer {
     this.states._shininessTex = null;
     this.states._normalTex = null;
     this.states._normalScale = 1;
+    // how to read _normalTex: 0 = tangent-space normal map (rgb is the normal),
+    // 1 = bump map (brightness is height, the normal comes from its slope)
+    this.states._normalMapMode = 0;
     this.states.textureMode = constants.IMAGE;
     this.states.textureWrapX = constants.CLAMP;
     this.states.textureWrapY = constants.CLAMP;
@@ -732,6 +735,7 @@ export class Renderer3D extends Renderer {
       if (partState.normalScale != null) {
         this.states.setValue('_normalScale', partState.normalScale);
       }
+      this.states.setValue('_normalMapMode', partState.normalMapMode ?? 0);
     }
   }
 
@@ -1652,6 +1656,15 @@ export class Renderer3D extends Renderer {
       fillShader.setUniform('uHasNormalMap', !!this.states._normalTex);
       fillShader.setUniform('uNormalSampler', this.states._normalTex || empty);
       fillShader.setUniform('uNormalScale', this.states._normalScale);
+      fillShader.setUniform('uNormalMapMode', this.states._normalMapMode);
+      // a bump map reads its neighbours to find the slope, so it needs to know
+      // how far apart texels are. falls back to a sane size for sources that
+      // don't report their dimensions.
+      const normalTex = this.states._normalTex;
+      fillShader.setUniform('uNormalTexelSize', [
+        1 / (normalTex && normalTex.width ? normalTex.width : 256),
+        1 / (normalTex && normalTex.height ? normalTex.height : 256)
+      ]);
     }
     fillShader.setUniform(
       'uTint',

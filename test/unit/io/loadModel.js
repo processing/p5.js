@@ -130,6 +130,8 @@ suite('loadModel', function () {
       const normalMapped = model.parts.find(p => p.partState.normalTexture);
       assert.ok(normalMapped, 'a part has the normal map');
       assert.equal(normalMapped.partState.normalTexture, fakeImage);
+      // norm means read it as a normal map, not as heights
+      assert.equal(normalMapped.partState.normalMapMode, 0);
     } finally {
       delete mockP5Prototype.loadImage;
     }
