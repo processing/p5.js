@@ -2697,26 +2697,35 @@ function primitives3D(p5, fn) {
   fn.instances = function (count) {
     this._assert3d('instances');
 
-    if (typeof count !== 'number' || !isFinite(count) || count < 1) {
-      p5._friendlyError(
-        'instances() requires a positive integer count. Clamping to 1.',
-        'instances'
-      );
-      count = 1;
-    } else {
-      count = Math.round(count);
+    const isList = count?._isStorageList;
+
+    if (!isList) {
+      if (typeof count !== 'number' || !isFinite(count) || count < 1) {
+        p5._friendlyError(
+          'instances() requires a positive integer count or a StorageList. Clamping to 1.',
+          'instances'
+        );
+        count = 1;
+      } else {
+        count = Math.round(count);
+      }
     }
 
     const r = this._renderer;
 
-    // Each wrapped method: set _instanceCount, call the method with
-    // the correct context, clear _instanceCount in finally so it never leaks.
+    // Each wrapped method: set _instanceCount or _instanceList, call the method
+    // with the correct context, clear both in finally so they never leak.
     const wrap = (method, ctx = r) =>
       function (...args) {
-        r._instanceCount = count;
+        if (isList) {
+          r._instanceList = count;
+        } else {
+          r._instanceCount = count;
+        }
         try {
           method.apply(ctx, args);
         } finally {
+          r._instanceList = undefined;
           r._instanceCount = undefined;
         }
       };

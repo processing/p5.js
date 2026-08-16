@@ -1051,6 +1051,109 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
     });
   }
 
+  // Adds push() and length getter to the node proxy returned by uniformStorage()
+  // when the underlying value is a StorageList.
+  //
+  // push() generates a call to the _p5_push_<name> WGSL helper function that
+  // atomically appends an element. length generates a call to _p5_length_<name>
+  // which wraps atomicLoad so users can read the current count in shaders.
+  function _installStorageListMethods(node, listName, schema, ctx) {
+    const { dag, cfg } = ctx;
+
+    node.push = function (element) {
+      let argID;
+
+      if (schema) {
+        // Build a struct constructor call: <listName>Element(field0, field1, ...)
+        const structTypeName = `${listName}Element`;
+        const fieldIDs = schema.fields.map(field => {
+          const val =
+            element && typeof element === 'object' && !element.isStrandsNode
+              ? element[field.name]
+              : element;
+          if (val?.isStrandsNode) return val.id;
+          const { id: primID } = build.primitiveConstructorNode(
+            ctx,
+            { baseType: field.baseType, dimension: field.dim },
+            val
+          );
+          return primID;
+        });
+        const structCallData = DAG.createNodeData({
+          nodeType: NodeType.OPERATION,
+          opCode: OpCode.Nary.FUNCTION_CALL,
+          identifier: structTypeName,
+          dependsOn: fieldIDs,
+          baseType: BaseType.FLOAT,
+          dimension: 1
+        });
+        argID = DAG.getOrCreateNode(dag, structCallData);
+      } else {
+        // Float list
+        const val = element;
+        if (val?.isStrandsNode) {
+          argID = val.id;
+        } else {
+          const { id: primID } = build.primitiveConstructorNode(
+            ctx,
+            { baseType: BaseType.FLOAT, dimension: 1 },
+            val
+          );
+          argID = primID;
+        }
+      }
+
+      const callData = DAG.createNodeData({
+        nodeType: NodeType.OPERATION,
+        opCode: OpCode.Nary.FUNCTION_CALL,
+        identifier: `_p5_push_${listName}`,
+        dependsOn: [argID],
+        baseType: BaseType.FLOAT,
+        dimension: 1
+      });
+      const callID = DAG.getOrCreateNode(dag, callData);
+
+      const stmtData = DAG.createNodeData({
+        nodeType: NodeType.STATEMENT,
+        statementType: StatementType.EXPRESSION,
+        dependsOn: [callID],
+        phiBlocks: []
+      });
+      CFG.recordInBasicBlock(cfg, cfg.currentBlock, DAG.getOrCreateNode(dag, stmtData));
+    };
+
+    node.pop = function () {
+      const callData = DAG.createNodeData({
+        nodeType: NodeType.OPERATION,
+        opCode: OpCode.Nary.FUNCTION_CALL,
+        identifier: `_p5_pop_${listName}`,
+        dependsOn: [],
+        baseType: BaseType.FLOAT,
+        dimension: 1
+      });
+      const callID = DAG.getOrCreateNode(dag, callData);
+      CFG.recordInBasicBlock(cfg, cfg.currentBlock, callID);
+      return createStrandsNode(callID, 1, ctx);
+    };
+
+    Object.defineProperty(node, 'length', {
+      get() {
+        const callData = DAG.createNodeData({
+          nodeType: NodeType.OPERATION,
+          opCode: OpCode.Nary.FUNCTION_CALL,
+          identifier: `_p5_length_${listName}`,
+          dependsOn: [],
+          baseType: BaseType.INT,
+          dimension: 1
+        });
+        const callID = DAG.getOrCreateNode(dag, callData);
+        CFG.recordInBasicBlock(cfg, cfg.currentBlock, callID);
+        return createStrandsNode(callID, 1, ctx);
+      },
+      configurable: true
+    });
+  }
+
   // Storage buffer uniform function for compute shaders
   fn.uniformStorage = function (name, bufferOrSchema) {
     const shaderName = resolveShaderName(
@@ -1060,6 +1163,8 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
     );
     let schema = null;
     let defaultValue = null;
+    let isStorageList = false;
+    let maxCapacity = 0;
 
     // If it's a function, evaluate it immediately to infer schema,
     // then store the function so it gets called each frame.
@@ -1071,8 +1176,12 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
       }
     }
 
-    if (value?._schema) {
-      // Struct storage buffer with pre-computed schema
+    if (value?._isStorageList) {
+      isStorageList = true;
+      maxCapacity = value.maxCapacity;
+      schema = value._schema;
+      if (defaultValue === null) defaultValue = value;
+    } else if (value?._schema) {
       schema = value._schema;
       if (defaultValue === null) defaultValue = value;
     } else if (value && typeof value === 'object' && !value._isStorageBuffer) {
@@ -1089,7 +1198,7 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
     );
     strandsContext.uniforms.push({
       name: shaderName,
-      typeInfo: { baseType: 'storage', dimension: 1, schema },
+      typeInfo: { baseType: 'storage', dimension: 1, schema, isStorageList, maxCapacity },
       defaultValue
     });
 
@@ -1100,6 +1209,11 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
     node._originalBaseType = 'storage';
     node._originalDimension = 1;
     node._schema = schema;
+
+    if (isStorageList) {
+      _installStorageListMethods(node, shaderName, schema, strandsContext);
+    }
+
     return node;
   };
 }

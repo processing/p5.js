@@ -2345,6 +2345,31 @@ function renderer3D(p5, fn) {
   };
 
   /**
+   * Creates a variable-length GPU buffer that compute shaders can push elements
+   * into atomically, and that can drive instanced draw calls without CPU readback.
+   *
+   * @method createStorageList
+   * @for p5
+   * @beta
+   * @webgpu
+   * @webgpuOnly
+   * @param {Number} maxCapacity Maximum number of elements the list can hold.
+   * @param {Object|Object[]} [schemaOrData] A schema template object or initial
+   *   array of struct objects. Omit for a float list.
+   * @returns {p5.StorageList}
+   */
+  fn.createStorageList = function (maxCapacity, schemaOrData) {
+    if (!this._renderer.createStorageList) {
+      p5._friendlyError(
+        `createStorageList() is only available with the WebGPU renderer. ${webGPUAddonMessage}`,
+        'createStorageList'
+      );
+      return;
+    }
+    return this._renderer.createStorageList(maxCapacity, schemaOrData);
+  };
+
+  /**
    * Returns the default shader used for compute operations.
    *
    * Calling <a href="#/p5/buildComputeShader">`buildComputeShader(shaderFunction)`</a>

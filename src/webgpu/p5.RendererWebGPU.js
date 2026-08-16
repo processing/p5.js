@@ -387,6 +387,110 @@ function rendererWebGPU(p5, fn) {
    */
   p5.StorageBuffer = StorageBuffer;
 
+  class StorageList {
+    constructor(buffer, lengthOffset, maxCapacity, renderer, schema = null) {
+      this._isStorageList = true;
+      this.buffer = buffer;
+      this._lengthOffset = lengthOffset;
+      this.maxCapacity = maxCapacity;
+      this._renderer = renderer;
+      this._schema = schema;
+    }
+
+    /**
+     * Empties the list.
+     *
+     * @method clear
+     * @for p5.StorageList
+     * @beta
+     * @webgpu
+     * @webgpuOnly
+     */
+    clear() {
+      this._renderer.device.queue.writeBuffer(
+        this.buffer,
+        this._lengthOffset,
+        new Uint32Array([0])
+      );
+    }
+
+    /**
+     * Reads the current contents of the list back to JavaScript.
+     *
+     * It returns a `Float32Array` for float lists, or an array of plain objects
+     * for struct lists.
+     *
+     * Note: This is a GPU-to-CPU read. Calling it frequently can be slow.
+     *
+     * @method read
+     * @for p5.StorageList
+     * @beta
+     * @webgpu
+     * @webgpuOnly
+     * @returns {Promise<Float32Array|Object[]>}
+     */
+    async read() {
+      const device = this._renderer.device;
+      this._renderer.flushDraw();
+
+      const totalSize = this.buffer.size;
+      const stagingBuffer = device.createBuffer({
+        size: totalSize,
+        usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ
+      });
+
+      const encoder = device.createCommandEncoder();
+      encoder.copyBufferToBuffer(this.buffer, 0, stagingBuffer, 0, totalSize);
+      device.queue.submit([encoder.finish()]);
+
+      await stagingBuffer.mapAsync(GPUMapMode.READ);
+      const mapped = stagingBuffer.getMappedRange();
+
+      const length = Math.min(
+        new DataView(mapped).getUint32(this._lengthOffset, true),
+        this.maxCapacity
+      );
+
+      let result;
+      const stride = this._schema ? this._schema.stride : 4;
+      if (this._schema) {
+        const byteLen = length * stride;
+        const rawCopy = new Float32Array(byteLen / 4);
+        if (byteLen > 0) {
+          rawCopy.set(new Float32Array(mapped, 0, byteLen / 4));
+        }
+        result = this._renderer._unpackStructArray(rawCopy, this._schema);
+      } else {
+        const rawCopy = new Float32Array(length);
+        if (length > 0) {
+          rawCopy.set(new Float32Array(mapped, 0, length));
+        }
+        result = rawCopy;
+      }
+
+      stagingBuffer.unmap();
+      stagingBuffer.destroy();
+
+      return result;
+    }
+  }
+
+  /**
+   * A variable-length buffer that compute can push to and pop from, like
+   * a JavaScript array.
+   *
+   * This is only available in WebGPU mode.
+   *
+   * Note: <a href="#/p5/createStorageList">`createStorageList()`</a> is the
+   * recommended way to create an instance of this class.
+   *
+   * @class p5.StorageList
+   * @beta
+   * @webgpu
+   * @webgpuOnly
+   */
+  p5.StorageList = StorageList;
+
   class RendererWebGPU extends Renderer3D {
     constructor(pInst, w, h, isMainCanvas, elt) {
       super(pInst, w, h, isMainCanvas, elt);
@@ -440,6 +544,9 @@ function rendererWebGPU(p5, fn) {
 
       // Storage buffers for compute shaders
       this._storageBuffers = new Set();
+
+      // Temporary indirect draw buffers created during a frame; destroyed after submit
+      this._tempBuffers = [];
 
       // 2D canvas for pixel reading fallback
       this._pixelReadCanvas = null;
@@ -1801,6 +1908,11 @@ function rendererWebGPU(p5, fn) {
         // Submit the commands
         this.queue.submit(commandsToSubmit);
 
+        for (const buf of this._tempBuffers) {
+          buf.destroy();
+        }
+        this._tempBuffers = [];
+
         for (const buf of this.activeUniformBuffers) {
           // buf.buffer = this.device.createBuffer({
           // size: buf.size,
@@ -1944,10 +2056,17 @@ function rendererWebGPU(p5, fn) {
         this._promoteToFramebufferWithoutCopy();
       }
 
+      const currentShader = this._curShader;
+      const instanceList = this._instanceList;
+
+      if (instanceList) {
+        this._drawBuffersIndirect(geometry, buffers, currentShader, mode, instanceList);
+        return;
+      }
+
       this._beginActiveRenderPass();
       const passEncoder = this.activeRenderPass;
 
-      const currentShader = this._curShader;
       this.setupShaderBindGroups(currentShader, passEncoder, { mode, buffers });
       // Bind vertex buffers
       for (const buffer of currentShader._vertexBuffers ||
@@ -1980,6 +2099,101 @@ function rendererWebGPU(p5, fn) {
       }
 
       // Mark that we have pending draws that need submission
+      this._hasPendingDraws = true;
+    }
+
+    // Handles draw calls where instance count comes from a StorageList on the GPU.
+    // Each call creates a fresh indirect buffer so that multiple draws in the same
+    // frame with different geometries don't overwrite each other's indexCount slot
+    // before the GPU reads it.
+    _drawBuffersIndirect(geometry, buffers, currentShader, mode, instanceList) {
+      // End the current render pass so we can issue the buffer copy command
+      // before starting the new render pass that contains the draw.
+      this._finishActiveRenderPass();
+
+      // indexCount and vertexCount are geometry-specific; write them to a
+      // fresh indirect buffer so concurrent draws don't clobber each other.
+      const indirectBuffer = this.device.createBuffer({
+        size: 20, // 5 u32s: indexCount/vertexCount, instanceCount, firstIndex/firstVertex, baseVertex, firstInstance
+        usage: GPUBufferUsage.INDIRECT | GPUBufferUsage.COPY_DST
+      });
+      this._tempBuffers.push(indirectBuffer);
+
+      const isIndexed =
+        !!buffers.indexBuffer && currentShader.shaderType !== 'stroke';
+
+      if (currentShader.shaderType === 'stroke') {
+        // drawIndirect: [vertexCount, instanceCount, firstVertex, firstInstance]
+        const vertexCount = geometry.lineVertices
+          ? geometry.lineVertices.length / 3
+          : 0;
+        this.device.queue.writeBuffer(
+          indirectBuffer,
+          0,
+          new Uint32Array([vertexCount, 0, 0, 0])
+        );
+      } else if (isIndexed) {
+        // drawIndexedIndirect: [indexCount, instanceCount, firstIndex, baseVertex, firstInstance]
+        this.device.queue.writeBuffer(
+          indirectBuffer,
+          0,
+          new Uint32Array([geometry.faces.length * 3, 0, 0, 0, 0])
+        );
+      } else {
+        // drawIndirect: [vertexCount, instanceCount, firstVertex, firstInstance]
+        this.device.queue.writeBuffer(
+          indirectBuffer,
+          0,
+          new Uint32Array([geometry.vertices.length, 0, 0, 0])
+        );
+      }
+
+      // Copy the GPU-side length into instanceCount slot (offset 4)
+      const copyEncoder = this.device.createCommandEncoder();
+      copyEncoder.copyBufferToBuffer(
+        instanceList.buffer,
+        instanceList._lengthOffset,
+        indirectBuffer,
+        4,
+        4
+      );
+      this._pendingCommandEncoders.push(copyEncoder.finish());
+
+      this._beginActiveRenderPass();
+      const passEncoder = this.activeRenderPass;
+
+      this.setupShaderBindGroups(currentShader, passEncoder, { mode, buffers });
+      for (const buffer of currentShader._vertexBuffers ||
+        this._getVertexBuffers(currentShader)) {
+        const location = currentShader.attributes[buffer.attr].location;
+        const gpuBuffer = buffers[buffer.dst];
+        passEncoder.setVertexBuffer(location, gpuBuffer, 0);
+      }
+
+      if (currentShader.shaderType === 'fill') {
+        if (isIndexed) {
+          passEncoder.setIndexBuffer(
+            buffers.indexBuffer,
+            buffers.indexFormat || 'uint16'
+          );
+          passEncoder.drawIndexedIndirect(indirectBuffer, 0);
+        } else {
+          passEncoder.drawIndirect(indirectBuffer, 0);
+        }
+      } else if (currentShader.shaderType === 'stroke') {
+        if (buffers.lineVerticesBuffer) {
+          passEncoder.drawIndirect(indirectBuffer, 0);
+        }
+      } else if (currentShader.shaderType === 'text') {
+        if (buffers.indexBuffer) {
+          passEncoder.setIndexBuffer(
+            buffers.indexBuffer,
+            buffers.indexFormat || 'uint16'
+          );
+          passEncoder.drawIndexedIndirect(indirectBuffer, 0);
+        }
+      }
+
       this._hasPendingDraws = true;
     }
 
@@ -2127,7 +2341,8 @@ function rendererWebGPU(p5, fn) {
             if (
               !uniform ||
               !uniform._cachedData ||
-              !uniform._cachedData._isStorageBuffer
+              (!uniform._cachedData._isStorageBuffer &&
+                !uniform._cachedData._isStorageList)
             ) {
               throw new Error(
                 `Storage buffer "${entry.storage.name}" not set. ` +
@@ -2463,8 +2678,10 @@ function rendererWebGPU(p5, fn) {
 
       // Extract storage buffers
       const storageBuffers = {};
+      // Matches plain array bindings (array<T> or array<T, N>), standalone atomic
+      // bindings (atomic<T>), and named struct type bindings used by StorageList.
       const storageRegex =
-        /@group\((\d+)\)\s*@binding\((\d+)\)\s*var<storage,\s*(read|read_write)>\s+(\w+)\s*:\s*array<\w+>/g;
+        /@group\((\d+)\)\s*@binding\((\d+)\)\s*var<storage,\s*(read|read_write)>\s+(\w+)\s*:\s*(array<[\w<>, ]+>|atomic<\w+>|\w+)/g;
 
       // Track which bindings are taken by the struct properties we've parsed
       // (the rest should be textures/samplers)
@@ -4013,6 +4230,68 @@ ${hookUniformFields}}
       this._storageBuffers.add(storageBuffer);
 
       return storageBuffer;
+    }
+
+    createStorageList(maxCapacity, schemaOrData) {
+      const device = this.device;
+
+      let schema = null;
+      let initialCount = 0;
+      let initialDataPacked = null;
+
+      if (
+        Array.isArray(schemaOrData) &&
+        schemaOrData.length > 0 &&
+        typeof schemaOrData[0] === 'object' &&
+        !Array.isArray(schemaOrData[0])
+      ) {
+        schema = this._inferStructSchema(schemaOrData[0]);
+        initialDataPacked = this._packStructArray(schemaOrData, schema);
+        initialCount = schemaOrData.length;
+      } else if (
+        schemaOrData !== undefined &&
+        typeof schemaOrData === 'object' &&
+        !Array.isArray(schemaOrData)
+      ) {
+        // Plain schema template object -- only used to infer layout
+        schema = this._inferStructSchema(schemaOrData);
+      }
+
+      const stride = schema ? schema.stride : 4;
+      // Length field (u32) follows the data array at a 4-byte aligned offset.
+      // Strides are always multiples of 4, so no padding is needed between
+      // the last element and the length field.
+      const lengthOffset = maxCapacity * stride;
+      const totalSize = Math.max(
+        Math.ceil((lengthOffset + 4) / 16) * 16,
+        16
+      );
+
+      const buffer = device.createBuffer({
+        size: totalSize,
+        usage:
+          GPUBufferUsage.STORAGE |
+          GPUBufferUsage.COPY_DST |
+          GPUBufferUsage.COPY_SRC,
+        mappedAtCreation: true
+      });
+
+      const mapped = buffer.getMappedRange();
+      if (initialDataPacked !== null) {
+        new Float32Array(mapped).set(initialDataPacked);
+      }
+      new Uint32Array(mapped, lengthOffset, 1).set([initialCount]);
+      buffer.unmap();
+
+      const storageList = new StorageList(
+        buffer,
+        lengthOffset,
+        maxCapacity,
+        this,
+        schema
+      );
+      this._storageBuffers.add(storageList);
+      return storageList;
     }
 
     _getWebGPUColorFormat(framebuffer) {
