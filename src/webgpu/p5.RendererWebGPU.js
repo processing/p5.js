@@ -389,13 +389,15 @@ function rendererWebGPU(p5, fn) {
   p5.StorageBuffer = StorageBuffer;
 
   class StorageList {
-    constructor(buffer, lengthOffset, maxCapacity, renderer, schema = null) {
+    constructor(buffer, lengthOffset, maxCapacity, renderer, schema = null, initialCount = 0) {
       this._isStorageList = true;
       this.buffer = buffer;
       this._lengthOffset = lengthOffset;
       this.maxCapacity = maxCapacity;
       this._renderer = renderer;
       this._schema = schema;
+      this._stride = schema ? schema.stride : 4;
+      this._cpuLength = initialCount;
     }
 
     /**
@@ -408,10 +410,172 @@ function rendererWebGPU(p5, fn) {
      * @webgpuOnly
      */
     clear() {
+      this._cpuLength = 0;
       const encoder = this._renderer.device.createCommandEncoder();
       encoder.clearBuffer(this.buffer, this._lengthOffset, 4);
       this._renderer._pendingCommandEncoders.push(encoder.finish());
       this._renderer._hasPendingDraws = true;
+    }
+
+    /**
+     * Appends one element to the list. This can be called from your sketch's
+     * JavaScript or from within a <a href="#/p5/buildComputeShader">compute shader.</a> Use this to seed a list
+     * before any compute shaders run. Calling `push()` after a GPU compute pass
+     * that has already modified the list will produce undefined ordering.
+     *
+     * For a float list, pass a number. For a struct list, pass a plain object
+     * whose properties match the schema.
+     *
+     * ```js example
+     * let positions;
+     * let drawShader;
+     * const COUNT = 5;
+     *
+     * async function setup() {
+     *   await createCanvas(200, 200, WEBGPU);
+     *
+     *   positions = createStorageList(COUNT, { pos: createVector(0, 0) });
+     *   for (let i = 0; i < COUNT; i++) {
+     *     positions.push({
+     *       pos: createVector(
+     *         random(-1, 1) * width / 2,
+     *         random(-1, 1) * height / 2
+     *       )
+     *     });
+     *   }
+     *
+     *   drawShader = buildMaterialShader(() => {
+     *     let data = uniformStorage(positions);
+     *     worldInputs.begin();
+     *     worldInputs.position.xy += data[instanceIndex].pos;
+     *     worldInputs.end();
+     *   });
+     *
+     *   describe('Five circles placed at random positions.');
+     * }
+     *
+     * function draw() {
+     *   background(220);
+     *   noStroke();
+     *   shader(drawShader);
+     *   instances(positions).circle(0, 0, 20);
+     * }
+     * ```
+     *
+     * You can also use `push()` from compute shaders. This approach can often
+     * be faster as no data needs to transfer from the CPU to the GPU.
+     *
+     * ```js example
+     * let particles, nextParticles;
+     * let removeOld, emitNew;
+     * let drawParticles;
+     * const MAX_PARTICLES = 300;
+     *
+     * async function setup() {
+     *   await createCanvas(200, 200, WEBGPU);
+     *
+     *   const schema = { position: createVector(0, 0), velocity: createVector(0, 0), life: 0 };
+     *   particles = createStorageList(MAX_PARTICLES, schema);
+     *   nextParticles = createStorageList(MAX_PARTICLES, schema);
+     *
+     *   // Seed an initial burst from JavaScript so something is visible on frame 1.
+     *   for (let i = 0; i < 20; i++) {
+     *     let angle = random(TWO_PI);
+     *     particles.push({
+     *       position: createVector(0, 0),
+     *       velocity: createVector(cos(angle) * 2, sin(angle) * 2 - 2.5),
+     *       life: random(0.5, 1.0)
+     *     });
+     *   }
+     *
+     *   removeOld = buildComputeShader(() => {
+     *     let src = uniformStorage(() => particles);
+     *     let dst = uniformStorage(() => nextParticles);
+     *     if (index.x < src.length) {
+     *       let p = src[index.x];
+     *       p.velocity.y += 0.08;
+     *       p.position += p.velocity;
+     *       p.life -= 0.02;
+     *       if (p.life > 0) {
+     *         dst.push(p);
+     *       }
+     *     }
+     *   });
+     *
+     *   emitNew = buildComputeShader(() => {
+     *     let dst = uniformStorage(() => nextParticles);
+     *     let angle = random() * TWO_PI;
+     *     dst.push({
+     *       position: [mouseX, mouseY] - [width, height] / 2,
+     *       velocity: [cos(angle), sin(angle) - 2.5],
+     *       life: 1.0
+     *     });
+     *   });
+     *
+     *   drawParticles = buildMaterialShader(() => {
+     *     let particleData = uniformStorage(() => particles);
+     *     let p = particleData[instanceIndex];
+     *     worldInputs.begin();
+     *     worldInputs.position.xy += p.position;
+     *     worldInputs.end();
+     *     finalColor.begin();
+     *     finalColor.set([1, p.life * 0.4, 0, p.life]);
+     *     finalColor.end();
+     *   });
+     *
+     *   describe('Orange particles emitting from the cursor, falling with gravity.');
+     * }
+     *
+     * function draw() {
+     *   background(0);
+     *   noStroke();
+     *
+     *   nextParticles.clear();
+     *   compute(removeOld, MAX_PARTICLES);
+     *   compute(emitNew, 5);
+     *   [particles, nextParticles] = [nextParticles, particles];
+     *
+     *   shader(drawParticles);
+     *   blendMode(ADD);
+     *   instances(particles).circle(0, 0, 4);
+     * }
+     * ```
+     *
+     * @method push
+     * @for p5.StorageList
+     * @beta
+     * @webgpu
+     * @webgpuOnly
+     * @param {Number|Object} element A number for float lists, or a plain object
+     *   matching the list's schema for struct lists.
+     */
+    push(element) {
+      if (this._cpuLength >= this.maxCapacity) {
+        throw new Error(
+          `StorageList is full (maxCapacity: ${this.maxCapacity})`
+        );
+      }
+      const device = this._renderer.device;
+      let packed;
+      if (this._schema) {
+        packed = this._renderer._packStructArray([element], this._schema);
+      } else {
+        if (typeof element !== 'number') {
+          throw new Error('Float StorageList.push() expects a number');
+        }
+        packed = new Float32Array([element]);
+      }
+      device.queue.writeBuffer(
+        this.buffer,
+        this._cpuLength * this._stride,
+        packed
+      );
+      this._cpuLength++;
+      device.queue.writeBuffer(
+        this.buffer,
+        this._lengthOffset,
+        new Uint32Array([this._cpuLength])
+      );
     }
 
     /**
@@ -4286,7 +4450,8 @@ ${hookUniformFields}}
         lengthOffset,
         maxCapacity,
         this,
-        schema
+        schema,
+        initialCount
       );
       this._storageBuffers.add(storageList);
       return storageList;

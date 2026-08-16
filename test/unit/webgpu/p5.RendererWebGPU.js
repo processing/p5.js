@@ -468,6 +468,106 @@ suite('WebGPU p5.RendererWebGPU', function () {
     });
   });
 
+  suite('StorageList.push() (CPU)', function () {
+    test('push a float and read it back', async function () {
+      const list = myp5.createStorageList(5);
+      list.push(42.0);
+
+      const result = await list.read();
+
+      expect(result).to.be.instanceOf(Float32Array);
+      expect(result.length).to.equal(1);
+      expect(result[0]).to.be.closeTo(42.0, 0.001);
+    });
+
+    test('push multiple floats and read them all back in order', async function () {
+      const list = myp5.createStorageList(5);
+      list.push(1.0);
+      list.push(2.0);
+      list.push(3.0);
+
+      const result = await list.read();
+
+      expect(result.length).to.equal(3);
+      expect(result[0]).to.be.closeTo(1.0, 0.001);
+      expect(result[1]).to.be.closeTo(2.0, 0.001);
+      expect(result[2]).to.be.closeTo(3.0, 0.001);
+    });
+
+    test('push a struct and read it back', async function () {
+      const list = myp5.createStorageList(5, { x: 0.0, y: 0.0 });
+      list.push({ x: 3.0, y: 7.0 });
+
+      const result = await list.read();
+
+      expect(result).to.be.an('array');
+      expect(result.length).to.equal(1);
+      expect(result[0].x).to.be.closeTo(3.0, 0.001);
+      expect(result[0].y).to.be.closeTo(7.0, 0.001);
+    });
+
+    test('push multiple structs and read them back in order', async function () {
+      const list = myp5.createStorageList(5, { x: 0.0, y: 0.0 });
+      list.push({ x: 1.0, y: 2.0 });
+      list.push({ x: 3.0, y: 4.0 });
+
+      const result = await list.read();
+
+      expect(result.length).to.equal(2);
+      expect(result[0].x).to.be.closeTo(1.0, 0.001);
+      expect(result[0].y).to.be.closeTo(2.0, 0.001);
+      expect(result[1].x).to.be.closeTo(3.0, 0.001);
+      expect(result[1].y).to.be.closeTo(4.0, 0.001);
+    });
+
+    test('throws when exceeding maxCapacity', function () {
+      const list = myp5.createStorageList(2);
+      list.push(1.0);
+      list.push(2.0);
+      expect(() => list.push(3.0)).to.throw();
+    });
+
+    test('throws when pushing a non-number to a float list', function () {
+      const list = myp5.createStorageList(5);
+      expect(() => list.push({ x: 1.0 })).to.throw();
+    });
+
+    test('clear() after CPU push resets length to zero', async function () {
+      const list = myp5.createStorageList(5);
+      list.push(1.0);
+      list.push(2.0);
+      list.clear();
+
+      const result = await list.read();
+
+      expect(result.length).to.equal(0);
+    });
+
+    test('CPU push is visible to a subsequent compute shader', async function () {
+      const list = myp5.createStorageList(10);
+      list.push(5.0);
+      list.push(10.0);
+
+      // Double every element already in the list
+      const shader = myp5.buildComputeShader(
+        () => {
+          const l = myp5.uniformStorage('l', list);
+          l.push(3.0);
+        },
+        { myp5, list }
+      );
+      myp5.compute(shader, 1);
+
+      const result = await list.read();
+
+      expect(result.length).to.equal(3);
+      const values = new Set(Array.from(result).map(v => Math.round(v)));
+      expect(values.has(5)).to.be.true;
+      expect(values.has(10)).to.be.true;
+      expect(values.has(3)).to.be.true;
+    });
+  });
+
   suite('p5.strands', function () {
     test('a uniform whose name matches a hook parameter name does not break', async function () {
       myp5.pixelDensity(1);
