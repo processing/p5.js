@@ -4823,7 +4823,10 @@ ${hookUniformFields}}
       );
 
       passEncoder.end();
-      this.device.queue.submit([commandEncoder.finish()]);
+      // Queue alongside pending draws so the copy and render in flushDraw()
+      // are guaranteed to execute after the compute in the same submit batch.
+      this._pendingCommandEncoders.push(commandEncoder.finish());
+      this._hasPendingDraws = true;
     }
   }
 
