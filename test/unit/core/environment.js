@@ -81,6 +81,78 @@ suite('Environment', function () {
     });
   });
 
+  suite('p5.prototype.focused with multiple instances', function () {
+  test('removing one instance should not remove another instance focus listeners', async function () {
+    let instance1;
+    let instance2;
+
+    await Promise.all([
+      new Promise(function (resolve) {
+        new p5(function (p) {
+          p.setup = function () {
+            instance1 = p;
+            resolve();
+          };
+        });
+      }),
+      new Promise(function (resolve) {
+        new p5(function (p) {
+          p.setup = function () {
+            instance2 = p;
+            resolve();
+          };
+        });
+      })
+    ]);
+
+    window.dispatchEvent(new Event('blur'));
+    assert.strictEqual(instance2.focused, false);
+
+    await instance1.remove();
+
+    window.dispatchEvent(new Event('focus'));
+    assert.strictEqual(instance2.focused, true);
+
+    await instance2.remove();
+  });
+  });
+
+  suite('p5.lifecycleHooks.remove cleanup', function () {
+    test('remove hooks should not accumulate after instances are removed', async function () {
+      const before = p5.lifecycleHooks.remove.length;
+
+      let instance1;
+      let instance2;
+
+      await Promise.all([
+        new Promise(function (resolve) {
+          new p5(function (p) {
+            p.setup = function () {
+              instance1 = p;
+              resolve();
+            };
+          });
+        }),
+        new Promise(function (resolve) {
+          new p5(function (p) {
+            p.setup = function () {
+              instance2 = p;
+              resolve();
+            };
+          });
+        })
+      ]);
+
+      await instance1.remove();
+      await instance2.remove();
+
+      assert.strictEqual(
+        p5.lifecycleHooks.remove.length,
+        before
+      );
+    });
+  });
+
   suite('p5.prototype.cursor', function () {
     test('should change cursor to cross', function () {
       myp5.cursor(myp5.CROSS);
