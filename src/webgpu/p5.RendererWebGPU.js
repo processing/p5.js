@@ -407,11 +407,10 @@ function rendererWebGPU(p5, fn) {
      * @webgpuOnly
      */
     clear() {
-      this._renderer.device.queue.writeBuffer(
-        this.buffer,
-        this._lengthOffset,
-        new Uint32Array([0])
-      );
+      const encoder = this._renderer.device.createCommandEncoder();
+      encoder.clearBuffer(this.buffer, this._lengthOffset, 4);
+      this._renderer._pendingCommandEncoders.push(encoder.finish());
+      this._renderer._hasPendingDraws = true;
     }
 
     /**
