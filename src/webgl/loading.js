@@ -225,11 +225,11 @@ function buildMaterialParts(model, faceMaterials, materials) {
 function loading(p5, fn) {
   /**
    * Loads a 3D model to create a
-   * <a href="#/p5.Geometry">p5.Geometry</a> object.
+   * <a href="#/p5.Geometry">`p5.Geometry`</a> object.
    *
    * `loadModel()` can load 3D models from OBJ and STL files. Once the model is
    * loaded, it can be displayed with the
-   * <a href="#/p5/model">model()</a> function, as in `model(shape)`.
+   * <a href="#/p5/model">`model()`</a> function, as in `model(shape)`.
    *
    * There are three ways to call `loadModel()` with optional parameters to help
    * process the model.
@@ -239,10 +239,13 @@ function loading(p5, fn) {
    * URLs such as `'https://example.com/model.obj'` may be blocked due to browser
    * security. The `path` parameter can also be defined as a [`Request`](https://developer.mozilla.org/en-US/docs/Web/API/Request)
    * object for more advanced usage.
-   * Note: When loading a `.obj` file that references materials stored in
-   * `.mtl` files, p5.js will attempt to load and apply those materials.
-   * To ensure that the `.obj` file reads the `.mtl` file correctly include the
-   * `.mtl` file alongside it.
+   * Note: When a `.obj` file references materials stored in a `.mtl` file,
+   * p5.js loads and applies them, so a model with several materials appears the
+   * way it was exported. Each material can use diffuse (`map_Kd`), specular
+   * (`map_Ks`), ambient (`map_Ka`), shininess (`map_Ns`), and normal
+   * (`map_Bump`) texture maps. Keep the `.mtl` file and its images alongside
+   * the `.obj` file so their paths resolve. A texture that fails to load is
+   * skipped with a warning instead of failing the whole model.
    *
    * The first way to call `loadModel()` has three optional parameters after the
    * file path. The first optional parameter, `successCallback`, is a function
@@ -304,9 +307,9 @@ function loading(p5, fn) {
    * @param  {String} [fileType]          model’s file extension. Either `'.obj'` or `'.stl'`.
    * @param  {Boolean} [normalize]        if `true`, scale the model to fit the canvas.
    * @param  {function(p5.Geometry)} [successCallback] function to call once the model is loaded. Will be passed
-   *                                                   the <a href="#/p5.Geometry">p5.Geometry</a> object.
+   *                                                   the <a href="#/p5.Geometry">`p5.Geometry`</a> object.
    * @param  {function(Event)} [failureCallback] function to call if the model fails to load. Will be passed an `Error` event object.
-   * @return {Promise<p5.Geometry>} the <a href="#/p5.Geometry">p5.Geometry</a> object
+   * @return {Promise<p5.Geometry>} the <a href="#/p5.Geometry">`p5.Geometry`</a> object
    *
    * @example
    * // Click and drag the mouse to view the scene from different angles.
@@ -1161,15 +1164,21 @@ function loading(p5, fn) {
   }
 
   /**
-   * Draws a <a href="#/p5.Geometry">p5.Geometry</a> object to the canvas.
+   * Draws a <a href="#/p5.Geometry">`p5.Geometry`</a> object to the canvas.
    *
    * The first parameter, `model`, is the
-   * <a href="#/p5.Geometry">p5.Geometry</a> object to draw.
-   * <a href="#/p5.Geometry">p5.Geometry</a> objects can be built with
-   * <a href="#/p5/buildGeometry">buildGeometry()</a>. They can also be loaded from
-   * a file with <a href="#/p5/loadGeometry">loadGeometry()</a>.
+   * <a href="#/p5.Geometry">`p5.Geometry`</a> object to draw.
+   * <a href="#/p5.Geometry">`p5.Geometry`</a> objects can be built with
+   * <a href="#/p5/buildGeometry">`buildGeometry()`</a>. They can also be loaded from
+   * a file with <a href="#/p5/loadGeometry">`loadGeometry()`</a>.
    *
    * Note: `model()` can only be used in WebGL mode.
+   *
+   * A model with several materials, such as a character with separate skin,
+   * shirt, and shoe materials, keeps each material's own colors and textures.
+   * The call to `model()` is the same whether the model has one material or
+   * many, so a model made in software such as Blender appears the way it was
+   * exported.
    *
    * ```js example
    * // Click and drag the mouse to view the scene from different angles.

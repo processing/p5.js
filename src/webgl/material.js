@@ -2569,7 +2569,7 @@ function material(p5, fn) {
   /**
    * Sets a normal map to add surface detail to shapes under lighting.
    *
-   * `normalTexture()` works like <a href="#/p5/texture">texture()</a>, but for a
+   * `normalTexture()` works like <a href="#/p5/texture">`texture()`</a>, but for a
    * tangent-space normal map: an image whose red, green, and blue channels
    * encode the direction of the surface normal (not brightness). Call it before
    * drawing a shape and its surface normals get perturbed by the map, so lights
@@ -2579,27 +2579,36 @@ function material(p5, fn) {
    * Call `normalTexture(null)` to turn it off, or scope it between
    * <a href="#/p5/push">push()</a> and <a href="#/p5/pop">pop()</a>.
    *
+   * A light source is needed to see the effect. Models loaded with
+   * <a href="#/p5/loadModel">loadModel()</a> apply their own normal map from
+   * the `.mtl` file's `map_Bump`.
+   *
+   * Note: `normalTexture()` can only be used in WebGL mode.
+   *
    * @method normalTexture
    * @param {p5.Image|p5.MediaElement|p5.Graphics|p5.Texture|p5.Framebuffer|p5.FramebufferTexture} tex normal map, or `null` to clear it.
    * @param {Number} [scale=1] strength multiplier for the surface detail.
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
+   * // Click and drag the mouse to view the scene from different angles.
+   *
    * let normalMap;
    *
    * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
-   *   // build a small tangent-space normal map with diagonal ridges
+   *   // Build a normal map with diagonal ridges running across it.
    *   normalMap = createImage(32, 32);
    *   normalMap.loadPixels();
    *   for (let y = 0; y < normalMap.height; y += 1) {
    *     for (let x = 0; x < normalMap.width; x += 1) {
+   *       // Slope of the ridge at this point.
    *       let s = sin(((x + y) / normalMap.width) * TWO_PI * 3) * 0.8;
    *       let inv = 1 / sqrt(s * s + s * s + 1);
    *       let i = (x + y * normalMap.width) * 4;
+   *
+   *       // Pack the normal direction into the color channels.
    *       normalMap.pixels[i] = (s * inv * 0.5 + 0.5) * 255;
    *       normalMap.pixels[i + 1] = (s * inv * 0.5 + 0.5) * 255;
    *       normalMap.pixels[i + 2] = (inv * 0.5 + 0.5) * 255;
@@ -2608,19 +2617,28 @@ function material(p5, fn) {
    *   }
    *   normalMap.updatePixels();
    *
-   *   describe('A sphere lit from the left, its surface covered in ridges from a normal map.');
+   *   describe('A gray sphere lit from the upper left. Diagonal ridges cover its surface.');
    * }
    *
    * function draw() {
    *   background(0);
-   *   pointLight(255, 255, 255, -50, -50, 100);
+   *
+   *   // Enable orbiting with the mouse.
+   *   orbitControl();
+   *
+   *   // Rock the shape so the lighting shifts across it.
+   *   rotateY(sin(millis() * 0.002) * PI * 0.1);
+   *
+   *   // Light the sphere from the upper left.
+   *   ambientLight(60);
+   *   pointLight(255, 255, 255, -80, -80, 150);
    *   noStroke();
    *   fill(200);
+   *
+   *   // Add the ridges without changing the geometry.
    *   normalTexture(normalMap);
    *   sphere(40);
    * }
-   * </code>
-   * </div>
    */
   fn.normalTexture = function (tex, scale) {
     this._assert3d('normalTexture');
@@ -2630,15 +2648,77 @@ function material(p5, fn) {
   };
 
   /**
-   * Sets a specular map to vary the specular highlight across a shape's surface.
+   * Sets an image that controls where a shape looks glossy.
    *
-   * Works like <a href="#/p5/texture">texture()</a> but for the specular colour,
-   * modulating <a href="#/p5/specularMaterial">specularMaterial()</a> per pixel.
-   * Call `specularTexture(null)` to clear it, or scope it with push()/pop().
+   * A specular map lets one shape mix polished and worn surfaces. It works like
+   * <a href="#/p5/texture">`texture()`</a>, but instead of setting the base color,
+   * the map's color at each point scales the highlight set by
+   * <a href="#/p5/specularMaterial">`specularMaterial()`</a>. Bright parts of the
+   * map stay shiny and dark parts look matte.
+   *
+   * The parameter, `tex`, is the image to use as the specular map. Passing
+   * `null` clears it, as in `specularTexture(null)`. The map can also be scoped
+   * between <a href="#/p5/push">`push()`</a> and <a href="#/p5/pop">`pop()`</a>.
+   *
+   * A light source is needed to see the effect. Models loaded with
+   * <a href="#/p5/loadModel">`loadModel()`</a> apply their own specular map from
+   * the `.mtl` file's `map_Ks`.
+   *
+   * Note: `specularTexture()` can only be used in WebGL mode.
    *
    * @method specularTexture
-   * @param {p5.Image|p5.MediaElement|p5.Graphics|p5.Texture|p5.Framebuffer|p5.FramebufferTexture} tex specular map, or `null` to clear it.
+   * @param {p5.Image|p5.MediaElement|p5.Graphics|p5.Texture|p5.Framebuffer|p5.FramebufferTexture} tex image to use as the specular map, or `null` to clear it.
    * @chainable
+   *
+   * @example
+   * // Click and drag the mouse to view the scene from different angles.
+   *
+   * let specularMap;
+   *
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *
+   *   // Build a checkered map of white and black squares.
+   *   specularMap = createImage(64, 64);
+   *   specularMap.loadPixels();
+   *   for (let y = 0; y < specularMap.height; y += 1) {
+   *     for (let x = 0; x < specularMap.width; x += 1) {
+   *       // White squares stay glossy, black squares turn matte.
+   *       let isWhite = (floor(x / 8) + floor(y / 8)) % 2 === 0;
+   *       let v = isWhite ? 255 : 0;
+   *       let i = (x + y * specularMap.width) * 4;
+   *       specularMap.pixels[i] = v;
+   *       specularMap.pixels[i + 1] = v;
+   *       specularMap.pixels[i + 2] = v;
+   *       specularMap.pixels[i + 3] = 255;
+   *     }
+   *   }
+   *   specularMap.updatePixels();
+   *
+   *   describe('A dark red square lit from the front. Its surface alternates between glossy white squares and matte red ones, like a checkerboard.');
+   * }
+   *
+   * function draw() {
+   *   background(0);
+   *
+   *   // Enable orbiting with the mouse.
+   *   orbitControl();
+   *
+   *   // Rock the shape so the lighting shifts across it.
+   *   rotateY(sin(millis() * 0.002) * PI * 0.1);
+   *
+   *   // Light the surface head on so the highlight spreads across it.
+   *   ambientLight(50);
+   *   pointLight(255, 255, 255, 0, 0, 300);
+   *   noStroke();
+   *   fill(120, 40, 40);
+   *
+   *   // Turn on highlights, then vary them across the surface.
+   *   specularMaterial(255);
+   *   shininess(5);
+   *   specularTexture(specularMap);
+   *   plane(80, 80);
+   * }
    */
   fn.specularTexture = function (tex) {
     this._assert3d('specularTexture');
@@ -2648,15 +2728,70 @@ function material(p5, fn) {
   };
 
   /**
-   * Sets an ambient map to vary the ambient colour across a shape's surface.
+   * Sets an image that controls the color a shape reflects from ambient light.
    *
-   * Works like <a href="#/p5/texture">texture()</a> but for the ambient colour,
-   * modulating <a href="#/p5/ambientMaterial">ambientMaterial()</a> per pixel.
-   * Call `ambientTexture(null)` to clear it, or scope it with push()/pop().
+   * An ambient map varies the color set by
+   * <a href="#/p5/ambientMaterial">`ambientMaterial()`</a> across a surface, so
+   * different parts of one shape can pick up ambient light differently. It works
+   * like <a href="#/p5/texture">`texture()`</a>, but the map's color is applied to
+   * the ambient term rather than the base color.
+   *
+   * The parameter, `tex`, is the image to use as the ambient map. Passing `null`
+   * clears it, as in `ambientTexture(null)`. The map can also be scoped between
+   * <a href="#/p5/push">`push()`</a> and <a href="#/p5/pop">`pop()`</a>.
+   *
+   * An <a href="#/p5/ambientLight">`ambientLight()`</a> is needed to see the
+   * effect. Models loaded with <a href="#/p5/loadModel">`loadModel()`</a> apply
+   * their own ambient map from the `.mtl` file's `map_Ka`.
+   *
+   * Note: `ambientTexture()` can only be used in WebGL mode.
    *
    * @method ambientTexture
-   * @param {p5.Image|p5.MediaElement|p5.Graphics|p5.Texture|p5.Framebuffer|p5.FramebufferTexture} tex ambient map, or `null` to clear it.
+   * @param {p5.Image|p5.MediaElement|p5.Graphics|p5.Texture|p5.Framebuffer|p5.FramebufferTexture} tex image to use as the ambient map, or `null` to clear it.
    * @chainable
+   *
+   * @example
+   * // Click and drag the mouse to view the scene from different angles.
+   *
+   * let ambientMap;
+   *
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *
+   *   // Build a map that fades from blue at the top to orange at the bottom.
+   *   ambientMap = createImage(32, 32);
+   *   ambientMap.loadPixels();
+   *   for (let y = 0; y < ambientMap.height; y += 1) {
+   *     for (let x = 0; x < ambientMap.width; x += 1) {
+   *       let t = y / (ambientMap.height - 1);
+   *       let i = (x + y * ambientMap.width) * 4;
+   *       ambientMap.pixels[i] = 60 + t * 195;
+   *       ambientMap.pixels[i + 1] = 90;
+   *       ambientMap.pixels[i + 2] = 255 - t * 195;
+   *       ambientMap.pixels[i + 3] = 255;
+   *     }
+   *   }
+   *   ambientMap.updatePixels();
+   *
+   *   describe('A sphere on a black background. Its color fades from blue at the top to orange at the bottom.');
+   * }
+   *
+   * function draw() {
+   *   background(0);
+   *
+   *   // Enable orbiting with the mouse.
+   *   orbitControl();
+   *
+   *   // Rock the shape so the lighting shifts across it.
+   *   rotateY(sin(millis() * 0.002) * PI * 0.1);
+   *
+   *   // Ambient light reveals the map's colors.
+   *   ambientLight(200);
+   *   noStroke();
+   *   fill(255);
+   *   ambientTexture(ambientMap);
+   *   sphere(40);
+   * }
    */
   fn.ambientTexture = function (tex) {
     this._assert3d('ambientTexture');
@@ -2666,16 +2801,79 @@ function material(p5, fn) {
   };
 
   /**
-   * Sets a shininess map to vary the shininess across a shape's surface.
+   * Sets an image that controls how tight a shape's highlights are.
    *
-   * Works like <a href="#/p5/texture">texture()</a> but for shininess: the map's
-   * red channel scales the base <a href="#/p5/shininess">shininess()</a> value
-   * per pixel. Call `shininessTexture(null)` to clear it, or scope it with
-   * push()/pop().
+   * A shininess map varies the value set by
+   * <a href="#/p5/shininess">`shininess()`</a> across a surface. Only the map's
+   * red channel is read, and it scales the base shininess, so bright areas get
+   * a small, sharp highlight and dark areas get a broad, soft one. This lets a
+   * single shape look polished in some places and dull in others.
+   *
+   * The parameter, `tex`, is the image to use as the shininess map. Passing
+   * `null` clears it, as in `shininessTexture(null)`. The map can also be scoped
+   * between <a href="#/p5/push">`push()`</a> and <a href="#/p5/pop">`pop()`</a>.
+   *
+   * A light source and
+   * <a href="#/p5/specularMaterial">`specularMaterial()`</a> are needed to see the
+   * effect. Models loaded with <a href="#/p5/loadModel">`loadModel()`</a> apply
+   * their own shininess map from the `.mtl` file's `map_Ns`.
+   *
+   * Note: `shininessTexture()` can only be used in WebGL mode.
    *
    * @method shininessTexture
-   * @param {p5.Image|p5.MediaElement|p5.Graphics|p5.Texture|p5.Framebuffer|p5.FramebufferTexture} tex shininess map, or `null` to clear it.
+   * @param {p5.Image|p5.MediaElement|p5.Graphics|p5.Texture|p5.Framebuffer|p5.FramebufferTexture} tex image to use as the shininess map, or `null` to clear it.
    * @chainable
+   *
+   * @example
+   * // Click and drag the mouse to view the scene from different angles.
+   *
+   * let shininessMap;
+   *
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *
+   *   // Build a checkered map of bright and dark squares.
+   *   shininessMap = createImage(64, 64);
+   *   shininessMap.loadPixels();
+   *   for (let y = 0; y < shininessMap.height; y += 1) {
+   *     for (let x = 0; x < shininessMap.width; x += 1) {
+   *       // Only the red channel is read. Bright squares keep the full
+   *       // shininess, dark ones drop it so their highlight spreads out.
+   *       let isBright = (floor(x / 8) + floor(y / 8)) % 2 === 0;
+   *       let v = isBright ? 255 : 40;
+   *       let i = (x + y * shininessMap.width) * 4;
+   *       shininessMap.pixels[i] = v;
+   *       shininessMap.pixels[i + 1] = v;
+   *       shininessMap.pixels[i + 2] = v;
+   *       shininessMap.pixels[i + 3] = 255;
+   *     }
+   *   }
+   *   shininessMap.updatePixels();
+   *
+   *   describe('A blue square lit from the upper left. Its surface alternates between squares with tight highlights and squares with broader, softer ones.');
+   * }
+   *
+   * function draw() {
+   *   background(0);
+   *
+   *   // Enable orbiting with the mouse.
+   *   orbitControl();
+   *
+   *   // Rock the shape so the lighting shifts across it.
+   *   rotateY(sin(millis() * 0.002) * PI * 0.1);
+   *
+   *   // Light the surface from the upper left.
+   *   ambientLight(40);
+   *   pointLight(255, 255, 255, -60, -60, 180);
+   *   noStroke();
+   *   fill(60, 80, 160);
+   *
+   *   // Vary the size of the highlight across the surface.
+   *   specularMaterial(200);
+   *   shininess(120);
+   *   shininessTexture(shininessMap);
+   *   plane(80, 80);
+   * }
    */
   fn.shininessTexture = function (tex) {
     this._assert3d('shininessTexture');
