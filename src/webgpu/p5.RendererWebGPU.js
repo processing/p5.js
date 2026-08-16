@@ -4794,11 +4794,17 @@ ${hookUniformFields}}
         pz = 1;
       }
 
-      shader.setUniform('uPhysicalCount', [px, py, pz]);
-
       const workgroupCountX = Math.ceil(px / WORKGROUP_SIZE_X);
       const workgroupCountY = Math.ceil(py / WORKGROUP_SIZE_Y);
       const workgroupCountZ = Math.ceil(pz / WORKGROUP_SIZE_Z);
+
+      // Use actual dispatch width as stride, not px: extra threads beyond px are
+      // still launched and would collide with threads in the next row if px were used.
+      shader.setUniform('uPhysicalCount', [
+        workgroupCountX * WORKGROUP_SIZE_X,
+        workgroupCountY * WORKGROUP_SIZE_Y,
+        workgroupCountZ * WORKGROUP_SIZE_Z
+      ]);
 
       const commandEncoder = this.device.createCommandEncoder();
       const passEncoder = commandEncoder.beginComputePass();
