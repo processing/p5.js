@@ -2655,8 +2655,9 @@ function primitives3D(p5, fn) {
    * that reads per-instance data from an instanced attribute buffer.
    *
    * @method instances
-   * @param  {Number} count number of instances to draw. Must be a positive
-   *   integer.
+   * @param  {Number|p5.StorageBuffer|p5.StorageList} count number of instances
+   *   to draw, or a storage buffer/list whose element count is used. A plain
+   *   number must be a positive integer.
    * @returns {p5.InstancesWrapper} an object with methods `sphere`, `box`, `plane`,
    *   `ellipsoid`, `cylinder`, `cone`, `torus`, `triangle`, `rect`, `quad`,
    *   `ellipse`, `arc`, `model`, `line`, `point`, `bezier`, and `spline`. Call one of
@@ -2699,10 +2700,14 @@ function primitives3D(p5, fn) {
 
     const isList = count?._isStorageList;
 
+    if (count?._isStorageBuffer) {
+      count = count.size;
+    }
+
     if (!isList) {
       if (typeof count !== 'number' || !isFinite(count) || count < 1) {
         p5._friendlyError(
-          'instances() requires a positive integer count or a StorageList. Clamping to 1.',
+          'instances() requires a positive integer count, a StorageBuffer, or a StorageList. Clamping to 1.',
           'instances'
         );
         count = 1;

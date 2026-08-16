@@ -532,6 +532,44 @@ visualSuite('WebGPU', function () {
     );
 
     visualTest(
+      'instances() using createStorage() element count',
+      async function (p5, screenshot) {
+        await p5.createCanvas(50, 50, p5.WEBGPU);
+
+        const particles = p5.createStorage([
+          { pos: [-15, -15] },
+          { pos: [  0, -15] },
+          { pos: [ 15, -15] },
+          { pos: [-15,   0] },
+          { pos: [  0,   0] },
+          { pos: [ 15,   0] },
+          { pos: [-15,  15] },
+          { pos: [  0,  15] },
+          { pos: [ 15,  15] }
+        ]);
+
+        const dotShader = p5.baseMaterialShader().modify(
+          () => {
+            const buf = p5.uniformStorage('buf', particles);
+            p5.getWorldInputs(inputs => {
+              inputs.position.xy += buf[p5.instanceIndex].pos;
+              return inputs;
+            });
+          },
+          { p5, particles }
+        );
+
+        p5.background(220);
+        p5.noStroke();
+        p5.fill(200, 50, 50);
+        p5.shader(dotShader);
+        p5.instances(particles).circle(0, 0, 8);
+
+        await screenshot();
+      }
+    );
+
+    visualTest(
       'random() colors a basic shader (WebGPU)',
       async function (p5, screenshot) {
         await p5.createCanvas(50, 50, p5.WEBGPU);
