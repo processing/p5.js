@@ -2610,7 +2610,9 @@ function material(p5, fn) {
    *   normalMap.loadPixels();
    *   for (let y = 0; y < normalMap.height; y += 1) {
    *     for (let x = 0; x < normalMap.width; x += 1) {
-   *       // Slope of the ridge at this point.
+   *       // Slope of the ridge at this point. The pattern repeats a whole
+   *       // number of times across the image so it tiles, which keeps it from
+   *       // showing a seam where the sphere's texture coordinates wrap around.
    *       let s = sin(((x + y) / normalMap.width) * TWO_PI * 3) * 0.8;
    *       let inv = 1 / sqrt(s * s + s * s + 1);
    *       let i = (x + y * normalMap.width) * 4;
@@ -2641,6 +2643,9 @@ function material(p5, fn) {
    *   pointLight(255, 255, 255, -80, -80, 150);
    *   noStroke();
    *   fill(200);
+   *
+   *   // Tile the map so it wraps around the sphere without a seam.
+   *   textureWrap(REPEAT);
    *
    *   // Add the ridges without changing the geometry.
    *   normalTexture(normalMap);
@@ -2697,7 +2702,10 @@ function material(p5, fn) {
    *   bumpMap.loadPixels();
    *   for (let y = 0; y < bumpMap.height; y += 1) {
    *     for (let x = 0; x < bumpMap.width; x += 1) {
-   *       // Bright where the surface is high, dark where it's low.
+   *       // Bright where the surface is high, dark where it's low. The pattern
+   *       // repeats a whole number of times across the image so it tiles,
+   *       // which keeps it from showing a seam where the sphere's texture
+   *       // coordinates wrap around.
    *       let h = sin((x / bumpMap.width) * TWO_PI * 4);
    *       h *= sin((y / bumpMap.height) * TWO_PI * 4);
    *       let v = (h * 0.5 + 0.5) * 255;
@@ -2727,6 +2735,13 @@ function material(p5, fn) {
    *   pointLight(255, 255, 255, -80, -80, 150);
    *   noStroke();
    *   fill(200);
+   *
+   *   // Tile the map so it wraps around the sphere without a seam.
+   *   textureWrap(REPEAT);
+   *
+   *   // Highlights make the raised areas easier to pick out.
+   *   specularMaterial(255);
+   *   shininess(40);
    *
    *   // Raise the bumps without changing the geometry.
    *   bumpTexture(bumpMap, 4);
