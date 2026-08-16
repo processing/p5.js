@@ -18,10 +18,10 @@ jobs:
       INPUT_TOKEN: ${{ secrets.NPM_TOKEN }}
     steps:
       # 1. Setup
-      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: actions/setup-node@3235b876344d2a9aa001b8d1453c930bba69e610 # v3.9.1
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: 22
       - name: Check prerelease
@@ -90,7 +90,7 @@ jobs:
       # 4. Update p5.js website
       - name: Clone p5.js website
         if: ${{ steps.semver.outputs.is-prerelease != 'true' }}
-        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: processing/p5.js-website
           ref: 'main'
