@@ -2571,7 +2571,8 @@ function renderer3D(p5, fn) {
    * into `compute`.
    *
    * A compute shader will read from and write to storage, which is often an array of
-   * numbers or objects. Use <a href="#/p5/createStorage">`createStorage`</a> to construct
+   * numbers or objects. Use <a href="#/p5/createStorage">`createStorage`</a>
+   * or <a href="#/p5/createStorageList">`createStorageList`</a> to construct
    * initial data. Connect your iteration function to the storage by passing the storage
    * into <a href="#/p5/uniformStorage">`uniformStorage`</a>.
    *
