@@ -2117,40 +2117,33 @@ function rendererWebGPU(p5, fn) {
 
       // indexCount and vertexCount are geometry-specific; write them to a
       // fresh indirect buffer so concurrent draws don't clobber each other.
-      const indirectBuffer = this.device.createBuffer({
-        size: 20, // 5 u32s: indexCount/vertexCount, instanceCount, firstIndex/firstVertex, baseVertex, firstInstance
-        usage: GPUBufferUsage.INDIRECT | GPUBufferUsage.COPY_DST
-      });
-      this._tempBuffers.push(indirectBuffer);
-
+      // Use mappedAtCreation so the geometry counts are committed at buffer
+      // creation time, with no race against the copyBufferToBuffer below.
       const isIndexed =
         !!buffers.indexBuffer && currentShader.shaderType !== 'stroke';
 
+      const indirectBuffer = this.device.createBuffer({
+        size: 20, // 5 u32s: indexCount/vertexCount, instanceCount, firstIndex/firstVertex, baseVertex, firstInstance
+        usage: GPUBufferUsage.INDIRECT | GPUBufferUsage.COPY_DST,
+        mappedAtCreation: true
+      });
+      const indirectInit = new Uint32Array(indirectBuffer.getMappedRange());
       if (currentShader.shaderType === 'stroke') {
-        // drawIndirect: [vertexCount, instanceCount, firstVertex, firstInstance]
-        const vertexCount = geometry.lineVertices
+        // drawIndirect: [vertexCount, instanceCount, firstVertex, firstInstance, (padding)]
+        indirectInit[0] = geometry.lineVertices
           ? geometry.lineVertices.length / 3
           : 0;
-        this.device.queue.writeBuffer(
-          indirectBuffer,
-          0,
-          new Uint32Array([vertexCount, 0, 0, 0])
-        );
       } else if (isIndexed) {
         // drawIndexedIndirect: [indexCount, instanceCount, firstIndex, baseVertex, firstInstance]
-        this.device.queue.writeBuffer(
-          indirectBuffer,
-          0,
-          new Uint32Array([geometry.faces.length * 3, 0, 0, 0, 0])
-        );
+        indirectInit[0] = geometry.faces.length * 3;
       } else {
-        // drawIndirect: [vertexCount, instanceCount, firstVertex, firstInstance]
-        this.device.queue.writeBuffer(
-          indirectBuffer,
-          0,
-          new Uint32Array([geometry.vertices.length, 0, 0, 0])
-        );
+        // drawIndirect: [vertexCount, instanceCount, firstVertex, firstInstance, (padding)]
+        indirectInit[0] = geometry.vertices.length;
       }
+      // Slot 1 (instanceCount) is intentionally left 0; copyBufferToBuffer below
+      // overwrites it with the GPU-side list length before the draw.
+      indirectBuffer.unmap();
+      this._tempBuffers.push(indirectBuffer);
 
       // Copy the GPU-side length into instanceCount slot (offset 4)
       const copyEncoder = this.device.createCommandEncoder();
