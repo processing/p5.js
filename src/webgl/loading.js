@@ -78,9 +78,15 @@ function parseMtlData(data) {
       //shininess texture
       materials[currentMaterial].shininessTexturePath = tokens[1];
     } else if (tokens[0] === 'map_Bump' || tokens[0] === 'bump') {
-      //bump map. -bm etc can precede the path so take the last token. parsed
-      //but not used until the renderer handles it.
+      //bump map. the path is the last token; a `-bm <value>` option can precede
+      //it to scale the bump strength (maps often use the full range for precision
+      //and get scaled down here).
       materials[currentMaterial].bumpTexturePath = tokens[tokens.length - 1];
+      const bmIndex = tokens.indexOf('-bm');
+      if (bmIndex !== -1 && tokens[bmIndex + 1] !== undefined) {
+        const bm = parseFloat(tokens[bmIndex + 1]);
+        if (!isNaN(bm)) materials[currentMaterial].bumpScale = bm;
+      }
     }
   }
 
@@ -117,6 +123,11 @@ function mtlToPartState(material) {
     // the map scales the base shininess; default the base to 1 when no Ns
     if (state.shininess == null) state.shininess = 1;
   }
+  if (material.normalTexture) {
+    state.normalTexture = material.normalTexture;
+    // a -bm multiplier scales the bump strength; defaults to 1 when omitted
+    if (material.bumpScale != null) state.normalScale = material.bumpScale;
+  }
   return state;
 }
 
@@ -126,7 +137,8 @@ const MATERIAL_TEXTURE_MAPS = [
   ['texturePath', 'texture'], // map_Kd (diffuse)
   ['specularTexturePath', 'specularTexture'], // map_Ks (specular)
   ['ambientTexturePath', 'ambientTexture'], // map_Ka (ambient)
-  ['shininessTexturePath', 'shininessTexture'] // map_Ns (shininess)
+  ['shininessTexturePath', 'shininessTexture'], // map_Ns (shininess)
+  ['bumpTexturePath', 'normalTexture'] // map_Bump (normal)
 ];
 
 // load each material's texture maps and hang them on the material so they land
@@ -173,6 +185,7 @@ function buildMaterialParts(model, faceMaterials, materials) {
 
   const hasUvs = model.uvs.length > 0;
   const hasNormals = model.vertexNormals.length > 0;
+  const hasTangents = model.vertexTangents.length > 0;
   const parts = [];
 
   for (const name of names) {
@@ -190,6 +203,14 @@ function buildMaterialParts(model, faceMaterials, materials) {
           part.vertices.push(model.vertices[vi]);
           if (hasUvs) part.uvs.push(model.uvs[vi]);
           if (hasNormals) part.vertexNormals.push(model.vertexNormals[vi]);
+          if (hasTangents) {
+            part.vertexTangents.push(
+              model.vertexTangents[vi * 4],
+              model.vertexTangents[vi * 4 + 1],
+              model.vertexTangents[vi * 4 + 2],
+              model.vertexTangents[vi * 4 + 3]
+            );
+          }
         }
         return localIndex.get(vi);
       });
@@ -816,6 +837,17 @@ function loading(p5, fn) {
     }
     if (!hasColoredVertices) {
       model.vertexColors = [];
+    }
+
+    // normal maps need per-vertex tangents; compute them once on the aggregate
+    // (normals are ready above) so buildMaterialParts hands each part its slice.
+    // only done when a material actually uses a normal map, so plain models pay
+    // nothing extra.
+    const needsTangents = Object.values(materials).some(
+      m => m && m.normalTexture
+    );
+    if (needsTangents) {
+      model.computeTangents();
     }
 
     // bucket faces into per-material parts (aggregate arrays above stay as-is)

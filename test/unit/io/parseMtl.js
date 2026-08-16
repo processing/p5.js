@@ -32,6 +32,21 @@ suite('parseMtlData', function () {
     expect(m.shininessTexturePath).toEqual('shininess.png');
     // bump options like -bm precede the path, so the path is the last token.
     expect(m.bumpTexturePath).toEqual('bump.png');
+    // and the -bm value is parsed as the bump strength multiplier
+    expect(m.bumpScale).toEqual(0.5);
+  });
+
+  test('a normal map carries its -bm strength onto the part state', function () {
+    const img = { width: 1, height: 1 };
+    const state = mtlToPartState({ normalTexture: img, bumpScale: 2.5 });
+    expect(state.normalTexture).toBe(img);
+    expect(state.normalScale).toEqual(2.5);
+  });
+
+  test('a normal map with no -bm defaults the strength to 1', function () {
+    const img = { width: 1, height: 1 };
+    const state = mtlToPartState({ normalTexture: img });
+    expect(state.normalScale).toEqual(1);
   });
 
   test('Tr is read as the inverse of d', function () {
@@ -119,5 +134,11 @@ suite('mtlToPartState', function () {
     expect(state.shininessTexture).toBe(img);
     // the map scales a base shininess, which defaults to 1
     expect(state.shininess).toEqual(1);
+  });
+
+  test('a normal map lands on the part state', function () {
+    const img = { width: 1, height: 1 };
+    const state = mtlToPartState({ normalTexture: img });
+    expect(state.normalTexture).toBe(img);
   });
 });

@@ -8,7 +8,11 @@
 
 import * as constants from '../core/constants';
 import { DataArray } from './p5.DataArray';
-import { GeometryPart, createPartState } from './p5.GeometryPart';
+import {
+  GeometryPart,
+  createPartState,
+  createUserVertexProperty
+} from './p5.GeometryPart';
 import { Vector } from '../math/p5.Vector';
 import { downloadFile } from '../io/utilities';
 
@@ -37,6 +41,11 @@ class Geometry {
     this.lineSides = new DataArray();
 
     this.vertexNormals = [];
+
+    // per-vertex surface tangents for normal mapping, stored flat as
+    // [x, y, z, w] where w is the bitangent handedness. computeTangents() fills
+    // this; empty until a normal-mapped model needs it.
+    this.vertexTangents = [];
 
     this.faces = [];
 
@@ -250,6 +259,7 @@ class Geometry {
     this.vertexStrokeColors.length = 0;
     this.lineVertexColors.clear();
     this.vertexNormals.length = 0;
+    this.vertexTangents.length = 0;
     this.uvs.length = 0;
 
     for (const propName in this.userVertexProperties) {
@@ -1257,6 +1267,79 @@ class Geometry {
   }
 
   /**
+   * computes a per-vertex surface tangent from the uvs, needed for normal
+   * (bump) mapping. the tangent points along the +u texture direction; its w
+   * component stores the bitangent handedness so the shader can rebuild the
+   * bitangent as cross(normal, tangent) * w. results are stored flat as
+   * [x, y, z, w] per vertex on this.vertexTangents. needs uvs and vertex
+   * normals, so run computeNormals() first if the model has none.
+   * @private
+   * @chainable
+   */
+  computeTangents() {
+    const vertices = this.vertices;
+    const faces = this.faces;
+    const uvs = this.uvs.flat();
+    const normals = this.vertexNormals;
+
+    // nothing to build a tangent basis from without uvs and normals
+    if (uvs.length === 0 || normals.length === 0) {
+      this.vertexTangents = [];
+      return this;
+    }
+
+    // accumulate the +u direction (tan) and +v direction (bitan) per vertex
+    const tan = [];
+    const bitan = [];
+    for (let i = 0; i < vertices.length; i++) {
+      tan.push(new Vector(0, 0, 0));
+      bitan.push(new Vector(0, 0, 0));
+    }
+    const uvAt = i => ({ x: uvs[i * 2] || 0, y: uvs[i * 2 + 1] || 0 });
+
+    for (const face of faces) {
+      const [i0, i1, i2] = face;
+      const e1 = Vector.sub(vertices[i1], vertices[i0]);
+      const e2 = Vector.sub(vertices[i2], vertices[i0]);
+      const w0 = uvAt(i0);
+      const w1 = uvAt(i1);
+      const w2 = uvAt(i2);
+      const du1 = w1.x - w0.x;
+      const dv1 = w1.y - w0.y;
+      const du2 = w2.x - w0.x;
+      const dv2 = w2.y - w0.y;
+
+      const denom = du1 * dv2 - du2 * dv1;
+      const r = denom === 0 ? 0 : 1 / denom;
+      const sdir = Vector.sub(Vector.mult(e1, dv2), Vector.mult(e2, dv1)).mult(r);
+      const tdir = Vector.sub(Vector.mult(e2, du1), Vector.mult(e1, du2)).mult(r);
+
+      for (const idx of face) {
+        tan[idx].add(sdir);
+        bitan[idx].add(tdir);
+      }
+    }
+
+    // orthonormalise each tangent against its normal and record handedness
+    const tangents = [];
+    for (let i = 0; i < vertices.length; i++) {
+      const n = normals[i] || new Vector(0, 0, 1);
+      let t = Vector.sub(tan[i], Vector.mult(n, n.dot(tan[i])));
+      if (t.magSq() === 0) {
+        // degenerate uvs: pick any direction perpendicular to the normal
+        const seed = Math.abs(n.x) < 0.9 ? new Vector(1, 0, 0) : new Vector(0, 1, 0);
+        t = Vector.sub(seed, Vector.mult(n, n.dot(seed)));
+      }
+      t.normalize();
+      const handedness = Vector.cross(n, t).dot(bitan[i]) < 0 ? -1 : 1;
+      tangents.push(t.x, t.y, t.z, handedness);
+    }
+
+    this.vertexTangents = tangents;
+    return this;
+  }
+
+  /**
    * Averages the vertex normals. Used in curved
    * surfaces
    * @private
@@ -1814,67 +1897,8 @@ class Geometry {
   }
 
   _userVertexPropertyHelper(propertyName, data, size) {
-    const geometryInstance = this;
-    const prop = (this.userVertexProperties[propertyName] = {
-      name: propertyName,
-      dataSize: size ? size : data.length ? data.length : 1,
-      geometry: geometryInstance,
-      // Getters
-      getName() {
-        return this.name;
-      },
-      getCurrentData() {
-        if (this.currentData === undefined) {
-          this.currentData = new Array(this.getDataSize()).fill(0);
-        }
-        return this.currentData;
-      },
-      getDataSize() {
-        return this.dataSize;
-      },
-      getSrcName() {
-        const src = this.name.concat('Src');
-        return src;
-      },
-      getDstName() {
-        const dst = this.name.concat('Buffer');
-        return dst;
-      },
-      getSrcArray() {
-        const srcName = this.getSrcName();
-        return this.geometry[srcName];
-      },
-      //Setters
-      setCurrentData(data) {
-        const size = data.length ? data.length : 1;
-        // if (size != this.getDataSize()){
-        //   p5._friendlyError(`Custom vertex property '${this.name}' has been set with various data sizes. You can change it's name, or if it was an accident, set '${this.name}' to have the same number of inputs each time!`, 'vertexProperty()');
-        // }
-        this.currentData = data;
-      },
-      // Utilities
-      pushCurrentData() {
-        const data = this.getCurrentData();
-        this.pushDirect(data);
-      },
-      pushDirect(data) {
-        if (data.length) {
-          this.getSrcArray().push(...data);
-        } else {
-          this.getSrcArray().push(data);
-        }
-      },
-      resetSrcArray() {
-        this.geometry[this.getSrcName()] = [];
-      },
-      delete() {
-        const srcName = this.getSrcName();
-        delete this.geometry[srcName];
-        delete this;
-      }
-    });
-    this[prop.getSrcName()] = [];
-    return this.userVertexProperties[propertyName];
+    // shared with GeometryPart so parts carry custom attributes identically
+    return createUserVertexProperty(this, propertyName, data, size);
   }
 }
 

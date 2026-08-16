@@ -208,6 +208,27 @@ class GeometryBuilder {
     for (const f of input.faces) {
       part.faces.push(f.map(idx => idx + startIdx));
     }
+
+    // carry custom per-vertex attributes into the part too, the same way the
+    // combined geometry does above. draws within a part can use different
+    // properties, so pad the gaps: props the part already has but this draw
+    // lacks get zeros for the new verts, and a prop new to the part backfills
+    // zeros for the verts already in it.
+    const inputProps = input.userVertexProperties;
+    const partProps = part.userVertexProperties;
+    for (const propName in partProps) {
+      if (propName in inputProps) continue;
+      const size = partProps[propName].getDataSize();
+      partProps[propName].pushDirect(Array(size * vertices.length).fill(0));
+    }
+    for (const propName in inputProps) {
+      const inProp = inputProps[propName];
+      const size = inProp.getDataSize();
+      if (startIdx > 0 && !(propName in partProps)) {
+        part.vertexProperty(propName, Array(size * startIdx).fill(0), size);
+      }
+      part.vertexProperty(propName, inProp.getSrcArray(), size);
+    }
   }
 
   /**
@@ -266,13 +287,11 @@ class GeometryBuilder {
    */
   finish() {
     this.renderer._pInst.pop();
-    // expose the material parts only when there really are multiple materials,
-    // and not while custom per-vertex attributes are in play (those aren't
-    // split per part yet). single-material builds keep the geometry as its own
+    // expose the material parts whenever there really are multiple materials.
+    // custom per-vertex attributes are now carried per part too, so they work
+    // alongside the split. single-material builds keep the geometry as its own
     // part, so nothing changes for them (zero regression).
-    const hasUserProps =
-      Object.keys(this.geometry.userVertexProperties).length > 0;
-    if (this.parts.length >= 2 && !hasUserProps) {
+    if (this.parts.length >= 2) {
       this.geometry.parts = this.parts;
     }
     return this.geometry;

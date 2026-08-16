@@ -15,6 +15,56 @@ suite('p5.Geometry', function () {
     myp5.remove();
   });
 
+  suite('computeTangents', function () {
+    test('a uv-mapped triangle gets a +u tangent with correct handedness',
+      function () {
+        const geom = new p5.Geometry();
+        // triangle in the xy plane, facing +z, uvs aligned to x (u) and y (v)
+        geom.vertices.push(
+          myp5.createVector(0, 0, 0),
+          myp5.createVector(1, 0, 0),
+          myp5.createVector(0, 1, 0)
+        );
+        geom.uvs.push(0, 0, 1, 0, 0, 1);
+        geom.vertexNormals.push(
+          myp5.createVector(0, 0, 1),
+          myp5.createVector(0, 0, 1),
+          myp5.createVector(0, 0, 1)
+        );
+        geom.faces.push([0, 1, 2]);
+
+        geom.computeTangents();
+
+        // 4 components per vertex (x, y, z, handedness)
+        expect(geom.vertexTangents.length).toEqual(12);
+        // tangent points along +u (the +x direction here), handedness +1
+        for (let i = 0; i < 3; i++) {
+          expect(geom.vertexTangents[i * 4]).toBeCloseTo(1, 5);
+          expect(geom.vertexTangents[i * 4 + 1]).toBeCloseTo(0, 5);
+          expect(geom.vertexTangents[i * 4 + 2]).toBeCloseTo(0, 5);
+          expect(geom.vertexTangents[i * 4 + 3]).toEqual(1);
+        }
+      }
+    );
+
+    test('no uvs means no tangents', function () {
+      const geom = new p5.Geometry();
+      geom.vertices.push(
+        myp5.createVector(0, 0, 0),
+        myp5.createVector(1, 0, 0),
+        myp5.createVector(0, 1, 0)
+      );
+      geom.vertexNormals.push(
+        myp5.createVector(0, 0, 1),
+        myp5.createVector(0, 0, 1),
+        myp5.createVector(0, 0, 1)
+      );
+      geom.faces.push([0, 1, 2]);
+      geom.computeTangents();
+      expect(geom.vertexTangents.length).toEqual(0);
+    });
+  });
+
   suite('generating edge geometry', function () {
     let geom;
 
@@ -354,6 +404,50 @@ suite('p5.Geometry', function () {
       expect(geom.parts[0].partState.texture)
         .not.toEqual(geom.parts[1].partState.texture);
     });
+
+    test('custom vertex attributes survive the multi-material part split',
+      function() {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+        const texA = myp5.createGraphics(10, 10);
+        const texB = myp5.createGraphics(10, 10);
+        const geom = myp5.buildGeometry(() => {
+          // first material: aCustom values in 1..3
+          myp5.texture(texA);
+          myp5.beginShape(myp5.TRIANGLES);
+          myp5.vertexProperty('aCustom', 1);
+          myp5.vertex(-10, -10, 0);
+          myp5.vertexProperty('aCustom', 2);
+          myp5.vertex(10, -10, 0);
+          myp5.vertexProperty('aCustom', 3);
+          myp5.vertex(0, 10, 0);
+          myp5.endShape();
+          // second material: aCustom values in 4..6
+          myp5.texture(texB);
+          myp5.beginShape(myp5.TRIANGLES);
+          myp5.vertexProperty('aCustom', 4);
+          myp5.vertex(-10, -10, 0);
+          myp5.vertexProperty('aCustom', 5);
+          myp5.vertex(10, -10, 0);
+          myp5.vertexProperty('aCustom', 6);
+          myp5.vertex(0, 10, 0);
+          myp5.endShape();
+        });
+
+        // the texture change still splits into two parts even with a custom attr
+        expect(geom.parts.length).toEqual(2);
+
+        const a0 = geom.parts[0].userVertexProperties.aCustom;
+        const a1 = geom.parts[1].userVertexProperties.aCustom;
+        expect(a0).toBeTruthy();
+        expect(a1).toBeTruthy();
+        // one value per vertex, aligned to each part
+        expect(a0.getSrcArray().length).toEqual(geom.parts[0].vertices.length);
+        expect(a1.getSrcArray().length).toEqual(geom.parts[1].vertices.length);
+        // and each part only carries its own draw's values
+        expect(a0.getSrcArray().every(v => v >= 1 && v <= 3)).toBe(true);
+        expect(a1.getSrcArray().every(v => v >= 4 && v <= 6)).toBe(true);
+      }
+    );
 
     test('a fill change alone does not split the build', function() {
       myp5.createCanvas(50, 50, myp5.WEBGL);

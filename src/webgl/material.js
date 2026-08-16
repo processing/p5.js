@@ -2567,6 +2567,124 @@ function material(p5, fn) {
   };
 
   /**
+   * Sets a normal map to add surface detail to shapes under lighting.
+   *
+   * `normalTexture()` works like <a href="#/p5/texture">texture()</a>, but for a
+   * tangent-space normal map: an image whose red, green, and blue channels
+   * encode the direction of the surface normal (not brightness). Call it before
+   * drawing a shape and its surface normals get perturbed by the map, so lights
+   * react to detail that isn't actually in the geometry. This is the same kind
+   * of map glTF models use. Pass an optional `scale` to tune the strength.
+   *
+   * Call `normalTexture(null)` to turn it off, or scope it between
+   * <a href="#/p5/push">push()</a> and <a href="#/p5/pop">pop()</a>.
+   *
+   * @method normalTexture
+   * @param {p5.Image|p5.MediaElement|p5.Graphics|p5.Texture|p5.Framebuffer|p5.FramebufferTexture} tex normal map, or `null` to clear it.
+   * @param {Number} [scale=1] strength multiplier for the surface detail.
+   * @chainable
+   *
+   * @example
+   * <div>
+   * <code>
+   * let normalMap;
+   *
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *
+   *   // build a small tangent-space normal map with diagonal ridges
+   *   normalMap = createImage(32, 32);
+   *   normalMap.loadPixels();
+   *   for (let y = 0; y < normalMap.height; y += 1) {
+   *     for (let x = 0; x < normalMap.width; x += 1) {
+   *       let s = sin(((x + y) / normalMap.width) * TWO_PI * 3) * 0.8;
+   *       let inv = 1 / sqrt(s * s + s * s + 1);
+   *       let i = (x + y * normalMap.width) * 4;
+   *       normalMap.pixels[i] = (s * inv * 0.5 + 0.5) * 255;
+   *       normalMap.pixels[i + 1] = (s * inv * 0.5 + 0.5) * 255;
+   *       normalMap.pixels[i + 2] = (inv * 0.5 + 0.5) * 255;
+   *       normalMap.pixels[i + 3] = 255;
+   *     }
+   *   }
+   *   normalMap.updatePixels();
+   *
+   *   describe('A sphere lit from the left, its surface covered in ridges from a normal map.');
+   * }
+   *
+   * function draw() {
+   *   background(0);
+   *   pointLight(255, 255, 255, -50, -50, 100);
+   *   noStroke();
+   *   fill(200);
+   *   normalTexture(normalMap);
+   *   sphere(40);
+   * }
+   * </code>
+   * </div>
+   */
+  fn.normalTexture = function (tex, scale) {
+    this._assert3d('normalTexture');
+    this._renderer.normalTexture(tex || null, scale);
+
+    return this;
+  };
+
+  /**
+   * Sets a specular map to vary the specular highlight across a shape's surface.
+   *
+   * Works like <a href="#/p5/texture">texture()</a> but for the specular colour,
+   * modulating <a href="#/p5/specularMaterial">specularMaterial()</a> per pixel.
+   * Call `specularTexture(null)` to clear it, or scope it with push()/pop().
+   *
+   * @method specularTexture
+   * @param {p5.Image|p5.MediaElement|p5.Graphics|p5.Texture|p5.Framebuffer|p5.FramebufferTexture} tex specular map, or `null` to clear it.
+   * @chainable
+   */
+  fn.specularTexture = function (tex) {
+    this._assert3d('specularTexture');
+    this._renderer.specularTexture(tex || null);
+
+    return this;
+  };
+
+  /**
+   * Sets an ambient map to vary the ambient colour across a shape's surface.
+   *
+   * Works like <a href="#/p5/texture">texture()</a> but for the ambient colour,
+   * modulating <a href="#/p5/ambientMaterial">ambientMaterial()</a> per pixel.
+   * Call `ambientTexture(null)` to clear it, or scope it with push()/pop().
+   *
+   * @method ambientTexture
+   * @param {p5.Image|p5.MediaElement|p5.Graphics|p5.Texture|p5.Framebuffer|p5.FramebufferTexture} tex ambient map, or `null` to clear it.
+   * @chainable
+   */
+  fn.ambientTexture = function (tex) {
+    this._assert3d('ambientTexture');
+    this._renderer.ambientTexture(tex || null);
+
+    return this;
+  };
+
+  /**
+   * Sets a shininess map to vary the shininess across a shape's surface.
+   *
+   * Works like <a href="#/p5/texture">texture()</a> but for shininess: the map's
+   * red channel scales the base <a href="#/p5/shininess">shininess()</a> value
+   * per pixel. Call `shininessTexture(null)` to clear it, or scope it with
+   * push()/pop().
+   *
+   * @method shininessTexture
+   * @param {p5.Image|p5.MediaElement|p5.Graphics|p5.Texture|p5.Framebuffer|p5.FramebufferTexture} tex shininess map, or `null` to clear it.
+   * @chainable
+   */
+  fn.shininessTexture = function (tex) {
+    this._assert3d('shininessTexture');
+    this._renderer.shininessTexture(tex || null);
+
+    return this;
+  };
+
+  /**
    * Changes the coordinate system used for textures when they’re applied to
    * custom shapes.
    *
@@ -3817,6 +3935,29 @@ function material(p5, fn) {
     this.states.setValue('_useNormalMaterial', false);
     this.states.setValue('_tex', tex);
     this.states.setValue('fillColor', new Color([1, 1, 1]));
+  };
+
+  Renderer3D.prototype.normalTexture = function (tex, scale = 1) {
+    // null clears the map (back to the plain shader variant); a value sets the
+    // normal map + its strength. push()/pop() scopes it like any other state.
+    this.states.setValue('_normalTex', tex || null);
+    this.states.setValue('_normalScale', tex ? scale : 1);
+  };
+
+  // the remaining map setters mirror _applyPartState: setting a map also turns
+  // on the material term it modulates, so the map has something to affect.
+  Renderer3D.prototype.specularTexture = function (tex) {
+    this.states.setValue('_specularTex', tex || null);
+    if (tex) this.states.setValue('_useSpecularMaterial', true);
+  };
+
+  Renderer3D.prototype.ambientTexture = function (tex) {
+    this.states.setValue('_ambientTex', tex || null);
+    if (tex) this.states.setValue('_hasSetAmbient', true);
+  };
+
+  Renderer3D.prototype.shininessTexture = function (tex) {
+    this.states.setValue('_shininessTex', tex || null);
   };
 
   Renderer3D.prototype.normalMaterial = function (...args) {
