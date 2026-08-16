@@ -735,6 +735,7 @@ export class Renderer3D extends Renderer {
       if (partState.normalScale != null) {
         this.states.setValue('_normalScale', partState.normalScale);
       }
+      this.states.setValue('_normalMapMode', partState.normalMapMode ?? 0);
     }
   }
 
