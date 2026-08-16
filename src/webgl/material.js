@@ -2577,9 +2577,9 @@ function material(p5, fn) {
    * of map glTF models use. Pass an optional `scale` to tune the strength.
    *
    * Call `normalTexture(null)` to turn it off, or scope it between
-   * <a href="#/p5/push">push()</a> and <a href="#/p5/pop">pop()</a>.
+   * <a href="#/p5/push">`push()`</a> and <a href="#/p5/pop">`pop()`</a>.
    *
-   * <a href="#/p5/bumpTexture">bumpTexture()</a> creates a similar effect from
+   * <a href="#/p5/bumpTexture">`bumpTexture()`</a> creates a similar effect from
    * a grayscale height map instead. The two are easy to mix up because they
    * produce similar results, but they expect different images: a normal map is
    * the blue-tinted kind that stores directions, while a bump map is grayscale
@@ -2587,7 +2587,7 @@ function material(p5, fn) {
    * replaces the other.
    *
    * A light source is needed to see the effect. Models loaded with
-   * <a href="#/p5/loadModel">loadModel()</a> apply their own normal map from
+   * <a href="#/p5/loadModel">`loadModel()`</a> apply their own normal map from
    * the `.mtl` file's `map_Bump`.
    *
    * Note: `normalTexture()` can only be used in WebGL mode.
@@ -2662,14 +2662,14 @@ function material(p5, fn) {
    * surface tilts from how quickly that height changes. Bright areas rise and
    * dark areas sink, so lights react to detail that isn't in the geometry.
    *
-   * `bumpTexture()` works like <a href="#/p5/texture">texture()</a>, but sets
+   * `bumpTexture()` works like <a href="#/p5/texture">`texture()`</a>, but sets
    * the bump map instead of the base color. The parameter, `tex`, is the image
    * to use. Passing `null` clears it, as in `bumpTexture(null)`. The optional
    * second parameter, `scale`, tunes how pronounced the bumps are. The map can
-   * also be scoped between <a href="#/p5/push">push()</a> and
-   * <a href="#/p5/pop">pop()</a>.
+   * also be scoped between <a href="#/p5/push">`push()`</a> and
+   * <a href="#/p5/pop">`pop()`</a>.
    *
-   * <a href="#/p5/normalTexture">normalTexture()</a> creates a similar effect
+   * <a href="#/p5/normalTexture">`normalTexture()`</a> creates a similar effect
    * from a tangent-space normal map, the blue-tinted kind that stores
    * directions rather than height. A bump map is usually easier to make by
    * hand, since it's just a grayscale picture of where the surface is high and
@@ -2685,6 +2685,8 @@ function material(p5, fn) {
    * @chainable
    *
    * @example
+   * // Click and drag the mouse to view the scene from different angles.
+   *
    * let bumpMap;
    *
    * function setup() {
@@ -2713,6 +2715,12 @@ function material(p5, fn) {
    *
    * function draw() {
    *   background(0);
+   *
+   *   // Enable orbiting with the mouse.
+   *   orbitControl();
+   *
+   *   // Rock the shape so the lighting shifts across it.
+   *   rotateY(sin(millis() * 0.002) * PI * 0.1);
    *
    *   // Light the sphere from the upper left.
    *   ambientLight(60);
