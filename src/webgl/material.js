@@ -2579,6 +2579,13 @@ function material(p5, fn) {
    * Call `normalTexture(null)` to turn it off, or scope it between
    * <a href="#/p5/push">push()</a> and <a href="#/p5/pop">pop()</a>.
    *
+   * <a href="#/p5/bumpTexture">bumpTexture()</a> creates a similar effect from
+   * a grayscale height map instead. The two are easy to mix up because they
+   * produce similar results, but they expect different images: a normal map is
+   * the blue-tinted kind that stores directions, while a bump map is grayscale
+   * and stores height. Only one can be active at a time, so setting one
+   * replaces the other.
+   *
    * A light source is needed to see the effect. Models loaded with
    * <a href="#/p5/loadModel">loadModel()</a> apply their own normal map from
    * the `.mtl` file's `map_Bump`.
@@ -2643,6 +2650,84 @@ function material(p5, fn) {
   fn.normalTexture = function (tex, scale) {
     this._assert3d('normalTexture');
     this._renderer.normalTexture(tex || null, scale);
+
+    return this;
+  };
+
+  /**
+   * Sets a grayscale image that adds bumps and dents to a shape's surface.
+   *
+   * A bump map is a height map: the brightness of the image at each point is
+   * read as how high the surface is there, and p5.js works out which way the
+   * surface tilts from how quickly that height changes. Bright areas rise and
+   * dark areas sink, so lights react to detail that isn't in the geometry.
+   *
+   * `bumpTexture()` works like <a href="#/p5/texture">texture()</a>, but sets
+   * the bump map instead of the base color. The parameter, `tex`, is the image
+   * to use. Passing `null` clears it, as in `bumpTexture(null)`. The optional
+   * second parameter, `scale`, tunes how pronounced the bumps are. The map can
+   * also be scoped between <a href="#/p5/push">push()</a> and
+   * <a href="#/p5/pop">pop()</a>.
+   *
+   * <a href="#/p5/normalTexture">normalTexture()</a> creates a similar effect
+   * from a tangent-space normal map, the blue-tinted kind that stores
+   * directions rather than height. A bump map is usually easier to make by
+   * hand, since it's just a grayscale picture of where the surface is high and
+   * low. Only one can be active at a time, so setting one replaces the other.
+   *
+   * A light source is needed to see the effect.
+   *
+   * Note: `bumpTexture()` can only be used in WebGL mode.
+   *
+   * @method bumpTexture
+   * @param {p5.Image|p5.MediaElement|p5.Graphics|p5.Texture|p5.Framebuffer|p5.FramebufferTexture} tex grayscale image to use as the bump map, or `null` to clear it.
+   * @param {Number} [scale=1] strength multiplier for the bumps.
+   * @chainable
+   *
+   * @example
+   * let bumpMap;
+   *
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *
+   *   // Build a grayscale height map with a grid of round bumps.
+   *   bumpMap = createImage(64, 64);
+   *   bumpMap.loadPixels();
+   *   for (let y = 0; y < bumpMap.height; y += 1) {
+   *     for (let x = 0; x < bumpMap.width; x += 1) {
+   *       // Bright where the surface is high, dark where it's low.
+   *       let h = sin((x / bumpMap.width) * TWO_PI * 4);
+   *       h *= sin((y / bumpMap.height) * TWO_PI * 4);
+   *       let v = (h * 0.5 + 0.5) * 255;
+   *       let i = (x + y * bumpMap.width) * 4;
+   *       bumpMap.pixels[i] = v;
+   *       bumpMap.pixels[i + 1] = v;
+   *       bumpMap.pixels[i + 2] = v;
+   *       bumpMap.pixels[i + 3] = 255;
+   *     }
+   *   }
+   *   bumpMap.updatePixels();
+   *
+   *   describe('A gray sphere lit from the upper left. A grid of round bumps covers its surface.');
+   * }
+   *
+   * function draw() {
+   *   background(0);
+   *
+   *   // Light the sphere from the upper left.
+   *   ambientLight(60);
+   *   pointLight(255, 255, 255, -80, -80, 150);
+   *   noStroke();
+   *   fill(200);
+   *
+   *   // Raise the bumps without changing the geometry.
+   *   bumpTexture(bumpMap, 4);
+   *   sphere(40);
+   * }
+   */
+  fn.bumpTexture = function (tex, scale) {
+    this._assert3d('bumpTexture');
+    this._renderer.bumpTexture(tex || null, scale);
 
     return this;
   };
@@ -4135,11 +4220,19 @@ function material(p5, fn) {
     this.states.setValue('fillColor', new Color([1, 1, 1]));
   };
 
+  // normal maps and bump maps share one texture slot and differ only by the mode
+  // flag the shader reads, so only one can be active at a time and setting either
+  // replaces the other. null clears the map, back to the plain shader variant.
   Renderer3D.prototype.normalTexture = function (tex, scale = 1) {
-    // null clears the map (back to the plain shader variant); a value sets the
-    // normal map + its strength. push()/pop() scopes it like any other state.
     this.states.setValue('_normalTex', tex || null);
     this.states.setValue('_normalScale', tex ? scale : 1);
+    this.states.setValue('_normalMapMode', 0);
+  };
+
+  Renderer3D.prototype.bumpTexture = function (tex, scale = 1) {
+    this.states.setValue('_normalTex', tex || null);
+    this.states.setValue('_normalScale', tex ? scale : 1);
+    this.states.setValue('_normalMapMode', tex ? 1 : 0);
   };
 
   // the remaining map setters mirror _applyPartState: setting a map also turns
