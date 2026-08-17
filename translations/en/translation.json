@@ -68,5 +68,11 @@
     },
     "welcome": "Welcome! This is your friendly debugger. To turn me off, switch to using p5.min.js.",
     "wrongPreload": "{{location}} An error with message \"{{error}}\" occurred inside the p5js library when \"{{func}}\" was called. If not stated otherwise, it might be due to \"{{func}}\" being called from preload. Nothing besides load calls (loadImage, loadJSON, loadFont, loadStrings, etc.) should be inside the preload function."
+  },
+  "webgl": {
+    "colinearSidesOrRepeatedVertex": "face has colinear sides or a repeated vertex."
+  },
+  "shape": {
+    "vertexBeforeBezierVertex": "vertex() must be used once before calling bezierVertex()"
   }
 }
