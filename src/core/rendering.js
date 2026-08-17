@@ -215,6 +215,20 @@ p5.prototype.createCanvas = function(w, h, renderer, canvas) {
   }
   this._renderer.resize(w, h);
   this._renderer._applyDefaults();
+
+  //isWebGL flag is set and made read-only
+  if (this.isWebGL == false) {
+    Object.defineProperty(this,"isWebGL" , {
+      value: this._renderer.drawingContext instanceof WebGLRenderingContext,
+      writable: false
+    });
+    }
+    //createCanvas is run automatically with the 2D renderer.
+    //Auto-set isWebGL to false if undefined because of this
+    if (this.isWebGL === undefined) {
+      this.isWebGL = false;
+    }
+
   return this._renderer;
 };
 
