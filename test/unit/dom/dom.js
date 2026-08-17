@@ -648,13 +648,13 @@ suite('DOM', function() {
 
     // helper functions
     const getSpanElement = el =>
-      el.elt.firstElementChild.getElementsByTagName('span').length
-        ? el.elt.firstElementChild.getElementsByTagName('span')[0]
+      el.elt.getElementsByTagName('span').length
+        ? el.elt.getElementsByTagName('span')[0]
         : null;
 
     const getCheckboxElement = el =>
-      el.elt.firstElementChild.getElementsByTagName('input').length
-        ? el.elt.firstElementChild.getElementsByTagName('input')[0]
+      el.elt.getElementsByTagName('input').length
+        ? el.elt.getElementsByTagName('input')[0]
         : null;
 
     test('should be a function', function() {
