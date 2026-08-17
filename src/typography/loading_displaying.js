@@ -180,8 +180,29 @@ p5.prototype.loadFont = function(path, onSuccess, onError) {
 };
 
 /**
- * Draws text to the canvas.
+ * Specifies how text should wrap when displayed inside a text box using the text() function.
+ * 
+ * When you use text() with width and height parameters, the text will wrap automatically.
+ * By default, p5.js wraps text based on whole words — it moves entire words to the next line
+ * when they don’t fit in the given width.
+ * 
+ * If your text contains very long words or no spaces (like long URLs or technical terms),
+ * and you want it to wrap at the character level instead, use textWrap(CHAR).
+ * 
+ * You can switch between word-based or character-based wrapping by passing either WORD or CHAR.
+ * 
+ * @method textWrap
+ * @param {Constant} mode either WORD or CHAR
  *
+ * @example 
+ * textWrap(CHAR);
+ * text("TheQuickBrownFoxJumpsOverTheLazyDogWithoutAnySpaces", 10, 30, 150, 100);
+ *
+ * @example 
+ * textWrap(WORD);
+ * text("This is a sentence that wraps based on word boundaries.", 10, 30, 150, 100);
+ */
+ /** 
  * The first parameter, `str`, is the text to be drawn. The second and third
  * parameters, `x` and `y`, set the coordinates of the text's bottom-left
  * corner. See <a href="#/p5/textAlign">textAlign()</a> for other ways to
