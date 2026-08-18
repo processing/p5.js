@@ -1463,4 +1463,70 @@ p5.prototype.triangle = function(...args) {
   return this;
 };
 
+/**
+ * Draws a five-pointed star.
+ *
+ * The star is drawn at the position specified by the `x` and `y` parameters.
+ * `radius1` sets the outer radius of the star, and `radius2` sets the inner radius.
+ * The parameter `npoints` can be used to specify the number of points in the star
+ * (default is 5 for a five-pointed star).
+ *
+ * @method star
+ * @param  {Number} x x-coordinate of the star.
+ * @param  {Number} y y-coordinate of the star.
+ * @param  {Number} radius1 outer radius of the star.
+ * @param  {Number} radius2 inner radius of the star.
+ * @param  {Number} [npoints] number of points on the star (default is 5).
+ * @chainable
+ *
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ *
+ *   background(200);
+ *
+ *   // Draw a star at the center of the canvas.
+ *   star(50, 50, 40, 20, 5);
+ *
+ *   describe('A white five-pointed star on a gray background.');
+ * }
+ * </code>
+ * </div>
+ *
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100);
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *
+ *   // The star follows the mouse.
+ *   star(mouseX, mouseY, 30, 15, 5);
+ *
+ *   describe('A white five-pointed star follows the mouse.');
+ * }
+ * </code>
+ * </div>
+ */
+p5.prototype.star = function(x, y, radius1, radius2, npoints = 5) {
+  this.beginShape();
+  const angle = constants.TWO_PI / npoints;
+  const halfAngle = angle / 2.0;
+  for (let a = 0; a < constants.TWO_PI; a += angle) {
+    let sx = x + Math.cos(a) * radius1;
+    let sy = y + Math.sin(a) * radius1;
+    this.vertex(sx, sy);
+    sx = x + Math.cos(a + halfAngle) * radius2;
+    sy = y + Math.sin(a + halfAngle) * radius2;
+    this.vertex(sx, sy);
+  }
+  this.endShape(constants.CLOSE);
+  return this;
+};
+
 export default p5;

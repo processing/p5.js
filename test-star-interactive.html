@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>p5.js 交互式五角星</title>
+  <script src="lib/p5.js"></script>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+  </style>
+</head>
+<body>
+  <script>
+    let starColor;
+    
+    function setup() {
+      createCanvas(600, 400);
+      starColor = color(255, 255, 0);
+    }
+    
+    function draw() {
+      background(100, 150, 200);
+      
+      // 计算内外半径，根据鼠标与中心的距离变化
+      let outerRadius = map(mouseX, 0, width, 20, 100);
+      let innerRadius = outerRadius * 0.4;
+      
+      // 计算点数，根据鼠标Y位置变化
+      let points = floor(map(mouseY, 0, height, 3, 12));
+      
+      // 绘制跟随鼠标的星星
+      fill(starColor);
+      stroke(0);
+      strokeWeight(2);
+      star(mouseX, mouseY, outerRadius, innerRadius, points);
+      
+      // 显示参数信息
+      fill(255);
+      noStroke();
+      text('移动鼠标: X轴控制大小, Y轴控制点数', 20, 30);
+      text('当前点数: ' + points, 20, 50);
+      text('点击鼠标改变颜色', 20, 70);
+    }
+    
+    function mousePressed() {
+      // 点击更换随机颜色
+      starColor = color(random(255), random(255), random(255));
+    }
+  </script>
+</body>
+</html> 

@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>p5.js 功能演示</title>
+  <script src="lib/p5.js"></script>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background-color: #f0f0f0;
+      font-family: Arial, sans-serif;
+    }
+    h1 {
+      color: #333;
+      margin: 20px 0;
+    }
+    .container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      max-width: 1200px;
+    }
+    .canvas-container {
+      margin: 10px;
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      overflow: hidden;
+    }
+    .description {
+      padding: 10px;
+      text-align: center;
+      font-size: 14px;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+  <h1>p5.js 功能演示</h1>
+  <div class="container">
+    <div class="canvas-container">
+      <div id="sketch1"></div>
+      <div class="description">基本形状</div>
+    </div>
+    <div class="canvas-container">
+      <div id="sketch2"></div>
+      <div class="description">五角星(新功能)</div>
+    </div>
+    <div class="canvas-container">
+      <div id="sketch3"></div>
+      <div class="description">颜色和渐变</div>
+    </div>
+    <div class="canvas-container">
+      <div id="sketch4"></div>
+      <div class="description">动画</div>
+    </div>
+    <div class="canvas-container">
+      <div id="sketch5"></div>
+      <div class="description">鼠标交互</div>
+    </div>
+    <div class="canvas-container">
+      <div id="sketch6"></div>
+      <div class="description">粒子系统</div>
+    </div>
+  </div>
+
+  <script>
+    // 基本形状
+    let s1 = function(p) {
+      p.setup = function() {
+        p.createCanvas(300, 200);
+      };
+      
+      p.draw = function() {
+        p.background(240);
+        p.stroke(0);
+        p.strokeWeight(2);
+        
+        // 矩形
+        p.fill(255, 0, 0, 150);
+        p.rect(50, 50, 80, 80);
+        
+        // 圆形
+        p.fill(0, 0, 255, 150);
+        p.ellipse(200, 100, 100, 100);
+        
+        // 三角形
+        p.fill(0, 255, 0, 150);
+        p.triangle(150, 50, 120, 150, 180, 150);
+        
+        // 线条
+        p.stroke(100);
+        p.line(25, 150, 275, 150);
+      };
+    };
+    new p5(s1, 'sketch1');
+    
+    // 五角星(新功能)
+    let s2 = function(p) {
+      let angle = 0;
+      
+      p.setup = function() {
+        p.createCanvas(300, 200);
+      };
+      
+      p.draw = function() {
+        p.background(240);
+        p.translate(p.width/2, p.height/2);
+        p.rotate(angle);
+        
+        // 绘制多个不同的星形
+        p.fill(255, 255, 0);
+        p.stroke(0);
+        p.strokeWeight(1);
+        p.star(0, 0, 80, 40, 5);
+        
+        p.fill(255, 100, 0, 150);
+        p.star(0, 0, 50, 20, 8);
+        
+        angle += 0.01;
+      };
+    };
+    new p5(s2, 'sketch2');
+    
+    // 颜色和渐变
+    let s3 = function(p) {
+      p.setup = function() {
+        p.createCanvas(300, 200);
+      };
+      
+      p.draw = function() {
+        p.background(240);
+        
+        // 创建渐变背景
+        for(let i = 0; i < p.width; i++) {
+          let r = p.map(i, 0, p.width, 255, 0);
+          let g = p.map(i, 0, p.width, 0, 255);
+          let b = p.map(i, 0, p.width, 0, 255);
+          p.stroke(r, g, b);
+          p.line(i, 0, i, p.height);
+        }
+        
+        // 半透明形状
+        p.noStroke();
+        for(let i = 0; i < 5; i++) {
+          let x = p.map(i, 0, 4, 50, 250);
+          p.fill(255, 255, 255, 100);
+          p.ellipse(x, 100, 70, 70);
+        }
+      };
+    };
+    new p5(s3, 'sketch3');
+    
+    // 动画
+    let s4 = function(p) {
+      let x = 0;
+      let speed = 3;
+      
+      p.setup = function() {
+        p.createCanvas(300, 200);
+      };
+      
+      p.draw = function() {
+        p.background(240);
+        
+        // 移动的圆
+        p.fill(255, 0, 0);
+        p.noStroke();
+        p.ellipse(x, 100, 50, 50);
+        
+        x += speed;
+        if (x > p.width + 25 || x < -25) {
+          speed *= -1;
+        }
+      };
+    };
+    new p5(s4, 'sketch4');
+    
+    // 鼠标交互
+    let s5 = function(p) {
+      p.setup = function() {
+        p.createCanvas(300, 200);
+        p.noStroke();
+      };
+      
+      p.draw = function() {
+        p.background(240);
+        
+        // 跟随鼠标的渐变圆
+        for(let i = 10; i > 0; i--) {
+          let diameter = i * 10;
+          let alpha = p.map(i, 0, 10, 255, 0);
+          p.fill(255, 0, 255, alpha);
+          p.ellipse(p.mouseX, p.mouseY, diameter, diameter);
+        }
+        
+        // 说明文字
+        p.fill(0);
+        p.text('移动鼠标在此区域内', 80, 20);
+      };
+    };
+    new p5(s5, 'sketch5');
+    
+    // 粒子系统
+    let s6 = function(p) {
+      let particles = [];
+      
+      p.setup = function() {
+        p.createCanvas(300, 200);
+      };
+      
+      p.draw = function() {
+        p.background(0, 10);
+        
+        // 添加新粒子
+        if(p.random(1) < 0.2) {
+          particles.push(new Particle(p));
+        }
+        
+        // 更新和显示粒子
+        for(let i = particles.length - 1; i >= 0; i--) {
+          particles[i].update();
+          particles[i].display();
+          
+          if(particles[i].isDead()) {
+            particles.splice(i, 1);
+          }
+        }
+      };
+      
+      // 粒子类
+      class Particle {
+        constructor(p) {
+          this.p = p;
+          this.x = p.width / 2;
+          this.y = p.height / 2;
+          this.vx = p.random(-1, 1);
+          this.vy = p.random(-2, -1);
+          this.alpha = 255;
+          this.size = p.random(5, 15);
+          this.color = p.color(
+            p.random(100, 255),
+            p.random(100, 255),
+            p.random(100, 255)
+          );
+        }
+        
+        update() {
+          this.x += this.vx;
+          this.y += this.vy;
+          this.alpha -= 2;
+        }
+        
+        display() {
+          this.p.noStroke();
+          this.color.setAlpha(this.alpha);
+          this.p.fill(this.color);
+          this.p.ellipse(this.x, this.y, this.size, this.size);
+        }
+        
+        isDead() {
+          return this.alpha <= 0;
+        }
+      }
+    };
+    new p5(s6, 'sketch6');
+  </script>
+</body>
+</html> 
