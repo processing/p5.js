@@ -6,8 +6,13 @@
 
 // Example 3-2: mouseX and mouseY
 
+let offsetX, offsetY; // Declare variables globally
+
 function setup() {
   createCanvas(200, 200);
+  const rect = canvas.elt.getBoundingClientRect(); // Get canvas position
+  offsetX = rect.left + window.scrollX;
+  offsetY = rect.top + window.scrollY;
 }
 
 function draw() {
@@ -19,7 +24,9 @@ function draw() {
   fill(175);
   rectMode(CENTER);
 
-  // mouseX is a keyword that the sketch replaces with the horizontal position of the mouse.
-  // mouseY is a keyword that the sketch replaces with the vertical position of the mouse.
-  rect(mouseX, mouseY, 50, 50);
+  // Corrected mouseX and mouseY for canvas offset
+  const correctedMouseX = mouseX - offsetX;
+  const correctedMouseY = mouseY - offsetY;
+
+  rect(correctedMouseX, correctedMouseY, 50, 50); // Adjust size as needed
 }
