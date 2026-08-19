@@ -157,7 +157,12 @@ async function loadMaterialTextures(materials, modelPath, instance) {
 
   const slash = modelPath.lastIndexOf('/');
   const folder = slash >= 0 ? modelPath.slice(0, slash) : '';
-  const resolve = file => (folder ? `${folder}/${file}` : file);
+  // mtl files exported on windows can use backslashes, which mean nothing to a
+  // url, so swap them for the separator the fetch actually needs
+  const resolve = file => {
+    const path = file.replace(/\\/g, '/');
+    return folder ? `${folder}/${path}` : path;
+  };
 
   const jobs = [];
   for (const name in materials) {
