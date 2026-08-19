@@ -2358,6 +2358,186 @@ function renderer3D(p5, fn) {
   };
 
   /**
+   * Creates a <a href="#/p5/p5.StorageList">`p5.StorageList`</a>, which is a
+   * variable-length block of data that compute shaders can push elements
+   * into, and regular shaders can read from. This is only available in WebGPU mode.
+   *
+   * It takes the maximum number of items that can be in the list, and then an optional
+   * example object of what you will push into the list. If you do not provide an example
+   * object, the list will be of numbers rather than objects.
+   *
+   * `p5.StorageList`s are similar to <a href="#/p5/p5.StorageBuffer">`p5.StorageBuffer`s</a>,
+   * created with <a href="#/p5/p5.createStorage">`createStorage()`</a>, which can also be read from
+   * and written to by shaders. Those are fixed-length, so the number of items never changes.
+   * `p5.StorageList`s have a `push()` method that can be called from compute shaders, making
+   * this helpful for cases when the number of items might change.
+   *
+   * For example, you may want create particle systems where the number of particles visible
+   * is not fixed. Pass the `p5.StorageList` into <a href="#/p5/instances">`instances()`</a>
+   * to draw one instance per item in the list:
+   *
+   * ```js example
+   * let particles, nextParticles; // Data
+   * let removeOld, emitNew; // Compute
+   * let drawParticles; // Rendering
+   * const MAX_PARTICLES = 300;
+   *
+   * async function setup() {
+   *   await createCanvas(200, 200, WEBGPU);
+   *
+   *   const schema = { position: createVector(0, 0), velocity: createVector(0, 0), life: 0 };
+   *   particles = createStorageList(MAX_PARTICLES, schema);
+   *   nextParticles = createStorageList(MAX_PARTICLES, schema);
+   *
+   *   // Move any alive particles into nextParticles and simulate
+   *   removeOld = buildComputeShader(() => {
+   *     let src = uniformStorage(() => particles);
+   *     let dst = uniformStorage(() => nextParticles);
+   *     if (index.x < src.length) {
+   *       let p = src[index.x];
+   *       p.velocity.y += 0.08; // gravity
+   *       p.position += p.velocity;
+   *       p.life -= 0.02;
+   *       if (p.life > 0) {
+   *         dst.push(p);
+   *       }
+   *     }
+   *   });
+   *
+   *   // Emit new particles at the cursor with random outward velocities
+   *   emitNew = buildComputeShader(() => {
+   *     let dst = uniformStorage(() => nextParticles);
+   *     let angle = random() * TWO_PI;
+   *     dst.push({
+   *       position: [mouseX, mouseY] - [width, height] / 2,
+   *       velocity: [cos(angle), sin(angle) - 2.5], // shoot slightly upward
+   *       life: 1.0
+   *     });
+   *   });
+   *
+   *   drawParticles = buildMaterialShader(() => {
+   *     let particleData = uniformStorage(() => particles);
+   *     let p = particleData[instanceIndex];
+   *
+   *     worldInputs.begin();
+   *     worldInputs.position.xy += p.position;
+   *     worldInputs.end();
+   *
+   *     finalColor.begin();
+   *     finalColor.set([1, p.life * 0.4, 0, p.life]);
+   *     finalColor.end();
+   *   });
+   *
+   *   describe('Orange particles emitting from the cursor, arcing upward then falling with gravity.');
+   * }
+   *
+   * function draw() {
+   *   background(0);
+   *   noStroke();
+   *
+   *   nextParticles.clear();
+   *   compute(removeOld, MAX_PARTICLES);
+   *   compute(emitNew, 5);
+   *
+   *   // Swap so particles always holds the freshly built list for drawing and
+   *   // for the next frame's filter pass.
+   *   [particles, nextParticles] = [nextParticles, particles];
+   *
+   *   shader(drawParticles);
+   *   blendMode(ADD);
+   *   instances(particles).circle(0, 0, 4);
+   * }
+   * ```
+   *
+   * Another thing you might want to do is draw a different number of instances of a shape
+   * every frame, but where you calculate the instances in a compute shader for speed, where
+   * it can happen in parallel:
+   *
+   * ```js example
+   * let cellLocs, circleIndices, squareIndices;
+   * let updateCells, drawParticles;
+   * const COLS = 10, ROWS = 10;
+   *
+   * async function setup() {
+   *   await createCanvas(200, 200, WEBGPU);
+   *
+   *   let locs = [];
+   *   for (let x = 0; x < COLS; x++) {
+   *     for (let y = 0; y < ROWS; y++) {
+   *       locs.push({ position: createVector(x * 20 - 90, y * 20 - 90) });
+   *     }
+   *   }
+   *   cellLocs = createStorage(locs);
+   *   circleIndices = createStorageList(locs.length);
+   *   squareIndices = createStorageList(locs.length);
+   *
+   *   updateCells = buildComputeShader(() => {
+   *     let locs = uniformStorage(cellLocs);
+   *     let circles = uniformStorage(circleIndices);
+   *     let squares = uniformStorage(squareIndices);
+   *     let loc = locs[index.x].position;
+   *     let r = 50 + 30 * sin(millis() * 0.004);
+   *     if (distance(loc, [mouseX, mouseY] - [width, height] / 2) < r) {
+   *       circles.push(index.x);
+   *     } else {
+   *       squares.push(index.x);
+   *     }
+   *   });
+   *
+   *   drawParticles = buildMaterialShader(() => {
+   *     let data = uniformStorage(cellLocs);
+   *     let indices = uniformStorage(0);
+   *     worldInputs.begin();
+   *     worldInputs.position.xy += data[indices[instanceIndex]].position;
+   *     worldInputs.end();
+   *   });
+   *
+   *   describe('A 10x10 grid of cells that switch between circles and squares based on mouse proximity.');
+   * }
+   *
+   * function draw() {
+   *   background(255);
+   *   noStroke();
+   *
+   *   circleIndices.clear();
+   *   squareIndices.clear();
+   *   compute(updateCells, cellLocs.length);
+   *
+   *   shader(drawParticles);
+   *
+   *   fill('blue');
+   *   drawParticles.setUniform('indices', circleIndices);
+   *   instances(circleIndices).circle(0, 0, 12);
+   *
+   *   fill('red');
+   *   drawParticles.setUniform('indices', squareIndices);
+   *   rectMode(CENTER);
+   *   instances(squareIndices).rect(0, 0, 10, 10);
+   * }
+   * ```
+   *
+   * @method createStorageList
+   * @submodule p5.strands
+   * @beta
+   * @webgpu
+   * @webgpuOnly
+   * @param {Number} maxCapacity Maximum number of elements the list can hold.
+   * @param {Object|Object[]} [schemaOrData] A schema template object or initial
+   *   array of struct objects. Omit for a float list.
+   * @returns {p5.StorageList}
+   */
+  fn.createStorageList = function (maxCapacity, schemaOrData) {
+    if (!this._renderer.createStorageList) {
+      p5._friendlyError(
+        `createStorageList() is only available with the WebGPU renderer. ${webGPUAddonMessage}`,
+        'createStorageList'
+      );
+      return;
+    }
+    return this._renderer.createStorageList(maxCapacity, schemaOrData);
+  };
+
+  /**
    * Returns the default shader used for compute operations.
    *
    * Calling <a href="#/p5/buildComputeShader">`buildComputeShader(shaderFunction)`</a>
@@ -2404,7 +2584,8 @@ function renderer3D(p5, fn) {
    * into `compute`.
    *
    * A compute shader will read from and write to storage, which is often an array of
-   * numbers or objects. Use <a href="#/p5/createStorage">`createStorage`</a> to construct
+   * numbers or objects. Use <a href="#/p5/createStorage">`createStorage`</a>
+   * or <a href="#/p5/createStorageList">`createStorageList`</a> to construct
    * initial data. Connect your iteration function to the storage by passing the storage
    * into <a href="#/p5/uniformStorage">`uniformStorage`</a>.
    *

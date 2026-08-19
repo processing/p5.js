@@ -2655,8 +2655,9 @@ function primitives3D(p5, fn) {
    * that reads per-instance data from an instanced attribute buffer.
    *
    * @method instances
-   * @param  {Number} count number of instances to draw. Must be a positive
-   *   integer.
+   * @param  {Number|p5.StorageBuffer|p5.StorageList} count number of instances
+   *   to draw, or a storage buffer/list whose element count is used. A plain
+   *   number must be a positive integer.
    * @returns {p5.InstancesWrapper} an object with methods `sphere`, `box`, `plane`,
    *   `ellipsoid`, `cylinder`, `cone`, `torus`, `triangle`, `rect`, `quad`,
    *   `ellipse`, `arc`, `model`, `line`, `point`, `bezier`, and `spline`. Call one of
@@ -2697,26 +2698,39 @@ function primitives3D(p5, fn) {
   fn.instances = function (count) {
     this._assert3d('instances');
 
-    if (typeof count !== 'number' || !isFinite(count) || count < 1) {
-      p5._friendlyError(
-        'instances() requires a positive integer count. Clamping to 1.',
-        'instances'
-      );
-      count = 1;
-    } else {
-      count = Math.round(count);
+    const isList = count?._isStorageList;
+
+    if (count?._isStorageBuffer) {
+      count = count.size;
+    }
+
+    if (!isList) {
+      if (typeof count !== 'number' || !isFinite(count) || count < 1) {
+        p5._friendlyError(
+          'instances() requires a positive integer count, a StorageBuffer, or a StorageList. Clamping to 1.',
+          'instances'
+        );
+        count = 1;
+      } else {
+        count = Math.round(count);
+      }
     }
 
     const r = this._renderer;
 
-    // Each wrapped method: set _instanceCount, call the method with
-    // the correct context, clear _instanceCount in finally so it never leaks.
+    // Each wrapped method: set _instanceCount or _instanceList, call the method
+    // with the correct context, clear both in finally so they never leak.
     const wrap = (method, ctx = r) =>
       function (...args) {
-        r._instanceCount = count;
+        if (isList) {
+          r._instanceList = count;
+        } else {
+          r._instanceCount = count;
+        }
         try {
           method.apply(ctx, args);
         } finally {
+          r._instanceList = undefined;
           r._instanceCount = undefined;
         }
       };

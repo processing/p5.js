@@ -275,25 +275,103 @@ export const wgslBackend = {
 
     for (const { name, typeInfo } of strandsContext.uniforms) {
       if (typeInfo.baseType === 'storage') {
-        const accessMode = isComputeShader ? 'read_write' : 'read';
-        let declaration;
-        if (typeInfo.schema) {
-          const structTypeName = `${name}Element`;
-          declaration = `struct ${structTypeName} ${typeInfo.schema.structBody}\n@group(0) @binding(${bindingIndex}) var<storage, ${accessMode}> ${name}: array<${structTypeName}>;`;
+        if (typeInfo.isStorageList) {
+          this._addStorageListBindings(
+            strandsContext,
+            name,
+            typeInfo,
+            bindingIndex,
+            isComputeShader
+          );
+          bindingIndex += 1;
         } else {
-          declaration = `@group(0) @binding(${bindingIndex}) var<storage, ${accessMode}> ${name}: array<f32>;`;
-        }
+          const accessMode = isComputeShader ? 'read_write' : 'read';
+          let declaration;
+          if (typeInfo.schema) {
+            const structTypeName = `${name}Element`;
+            declaration = `struct ${structTypeName} ${typeInfo.schema.structBody}\n@group(0) @binding(${bindingIndex}) var<storage, ${accessMode}> ${name}: array<${structTypeName}>;`;
+          } else {
+            declaration = `@group(0) @binding(${bindingIndex}) var<storage, ${accessMode}> ${name}: array<f32>;`;
+          }
 
-        if (isComputeShader) {
-          strandsContext.computeDeclarations.add(declaration);
-        } else {
-          strandsContext.vertexDeclarations.add(declaration);
-          strandsContext.fragmentDeclarations.add(declaration);
-        }
+          if (isComputeShader) {
+            strandsContext.computeDeclarations.add(declaration);
+          } else {
+            strandsContext.vertexDeclarations.add(declaration);
+            strandsContext.fragmentDeclarations.add(declaration);
+          }
 
-        bindingIndex += 1;
+          bindingIndex += 1;
+        }
       }
     }
+  },
+
+  _addStorageListBindings(
+    strandsContext,
+    name,
+    typeInfo,
+    bindingIndex,
+    isComputeShader
+  ) {
+    const { schema, maxCapacity } = typeInfo;
+    const elementTypeName = schema ? `${name}Element` : 'f32';
+    const elementTypeDecl = schema
+      ? `struct ${elementTypeName} ${schema.structBody}\n`
+      : '';
+
+    if (isComputeShader) {
+      // Wrapper struct holds a fixed-size data array followed by an atomic
+      // length. The layout matches the single GPU buffer written by createStorageList.
+      const bufTypeName = `${name}_buf`;
+      const bufDecl =
+        `${elementTypeDecl}` +
+        `struct ${bufTypeName} { data: array<${elementTypeName}, ${maxCapacity}>, length: atomic<u32> }\n` +
+        `@group(0) @binding(${bindingIndex}) var<storage, read_write> ${name}: ${bufTypeName};`;
+
+      const pushParam = schema ? `element: ${elementTypeName}` : `value: f32`;
+      const pushStore = schema ? `${name}.data[_idx] = element;` : `${name}.data[_idx] = value;`;
+      const pushFn =
+        `fn _p5_push_${name}(${pushParam}) {\n` +
+        `  let _idx = atomicAdd(&${name}.length, 1u);\n` +
+        `  if (_idx < ${maxCapacity}u) { ${pushStore} }\n` +
+        `}`;
+
+      const popReturnType = schema ? elementTypeName : 'f32';
+      const popFn =
+        `fn _p5_pop_${name}() -> ${popReturnType} {\n` +
+        `  let _idx = atomicSub(&${name}.length, 1u);\n` +
+        `  return ${name}.data[_idx - 1u];\n` +
+        `}`;
+
+      const lengthFn =
+        `fn _p5_length_${name}() -> i32 {\n` +
+        `  return i32(atomicLoad(&${name}.length));\n` +
+        `}`;
+
+      strandsContext.computeDeclarations.add(bufDecl);
+      strandsContext.computeDeclarations.add(pushFn);
+      strandsContext.computeDeclarations.add(popFn);
+      strandsContext.computeDeclarations.add(lengthFn);
+    } else {
+      // In vertex/fragment shaders the same buffer is declared as a plain
+      // runtime-sized array. The atomic length bytes at the end of the buffer
+      // are beyond the last addressable element (floor(bufSize/stride) == maxCapacity),
+      // so they are never touched from the render side.
+      const dataDecl =
+        `${elementTypeDecl}` +
+        `@group(0) @binding(${bindingIndex}) var<storage, read> ${name}: array<${elementTypeName}>;`;
+      strandsContext.vertexDeclarations.add(dataDecl);
+      strandsContext.fragmentDeclarations.add(dataDecl);
+    }
+  },
+  _storageListDataAccess(generationContext, bufferExpr) {
+    if (generationContext.shaderContext !== 'compute') return bufferExpr;
+    const uniforms = generationContext.strandsContext?.uniforms;
+    if (!uniforms) return bufferExpr;
+    const uniform = uniforms.find(u => u.name === bufferExpr);
+    if (uniform?.typeInfo?.isStorageList) return `${bufferExpr}.data`;
+    return bufferExpr;
   },
   getTypeName(baseType, dimension) {
     const primitiveTypeName = TypeNames[baseType + dimension];
@@ -322,7 +400,7 @@ export const wgslBackend = {
     if (typeInfo.baseType === 'sampler2D') {
       return `${name}: sampler2D`; // Signal that this should not be added to uniform struct
     }
-    // For storage buffers, we don't add them to the uniform struct
+    // For storage buffers/lists, we don't add them to the uniform struct
     // Instead, they become separate storage buffer bindings
     if (typeInfo.baseType === 'storage') {
       return null; // Signal that this should not be added to uniform struct
@@ -396,8 +474,9 @@ export const wgslBackend = {
       const fieldSuffix = targetNode.identifier
         ? `.${targetNode.identifier}`
         : '';
+      const accessExpr = this._storageListDataAccess(generationContext, bufferExpr);
       generationContext.write(
-        `${bufferExpr}[i32(${indexExpr})]${fieldSuffix} = ${sourceExpr}${semicolon}`
+        `${accessExpr}[i32(${indexExpr})]${fieldSuffix} = ${sourceExpr}${semicolon}`
       );
       return;
     }
@@ -677,7 +756,8 @@ export const wgslBackend = {
             indexID
           );
           const fieldSuffix = node.identifier ? `.${node.identifier}` : '';
-          return `${bufferExpr}[i32(${indexExpr})]${fieldSuffix}`;
+          const accessExpr = this._storageListDataAccess(generationContext, bufferExpr);
+          return `${accessExpr}[i32(${indexExpr})]${fieldSuffix}`;
         }
         if (node.dependsOn.length === 2) {
           const [lID, rID] = node.dependsOn;
