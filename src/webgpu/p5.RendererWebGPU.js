@@ -52,14 +52,6 @@ function rendererWebGPU(p5, fn) {
     i32: Int32Array
   };
 
-  // atomic<u32> and friends store their underlying type
-  function storageArrayTypeFor(elementType) {
-    if (!elementType) return undefined;
-    return STORAGE_ARRAY_TYPES[
-      elementType.replace(/^atomic<(\w+)>$/, '$1')
-    ];
-  }
-
   class StorageBuffer {
     constructor(
       buffer,
@@ -2608,7 +2600,7 @@ function rendererWebGPU(p5, fn) {
             type: 'storage',
             elementType, // e.g. 'f32', 'u32', 'atomic<u32>'
             // Resolved here so the per-frame check is just a comparison
-            expectedArrayType: storageArrayTypeFor(elementType)
+            expectedArrayType: this._storageArrayTypeFor(elementType)
           };
         }
       }
@@ -3988,6 +3980,17 @@ ${hookUniformFields}}
       }
 
       return result;
+    }
+
+    /**
+     * Resolves the WGSL element type a shader declares for a storage buffer
+     * into the typed array that reads it back correctly, unwrapping
+     * `atomic<T>` to `T`. Returns undefined for types we can't check.
+     * @private
+     */
+    _storageArrayTypeFor(elementType) {
+      if (!elementType) return undefined;
+      return STORAGE_ARRAY_TYPES[elementType.replace(/^atomic<(\w+)>$/, '$1')];
     }
 
     /**
