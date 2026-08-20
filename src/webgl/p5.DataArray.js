@@ -78,9 +78,9 @@ class DataArray {
       this.data = newData;
     }
   }
-};
+}
 
-function dataArray(p5, fn){
+function dataArray(p5, fn) {
   /**
    * An internal class to store data that will be sent to a p5.RenderBuffer.
    * Those need to eventually go into a Float32Array, so this class provides a
@@ -108,6 +108,6 @@ function dataArray(p5, fn){
 export default dataArray;
 export { DataArray };
 
-if(typeof p5 !== 'undefined'){
+if (typeof p5 !== 'undefined') {
   dataArray(p5, p5.prototype);
 }

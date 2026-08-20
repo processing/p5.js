@@ -18,8 +18,7 @@ WebGPU mode is currently experimental, so it is not in the standard build of p5.
     <!-- Your code -->
     <script type="text/javascript" src="sketch.js" />
   </head>
-  <body>
-  </body>
+  <body></body>
 </html>
 ```
 

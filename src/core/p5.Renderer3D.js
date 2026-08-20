@@ -3,36 +3,36 @@
  * @for p5
  */
 
-import * as constants from "../core/constants";
-import { Graphics } from "../core/p5.Graphics";
+import * as constants from '../core/constants';
+import { Graphics } from '../core/p5.Graphics';
 import { Renderer } from './p5.Renderer';
-import GeometryBuilder from "../webgl/GeometryBuilder";
-import { Matrix } from "../math/p5.Matrix";
-import { Camera } from "../webgl/p5.Camera";
-import { Vector } from "../math/p5.Vector";
-import { ShapeBuilder } from "../webgl/ShapeBuilder";
-import { GeometryBufferCache } from "../webgl/GeometryBufferCache";
-import { filterParamDefaults } from "../image/const";
-import { PrimitiveToVerticesConverter } from "../shape/custom_shapes";
-import { Color } from "../color/p5.Color";
-import { Element } from "../dom/p5.Element";
-import { Framebuffer } from "../webgl/p5.Framebuffer";
-import { DataArray } from "../webgl/p5.DataArray";
-import { textCoreConstants } from "../type/textCore";
-import { RenderBuffer } from "../webgl/p5.RenderBuffer";
-import { Image } from "../image/p5.Image";
-import { Texture } from "../webgl/p5.Texture";
-import { makeFilterShader } from "../core/filterShaders";
-import { getStrokeDefs } from "../webgl/enums";
+import GeometryBuilder from '../webgl/GeometryBuilder';
+import { Matrix } from '../math/p5.Matrix';
+import { Camera } from '../webgl/p5.Camera';
+import { Vector } from '../math/p5.Vector';
+import { ShapeBuilder } from '../webgl/ShapeBuilder';
+import { GeometryBufferCache } from '../webgl/GeometryBufferCache';
+import { filterParamDefaults } from '../image/const';
+import { PrimitiveToVerticesConverter } from '../shape/custom_shapes';
+import { Color } from '../color/p5.Color';
+import { Element } from '../dom/p5.Element';
+import { Framebuffer } from '../webgl/p5.Framebuffer';
+import { DataArray } from '../webgl/p5.DataArray';
+import { textCoreConstants } from '../type/textCore';
+import { RenderBuffer } from '../webgl/p5.RenderBuffer';
+import { Image } from '../image/p5.Image';
+import { Texture } from '../webgl/p5.Texture';
+import { makeFilterShader } from '../core/filterShaders';
+import { getStrokeDefs } from '../webgl/enums';
 
-const { STROKE_CAP_ENUM, STROKE_JOIN_ENUM } = getStrokeDefs(()=>"");
+const { STROKE_CAP_ENUM, STROKE_JOIN_ENUM } = getStrokeDefs(() => '');
 
 export class Renderer3D extends Renderer {
   constructor(pInst, w, h, isMainCanvas, elt) {
     super(pInst, w, h, isMainCanvas);
 
     // Create new canvas
-    this.canvas = this.elt = elt || document.createElement("canvas");
+    this.canvas = this.elt = elt || document.createElement('canvas');
     this.contextReady = this.setupContext();
 
     if (this._isMainCanvas) {
@@ -41,10 +41,10 @@ export class Renderer3D extends Renderer {
       this._pInst.canvas = this.canvas;
     } else {
       // hide if offscreen buffer by default
-      this.canvas.style.display = "none";
+      this.canvas.style.display = 'none';
     }
-    this.elt.id = "defaultCanvas0";
-    this.elt.classList.add("p5Canvas");
+    this.elt.id = 'defaultCanvas0';
+    this.elt.classList.add('p5Canvas');
 
     // Set and return p5.Element
     this.wrappedElt = new Element(this.elt, this._pInst);
@@ -56,7 +56,7 @@ export class Renderer3D extends Renderer {
           get() {
             return this.wrappedElt[p];
           }
-        })
+        });
       }
     }
 
@@ -80,12 +80,12 @@ export class Renderer3D extends Renderer {
       this._pInst._userNode.appendChild(this.elt);
     } else {
       //create main element
-      if (document.getElementsByTagName("main").length === 0) {
-        let m = document.createElement("main");
+      if (document.getElementsByTagName('main').length === 0) {
+        let m = document.createElement('main');
         document.body.appendChild(m);
       }
       //append canvas to main
-      document.getElementsByTagName("main")[0].appendChild(this.elt);
+      document.getElementsByTagName('main')[0].appendChild(this.elt);
     }
 
     this.isP3D = true; //lets us know we're in 3d mode
@@ -148,6 +148,14 @@ export class Renderer3D extends Renderer {
     this.states.drawMode = constants.FILL;
 
     this.states._tex = null;
+    this.states._specularTex = null;
+    this.states._ambientTex = null;
+    this.states._shininessTex = null;
+    this.states._normalTex = null;
+    this.states._normalScale = 1;
+    // how to read _normalTex: 0 = tangent-space normal map (rgb is the normal),
+    // 1 = bump map (brightness is height, the normal comes from its slope)
+    this.states._normalMapMode = 0;
     this.states.textureMode = constants.IMAGE;
     this.states.textureWrapX = constants.CLAMP;
     this.states.textureWrapY = constants.CLAMP;
@@ -260,83 +268,97 @@ export class Renderer3D extends Renderer {
       fill: [
         new RenderBuffer(
           3,
-          "vertices",
-          "vertexBuffer",
-          "aPosition",
+          'vertices',
+          'vertexBuffer',
+          'aPosition',
           this,
           this._vToNArray
         ),
         new RenderBuffer(
           3,
-          "vertexNormals",
-          "normalBuffer",
-          "aNormal",
+          'vertexNormals',
+          'normalBuffer',
+          'aNormal',
           this,
           this._vToNArray
         ),
         new RenderBuffer(
           4,
-          "vertexColors",
-          "colorBuffer",
-          "aVertexColor",
+          'vertexColors',
+          'colorBuffer',
+          'aVertexColor',
           this
-        ).default((geometry) => geometry.vertices.flatMap(() => [-1, -1, -1, -1])),
+        ).default(geometry =>
+          geometry.vertices.flatMap(() => [-1, -1, -1, -1])
+        ),
         new RenderBuffer(
           3,
-          "vertexAmbients",
-          "ambientBuffer",
-          "aAmbientColor",
+          'vertexAmbients',
+          'ambientBuffer',
+          'aAmbientColor',
           this
         ),
-        new RenderBuffer(2, "uvs", "uvBuffer", "aTexCoord", this, (arr) =>
+        new RenderBuffer(2, 'uvs', 'uvBuffer', 'aTexCoord', this, arr =>
           arr.flat()
         ),
+        // surface tangents for normal mapping. [x, y, z, handedness] per vertex.
+        // only computed for models with a normal map, and only read by the map
+        // shader variant; defaults to a dummy so the attribute stays valid.
+        new RenderBuffer(
+          4,
+          'vertexTangents',
+          'tangentBuffer',
+          'aTangent',
+          this
+        ).default(geometry => geometry.vertices.flatMap(() => [0, 0, 0, 1]))
       ],
       stroke: [
         new RenderBuffer(
           4,
-          "lineVertexColors",
-          "lineColorBuffer",
-          "aVertexColor",
+          'lineVertexColors',
+          'lineColorBuffer',
+          'aVertexColor',
           this
-        ).default((geometry) => geometry.lineVertices.flatMap(() => [-1, -1, -1, -1])),
+        ).default(geometry =>
+          geometry.lineVertices.flatMap(() => [-1, -1, -1, -1])
+        ),
         new RenderBuffer(
           3,
-          "lineVertices",
-          "lineVerticesBuffer",
-          "aPosition",
+          'lineVertices',
+          'lineVerticesBuffer',
+          'aPosition',
           this
         ),
         new RenderBuffer(
           3,
-          "lineTangentsIn",
-          "lineTangentsInBuffer",
-          "aTangentIn",
+          'lineTangentsIn',
+          'lineTangentsInBuffer',
+          'aTangentIn',
           this
         ),
         new RenderBuffer(
           3,
-          "lineTangentsOut",
-          "lineTangentsOutBuffer",
-          "aTangentOut",
+          'lineTangentsOut',
+          'lineTangentsOutBuffer',
+          'aTangentOut',
           this
         ),
-        new RenderBuffer(1, "lineSides", "lineSidesBuffer", "aSide", this),
+        new RenderBuffer(1, 'lineSides', 'lineSidesBuffer', 'aSide', this)
       ],
       text: [
         new RenderBuffer(
           3,
-          "vertices",
-          "vertexBuffer",
-          "aPosition",
+          'vertices',
+          'vertexBuffer',
+          'aPosition',
           this,
           this._vToNArray
         ),
-        new RenderBuffer(2, "uvs", "uvBuffer", "aTexCoord", this, (arr) =>
+        new RenderBuffer(2, 'uvs', 'uvBuffer', 'aTexCoord', this, arr =>
           arr.flat()
-        ),
+        )
       ],
-      user: [],
+      user: []
     };
   }
 
@@ -353,14 +375,14 @@ export class Renderer3D extends Renderer {
     const prevStyle = {
       position: this.canvas.style.position,
       top: this.canvas.style.top,
-      left: this.canvas.style.left,
+      left: this.canvas.style.left
     };
 
     if (isPGraphics) {
       // Handle PGraphics: remove and recreate the canvas
       const pg = this._pInst;
       pg.canvas.parentNode.removeChild(pg.canvas);
-      pg.canvas = document.createElement("canvas");
+      pg.canvas = document.createElement('canvas');
       const node = pg._pInst._userNode || document.body;
       node.appendChild(pg.canvas);
       Element.call(pg, pg.canvas, pg._pInst);
@@ -373,7 +395,7 @@ export class Renderer3D extends Renderer {
       if (c) {
         c.parentNode.removeChild(c);
       }
-      c = document.createElement("canvas");
+      c = document.createElement('canvas');
       c.id = defaultId;
       // Attach the new canvas to the correct parent node
       if (this._pInst._userNode) {
@@ -402,10 +424,10 @@ export class Renderer3D extends Renderer {
     renderer._applyDefaults();
 
     if (renderer.contextReady) {
-      await renderer.contextReady
+      await renderer.contextReady;
     }
 
-    if (typeof callback === "function") {
+    if (typeof callback === 'function') {
       //setTimeout with 0 forces the task to the back of the queue, this ensures that
       //we finish switching out the renderer
       setTimeout(() => {
@@ -440,7 +462,7 @@ export class Renderer3D extends Renderer {
   beginGeometry() {
     if (this.geometryBuilder) {
       throw new Error(
-        "It looks like `beginGeometry()` is being called while another p5.Geometry is already being build."
+        'It looks like `beginGeometry()` is being called while another p5.Geometry is already being build.'
       );
     }
     this.geometryBuilder = new GeometryBuilder(this);
@@ -460,7 +482,7 @@ export class Renderer3D extends Renderer {
   endGeometry() {
     if (!this.geometryBuilder) {
       throw new Error(
-        "Make sure you call beginGeometry() before endGeometry()!"
+        'Make sure you call beginGeometry() before endGeometry()!'
       );
     }
     const geometry = this.geometryBuilder.finish();
@@ -505,13 +527,13 @@ export class Renderer3D extends Renderer {
     if (d === undefined) {
       return this.states.curveDetail;
     } else {
-      this.states.setValue("curveDetail", d);
+      this.states.setValue('curveDetail', d);
     }
   }
 
   drawShape(shape) {
     const visitor = new PrimitiveToVerticesConverter({
-      curveDetail: this.states.curveDetail,
+      curveDetail: this.states.curveDetail
     });
     shape.accept(visitor);
     this.shapeBuilder.constructFromContours(shape, visitor.contours);
@@ -542,9 +564,9 @@ export class Renderer3D extends Renderer {
 
   normal(xorv, y, z) {
     if (xorv instanceof Vector) {
-      this.states.setValue("_currentNormal", xorv);
+      this.states.setValue('_currentNormal', xorv);
     } else {
-      this.states.setValue("_currentNormal", new Vector(xorv, y, z));
+      this.states.setValue('_currentNormal', new Vector(xorv, y, z));
     }
     this.updateShapeVertexProperties();
   }
@@ -592,7 +614,34 @@ export class Renderer3D extends Renderer {
       geometry.vertices.length >= 3 &&
       ![constants.LINES, constants.POINTS].includes(mode)
     ) {
-      this._drawFills(geometry, { mode, count });
+      // draw every part. a geometry always has at least one part (the
+      // constructor makes it its own single part when nothing else does), so no
+      // fallback is needed. a part with no material state draws straight;
+      // multi-material parts apply their own material around the draw.
+      for (const part of geometry.parts) {
+        const state = part.partState;
+        // fill/ambientColor/specularColor are arrays and texture is a p5.Image,
+        // so they're truthy when set; shininess is a number where 0 is valid.
+        // `!= null` keeps every field consistent and treats a 0 as present.
+        const hasMaterial =
+          state &&
+          (state.fill != null ||
+            state.texture != null ||
+            state.ambientColor != null ||
+            state.specularColor != null ||
+            state.shininess != null ||
+            state.specularTexture != null ||
+            state.ambientTexture != null ||
+            state.shininessTexture != null);
+        if (hasMaterial) {
+          this.push();
+          this._applyPartState(state);
+          this._drawFills(part, { mode, count });
+          this.pop();
+        } else {
+          this._drawFills(part, { mode, count });
+        }
+      }
     }
 
     if (this.states.strokeColor && geometry.lineVertices.length >= 1) {
@@ -603,8 +652,21 @@ export class Renderer3D extends Renderer {
   }
 
   _drawFills(geometry, { count, mode } = {}) {
-    this._useVertexColor = geometry.vertexColors.length > 0 &&
-      !geometry.vertexColors.isDefault;
+    this._useVertexColor =
+      geometry.vertexColors.length > 0 && !geometry.vertexColors.isDefault;
+
+    // a normal map needs per-vertex tangents. loaded models compute them at load,
+    // but geometry drawn with normalTexture() (built shapes, immediate mode) won't
+    // have them, so build them on demand once (cached on the geometry).
+    if (
+      this.states._normalTex &&
+      geometry.computeTangents &&
+      (!geometry.vertexTangents || geometry.vertexTangents.length === 0) &&
+      geometry.uvs.length > 0 &&
+      geometry.vertexNormals.length > 0
+    ) {
+      geometry.computeTangents();
+    }
 
     const shader =
       !this._drawingFilter && this.states.userFillShader
@@ -631,8 +693,53 @@ export class Renderer3D extends Renderer {
     shader.unbindShader();
   }
 
-  _drawStrokes(geometry, { count } = {}) {
+  // apply a part's material to the renderer before it's drawn. only non-null
+  // fields are set, so an empty part state leaves the uniforms untouched.
+  _applyPartState(partState) {
+    if (!partState) return;
+    if (partState.fill) {
+      // fill is always [r, g, b, a] in 0..1, so it maps straight onto
+      // curFillColor (same shape/range as the array fill() sets).
+      this.states.setValue('curFillColor', partState.fill);
+    }
+    if (partState.texture) {
+      this.states.setValue('_tex', partState.texture);
+      this.states.setValue('drawMode', constants.TEXTURE);
+    }
+    if (partState.ambientColor) {
+      this.states.setValue('curAmbientColor', partState.ambientColor);
+      this.states.setValue('_hasSetAmbient', true);
+    }
+    if (partState.ambientTexture) {
+      // an ambient map modulates the ambient term, so make sure it is on
+      this.states.setValue('_ambientTex', partState.ambientTexture);
+      this.states.setValue('_hasSetAmbient', true);
+    }
+    if (partState.specularColor) {
+      this.states.setValue('curSpecularColor', partState.specularColor);
+      this.states.setValue('_useSpecularMaterial', true);
+    }
+    if (partState.specularTexture) {
+      // a specular map modulates the specular term, so make sure that term is on
+      this.states.setValue('_specularTex', partState.specularTexture);
+      this.states.setValue('_useSpecularMaterial', true);
+    }
+    if (partState.shininess != null) {
+      this.states.setValue('_useShininess', partState.shininess);
+    }
+    if (partState.shininessTexture) {
+      this.states.setValue('_shininessTex', partState.shininessTexture);
+    }
+    if (partState.normalTexture) {
+      this.states.setValue('_normalTex', partState.normalTexture);
+      if (partState.normalScale != null) {
+        this.states.setValue('_normalScale', partState.normalScale);
+      }
+      this.states.setValue('_normalMapMode', partState.normalMapMode ?? 0);
+    }
+  }
 
+  _drawStrokes(geometry, { count } = {}) {
     this._useLineColor = geometry.vertexStrokeColors.length > 0;
 
     const shader = this._getStrokeShader();
@@ -652,7 +759,7 @@ export class Renderer3D extends Renderer {
       geometry.hasStrokeTransparency()
     );
 
-    this._drawBuffers(geometry, {count})
+    this._drawBuffers(geometry, { count });
 
     shader.unbindShader();
   }
@@ -667,12 +774,12 @@ export class Renderer3D extends Renderer {
           if (adjustedLength > geometry.vertices.length) {
             this._pInst.constructor._friendlyError(
               `One of the geometries has a custom vertex property '${prop.getName()}' with more values than vertices. This is probably caused by directly using the Geometry.vertexProperty() method.`,
-              "vertexProperty()"
+              'vertexProperty()'
             );
           } else if (adjustedLength < geometry.vertices.length) {
             this._pInst.constructor._friendlyError(
               `One of the geometries has a custom vertex property '${prop.getName()}' with fewer values than vertices. This is probably caused by directly using the Geometry.vertexProperty() method.`,
-              "vertexProperty()"
+              'vertexProperty()'
             );
           }
         }
@@ -684,7 +791,7 @@ export class Renderer3D extends Renderer {
   _drawGeometryScaled(model, scaleX, scaleY, scaleZ) {
     const count = this._instanceCount || 1;
     let originalModelMatrix = this.states.uModelMatrix;
-    this.states.setValue("uModelMatrix", this.states.uModelMatrix.clone());
+    this.states.setValue('uModelMatrix', this.states.uModelMatrix.clone());
     try {
       this.states.uModelMatrix.scale(scaleX, scaleY, scaleZ);
 
@@ -694,42 +801,42 @@ export class Renderer3D extends Renderer {
         this._drawGeometry(model, { count });
       }
     } finally {
-      this.states.setValue("uModelMatrix", originalModelMatrix);
+      this.states.setValue('uModelMatrix', originalModelMatrix);
     }
   }
 
   _update() {
     // reset model view and apply initial camera transform
     // (containing only look at info; no projection).
-    this.states.setValue("uModelMatrix", this.states.uModelMatrix.clone());
+    this.states.setValue('uModelMatrix', this.states.uModelMatrix.clone());
     this.states.uModelMatrix.reset();
-    this.states.setValue("uViewMatrix", this.states.uViewMatrix.clone());
+    this.states.setValue('uViewMatrix', this.states.uViewMatrix.clone());
     this.states.uViewMatrix.set(this.states.curCamera.cameraMatrix);
 
     // reset light data for new frame.
 
-    this.states.setValue("ambientLightColors", []);
-    this.states.setValue("specularColors", [1, 1, 1]);
+    this.states.setValue('ambientLightColors', []);
+    this.states.setValue('specularColors', [1, 1, 1]);
 
-    this.states.setValue("directionalLightDirections", []);
-    this.states.setValue("directionalLightDiffuseColors", []);
-    this.states.setValue("directionalLightSpecularColors", []);
+    this.states.setValue('directionalLightDirections', []);
+    this.states.setValue('directionalLightDiffuseColors', []);
+    this.states.setValue('directionalLightSpecularColors', []);
 
-    this.states.setValue("pointLightPositions", []);
-    this.states.setValue("pointLightDiffuseColors", []);
-    this.states.setValue("pointLightSpecularColors", []);
+    this.states.setValue('pointLightPositions', []);
+    this.states.setValue('pointLightDiffuseColors', []);
+    this.states.setValue('pointLightSpecularColors', []);
 
-    this.states.setValue("spotLightPositions", []);
-    this.states.setValue("spotLightDirections", []);
-    this.states.setValue("spotLightDiffuseColors", []);
-    this.states.setValue("spotLightSpecularColors", []);
-    this.states.setValue("spotLightAngle", []);
-    this.states.setValue("spotLightConc", []);
+    this.states.setValue('spotLightPositions', []);
+    this.states.setValue('spotLightDirections', []);
+    this.states.setValue('spotLightDiffuseColors', []);
+    this.states.setValue('spotLightSpecularColors', []);
+    this.states.setValue('spotLightAngle', []);
+    this.states.setValue('spotLightConc', []);
 
-    this.states.setValue("enableLighting", false);
+    this.states.setValue('enableLighting', false);
 
     //reset tint value for new frame
-    this.states.setValue("tint", new Color([1,1,1,1]));
+    this.states.setValue('tint', new Color([1, 1, 1, 1]));
 
     //Clear depth every frame
     this._resetBuffersBeforeDraw();
@@ -797,8 +904,9 @@ export class Renderer3D extends Renderer {
 
     const modelViewMatrix = modelMatrix.copy().mult(viewMatrix);
     const modelViewProjectionMatrix = modelViewMatrix.mult(projectionMatrix);
-    const worldToScreenMatrix = modelViewProjectionMatrix
-      .mult(projectedToScreenMatrix);
+    const worldToScreenMatrix = modelViewProjectionMatrix.mult(
+      projectedToScreenMatrix
+    );
     return worldToScreenMatrix;
   }
 
@@ -878,13 +986,13 @@ export class Renderer3D extends Renderer {
       ...super.getCommonVertexProperties(),
       stroke: this.states.strokeColor,
       fill: this.states.fillColor,
-      normal: this.states._currentNormal,
+      normal: this.states._currentNormal
     };
   }
 
   getSupportedIndividualVertexProperties() {
     return {
-      textureCoordinates: true,
+      textureCoordinates: true
     };
   }
 
@@ -937,7 +1045,10 @@ export class Renderer3D extends Renderer {
       // Need to store multiple in case user calls different filters,
       // eg. filter(BLUR) then filter(GRAY)
       if (!(operation in this.defaultFilterShaders)) {
-        this.defaultFilterShaders[operation] = this._makeFilterShader(fbo.renderer, operation);
+        this.defaultFilterShaders[operation] = this._makeFilterShader(
+          fbo.renderer,
+          operation
+        );
       }
       this.states.setValue(
         'filterShader',
@@ -960,7 +1071,7 @@ export class Renderer3D extends Renderer {
 
     let texelSize = [
       1 / (target.width * target.pixelDensity()),
-      1 / (target.height * target.pixelDensity()),
+      1 / (target.height * target.pixelDensity())
     ];
 
     // apply blur shader with multiple passes.
@@ -979,7 +1090,7 @@ export class Renderer3D extends Renderer {
       this.states.filterShader.setUniform('texelSize', texelSize);
       this.states.filterShader.setUniform('canvasSize', [
         target.width,
-        target.height,
+        target.height
       ]);
       this.states.filterShader.setUniform(
         'radius',
@@ -1018,7 +1129,7 @@ export class Renderer3D extends Renderer {
         this.states.filterShader.setUniform('texelSize', texelSize);
         this.states.filterShader.setUniform('canvasSize', [
           target.width,
-          target.height,
+          target.height
         ]);
         // filterParameter uniform only used for POSTERIZE, and THRESHOLD
         // but shouldn't hurt to always set
@@ -1171,7 +1282,7 @@ export class Renderer3D extends Renderer {
         format: constants.UNSIGNED_BYTE,
         useDepth: this._pInst._glAttributes.depth,
         depthFormat: constants.UNSIGNED_INT,
-        antialias: this._pInst._glAttributes.antialias,
+        antialias: this._pInst._glAttributes.antialias
       });
     }
     return this._tempFramebuffer;
@@ -1198,7 +1309,7 @@ export class Renderer3D extends Renderer {
     const props = {};
     for (const key in this.drawingContext) {
       const val = this.drawingContext[key];
-      if (typeof val !== "object" && typeof val !== "function") {
+      if (typeof val !== 'object' && typeof val !== 'function') {
         props[key] = val;
       }
     }
@@ -1223,7 +1334,7 @@ export class Renderer3D extends Renderer {
     }
 
     //resize pixels buffer
-    if (typeof this.pixels !== "undefined") {
+    if (typeof this.pixels !== 'undefined') {
       this._createPixelsArray();
     }
 
@@ -1246,7 +1357,7 @@ export class Renderer3D extends Renderer {
   }
 
   applyMatrix(a, b, c, d, e, f) {
-    this.states.setValue("uModelMatrix", this.states.uModelMatrix.clone());
+    this.states.setValue('uModelMatrix', this.states.uModelMatrix.clone());
     if (arguments.length === 16) {
       // this.states.uModelMatrix.apply(arguments);
       Matrix.prototype.apply.apply(this.states.uModelMatrix, arguments);
@@ -1267,7 +1378,7 @@ export class Renderer3D extends Renderer {
         e,
         f,
         0,
-        1,
+        1
       ]);
     }
   }
@@ -1287,7 +1398,7 @@ export class Renderer3D extends Renderer {
       y = x.y;
       x = x.x;
     }
-    this.states.setValue("uModelMatrix", this.states.uModelMatrix.clone());
+    this.states.setValue('uModelMatrix', this.states.uModelMatrix.clone());
     this.states.uModelMatrix.translate([x, y, z]);
     return this;
   }
@@ -1301,16 +1412,16 @@ export class Renderer3D extends Renderer {
    * @chainable
    */
   scale(x, y, z) {
-    this.states.setValue("uModelMatrix", this.states.uModelMatrix.clone());
+    this.states.setValue('uModelMatrix', this.states.uModelMatrix.clone());
     this.states.uModelMatrix.scale(x, y, z);
     return this;
   }
 
   rotate(rad, axis) {
-    if (typeof axis === "undefined") {
+    if (typeof axis === 'undefined') {
       return this.rotateZ(rad);
     }
-    this.states.setValue("uModelMatrix", this.states.uModelMatrix.clone());
+    this.states.setValue('uModelMatrix', this.states.uModelMatrix.clone());
     Matrix.prototype.rotate4x4.apply(this.states.uModelMatrix, arguments);
     return this;
   }
@@ -1331,10 +1442,10 @@ export class Renderer3D extends Renderer {
   }
 
   push() {
-    super.push()
-    const saved = !!(this.states.textFont?.font);
+    super.push();
+    const saved = !!this.states.textFont?.font;
     if (saved) {
-      this.textDrawingContext().save()
+      this.textDrawingContext().save();
     }
     this._textContextSavedStack.push(saved);
   }
@@ -1347,16 +1458,16 @@ export class Renderer3D extends Renderer {
       this._clearClip();
     }
     if (this._textContextSavedStack.pop()) {
-      this.textDrawingContext().restore()
+      this.textDrawingContext().restore();
     }
     super.pop(...args);
     this._applyStencilTestIfClipping();
   }
 
   resetMatrix() {
-    this.states.setValue("uModelMatrix", this.states.uModelMatrix.clone());
+    this.states.setValue('uModelMatrix', this.states.uModelMatrix.clone());
     this.states.uModelMatrix.reset();
-    this.states.setValue("uViewMatrix", this.states.uViewMatrix.clone());
+    this.states.setValue('uViewMatrix', this.states.uViewMatrix.clone());
     this.states.uViewMatrix.set(this.states.curCamera.cameraMatrix);
     return this;
   }
@@ -1397,12 +1508,25 @@ export class Renderer3D extends Renderer {
     else if (this.states._useNormalMaterial) {
       return this._getNormalShader();
     }
-    // Use light shader if lighting or textures are enabled
+    // Use light shader if lighting or textures are enabled. only reach for the
+    // heavier map variant when the current part actually binds an mtl map.
     else if (this.states.enableLighting || this.states._tex) {
-      return this._getLightShader();
+      return this._getLightShader(this._hasActiveTextureMap());
     }
     // Default to color shader if no other conditions are met
     return this._getColorShader();
+  }
+
+  // true when the current material has any mtl texture map bound (specular,
+  // ambient, shininess or normal). drives both shader-variant selection and
+  // whether the map uniforms are worth binding at all.
+  _hasActiveTextureMap() {
+    return !!(
+      this.states._specularTex ||
+      this.states._ambientTex ||
+      this.states._shininessTex ||
+      this.states._normalTex
+    );
   }
 
   baseMaterialShader() {
@@ -1441,45 +1565,45 @@ export class Renderer3D extends Renderer {
     const modelViewMatrix = modelMatrix.copy().mult(viewMatrix);
 
     shader.setUniform(
-      "uPerspective",
+      'uPerspective',
       this.states.curCamera.useLinePerspective ? 1 : 0
     );
-    shader.setUniform("uViewMatrix", viewMatrix.mat4);
-    shader.setUniform("uProjectionMatrix", projectionMatrix.mat4);
-    shader.setUniform("uModelMatrix", modelMatrix.mat4);
-    shader.setUniform("uModelViewMatrix", modelViewMatrix.mat4);
+    shader.setUniform('uViewMatrix', viewMatrix.mat4);
+    shader.setUniform('uProjectionMatrix', projectionMatrix.mat4);
+    shader.setUniform('uModelMatrix', modelMatrix.mat4);
+    shader.setUniform('uModelViewMatrix', modelViewMatrix.mat4);
     if (shader.uniforms.uModelViewProjectionMatrix) {
       const modelViewProjectionMatrix = modelViewMatrix.copy();
       modelViewProjectionMatrix.mult(projectionMatrix);
       shader.setUniform(
-        "uModelViewProjectionMatrix",
+        'uModelViewProjectionMatrix',
         modelViewProjectionMatrix.mat4
       );
     }
     if (shader.uniforms.uNormalMatrix) {
       this.scratchMat3.inverseTranspose4x4(modelViewMatrix);
-      shader.setUniform("uNormalMatrix", this.scratchMat3.mat3);
+      shader.setUniform('uNormalMatrix', this.scratchMat3.mat3);
     }
     if (shader.uniforms.uModelNormalMatrix) {
       this.scratchMat3.inverseTranspose4x4(this.states.uModelMatrix);
-      shader.setUniform("uModelNormalMatrix", this.scratchMat3.mat3);
+      shader.setUniform('uModelNormalMatrix', this.scratchMat3.mat3);
     }
     if (shader.uniforms.uCameraNormalMatrix) {
       this.scratchMat3.inverseTranspose4x4(this.states.uViewMatrix);
-      shader.setUniform("uCameraNormalMatrix", this.scratchMat3.mat3);
+      shader.setUniform('uCameraNormalMatrix', this.scratchMat3.mat3);
     }
-    shader.setUniform("uViewport", this._viewport);
+    shader.setUniform('uViewport', this._viewport);
   }
 
   _setStrokeUniforms(strokeShader) {
     // set the uniform values
-    strokeShader.setUniform("uSimpleLines", this._simpleLines);
-    strokeShader.setUniform("uUseLineColor", this._useLineColor);
-    strokeShader.setUniform("uMaterialColor", this.states.curStrokeColor);
-    strokeShader.setUniform("uStrokeWeight", this.states.strokeWeight);
-    strokeShader.setUniform("uStrokeCap", STROKE_CAP_ENUM[this.curStrokeCap]);
+    strokeShader.setUniform('uSimpleLines', this._simpleLines);
+    strokeShader.setUniform('uUseLineColor', this._useLineColor);
+    strokeShader.setUniform('uMaterialColor', this.states.curStrokeColor);
+    strokeShader.setUniform('uStrokeWeight', this.states.strokeWeight);
+    strokeShader.setUniform('uStrokeCap', STROKE_CAP_ENUM[this.curStrokeCap]);
     strokeShader.setUniform(
-      "uStrokeJoin",
+      'uStrokeJoin',
       STROKE_JOIN_ENUM[this.curStrokeJoin]
     );
   }
@@ -1497,9 +1621,9 @@ export class Renderer3D extends Renderer {
     }
 
     // TODO: optimize
-    fillShader.setUniform("uUseVertexColor", this._useVertexColor);
-    fillShader.setUniform("uMaterialColor", this.states.curFillColor);
-    fillShader.setUniform("isTexture", !!this.states._tex);
+    fillShader.setUniform('uUseVertexColor', this._useVertexColor);
+    fillShader.setUniform('uMaterialColor', this.states.curFillColor);
+    fillShader.setUniform('isTexture', !!this.states._tex);
     // We need to explicitly set uSampler back to an empty texture here.
     // In general, we record the last set texture so we can re-apply it
     // the next time a shader is used. However, the texture() function
@@ -1507,55 +1631,87 @@ export class Renderer3D extends Renderer {
     // been cleared, we also need to clear the value in uSampler to match.
     this._settingFillUniforms = true;
     if (this.states._tex || !fillShader._userSetSampler) {
-      fillShader.setUniform("uSampler", this.states._tex || empty);
+      fillShader.setUniform('uSampler', this.states._tex || empty);
     }
     this._settingFillUniforms = false;
+    // mtl texture maps only exist in the USE_TEXTURE_MAPS shader variant, which
+    // is only selected when a part actually binds one. so for the common case
+    // (lit scene, no maps) we skip all of these setUniform calls entirely and
+    // the plain phong shader carries none of the map uniforms. bind all four
+    // pairs together since the variant declares all of them.
+    if (this._hasActiveTextureMap()) {
+      // specular map (map_Ks)
+      fillShader.setUniform('uHasSpecularTex', !!this.states._specularTex);
+      fillShader.setUniform('uSpecularSampler', this.states._specularTex || empty);
+      // ambient map (map_Ka)
+      fillShader.setUniform('uHasAmbientTex', !!this.states._ambientTex);
+      fillShader.setUniform('uAmbientSampler', this.states._ambientTex || empty);
+      // shininess map (map_Ns): scales base shininess by the map's red channel
+      fillShader.setUniform('uHasShininessTex', !!this.states._shininessTex);
+      fillShader.setUniform(
+        'uShininessSampler',
+        this.states._shininessTex || empty
+      );
+      // normal map (map_Bump): perturbs the surface normal in tangent space
+      fillShader.setUniform('uHasNormalMap', !!this.states._normalTex);
+      fillShader.setUniform('uNormalSampler', this.states._normalTex || empty);
+      fillShader.setUniform('uNormalScale', this.states._normalScale);
+      fillShader.setUniform('uNormalMapMode', this.states._normalMapMode);
+      // a bump map reads its neighbours to find the slope, so it needs to know
+      // how far apart texels are. falls back to a sane size for sources that
+      // don't report their dimensions.
+      const normalTex = this.states._normalTex;
+      fillShader.setUniform('uNormalTexelSize', [
+        1 / (normalTex && normalTex.width ? normalTex.width : 256),
+        1 / (normalTex && normalTex.height ? normalTex.height : 256)
+      ]);
+    }
     fillShader.setUniform(
-      "uTint",
+      'uTint',
       this.states.tint?._getRGBA([255, 255, 255, 255]) ?? [255, 255, 255, 255]
     );
 
-    fillShader.setUniform("uHasSetAmbient", this.states._hasSetAmbient);
-    fillShader.setUniform("uAmbientMatColor", this.states.curAmbientColor);
-    fillShader.setUniform("uSpecularMatColor", this.mixedSpecularColor);
-    fillShader.setUniform("uEmissiveMatColor", this.states.curEmissiveColor);
-    fillShader.setUniform("uSpecular", this.states._useSpecularMaterial);
-    fillShader.setUniform("uEmissive", this.states._useEmissiveMaterial);
-    fillShader.setUniform("uShininess", this.states._useShininess);
-    fillShader.setUniform("uMetallic", this.states._useMetalness);
+    fillShader.setUniform('uHasSetAmbient', this.states._hasSetAmbient);
+    fillShader.setUniform('uAmbientMatColor', this.states.curAmbientColor);
+    fillShader.setUniform('uSpecularMatColor', this.mixedSpecularColor);
+    fillShader.setUniform('uEmissiveMatColor', this.states.curEmissiveColor);
+    fillShader.setUniform('uSpecular', this.states._useSpecularMaterial);
+    fillShader.setUniform('uEmissive', this.states._useEmissiveMaterial);
+    fillShader.setUniform('uShininess', this.states._useShininess);
+    fillShader.setUniform('uMetallic', this.states._useMetalness);
 
     this._setImageLightUniforms(fillShader);
 
-    fillShader.setUniform("uUseLighting", this.states.enableLighting);
+    fillShader.setUniform('uUseLighting', this.states.enableLighting);
 
     const pointLightCount = this.states.pointLightDiffuseColors.length / 3;
-    fillShader.setUniform("uPointLightCount", pointLightCount);
+    fillShader.setUniform('uPointLightCount', pointLightCount);
     fillShader.setUniform(
-      "uPointLightLocation",
+      'uPointLightLocation',
       this.states.pointLightPositions
     );
     fillShader.setUniform(
-      "uPointLightDiffuseColors",
+      'uPointLightDiffuseColors',
       this.states.pointLightDiffuseColors
     );
     fillShader.setUniform(
-      "uPointLightSpecularColors",
+      'uPointLightSpecularColors',
       this.states.pointLightSpecularColors
     );
 
     const directionalLightCount =
       this.states.directionalLightDiffuseColors.length / 3;
-    fillShader.setUniform("uDirectionalLightCount", directionalLightCount);
+    fillShader.setUniform('uDirectionalLightCount', directionalLightCount);
     fillShader.setUniform(
-      "uLightingDirection",
+      'uLightingDirection',
       this.states.directionalLightDirections
     );
     fillShader.setUniform(
-      "uDirectionalDiffuseColors",
+      'uDirectionalDiffuseColors',
       this.states.directionalLightDiffuseColors
     );
     fillShader.setUniform(
-      "uDirectionalSpecularColors",
+      'uDirectionalSpecularColors',
       this.states.directionalLightSpecularColors
     );
 
@@ -1573,33 +1729,33 @@ export class Renderer3D extends Renderer {
         }
       }
     }
-    fillShader.setUniform("uAmbientColor", mixedAmbientLight);
+    fillShader.setUniform('uAmbientColor', mixedAmbientLight);
 
     const spotLightCount = this.states.spotLightDiffuseColors.length / 3;
-    fillShader.setUniform("uSpotLightCount", spotLightCount);
-    fillShader.setUniform("uSpotLightAngle", this.states.spotLightAngle);
-    fillShader.setUniform("uSpotLightConc", this.states.spotLightConc);
+    fillShader.setUniform('uSpotLightCount', spotLightCount);
+    fillShader.setUniform('uSpotLightAngle', this.states.spotLightAngle);
+    fillShader.setUniform('uSpotLightConc', this.states.spotLightConc);
     fillShader.setUniform(
-      "uSpotLightDiffuseColors",
+      'uSpotLightDiffuseColors',
       this.states.spotLightDiffuseColors
     );
     fillShader.setUniform(
-      "uSpotLightSpecularColors",
+      'uSpotLightSpecularColors',
       this.states.spotLightSpecularColors
     );
-    fillShader.setUniform("uSpotLightLocation", this.states.spotLightPositions);
+    fillShader.setUniform('uSpotLightLocation', this.states.spotLightPositions);
     fillShader.setUniform(
-      "uSpotLightDirection",
+      'uSpotLightDirection',
       this.states.spotLightDirections
     );
 
     fillShader.setUniform(
-      "uConstantAttenuation",
+      'uConstantAttenuation',
       this.states.constantAttenuation
     );
-    fillShader.setUniform("uLinearAttenuation", this.states.linearAttenuation);
+    fillShader.setUniform('uLinearAttenuation', this.states.linearAttenuation);
     fillShader.setUniform(
-      "uQuadraticAttenuation",
+      'uQuadraticAttenuation',
       this.states.quadraticAttenuation
     );
   }
@@ -1607,19 +1763,19 @@ export class Renderer3D extends Renderer {
   // getting called from _setFillUniforms
   _setImageLightUniforms(shader) {
     //set uniform values
-    shader.setUniform("uUseImageLight", this.states.activeImageLight != null);
+    shader.setUniform('uUseImageLight', this.states.activeImageLight != null);
     // true
     if (this.states.activeImageLight) {
       // this.states.activeImageLight has image as a key
       // look up the texture from the diffusedTexture map
       let diffusedLight = this.getDiffusedTexture(this.states.activeImageLight);
-      shader.setUniform("environmentMapDiffused", diffusedLight);
+      shader.setUniform('environmentMapDiffused', diffusedLight);
       let specularLight = this.getSpecularTexture(this.states.activeImageLight);
 
-      shader.setUniform("environmentMapSpecular", specularLight);
+      shader.setUniform('environmentMapSpecular', specularLight);
     } else {
-      shader.setUniform("environmentMapDiffused", this._getEmptyTexture());
-      shader.setUniform("environmentMapSpecular", this._getEmptyTexture());
+      shader.setUniform('environmentMapDiffused', this._getEmptyTexture());
+      shader.setUniform('environmentMapSpecular', this._getEmptyTexture());
     }
   }
 
@@ -1685,8 +1841,8 @@ export class Renderer3D extends Renderer {
       Float64Array,
       Int16Array,
       Uint16Array,
-      Uint32Array,
-    ].some((x) => arr instanceof x);
+      Uint32Array
+    ].some(x => arr instanceof x);
   }
 
   /**
@@ -1698,7 +1854,7 @@ export class Renderer3D extends Renderer {
    * [1, 2, 3, 4, 5, 6]
    */
   _vToNArray(arr) {
-    return arr.flatMap((item) => [item.x, item.y, item.z]);
+    return arr.flatMap(item => [item.x, item.y, item.z]);
   }
 
   ///////////////////////////////
@@ -1731,8 +1887,10 @@ export class Renderer3D extends Renderer {
   _positionLines(x, y, width, height, lines) {
     let { textLeading, textAlign } = this.states;
     const widths = lines.map(line => this._fontWidthSingle(line));
-    let adjustedX, lineData = new Array(lines.length);
-    let adjustedW = typeof width === 'undefined' ? Math.max(0, ...widths) : width;
+    let adjustedX,
+      lineData = new Array(lines.length);
+    let adjustedW =
+      typeof width === 'undefined' ? Math.max(0, ...widths) : width;
     let adjustedH = typeof height === 'undefined' ? 0 : height;
 
     for (let i = 0; i < lines.length; i++) {
@@ -1743,10 +1901,8 @@ export class Renderer3D extends Renderer {
           adjustedX = x;
           break;
         case constants.CENTER:
-          adjustedX = x +
-            (adjustedW - widths[i]) / 2 -
-            adjustedW / 2 +
-            (width || 0) / 2;
+          adjustedX =
+            x + (adjustedW - widths[i]) / 2 - adjustedW / 2 + (width || 0) / 2;
           break;
         case constants.RIGHT:
           adjustedX = x + adjustedW - widths[i] - adjustedW + (width || 0);
@@ -1763,12 +1919,14 @@ export class Renderer3D extends Renderer {
     return this._yAlignOffset(lineData, adjustedH);
   }
 
-  _verticalAlignFont = function() {
+  _verticalAlignFont = function () {
     const ctx = this.textDrawingContext();
     const metrics = ctx.measureText('X');
-    return -metrics.alphabeticBaseline ||
-      (-metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent);
-  }
+    return (
+      -metrics.alphabeticBaseline ||
+      -metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent
+    );
+  };
 
   _yAlignOffset(dataArr, height) {
     if (typeof height === 'undefined') {
@@ -1776,17 +1934,23 @@ export class Renderer3D extends Renderer {
     }
 
     let { textLeading, textBaseline, textSize, textFont } = this.states;
-    let yOff = 0, numLines = dataArr.length;
-    let totalHeight = textSize * numLines +
-      ((textLeading - textSize) * (numLines - 1));
-    switch (textBaseline) { // drawingContext ?
+    let yOff = 0,
+      numLines = dataArr.length;
+    let totalHeight =
+      textSize * numLines + (textLeading - textSize) * (numLines - 1);
+    switch (
+      textBaseline // drawingContext ?
+    ) {
       case constants.TOP:
         yOff = this._verticalAlignFont();
         break;
       case constants.BASELINE:
         break;
       case textCoreConstants._CTX_MIDDLE:
-        yOff = (-totalHeight + textSize + (height || 0)) / 2 + this._verticalAlignFont() + this._middleAlignOffset();
+        yOff =
+          (-totalHeight + textSize + (height || 0)) / 2 +
+          this._verticalAlignFont() +
+          this._middleAlignOffset();
         break;
       case constants.BOTTOM:
         yOff = -(totalHeight - textSize) + (height || 0);
@@ -1795,7 +1959,7 @@ export class Renderer3D extends Renderer {
         console.warn(`${textBaseline} is not supported in WebGL mode.`); // FES?
         break;
     }
-    dataArr.forEach(ele => ele.y += yOff);
+    dataArr.forEach(ele => (ele.y += yOff));
     return dataArr;
   }
 
@@ -1829,17 +1993,17 @@ export class Renderer3D extends Renderer {
     newFramebuffer = new Framebuffer(this, {
       width,
       height,
-      density: 1,
+      density: 1
     });
     // create framebuffer is like making a new sketch, all functions on main
     // sketch it would be available on framebuffer
     if (!this.diffusedShader) {
-      this.diffusedShader = this._createImageLightShader("diffused");
+      this.diffusedShader = this._createImageLightShader('diffused');
     }
     newFramebuffer.draw(() => {
       this.shader(this.diffusedShader);
       this._setImageLightShaderUniforms(this.diffusedShader, input);
-      this.states.setValue("strokeColor", null);
+      this.states.setValue('strokeColor', null);
       this.noLights();
       this.plane(width, height);
     });
@@ -1871,7 +2035,7 @@ export class Renderer3D extends Renderer {
     let count = Math.floor(Math.log2(size)) + 1; // Actual number of mip levels from size down to 1x1
 
     if (!this.specularShader) {
-      this.specularShader = this._createImageLightShader("specular");
+      this.specularShader = this._createImageLightShader('specular');
     }
 
     // Prepare mipmap level accumulator
@@ -1880,7 +2044,7 @@ export class Renderer3D extends Renderer {
     const framebuffer = new Framebuffer(this, {
       width: size,
       height: size,
-      density: 1,
+      density: 1
     });
 
     // currently only 8 levels
@@ -1899,9 +2063,9 @@ export class Renderer3D extends Renderer {
         this._setImageLightShaderUniforms(
           this.specularShader,
           input,
-          roughness,
+          roughness
         );
-        this.states.setValue("strokeColor", null);
+        this.states.setValue('strokeColor', null);
         this.noLights();
         this.plane(w, w);
       });
@@ -1926,47 +2090,50 @@ export class Renderer3D extends Renderer {
   _getSphereMapping(img) {
     if (!this.sphereMapping) {
       const p5 = this._pInst;
-      this.sphereMapping = this.baseFilterShader().modify(({ p5 }) => {
-        const uEnvMap = p5.uniformTexture('uEnvMap');
-        const uFovY = p5.uniformFloat('uFovY');
-        const uAspect = p5.uniformFloat('uAspect');
-        // Hack: we don't have matrix uniforms yet; use three vectors
-        const uN1 = p5.uniformVec3('uN1');
-        const uN2 = p5.uniformVec3('uN2');
-        const uN3 = p5.uniformVec3('uN3');
-        p5.getColor((inputs) => {
-          const uFovX = uFovY * uAspect;
-          const angleY = p5.mix(uFovY/2.0,  -uFovY/2.0, inputs.texCoord.y);
-          const angleX = p5.mix(uFovX/2.0, -uFovX/2.0, inputs.texCoord.x);
-          let rotatedNormal = p5.normalize([angleX, angleY, 1]);
-          rotatedNormal = [
-            // Don't mind me, just doing matrix vector multiplication...
-            p5.dot(rotatedNormal, uN1),
-            p5.dot(rotatedNormal, uN2),
-            p5.dot(rotatedNormal, uN3),
-          ];
-          const temp = rotatedNormal.z;
-          rotatedNormal.z = rotatedNormal.x;
-          rotatedNormal.x = -temp;
-          const suv = [
-            p5.atan(rotatedNormal.z, rotatedNormal.x) / (2.0 * p5.PI) + 0.5,
-            0.5 + 0.5 * (-rotatedNormal.y)
-          ];
-          return p5.getTexture(uEnvMap, suv);
-        })
-      }, { p5 });
+      this.sphereMapping = this.baseFilterShader().modify(
+        ({ p5 }) => {
+          const uEnvMap = p5.uniformTexture('uEnvMap');
+          const uFovY = p5.uniformFloat('uFovY');
+          const uAspect = p5.uniformFloat('uAspect');
+          // Hack: we don't have matrix uniforms yet; use three vectors
+          const uN1 = p5.uniformVec3('uN1');
+          const uN2 = p5.uniformVec3('uN2');
+          const uN3 = p5.uniformVec3('uN3');
+          p5.getColor(inputs => {
+            const uFovX = uFovY * uAspect;
+            const angleY = p5.mix(uFovY / 2.0, -uFovY / 2.0, inputs.texCoord.y);
+            const angleX = p5.mix(uFovX / 2.0, -uFovX / 2.0, inputs.texCoord.x);
+            let rotatedNormal = p5.normalize([angleX, angleY, 1]);
+            rotatedNormal = [
+              // Don't mind me, just doing matrix vector multiplication...
+              p5.dot(rotatedNormal, uN1),
+              p5.dot(rotatedNormal, uN2),
+              p5.dot(rotatedNormal, uN3)
+            ];
+            const temp = rotatedNormal.z;
+            rotatedNormal.z = rotatedNormal.x;
+            rotatedNormal.x = -temp;
+            const suv = [
+              p5.atan(rotatedNormal.z, rotatedNormal.x) / (2.0 * p5.PI) + 0.5,
+              0.5 + 0.5 * -rotatedNormal.y
+            ];
+            return p5.getTexture(uEnvMap, suv);
+          });
+        },
+        { p5 }
+      );
     }
     this.scratchMat3.inverseTranspose4x4(this.states.uViewMatrix);
     this.scratchMat3.invert(this.scratchMat3); // uNMMatrix is 3x3
-    this.sphereMapping.setUniform("uFovY", this.states.curCamera.cameraFOV);
-    this.sphereMapping.setUniform("uAspect", this.states.curCamera.aspectRatio);
+    this.sphereMapping.setUniform('uFovY', this.states.curCamera.cameraFOV);
+    this.sphereMapping.setUniform('uAspect', this.states.curCamera.aspectRatio);
     // Pass in the normal matrix as three vectors. TODO replace this with
     // an actual matrix uniform once we have those again.
     const m = this.scratchMat3.mat3;
-    this.sphereMapping.setUniform("uN1", [m[0], m[3], m[6]]);
-    this.sphereMapping.setUniform("uN2", [m[1], m[4], m[7]]);
-    this.sphereMapping.setUniform("uN3", [m[2], m[5], m[8]]);
-    this.sphereMapping.setUniform("uEnvMap", img);
+    this.sphereMapping.setUniform('uN1', [m[0], m[3], m[6]]);
+    this.sphereMapping.setUniform('uN2', [m[1], m[4], m[7]]);
+    this.sphereMapping.setUniform('uN3', [m[2], m[5], m[8]]);
+    this.sphereMapping.setUniform('uEnvMap', img);
     return this.sphereMapping;
   }
 
@@ -1975,32 +2142,32 @@ export class Renderer3D extends Renderer {
    */
   _createImageLightShader(type) {
     throw new Error(
-      "_createImageLightShader must be implemented by the renderer",
+      '_createImageLightShader must be implemented by the renderer'
     );
   }
 
   _setImageLightShaderUniforms(shader, input, roughness) {
-    shader.setUniform("environmentMap", input);
+    shader.setUniform('environmentMap', input);
     if (roughness !== undefined) {
-      shader.setUniform("roughness", roughness);
+      shader.setUniform('roughness', roughness);
     }
   }
 
   _createMipmapTexture(levels) {
-    throw new Error("_createMipmapTexture must be implemented by the renderer");
+    throw new Error('_createMipmapTexture must be implemented by the renderer');
   }
 
   _prepareMipmapData(size, mipLevels) {
-    throw new Error("_prepareMipmapData must be implemented by the renderer");
+    throw new Error('_prepareMipmapData must be implemented by the renderer');
   }
 
   _accumulateMipLevel(framebuffer, mipmapData, mipLevel, width, height) {
-    throw new Error("_accumulateMipLevel must be implemented by the renderer");
+    throw new Error('_accumulateMipLevel must be implemented by the renderer');
   }
 
   _finalizeMipmapTexture(mipmapData) {
     throw new Error(
-      "_finalizeMipmapTexture must be implemented by the renderer",
+      '_finalizeMipmapTexture must be implemented by the renderer'
     );
   }
 
@@ -2012,12 +2179,13 @@ export class Renderer3D extends Renderer {
   }
 }
 
-const webGPUAddonMessage = 'Add the WebGPU add-on to your project and pass WEBGPU as the last argument to createCanvas.';
+const webGPUAddonMessage =
+  'Add the WebGPU add-on to your project and pass WEBGPU as the last argument to createCanvas.';
 
 function renderer3D(p5, fn) {
   p5.Renderer3D = Renderer3D;
 
-  ShapeBuilder.prototype.friendlyErrorsDisabled = function() {
+  ShapeBuilder.prototype.friendlyErrorsDisabled = function () {
     return Boolean(p5.disableFriendlyErrors);
   };
 
@@ -2038,55 +2206,55 @@ function renderer3D(p5, fn) {
    * item is accessed by index, and its properties are available by name.
    *
    * ```js example
-    * let instanceData;
-    * let instancesShader;
-    * let count = 5;
-    *
-    * async function setup() {
-    *   await createCanvas(200, 200, WEBGPU);
-    *
-    *   let data = [];
-    *   for (let i = 0; i < count; i++) {
-    *     data.push({
-    *       position: createVector(
-    *         random(-1, 1) * width / 2,
-    *         random(-1, 1) * height / 2,
-    *         0,
-    *       ),
-    *       color: color(
-    *         random(255),
-    *         random(255),
-    *         random(255)
-    *       )
-    *     });
-    *   }
-    *   instanceData = createStorage(data);
-    *   instancesShader = buildMaterialShader(drawInstances);
-    *   describe('Five spheres at random positions, each a different random color.');
-    * }
-    *
-    * function drawInstances() {
-    *   let data = uniformStorage(instanceData);
-    *   let itemColor = sharedVec4();
-    *
-    *   worldInputs.begin();
-    *   let item = data[instanceIndex];
-    *   itemColor = item.color;
-    *   worldInputs.position += item.position;
-    *   worldInputs.end();
-    *
-    *   finalColor.begin();
-    *   finalColor.set(itemColor);
-    *   finalColor.end();
-    * }
-    *
-    * function draw() {
-    *   background(220);
-    *   lights();
-    *   noStroke();
-    *   shader(instancesShader);
-    *   instances(count).sphere(15);
-    * }
+   * let instanceData;
+   * let instancesShader;
+   * let count = 5;
+   *
+   * async function setup() {
+   *   await createCanvas(200, 200, WEBGPU);
+   *
+   *   let data = [];
+   *   for (let i = 0; i < count; i++) {
+   *     data.push({
+   *       position: createVector(
+   *         random(-1, 1) * width / 2,
+   *         random(-1, 1) * height / 2,
+   *         0,
+   *       ),
+   *       color: color(
+   *         random(255),
+   *         random(255),
+   *         random(255)
+   *       )
+   *     });
+   *   }
+   *   instanceData = createStorage(data);
+   *   instancesShader = buildMaterialShader(drawInstances);
+   *   describe('Five spheres at random positions, each a different random color.');
+   * }
+   *
+   * function drawInstances() {
+   *   let data = uniformStorage(instanceData);
+   *   let itemColor = sharedVec4();
+   *
+   *   worldInputs.begin();
+   *   let item = data[instanceIndex];
+   *   itemColor = item.color;
+   *   worldInputs.position += item.position;
+   *   worldInputs.end();
+   *
+   *   finalColor.begin();
+   *   finalColor.set(itemColor);
+   *   finalColor.end();
+   * }
+   *
+   * function draw() {
+   *   background(220);
+   *   lights();
+   *   noStroke();
+   *   shader(instancesShader);
+   *   instances(count).sphere(15);
+   * }
    * ```
    *
    * You can also store a plain list of numbers by passing an array of numbers.
@@ -2584,6 +2752,6 @@ function renderer3D(p5, fn) {
 
 export default renderer3D;
 
-if (typeof p5 !== "undefined") {
+if (typeof p5 !== 'undefined') {
   renderer3D(p5, p5.prototype);
 }
