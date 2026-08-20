@@ -7,7 +7,7 @@ import {
   StatementType,
   OpCode
 } from './ir_types';
-import { StrandsNode, createStrandsNode } from './strands_node';
+import { createStrandsNode } from './strands_node';
 import { primitiveConstructorNode } from './ir_builders';
 import { createPhiNode } from './strands_phi_utils';
 

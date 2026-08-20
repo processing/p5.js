@@ -526,7 +526,7 @@ export const wgslBackend = {
         } else {
           return node.value;
         }
-      case NodeType.VARIABLE:
+      case NodeType.VARIABLE: {
         // Track shared variable usage context
         if (
           generationContext.shaderContext &&
@@ -567,7 +567,8 @@ export const wgslBackend = {
         }
 
         return node.identifier;
-      case NodeType.OPERATION:
+      }
+      case NodeType.OPERATION: {
         const useParantheses = node.usedBy.length > 0;
         if (node.opCode === OpCode.Nary.CONSTRUCTOR) {
           // TODO: differentiate casts and constructors for more efficient codegen.
@@ -706,6 +707,10 @@ export const wgslBackend = {
           const sym = OpCodeToSymbol[node.opCode];
           return `${sym}${val}`;
         }
+        return FES.internalError(
+          `Operation with opCode ${node.opCode} is not supported in expressions`
+        );
+      }
       case NodeType.PHI:
         // Phi nodes represent conditional merging of values
         // If this phi node has an identifier (like varying variables), use that
@@ -731,9 +736,11 @@ export const wgslBackend = {
           }
         }
       case NodeType.ASSIGNMENT:
-        FES.internalError(`ASSIGNMENT nodes should not be used as expressions`);
+        return FES.internalError(
+          `ASSIGNMENT nodes should not be used as expressions`
+        );
       default:
-        FES.internalError(
+        return FES.internalError(
           `${NodeTypeToName[node.nodeType]} code generation not implemented yet`
         );
     }

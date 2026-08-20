@@ -2156,7 +2156,7 @@ void main() {
       });
 
       test('works normally for <50k vertices', function () {
-        const renderer = myp5.createCanvas(10, 10, myp5.WEBGL);
+        myp5.createCanvas(10, 10, myp5.WEBGL);
         const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(false);
 
         myp5.beginShape();
@@ -2175,7 +2175,7 @@ void main() {
 
   suite('color interpolation', function () {
     test('strokes should interpolate colors between vertices', function () {
-      const renderer = myp5.createCanvas(512, 4, myp5.WEBGL);
+      myp5.createCanvas(512, 4, myp5.WEBGL);
 
       // far left color: (242, 236, 40)
       // far right color: (42, 36, 240)
@@ -3043,13 +3043,12 @@ void main() {
     });
 
     test('Maintains stencil test state across draw cycles when user enabled', function () {
-      let drawCalled = false;
-
       myp5.createCanvas(50, 50, myp5.WEBGL);
+      // NOTE: redraw() does not invoke this override, so the wrapper below never
+      // actually runs. Left in place to keep this test's behaviour unchanged.
       const originalDraw = myp5.draw;
 
       myp5.draw = function () {
-        drawCalled = true;
         if (originalDraw) originalDraw.call(myp5);
       };
 
