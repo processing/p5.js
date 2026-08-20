@@ -421,13 +421,6 @@ export class Renderer3D extends Renderer {
     }
   }
 
-  remove() {
-    this.wrappedElt.remove();
-    this.wrappedElt = null;
-    this.canvas = null;
-    this.elt = null;
-  }
-
   //////////////////////////////////////////////
   // Geometry Building
   //////////////////////////////////////////////
@@ -1315,7 +1308,7 @@ export class Renderer3D extends Renderer {
     for (const savedKey in props) {
       try {
         this.drawingContext[savedKey] = props[savedKey];
-      } catch (err) {
+      } catch {
         // ignore read-only property errors
       }
     }
@@ -1883,7 +1876,7 @@ export class Renderer3D extends Renderer {
       throw Error('_yAlignOffset: height is required');
     }
 
-    let { textLeading, textBaseline, textSize, textFont } = this.states;
+    let { textLeading, textBaseline, textSize } = this.states;
     let yOff = 0,
       numLines = dataArr.length;
     let totalHeight =
@@ -2125,6 +2118,10 @@ export class Renderer3D extends Renderer {
     if (this._textCanvas) {
       this._textCanvas.parentElement.removeChild(this._textCanvas);
     }
+    this.wrappedElt.remove();
+    this.wrappedElt = null;
+    this.canvas = null;
+    this.elt = null;
     super.remove();
   }
 }

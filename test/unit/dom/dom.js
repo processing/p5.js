@@ -947,6 +947,8 @@ suite('DOM', function () {
     });
 
     const emptyCallback = () => {};
+    // Used by the commented-out file-input tests further down in this suite.
+    /* oxlint-disable-next-line no-unused-vars */
     const createDummyFile = filename => {
       return new File(['testFileBlob'], filename, {
         type: 'text/plain'

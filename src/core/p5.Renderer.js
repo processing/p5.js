@@ -447,25 +447,5 @@ function renderer(p5, fn) {
   p5.Renderer = Renderer;
 }
 
-/**
- * Helper fxn to measure ascent and descent.
- * Adapted from http://stackoverflow.com/a/25355178
- * @private
- */
-function calculateOffset(object) {
-  let currentLeft = 0,
-    currentTop = 0;
-  if (object.offsetParent) {
-    do {
-      currentLeft += object.offsetLeft;
-      currentTop += object.offsetTop;
-    } while ((object = object.offsetParent));
-  } else {
-    currentLeft += object.offsetLeft;
-    currentTop += object.offsetTop;
-  }
-  return [currentLeft, currentTop];
-}
-
 export default renderer;
 export { Renderer };

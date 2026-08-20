@@ -1846,10 +1846,8 @@ class Geometry {
       },
       //Setters
       setCurrentData(data) {
-        const size = data.length ? data.length : 1;
-        // if (size != this.getDataSize()){
-        //   p5._friendlyError(`Custom vertex property '${this.name}' has been set with various data sizes. You can change it's name, or if it was an accident, set '${this.name}' to have the same number of inputs each time!`, 'vertexProperty()');
-        // }
+        // TODO: warn via the FES when the incoming data size, i.e.
+        // `data.length ? data.length : 1`, differs from this.getDataSize().
         this.currentData = data;
       },
       // Utilities
