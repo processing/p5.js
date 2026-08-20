@@ -2734,6 +2734,8 @@ function primitives3D(p5, fn) {
       rect: wrap(this.rect, this),
       quad: wrap(this.quad, this),
       ellipse: wrap(this.ellipse, this),
+      circle: wrap(this.circle, this),
+      square: wrap(this.square, this),
       arc: wrap(this.arc, this),
       model: wrap(r.model),
       line: wrap(this.line, this),

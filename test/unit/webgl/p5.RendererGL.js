@@ -3241,4 +3241,81 @@ void main() {
       expect(widthAfterPop).toBeLessThan(widthAt20);
     });
   });
+
+  suite('material map setters', function () {
+    const img = { width: 1, height: 1 };
+
+    test('normalTexture() sets the normal map + strength and null clears it',
+      function () {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+        myp5.normalTexture(img, 2);
+        expect(myp5._renderer.states._normalTex).toBe(img);
+        expect(myp5._renderer.states._normalScale).toEqual(2);
+        myp5.normalTexture(null);
+        expect(myp5._renderer.states._normalTex).toBeNull();
+        expect(myp5._renderer.states._normalScale).toEqual(1);
+      }
+    );
+
+    test('bumpTexture() sets the map in height mode and null clears it',
+      function () {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+        myp5.bumpTexture(img, 3);
+        expect(myp5._renderer.states._normalTex).toBe(img);
+        expect(myp5._renderer.states._normalScale).toEqual(3);
+        // mode 1 tells the shader to read the map as heights
+        expect(myp5._renderer.states._normalMapMode).toEqual(1);
+        myp5.bumpTexture(null);
+        expect(myp5._renderer.states._normalTex).toBeNull();
+        expect(myp5._renderer.states._normalMapMode).toEqual(0);
+      }
+    );
+
+    test('bump and normal maps share one slot, so setting one replaces the other',
+      function () {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+        const other = { width: 1, height: 1 };
+
+        myp5.bumpTexture(img);
+        expect(myp5._renderer.states._normalMapMode).toEqual(1);
+
+        // switching to a normal map keeps a single active map, in mode 0
+        myp5.normalTexture(other);
+        expect(myp5._renderer.states._normalTex).toBe(other);
+        expect(myp5._renderer.states._normalMapMode).toEqual(0);
+
+        myp5.bumpTexture(img);
+        expect(myp5._renderer.states._normalTex).toBe(img);
+        expect(myp5._renderer.states._normalMapMode).toEqual(1);
+      }
+    );
+
+    test('specularTexture() sets the map and turns on the specular term',
+      function () {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+        myp5.specularTexture(img);
+        expect(myp5._renderer.states._specularTex).toBe(img);
+        expect(myp5._renderer.states._useSpecularMaterial).toBe(true);
+        myp5.specularTexture(null);
+        expect(myp5._renderer.states._specularTex).toBeNull();
+      }
+    );
+
+    test('ambientTexture() sets the map and marks ambient as set', function () {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+      myp5.ambientTexture(img);
+      expect(myp5._renderer.states._ambientTex).toBe(img);
+      expect(myp5._renderer.states._hasSetAmbient).toBe(true);
+      myp5.ambientTexture(null);
+      expect(myp5._renderer.states._ambientTex).toBeNull();
+    });
+
+    test('shininessTexture() sets and clears the map', function () {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+      myp5.shininessTexture(img);
+      expect(myp5._renderer.states._shininessTex).toBe(img);
+      myp5.shininessTexture(null);
+      expect(myp5._renderer.states._shininessTex).toBeNull();
+    });
+  });
 });

@@ -2663,12 +2663,18 @@ function rendererWebGPU(p5, fn) {
       this._postSubmitCallbacks.push(() => gpuTexture.destroy());
     }
 
-    _getLightShader() {
-      if (!this._defaultLightShader) {
-        this._defaultLightShader = new Shader(
+    // useTextureMaps selects a shader variant that carries the tangent attribute
+    // and normal-map sampling. plain lit materials get the variant without any of
+    // it (webgpu has no #ifdef, so the shader source is built per-flag).
+    _getLightShader(useTextureMaps = false) {
+      const cacheKey = useTextureMaps
+        ? '_defaultLightShaderWithMaps'
+        : '_defaultLightShader';
+      if (!this[cacheKey]) {
+        this[cacheKey] = new Shader(
           this,
-          materialVertexShader,
-          materialFragmentShader,
+          materialVertexShader({ useTextureMaps }),
+          materialFragmentShader({ useTextureMaps }),
           {
             vertex: {
               'void beforeVertex': '() {}',
@@ -2695,7 +2701,7 @@ function rendererWebGPU(p5, fn) {
           }
         );
       }
-      return this._defaultLightShader;
+      return this[cacheKey];
     }
 
     _getColorShader() {
