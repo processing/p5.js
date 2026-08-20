@@ -5,33 +5,6 @@ import image from '../../../src/image/p5.Image';
 import p5 from '../../../src/app.js';
 import { vi } from 'vitest';
 
-/**
- * Expects an image file and a p5 instance with an image file loaded and drawn
- * and checks that they are exactly the same. Sends result to the callback.
- */
-var testImageRender = function (file, sketch) {
-  sketch.loadPixels();
-  var p = sketch.pixels;
-  var ctx = sketch;
-
-  sketch.clear();
-
-  return new Promise(function (resolve, reject) {
-    sketch.loadImage(file, resolve, reject);
-  }).then(function (img) {
-    ctx.image(img, 0, 0);
-
-    ctx.loadPixels();
-    var n = 0;
-    for (var i = 0; i < p.length; i++) {
-      var diff = Math.abs(p[i] - ctx.pixels[i]);
-      n += diff;
-    }
-    var same = n === 0 && ctx.pixels.length === p.length;
-    return same;
-  });
-};
-
 suite('loading images', function () {
   const imagePath = '/test/unit/assets/cat.jpg';
   const singleFrameGif = '/test/unit/assets/target_small.gif';

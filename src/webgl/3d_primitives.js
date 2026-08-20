@@ -1961,6 +1961,7 @@ function primitives3D(p5, fn) {
     this.bezierVertex(x3, y3, z3);
     this.bezierVertex(x4, y4, z4);
     this.endShape();
+    this.bezierOrder(prevOrder);
   };
 
   // pretier-ignore

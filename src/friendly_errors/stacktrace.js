@@ -325,12 +325,6 @@ export const processStack = (error, stacktrace) => {
     // from user's code
     if (friendlyStack.length === 0) return [true, null];
 
-    // get the function just above the topmost frame in the friendlyStack.
-    // i.e the name of the library function called from user's code
-    const func = stacktrace[friendlyStack[0].frameIndex - 1].functionName
-      .split('.')
-      .slice(-1)[0];
-
     // Try and get the location (line no.) from the top element of the stack
     let locationObj;
     if (
@@ -351,6 +345,8 @@ export const processStack = (error, stacktrace) => {
     }
 
     // Library error
+    // `func` below is the name of the library function called from user's code,
+    // i.e. stacktrace[friendlyStack[0].frameIndex - 1].functionName.
     // const message = TL.tl`${locationObj ? TL.tl`[${locationObj.file}, line ${locationObj.line}]` : ''} An error with message "${error.message}" occurred inside the p5js library when ${func} was called. If not stated otherwise, it might be an issue with the arguments passed to ${func}.`;
     // p5._friendlyError(
     //   message,

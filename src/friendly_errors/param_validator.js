@@ -555,6 +555,8 @@ function validateParams(p5, fn, lifecycles) {
           message = FES.log`Expected ${match[1]} at the ${position} parameter in ${func + '()'}.`;
           break;
         }
+        // Unrecognized custom errors fall through to the default logging below.
+        // falls through
       }
       default: {
         console.log('Zod error object', currentError);
@@ -564,7 +566,7 @@ function validateParams(p5, fn, lifecycles) {
     if (isVersionError) {
       FES.log`${message}`();
     } else {
-      const [_null, stacktrace] = processStack(
+      const [, stacktrace] = processStack(
         null,
         errorStackParser.parse(Error()).slice(3)
       );
@@ -624,7 +626,7 @@ function validateParams(p5, fn, lifecycles) {
         success: true,
         data: funcSchemas.parse(args)
       };
-    } catch (error) {
+    } catch {
       const closestSchema = findClosestSchema(funcSchemas, args);
       const zodError = closestSchema.safeParse(args).error;
       const errorMessage = friendlyParamError(zodError, func, args);

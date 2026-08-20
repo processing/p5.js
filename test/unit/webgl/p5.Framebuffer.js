@@ -481,7 +481,7 @@ suite('p5.Framebuffer', function () {
     });
 
     test('get() creates a p5.Image matching the source pixel density', function () {
-      const mainCanvas = myp5.createCanvas(20, 20, myp5.WEBGL);
+      myp5.createCanvas(20, 20, myp5.WEBGL);
       myp5.pixelDensity(2);
       const fbo = myp5.createFramebuffer();
       fbo.draw(() => {

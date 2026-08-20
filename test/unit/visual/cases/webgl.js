@@ -1506,7 +1506,7 @@ visualSuite('WebGL', function () {
         p5.baseMaterialShader().modify(() => {
           undefined.someMethod(); // This will throw an error
         });
-      } catch (e) {}
+      } catch {}
       p5.background('red');
       p5.circle(p5.noise(0), p5.noise(0), 20);
       screenshot();
