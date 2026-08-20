@@ -43,6 +43,23 @@ function rendererWebGPU(p5, fn) {
   const { Renderer3D, Shader, Texture, MipmapTexture, Image, Camera, RGBA } =
     p5;
 
+  // Maps a WGSL storage element type to the typed array that reads it back
+  // correctly. Used to check what a buffer was created with against what the
+  // shader declares.
+  const STORAGE_ARRAY_TYPES = {
+    f32: Float32Array,
+    u32: Uint32Array,
+    i32: Int32Array
+  };
+
+  // atomic<u32> and friends store their underlying type
+  function storageArrayTypeFor(elementType) {
+    if (!elementType) return undefined;
+    return STORAGE_ARRAY_TYPES[
+      elementType.replace(/^atomic<(\w+)>$/, '$1')
+    ];
+  }
+
   class StorageBuffer {
     constructor(
       buffer,
@@ -58,8 +75,9 @@ function rendererWebGPU(p5, fn) {
       this._schema = schema;
       // Struct buffers are always packed as floats
       this._arrayType = schema !== null ? Float32Array : arrayType;
-      // Set once an element type mismatch has been reported for this buffer
-      this._warnedElementType = false;
+      // The element type this buffer has already been checked against, so
+      // the check is skipped on every later frame
+      this._checkedArrayType = undefined;
     }
 
     /**
@@ -220,6 +238,12 @@ function rendererWebGPU(p5, fn) {
      * }
      * ```
      *
+     * While p5.strands is still growing, there may be WGSL features it doesn't
+     * cover yet. You can still reach for them by writing WGSL directly, and the
+     * buffer will read back as the right kind of typed array. Atomics are one
+     * example: WGSL only allows them on `u32` and `i32`, so a buffer used as
+     * `array<atomic<u32>>` should be created with a `Uint32Array`.
+     *
      * ```js example
      * let data;
      * let computeShader;
@@ -228,7 +252,7 @@ function rendererWebGPU(p5, fn) {
      *   await createCanvas(100, 100, WEBGPU);
      *
      *   data = createStorage(new Uint32Array([10, 20, 30, 40]));
-     *   computeShader = baseComputeShader().modify({
+     *   computeShader = buildComputeShader({
      *     computeDeclarations: `
      *       @group(0) @binding(1) var<storage, read_write> counts: array<atomic<u32>>;
      *     `,
@@ -2582,13 +2606,20 @@ function rendererWebGPU(p5, fn) {
             accessMode: finalAccessMode, // 'read' or 'read_write'
             isStorage: true,
             type: 'storage',
-            elementType // e.g. 'f32', 'u32', 'atomic<u32>'
+            elementType, // e.g. 'f32', 'u32', 'atomic<u32>'
+            // Resolved here so the per-frame check is just a comparison
+            expectedArrayType: storageArrayTypeFor(elementType)
           };
         }
       }
 
-      // Store storage buffers on shader for later use
+      // Store storage buffers on shader for later use, keyed by name too so
+      // that setUniform() can look one up without scanning the whole list
       shader._storageBuffers = Object.values(storageBuffers);
+      shader._storageBuffersByName = {};
+      for (const storage of shader._storageBuffers) {
+        shader._storageBuffersByName[storage.name] = storage;
+      }
 
       return [
         ...Object.values(allUniforms).sort((a, b) => a.index - b.index),
@@ -2629,13 +2660,13 @@ function rendererWebGPU(p5, fn) {
           uniform,
           uniform._cachedData
         );
-      } else if (shader._storageBuffers) {
+      } else if (shader._storageBuffersByName) {
         // The shader has been parsed, so we know what element type it
         // declares for this buffer and can check it early
-        const parsedStorage = shader._storageBuffers.find(
-          s => s.name === uniform.name
+        this._checkStorageElementType(
+          shader._storageBuffersByName[uniform.name],
+          data
         );
-        this._checkStorageElementType(parsedStorage, data);
       }
       shader.buffersDirty.add(uniform.group * 1000 + uniform.binding);
     }
@@ -3964,31 +3995,23 @@ ${hookUniformFields}}
      * match the element type the shader declares for it, since the bytes
      * would otherwise be silently reinterpreted.
      *
-     * Both call sites can run every frame, so this warns at most once per
-     * buffer rather than spamming the console from inside a draw loop.
+     * Both call sites run every frame, so the result is cached on the buffer:
+     * after the first check this costs a property read and a comparison, and
+     * any warning is only ever logged once.
      * @private
      */
     _checkStorageElementType(parsedStorage, storageBuffer) {
       if (p5.disableFriendlyErrors) return;
-      if (storageBuffer._warnedElementType) return;
-      if (!parsedStorage || !parsedStorage.elementType) return;
+      // Resolved once when the shader was parsed
+      const expected = parsedStorage?.expectedArrayType;
+      if (!expected) return;
+      if (storageBuffer._checkedArrayType === expected) return;
+      storageBuffer._checkedArrayType = expected;
+
       // Struct buffers are always packed as floats
       if (storageBuffer._schema !== null) return;
+      if (storageBuffer._arrayType === expected) return;
 
-      // atomic<u32> and friends store their underlying type
-      const elementType = parsedStorage.elementType.replace(
-        /^atomic<(\w+)>$/,
-        '$1'
-      );
-
-      const expected = {
-        f32: Float32Array,
-        u32: Uint32Array,
-        i32: Int32Array
-      }[elementType];
-      if (!expected || storageBuffer._arrayType === expected) return;
-
-      storageBuffer._warnedElementType = true;
       p5._friendlyError(
         `The storage buffer "${parsedStorage.name}" is declared as ` +
           `array<${parsedStorage.elementType}> in the shader, but it was created ` +
