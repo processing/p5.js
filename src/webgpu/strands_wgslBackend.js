@@ -2,8 +2,20 @@ import noiseWGSL from './shaders/functions/noise3DWGSL.js';
 import randomWGSL from './shaders/functions/randomWGSL';
 import randomVertWGSL from './shaders/functions/randomVertWGSL';
 import randomComputeWGSL from './shaders/functions/randomComputeWGSL';
-import { NodeType, OpCodeToSymbol, BlockType, OpCode, NodeTypeToName, isStructType, BaseType, StatementType, DataType, INSTANCE_ID_VARYING_NAME, HOOK_PARAM_PREFIX } from "../strands/ir_types";
-import { getNodeDataFromID, extractNodeTypeInfo } from "../strands/ir_dag";
+import {
+  NodeType,
+  OpCodeToSymbol,
+  BlockType,
+  OpCode,
+  NodeTypeToName,
+  isStructType,
+  BaseType,
+  StatementType,
+  DataType,
+  INSTANCE_ID_VARYING_NAME,
+  HOOK_PARAM_PREFIX
+} from '../strands/ir_types';
+import { getNodeDataFromID, extractNodeTypeInfo } from '../strands/ir_dag';
 import * as FES from '../strands/strands_FES';
 import * as build from '../strands/ir_builders';
 import { createStrandsNode } from '../strands/strands_node';
@@ -15,22 +27,22 @@ function shouldCreateTemp(dag, nodeID) {
   return uses.length > 1;
 }
 const TypeNames = {
-  'float1': 'f32',
-  'float2': 'vec2<f32>',
-  'float3': 'vec3<f32>',
-  'float4': 'vec4<f32>',
-  'int1': 'i32',
-  'int2': 'vec2<i32>',
-  'int3': 'vec3<i32>',
-  'int4': 'vec4<i32>',
-  'bool1': 'bool',
-  'bool2': 'vec2<bool>',
-  'bool3': 'vec3<bool>',
-  'bool4': 'vec4<bool>',
-  'mat2': 'mat2x2<f32>',
-  'mat3': 'mat3x3<f32>',
-  'mat4': 'mat4x4<f32>',
-}
+  float1: 'f32',
+  float2: 'vec2<f32>',
+  float3: 'vec3<f32>',
+  float4: 'vec4<f32>',
+  int1: 'i32',
+  int2: 'vec2<i32>',
+  int3: 'vec3<i32>',
+  int4: 'vec4<i32>',
+  bool1: 'bool',
+  bool2: 'vec2<bool>',
+  bool3: 'vec3<bool>',
+  bool4: 'vec4<bool>',
+  mat2: 'mat2x2<f32>',
+  mat3: 'mat3x3<f32>',
+  mat4: 'mat4x4<f32>'
+};
 const cfgHandlers = {
   [BlockType.DEFAULT]: (blockID, strandsContext, generationContext) => {
     const { dag, cfg } = strandsContext;
@@ -38,7 +50,11 @@ const cfgHandlers = {
     for (const nodeID of instructions) {
       const nodeType = dag.nodeTypes[nodeID];
       if (shouldCreateTemp(dag, nodeID)) {
-        const declaration = wgslBackend.generateDeclaration(generationContext, dag, nodeID);
+        const declaration = wgslBackend.generateDeclaration(
+          generationContext,
+          dag,
+          nodeID
+        );
         generationContext.write(declaration);
       }
       if (nodeType === NodeType.STATEMENT) {
@@ -101,7 +117,11 @@ const cfgHandlers = {
   [BlockType.IF_COND](blockID, strandsContext, generationContext) {
     const { dag, cfg } = strandsContext;
     const conditionID = cfg.blockConditions[blockID];
-    const condExpr = wgslBackend.generateExpression(generationContext, dag, conditionID);
+    const condExpr = wgslBackend.generateExpression(
+      generationContext,
+      dag,
+      conditionID
+    );
     generationContext.write(`if (${condExpr})`);
     this[BlockType.DEFAULT](blockID, strandsContext, generationContext);
   },
@@ -145,7 +165,11 @@ const cfgHandlers = {
       generationContext.suppressSemicolon = isLast;
 
       if (shouldCreateTemp(dag, nodeID)) {
-        const declaration = wgslBackend.generateDeclaration(generationContext, dag, nodeID);
+        const declaration = wgslBackend.generateDeclaration(
+          generationContext,
+          dag,
+          nodeID
+        );
         generationContext.write(declaration);
       }
       if (node.nodeType === NodeType.STATEMENT) {
@@ -177,29 +201,40 @@ const cfgHandlers = {
             const sourceNodeID = node.dependsOn[branchIndex];
             const tempName = generationContext.tempNames[nodeID];
             if (tempName && sourceNodeID !== null) {
-              const sourceExpr = wgslBackend.generateExpression(generationContext, dag, sourceNodeID);
+              const sourceExpr = wgslBackend.generateExpression(
+                generationContext,
+                dag,
+                sourceNodeID
+              );
               generationContext.write(`${tempName} = ${sourceExpr};`);
             }
           }
         }
       }
     }
-  },
-}
+  }
+};
 export const wgslBackend = {
   hookEntry(hookType) {
-    const params = hookType.parameters.map((param) => {
-      // For struct types, use a raw prefix since we'll create a mutable copy
-      const paramName = param.type.properties ? `_p5_strands_raw_${param.name}` : `${HOOK_PARAM_PREFIX}${param.name}`;
-      return `${paramName}: ${param.type.typeName}`;
-    }).join(', ');
+    const params = hookType.parameters
+      .map(param => {
+        // For struct types, use a raw prefix since we'll create a mutable copy
+        const paramName = param.type.properties
+          ? `_p5_strands_raw_${param.name}`
+          : `${HOOK_PARAM_PREFIX}${param.name}`;
+        return `${paramName}: ${param.type.typeName}`;
+      })
+      .join(', ');
 
     const firstLine = `(${params}) {`;
 
     // Generate mutable copies for struct parameters
     const mutableCopies = hookType.parameters
       .filter(param => param.type.properties) // Only struct types
-      .map(param => `  var ${HOOK_PARAM_PREFIX}${param.name} = _p5_strands_raw_${param.name};`)
+      .map(
+        param =>
+          `  var ${HOOK_PARAM_PREFIX}${param.name} = _p5_strands_raw_${param.name};`
+      )
       .join('\n');
 
     return mutableCopies ? firstLine + '\n' + mutableCopies : firstLine;
@@ -211,10 +246,10 @@ export const wgslBackend = {
     let bindingIndex = strandsContext.renderer.getNextBindingIndex({
       vert: strandsContext.baseShader._vertSrc,
       frag: strandsContext.baseShader._fragSrc,
-      compute: strandsContext.baseShader._computeSrc,
+      compute: strandsContext.baseShader._computeSrc
     });
 
-    for (const {name, typeInfo} of strandsContext.uniforms) {
+    for (const { name, typeInfo } of strandsContext.uniforms) {
       if (typeInfo.baseType === 'sampler2D') {
         const textureBinding = `@group(0) @binding(${bindingIndex}) var ${name}: texture_2d<f32>;`;
         const samplerBinding = `@group(0) @binding(${bindingIndex + 1}) var ${name}_sampler: sampler;`;
@@ -235,10 +270,10 @@ export const wgslBackend = {
     let bindingIndex = strandsContext.renderer.getNextBindingIndex({
       vert: strandsContext.baseShader._vertSrc,
       frag: strandsContext.baseShader._fragSrc,
-      compute: strandsContext.baseShader._computeSrc,
+      compute: strandsContext.baseShader._computeSrc
     });
 
-    for (const {name, typeInfo} of strandsContext.uniforms) {
+    for (const { name, typeInfo } of strandsContext.uniforms) {
       if (typeInfo.baseType === 'storage') {
         const accessMode = isComputeShader ? 'read_write' : 'read';
         let declaration;
@@ -261,7 +296,7 @@ export const wgslBackend = {
     }
   },
   getTypeName(baseType, dimension) {
-    const primitiveTypeName = TypeNames[baseType + dimension]
+    const primitiveTypeName = TypeNames[baseType + dimension];
     if (!primitiveTypeName) {
       return baseType;
     }
@@ -320,7 +355,11 @@ export const wgslBackend = {
     } else if (node.statementType === StatementType.EARLY_RETURN) {
       if (node.dependsOn && node.dependsOn.length > 0) {
         const exprNodeID = node.dependsOn[0];
-        const expr = this.generateExpression(generationContext, dag, exprNodeID);
+        const expr = this.generateExpression(
+          generationContext,
+          dag,
+          exprNodeID
+        );
         generationContext.write(`return ${expr}${semicolon}`);
       } else {
         generationContext.write(`return${semicolon}`);
@@ -339,11 +378,27 @@ export const wgslBackend = {
     // Check if target is an array access (storage buffer assignment)
     if (targetNode.opCode === OpCode.Binary.ARRAY_ACCESS) {
       const [bufferID, indexID] = targetNode.dependsOn;
-      const bufferExpr = this.generateExpression(generationContext, dag, bufferID);
-      const indexExpr = this.generateExpression(generationContext, dag, indexID);
-      const sourceExpr = this.generateExpression(generationContext, dag, sourceNodeID);
-      const fieldSuffix = targetNode.identifier ? `.${targetNode.identifier}` : '';
-      generationContext.write(`${bufferExpr}[i32(${indexExpr})]${fieldSuffix} = ${sourceExpr}${semicolon}`);
+      const bufferExpr = this.generateExpression(
+        generationContext,
+        dag,
+        bufferID
+      );
+      const indexExpr = this.generateExpression(
+        generationContext,
+        dag,
+        indexID
+      );
+      const sourceExpr = this.generateExpression(
+        generationContext,
+        dag,
+        sourceNodeID
+      );
+      const fieldSuffix = targetNode.identifier
+        ? `.${targetNode.identifier}`
+        : '';
+      generationContext.write(
+        `${bufferExpr}[i32(${indexExpr})]${fieldSuffix} = ${sourceExpr}${semicolon}`
+      );
       return;
     }
 
@@ -351,10 +406,18 @@ export const wgslBackend = {
     if (targetNode.opCode === OpCode.Unary.SWIZZLE) {
       const parentID = targetNode.dependsOn[0];
       const parentNode = getNodeDataFromID(dag, parentID);
-      const parentExpr = this.generateExpression(generationContext, dag, parentID);
+      const parentExpr = this.generateExpression(
+        generationContext,
+        dag,
+        parentID
+      );
       const swizzle = targetNode.swizzle;
       const parentDimension = parentNode.dimension;
-      const sourceExpr = this.generateExpression(generationContext, dag, sourceNodeID);
+      const sourceExpr = this.generateExpression(
+        generationContext,
+        dag,
+        sourceNodeID
+      );
 
       // Create an array for each element of the target variable
       const componentMap = [];
@@ -363,7 +426,7 @@ export const wgslBackend = {
       }
 
       // Map swizzle characters to component indices
-      const getComponentIndex = (char) => {
+      const getComponentIndex = char => {
         if ('xyzw'.includes(char)) return 'xyzw'.indexOf(char);
         if ('rgba'.includes(char)) return 'rgba'.indexOf(char);
         return -1;
@@ -372,22 +435,38 @@ export const wgslBackend = {
       // Update the component map based on the swizzle assignment
       for (let i = 0; i < swizzle.length; i++) {
         const targetComponentIndex = getComponentIndex(swizzle[i]);
-        if (targetComponentIndex >= 0 && targetComponentIndex < parentDimension) {
+        if (
+          targetComponentIndex >= 0 &&
+          targetComponentIndex < parentDimension
+        ) {
           componentMap[targetComponentIndex] = { target: 'rhs', index: i };
         }
       }
 
       // Generate the reconstruction expression
-      const vectorTypeName = this.getTypeName(parentNode.baseType, parentDimension);
+      const vectorTypeName = this.getTypeName(
+        parentNode.baseType,
+        parentDimension
+      );
       const components = componentMap.map(({ target, index }) => {
-        return `${target === 'self' ? parentExpr : sourceExpr}.${'xyzw'[index]}`
+        return `${target === 'self' ? parentExpr : sourceExpr}.${'xyzw'[index]}`;
       });
 
-      generationContext.write(`${parentExpr} = ${vectorTypeName}(${components.join(', ')})${semicolon}`);
+      generationContext.write(
+        `${parentExpr} = ${vectorTypeName}(${components.join(', ')})${semicolon}`
+      );
     } else {
       // Regular assignment
-      const targetExpr = this.generateExpression(generationContext, dag, targetNodeID);
-      const sourceExpr = this.generateExpression(generationContext, dag, sourceNodeID);
+      const targetExpr = this.generateExpression(
+        generationContext,
+        dag,
+        targetNodeID
+      );
+      const sourceExpr = this.generateExpression(
+        generationContext,
+        dag,
+        sourceNodeID
+      );
 
       // Generate assignment if we have both target and source
       if (targetExpr && sourceExpr && targetExpr !== sourceExpr) {
@@ -403,7 +482,12 @@ export const wgslBackend = {
     const typeName = this.getTypeName(T.baseType, T.dimension);
     return `var ${tmp}: ${typeName} = ${expr};`;
   },
-  generateReturnStatement(strandsContext, generationContext, rootNodeID, returnType) {
+  generateReturnStatement(
+    strandsContext,
+    generationContext,
+    rootNodeID,
+    returnType
+  ) {
     if (!returnType) {
       generationContext.write('return;');
       return;
@@ -414,15 +498,21 @@ export const wgslBackend = {
       const structTypeInfo = returnType;
       for (let i = 0; i < structTypeInfo.properties.length; i++) {
         const prop = structTypeInfo.properties[i];
-        const val = this.generateExpression(generationContext, dag, rootNode.dependsOn[i]);
+        const val = this.generateExpression(
+          generationContext,
+          dag,
+          rootNode.dependsOn[i]
+        );
         if (prop.name !== val) {
           generationContext.write(
             `${rootNode.identifier}.${prop.name} = ${val};`
-          )
+          );
         }
       }
     }
-    generationContext.write(`return ${this.generateExpression(generationContext, dag, rootNodeID)};`);
+    generationContext.write(
+      `return ${this.generateExpression(generationContext, dag, rootNodeID)};`
+    );
   },
   generateExpression(generationContext, dag, nodeID) {
     const node = getNodeDataFromID(dag, nodeID);
@@ -431,160 +521,221 @@ export const wgslBackend = {
     }
     switch (node.nodeType) {
       case NodeType.LITERAL:
-      if (node.baseType === BaseType.FLOAT) {
-        return node.value.toFixed(4);
-      }
-      else {
-        return node.value;
-      }
+        if (node.baseType === BaseType.FLOAT) {
+          return node.value.toFixed(4);
+        } else {
+          return node.value;
+        }
       case NodeType.VARIABLE:
-      // Track shared variable usage context
-      if (generationContext.shaderContext && generationContext.strandsContext?.sharedVariables?.has(node.identifier)) {
-        const sharedVar = generationContext.strandsContext.sharedVariables.get(node.identifier);
-        if (generationContext.shaderContext === 'vertex') {
-          sharedVar.usedInVertex = true;
-        } else if (generationContext.shaderContext === 'fragment') {
-          sharedVar.usedInFragment = true;
-        }
-      }
-
-      // Detect instanceID usage in fragment context and rewrite to varying name
-      if (node.identifier === this.instanceIdReference() && generationContext.shaderContext === 'fragment') {
-        generationContext.strandsContext._instanceIDUsedInFragment = true;
-        return INSTANCE_ID_VARYING_NAME;
-      }
-
-      // Check if this is a uniform variable (but not a texture or storage buffer)
-      const uniform = generationContext.strandsContext?.uniforms?.find(uniform => uniform.name === node.identifier);
-      if (uniform && uniform.typeInfo.baseType !== 'sampler2D' && uniform.typeInfo.baseType !== 'storage') {
-        return `hooks.${node.identifier}`;
-      }
-
-      return node.identifier;
-      case NodeType.OPERATION:
-      const useParantheses = node.usedBy.length > 0;
-      if (node.opCode === OpCode.Nary.CONSTRUCTOR) {
-        // TODO: differentiate casts and constructors for more efficient codegen.
-        // if (node.dependsOn.length === 1 && node.dimension === 1) {
-        //   return this.generateExpression(generationContext, dag, node.dependsOn[0]);
-        // }
-        if (node.baseType === BaseType.SAMPLER2D) {
-          return this.generateExpression(generationContext, dag, node.dependsOn[0]);
-        }
-        const T = this.getTypeName(node.baseType, node.dimension);
-        const deps = node.dependsOn.map((dep) => this.generateExpression(generationContext, dag, dep));
-        return `${T}(${deps.join(', ')})`;
-      }
-      if (node.opCode === OpCode.Nary.TERNARY) {
-        const [condID, trueID, falseID] = node.dependsOn;
-        const cond = this.generateExpression(generationContext, dag, condID);
-        const trueExpr = this.generateExpression(generationContext, dag, trueID);
-        const falseExpr = this.generateExpression(generationContext, dag, falseID);
-        return `select(${falseExpr}, ${trueExpr}, ${cond})`;
-      }
-      if (node.opCode === OpCode.Nary.FUNCTION_CALL) {
-        // Convert mod() function calls to % operator in WGSL
-        if (node.identifier === 'mod' && node.dependsOn.length === 2) {
-          const [leftID, rightID] = node.dependsOn;
-          const left = this.generateExpression(generationContext, dag, leftID);
-          const right = this.generateExpression(generationContext, dag, rightID);
-          const useParantheses = node.usedBy.length > 0;
-          if (useParantheses) {
-            return `(${left} % ${right})`;
-          } else {
-            return `${left} % ${right}`;
-          }
-        }
-
-        // Convert atan(y, x) to atan2(y, x) in WGSL
-        if (node.identifier === 'atan' && node.dependsOn.length === 2) {
-          const functionArgs = node.dependsOn.map(arg => this.generateExpression(generationContext, dag, arg));
-          return `atan2(${functionArgs.join(', ')})`;
-        }
-
-        const functionArgs = node.dependsOn.map(arg =>this.generateExpression(generationContext, dag, arg));
-
-        if (node.identifier === 'random') {
-          const ctx = generationContext.shaderContext;
-          if (ctx === 'fragment') {
-            functionArgs.push('_p5FragPos.xy');
-          } else if (ctx === 'vertex') {
-            functionArgs.push('f32(_p5VertexId)');
-          } else if (ctx === 'compute') {
-            functionArgs.push('_p5GlobalId');
-          }
-        }
-
-        return `${node.identifier}(${functionArgs.join(', ')})`;
-      }
-      if (node.opCode === OpCode.Binary.MEMBER_ACCESS) {
-        const [lID, rID] = node.dependsOn;
-        const lName = this.generateExpression(generationContext, dag, lID);
-        const rName = this.generateExpression(generationContext, dag, rID);
-        return `${lName}.${rName}`;
-      }
-      if (node.opCode === OpCode.Unary.SWIZZLE) {
-        const parentID = node.dependsOn[0];
-        const parentExpr = this.generateExpression(generationContext, dag, parentID);
-        return `${parentExpr}.${node.swizzle}`;
-      }
-      if (node.opCode === OpCode.Binary.ARRAY_ACCESS) {
-        const [bufferID, indexID] = node.dependsOn;
-        const bufferExpr = this.generateExpression(generationContext, dag, bufferID);
-        const indexExpr = this.generateExpression(generationContext, dag, indexID);
-        const fieldSuffix = node.identifier ? `.${node.identifier}` : '';
-        return `${bufferExpr}[i32(${indexExpr})]${fieldSuffix}`;
-      }
-      if (node.dependsOn.length === 2) {
-        const [lID, rID] = node.dependsOn;
-        const left  = this.generateExpression(generationContext, dag, lID);
-        const right = this.generateExpression(generationContext, dag, rID);
-
-        // In WGSL, % operator works for both floats and integers
-        if (node.opCode === OpCode.Binary.MODULO) {
-          return `(${left} % ${right})`;
-        }
-
-        const opSym = OpCodeToSymbol[node.opCode];
-        if (useParantheses) {
-          return `(${left} ${opSym} ${right})`;
-        } else {
-          return `${left} ${opSym} ${right}`;
-        }
-      }
-      if (node.opCode === OpCode.Unary.LOGICAL_NOT
-        || node.opCode === OpCode.Unary.NEGATE
-        || node.opCode === OpCode.Unary.PLUS
+        // Track shared variable usage context
+        if (
+          generationContext.shaderContext &&
+          generationContext.strandsContext?.sharedVariables?.has(
+            node.identifier
+          )
         ) {
-        const [i] = node.dependsOn;
-        const val  = this.generateExpression(generationContext, dag, i);
-        const sym  = OpCodeToSymbol[node.opCode];
-        return `${sym}${val}`;
-      }
-      case NodeType.PHI:
-      // Phi nodes represent conditional merging of values
-      // If this phi node has an identifier (like varying variables), use that
-      if (node.identifier) {
-        return node.identifier;
-      }
-      // Otherwise, they should have been declared as temporary variables
-      // and assigned in the appropriate branches
-      if (generationContext.tempNames?.[nodeID]) {
-        return generationContext.tempNames[nodeID];
-      } else {
-        // If no temp was created, this phi node only has one input
-        // so we can just use that directly
-        const validInputs = node.dependsOn.filter(id => id !== null);
-        if (validInputs.length > 0) {
-          return this.generateExpression(generationContext, dag, validInputs[0]);
-        } else {
-          throw new Error('No valid inputs for node');
+          const sharedVar =
+            generationContext.strandsContext.sharedVariables.get(
+              node.identifier
+            );
+          if (generationContext.shaderContext === 'vertex') {
+            sharedVar.usedInVertex = true;
+          } else if (generationContext.shaderContext === 'fragment') {
+            sharedVar.usedInFragment = true;
+          }
         }
-      }
+
+        // Detect instanceID usage in fragment context and rewrite to varying name
+        if (
+          node.identifier === this.instanceIdReference() &&
+          generationContext.shaderContext === 'fragment'
+        ) {
+          generationContext.strandsContext._instanceIDUsedInFragment = true;
+          return INSTANCE_ID_VARYING_NAME;
+        }
+
+        // Check if this is a uniform variable (but not a texture or storage buffer)
+        const uniform = generationContext.strandsContext?.uniforms?.find(
+          uniform => uniform.name === node.identifier
+        );
+        if (
+          uniform &&
+          uniform.typeInfo.baseType !== 'sampler2D' &&
+          uniform.typeInfo.baseType !== 'storage'
+        ) {
+          return `hooks.${node.identifier}`;
+        }
+
+        return node.identifier;
+      case NodeType.OPERATION:
+        const useParantheses = node.usedBy.length > 0;
+        if (node.opCode === OpCode.Nary.CONSTRUCTOR) {
+          // TODO: differentiate casts and constructors for more efficient codegen.
+          // if (node.dependsOn.length === 1 && node.dimension === 1) {
+          //   return this.generateExpression(generationContext, dag, node.dependsOn[0]);
+          // }
+          if (node.baseType === BaseType.SAMPLER2D) {
+            return this.generateExpression(
+              generationContext,
+              dag,
+              node.dependsOn[0]
+            );
+          }
+          const T = this.getTypeName(node.baseType, node.dimension);
+          const deps = node.dependsOn.map(dep =>
+            this.generateExpression(generationContext, dag, dep)
+          );
+          return `${T}(${deps.join(', ')})`;
+        }
+        if (node.opCode === OpCode.Nary.TERNARY) {
+          const [condID, trueID, falseID] = node.dependsOn;
+          const cond = this.generateExpression(generationContext, dag, condID);
+          const trueExpr = this.generateExpression(
+            generationContext,
+            dag,
+            trueID
+          );
+          const falseExpr = this.generateExpression(
+            generationContext,
+            dag,
+            falseID
+          );
+          return `select(${falseExpr}, ${trueExpr}, ${cond})`;
+        }
+        if (node.opCode === OpCode.Nary.FUNCTION_CALL) {
+          // Convert mod() function calls to % operator in WGSL
+          if (node.identifier === 'mod' && node.dependsOn.length === 2) {
+            const [leftID, rightID] = node.dependsOn;
+            const left = this.generateExpression(
+              generationContext,
+              dag,
+              leftID
+            );
+            const right = this.generateExpression(
+              generationContext,
+              dag,
+              rightID
+            );
+            const useParantheses = node.usedBy.length > 0;
+            if (useParantheses) {
+              return `(${left} % ${right})`;
+            } else {
+              return `${left} % ${right}`;
+            }
+          }
+
+          // Convert atan(y, x) to atan2(y, x) in WGSL
+          if (node.identifier === 'atan' && node.dependsOn.length === 2) {
+            const functionArgs = node.dependsOn.map(arg =>
+              this.generateExpression(generationContext, dag, arg)
+            );
+            return `atan2(${functionArgs.join(', ')})`;
+          }
+
+          const functionArgs = node.dependsOn.map(arg =>
+            this.generateExpression(generationContext, dag, arg)
+          );
+
+          if (node.identifier === 'random') {
+            const ctx = generationContext.shaderContext;
+            if (ctx === 'fragment') {
+              functionArgs.push('_p5FragPos.xy');
+            } else if (ctx === 'vertex') {
+              functionArgs.push('f32(_p5VertexId)');
+            } else if (ctx === 'compute') {
+              functionArgs.push('_p5GlobalId');
+            }
+          }
+
+          return `${node.identifier}(${functionArgs.join(', ')})`;
+        }
+        if (node.opCode === OpCode.Binary.MEMBER_ACCESS) {
+          const [lID, rID] = node.dependsOn;
+          const lName = this.generateExpression(generationContext, dag, lID);
+          const rName = this.generateExpression(generationContext, dag, rID);
+          return `${lName}.${rName}`;
+        }
+        if (node.opCode === OpCode.Unary.SWIZZLE) {
+          const parentID = node.dependsOn[0];
+          const parentExpr = this.generateExpression(
+            generationContext,
+            dag,
+            parentID
+          );
+          return `${parentExpr}.${node.swizzle}`;
+        }
+        if (node.opCode === OpCode.Binary.ARRAY_ACCESS) {
+          const [bufferID, indexID] = node.dependsOn;
+          const bufferExpr = this.generateExpression(
+            generationContext,
+            dag,
+            bufferID
+          );
+          const indexExpr = this.generateExpression(
+            generationContext,
+            dag,
+            indexID
+          );
+          const fieldSuffix = node.identifier ? `.${node.identifier}` : '';
+          return `${bufferExpr}[i32(${indexExpr})]${fieldSuffix}`;
+        }
+        if (node.dependsOn.length === 2) {
+          const [lID, rID] = node.dependsOn;
+          const left = this.generateExpression(generationContext, dag, lID);
+          const right = this.generateExpression(generationContext, dag, rID);
+
+          // In WGSL, % operator works for both floats and integers
+          if (node.opCode === OpCode.Binary.MODULO) {
+            return `(${left} % ${right})`;
+          }
+
+          const opSym = OpCodeToSymbol[node.opCode];
+          if (useParantheses) {
+            return `(${left} ${opSym} ${right})`;
+          } else {
+            return `${left} ${opSym} ${right}`;
+          }
+        }
+        if (
+          node.opCode === OpCode.Unary.LOGICAL_NOT ||
+          node.opCode === OpCode.Unary.NEGATE ||
+          node.opCode === OpCode.Unary.PLUS
+        ) {
+          const [i] = node.dependsOn;
+          const val = this.generateExpression(generationContext, dag, i);
+          const sym = OpCodeToSymbol[node.opCode];
+          return `${sym}${val}`;
+        }
+      case NodeType.PHI:
+        // Phi nodes represent conditional merging of values
+        // If this phi node has an identifier (like varying variables), use that
+        if (node.identifier) {
+          return node.identifier;
+        }
+        // Otherwise, they should have been declared as temporary variables
+        // and assigned in the appropriate branches
+        if (generationContext.tempNames?.[nodeID]) {
+          return generationContext.tempNames[nodeID];
+        } else {
+          // If no temp was created, this phi node only has one input
+          // so we can just use that directly
+          const validInputs = node.dependsOn.filter(id => id !== null);
+          if (validInputs.length > 0) {
+            return this.generateExpression(
+              generationContext,
+              dag,
+              validInputs[0]
+            );
+          } else {
+            throw new Error('No valid inputs for node');
+          }
+        }
       case NodeType.ASSIGNMENT:
-      FES.internalError(`ASSIGNMENT nodes should not be used as expressions`)
+        FES.internalError(`ASSIGNMENT nodes should not be used as expressions`);
       default:
-      FES.internalError(`${NodeTypeToName[node.nodeType]} code generation not implemented yet`)
+        FES.internalError(
+          `${NodeTypeToName[node.nodeType]} code generation not implemented yet`
+        );
     }
   },
   generateBlock(blockID, strandsContext, generationContext) {
@@ -605,8 +756,16 @@ export const wgslBackend = {
     const textureNode = getNodeDataFromID(dag, textureArg.id);
     const samplerIdentifier = textureNode.identifier + '_sampler';
 
-    const samplerVariable = build.variableNode(strandsContext, { baseType: BaseType.SAMPLER, dimension: 1 }, samplerIdentifier);
-    const samplerNode = createStrandsNode(samplerVariable.id, samplerVariable.dimension, strandsContext);
+    const samplerVariable = build.variableNode(
+      strandsContext,
+      { baseType: BaseType.SAMPLER, dimension: 1 },
+      samplerIdentifier
+    );
+    const samplerNode = createStrandsNode(
+      samplerVariable.id,
+      samplerVariable.dimension,
+      strandsContext
+    );
 
     // Create a LOD literal node (0.0) so we can use textureSampleLevel instead
     // of textureSample. textureSample doesn't let you use uniform values in control
@@ -619,17 +778,33 @@ export const wgslBackend = {
       { dimension: 1, baseType: BaseType.FLOAT },
       0.0
     );
-    const lodNode = createStrandsNode(lodLiteral.id, lodLiteral.dimension, strandsContext);
+    const lodNode = createStrandsNode(
+      lodLiteral.id,
+      lodLiteral.dimension,
+      strandsContext
+    );
 
     // Create the augmented args: [texture, sampler, coords, lod]
     const augmentedArgs = [textureArg, samplerNode, coordsArg, lodNode];
 
-    const { id, dimension } = build.functionCallNode(strandsContext, 'textureSampleLevel', augmentedArgs, {
-      overloads: [{
-        params: [DataType.sampler2D, DataType.sampler, DataType.float2, DataType.float1],
-        returnType: DataType.float4
-      }]
-    });
+    const { id, dimension } = build.functionCallNode(
+      strandsContext,
+      'textureSampleLevel',
+      augmentedArgs,
+      {
+        overloads: [
+          {
+            params: [
+              DataType.sampler2D,
+              DataType.sampler,
+              DataType.float2,
+              DataType.float1
+            ],
+            returnType: DataType.float4
+          }
+        ]
+      }
+    );
     return { id, dimension };
   },
 
@@ -638,6 +813,11 @@ export const wgslBackend = {
   },
 
   generateInstanceIDVarying() {
-    return { name: INSTANCE_ID_VARYING_NAME, declaration: `${INSTANCE_ID_VARYING_NAME}: i32`, source: 'i32(instanceID)', interpolation: 'flat' };
-  },
-}
+    return {
+      name: INSTANCE_ID_VARYING_NAME,
+      declaration: `${INSTANCE_ID_VARYING_NAME}: i32`,
+      source: 'i32(instanceID)',
+      interpolation: 'flat'
+    };
+  }
+};

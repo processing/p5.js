@@ -3,50 +3,68 @@ import { ancestor, recursive } from 'acorn-walk';
 import escodegen from 'escodegen';
 import { UnarySymbolToName } from './ir_types';
 import * as FES from './strands_FES';
+import {
+  createStrandsShaderNameMap,
+  createStrandsShaderNameState,
+  getOrCreateInternalShaderName
+} from './strands_names';
 let blockVarCounter = 0;
 let loopVarCounter = 0;
 function replaceBinaryOperator(codeSource) {
   switch (codeSource) {
-    case '+': return 'add';
-    case '-': return 'sub';
-    case '*': return 'mult';
-    case '/': return 'div';
-    case '%': return 'mod';
+    case '+':
+      return 'add';
+    case '-':
+      return 'sub';
+    case '*':
+      return 'mult';
+    case '/':
+      return 'div';
+    case '%':
+      return 'mod';
     case '==':
-    case '===': return 'equalTo';
+    case '===':
+      return 'equalTo';
     case '!=':
-    case '!==': return 'notEqual';
-    case '>': return 'greaterThan';
-    case '>=': return 'greaterEqual';
-    case '<': return 'lessThan';
-    case '<=': return 'lessEqual';
-    case '&&': return 'and';
-    case '||': return 'or';
+    case '!==':
+      return 'notEqual';
+    case '>':
+      return 'greaterThan';
+    case '>=':
+      return 'greaterEqual';
+    case '<':
+      return 'lessThan';
+    case '<=':
+      return 'lessEqual';
+    case '&&':
+      return 'and';
+    case '||':
+      return 'or';
     // TODO: handle ** --> pow, but make it stay pow in
     // GLSL instead of turning it back into **
   }
 }
 function nodeIsUniform(ancestor) {
-  return ancestor && ancestor.type === 'CallExpression'
-    && (
-      (
-        // Global mode
-        ancestor.callee?.type === 'Identifier' &&
-        ancestor.callee?.name.startsWith('uniform')
-      ) || (
-        // Instance mode
-        ancestor.callee?.type === 'MemberExpression' &&
-        ancestor.callee?.property.name.startsWith('uniform')
-      )
-    );
+  return (
+    ancestor &&
+    ancestor.type === 'CallExpression' && // Global mode
+    ((ancestor.callee?.type === 'Identifier' &&
+      ancestor.callee?.name.startsWith('uniform')) ||
+      // Instance mode
+      (ancestor.callee?.type === 'MemberExpression' &&
+        ancestor.callee?.property.name.startsWith('uniform')))
+  );
 }
 
 function nodeIsUniformCallbackFn(node, names) {
   if (!names?.size) return false;
-  if (node.type === 'FunctionDeclaration' && names.has(node.id?.name)) return true;
+  if (node.type === 'FunctionDeclaration' && names.has(node.id?.name))
+    return true;
   if (
-    node.type === 'VariableDeclarator' && names.has(node.id?.name) &&
-    (node.init?.type === 'FunctionExpression' || node.init?.type === 'ArrowFunctionExpression')
+    node.type === 'VariableDeclarator' &&
+    names.has(node.id?.name) &&
+    (node.init?.type === 'FunctionExpression' ||
+      node.init?.type === 'ArrowFunctionExpression')
   ) {
     return true;
   }
@@ -63,7 +81,8 @@ function collectUniformCallbackNames(ast) {
     VariableDeclarator(node) {
       if (
         node.id?.type === 'Identifier' &&
-        (node.init?.type === 'FunctionExpression' || node.init?.type === 'ArrowFunctionExpression')
+        (node.init?.type === 'FunctionExpression' ||
+          node.init?.type === 'ArrowFunctionExpression')
       ) {
         namedFunctions.add(node.id.name);
       }
@@ -86,18 +105,17 @@ function collectUniformCallbackNames(ast) {
 }
 
 function nodeIsVarying(node) {
-  return node && node.type === 'CallExpression'
-    && (
-      (
-        // Global mode
-        node.callee?.type === 'Identifier' &&
-        (node.callee?.name.startsWith('varying') || node.callee?.name.startsWith('shared'))
-      ) || (
-        // Instance mode
-        node.callee?.type === 'MemberExpression' &&
-        (node.callee?.property.name.startsWith('varying') || node.callee?.property.name.startsWith('shared'))
-      )
-    );
+  return (
+    node &&
+    node.type === 'CallExpression' && // Global mode
+    ((node.callee?.type === 'Identifier' &&
+      (node.callee?.name.startsWith('varying') ||
+        node.callee?.name.startsWith('shared'))) ||
+      // Instance mode
+      (node.callee?.type === 'MemberExpression' &&
+        (node.callee?.property.name.startsWith('varying') ||
+          node.callee?.property.name.startsWith('shared'))))
+  );
 }
 // Convert static member expressions into dotted paths such as
 // `loopProtect.protect` so loop-protection calls can be matched reliably.
@@ -110,9 +128,7 @@ function getMemberExpressionPath(node) {
   const objectPath = getMemberExpressionPath(node.object);
   const propertyName = node.property?.name;
 
-  return objectPath && propertyName
-    ? `${objectPath}.${propertyName}`
-    : null;
+  return objectPath && propertyName ? `${objectPath}.${propertyName}` : null;
 }
 
 // Detect calls added by loop protection before Strands tries to transpile them.
@@ -161,24 +177,19 @@ function throwIfLoopProtectionInserted(ast) {
 function statementContainsStrandsControlFlow(stmt) {
   // Check for variable declarations with strands control flow init
   if (stmt.type === 'VariableDeclaration') {
-    const match = stmt.declarations.some(decl =>
-      decl.init?.type === 'CallExpression' &&
-      (
-        (
-          decl.init?.callee?.type === 'MemberExpression' &&
+    const match = stmt.declarations.some(
+      decl =>
+        decl.init?.type === 'CallExpression' &&
+        ((decl.init?.callee?.type === 'MemberExpression' &&
           decl.init?.callee?.object?.type === 'Identifier' &&
           decl.init?.callee?.object?.name === '__p5' &&
           (decl.init?.callee?.property?.name === 'strandsFor' ||
-            decl.init?.callee?.property?.name === 'strandsIf')
-        ) ||
-        (
-          decl.init?.callee?.type === 'Identifier' &&
-          (decl.init?.callee?.name === '__p5.strandsFor' ||
-            decl.init?.callee?.name === '__p5.strandsIf')
-        )
-      )
+            decl.init?.callee?.property?.name === 'strandsIf')) ||
+          (decl.init?.callee?.type === 'Identifier' &&
+            (decl.init?.callee?.name === '__p5.strandsFor' ||
+              decl.init?.callee?.name === '__p5.strandsIf')))
     );
-    return match
+    return match;
   }
   return false;
 }
@@ -207,7 +218,7 @@ function buildPropertyPath(memberExpr) {
     const propName = current.property.name || current.property.value;
     if (isSwizzle(propName)) {
       current = current.object;
-      break;
+      continue;
     }
     parts.unshift(propName);
     current = current.object;
@@ -223,7 +234,7 @@ function buildPropertyPath(memberExpr) {
 // Replace all references to original variables with temp variables
 // and wrap literal assignments in strandsNode calls
 function replaceReferences(node, tempVarMap) {
-  const internalReplaceReferences = (node) => {
+  const internalReplaceReferences = node => {
     if (!node || typeof node !== 'object') return;
 
     // Check if this MemberExpression matches a tracked property path
@@ -259,8 +270,11 @@ function replaceReferences(node, tempVarMap) {
         leftPath = buildPropertyPath(node.left);
       }
 
-      if (leftPath && tempVarMap.has(leftPath) &&
-          (node.right.type === 'Literal' || node.right.type === 'ArrayExpression')) {
+      if (
+        leftPath &&
+        tempVarMap.has(leftPath) &&
+        (node.right.type === 'Literal' || node.right.type === 'ArrayExpression')
+      ) {
         // Wrap the right hand side in a strandsNode call to make sure
         // it's not just a literal and has a type
         node.right = {
@@ -278,7 +292,11 @@ function replaceReferences(node, tempVarMap) {
     for (const key in node) {
       if (node.hasOwnProperty(key) && key !== 'parent') {
         // Don't recurse into property names of non-computed member expressions
-        if (node.type === 'MemberExpression' && key === 'property' && !node.computed) {
+        if (
+          node.type === 'MemberExpression' &&
+          key === 'property' &&
+          !node.computed
+        ) {
           continue;
         }
         if (Array.isArray(node[key])) {
@@ -296,7 +314,7 @@ function replaceReferences(node, tempVarMap) {
 function replaceIdentifierReferences(node, oldName, newName) {
   if (!node || typeof node !== 'object') return node;
 
-  const replaceInNode = (n) => {
+  const replaceInNode = n => {
     if (!n || typeof n !== 'object') return n;
     if (n.type === 'Identifier' && n.name === oldName) {
       return { ...n, name: newName };
@@ -320,14 +338,20 @@ function replaceIdentifierReferences(node, oldName, newName) {
 // Shared handler for both BinaryExpression and LogicalExpression —
 // both follow the same operator-to-method-call transformation pattern.
 function transformBinaryOrLogical(node, state, ancestors) {
-  if (ancestors.some(a => nodeIsUniform(a) || nodeIsUniformCallbackFn(a, state.uniformCallbackNames))) {
+  if (
+    ancestors.some(
+      a =>
+        nodeIsUniform(a) ||
+        nodeIsUniformCallbackFn(a, state.uniformCallbackNames)
+    )
+  ) {
     return;
   }
   node.left = {
     type: 'CallExpression',
     callee: {
       type: 'Identifier',
-      name: '__p5.strandsNode',
+      name: '__p5.strandsNode'
     },
     arguments: [node.left]
   };
@@ -337,8 +361,8 @@ function transformBinaryOrLogical(node, state, ancestors) {
     object: node.left,
     property: {
       type: 'Identifier',
-      name: replaceBinaryOperator(node.operator),
-    },
+      name: replaceBinaryOperator(node.operator)
+    }
   };
   node.arguments = [node.right];
 }
@@ -377,20 +401,22 @@ function addCopyingAndReturn(functionBody, varsToReturn, sourcePrefix = null) {
 
     copyStatements.push({
       type: 'VariableDeclaration',
-      declarations: [{
-        type: 'VariableDeclarator',
-        id: { type: 'Identifier', name: tempName },
-        init: {
-          type: 'CallExpression',
-          callee: {
-            type: 'MemberExpression',
-            object: sourceExpr,
-            property: { type: 'Identifier', name: 'copy' },
-            computed: false
-          },
-          arguments: []
+      declarations: [
+        {
+          type: 'VariableDeclarator',
+          id: { type: 'Identifier', name: tempName },
+          init: {
+            type: 'CallExpression',
+            callee: {
+              type: 'MemberExpression',
+              object: sourceExpr,
+              property: { type: 'Identifier', name: 'copy' },
+              computed: false
+            },
+            arguments: []
+          }
         }
-      }],
+      ],
       kind: 'let'
     });
   }
@@ -418,18 +444,24 @@ function addCopyingAndReturn(functionBody, varsToReturn, sourcePrefix = null) {
 
 const ASTCallbacks = {
   UnaryExpression(node, state, ancestors) {
-    if (ancestors.some(a => nodeIsUniform(a) || nodeIsUniformCallbackFn(a, state.uniformCallbackNames))) {
+    if (
+      ancestors.some(
+        a =>
+          nodeIsUniform(a) ||
+          nodeIsUniformCallbackFn(a, state.uniformCallbackNames)
+      )
+    ) {
       return;
     }
     const unaryFnName = UnarySymbolToName[node.operator];
-    const standardReplacement = (node) => {
-      node.type = 'CallExpression'
+    const standardReplacement = node => {
+      node.type = 'CallExpression';
       node.callee = {
         type: 'Identifier',
-        name: `__p5.${unaryFnName}`,
-      }
-      node.arguments = [node.argument]
-    }
+        name: `__p5.${unaryFnName}`
+      };
+      node.arguments = [node.argument];
+    };
     if (node.type === 'MemberExpression') {
       const property = node.argument.property.name;
       const swizzleSets = [
@@ -437,9 +469,12 @@ const ASTCallbacks = {
         ['r', 'g', 'b', 'a'],
         ['s', 't', 'p', 'q']
       ];
-      let isSwizzle = swizzleSets.some(set =>
-        [...property].every(char => set.includes(char))
-      ) && node.argument.type === 'MemberExpression' && !node.argument.computed;
+      let isSwizzle =
+        swizzleSets.some(set =>
+          [...property].every(char => set.includes(char))
+        ) &&
+        node.argument.type === 'MemberExpression' &&
+        !node.argument.computed;
       if (isSwizzle) {
         node.type = 'MemberExpression';
         node.object = {
@@ -448,7 +483,7 @@ const ASTCallbacks = {
             type: 'Identifier',
             name: `__p5.${unaryFnName}`
           },
-          arguments: [node.argument.object],
+          arguments: [node.argument.object]
         };
         node.property = {
           type: 'Identifier',
@@ -464,7 +499,13 @@ const ASTCallbacks = {
     delete node.operator;
   },
   BreakStatement(node, state, ancestors) {
-    if (ancestors.some(a => nodeIsUniform(a) || nodeIsUniformCallbackFn(a, state.uniformCallbackNames))) {
+    if (
+      ancestors.some(
+        a =>
+          nodeIsUniform(a) ||
+          nodeIsUniformCallbackFn(a, state.uniformCallbackNames)
+      )
+    ) {
       return;
     }
     node.callee = {
@@ -475,7 +516,13 @@ const ASTCallbacks = {
     node.type = 'CallExpression';
   },
   MemberExpression(node, state, ancestors) {
-    if (ancestors.some(a => nodeIsUniform(a) || nodeIsUniformCallbackFn(a, state.uniformCallbackNames))) {
+    if (
+      ancestors.some(
+        a =>
+          nodeIsUniform(a) ||
+          nodeIsUniformCallbackFn(a, state.uniformCallbackNames)
+      )
+    ) {
       return;
     }
     // Skip sets -- these will be converted to .set() method
@@ -496,7 +543,7 @@ const ASTCallbacks = {
         object: callee,
         property: {
           type: 'Identifier',
-          name: 'get',
+          name: 'get'
         }
       };
       node.arguments = [member];
@@ -504,18 +551,31 @@ const ASTCallbacks = {
     }
   },
   VariableDeclarator(node, state, ancestors) {
-    if (ancestors.some(a => nodeIsUniform(a) || nodeIsUniformCallbackFn(a, state.uniformCallbackNames))) {
+    if (
+      ancestors.some(
+        a =>
+          nodeIsUniform(a) ||
+          nodeIsUniformCallbackFn(a, state.uniformCallbackNames)
+      )
+    ) {
       return;
     }
     if (nodeIsUniform(node.init)) {
       // Only inject the variable name if the first argument isn't already a string
-      if (node.init.arguments.length === 0 ||
-          node.init.arguments[0].type !== 'Literal' ||
-          typeof node.init.arguments[0].value !== 'string') {
+      if (
+        node.init.arguments.length === 0 ||
+        node.init.arguments[0].type !== 'Literal' ||
+        typeof node.init.arguments[0].value !== 'string'
+      ) {
+        const uniformName = getOrCreateInternalShaderName(
+          state.shaderNameMap,
+          state.shaderNameState,
+          node.id.name
+        );
         const uniformNameLiteral = {
           type: 'Literal',
-          value: node.id.name
-        }
+          value: uniformName
+        };
         node.init.arguments.unshift(uniformNameLiteral);
       }
     }
@@ -526,10 +586,15 @@ const ASTCallbacks = {
         node.init.arguments[0].type !== 'Literal' ||
         typeof node.init.arguments[0].value !== 'string'
       ) {
+        const varyingName = getOrCreateInternalShaderName(
+          state.shaderNameMap,
+          state.shaderNameState,
+          node.id.name
+        );
         const varyingNameLiteral = {
           type: 'Literal',
-          value: node.id.name
-        }
+          value: varyingName
+        };
         node.init.arguments.unshift(varyingNameLiteral);
         state.varyings[node.id.name] = varyingNameLiteral;
       } else {
@@ -539,11 +604,18 @@ const ASTCallbacks = {
     }
   },
   Identifier(node, state, ancestors) {
-    if (ancestors.some(a => nodeIsUniform(a) || nodeIsUniformCallbackFn(a, state.uniformCallbackNames))) {
+    if (
+      ancestors.some(
+        a =>
+          nodeIsUniform(a) ||
+          nodeIsUniformCallbackFn(a, state.uniformCallbackNames)
+      )
+    ) {
       return;
     }
-    if (state.varyings[node.name]
-      && !ancestors.some(a => a.type === 'AssignmentExpression' && a.left === node)
+    if (
+      state.varyings[node.name] &&
+      !ancestors.some(a => a.type === 'AssignmentExpression' && a.left === node)
     ) {
       node.type = 'CallExpression';
       node.callee = {
@@ -555,7 +627,7 @@ const ASTCallbacks = {
         property: {
           type: 'Identifier',
           name: 'getValue'
-        },
+        }
       };
       node.arguments = [];
     }
@@ -563,7 +635,13 @@ const ASTCallbacks = {
   // The callbacks for AssignmentExpression and BinaryExpression handle
   // operator overloading including +=, *= assignment expressions
   ArrayExpression(node, state, ancestors) {
-    if (ancestors.some(a => nodeIsUniform(a) || nodeIsUniformCallbackFn(a, state.uniformCallbackNames))) {
+    if (
+      ancestors.some(
+        a =>
+          nodeIsUniform(a) ||
+          nodeIsUniformCallbackFn(a, state.uniformCallbackNames)
+      )
+    ) {
       return;
     }
 
@@ -578,17 +656,23 @@ const ASTCallbacks = {
     node.type = 'CallExpression';
     node.callee = {
       type: 'Identifier',
-      name: '__p5.strandsNode',
+      name: '__p5.strandsNode'
     };
     node.arguments = [original];
   },
   AssignmentExpression(node, state, ancestors) {
-    if (ancestors.some(a => nodeIsUniform(a) || nodeIsUniformCallbackFn(a, state.uniformCallbackNames))) {
+    if (
+      ancestors.some(
+        a =>
+          nodeIsUniform(a) ||
+          nodeIsUniformCallbackFn(a, state.uniformCallbackNames)
+      )
+    ) {
       return;
     }
     const unsafeTypes = ['Literal', 'ArrayExpression', 'Identifier'];
     if (node.operator !== '=') {
-      const methodName = replaceBinaryOperator(node.operator.replace('=',''));
+      const methodName = replaceBinaryOperator(node.operator.replace('=', ''));
       const rightReplacementNode = {
         type: 'CallExpression',
         callee: {
@@ -598,18 +682,18 @@ const ASTCallbacks = {
                 type: 'CallExpression',
                 callee: {
                   type: 'Identifier',
-                  name: '__p5.strandsNode',
+                  name: '__p5.strandsNode'
                 },
                 arguments: [node.left]
               }
             : node.left,
           property: {
             type: 'Identifier',
-            name: methodName,
-          },
+            name: methodName
+          }
         },
         arguments: [node.right]
-      }
+      };
       node.operator = '=';
       node.right = rightReplacementNode;
     }
@@ -626,11 +710,11 @@ const ASTCallbacks = {
           },
           property: {
             type: 'Identifier',
-            name: 'bridge',
+            name: 'bridge'
           }
         },
-        arguments: [node.right],
-      }
+        arguments: [node.right]
+      };
     }
     // Handle swizzle assignment to varying variable: myVarying.xyz = value
     // Note: node.left.object might be worldPos.getValue() due to prior Identifier transformation
@@ -659,15 +743,20 @@ const ASTCallbacks = {
       let varyingName = null;
 
       // Check if it's a direct identifier: myVarying.xyz
-      if (node.left.object.type === 'Identifier' && state.varyings[node.left.object.name]) {
+      if (
+        node.left.object.type === 'Identifier' &&
+        state.varyings[node.left.object.name]
+      ) {
         varyingName = node.left.object.name;
       }
       // Check if it's a getValue() call: myVarying.getValue().xyz
-      else if (node.left.object.type === 'CallExpression' &&
-               node.left.object.callee?.type === 'MemberExpression' &&
-               node.left.object.callee.property?.name === 'getValue' &&
-               node.left.object.callee.object?.type === 'Identifier' &&
-               state.varyings[node.left.object.callee.object.name]) {
+      else if (
+        node.left.object.type === 'CallExpression' &&
+        node.left.object.callee?.type === 'MemberExpression' &&
+        node.left.object.callee.property?.name === 'getValue' &&
+        node.left.object.callee.object?.type === 'Identifier' &&
+        state.varyings[node.left.object.callee.object.name]
+      ) {
         varyingName = node.left.object.callee.object.name;
       }
 
@@ -684,7 +773,7 @@ const ASTCallbacks = {
             },
             property: {
               type: 'Identifier',
-              name: 'bridgeSwizzle',
+              name: 'bridgeSwizzle'
             }
           },
           arguments: [
@@ -693,17 +782,22 @@ const ASTCallbacks = {
               value: swizzlePattern
             },
             node.right
-          ],
-        }
+          ]
+        };
       }
     }
   },
   BinaryExpression: transformBinaryOrLogical,
   LogicalExpression: transformBinaryOrLogical,
 
-
   ConditionalExpression(node, state, ancestors) {
-    if (ancestors.some(a => nodeIsUniform(a) || nodeIsUniformCallbackFn(a, state.uniformCallbackNames))) {
+    if (
+      ancestors.some(
+        a =>
+          nodeIsUniform(a) ||
+          nodeIsUniformCallbackFn(a, state.uniformCallbackNames)
+      )
+    ) {
       return;
     }
     // Transform condition ? consequent : alternate
@@ -719,7 +813,13 @@ const ASTCallbacks = {
     delete node.alternate;
   },
   IfStatement(node, state, ancestors) {
-    if (ancestors.some(a => nodeIsUniform(a) || nodeIsUniformCallbackFn(a, state.uniformCallbackNames))) {
+    if (
+      ancestors.some(
+        a =>
+          nodeIsUniform(a) ||
+          nodeIsUniformCallbackFn(a, state.uniformCallbackNames)
+      )
+    ) {
       return;
     }
     // Transform if statement into strandsIf() call
@@ -729,10 +829,13 @@ const ASTCallbacks = {
     const thenFunction = {
       type: 'ArrowFunctionExpression',
       params: [],
-      body: node.consequent.type === 'BlockStatement' ? node.consequent : {
-        type: 'BlockStatement',
-        body: [node.consequent]
-      }
+      body:
+        node.consequent.type === 'BlockStatement'
+          ? node.consequent
+          : {
+              type: 'BlockStatement',
+              body: [node.consequent]
+            }
     };
     // Start building the call chain: __p5.strandsIf(condition, then)
     let callExpression = {
@@ -750,10 +853,13 @@ const ASTCallbacks = {
       elseFunction = {
         type: 'ArrowFunctionExpression',
         params: [],
-        body: node.alternate.type === 'BlockStatement' ? node.alternate : {
-          type: 'BlockStatement',
-          body: [node.alternate]
-        }
+        body:
+          node.alternate.type === 'BlockStatement'
+            ? node.alternate
+            : {
+                type: 'BlockStatement',
+                body: [node.alternate]
+              }
       };
     } else {
       // Create an empty else function
@@ -782,7 +888,7 @@ const ASTCallbacks = {
     // Analyze which outer scope variables are assigned in any branch
     const assignedVars = new Set();
 
-    const analyzeBranch = (functionBody) => {
+    const analyzeBranch = functionBody => {
       // First pass: collect all variable declarations in the branch
       const localVars = new Set();
       ancestor(functionBody, {
@@ -866,18 +972,20 @@ const ASTCallbacks = {
             right: {
               type: 'CallExpression',
               callee: { type: 'Identifier', name: '__p5.strandsNode' },
-              arguments: [rightArgExpr],
+              arguments: [rightArgExpr]
             }
           }
         });
       }
       statements.push({
         type: 'VariableDeclaration',
-        declarations: [{
-          type: 'VariableDeclarator',
-          id: { type: 'Identifier', name: blockVar },
-          init: callExpression
-        }],
+        declarations: [
+          {
+            type: 'VariableDeclarator',
+            id: { type: 'Identifier', name: blockVar },
+            init: callExpression
+          }
+        ],
         kind: 'const'
       });
       // 2. Assignments for each modified variable
@@ -926,7 +1034,13 @@ const ASTCallbacks = {
     delete node.alternate;
   },
   UpdateExpression(node, state, ancestors) {
-    if (ancestors.some(a => nodeIsUniform(a) || nodeIsUniformCallbackFn(a, state.uniformCallbackNames))) {
+    if (
+      ancestors.some(
+        a =>
+          nodeIsUniform(a) ||
+          nodeIsUniformCallbackFn(a, state.uniformCallbackNames)
+      )
+    ) {
       return;
     }
 
@@ -963,7 +1077,13 @@ const ASTCallbacks = {
     ASTCallbacks.AssignmentExpression(node, state, ancestors);
   },
   ForStatement(node, state, ancestors) {
-    if (ancestors.some(a => nodeIsUniform(a) || nodeIsUniformCallbackFn(a, state.uniformCallbackNames))) {
+    if (
+      ancestors.some(
+        a =>
+          nodeIsUniform(a) ||
+          nodeIsUniformCallbackFn(a, state.uniformCallbackNames)
+      )
+    ) {
       return;
     }
 
@@ -980,7 +1100,10 @@ const ASTCallbacks = {
       const declaration = node.init.declarations[0];
       let initValue = declaration.init;
 
-      const initAst = { type: 'Program', body: [{ type: 'ExpressionStatement', expression: initValue }] };
+      const initAst = {
+        type: 'Program',
+        body: [{ type: 'ExpressionStatement', expression: initValue }]
+      };
       initValue = initAst.body[0].expression;
 
       initialFunction = {
@@ -988,10 +1111,12 @@ const ASTCallbacks = {
         params: [],
         body: {
           type: 'BlockStatement',
-          body: [{
-            type: 'ReturnStatement',
-            argument: initValue
-          }]
+          body: [
+            {
+              type: 'ReturnStatement',
+              argument: initValue
+            }
+          ]
         }
       };
     } else {
@@ -1001,13 +1126,15 @@ const ASTCallbacks = {
         params: [],
         body: {
           type: 'BlockStatement',
-          body: [{
-            type: 'ReturnStatement',
-            argument: {
-              type: 'Literal',
-              value: 0
+          body: [
+            {
+              type: 'ReturnStatement',
+              argument: {
+                type: 'Literal',
+                value: 0
+              }
             }
-          }]
+          ]
         }
       };
     }
@@ -1017,9 +1144,16 @@ const ASTCallbacks = {
     // Replace loop variable references with the parameter
     if (node.init?.type === 'VariableDeclaration') {
       const loopVarName = node.init.declarations[0].id.name;
-      conditionBody = replaceIdentifierReferences(conditionBody, loopVarName, uniqueLoopVar);
+      conditionBody = replaceIdentifierReferences(
+        conditionBody,
+        loopVarName,
+        uniqueLoopVar
+      );
     }
-    const conditionAst = { type: 'Program', body: [{ type: 'ExpressionStatement', expression: conditionBody }] };
+    const conditionAst = {
+      type: 'Program',
+      body: [{ type: 'ExpressionStatement', expression: conditionBody }]
+    };
     conditionBody = conditionAst.body[0].expression;
 
     const conditionFunction = {
@@ -1035,9 +1169,16 @@ const ASTCallbacks = {
       // Replace loop variable references with the parameter
       if (node.init?.type === 'VariableDeclaration') {
         const loopVarName = node.init.declarations[0].id.name;
-        updateExpr = replaceIdentifierReferences(updateExpr, loopVarName, uniqueLoopVar);
+        updateExpr = replaceIdentifierReferences(
+          updateExpr,
+          loopVarName,
+          uniqueLoopVar
+        );
       }
-      const updateAst = { type: 'Program', body: [{ type: 'ExpressionStatement', expression: updateExpr }] };
+      const updateAst = {
+        type: 'Program',
+        body: [{ type: 'ExpressionStatement', expression: updateExpr }]
+      };
       updateExpr = updateAst.body[0].expression;
 
       updateFunction = {
@@ -1045,10 +1186,12 @@ const ASTCallbacks = {
         params: [{ type: 'Identifier', name: uniqueLoopVar }],
         body: {
           type: 'BlockStatement',
-          body: [{
-            type: 'ReturnStatement',
-            argument: updateExpr
-          }]
+          body: [
+            {
+              type: 'ReturnStatement',
+              argument: updateExpr
+            }
+          ]
         }
       };
     } else {
@@ -1057,24 +1200,33 @@ const ASTCallbacks = {
         params: [{ type: 'Identifier', name: uniqueLoopVar }],
         body: {
           type: 'BlockStatement',
-          body: [{
-            type: 'ReturnStatement',
-            argument: { type: 'Identifier', name: uniqueLoopVar }
-          }]
+          body: [
+            {
+              type: 'ReturnStatement',
+              argument: { type: 'Identifier', name: uniqueLoopVar }
+            }
+          ]
         }
       };
     }
 
     // Create the body callback
-    let bodyBlock = node.body.type === 'BlockStatement' ? node.body : {
-      type: 'BlockStatement',
-      body: [node.body]
-    };
+    let bodyBlock =
+      node.body.type === 'BlockStatement'
+        ? node.body
+        : {
+            type: 'BlockStatement',
+            body: [node.body]
+          };
 
     // Replace loop variable references in the body
     if (node.init?.type === 'VariableDeclaration') {
       const loopVarName = node.init.declarations[0].id.name;
-      bodyBlock = replaceIdentifierReferences(bodyBlock, loopVarName, uniqueLoopVar);
+      bodyBlock = replaceIdentifierReferences(
+        bodyBlock,
+        loopVarName,
+        uniqueLoopVar
+      );
     }
 
     const bodyFunction = {
@@ -1106,7 +1258,7 @@ const ASTCallbacks = {
       AssignmentExpression(node, ancestors) {
         // Skip if we're inside a block that contains strands control flow
         if (ancestors.some(statementContainsStrandsControlFlow)) {
-          return
+          return;
         }
 
         const left = node.left;
@@ -1129,7 +1281,6 @@ const ASTCallbacks = {
     });
 
     if (assignedVars.size > 0) {
-
       addCopyingAndReturn(bodyFunction.body, assignedVars, 'vars');
 
       // Create block variable and assignments similar to if statements
@@ -1172,16 +1323,24 @@ const ASTCallbacks = {
           type: 'Identifier',
           name: '__p5.strandsFor'
         },
-        arguments: [initialFunction, conditionFunction, updateFunction, bodyFunction, initialVarsObject]
+        arguments: [
+          initialFunction,
+          conditionFunction,
+          updateFunction,
+          bodyFunction,
+          initialVarsObject
+        ]
       };
 
       statements.push({
         type: 'VariableDeclaration',
-        declarations: [{
-          type: 'VariableDeclarator',
-          id: { type: 'Identifier', name: blockVar },
-          init: callExpression
-        }],
+        declarations: [
+          {
+            type: 'VariableDeclarator',
+            id: { type: 'Identifier', name: blockVar },
+            init: callExpression
+          }
+        ],
         kind: 'const'
       });
 
@@ -1233,21 +1392,24 @@ const ASTCallbacks = {
           type: 'Identifier',
           name: '__p5.strandsFor'
         },
-        arguments: [initialFunction, conditionFunction, updateFunction, bodyFunction, {
-          type: 'ObjectExpression',
-          properties: []
-        }]
+        arguments: [
+          initialFunction,
+          conditionFunction,
+          updateFunction,
+          bodyFunction,
+          {
+            type: 'ObjectExpression',
+            properties: []
+          }
+        ]
       };
     }
 
     delete node.init;
     delete node.test;
     delete node.update;
-  },
-
-
-
-}
+  }
+};
 
 // Helper function to check if a function body contains return statements in control flow
 function functionHasEarlyReturns(functionNode) {
@@ -1309,11 +1471,13 @@ function transformHelperFunction(functionNode) {
   // 1. Add __returnValue declaration at the start of function body
   const returnValueDecl = {
     type: 'VariableDeclaration',
-    declarations: [{
-      type: 'VariableDeclarator',
-      id: { type: 'Identifier', name: '__returnValue' },
-      init: null
-    }],
+    declarations: [
+      {
+        type: 'VariableDeclarator',
+        id: { type: 'Identifier', name: '__returnValue' },
+        init: null
+      }
+    ],
     kind: 'let'
   };
 
@@ -1328,7 +1492,11 @@ function transformHelperFunction(functionNode) {
     for (let i = 0; i < statements.length; i++) {
       const stmt = statements[i];
 
-      if (stmt.type === 'IfStatement' && blockContainsReturn(stmt.consequent) && !stmt.alternate) {
+      if (
+        stmt.type === 'IfStatement' &&
+        blockContainsReturn(stmt.consequent) &&
+        !stmt.alternate
+      ) {
         // Find all subsequent statements
         const subsequentStatements = statements.slice(i + 1);
 
@@ -1355,7 +1523,11 @@ function transformHelperFunction(functionNode) {
         if (stmt.alternate && stmt.alternate.type === 'BlockStatement') {
           restructureIfStatements(stmt.alternate.body);
         }
-      } else if (stmt.type === 'ForStatement' && stmt.body && stmt.body.type === 'BlockStatement') {
+      } else if (
+        stmt.type === 'ForStatement' &&
+        stmt.body &&
+        stmt.body.type === 'BlockStatement'
+      ) {
         restructureIfStatements(stmt.body.body);
       } else if (stmt.type === 'BlockStatement') {
         restructureIfStatements(stmt.body);
@@ -1414,9 +1586,11 @@ function functionHasSetInControlFlow(functionNode) {
     },
     CallExpression(node) {
       // Check if this is a .set() call
-      if (inControlFlow > 0 &&
-          node.callee?.type === 'MemberExpression' &&
-          node.callee?.property?.name === 'set') {
+      if (
+        inControlFlow > 0 &&
+        node.callee?.type === 'MemberExpression' &&
+        node.callee?.property?.name === 'set'
+      ) {
         hasSetInControlFlow = true;
       }
     }
@@ -1441,9 +1615,11 @@ function transformFunctionSetCalls(functionNode) {
   // First pass: find all hooks that have .set() calls in control flow
   const findSetCalls = {
     CallExpression(node) {
-      if (node.callee?.type === 'MemberExpression' &&
-          node.callee?.property?.name === 'set' &&
-          node.callee?.object) {
+      if (
+        node.callee?.type === 'MemberExpression' &&
+        node.callee?.property?.name === 'set' &&
+        node.callee?.object
+      ) {
         // This is something like filterColor.set(...) or myp5.filterColor.set(...)
         const hookObjectNode = node.callee.object;
         const exprString = escodegen.generate(hookObjectNode);
@@ -1469,22 +1645,28 @@ function transformFunctionSetCalls(functionNode) {
     // 1. Find the .begin() call and insert intermediate variable right after it
     const intermediateVarDecl = {
       type: 'VariableDeclaration',
-      declarations: [{
-        type: 'VariableDeclarator',
-        id: { type: 'Identifier', name: intermediateVarName },
-        init: null
-      }],
+      declarations: [
+        {
+          type: 'VariableDeclarator',
+          id: { type: 'Identifier', name: intermediateVarName },
+          init: null
+        }
+      ],
       kind: 'let'
     };
 
     let beginCallIndex = -1;
     for (let i = 0; i < functionNode.body.body.length; i++) {
       const stmt = functionNode.body.body[i];
-      if (stmt.type === 'ExpressionStatement' &&
-          stmt.expression?.type === 'CallExpression' &&
-          stmt.expression?.callee?.type === 'MemberExpression' &&
-          stmt.expression?.callee?.property?.name === 'begin') {
-        const beginExprString = escodegen.generate(stmt.expression.callee.object);
+      if (
+        stmt.type === 'ExpressionStatement' &&
+        stmt.expression?.type === 'CallExpression' &&
+        stmt.expression?.callee?.type === 'MemberExpression' &&
+        stmt.expression?.callee?.property?.name === 'begin'
+      ) {
+        const beginExprString = escodegen.generate(
+          stmt.expression.callee.object
+        );
         if (beginExprString === exprString) {
           beginCallIndex = i;
           break;
@@ -1503,9 +1685,11 @@ function transformFunctionSetCalls(functionNode) {
     const transformSetToAssignment = {
       CallExpression(node, state, ancestors) {
         // Check if this is a .set() call for this hook
-        if (node.callee?.type === 'MemberExpression' &&
-            node.callee?.property?.name === 'set' &&
-            node.callee?.object) {
+        if (
+          node.callee?.type === 'MemberExpression' &&
+          node.callee?.property?.name === 'set' &&
+          node.callee?.object
+        ) {
           const currentExprString = escodegen.generate(node.callee.object);
           if (currentExprString === exprString && node.arguments.length > 0) {
             // Find the parent statement
@@ -1553,10 +1737,12 @@ function transformFunctionSetCalls(functionNode) {
     let endCallIndex = -1;
     for (let i = 0; i < functionNode.body.body.length; i++) {
       const stmt = functionNode.body.body[i];
-      if (stmt.type === 'ExpressionStatement' &&
-          stmt.expression?.type === 'CallExpression' &&
-          stmt.expression?.callee?.type === 'MemberExpression' &&
-          stmt.expression?.callee?.property?.name === 'end') {
+      if (
+        stmt.type === 'ExpressionStatement' &&
+        stmt.expression?.type === 'CallExpression' &&
+        stmt.expression?.callee?.type === 'MemberExpression' &&
+        stmt.expression?.callee?.property?.name === 'end'
+      ) {
         const endExprString = escodegen.generate(stmt.expression.callee.object);
         if (endExprString === exprString) {
           endCallIndex = i;
@@ -1570,9 +1756,14 @@ function transformFunctionSetCalls(functionNode) {
       functionNode.body.body.splice(endCallIndex, 0, finalSetCall);
     } else {
       // If no .end() found, insert before return statement or at the end
-      const lastStatement = functionNode.body.body[functionNode.body.body.length - 1];
+      const lastStatement =
+        functionNode.body.body[functionNode.body.body.length - 1];
       if (lastStatement && lastStatement.type === 'ReturnStatement') {
-        functionNode.body.body.splice(functionNode.body.body.length - 1, 0, finalSetCall);
+        functionNode.body.body.splice(
+          functionNode.body.body.length - 1,
+          0,
+          finalSetCall
+        );
       } else {
         functionNode.body.body.push(finalSetCall);
       }
@@ -1587,7 +1778,11 @@ function transformSetCallsInControlFlow(ast, names) {
   // Collect functions that have .set() calls in control flow
   const collectFunctions = {
     ArrowFunctionExpression(node, ancestors) {
-      if (ancestors.some(a => nodeIsUniform(a) || nodeIsUniformCallbackFn(a, names))) {
+      if (
+        ancestors.some(
+          a => nodeIsUniform(a) || nodeIsUniformCallbackFn(a, names)
+        )
+      ) {
         return;
       }
       if (functionHasSetInControlFlow(node)) {
@@ -1595,7 +1790,11 @@ function transformSetCallsInControlFlow(ast, names) {
       }
     },
     FunctionExpression(node, ancestors) {
-      if (ancestors.some(a => nodeIsUniform(a) || nodeIsUniformCallbackFn(a, names))) {
+      if (
+        ancestors.some(
+          a => nodeIsUniform(a) || nodeIsUniformCallbackFn(a, names)
+        )
+      ) {
         return;
       }
       if (functionHasSetInControlFlow(node)) {
@@ -1603,7 +1802,11 @@ function transformSetCallsInControlFlow(ast, names) {
       }
     },
     FunctionDeclaration(node, ancestors) {
-      if (ancestors.some(a => nodeIsUniform(a) || nodeIsUniformCallbackFn(a, names))) {
+      if (
+        ancestors.some(
+          a => nodeIsUniform(a) || nodeIsUniformCallbackFn(a, names)
+        )
+      ) {
         return;
       }
       if (functionHasSetInControlFlow(node)) {
@@ -1627,18 +1830,30 @@ function transformHelperFunctionEarlyReturns(ast, names) {
   // Collect helper functions that need transformation
   const collectHelperFunctions = {
     VariableDeclarator(node, ancestors) {
-      if (ancestors.some(a => nodeIsUniform(a) || nodeIsUniformCallbackFn(a, names))) {
+      if (
+        ancestors.some(
+          a => nodeIsUniform(a) || nodeIsUniformCallbackFn(a, names)
+        )
+      ) {
         return;
       }
       const init = node.init;
-      if (init && (init.type === 'ArrowFunctionExpression' || init.type === 'FunctionExpression')) {
+      if (
+        init &&
+        (init.type === 'ArrowFunctionExpression' ||
+          init.type === 'FunctionExpression')
+      ) {
         if (functionHasEarlyReturns(init)) {
           helperFunctionsToTransform.push(init);
         }
       }
     },
     FunctionDeclaration(node, ancestors) {
-      if (ancestors.some(a => nodeIsUniform(a) || nodeIsUniformCallbackFn(a, names))) {
+      if (
+        ancestors.some(
+          a => nodeIsUniform(a) || nodeIsUniformCallbackFn(a, names)
+        )
+      ) {
         return;
       }
       if (functionHasEarlyReturns(node)) {
@@ -1663,7 +1878,7 @@ function transformHelperFunctionEarlyReturns(ast, names) {
 /**
  * @private
  * @internal
- * 
+ *
  * Transpiles a p5.strands callback into executable JavaScript by applying
  * a multi-pass AST transformation pipeline.
  *
@@ -1696,27 +1911,49 @@ function makeGuardedCallbacks(callbacks) {
   const guarded = {};
   for (const [name, fn] of Object.entries(callbacks)) {
     guarded[name] = (node, state, ancestors) => {
-      if (ancestors.some(a =>
-        nodeIsUniform(a) ||
-        nodeIsUniformCallbackFn(a, state.uniformCallbackNames)
-      )) return;
+      if (
+        ancestors.some(
+          a =>
+            nodeIsUniform(a) ||
+            nodeIsUniformCallbackFn(a, state.uniformCallbackNames)
+        )
+      )
+        return;
       return fn(node, state, ancestors);
     };
   }
   return guarded;
 }
 
-function runNonControlFlowPass(ast, uniformCallbackNames) {
-  const nonControlFlowCallbacks = ({ ...ASTCallbacks });
+function runNonControlFlowPass(
+  ast,
+  uniformCallbackNames,
+  initialShaderNameState
+) {
+  const nonControlFlowCallbacks = { ...ASTCallbacks };
   delete nonControlFlowCallbacks.IfStatement;
   delete nonControlFlowCallbacks.ForStatement;
-  ancestor(ast, nonControlFlowCallbacks, undefined, { varyings: {}, uniformCallbackNames });
+  const state = {
+    varyings: {},
+    uniformCallbackNames,
+    shaderNameMap: createStrandsShaderNameMap(),
+    shaderNameState: createStrandsShaderNameState(
+      initialShaderNameState?.nextSuffix || 0
+    )
+  };
+  ancestor(ast, nonControlFlowCallbacks, undefined, state);
+  return {
+    shaderNameMap: state.shaderNameMap,
+    shaderNameState: state.shaderNameState
+  };
 }
 
 function runControlFlowPass(ast, uniformCallbackNames) {
   const postOrderControlFlowTransform = {
     CallExpression(node, state, c) {
-      if (nodeIsUniform(node)) { return; }
+      if (nodeIsUniform(node)) {
+        return;
+      }
       if (node.callee) c(node.callee, state);
       for (const arg of node.arguments) c(arg, state);
     },
@@ -1727,8 +1964,11 @@ function runControlFlowPass(ast, uniformCallbackNames) {
     VariableDeclarator(node, state, c) {
       if (
         state.uniformCallbackNames?.has(node.id?.name) &&
-        (node.init?.type === 'FunctionExpression' || node.init?.type === 'ArrowFunctionExpression')
-      ) { return; }
+        (node.init?.type === 'FunctionExpression' ||
+          node.init?.type === 'ArrowFunctionExpression')
+      ) {
+        return;
+      }
       if (node.init) c(node.init, state);
     },
     IfStatement(node, state, c) {
@@ -1759,14 +1999,20 @@ function runControlFlowPass(ast, uniformCallbackNames) {
       delete node.argument;
     }
   };
-  recursive(ast, { varyings: {}, inControlFlow: 0, uniformCallbackNames }, postOrderControlFlowTransform);
+  recursive(
+    ast,
+    { varyings: {}, inControlFlow: 0, uniformCallbackNames },
+    postOrderControlFlowTransform
+  );
 }
 
 function buildStrandsCallback(p5, ast, scope) {
   const transpiledSource = escodegen.generate(ast);
   const scopeKeys = Object.keys(scope);
-  const match = /\(?\s*(?:function)?\s*\w*\s*\(([^)]*)\)\s*(?:=>)?\s*{((?:.|\n)*)}\s*;?\s*\)?/
-    .exec(transpiledSource);
+  const match =
+    /\(?\s*(?:function)?\s*\w*\s*\(([^)]*)\)\s*(?:=>)?\s*{((?:.|\n)*)}\s*;?\s*\)?/.exec(
+      transpiledSource
+    );
   if (!match) {
     console.log(transpiledSource);
     throw new Error('Could not parse p5.strands function!');
@@ -1796,13 +2042,20 @@ function buildStrandsCallback(p5, ast, scope) {
   }
 }
 
-
-
-export function transpileStrandsToJS(p5, sourceString, srcLocations, scope) {
+export function transpileStrandsToJS(
+  p5,
+  sourceString,
+  srcLocations,
+  scope,
+  initialShaderNameState
+) {
   blockVarCounter = 0;
   loopVarCounter = 0;
 
-  const ast = parse(sourceString, { ecmaVersion: 2021, locations: srcLocations });
+  const ast = parse(sourceString, {
+    ecmaVersion: 2021,
+    locations: srcLocations
+  });
 
   throwIfLoopProtectionInserted(ast);
 
@@ -1813,7 +2066,11 @@ export function transpileStrandsToJS(p5, sourceString, srcLocations, scope) {
   transformSetCallsInControlFlow(ast, uniformCallbackNames);
 
   // Pass 2: transform non-control-flow nodes (operators, varyings, uniforms, arrays)
-  runNonControlFlowPass(ast, uniformCallbackNames);
+  const { shaderNameMap, shaderNameState } = runNonControlFlowPass(
+    ast,
+    uniformCallbackNames,
+    initialShaderNameState
+  );
 
   // Pass 3: transform helper functions with early returns to use __returnValue pattern
   transformHelperFunctionEarlyReturns(ast, uniformCallbackNames);
@@ -1821,5 +2078,10 @@ export function transpileStrandsToJS(p5, sourceString, srcLocations, scope) {
   // Pass 4: transform if/for statements post-order into strandsIf/strandsFor calls
   runControlFlowPass(ast, uniformCallbackNames);
 
-  return buildStrandsCallback(p5, ast, scope);
+  const callback = buildStrandsCallback(p5, ast, scope);
+  return {
+    callback,
+    shaderNameMap,
+    shaderNameState
+  };
 }
