@@ -4,7 +4,7 @@
  * @for p5
  */
 
-function transform(p5, fn){
+function transform(p5, fn) {
   /**
    * Applies a transformation matrix to the coordinate system.
    *
@@ -211,7 +211,7 @@ function transform(p5, fn){
    * @param  {Number} p an element of the transformation matrix.
    * @chainable
    */
-  fn.applyMatrix = function(...args) {
+  fn.applyMatrix = function (...args) {
     let isTypedArray = args[0] instanceof Object.getPrototypeOf(Uint8Array);
     if (Array.isArray(args[0]) || isTypedArray) {
       this._renderer.applyMatrix(...args[0]);
@@ -255,7 +255,7 @@ function transform(p5, fn){
    *   circle(25, 25, 20);
    * }
    */
-  fn.resetMatrix = function() {
+  fn.resetMatrix = function () {
     this._renderer.resetMatrix();
     return this;
   };
@@ -416,7 +416,7 @@ function transform(p5, fn){
    *   box();
    * }
    */
-  fn.rotate = function(angle, axis) {
+  fn.rotate = function (angle, axis) {
     // p5._validateParameters('rotate', arguments);
     return this._renderer.rotate(this._toRadians(angle), axis);
   };
@@ -537,7 +537,7 @@ function transform(p5, fn){
    *   box();
    * }
    */
-  fn.rotateX = function(angle) {
+  fn.rotateX = function (angle) {
     this._assert3d('rotateX');
     // p5._validateParameters('rotateX', arguments);
     return this._renderer.rotateX(this._toRadians(angle));
@@ -659,7 +659,7 @@ function transform(p5, fn){
    *   box();
    * }
    */
-  fn.rotateY = function(angle) {
+  fn.rotateY = function (angle) {
     this._assert3d('rotateY');
     // p5._validateParameters('rotateY', arguments);
     return this._renderer.rotateY(this._toRadians(angle));
@@ -781,7 +781,7 @@ function transform(p5, fn){
    *   box();
    * }
    */
-  fn.rotateZ = function(angle) {
+  fn.rotateZ = function (angle) {
     this._assert3d('rotateZ');
     // p5._validateParameters('rotateZ', arguments);
     return this._renderer.rotateZ(this._toRadians(angle));
@@ -940,7 +940,7 @@ function transform(p5, fn){
    * @param  {p5.Vector|Number[]} scales vector whose components should be used to scale.
    * @chainable
    */
-  fn.scale = function(x, y, z) {
+  fn.scale = function (x, y, z) {
     // p5._validateParameters('scale', arguments);
     // Only check for Vector argument type if Vector is available
     if (x instanceof p5.Vector) {
@@ -1026,7 +1026,7 @@ function transform(p5, fn){
    *   square(0, 0, 50);
    * }
    */
-  fn.shearX = function(angle) {
+  fn.shearX = function (angle) {
     // p5._validateParameters('shearX', arguments);
     const rad = this._toRadians(angle);
     this._renderer.applyMatrix(1, 0, Math.tan(rad), 1, 0, 0);
@@ -1096,7 +1096,7 @@ function transform(p5, fn){
    *   square(0, 0, 50);
    * }
    */
-  fn.shearY = function(angle) {
+  fn.shearY = function (angle) {
     // p5._validateParameters('shearY', arguments);
     const rad = this._toRadians(angle);
     this._renderer.applyMatrix(1, Math.tan(rad), 0, 1, 0, 0);
@@ -1263,7 +1263,7 @@ function transform(p5, fn){
    * @param  {p5.Vector} vector vector by which to translate.
    * @chainable
    */
-  fn.translate = function(x, y, z) {
+  fn.translate = function (x, y, z) {
     // p5._validateParameters('translate', arguments);
     if (this._renderer.isP3D) {
       return this._renderer.translate(x, y, z);
@@ -1537,7 +1537,7 @@ function transform(p5, fn){
    *   pop();
    * }
    */
-  fn.push = function() {
+  fn.push = function () {
     this._renderer.push();
   };
 
@@ -1806,13 +1806,13 @@ function transform(p5, fn){
    *   pop();
    * }
    */
-  fn.pop = function() {
+  fn.pop = function () {
     this._renderer.pop();
   };
 }
 
 export default transform;
 
-if(typeof p5 !== 'undefined'){
+if (typeof p5 !== 'undefined') {
   transform(p5, p5.prototype);
 }

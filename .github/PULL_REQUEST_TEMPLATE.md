@@ -3,16 +3,17 @@
 
 
  In the description field of this PR, include "resolves #XXXX" tagging the issue you are fixing. If this PR addresses the issue but doesn't completely resolve it (ie the issue should remain open after your PR is merged), write "addresses #XXXX".-->
+
 Resolves #[Add issue number here]
 
- Changes:
+Changes:
 <!-- Add here what changes were made in this pull request and if possible provide links showcasing the changes. -->
 
-
- Screenshots of the change:
+Screenshots of the change:
 <!-- If applicable, add screenshots depicting the changes. -->
 
 #### PR Checklist
+
 <!--
   To check any option, replace the "[ ]" with a "[x]". Be sure to check out how it looks in the Preview tab! Feel free to remove any portion of the template that is not relevant for your issue.
 -->

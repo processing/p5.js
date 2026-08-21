@@ -11,10 +11,31 @@ uniform vec4 uTint;
 uniform sampler2D uSampler;
 uniform bool isTexture;
 
+// the mtl texture maps only exist in the USE_TEXTURE_MAPS variant of this
+// shader. models that don't use any map get the plain phong shader instead,
+// so none of these samplers/branches are even compiled in for them. dave's
+// call: separate variant rather than branching in one shader that everyone pays for.
+#ifdef USE_TEXTURE_MAPS
+uniform sampler2D uSpecularSampler;
+uniform bool uHasSpecularTex;
+uniform sampler2D uAmbientSampler;
+uniform bool uHasAmbientTex;
+uniform sampler2D uShininessSampler;
+uniform bool uHasShininessTex;
+uniform sampler2D uNormalSampler;
+uniform bool uHasNormalMap;
+uniform float uNormalScale;
+uniform int uNormalMapMode;
+uniform vec2 uNormalTexelSize;
+#endif
+
 IN vec3 vNormal;
 IN vec2 vTexCoord;
 IN vec3 vViewPosition;
 IN vec4 vColor;
+#ifdef USE_TEXTURE_MAPS
+IN vec4 vTangent;
+#endif
 
 struct ColorComponents {
   vec3 baseColor;
@@ -43,7 +64,34 @@ void main(void) {
   HOOK_beforeFragment();
 
   Inputs inputs;
-  inputs.normal = normalize(vNormal);
+  vec3 N = normalize(vNormal);
+#ifdef USE_TEXTURE_MAPS
+  if (uHasNormalMap) {
+    // rebuild the tangent basis (TBN) from the smooth per-vertex tangent and
+    // perturb the normal by the map. gram-schmidt keeps T perpendicular to the
+    // interpolated normal so the frame stays smooth across triangles (no facets).
+    vec3 T = normalize(vTangent.xyz);
+    T = normalize(T - N * dot(N, T));
+    vec3 B = cross(N, T) * vTangent.w;
+    vec3 mapN;
+    if (uNormalMapMode == 1) {
+      // bump map: brightness is height, so the tangent-space normal comes from
+      // how fast that height changes between neighbouring texels.
+      float h = TEXTURE(uNormalSampler, vTexCoord).r;
+      float hu = TEXTURE(uNormalSampler, vTexCoord + vec2(uNormalTexelSize.x, 0.0)).r;
+      float hv = TEXTURE(uNormalSampler, vTexCoord + vec2(0.0, uNormalTexelSize.y)).r;
+      // the surface leans away from the direction height increases in
+      mapN = normalize(vec3(h - hu, h - hv, 1.0));
+    } else {
+      // normal map: rgb already holds the tangent-space normal
+      mapN = TEXTURE(uNormalSampler, vTexCoord).rgb * 2.0 - 1.0;
+    }
+    // scale the tangent-space slope so the strength can be tuned (-bm)
+    mapN.xy *= uNormalScale;
+    N = normalize(mat3(T, B, N) * mapN);
+  }
+#endif
+  inputs.normal = N;
   inputs.texCoord = vTexCoord;
   inputs.ambientLight = uAmbientColor;
   inputs.color = isTexture
@@ -54,10 +102,24 @@ void main(void) {
     // so hooks users don't have to think about premultiplied alpha.
     inputs.color.rgb /= inputs.color.a;
   }
-  inputs.shininess = uShininess;
   inputs.metalness = uMetallic;
+#ifdef USE_TEXTURE_MAPS
+  // map variant: shininess/ambient/specular can be modulated by their maps
+  inputs.shininess = uHasShininessTex
+      ? uShininess * TEXTURE(uShininessSampler, vTexCoord).r
+      : uShininess;
+  inputs.ambientMaterial = uHasAmbientTex
+      ? TEXTURE(uAmbientSampler, vTexCoord).rgb * uAmbientMatColor.rgb
+      : (uHasSetAmbient ? uAmbientMatColor.rgb : inputs.color.rgb);
+  inputs.specularMaterial = uHasSpecularTex
+      ? TEXTURE(uSpecularSampler, vTexCoord).rgb * uSpecularMatColor.rgb
+      : uSpecularMatColor.rgb;
+#else
+  // default variant: plain phong, exactly as before this feature existed
+  inputs.shininess = uShininess;
   inputs.ambientMaterial = uHasSetAmbient ? uAmbientMatColor.rgb : inputs.color.rgb;
   inputs.specularMaterial = uSpecularMatColor.rgb;
+#endif
   inputs.emissiveMaterial = uEmissiveMatColor.rgb;
   inputs = HOOK_getPixelInputs(inputs);
 

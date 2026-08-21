@@ -1,6 +1,6 @@
-import * as constants from "../core/constants";
-import { INSTANCE_ID_VARYING_NAME } from "../strands/ir_types";
-import { Texture } from "./p5.Texture";
+import * as constants from '../core/constants';
+import { INSTANCE_ID_VARYING_NAME } from '../strands/ir_types';
+import { Texture } from './p5.Texture';
 
 /**
  * @private
@@ -27,7 +27,7 @@ export function readPixelsWebGL(
   height,
   format,
   type,
-  flipY,
+  flipY
 ) {
   // Record the currently bound framebuffer so we can go back to it after, and
   // bind the framebuffer we want to read from
@@ -50,7 +50,7 @@ export function readPixelsWebGL(
     height,
     format,
     type,
-    pixels,
+    pixels
   );
 
   // Re-bind whatever was previously bound
@@ -105,15 +105,18 @@ export function readPixelWebGL(gl, framebuffer, x, y, format, type, flipY) {
 export function setWebGLTextureParams(texture, gl, webglVersion) {
   texture.bindTexture();
   const glMinFilter =
-    texture.minFilter === constants.NEAREST ? gl.NEAREST :
-      texture.minFilter === constants.LINEAR_MIPMAP ? gl.LINEAR_MIPMAP_LINEAR : gl.LINEAR;
+    texture.minFilter === constants.NEAREST
+      ? gl.NEAREST
+      : texture.minFilter === constants.LINEAR_MIPMAP
+        ? gl.LINEAR_MIPMAP_LINEAR
+        : gl.LINEAR;
   const glMagFilter =
     texture.magFilter === constants.NEAREST ? gl.NEAREST : gl.LINEAR;
 
   // for webgl 1 we need to check if the texture is power of two
   // if it isn't we will set the wrap mode to CLAMP
   // webgl2 will support npot REPEAT and MIRROR but we don't check for it yet
-  const isPowerOfTwo = (x) => (x & (x - 1)) === 0;
+  const isPowerOfTwo = x => (x & (x - 1)) === 0;
   const textureData = texture._getTextureDataFromSource();
 
   let wrapWidth;
@@ -139,7 +142,7 @@ export function setWebGLTextureParams(texture, gl, webglVersion) {
       glWrapS = gl.REPEAT;
     } else {
       console.warn(
-        "You tried to set the wrap mode to REPEAT but the texture size is not a power of two. Setting to CLAMP instead",
+        'You tried to set the wrap mode to REPEAT but the texture size is not a power of two. Setting to CLAMP instead'
       );
       glWrapS = gl.CLAMP_TO_EDGE;
     }
@@ -151,7 +154,7 @@ export function setWebGLTextureParams(texture, gl, webglVersion) {
       glWrapS = gl.MIRRORED_REPEAT;
     } else {
       console.warn(
-        "You tried to set the wrap mode to MIRROR but the texture size is not a power of two. Setting to CLAMP instead",
+        'You tried to set the wrap mode to MIRROR but the texture size is not a power of two. Setting to CLAMP instead'
       );
       glWrapS = gl.CLAMP_TO_EDGE;
     }
@@ -168,7 +171,7 @@ export function setWebGLTextureParams(texture, gl, webglVersion) {
       glWrapT = gl.REPEAT;
     } else {
       console.warn(
-        "You tried to set the wrap mode to REPEAT but the texture size is not a power of two. Setting to CLAMP instead",
+        'You tried to set the wrap mode to REPEAT but the texture size is not a power of two. Setting to CLAMP instead'
       );
       glWrapT = gl.CLAMP_TO_EDGE;
     }
@@ -180,7 +183,7 @@ export function setWebGLTextureParams(texture, gl, webglVersion) {
       glWrapT = gl.MIRRORED_REPEAT;
     } else {
       console.warn(
-        "You tried to set the wrap mode to MIRROR but the texture size is not a power of two. Setting to CLAMP instead",
+        'You tried to set the wrap mode to MIRROR but the texture size is not a power of two. Setting to CLAMP instead'
       );
       glWrapT = gl.CLAMP_TO_EDGE;
     }
@@ -221,6 +224,9 @@ export function setWebGLUniformValue(shader, uniform, data, getTexture, gl) {
       } else {
         gl.uniform1f(location, data);
       }
+      break;
+    case gl.FLOAT_MAT2:
+      gl.uniformMatrix2fv(location, false, data);
       break;
     case gl.FLOAT_MAT3:
       gl.uniformMatrix3fv(location, false, data);
@@ -271,16 +277,16 @@ export function setWebGLUniformValue(shader, uniform, data, getTexture, gl) {
       }
       break;
     case gl.SAMPLER_2D:
-      if (typeof data == "number") {
+      if (typeof data == 'number') {
         if (
           data < gl.TEXTURE0 ||
           data > gl.TEXTURE31 ||
           data !== Math.ceil(data)
         ) {
           console.log(
-            "🌸 p5.js says: " +
+            '🌸 p5.js says: ' +
               "You're trying to use a number as the data for a texture." +
-              "Please use a texture.",
+              'Please use a texture.'
           );
           return;
         }
@@ -306,7 +312,7 @@ export function setWebGLUniformValue(shader, uniform, data, getTexture, gl) {
     case gl.UNSIGNED_INT_SAMPLER_3D:
     case gl.UNSIGNED_INT_SAMPLER_CUBE:
     case gl.UNSIGNED_INT_SAMPLER_2D_ARRAY:
-      if (typeof data !== "number") {
+      if (typeof data !== 'number') {
         break;
       }
       if (
@@ -315,9 +321,9 @@ export function setWebGLUniformValue(shader, uniform, data, getTexture, gl) {
         data !== Math.ceil(data)
       ) {
         console.log(
-          "🌸 p5.js says: " +
+          '🌸 p5.js says: ' +
             "You're trying to use a number as the data for a texture." +
-            "Please use a texture.",
+            'Please use a texture.'
         );
         break;
       }
@@ -347,7 +353,7 @@ export function getWebGLUniformMetadata(shader, gl) {
     //off here. The size property tells us that its an array
     //so we dont lose any information by doing this
     if (uniformInfo.size > 1) {
-      uniformName = uniformName.substring(0, uniformName.indexOf("[0]"));
+      uniformName = uniformName.substring(0, uniformName.indexOf('[0]'));
     }
     uniform.name = uniformName;
     uniform.type = uniformInfo.type;
@@ -360,6 +366,7 @@ export function getWebGLUniformMetadata(shader, gl) {
 
     uniform.isArray =
       uniformInfo.size > 1 ||
+      uniform.type === gl.FLOAT_MAT2 ||
       uniform.type === gl.FLOAT_MAT3 ||
       uniform.type === gl.FLOAT_MAT4 ||
       uniform.type === gl.FLOAT_VEC2 ||
@@ -380,7 +387,7 @@ export function getWebGLShaderAttributes(shader, gl) {
 
   const numAttributes = gl.getProgramParameter(
     shader._glProgram,
-    gl.ACTIVE_ATTRIBUTES,
+    gl.ACTIVE_ATTRIBUTES
   );
   for (let i = 0; i < numAttributes; ++i) {
     const attributeInfo = gl.getActiveAttrib(shader._glProgram, i);
@@ -399,21 +406,21 @@ export function getWebGLShaderAttributes(shader, gl) {
 }
 
 export function populateGLSLHooks(shader, src, shaderType) {
-  const main = "void main";
+  const main = 'void main';
   if (!src.includes(main)) return src;
 
   let [preMain, postMain] = src.split(main);
 
-  let hooks = "";
-  let defines = "";
+  let hooks = '';
+  let defines = '';
   for (const key in shader.hooks.uniforms) {
     hooks += `uniform ${key};\n`;
   }
   if (shader.hooks.declarations) {
-    hooks += shader.hooks.declarations + "\n";
+    hooks += shader.hooks.declarations + '\n';
   }
   if (shader.hooks[shaderType].declarations) {
-    hooks += shader.hooks[shaderType].declarations + "\n";
+    hooks += shader.hooks[shaderType].declarations + '\n';
   }
 
   // Handle varying variables from p5.strands
@@ -423,9 +430,9 @@ export function populateGLSLHooks(shader, src, shaderType) {
   ) {
     for (const varyingVar of shader.hooks.varyingVariables) {
       // Generate OUT declaration for vertex shader, IN declaration for fragment shader
-      if (shaderType === "vertex") {
+      if (shaderType === 'vertex') {
         hooks += `OUT ${varyingVar};\n`;
-      } else if (shaderType === "fragment") {
+      } else if (shaderType === 'fragment') {
         hooks += `IN ${varyingVar};\n`;
       }
     }
@@ -433,13 +440,17 @@ export function populateGLSLHooks(shader, src, shaderType) {
 
   // Handle instanceID varying for fragment access
   if (shader.hooks.instanceIDVarying) {
-    const { declaration, source, interpolation } = shader.hooks.instanceIDVarying;
+    const { declaration, source, interpolation } =
+      shader.hooks.instanceIDVarying;
     const qualifier = interpolation ? `${interpolation} ` : '';
-    if (shaderType === "vertex") {
+    if (shaderType === 'vertex') {
       // Emit flat out declaration and inject assignment into main() body
       hooks += `${qualifier}OUT ${declaration};\n`;
-      postMain = postMain.replace(/\{/, `{\n  ${declaration.split(' ').pop()} = ${source};`);
-    } else if (shaderType === "fragment") {
+      postMain = postMain.replace(
+        /\{/,
+        `{\n  ${declaration.split(' ').pop()} = ${source};`
+      );
+    } else if (shaderType === 'fragment') {
       hooks += `${qualifier}IN ${declaration};\n`;
     }
   }
@@ -448,8 +459,8 @@ export function populateGLSLHooks(shader, src, shaderType) {
     hooks += `${hookDef}${shader.hooks.helpers[hookDef]}\n`;
   }
   for (const hookDef in shader.hooks[shaderType]) {
-    if (hookDef === "declarations") continue;
-    const [hookType, hookName] = hookDef.split(" ");
+    if (hookDef === 'declarations') continue;
+    const [hookType, hookName] = hookDef.split(' ');
 
     // Add a #define so that if the shader wants to use preprocessor directives to
     // optimize away the extra function calls in main, it can do so
@@ -457,43 +468,43 @@ export function populateGLSLHooks(shader, src, shaderType) {
       shader.hooks.modified.vertex[hookDef] ||
       shader.hooks.modified.fragment[hookDef]
     ) {
-      defines += "#define AUGMENTED_HOOK_" + hookName + "\n";
+      defines += '#define AUGMENTED_HOOK_' + hookName + '\n';
     }
 
     hooks +=
-      hookType + " HOOK_" + hookName + shader.hooks[shaderType][hookDef] + "\n";
+      hookType + ' HOOK_' + hookName + shader.hooks[shaderType][hookDef] + '\n';
   }
 
   // Allow shaders to specify the location of hook #define statements. Normally these
   // go after function definitions, but one might want to have them defined earlier
   // in order to only conditionally make uniforms.
-  if (preMain.indexOf("#define HOOK_DEFINES") !== -1) {
-    preMain = preMain.replace("#define HOOK_DEFINES", "\n" + defines + "\n");
-    defines = "";
+  if (preMain.indexOf('#define HOOK_DEFINES') !== -1) {
+    preMain = preMain.replace('#define HOOK_DEFINES', '\n' + defines + '\n');
+    defines = '';
   }
 
-  return preMain + "\n" + defines + hooks + main + postMain;
+  return preMain + '\n' + defines + hooks + main + postMain;
 }
 
 export function checkWebGLCapabilities({ GL, webglVersion }) {
   const gl = GL;
   const supportsFloat =
     webglVersion === constants.WEBGL2
-      ? gl.getExtension("EXT_color_buffer_float") &&
-        gl.getExtension("EXT_float_blend")
-      : gl.getExtension("OES_texture_float");
+      ? gl.getExtension('EXT_color_buffer_float') &&
+        gl.getExtension('EXT_float_blend')
+      : gl.getExtension('OES_texture_float');
   const supportsFloatLinear =
-    supportsFloat && gl.getExtension("OES_texture_float_linear");
+    supportsFloat && gl.getExtension('OES_texture_float_linear');
   const supportsHalfFloat =
     webglVersion === constants.WEBGL2
-      ? gl.getExtension("EXT_color_buffer_float")
-      : gl.getExtension("OES_texture_half_float");
+      ? gl.getExtension('EXT_color_buffer_float')
+      : gl.getExtension('OES_texture_half_float');
   const supportsHalfFloatLinear =
-    supportsHalfFloat && gl.getExtension("OES_texture_half_float_linear");
+    supportsHalfFloat && gl.getExtension('OES_texture_half_float_linear');
   return {
     float: supportsFloat,
     floatLinear: supportsFloatLinear,
     halfFloat: supportsHalfFloat,
-    halfFloatLinear: supportsHalfFloatLinear,
+    halfFloatLinear: supportsHalfFloatLinear
   };
 }

@@ -13,7 +13,7 @@ import * as constants from '../core/constants';
 function polylineLength(vertices) {
   let length = 0;
   for (let i = 1; i < vertices.length; i++) {
-    length += vertices[i-1].position.dist(vertices[i].position);
+    length += vertices[i - 1].position.dist(vertices[i].position);
   }
   return length;
 }
@@ -22,9 +22,7 @@ function polylineLength(vertices) {
 
 class Vertex {
   constructor(properties) {
-    for (const [key, value] of Object.entries(properties)) {
-      this[key] = value;
-    }
+    Object.assign(this, properties);
   }
   /*
   get array() {
@@ -48,13 +46,14 @@ class ShapePrimitive {
   isClosing = false;
 
   constructor(...vertices) {
-    if (this.constructor === ShapePrimitive) {
-      throw new Error('ShapePrimitive is an abstract class: it cannot be instantiated.');
+    if (new.target === ShapePrimitive) {
+      throw new Error(
+        'ShapePrimitive is an abstract class: it cannot be instantiated.'
+      );
     }
     if (vertices.length > 0) {
       this.vertices = vertices;
-    }
-    else {
+    } else {
       throw new Error('At least one vertex must be passed to the constructor.');
     }
   }
@@ -94,15 +93,14 @@ class ShapePrimitive {
       // last primitive in shape
       let lastPrimitive = shape.at(-1, -1);
       let hasSameType = lastPrimitive instanceof this.constructor;
-      let spareCapacity = lastPrimitive.vertexCapacity -
-                          lastPrimitive.vertexCount;
+      let spareCapacity =
+        lastPrimitive.vertexCapacity - lastPrimitive.vertexCount;
 
       // this primitive
       let pushableVertices;
       let remainingVertices;
 
       if (hasSameType && spareCapacity > 0) {
-
         pushableVertices = this.vertices.splice(0, spareCapacity);
         remainingVertices = this.vertices;
         lastPrimitive.vertices.push(...pushableVertices);
@@ -110,8 +108,7 @@ class ShapePrimitive {
         if (remainingVertices.length > 0) {
           lastContour.primitives.push(this);
         }
-      }
-      else {
+      } else {
         lastContour.primitives.push(this);
       }
     }
@@ -131,9 +128,9 @@ class ShapePrimitive {
   }
 
   get _nextPrimitive() {
-    return this._belongsToShape ?
-      this._shape.at(this._contoursIndex, this._primitivesIndex + 1) :
-      null;
+    return this._belongsToShape
+      ? this._shape.at(this._contoursIndex, this._primitivesIndex + 1)
+      : null;
   }
 
   get _belongsToShape() {
@@ -174,10 +171,8 @@ class Contour {
 // ---- PATH PRIMITIVES ----
 
 class Anchor extends ShapePrimitive {
-  #vertexCapacity = 1;
-
   get vertexCapacity() {
-    return this.#vertexCapacity;
+    return 1;
   }
 
   accept(visitor) {
@@ -193,17 +188,19 @@ class Anchor extends ShapePrimitive {
 class Segment extends ShapePrimitive {
   constructor(...vertices) {
     super(...vertices);
-    if (this.constructor === Segment) {
-      throw new Error('Segment is an abstract class: it cannot be instantiated.');
+    if (new.target === Segment) {
+      throw new Error(
+        'Segment is an abstract class: it cannot be instantiated.'
+      );
     }
   }
 
   // segments in a shape always have a predecessor
   // (either an anchor or another segment)
   get _previousPrimitive() {
-    return this._belongsToShape ?
-      this._shape.at(this._contoursIndex, this._primitivesIndex - 1) :
-      null;
+    return this._belongsToShape
+      ? this._shape.at(this._contoursIndex, this._primitivesIndex - 1)
+      : null;
   }
 
   getStartVertex() {
@@ -211,15 +208,18 @@ class Segment extends ShapePrimitive {
   }
 
   getEndVertex() {
-    return this.vertices.at(-1);
+    return this.vertices[this.vertices.length - 1];
   }
 }
 
 class LineSegment extends Segment {
-  #vertexCapacity = 1;
-
+  // Consecutive line vertices on a path batch into a single LineSegment
+  // (see Shape.vertex()), so vertexCount may exceed this capacity. The
+  // capacity only governs addToShape() merging, which batching bypasses;
+  // it stays at 1 so the generic path never merges into a LineSegment
+  // (a closing vertex must remain its own segment).
   get vertexCapacity() {
-    return this.#vertexCapacity;
+    return 1;
   }
 
   accept(visitor) {
@@ -305,9 +305,7 @@ class SplineSegment extends Segment {
   // the first vertex is in an anchor
   get _firstInterpolatedVertex() {
     if (this._splineProperties.ends === constants.EXCLUDE) {
-      return this._comesAfterSegment ?
-        this.vertices[1] :
-        this.vertices[0];
+      return this._comesAfterSegment ? this.vertices[1] : this.vertices[0];
     } else {
       return this.getStartVertex();
     }
@@ -318,8 +316,7 @@ class SplineSegment extends Segment {
       let interpolatedStartPosition = this._firstInterpolatedVertex.position;
       let predecessorEndPosition = this.getStartVertex().position;
       return predecessorEndPosition.equals(interpolatedStartPosition);
-    }
-    else {
+    } else {
       return false;
     }
   }
@@ -341,7 +338,8 @@ class SplineSegment extends Segment {
       second spline vertex at (${array1})
       expected to be at (${array2}).`;
 
-    if (verticesPushed &&
+    if (
+      verticesPushed &&
       // Only check once the first interpolated vertex has been added
       lastPrimitive.vertices.length === 2 &&
       lastPrimitive._comesAfterSegment &&
@@ -350,9 +348,7 @@ class SplineSegment extends Segment {
       let interpolatedStart = lastPrimitive._firstInterpolatedVertex.position;
       let predecessorEnd = lastPrimitive.getStartVertex().position;
 
-      console.warn(
-        message(interpolatedStart.array(), predecessorEnd.array())
-      );
+      console.warn(message(interpolatedStart.array(), predecessorEnd.array()));
     }
 
     // Note: Could add a warning in an else-if case for when this spline segment
@@ -417,10 +413,8 @@ class SplineSegment extends Segment {
 // ---- ISOLATED PRIMITIVES ----
 
 class Point extends ShapePrimitive {
-  #vertexCapacity = 1;
-
   get vertexCapacity() {
-    return this.#vertexCapacity;
+    return 1;
   }
 
   accept(visitor) {
@@ -429,10 +423,8 @@ class Point extends ShapePrimitive {
 }
 
 class Line extends ShapePrimitive {
-  #vertexCapacity = 2;
-
   get vertexCapacity() {
-    return this.#vertexCapacity;
+    return 2;
   }
 
   accept(visitor) {
@@ -441,10 +433,8 @@ class Line extends ShapePrimitive {
 }
 
 class Triangle extends ShapePrimitive {
-  #vertexCapacity = 3;
-
   get vertexCapacity() {
-    return this.#vertexCapacity;
+    return 3;
   }
 
   accept(visitor) {
@@ -453,10 +443,8 @@ class Triangle extends ShapePrimitive {
 }
 
 class Quad extends ShapePrimitive {
-  #vertexCapacity = 4;
-
   get vertexCapacity() {
-    return this.#vertexCapacity;
+    return 4;
   }
 
   accept(visitor) {
@@ -494,15 +482,33 @@ class ArcPrimitive extends ShapePrimitive {
     this.#mode = mode;
   }
 
-  get x() { return this.#x; }
-  get y() { return this.#y; }
-  get w() { return this.#w; }
-  get h() { return this.#h; }
-  get start() { return this.#start; }
-  get stop() { return this.#stop; }
-  get mode() { return this.#mode; }
-  get startVertex() { return this.vertices[0]; }
-  get endVertex() { return this.vertices[1]; }
+  get x() {
+    return this.#x;
+  }
+  get y() {
+    return this.#y;
+  }
+  get w() {
+    return this.#w;
+  }
+  get h() {
+    return this.#h;
+  }
+  get start() {
+    return this.#start;
+  }
+  get stop() {
+    return this.#stop;
+  }
+  get mode() {
+    return this.#mode;
+  }
+  get startVertex() {
+    return this.vertices[0];
+  }
+  get endVertex() {
+    return this.vertices[1];
+  }
 
   get vertexCapacity() {
     return this.#vertexCapacity;
@@ -521,7 +527,6 @@ class EllipsePrimitive extends ShapePrimitive {
   #vertexCapacity = 1;
 
   constructor(centerVertex, x, y, w, h) {
-
     super(centerVertex);
     this.#x = x;
     this.#y = y;
@@ -529,10 +534,18 @@ class EllipsePrimitive extends ShapePrimitive {
     this.#h = h;
   }
 
-  get x() { return this.#x; }
-  get y() { return this.#y; }
-  get w() { return this.#w; }
-  get h() { return this.#h; }
+  get x() {
+    return this.#x;
+  }
+  get y() {
+    return this.#y;
+  }
+  get w() {
+    return this.#w;
+  }
+  get h() {
+    return this.#h;
+  }
 
   get vertexCapacity() {
     return this.#vertexCapacity;
@@ -566,14 +579,30 @@ class RectPrimitive extends ShapePrimitive {
     this.#bl = bl;
   }
 
-  get x() { return this.#x; }
-  get y() { return this.#y; }
-  get w() { return this.#w; }
-  get h() { return this.#h; }
-  get tl() { return this.#tl; }
-  get tr() { return this.#tr; }
-  get br() { return this.#br; }
-  get bl() { return this.#bl; }
+  get x() {
+    return this.#x;
+  }
+  get y() {
+    return this.#y;
+  }
+  get w() {
+    return this.#w;
+  }
+  get h() {
+    return this.#h;
+  }
+  get tl() {
+    return this.#tl;
+  }
+  get tr() {
+    return this.#tr;
+  }
+  get br() {
+    return this.#br;
+  }
+  get bl() {
+    return this.#bl;
+  }
 
   get vertexCapacity() {
     return this.#vertexCapacity;
@@ -587,10 +616,8 @@ class RectPrimitive extends ShapePrimitive {
 // ---- TESSELLATION PRIMITIVES ----
 
 class TriangleFan extends ShapePrimitive {
-  #vertexCapacity = Infinity;
-
   get vertexCapacity() {
-    return this.#vertexCapacity;
+    return Infinity;
   }
 
   accept(visitor) {
@@ -599,10 +626,8 @@ class TriangleFan extends ShapePrimitive {
 }
 
 class TriangleStrip extends ShapePrimitive {
-  #vertexCapacity = Infinity;
-
   get vertexCapacity() {
-    return this.#vertexCapacity;
+    return Infinity;
   }
 
   accept(visitor) {
@@ -611,10 +636,8 @@ class TriangleStrip extends ShapePrimitive {
 }
 
 class QuadStrip extends ShapePrimitive {
-  #vertexCapacity = Infinity;
-
   get vertexCapacity() {
-    return this.#vertexCapacity;
+    return Infinity;
   }
 
   accept(visitor) {
@@ -624,70 +647,35 @@ class QuadStrip extends ShapePrimitive {
 
 // ---- PRIMITIVE SHAPE CREATORS ----
 
-class PrimitiveShapeCreators {
-  // TODO: make creators private?
-  // That'd probably be better, but for now, it may be convenient to use
-  // native Map properties like size, e.g. for testing, and it's simpler to
-  // not have to wrap all the properties that might be useful
-  creators;
-
-  constructor() {
-    let creators = new Map();
-
-    /* TODO: REFACTOR BASED ON THE CODE BELOW,
-       ONCE CONSTANTS ARE IMPLEMENTED AS SYMBOLS
-
-    // Store Symbols as strings for use in Map keys
-    const EMPTY_PATH = constants.EMPTY_PATH.description;
-    const PATH = constants.PATH.description;
-    //etc.
-
-    creators.set(`vertex-${EMPTY_PATH}`, (...vertices) => new Anchor(...vertices));
-    // etc.
-
-    get(vertexKind, shapeKind) {
-      const key = `${vertexKind}-${shapeKind.description}`;
-      return this.creators.get(key);
-    }
-    // etc.
-    */
-
-    // vertex
-    creators.set(`vertex-${constants.EMPTY_PATH}`, (...vertices) => new Anchor(...vertices));
-    creators.set(`vertex-${constants.PATH}`, (...vertices) => new LineSegment(...vertices));
-    creators.set(`vertex-${constants.POINTS}`, (...vertices) => new Point(...vertices));
-    creators.set(`vertex-${constants.LINES}`, (...vertices) => new Line(...vertices));
-    creators.set(`vertex-${constants.TRIANGLES}`, (...vertices) => new Triangle(...vertices));
-    creators.set(`vertex-${constants.QUADS}`, (...vertices) => new Quad(...vertices));
-    creators.set(`vertex-${constants.TRIANGLE_FAN}`, (...vertices) => new TriangleFan(...vertices));
-    creators.set(`vertex-${constants.TRIANGLE_STRIP}`, (...vertices) => new TriangleStrip(...vertices));
-    creators.set(`vertex-${constants.QUAD_STRIP}`, (...vertices) => new QuadStrip(...vertices));
-
-    // bezierVertex (constructors all take order and vertices so they can be called in a uniform way)
-    creators.set(`bezierVertex-${constants.EMPTY_PATH}`, (order, ...vertices) => new Anchor(...vertices));
-    creators.set(`bezierVertex-${constants.PATH}`, (order, ...vertices) => new BezierSegment(order, ...vertices));
-
-    // splineVertex
-    creators.set(`splineVertex-${constants.EMPTY_PATH}`, (...vertices) => new Anchor(...vertices));
-    creators.set(`splineVertex-${constants.PATH}`, (...vertices) => new SplineSegment(...vertices));
-
-    this.creators = creators;
+// Creators are stored in a static nested object keyed by vertex kind and
+// then by shape kind, so a lookup is two property accesses with no key
+// string to build, and nothing is constructed per Shape. Shape kinds are
+// primitive constants (numbers/strings), which work as computed keys;
+// Symbols would too, if constants become Symbols later.
+const defaultPrimitiveShapeCreators = {
+  vertex: {
+    [constants.EMPTY_PATH]: (...vertices) => new Anchor(...vertices),
+    [constants.PATH]: (...vertices) => new LineSegment(...vertices),
+    [constants.POINTS]: (...vertices) => new Point(...vertices),
+    [constants.LINES]: (...vertices) => new Line(...vertices),
+    [constants.TRIANGLES]: (...vertices) => new Triangle(...vertices),
+    [constants.QUADS]: (...vertices) => new Quad(...vertices),
+    [constants.TRIANGLE_FAN]: (...vertices) => new TriangleFan(...vertices),
+    [constants.TRIANGLE_STRIP]: (...vertices) => new TriangleStrip(...vertices),
+    [constants.QUAD_STRIP]: (...vertices) => new QuadStrip(...vertices)
+  },
+  // bezierVertex creators all take order and vertices so they can be
+  // called in a uniform way
+  bezierVertex: {
+    [constants.EMPTY_PATH]: (order, ...vertices) => new Anchor(...vertices),
+    [constants.PATH]: (order, ...vertices) =>
+      new BezierSegment(order, ...vertices)
+  },
+  splineVertex: {
+    [constants.EMPTY_PATH]: (...vertices) => new Anchor(...vertices),
+    [constants.PATH]: (...vertices) => new SplineSegment(...vertices)
   }
-
-  get(vertexKind, shapeKind) {
-    const key = `${vertexKind}-${shapeKind}`;
-    return this.creators.get(key);
-  }
-
-  set(vertexKind, shapeKind, creator) {
-    const key = `${vertexKind}-${shapeKind}`;
-    this.creators.set(key, creator);
-  }
-
-  clear() {
-    this.creators.clear();
-  }
-}
+};
 
 // ---- SHAPE ----
 
@@ -711,7 +699,7 @@ class Shape {
 
   constructor(
     vertexProperties,
-    primitiveShapeCreators = new PrimitiveShapeCreators()
+    primitiveShapeCreators = defaultPrimitiveShapeCreators
   ) {
     this.#initialVertexProperties = vertexProperties;
     this.#vertexProperties = vertexProperties;
@@ -719,7 +707,7 @@ class Shape {
 
     for (const key in this.#vertexProperties) {
       if (key !== 'position' && key !== 'textureCoordinates') {
-        this[key] = function(value) {
+        this[key] = function (value) {
           this.#vertexProperties[key] = value;
         };
       }
@@ -729,7 +717,8 @@ class Shape {
   serializeToArray(val) {
     if (val === null || val === undefined) {
       return [];
-    } if (val instanceof Number) {
+    }
+    if (val instanceof Number) {
       return [val];
     } else if (val instanceof Array) {
       return val;
@@ -902,7 +891,7 @@ class Shape {
 
     contour = this.contours.at(contoursIndex);
 
-    switch(arguments.length) {
+    switch (arguments.length) {
       case 1:
         return contour;
       case 2:
@@ -913,7 +902,6 @@ class Shape {
     }
   }
 
-  // maybe call this clear() for consistency with PrimitiveShapeCreators.clear()?
   // note: p5.Geometry has a reset() method, but also clearColors()
   // looks like reset() isn't in the public reference, so maybe we can switch
   // everything to clear()? Not sure if reset/clear is used in other classes,
@@ -976,13 +964,12 @@ class Shape {
   }
 
   #createPrimitiveShape(vertexKind, shapeKind, ...vertices) {
-    let primitiveShapeCreator = this.#primitiveShapeCreators.get(
-      vertexKind, shapeKind
-    );
+    let primitiveShapeCreator =
+      this.#primitiveShapeCreators[vertexKind][shapeKind];
 
-    return  vertexKind === 'bezierVertex' ?
-      primitiveShapeCreator(this.#bezierOrder, ...vertices) :
-      primitiveShapeCreator(...vertices);
+    return vertexKind === 'bezierVertex'
+      ? primitiveShapeCreator(this.#bezierOrder, ...vertices)
+      : primitiveShapeCreator(...vertices);
   }
 
   /*
@@ -1007,6 +994,38 @@ class Shape {
   }
 
   vertex(position, textureCoordinates, { isClosing = false } = {}) {
+    // Fast path for the most common case: appending a line segment to a
+    // path that has already started. Equivalent to the general path below
+    // (a LineSegment's vertex capacity is 1, so addToShape() never merges
+    // it into the previous primitive), without the creator-map lookup and
+    // the generic merging logic.
+    const contours = this.contours;
+    const lastContour = contours[contours.length - 1];
+    if (
+      lastContour !== undefined &&
+      lastContour.primitives.length > 0 &&
+      lastContour.kind === constants.PATH
+    ) {
+      const vertex = this.#createVertex(position, textureCoordinates);
+      const primitives = lastContour.primitives;
+      const lastPrimitive = primitives[primitives.length - 1];
+      if (
+        !isClosing &&
+        lastPrimitive instanceof LineSegment &&
+        !lastPrimitive.isClosing
+      ) {
+        // Consecutive line vertices accumulate into one polyline segment
+        lastPrimitive.vertices.push(vertex);
+        return;
+      }
+      const segment = new LineSegment(vertex);
+      segment.isClosing = isClosing;
+      segment._primitivesIndex = primitives.length;
+      segment._contoursIndex = contours.length - 1;
+      segment._shape = this;
+      primitives.push(segment);
+      return;
+    }
     const added = this.#generalVertex('vertex', position, textureCoordinates);
     added.isClosing = isClosing;
   }
@@ -1023,11 +1042,10 @@ class Shape {
     this.#generalVertex('arcVertex', position, textureCoordinates);
   }
 
-
-  arcPrimitive(x,y,w,h,start,stop,mode){
+  arcPrimitive(x, y, w, h, start, stop, mode) {
     this.beginShape();
-    const centerX = x+w/2;
-    const centerY = y+h/2;
+    const centerX = x + w / 2;
+    const centerY = y + h / 2;
     const radiusX = w / 2;
     const radiusY = h / 2;
 
@@ -1048,7 +1066,10 @@ class Shape {
     const primitive = new ArcPrimitive(
       startVertex,
       endVertex,
-      x, y, w, h,
+      x,
+      y,
+      w,
+      h,
       start,
       stop,
       mode
@@ -1056,11 +1077,10 @@ class Shape {
     primitive.addToShape(this);
     this.endShape();
     return this;
-
   }
 
-  ellipsePrimitive(x,y,w,h){
-    const centerVertex = this.#createVertex(new Vector(x+w/2,y+h/2));
+  ellipsePrimitive(x, y, w, h) {
+    const centerVertex = this.#createVertex(new Vector(x + w / 2, y + h / 2));
 
     const primitive = new EllipsePrimitive(centerVertex, x, y, w, h);
     return primitive.addToShape(this);
@@ -1068,7 +1088,17 @@ class Shape {
 
   rectPrimitive(x, y, w, h, tl, tr, br, bl) {
     const startVertex = this.#createVertex(new Vector(x, y));
-    const primitive = new RectPrimitive(startVertex, x, y, w, h, tl, tr, br, bl);
+    const primitive = new RectPrimitive(
+      startVertex,
+      x,
+      y,
+      w,
+      h,
+      tl,
+      tr,
+      br,
+      bl
+    );
     return primitive.addToShape(this);
   }
 
@@ -1134,14 +1164,12 @@ class Shape {
           const prevVertexProperties = this.#vertexProperties;
           this.#vertexProperties = { ...prevVertexProperties };
           for (const key in anchorVertex) {
-            if (['position', 'textureCoordinates'].includes(key)) continue;
+            if (key === 'position' || key === 'textureCoordinates') continue;
             this.#vertexProperties[key] = anchorVertex[key];
           }
-          this.vertex(
-            anchorVertex.position,
-            anchorVertex.textureCoordinates,
-            { isClosing: true }
-          );
+          this.vertex(anchorVertex.position, anchorVertex.textureCoordinates, {
+            isClosing: true
+          });
           this.#vertexProperties = prevVertexProperties;
           this.contours.push(...rest);
         }
@@ -1180,8 +1208,10 @@ class Shape {
 // abstract class
 class PrimitiveVisitor {
   constructor() {
-    if (this.constructor === PrimitiveVisitor) {
-      throw new Error('PrimitiveVisitor is an abstract class: it cannot be instantiated.');
+    if (new.target === PrimitiveVisitor) {
+      throw new Error(
+        'PrimitiveVisitor is an abstract class: it cannot be instantiated.'
+      );
     }
   }
   // path primitives
@@ -1242,10 +1272,14 @@ class PrimitiveToPath2DConverter extends PrimitiveVisitor {
   strokePath = null;
   fillPath = null;
   strokeWeight;
+  hasFill;
+  hasStroke;
 
-  constructor({ strokeWeight }) {
+  constructor({ strokeWeight, hasFill = true, hasStroke = true }) {
     super();
     this.strokeWeight = strokeWeight;
+    this.hasFill = hasFill;
+    this.hasStroke = hasStroke;
   }
 
   // path primitives
@@ -1259,8 +1293,11 @@ class PrimitiveToPath2DConverter extends PrimitiveVisitor {
       // and the starting vertex rather than having two caps
       this.path.closePath();
     } else {
-      let vertex = lineSegment.getEndVertex();
-      this.path.lineTo(vertex.position.x, vertex.position.y);
+      const vertices = lineSegment.vertices;
+      for (let i = 0; i < vertices.length; i++) {
+        const position = vertices[i].position;
+        this.path.lineTo(position.x, position.y);
+      }
     }
   }
   visitBezierSegment(bezierSegment) {
@@ -1298,13 +1335,15 @@ class PrimitiveToPath2DConverter extends PrimitiveVisitor {
       this.path.moveTo(startVertex.position.x, startVertex.position.y);
     }
 
-    const arrayVertices = splineSegment.getControlPoints().map(
-      v => shape.vertexToArray(v)
-    );
-    let bezierArrays = shape.catmullRomToBezier(
-      arrayVertices,
-      splineSegment._splineProperties.tightness
-    ).map(arr => arr.map(vertArr => shape.arrayToVertex(vertArr)));
+    const arrayVertices = splineSegment
+      .getControlPoints()
+      .map(v => shape.vertexToArray(v));
+    let bezierArrays = shape
+      .catmullRomToBezier(
+        arrayVertices,
+        splineSegment._splineProperties.tightness
+      )
+      .map(arr => arr.map(vertArr => shape.arrayToVertex(vertArr)));
     for (const array of bezierArrays) {
       const points = array.flatMap(vert => [vert.position.x, vert.position.y]);
       this.path.bezierCurveTo(...points);
@@ -1368,40 +1407,66 @@ class PrimitiveToPath2DConverter extends PrimitiveVisitor {
     const startY = centerY + radiusY * Math.sin(arc.start);
 
     const delta = arc.stop - arc.start;
-    const isFullCircle = Math.abs(delta % (2 * Math.PI)) < 0.00001 &&
-      Math.abs(delta) > 0.00001;
+    const isFullCircle =
+      Math.abs(delta % (2 * Math.PI)) < 0.00001 && Math.abs(delta) > 0.00001;
 
-    const createPieSlice = ! (
+    const createPieSlice = !(
       arc.mode === constants.CHORD ||
       arc.mode === constants.OPEN ||
       isFullCircle
     );
 
-    if (!this.fillPath) this.fillPath = new Path2D(this.path);
-    if (!this.strokePath) this.strokePath = new Path2D(this.path);
+    if (this.hasFill) {
+      if (!this.fillPath) this.fillPath = new Path2D(this.path);
 
-    this.fillPath.moveTo(startX, startY);
-    this.fillPath.ellipse(centerX, centerY, radiusX, radiusY,
-      0, arc.start, arc.stop);
-    if (createPieSlice) {
-      this.fillPath.lineTo(centerX, centerY);
-    }
-    this.fillPath.closePath();
-
-    this.strokePath.moveTo(startX, startY);
-    this.strokePath.ellipse(centerX, centerY, radiusX, radiusY,
-      0, arc.start, arc.stop);
-    if (arc.mode === constants.PIE && createPieSlice) {
-      this.strokePath.lineTo(centerX, centerY);
-    }
-    if (arc.mode === constants.PIE || arc.mode === constants.CHORD) {
-      this.strokePath.closePath();
+      this.fillPath.moveTo(startX, startY);
+      this.fillPath.ellipse(
+        centerX,
+        centerY,
+        radiusX,
+        radiusY,
+        0,
+        arc.start,
+        arc.stop
+      );
+      if (createPieSlice) {
+        this.fillPath.lineTo(centerX, centerY);
+      }
+      this.fillPath.closePath();
     }
 
-    // Still maintain base path just in case
+    if (this.hasStroke) {
+      if (!this.strokePath) this.strokePath = new Path2D(this.path);
+
+      this.strokePath.moveTo(startX, startY);
+      this.strokePath.ellipse(
+        centerX,
+        centerY,
+        radiusX,
+        radiusY,
+        0,
+        arc.start,
+        arc.stop
+      );
+      if (arc.mode === constants.PIE && createPieSlice) {
+        this.strokePath.lineTo(centerX, centerY);
+      }
+      if (arc.mode === constants.PIE || arc.mode === constants.CHORD) {
+        this.strokePath.closePath();
+      }
+    }
+
+    // Clipping uses the base path rather than the specialized paint paths.
     this.path.moveTo(startX, startY);
-    this.path.ellipse(centerX, centerY, radiusX, radiusY,
-      0, arc.start, arc.stop);
+    this.path.ellipse(
+      centerX,
+      centerY,
+      radiusX,
+      radiusY,
+      0,
+      arc.start,
+      arc.stop
+    );
   }
   visitEllipsePrimitive(ellipse) {
     const centerX = ellipse.x + ellipse.w / 2;
@@ -1511,7 +1576,11 @@ class PrimitiveToVerticesConverter extends PrimitiveVisitor {
     }
   }
   visitLineSegment(lineSegment) {
-    this.lastContour().push(lineSegment.getEndVertex());
+    const contour = this.lastContour();
+    const vertices = lineSegment.vertices;
+    for (let i = 0; i < vertices.length; i++) {
+      contour.push(vertices[i]);
+    }
   }
   visitBezierSegment(bezierSegment) {
     const contour = this.lastContour();
@@ -1538,9 +1607,9 @@ class PrimitiveToVerticesConverter extends PrimitiveVisitor {
     const shape = splineSegment._shape;
     const contour = this.lastContour();
 
-    const arrayVertices = splineSegment.getControlPoints().map(
-      v => shape.vertexToArray(v)
-    );
+    const arrayVertices = splineSegment
+      .getControlPoints()
+      .map(v => shape.vertexToArray(v));
     let bezierArrays = shape.catmullRomToBezier(
       arrayVertices,
       splineSegment._splineProperties.tightness
@@ -1554,7 +1623,7 @@ class PrimitiveToVerticesConverter extends PrimitiveVisitor {
         1,
         Math.ceil(
           polylineLength(bezierControls.map(v => shape.arrayToVertex(v))) *
-          this.curveDetail
+            this.curveDetail
         )
       );
       for (let i = 0; i < numPoints; i++) {
@@ -1608,17 +1677,17 @@ class PrimitiveToVerticesConverter extends PrimitiveVisitor {
     const numPoints = Math.max(3, Math.ceil(this.curveDetail * arcLength));
     const verts = [];
     const interpolateVertexProps = (v1, v2, t) => {
-    const props = {};
-    for (const [key, value] of Object.entries(v1)) {
-      if (key === 'position') continue;
-      if (typeof value === 'number' && typeof v2[key] === 'number') {
-        props[key] = value * (1 - t) + v2[key] * t;
-      } else {
-        props[key] = value;
+      const props = {};
+      for (const [key, value] of Object.entries(v1)) {
+        if (key === 'position') continue;
+        if (typeof value === 'number' && typeof v2[key] === 'number') {
+          props[key] = value * (1 - t) + v2[key] * t;
+        } else {
+          props[key] = value;
+        }
       }
-    }
-    return props;
-  };
+      return props;
+    };
     if (arc.mode === constants.PIE) {
       const centerProps = interpolateVertexProps(startVertex, endVertex, 0.5);
       centerProps.position = new Vector(centerX, centerY);
@@ -1714,11 +1783,13 @@ class PrimitiveToVerticesConverter extends PrimitiveVisitor {
       if (absH < 2 * bl) bl = hh;
 
       const addCornerArc = (cx, cy, rx, ry, startAngle, endAngle) => {
-        const perimeter = Math.PI / 2 * (rx + ry) / 2;
+        const perimeter = ((Math.PI / 2) * (rx + ry)) / 2;
         const numPoints = Math.max(1, Math.ceil(this.curveDetail * perimeter));
         for (let i = 0; i <= numPoints; i++) {
           const angle = startAngle + (endAngle - startAngle) * (i / numPoints);
-          verts.push(getVertexProps(cx + rx * Math.cos(angle), cy + ry * Math.sin(angle)));
+          verts.push(
+            getVertexProps(cx + rx * Math.cos(angle), cy + ry * Math.sin(angle))
+          );
         }
       };
 
@@ -2040,7 +2111,6 @@ function customShapes(p5, fn) {
 
   // ---- FUNCTIONS ----
 
-
   /**
    * Influences the shape of the Bézier curve segment in a custom shape.
    * By default, this is 3; the other possible parameter is 2. This
@@ -2103,11 +2173,9 @@ function customShapes(p5, fn) {
    * @method bezierOrder
    * @returns {Number} The current Bézier order.
    */
-  fn.bezierOrder = function(order) {
+  fn.bezierOrder = function (order) {
     return this._renderer.bezierOrder(order);
   };
-
-
 
   /**
    * Connects points with a smooth curve (a spline).
@@ -2418,8 +2486,12 @@ function customShapes(p5, fn) {
    * @param {Number} [u=0]
    * @param {Number} [v=0]
    */
-  fn.splineVertex = function(...args) {
-    let x = 0, y = 0, z = 0, u = 0, v = 0;
+  fn.splineVertex = function (...args) {
+    let x = 0,
+      y = 0,
+      z = 0,
+      u = 0,
+      v = 0;
     if (args.length === 2) {
       [x, y] = args;
     } else if (args.length === 4) {
@@ -2703,7 +2775,7 @@ function customShapes(p5, fn) {
    * @param {String} property
    * @returns The current value for the given property.
    */
-  fn.splineProperty = function(property, value) {
+  fn.splineProperty = function (property, value) {
     return this._renderer.splineProperty(property, value);
   };
 
@@ -2809,7 +2881,7 @@ function customShapes(p5, fn) {
    * @method splineProperties
    * @return {Object}
    */
-  fn.splineProperties = function(values) {
+  fn.splineProperties = function (values) {
     return this._renderer.splineProperties(values);
   };
 
@@ -3017,7 +3089,7 @@ function customShapes(p5, fn) {
    * @param  {Number} [u=0]   u-coordinate of the vertex's texture.
    * @param  {Number} [v=0]   v-coordinate of the vertex's texture.
    */
-  fn.vertex = function(x, y) {
+  fn.vertex = function (x, y) {
     let z, u, v;
 
     // default to (x, y) mode: all other arguments assumed to be 0.
@@ -3131,7 +3203,7 @@ function customShapes(p5, fn) {
    *   endShape(CLOSE);
    * }
    */
-  fn.beginContour = function(kind) {
+  fn.beginContour = function (kind) {
     this._renderer.beginContour(kind);
   };
 
@@ -3230,7 +3302,7 @@ function customShapes(p5, fn) {
    *   endShape(CLOSE);
    * }
    */
-  fn.endContour = function(mode = constants.OPEN) {
+  fn.endContour = function (mode = constants.OPEN) {
     this._renderer.endContour(mode);
   };
 }

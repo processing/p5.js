@@ -1,5 +1,4 @@
 import p5 from '../core/main';
-import { initialize as initTranslator } from './internationalization';
 
 /**
  * This file setup global mode automatic instantiation
@@ -13,7 +12,7 @@ import { initialize as initTranslator } from './internationalization';
  * @return {Undefined}
  */
 export const _globalInit = () => {
-  if(typeof window === 'undefined') return;
+  if (typeof window === 'undefined') return;
   // Could have been any property defined within the p5 constructor.
   // If that property is already a part of the global object,
   // this code has already run before, likely due to a duplicate import
@@ -41,8 +40,8 @@ export const _globalInit = () => {
 };
 
 // make a promise that resolves when the document is ready
-export const waitForDocumentReady = () =>{
-  if(typeof document !== 'undefined'){
+export const waitForDocumentReady = () => {
+  if (typeof document !== 'undefined') {
     return new Promise((resolve, reject) => {
       // if the page is ready, initialize p5 immediately
       if (document.readyState === 'complete') {
@@ -55,8 +54,3 @@ export const waitForDocumentReady = () =>{
     });
   }
 };
-
-// only load translations if we're using the full, un-minified library
-export const waitingForTranslator =
-  typeof IS_MINIFIED === 'undefined' ? initTranslator() :
-    Promise.resolve();

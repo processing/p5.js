@@ -30,7 +30,6 @@ $ npm test
 
 "p5.ColorConversion"のテストスイートのみを実行するには、`test/unit/color/color_conversion.js`ファイルの最初の行を変更する必要があります：
 
-
 ```js
 suite.only('color/p5.ColorConversion', function() {
 ```
@@ -96,18 +95,17 @@ p5.jsリポジトリにプルリクエストを出すと、自動的に[テス�
 
 `p5.prototype.keyIsPressed`に対するテストスイートを作成し、対応するテストを書き始めることができます。テストの整理と実行にはmochaを使用します。
 
-
 ```js
-suite('p5.prototype.keyIsPressed', function() {
-  test('keyIsPressed is a boolean', function() {
+suite('p5.prototype.keyIsPressed', function () {
+  test('keyIsPressed is a boolean', function () {
     // ここにテストを書きます
   });
 
-  test('keyIsPressed is true on key press', function() {
+  test('keyIsPressed is true on key press', function () {
     // ここにテストを書きます
   });
 
-  test('keyIsPressed is false when no keys are pressed', function() {
+  test('keyIsPressed is false when no keys are pressed', function () {
     // ここにテストを書きます
   });
 });
@@ -117,11 +115,10 @@ suite('p5.prototype.keyIsPressed', function() {
 例えば：
 
 ```js
-test('keyIsPressed is a boolean', function() {
+test('keyIsPressed is a boolean', function () {
   assert.isBoolean(myp5.keyIsPressed); // アサート値はブール値です。
 });
 ```
 
 同様に、`assert.strictEqual(myp5.keyIsPressed, true)`を使用して値がtrueであることをアサートできます。chaiのassertに関する詳細は、こちらの[chaiドキュメント](https://www.chaijs.com/api/assert/)で読むことができます。
 これで、テストを書き終えましたので、それらを実行して、そのメソッドが期待通りに動作するかどうかを確認してください。もし期待通りに動作しない場合は、そのためのissueを作成し、もしご希望であれば、それを修正することも試みることができます！
-

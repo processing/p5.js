@@ -19,7 +19,7 @@ import { Element } from './p5.Element';
 import { MediaElement } from './p5.MediaElement';
 import { File } from './p5.File';
 
-function dom(p5, fn){
+function dom(p5, fn) {
   /**
    * Searches the page for the first element that matches the given
    * <a href="https://developer.mozilla.org/en-US/docs/Learn/Getting_started_with_the_web/CSS_basics#different_types_of_selectors" target="_blank">CSS selector string</a>.
@@ -362,9 +362,7 @@ function dom(p5, fn){
   function addElement(elt, pInst, media) {
     const node = pInst._userNode ? pInst._userNode : document.body;
     node.appendChild(elt);
-    const c = media
-      ? new MediaElement(elt, pInst)
-      : new Element(elt, pInst);
+    const c = media ? new MediaElement(elt, pInst) : new Element(elt, pInst);
     pInst._elements.push(c);
     return c;
   }
@@ -1403,10 +1401,8 @@ function dom(p5, fn){
     const arg0 = args[0];
     if (
       arg0 instanceof Element &&
-      (
-        arg0.elt instanceof HTMLDivElement ||
-        arg0.elt instanceof HTMLSpanElement
-      )
+      (arg0.elt instanceof HTMLDivElement ||
+        arg0.elt instanceof HTMLSpanElement)
     ) {
       // If given argument is p5.Element of div/span type
       self = arg0;
@@ -1848,6 +1844,6 @@ function dom(p5, fn){
 
 export default dom;
 
-if(typeof p5 !== 'undefined'){
+if (typeof p5 !== 'undefined') {
   dom(p5, p5.prototype);
 }
