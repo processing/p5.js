@@ -24,6 +24,7 @@ import { Image } from '../image/p5.Image';
 import { Texture } from '../webgl/p5.Texture';
 import { makeFilterShader } from '../core/filterShaders';
 import { getStrokeDefs } from '../webgl/enums';
+import { markExperimental } from '../core/experimental';
 
 const { STROKE_CAP_ENUM, STROKE_JOIN_ENUM } = getStrokeDefs(() => '');
 
@@ -2356,6 +2357,7 @@ function renderer3D(p5, fn) {
     }
     return this._renderer.createStorage(dataOrCount);
   };
+  p5.registerDecorator('p5.prototype.createStorage', markExperimental('webgpu', p5));
 
   /**
    * Returns the default shader used for compute operations.
@@ -2551,6 +2553,7 @@ function renderer3D(p5, fn) {
     }
     return this.baseComputeShader().modify(cb, context, { hook: 'iteration' });
   };
+  p5.registerDecorator('p5.prototype.buildComputeShader', markExperimental('webgpu', p5));
 
   /**
    * Dispatches a compute shader to run on the GPU.

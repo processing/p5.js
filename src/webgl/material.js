@@ -9,6 +9,7 @@ import { Renderer3D } from '../core/p5.Renderer3D';
 import { Shader } from './p5.Shader';
 import { request } from '../io/files';
 import { Color } from '../color/p5.Color';
+import { markExperimental } from '../core/experimental';
 
 async function urlToStrandsCallback(url) {
   const src = await fetch(url).then(res => res.text());
@@ -746,6 +747,7 @@ function material(p5, fn) {
   fn.buildFilterShader = function (callback, scope) {
     return this.baseFilterShader().modify(callback, scope);
   };
+  p5.registerDecorator('p5.prototype.buildFilterShader', markExperimental('p5.strands', p5));
 
   /**
    * Creates a <a href="#/p5.Shader">p5.Shader</a> object to be used with the
@@ -1574,6 +1576,7 @@ function material(p5, fn) {
   fn.buildMaterialShader = function (cb, scope) {
     return this.baseMaterialShader().modify(cb, scope);
   };
+  p5.registerDecorator('p5.prototype.buildMaterialShader', markExperimental('p5.strands', p5));
 
   /**
    * Loads a new shader from a file that can change how fills are drawn. Pass the resulting
@@ -1956,6 +1959,7 @@ function material(p5, fn) {
   fn.buildColorShader = function (cb, scope) {
     return this.baseColorShader().modify(cb, scope);
   };
+  p5.registerDecorator('p5.prototype.buildColorShader', markExperimental('p5.strands', p5));
 
   /**
    * Loads a new shader from a file that can change how fills are drawn, based on the material used
@@ -2213,6 +2217,7 @@ function material(p5, fn) {
   fn.buildStrokeShader = function (cb, scope) {
     return this.baseStrokeShader().modify(cb, scope);
   };
+  p5.registerDecorator('p5.prototype.buildStrokeShader', markExperimental('p5.strands', p5));
 
   /**
    * Loads a new shader from a file that can change how strokes are drawn. Pass the resulting
