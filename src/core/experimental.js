@@ -56,7 +56,7 @@ export function warnExperimental(p5, pInst, subjectArea) {
 export function markExperimental(subjectArea, p5, getPInst = (targetObj) => targetObj) {
   return function (target) {
     return function (...args) {
-      warnExperimental(p5, getPInst(this));
+      warnExperimental(p5, getPInst(this), subjectArea);
       return target.apply(this, args);
     }
   };
