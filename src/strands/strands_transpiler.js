@@ -565,6 +565,7 @@ const ASTCallbacks = {
       if (
         node.init.arguments.length === 0 ||
         node.init.arguments[0].type !== 'Literal' ||
+        node.init.arguments[0].type !== 'TemplateLiteral' ||
         typeof node.init.arguments[0].value !== 'string'
       ) {
         const uniformName = getOrCreateInternalShaderName(
