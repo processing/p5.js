@@ -159,6 +159,25 @@ suite('loadModel', function () {
     assert.equal(model.parts[0], model, 'the geometry is its own single part');
   });
 
+  test('a single-material OBJ still receives its maps', async function () {
+    const fakeImage = { width: 1, height: 1 };
+    mockP5Prototype.loadImage = async () => fakeImage;
+    try {
+      const model = await mockP5Prototype.loadModel(
+        '/test/unit/assets/single_material_textured.obj'
+      );
+      // one material, so no split: the geometry stays its own only part
+      assert.equal(model.parts.length, 1);
+      assert.equal(model.parts[0], model);
+      // and it carries the material's state rather than dropping it
+      assert.equal(model.partState.texture, fakeImage);
+      assert.equal(model.partState.shininess, 60);
+      assert.deepEqual(model.partState.specularColor, [0.5, 0.5, 0.5]);
+    } finally {
+      delete mockP5Prototype.loadImage;
+    }
+  });
+
   test('a 12-material OBJ splits into 12 parts', async function () {
     const model = await mockP5Prototype.loadModel(
       '/test/unit/assets/multi_material_12.obj'
