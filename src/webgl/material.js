@@ -2590,6 +2590,11 @@ function material(p5, fn) {
    * <a href="#/p5/loadModel">`loadModel()`</a> apply their own normal map from
    * the `.mtl` file's `map_Bump`.
    *
+   * Note: On a shape whose texture coordinates wrap all the way around, such as
+   * <a href="#/p5/sphere">`sphere()`</a>, the two edges of the image meet. The
+   * image has to tile for them to line up, otherwise a seam shows where they
+   * join.
+   *
    * Note: `normalTexture()` can only be used in WebGL mode.
    *
    * @method normalTexture
@@ -2681,6 +2686,13 @@ function material(p5, fn) {
    * low. Only one can be active at a time, so setting one replaces the other.
    *
    * A light source is needed to see the effect.
+   *
+   * Note: On a shape whose texture coordinates wrap all the way around, such as
+   * <a href="#/p5/sphere">`sphere()`</a>, the two edges of the image meet. The
+   * image has to tile for them to line up. Because a bump map is read by
+   * comparing neighbouring pixels, also call
+   * <a href="#/p5/textureWrap">`textureWrap(REPEAT)`</a> so those comparisons
+   * carry across the join instead of stopping at the edge.
    *
    * Note: `bumpTexture()` can only be used in WebGL mode.
    *
