@@ -33,7 +33,7 @@ import { FES } from '../friendly_errors/fes';
 
 const experimentalMessages = {
   webgpu: 'WEBGPU mode is experimental. Your feedback will help direct its development!',
-  'p5.strands': 'p5.strands shaders are experimental. Whether you are a learner, educator, user, your feedback will help shape its future!',
+  'p5.strands': 'p5.strands shaders are experimental. Your feedback will help shape its future!',
 };
 
 // Just in case it's not possible to get access to the p5 instance from something,
