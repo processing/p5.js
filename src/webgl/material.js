@@ -1795,6 +1795,7 @@ function material(p5, fn) {
   fn.buildNormalShader = function (cb, scope) {
     return this.baseNormalShader().modify(cb, scope);
   };
+  p5.registerDecorator('p5.prototype.buildNormalShader', markExperimental('p5.strands', p5));
 
   /**
    * Loads a new shader from a file that can change how fills are drawn, based on the material used
