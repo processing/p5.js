@@ -329,3 +329,10 @@ function setup() {
 The page will output:
 
 ![A p5.js canvas, followed by two lines of description: "A red heart and yellow circle over a pink background," and "Heart: A red heart in the bottom-right corner."](images/sketch-text-output3.png)
+
+### Best Practices
+
+When writing text for `describe()` and `describeElement()`, keep the following screen reader limitations in mind:
+
+- **Avoid transliterations:** Text-to-Speech (TTS) engines cannot reliably pronounce transliterations of languages. This makes it hard for screen reader users to understand the text. We encourage sketch creators to use their native script language when writing the text for describe functions.
+- **macOS VoiceOver limitations:** macOS VoiceOver ignores the HTML `lang` attribute completely. As a result, Latin-script languages (Spanish, German, French, etc.) will be read with the default English voice, making it likely that words won't be pronounced correctly.
