@@ -52,7 +52,7 @@ jobs:
       - name: Build and test (Ubuntu)
         id: test
         if: matrix.os == 'ubuntu-latest'
-        run: npm test -- --project=unit-tests
+        run: npm test -- --project=unit-tests --reporter=default --reporter=json --outputFile.json=./test/unit/visual/test-results.json
         continue-on-error: true
         env:
           CI: true
