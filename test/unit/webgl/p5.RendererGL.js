@@ -3044,8 +3044,9 @@ void main() {
 
     test('Maintains stencil test state across draw cycles when user enabled', function () {
       myp5.createCanvas(50, 50, myp5.WEBGL);
-      // NOTE: redraw() does not invoke this override, so the wrapper below never
-      // actually runs. Left in place to keep this test's behaviour unchanged.
+      // NOTE: redraw() is async and isn't awaited here, so this override runs
+      // after the assertions below rather than before them. The stencil state
+      // assertions are what this test actually verifies.
       const originalDraw = myp5.draw;
 
       myp5.draw = function () {

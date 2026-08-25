@@ -947,13 +947,14 @@ suite('DOM', function () {
     });
 
     const emptyCallback = () => {};
-    // Used by the commented-out file-input tests further down in this suite.
-    /* oxlint-disable-next-line no-unused-vars */
-    const createDummyFile = filename => {
-      return new File(['testFileBlob'], filename, {
-        type: 'text/plain'
-      });
-    };
+    // Commented out along with its only callers: the file-input tests further
+    // down in this suite. Restore this together with them.
+    //
+    // const createDummyFile = filename => {
+    //   return new File(['testFileBlob'], filename, {
+    //     type: 'text/plain'
+    //   });
+    // };
 
     test('should be a function', function () {
       assert.isFunction(mockP5Prototype.createFileInput);
