@@ -336,6 +336,55 @@ suite('WebGPU p5.RendererWebGPU', function () {
     });
   });
 
+  suite('StorageBuffer.remove()', function () {
+    test('removes a StorageBuffer from the WebGPU\'s memory', function () {
+      const buf = myp5.createStorage(new Float32Array([1, 2, 3, 4]));
+
+      // Remove the buffer and check that it is no longer accessible
+      buf.remove();
+      expect(buf.buffer).to.be.null;
+    });
+
+    test('throws when setting a value on a removed StorageBuffer', function () {
+      const buf = myp5.createStorage(new Float32Array([1, 2, 3, 4]));
+      buf.remove();
+      expect(() => buf.set(0, 5.0)).to.throw();
+    });
+
+    test('throws when updating a removed StorageBuffer', function () {
+      const buf = myp5.createStorage(new Float32Array([1, 2, 3, 4]));
+      buf.remove();
+      expect(() => buf.update(new Float32Array([5, 6, 7, 8]))).to.throw();
+    });
+
+    test('throws when reading a removed StorageBuffer', async function () {
+      const buf = myp5.createStorage(new Float32Array([1, 2, 3, 4]));
+      buf.remove();
+      await expect(buf.read()).rejects.toThrow();
+    });
+
+    test('calling remove() multiple times does not throw', function () {
+      const buf = myp5.createStorage(new Float32Array([1, 2, 3, 4]));
+      expect(() => {
+        buf.remove();
+        buf.remove();
+      }).not.toThrow();
+    });
+
+    test('creating a new StorageBuffer after removing one in the same variable works properly', async function () {
+      let buf = myp5.createStorage(new Float32Array([1, 2, 3, 4]));
+      buf.remove();
+
+      buf = myp5.createStorage(new Float32Array([5, 6, 7, 8]));
+      const result = await buf.read();
+
+      expect(result[0]).to.be.closeTo(5, 0.001);
+      expect(result[1]).to.be.closeTo(6, 0.001);
+      expect(result[2]).to.be.closeTo(7, 0.001);
+      expect(result[3]).to.be.closeTo(8, 0.001);
+    });
+  });
+
   suite('p5.strands', function () {
     test('a uniform whose name matches a hook parameter name does not break', async function () {
       myp5.pixelDensity(1);

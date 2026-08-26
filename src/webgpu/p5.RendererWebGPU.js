@@ -50,6 +50,9 @@ function rendererWebGPU(p5, fn) {
       this.size = size;
       this._renderer = renderer;
       this._schema = schema;
+
+      // Flag to track whether the buffer has been removed from GPU memory
+      this._isRemoved = false;
     }
 
     /**
@@ -120,6 +123,10 @@ function rendererWebGPU(p5, fn) {
      */
     update(data) {
       const device = this._renderer.device;
+
+      if(this._isRemoved) {
+        throw new Error('Cannot update() in a removed storage buffer');
+      }
 
       if (this._schema !== null) {
         // Buffer was created with a struct array
@@ -219,6 +226,10 @@ function rendererWebGPU(p5, fn) {
       const device = this._renderer.device;
       this._renderer.flushDraw();
 
+      if(this._isRemoved) {
+        throw new Error('Cannot read() from a removed storage buffer');
+      }
+
       const stagingBuffer = device.createBuffer({
         size: this.size,
         usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ
@@ -317,6 +328,10 @@ function rendererWebGPU(p5, fn) {
     set(index, value) {
       const device = this._renderer.device;
 
+      if(this._isRemoved) {
+        throw new Error('Cannot set() on a removed storage buffer');
+      }
+
       if (this._schema !== null) {
         // buffer was created with an array of structs
         if (
@@ -369,6 +384,28 @@ function rendererWebGPU(p5, fn) {
           byteOffset,
           new Float32Array([value])
         );
+      }
+    }
+
+    /**
+     * Removes the storage buffer from GPU memory.
+     * 
+     * @method remove
+     * @for p5.StorageBuffer
+     * @beta
+     * @webgpu
+     * @webgpuOnly
+     */
+
+    remove() {
+      const renderer = this._renderer;
+      if (!this._isRemoved && this.buffer && this.buffer.destroy) {
+        // Handle pending draws before destroying the buffer to avoid GPU errors
+        renderer.flushDraw();
+        const bufferToDestroy = this.buffer;
+        renderer._postSubmitCallbacks.push(() => bufferToDestroy.destroy());
+        this.buffer = null;
+        this._isRemoved = true;
       }
     }
   }
