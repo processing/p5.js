@@ -78,10 +78,16 @@ function parseMtlData(data) {
       //shininess texture
       materials[currentMaterial].shininessTexturePath = tokens[1];
     } else if (tokens[0] === 'map_Bump' || tokens[0] === 'bump') {
-      //bump map. the path is the last token; a `-bm <value>` option can precede
-      //it to scale the bump strength (maps often use the full range for precision
-      //and get scaled down here).
+      //bump map, brightness is height. `-bm <value>` can precede the path
       materials[currentMaterial].bumpTexturePath = tokens[tokens.length - 1];
+      const bmIndex = tokens.indexOf('-bm');
+      if (bmIndex !== -1 && tokens[bmIndex + 1] !== undefined) {
+        const bm = parseFloat(tokens[bmIndex + 1]);
+        if (!isNaN(bm)) materials[currentMaterial].bumpScale = bm;
+      }
+    } else if (tokens[0] === 'norm') {
+      //normal map. not in the original spec, but what most exporters use
+      materials[currentMaterial].normalTexturePath = tokens[tokens.length - 1];
       const bmIndex = tokens.indexOf('-bm');
       if (bmIndex !== -1 && tokens[bmIndex + 1] !== undefined) {
         const bm = parseFloat(tokens[bmIndex + 1]);
@@ -123,9 +129,10 @@ function mtlToPartState(material) {
     // the map scales the base shininess; default the base to 1 when no Ns
     if (state.shininess == null) state.shininess = 1;
   }
-  if (material.normalTexture) {
-    state.normalTexture = material.normalTexture;
-    // a -bm multiplier scales the bump strength; defaults to 1 when omitted
+  // one slot, mode says how to read it. norm wins if both are set
+  if (material.bumpTexture || material.normalTexture) {
+    state.normalTexture = material.normalTexture || material.bumpTexture;
+    state.normalMapMode = material.normalTexture ? 0 : 1;
     if (material.bumpScale != null) state.normalScale = material.bumpScale;
   }
   return state;
@@ -138,7 +145,8 @@ const MATERIAL_TEXTURE_MAPS = [
   ['specularTexturePath', 'specularTexture'], // map_Ks (specular)
   ['ambientTexturePath', 'ambientTexture'], // map_Ka (ambient)
   ['shininessTexturePath', 'shininessTexture'], // map_Ns (shininess)
-  ['bumpTexturePath', 'normalTexture'] // map_Bump (normal)
+  ['bumpTexturePath', 'bumpTexture'], // map_Bump (height)
+  ['normalTexturePath', 'normalTexture'] // norm (tangent-space normal)
 ];
 
 // load each material's texture maps and hang them on the material so they land
@@ -149,7 +157,12 @@ async function loadMaterialTextures(materials, modelPath, instance) {
 
   const slash = modelPath.lastIndexOf('/');
   const folder = slash >= 0 ? modelPath.slice(0, slash) : '';
-  const resolve = file => (folder ? `${folder}/${file}` : file);
+  // mtl files exported on windows can use backslashes, which mean nothing to a
+  // url, so swap them for the separator the fetch actually needs
+  const resolve = file => {
+    const path = file.replace(/\\/g, '/');
+    return folder ? `${folder}/${path}` : path;
+  };
 
   const jobs = [];
   for (const name in materials) {
@@ -242,10 +255,11 @@ function loading(p5, fn) {
    * Note: When a `.obj` file references materials stored in a `.mtl` file,
    * p5.js loads and applies them, so a model with several materials appears the
    * way it was exported. Each material can use diffuse (`map_Kd`), specular
-   * (`map_Ks`), ambient (`map_Ka`), shininess (`map_Ns`), and normal
-   * (`map_Bump`) texture maps. Keep the `.mtl` file and its images alongside
-   * the `.obj` file so their paths resolve. A texture that fails to load is
-   * skipped with a warning instead of failing the whole model.
+   * (`map_Ks`), ambient (`map_Ka`), shininess (`map_Ns`), bump (`map_Bump`),
+   * and normal (`norm`) texture maps. A bump map is read as a height map, while
+   * `norm` is read as a tangent-space normal map. Keep the `.mtl` file and its
+   * images alongside the `.obj` file so their paths resolve. A texture that
+   * fails to load is skipped with a warning instead of failing the whole model.
    *
    * The first way to call `loadModel()` has three optional parameters after the
    * file path. The first optional parameter, `successCallback`, is a function
@@ -839,10 +853,9 @@ function loading(p5, fn) {
 
     // normal maps need per-vertex tangents; compute them once on the aggregate
     // (normals are ready above) so buildMaterialParts hands each part its slice.
-    // only done when a material actually uses a normal map, so plain models pay
-    // nothing extra.
+    // only done when a material actually uses one, so plain models pay nothing
     const needsTangents = Object.values(materials).some(
-      m => m && m.normalTexture
+      m => m && (m.normalTexture || m.bumpTexture)
     );
     if (needsTangents) {
       model.computeTangents();
