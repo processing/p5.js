@@ -19,12 +19,6 @@ function describe(p5, fn) {
    *
    * The first parameter, `text`, is the description of the canvas.
    *
-   * The second parameter, `display`, is optional. It determines how the
-   * description is displayed. If `LABEL` is passed, as in
-   * `describe('A description.', LABEL)`, the description will be visible in
-   * a div element next to the canvas. If `FALLBACK` is passed, as in
-   * `describe('A description.', FALLBACK)`, the description will only be
-   * visible to screen readers. This is the default mode.
    *
    * Read
    * <a href="/learn/accessible-labels.html">Writing accessible canvas descriptions</a>
@@ -32,7 +26,6 @@ function describe(p5, fn) {
    *
    * @method describe
    * @param  {String} text        description of the canvas.
-   * @param  {(FALLBACK|LABEL)} [display] either LABEL or FALLBACK.
    *
    * @example
    * function setup() {
@@ -110,11 +103,14 @@ function describe(p5, fn) {
    *   describe(`A green circle at (${x}, 50) moves from left to right on a gray square.`, LABEL);
    * }
    */
-  fn.describe = function (text, display) {
+  fn.describe = function (text, langOrDisplay, display) {
     // p5._validateParameters('describe', arguments);
     if (typeof text !== 'string') {
       return;
     }
+    const parsedOptions = _parseOptions(this, langOrDisplay, display);
+    display = parsedOptions.display;
+    const { lang } = parsedOptions;
     const cnvId = this.canvas.id;
     //calls function that adds punctuation for better screen reading
     text = _descriptionText(text);
@@ -122,6 +118,7 @@ function describe(p5, fn) {
     if (!this.dummyDOM) {
       this.dummyDOM = document.getElementById(cnvId).parentNode;
     }
+    //check if html structure for description is ready
     if (!this.descriptions) {
       this.descriptions = {};
     }
@@ -150,6 +147,7 @@ function describe(p5, fn) {
         this._describeHTML('label', text);
       }
     }
+    _setDescriptionLang(this, lang);
   };
 
   /**
@@ -162,10 +160,6 @@ function describe(p5, fn) {
    *
    * The second parameter, `text`, is the description of the element.
    *
-   * The third parameter, `display`, is optional. It determines how the
-   * description is displayed. If `LABEL` is passed, as in
-   * `describe('A description.', LABEL)`, the description will be visible in
-   * a div element next to the canvas. Using `LABEL` creates unhelpful
    * duplicates for screen readers. Only use `LABEL` during development. If
    * `FALLBACK` is passed, as in `describe('A description.', FALLBACK)`, the
    * description will only be visible to screen readers. This is the default
@@ -229,11 +223,14 @@ function describe(p5, fn) {
    * }
    */
 
-  fn.describeElement = function (name, text, display) {
+  fn.describeElement = function (name, text, langOrDisplay, display) {
     // p5._validateParameters('describeElement', arguments);
     if (typeof text !== 'string' || typeof name !== 'string') {
       return;
     }
+    const parsedOptions = _parseOptions(this, langOrDisplay, display);
+    display = parsedOptions.display;
+    const { lang } = parsedOptions;
     const cnvId = this.canvas.id;
     //calls function that adds punctuation for better screen reading
     text = _descriptionText(text);
@@ -281,6 +278,7 @@ function describe(p5, fn) {
         this._describeElementHTML('label', name, inner);
       }
     }
+    _setDescriptionLang(this, lang);
   };
 
   /*
@@ -288,6 +286,40 @@ function describe(p5, fn) {
    * Helper functions for describe() and describeElement().
    *
    */
+
+  function _parseOptions(pInst, langOrDisplay, display) {
+    if (typeof langOrDisplay === 'object' && langOrDisplay !== null) {
+      return {
+        display: display === undefined ? langOrDisplay.display : display,
+        lang: langOrDisplay.lang
+      };
+    }
+    if (
+      langOrDisplay === pInst.LABEL ||
+      langOrDisplay === pInst.FALLBACK
+    ) {
+      return { display: langOrDisplay };
+    }
+    return { display, lang: langOrDisplay };
+  }
+
+  function _setDescriptionLang(pInst, lang) {
+    if (typeof lang !== 'string') {
+      return;
+    }
+    const cnvId = pInst.canvas.id;
+    const canvas = pInst.canvas.elt || pInst.elt || pInst.canvas;
+    canvas.setAttribute('lang', lang);
+    const containers = pInst.dummyDOM.querySelectorAll(
+      `#${cnvId}${descContainer}, #${cnvId}${labelContainer}`
+    );
+    containers.forEach(container => {
+      container.setAttribute('lang', lang);
+      container
+        .querySelectorAll('p, table, caption, tr, th, td')
+        .forEach(element => element.setAttribute('lang', lang));
+    });
+  }
 
   // check that text is not LABEL or FALLBACK and ensure text ends with punctuation mark
   function _descriptionText(text) {
