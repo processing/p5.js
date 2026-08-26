@@ -266,7 +266,7 @@ async function generateVisualReport() {
           } else if (hasDiff) {
             status = FAILED;
           } else if (hasExpected && hasActual) {
-            // Another screenshot in the same test is what failed.
+            // This screenshot matched; the test failed for some other reason.
             status = PASSED;
           } else if (!hasActual) {
             // The test bailed out before getting this far.
@@ -279,7 +279,12 @@ async function generateVisualReport() {
             index: i,
             expectedImage: hasExpected ? imageToDataURL(expectedPath) : null,
             actualImage: hasActual ? imageToDataURL(actualPath) : null,
-            diffImage: hasDiff ? imageToDataURL(diffPath) : null,
+            // A leftover diff from an earlier run says nothing about a test
+            // vitest reported as passing, and a missing actual only means
+            // something when the test actually tried to produce one.
+            diffImage:
+              hasDiff && status === FAILED ? imageToDataURL(diffPath) : null,
+            showMissingActual: status === FAILED || status === NOT_CAPTURED,
             status,
             passed: status === PASSED
           };
@@ -335,8 +340,7 @@ async function generateVisualReport() {
 
   // Percentages only make sense against the tests that actually ran.
   const executedTests = tests.passed + tests.failed;
-  const executedScreenshots =
-    screenshots.passed + screenshots.failed + screenshots.notCaptured;
+  const executedScreenshots = screenshots.passed + screenshots.failed;
 
   const fallbackNotice = testResults
     ? ''
@@ -344,8 +348,7 @@ async function generateVisualReport() {
         No vitest results were found at <code>${escapeHTML(path.relative(process.cwd(), resultsFile))}</code>,
         so statuses below were inferred from the screenshots on disk. Tests that
         were skipped or never ran are indistinguishable from failures in this mode.
-        Run the tests with <code>--reporter=json --outputFile.json=test/unit/visual/test-results.json</code>
-        to get accurate results.
+        Run <code>npm test</code> to generate the results, then regenerate this report.
       </div>`;
 
   // Generate HTML
@@ -602,14 +605,20 @@ async function generateVisualReport() {
                         : `<div class="missing-notice">No expected image found</div>`
                     }
                   </div>
-                  <div class="image-container">
-                    <div class="image-header">Actual</div>
-                    ${
-                      screenshot.actualImage
-                        ? `<img src="${screenshot.actualImage}" alt="Actual Result">`
-                        : `<div class="missing-notice">No actual image found</div>`
-                    }
-                  </div>
+                  ${
+                    screenshot.actualImage || screenshot.showMissingActual
+                      ? `
+                    <div class="image-container">
+                      <div class="image-header">Actual</div>
+                      ${
+                        screenshot.actualImage
+                          ? `<img src="${screenshot.actualImage}" alt="Actual Result">`
+                          : `<div class="missing-notice">No actual image found</div>`
+                      }
+                    </div>
+                  `
+                      : ''
+                  }
                   ${
                     screenshot.diffImage
                       ? `
