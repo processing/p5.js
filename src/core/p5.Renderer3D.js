@@ -2342,8 +2342,8 @@ function renderer3D(p5, fn) {
    * @beta
    * @webgpu
    * @webgpuOnly
-   * @param {Number|Array|Float32Array|Object[]} dataOrCount Either a number specifying the count of floats,
-   *   an array/Float32Array of floats, or an array of objects describing struct elements.
+   * @param {Number|Array|Float32Array|Uint32Array|Int32Array|Object[]} dataOrCount Either a number specifying the count of elements,
+   *   an array/TypedArray of values, or an array of objects describing struct elements.
    * @returns {p5.StorageBuffer} A storage buffer.
    */
   fn.createStorage = function (dataOrCount) {
