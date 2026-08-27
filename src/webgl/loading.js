@@ -78,10 +78,16 @@ function parseMtlData(data) {
       //shininess texture
       materials[currentMaterial].shininessTexturePath = tokens[1];
     } else if (tokens[0] === 'map_Bump' || tokens[0] === 'bump') {
-      //bump map. the path is the last token; a `-bm <value>` option can precede
-      //it to scale the bump strength (maps often use the full range for precision
-      //and get scaled down here).
+      //bump map, brightness is height. `-bm <value>` can precede the path
       materials[currentMaterial].bumpTexturePath = tokens[tokens.length - 1];
+      const bmIndex = tokens.indexOf('-bm');
+      if (bmIndex !== -1 && tokens[bmIndex + 1] !== undefined) {
+        const bm = parseFloat(tokens[bmIndex + 1]);
+        if (!isNaN(bm)) materials[currentMaterial].bumpScale = bm;
+      }
+    } else if (tokens[0] === 'norm') {
+      //normal map. not in the original spec, but what most exporters use
+      materials[currentMaterial].normalTexturePath = tokens[tokens.length - 1];
       const bmIndex = tokens.indexOf('-bm');
       if (bmIndex !== -1 && tokens[bmIndex + 1] !== undefined) {
         const bm = parseFloat(tokens[bmIndex + 1]);
@@ -123,9 +129,10 @@ function mtlToPartState(material) {
     // the map scales the base shininess; default the base to 1 when no Ns
     if (state.shininess == null) state.shininess = 1;
   }
-  if (material.normalTexture) {
-    state.normalTexture = material.normalTexture;
-    // a -bm multiplier scales the bump strength; defaults to 1 when omitted
+  // one slot, mode says how to read it. norm wins if both are set
+  if (material.bumpTexture || material.normalTexture) {
+    state.normalTexture = material.normalTexture || material.bumpTexture;
+    state.normalMapMode = material.normalTexture ? 0 : 1;
     if (material.bumpScale != null) state.normalScale = material.bumpScale;
   }
   return state;
@@ -138,7 +145,8 @@ const MATERIAL_TEXTURE_MAPS = [
   ['specularTexturePath', 'specularTexture'], // map_Ks (specular)
   ['ambientTexturePath', 'ambientTexture'], // map_Ka (ambient)
   ['shininessTexturePath', 'shininessTexture'], // map_Ns (shininess)
-  ['bumpTexturePath', 'normalTexture'] // map_Bump (normal)
+  ['bumpTexturePath', 'bumpTexture'], // map_Bump (height)
+  ['normalTexturePath', 'normalTexture'] // norm (tangent-space normal)
 ];
 
 // load each material's texture maps and hang them on the material so they land
@@ -149,7 +157,12 @@ async function loadMaterialTextures(materials, modelPath, instance) {
 
   const slash = modelPath.lastIndexOf('/');
   const folder = slash >= 0 ? modelPath.slice(0, slash) : '';
-  const resolve = file => (folder ? `${folder}/${file}` : file);
+  // mtl files exported on windows can use backslashes, which mean nothing to a
+  // url, so swap them for the separator the fetch actually needs
+  const resolve = file => {
+    const path = file.replace(/\\/g, '/');
+    return folder ? `${folder}/${path}` : path;
+  };
 
   const jobs = [];
   for (const name in materials) {
@@ -177,10 +190,21 @@ async function loadMaterialTextures(materials, modelPath, instance) {
 // as the aggregate; each part gets its own localised verts with faces re-indexed
 // against them, plus its material's state.
 function buildMaterialParts(model, faceMaterials, materials) {
-  // only split when there are genuinely multiple materials. a single material
-  // (or none) stays as the geometry's own part and renders as before. one group
-  // per material, plus a null group for faces before any usemtl so none drop.
+  // one group per material, plus a null group for faces before any usemtl so
+  // none drop.
   const names = [...new Set(faceMaterials)];
+
+  // one material covering every face. the geometry is already its own part, so
+  // hand it the state directly: splitting would duplicate every vertex to say
+  // the same thing, and would stop parts[0] being the geometry itself. without
+  // this a single material model never receives its maps at all.
+  if (names.length === 1 && names[0] != null) {
+    Object.assign(model.partState, mtlToPartState(materials[names[0]]));
+    return;
+  }
+
+  // nothing to split on: no materials, or one material alongside faces that
+  // were declared before any usemtl and so have none.
   if (names.filter(name => name != null).length < 2) return;
 
   const hasUvs = model.uvs.length > 0;
@@ -225,11 +249,11 @@ function buildMaterialParts(model, faceMaterials, materials) {
 function loading(p5, fn) {
   /**
    * Loads a 3D model to create a
-   * <a href="#/p5.Geometry">p5.Geometry</a> object.
+   * <a href="#/p5.Geometry">`p5.Geometry`</a> object.
    *
    * `loadModel()` can load 3D models from OBJ and STL files. Once the model is
    * loaded, it can be displayed with the
-   * <a href="#/p5/model">model()</a> function, as in `model(shape)`.
+   * <a href="#/p5/model">`model()`</a> function, as in `model(shape)`.
    *
    * There are three ways to call `loadModel()` with optional parameters to help
    * process the model.
@@ -239,10 +263,14 @@ function loading(p5, fn) {
    * URLs such as `'https://example.com/model.obj'` may be blocked due to browser
    * security. The `path` parameter can also be defined as a [`Request`](https://developer.mozilla.org/en-US/docs/Web/API/Request)
    * object for more advanced usage.
-   * Note: When loading a `.obj` file that references materials stored in
-   * `.mtl` files, p5.js will attempt to load and apply those materials.
-   * To ensure that the `.obj` file reads the `.mtl` file correctly include the
-   * `.mtl` file alongside it.
+   * Note: When a `.obj` file references materials stored in a `.mtl` file,
+   * p5.js loads and applies them, so a model with several materials appears the
+   * way it was exported. Each material can use diffuse (`map_Kd`), specular
+   * (`map_Ks`), ambient (`map_Ka`), shininess (`map_Ns`), bump (`map_Bump`),
+   * and normal (`norm`) texture maps. A bump map is read as a height map, while
+   * `norm` is read as a tangent-space normal map. Keep the `.mtl` file and its
+   * images alongside the `.obj` file so their paths resolve. A texture that
+   * fails to load is skipped with a warning instead of failing the whole model.
    *
    * The first way to call `loadModel()` has three optional parameters after the
    * file path. The first optional parameter, `successCallback`, is a function
@@ -304,9 +332,9 @@ function loading(p5, fn) {
    * @param  {String} [fileType]          model’s file extension. Either `'.obj'` or `'.stl'`.
    * @param  {Boolean} [normalize]        if `true`, scale the model to fit the canvas.
    * @param  {function(p5.Geometry)} [successCallback] function to call once the model is loaded. Will be passed
-   *                                                   the <a href="#/p5.Geometry">p5.Geometry</a> object.
+   *                                                   the <a href="#/p5.Geometry">`p5.Geometry`</a> object.
    * @param  {function(Event)} [failureCallback] function to call if the model fails to load. Will be passed an `Error` event object.
-   * @return {Promise<p5.Geometry>} the <a href="#/p5.Geometry">p5.Geometry</a> object
+   * @return {Promise<p5.Geometry>} the <a href="#/p5.Geometry">`p5.Geometry`</a> object
    *
    * @example
    * // Click and drag the mouse to view the scene from different angles.
@@ -836,10 +864,9 @@ function loading(p5, fn) {
 
     // normal maps need per-vertex tangents; compute them once on the aggregate
     // (normals are ready above) so buildMaterialParts hands each part its slice.
-    // only done when a material actually uses a normal map, so plain models pay
-    // nothing extra.
+    // only done when a material actually uses one, so plain models pay nothing
     const needsTangents = Object.values(materials).some(
-      m => m && m.normalTexture
+      m => m && (m.normalTexture || m.bumpTexture)
     );
     if (needsTangents) {
       model.computeTangents();
@@ -1161,15 +1188,21 @@ function loading(p5, fn) {
   }
 
   /**
-   * Draws a <a href="#/p5.Geometry">p5.Geometry</a> object to the canvas.
+   * Draws a <a href="#/p5.Geometry">`p5.Geometry`</a> object to the canvas.
    *
    * The first parameter, `model`, is the
-   * <a href="#/p5.Geometry">p5.Geometry</a> object to draw.
-   * <a href="#/p5.Geometry">p5.Geometry</a> objects can be built with
-   * <a href="#/p5/buildGeometry">buildGeometry()</a>. They can also be loaded from
-   * a file with <a href="#/p5/loadGeometry">loadGeometry()</a>.
+   * <a href="#/p5.Geometry">`p5.Geometry`</a> object to draw.
+   * <a href="#/p5.Geometry">`p5.Geometry`</a> objects can be built with
+   * <a href="#/p5/buildGeometry">`buildGeometry()`</a>. They can also be loaded from
+   * a file with <a href="#/p5/loadGeometry">`loadGeometry()`</a>.
    *
    * Note: `model()` can only be used in WebGL mode.
+   *
+   * A model with several materials, such as a character with separate skin,
+   * shirt, and shoe materials, keeps each material's own colors and textures.
+   * The call to `model()` is the same whether the model has one material or
+   * many, so a model made in software such as Blender appears the way it was
+   * exported.
    *
    * ```js example
    * // Click and drag the mouse to view the scene from different angles.

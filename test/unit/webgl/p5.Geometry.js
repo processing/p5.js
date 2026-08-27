@@ -507,5 +507,51 @@ suite('p5.Geometry', function () {
         fillSpy.mockRestore();
       }
     );
+
+    test('drawing a multi-material model leaves the caller material intact',
+      function() {
+        const renderer = myp5.createCanvas(50, 50, myp5.WEBGL);
+        const geom = myp5.buildGeometry(() => {
+          myp5.texture(myp5.createGraphics(10, 10));
+          myp5.box(8);
+          myp5.specularMaterial(255, 0, 0);
+          myp5.shininess(99);
+          myp5.sphere(8);
+        });
+
+        // whatever the sketch set before the call has to survive it, otherwise
+        // the next shape silently picks up the model's material
+        const callerTex = myp5.createGraphics(10, 10);
+        myp5.background(255);
+        myp5.texture(callerTex);
+        myp5.shininess(7);
+        myp5.model(geom);
+
+        expect(renderer.states._tex).toBe(callerTex);
+        expect(renderer.states._useShininess).toEqual(7);
+      }
+    );
+
+    test('a multi-material model can be drawn inside buildGeometry',
+      function() {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+        const inner = myp5.buildGeometry(() => {
+          myp5.texture(myp5.createGraphics(10, 10));
+          myp5.box(8);
+          myp5.texture(myp5.createGraphics(10, 10));
+          myp5.sphere(8);
+        });
+        expect(inner.parts.length).toEqual(2);
+
+        const outer = myp5.buildGeometry(() => {
+          myp5.model(inner);
+        });
+        // the geometry comes through whole. the materials flatten to whatever
+        // the callback had set, since the builder follows renderer state rather
+        // than the parts of a model handed to it
+        expect(outer.vertices.length).toEqual(inner.vertices.length);
+        expect(outer.faces.length).toEqual(inner.faces.length);
+      }
+    );
   });
 });

@@ -2,10 +2,10 @@ newmtl m0
 Kd 0.8 0.8 0.8
 Ks 0.5 0.5 0.5
 Ns 60
-map_Bump spheremap.jpg
+map_Bump -bm 8 bumpmap.png
 
 newmtl m1
 Kd 0.8 0.8 0.8
 Ks 0.5 0.5 0.5
 Ns 60
-map_Bump spheremap.jpg
+map_Bump -bm 8 bumpmap.png

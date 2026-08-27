@@ -25,6 +25,8 @@ uniform bool uHasShininessTex;
 uniform sampler2D uNormalSampler;
 uniform bool uHasNormalMap;
 uniform float uNormalScale;
+uniform int uNormalMapMode;
+uniform vec2 uNormalTexelSize;
 #endif
 
 IN vec3 vNormal;
@@ -71,8 +73,25 @@ void main(void) {
     vec3 T = normalize(vTangent.xyz);
     T = normalize(T - N * dot(N, T));
     vec3 B = cross(N, T) * vTangent.w;
-    vec3 mapN = TEXTURE(uNormalSampler, vTexCoord).rgb * 2.0 - 1.0;
-    // scale the tangent-space slope so the bump strength can be tuned (-bm)
+    vec3 mapN;
+    if (uNormalMapMode == 1) {
+      // bump map: brightness is height, so the tangent-space normal comes from
+      // how fast that height changes between neighbouring texels. sampling both
+      // sides keeps the slope right at the edges of the map, where reaching past
+      // one side would otherwise clamp and read back the same texel.
+      vec2 du = vec2(uNormalTexelSize.x, 0.0);
+      vec2 dv = vec2(0.0, uNormalTexelSize.y);
+      float hl = TEXTURE(uNormalSampler, vTexCoord - du).r;
+      float hr = TEXTURE(uNormalSampler, vTexCoord + du).r;
+      float hd = TEXTURE(uNormalSampler, vTexCoord - dv).r;
+      float hu = TEXTURE(uNormalSampler, vTexCoord + dv).r;
+      // the surface leans away from the direction height increases in
+      mapN = normalize(vec3((hl - hr) * 0.5, (hd - hu) * 0.5, 1.0));
+    } else {
+      // normal map: rgb already holds the tangent-space normal
+      mapN = TEXTURE(uNormalSampler, vTexCoord).rgb * 2.0 - 1.0;
+    }
+    // scale the tangent-space slope so the strength can be tuned (-bm)
     mapN.xy *= uNormalScale;
     N = normalize(mat3(T, B, N) * mapN);
   }
