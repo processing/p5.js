@@ -45,7 +45,7 @@ function describe(p5, fn) {
    * @method describe
    * @param  {String} text        description of the canvas.
    * @param  {(FALLBACK|LABEL|String)} [langOrDisplay] valid lang attribute or either LABEL or FALLBACK.
-   * @param  {(FALLBACK|LABEL|String)} [display] either LABEL or FALLBACK.
+   * @param  {(FALLBACK|LABEL)} [display] either LABEL or FALLBACK.
    *
    * @example
    * function setup() {
@@ -190,10 +190,11 @@ function describe(p5, fn) {
    * to determine how the description is displayed as well. In this case, they can 
    * pass either `LABEL` or `FALLBACK` as the fourth parameter.
    *
-   * duplicates for screen readers. Only use `LABEL` during development. If
-   * `FALLBACK` is passed, as in `describe('A description.', FALLBACK)`, the
-   * description will only be visible to screen readers. This is the default
-   * mode.
+   * If `LABEL` is passed, as in `describe('A description.', LABEL)`, 
+   * the description will be visible in a div element next to the canvas. Using 
+   * `LABEL` creates unhelpful duplicates for screen readers. Only use `LABEL` 
+   * during development. If `FALLBACK` is passed, as in `describe('A description.', FALLBACK)`, 
+   * the description will only be visible to screen readers. This is the default mode.
    *
    * Read
    * <a href="/learn/accessible-labels.html">Writing accessible canvas descriptions</a>
@@ -203,7 +204,7 @@ function describe(p5, fn) {
    * @param  {String} name        name of the element.
    * @param  {String} text        description of the element.
    * @param  {(FALLBACK|LABEL|String)} [langOrDisplay]    valid lang attribute or either LABEL or FALLBACK.
-   * @param  {(FALLBACK|LABEL|String)} [display]          either LABEL or FALLBACK.
+   * @param  {(FALLBACK|LABEL)} [display]          either LABEL or FALLBACK.
    * @example
    * function setup() {
    *   background('pink');
@@ -319,6 +320,7 @@ function describe(p5, fn) {
    *
    */
 
+  // Helps parse the optional parameters regardless of order
   function _parseOptions(pInst, langOrDisplay, display) {
     // Check if 2nd parameter is an object
     if (typeof langOrDisplay === 'object' && langOrDisplay !== null) {
