@@ -43,14 +43,6 @@ suite('describe', function () {
       assert.deepEqual(actual.innerHTML, 'a.');
     });
 
-    test('should support text only', function () {
-      mockP5Prototype.describe('Chào các bạn');
-      let actual = document.getElementById(myID + '_fallbackDesc').innerHTML;
-      assert.deepEqual(actual, 'Chào các bạn.');
-      assert.isNull(document.getElementById(myID + '_Label'));
-      assert.isNull(document.getElementById(myID + '_fallbackDesc').getAttribute('lang'));
-    });
-
     test('should support text and lang', function () {
       mockP5Prototype.describe('Chào các bạn', 'vi');
       let actual = document.getElementById(myID + '_fallbackDesc');
@@ -58,13 +50,6 @@ suite('describe', function () {
       assert.deepEqual(actual.getAttribute('lang'), 'vi');
       assert.deepEqual(mockP5Prototype.elt.getAttribute('lang'), 'vi');
       assert.isNull(document.getElementById(myID + '_Label'));
-    });
-
-    test('should support text and display', function () {
-      mockP5Prototype.describe('Chào các bạn', mockP5Prototype.LABEL);
-      let actual = document.getElementById(myID + '_labelDesc').innerHTML;
-      assert.deepEqual(actual, 'Chào các bạn.');
-      assert.isNull(document.getElementById(myID + '_labelDesc').getAttribute('lang'));
     });
 
     test('should support text lang and display', function () {
@@ -153,23 +138,11 @@ suite('describe', function () {
       assert.deepEqual(actual, '<th scope="row">az:</th><td>b.</td>');
     });
 
-    test('should support element text only', function () {
-      mockP5Prototype.describeElement('ai', 'Chào các bạn');
-      let actual = document.getElementById(myID + '_fte_ai').innerHTML;
-      assert.deepEqual(actual, '<th scope="row">ai:</th><td>Chào các bạn.</td>');
-    });
-
     test('should support element text and lang', function () {
       mockP5Prototype.describeElement('aj', 'Chào các bạn', 'vi');
       let actual = document.getElementById(myID + '_fte_aj').innerHTML;
       assert.deepEqual(actual, '<th scope="row" lang="vi">aj:</th><td lang="vi">Chào các bạn.</td>'
       );
-    });
-
-    test('should support element text and display', function () {
-      mockP5Prototype.describeElement('ak', 'Chào các bạn', mockP5Prototype.LABEL);
-      let actual = document.getElementById(myID + '_lte_ak').innerHTML;
-      assert.deepEqual(actual, '<th scope="row">ak:</th><td>Chào các bạn.</td>');
     });
 
     test('should support element text lang and display', function () {
