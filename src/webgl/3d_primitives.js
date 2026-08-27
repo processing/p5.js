@@ -2701,7 +2701,7 @@ function primitives3D(p5, fn) {
     const isList = count?._isStorageList;
 
     if (count?._isStorageBuffer) {
-      count = count.size;
+      count = count.length;
     }
 
     if (!isList) {
