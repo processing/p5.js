@@ -334,6 +334,7 @@ export const wgslBackend = {
       const pushFn =
         `fn _p5_push_${name}(${pushParam}) {\n` +
         `  let _idx = atomicAdd(&${name}.length, 1u);\n` +
+        `  atomicMin(&${name}.length, ${maxCapacity}u);\n` +
         `  if (_idx < ${maxCapacity}u) { ${pushStore} }\n` +
         `}`;
 

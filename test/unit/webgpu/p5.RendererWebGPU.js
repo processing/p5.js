@@ -446,6 +446,44 @@ suite('WebGPU p5.RendererWebGPU', function () {
       expect(result.length).to.equal(3);
     });
 
+    test('raw GPU counter at _lengthOffset is clamped to maxCapacity after overflow', async function () {
+      // read() masks this bug by clamping with Math.min; we test the raw counter
+      // that copyBufferToBuffer copies into the indirect draw's instanceCount slot.
+      const MAX = 3;
+      const list = myp5.createStorageList(MAX);
+
+      const shader = myp5.buildComputeShader(
+        () => {
+          const l = myp5.uniformStorage('l', list);
+          l.push(1.0);
+        },
+        { myp5, list }
+      );
+      myp5.compute(shader, 20);
+      myp5._renderer.flushDraw();
+
+      const device = myp5._renderer.device;
+      const stagingBuffer = device.createBuffer({
+        size: 4,
+        usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ
+      });
+      const encoder = device.createCommandEncoder();
+      encoder.copyBufferToBuffer(
+        list.buffer,
+        list._lengthOffset,
+        stagingBuffer,
+        0,
+        4
+      );
+      device.queue.submit([encoder.finish()]);
+      await stagingBuffer.mapAsync(GPUMapMode.READ);
+      const rawCounter = new Uint32Array(stagingBuffer.getMappedRange())[0];
+      stagingBuffer.unmap();
+      stagingBuffer.destroy();
+
+      expect(rawCounter).to.equal(MAX);
+    });
+
     test('pushing an integer-typed value (index.x) into a float list works', async function () {
       const list = myp5.createStorageList(5);
 
