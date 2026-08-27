@@ -31,7 +31,11 @@ async function bootstrap(w = 400, h = 400, renderer = undefined) {
     p.setup = async function () {
       myp5 = p;
       font = await p.loadFont(fontFile);
-      p.createCanvas(w, h, renderer);
+      if (renderer === WEBGPU) {
+        await p.createCanvas(w, h, renderer);
+      } else {
+        p.createCanvas(w, h, renderer);
+      }
     };
   });
   await vi.waitFor(() => {
