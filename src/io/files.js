@@ -1146,6 +1146,7 @@ function files(p5, fn) {
         case 'xml':
         // NOTE: still need to normalize type handling/mapping
         // datatype = 'xml';
+        // falls through
         case 'txt':
         default:
           datatype = 'text';
@@ -2119,17 +2120,6 @@ function files(p5, fn) {
     // The following line is CC BY SA 3 by user Fregante https://stackoverflow.com/a/23522755
     return /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
   };
-
-  /**
-   *  Helper function, a callback for download that deletes
-   *  an invisible anchor element from the DOM once the file
-   *  has been automatically downloaded.
-   *
-   *  @private
-   */
-  function destroyClickedElement(event) {
-    document.body.removeChild(event.target);
-  }
 }
 
 export default files;

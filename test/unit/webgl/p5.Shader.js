@@ -1930,6 +1930,9 @@ suite('p5.Shader', function () {
 
         const testShader = myp5.baseFilterShader().modify(
           () => {
+            // The constant comparisons below are the subject of this test: they
+            // exercise how p5.strands transpiles boolean intermediate variables.
+            /* oxlint-disable no-constant-binary-expression */
             myp5.getColor((inputs, canvasContent) => {
               let value = 1;
               let condition = 1 > 2;
@@ -1944,6 +1947,7 @@ suite('p5.Shader', function () {
 
               return [0.4, 0, 0, 1];
             });
+            /* oxlint-enable no-constant-binary-expression */
           },
           { myp5 }
         );
@@ -1962,6 +1966,9 @@ suite('p5.Shader', function () {
 
         const testShader = myp5.baseFilterShader().modify(
           () => {
+            // The constant comparisons below are the subject of this test: they
+            // exercise how p5.strands transpiles boolean intermediate variables.
+            /* oxlint-disable no-constant-binary-expression */
             const conditionMet = () => {
               let condition = 1 > 2;
               let value = 1;
@@ -1970,6 +1977,7 @@ suite('p5.Shader', function () {
               }
               return !condition;
             };
+            /* oxlint-enable no-constant-binary-expression */
             myp5.getColor((inputs, canvasContent) => {
               if (conditionMet()) {
                 return [1, 0, 0, 1];
@@ -2537,7 +2545,7 @@ suite('p5.Shader', function () {
 
               for (let xOff = -1; xOff <= 1; xOff++) {
                 for (let yOff = -1; yOff <= 1; yOff++) {
-                  if (xOff != 0 || yOff != 0) {
+                  if (xOff !== 0 || yOff !== 0) {
                     aliveNeighbours += 0.1;
                   }
                 }
@@ -2964,7 +2972,8 @@ suite('p5.Shader', function () {
       test('simple vector multiplication in filter shader', () => {
         myp5.createCanvas(50, 50, myp5.WEBGL);
 
-        const testShader = myp5.baseFilterShader().modify(
+        // Compiling the shader without throwing is what this test checks.
+        myp5.baseFilterShader().modify(
           () => {
             myp5.getColor((inputs, canvasContent) => {
               // Test simple scalar * vector operation
@@ -3591,6 +3600,8 @@ suite('p5.Shader', function () {
       expect(() => {
         myp5.baseMaterialShader().modify(
           () => {
+            // The shared variable is consumed by the p5.strands transpiler, not by JS.
+            /* oxlint-disable-next-line no-unused-vars */
             let worldPosX = myp5.sharedVec3();
             myp5.getWorldInputs(inputs => {
               worldPosX = inputs.position.x; // scalar → vec3, valid broadcast
@@ -3608,6 +3619,8 @@ suite('p5.Shader', function () {
       expect(() => {
         myp5.baseMaterialShader().modify(
           () => {
+            // The shared variable is consumed by the p5.strands transpiler, not by JS.
+            /* oxlint-disable-next-line no-unused-vars */
             let myVec = myp5.sharedVec3();
             myp5.getWorldInputs(inputs => {
               myVec = inputs.position.xy; // vec2 → vec3 mismatch
@@ -3642,6 +3655,8 @@ suite('p5.Shader', function () {
       expect(() => {
         myp5.baseMaterialShader().modify(
           () => {
+            // The shared variable is consumed by the p5.strands transpiler, not by JS.
+            /* oxlint-disable-next-line no-unused-vars */
             let myVec = myp5.sharedVec3();
             myp5.getWorldInputs(inputs => {
               myVec = inputs.position; // vec3 → vec3, OK
@@ -3683,7 +3698,7 @@ suite('p5.Shader', function () {
           },
           { myp5 }
         );
-      } catch (e) {
+      } catch {
         /* expected */
       }
 
@@ -3710,7 +3725,7 @@ suite('p5.Shader', function () {
           },
           { myp5 }
         );
-      } catch (e) {
+      } catch {
         /* expected */
       }
 
@@ -3736,7 +3751,7 @@ suite('p5.Shader', function () {
           },
           { myp5 }
         );
-      } catch (e) {
+      } catch {
         /* expected */
       }
 
@@ -3766,7 +3781,7 @@ suite('p5.Shader', function () {
           },
           { myp5 }
         );
-      } catch (e) {
+      } catch {
         /* expected */
       }
 
@@ -3830,11 +3845,13 @@ suite('p5.Shader', function () {
           () => {
             myp5.getWorldInputs.begin();
             myp5.getWorldInputs.end();
+            // Reading `.position` outside the hook scope is what should error.
+            /* oxlint-disable-next-line no-unused-vars */
             const pos = myp5.getWorldInputs.position;
           },
           { myp5 }
         );
-      } catch (e) {
+      } catch {
         /* expected */
       }
 

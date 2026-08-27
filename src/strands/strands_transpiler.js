@@ -1910,26 +1910,6 @@ function transformHelperFunctionEarlyReturns(ast, names) {
  * This staged approach ensures correct ordering and avoids transformation conflicts.
  */
 
-// Wraps each callback with a uniform context guard, eliminating the need
-// to repeat the early-return check at the top of every handler.
-function makeGuardedCallbacks(callbacks) {
-  const guarded = {};
-  for (const [name, fn] of Object.entries(callbacks)) {
-    guarded[name] = (node, state, ancestors) => {
-      if (
-        ancestors.some(
-          a =>
-            nodeIsUniform(a) ||
-            nodeIsUniformCallbackFn(a, state.uniformCallbackNames)
-        )
-      )
-        return;
-      return fn(node, state, ancestors);
-    };
-  }
-  return guarded;
-}
-
 function runNonControlFlowPass(
   ast,
   uniformCallbackNames,
