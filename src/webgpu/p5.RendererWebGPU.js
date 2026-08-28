@@ -29,6 +29,8 @@ import {
 } from './shaders/imageLight';
 import { baseComputeShader } from './shaders/compute';
 
+import { warnExperimental } from '../core/experimental';
+
 const FRAME_STATE = {
   PENDING: 0,
   UNPROMOTED: 1,
@@ -450,6 +452,8 @@ function rendererWebGPU(p5, fn) {
   class RendererWebGPU extends Renderer3D {
     constructor(pInst, w, h, isMainCanvas, elt) {
       super(pInst, w, h, isMainCanvas, elt);
+
+      warnExperimental(p5, pInst, 'webgpu');
 
       // Used to group draws into one big render pass
       this.activeRenderPass = null;
