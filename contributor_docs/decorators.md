@@ -86,6 +86,8 @@ export function _exampleDecorator(target, ...args) {
 
 When this decorator is applied to any function, it will print the message, and then execute the function as usual.
 
+Please include the **@private** and **@internal** tags in docstrings, to make sure these functions to not appear in the public reference; in general, they are not intended to be part of the public API.
+
 ### Step 2: Register decorator
 
 Second, use `pattern` to register the decorator on various targets. You can use path comparison (as in the FES example above), or text:
