@@ -109,10 +109,7 @@ function _positionCanvas(loadingCanvas, actualCanvas) {
 }
 
 /**
- * Stops the loading indicator animation and removes the overlay canvas from the DOM.
- *
- * Cancels the requestAnimationFrame loop and removes the overlay canvas
- * element from the document.
+ * Stops the loading indicator animation and removes the overlay canvas from the DO
  *
  * @private
  * @param {p5} pInst The p5 instance.
@@ -127,7 +124,7 @@ function _removeLoadingOverlay(pInst) {
 
 /**
  * Draws a canvas-based animated loading indicator.
- * The loading indcator is a spinning p5 logo.
+ * The loading indicator is a spinning p5 logo.
  * 
  * Credits to Raphaël de Courville for creating the p5 logo sketch
  *
@@ -186,14 +183,14 @@ export function _handleLoadingIndicator(isLoading) {
     return function (...args) {
       const result = target.call(this, ...args);
 
-      // Create loading sketch if canvas is loading
+      // Create loading overlay if canvas is loading
       if (isLoading) {
         if (this._isSketchLoading) {
           _createLoadingOverlay(this);
         }
       } 
 
-      // Remove loading sketch if canvas isn't loading
+      // Remove loading overlay if canvas isn't loading
       else {
         _removeLoadingOverlay(this);
       }
