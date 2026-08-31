@@ -320,8 +320,13 @@ const builtInGLSLFunctions = {
       isp5Function: false
     }
   ],
-  reflect: [{ params: [GenType.FLOAT, GenType.FLOAT], returnType: GenType.FLOAT, isp5Function: false}],
-  refract: [{ params: [GenType.FLOAT, GenType.FLOAT,DataType.float1], returnType: GenType.FLOAT, isp5Function: false}],
+  refract: [
+    {
+      params: [GenType.FLOAT, GenType.FLOAT, DataType.float1],
+      returnType: GenType.FLOAT,
+      isp5Function: false
+    }
+  ],
 
   ////////// Matrix //////////
   inverse: [
@@ -334,14 +339,6 @@ const builtInGLSLFunctions = {
     { params: [DataType.mat3], returnType: DataType.mat3, isp5Function: false},
     { params: [DataType.mat4], returnType: DataType.mat4, isp5Function: false},
   ],
-}
-  refract: [
-    {
-      params: [GenType.FLOAT, GenType.FLOAT, DataType.float1],
-      returnType: GenType.FLOAT,
-      isp5Function: false
-    }
-  ]
 };
 
 export const strandsBuiltinFunctions = {

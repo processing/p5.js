@@ -613,28 +613,27 @@ export const wgslBackend = {
             }
           }
 
-        // WGSL has no built-in matrix inverse, so emit a size-specific polyfill
-        // (_p5_inverse_mat2/3/4). WGSL user functions can't be overloaded, hence
-        // the per-dimension names. The inverse node's dimension is the matrix
-        // size, since inverse() returns the same matrix type it receives.
-        if (node.identifier === 'inverse') {
-          const { vertexDeclarations, fragmentDeclarations, computeDeclarations } =
-            generationContext.strandsContext;
-          const declarationsByStage = {
-            vertex: vertexDeclarations,
-            fragment: fragmentDeclarations,
-            compute: computeDeclarations,
-          };
-          // Hooks without a recorded stage fall back to declaring in all of them.
-          const stage = declarationsByStage[generationContext.shaderContext];
-          for (const declarations of stage ? [stage] : Object.values(declarationsByStage)) {
-            declarations.add(inverseWGSL);
+          // WGSL has no built-in matrix inverse, so emit a size-specific polyfill
+          // (_p5_inverse_mat2/3/4). WGSL user functions can't be overloaded, hence
+          // the per-dimension names. The inverse node's dimension is the matrix
+          // size, since inverse() returns the same matrix type it receives.
+          if (node.identifier === 'inverse') {
+            const { vertexDeclarations, fragmentDeclarations, computeDeclarations } =
+              generationContext.strandsContext;
+            const declarationsByStage = {
+              vertex: vertexDeclarations,
+              fragment: fragmentDeclarations,
+              compute: computeDeclarations,
+            };
+            // Hooks without a recorded stage fall back to declaring in all of them.
+            const stage = declarationsByStage[generationContext.shaderContext];
+            for (const declarations of stage ? [stage] : Object.values(declarationsByStage)) {
+              declarations.add(inverseWGSL);
+            }
+            const arg = this.generateExpression(generationContext, dag, node.dependsOn[0]);
+            return `_p5_inverse_mat${node.dimension}(${arg})`;
           }
-          const arg = this.generateExpression(generationContext, dag, node.dependsOn[0]);
-          return `_p5_inverse_mat${node.dimension}(${arg})`;
-        }
 
-        const functionArgs = node.dependsOn.map(arg =>this.generateExpression(generationContext, dag, arg));
           // Convert atan(y, x) to atan2(y, x) in WGSL
           if (node.identifier === 'atan' && node.dependsOn.length === 2) {
             const functionArgs = node.dependsOn.map(arg =>
