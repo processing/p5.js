@@ -71,7 +71,7 @@ Next, we will show step by step how to add a decorator. These steps are adapted 
 
 ### Step 1: Define behavior
 
-First, create a new function, which will be out `decorator`:
+First, create a new function, which will be our `decorator`:
 
 ```js
 /**
