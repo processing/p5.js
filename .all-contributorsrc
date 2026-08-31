@@ -7592,6 +7592,24 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "okra-sf",
+      "name": "okra-sf",
+      "avatar_url": "https://avatars.githubusercontent.com/u/110788460?v=4",
+      "profile": "https://github.com/okra-sf",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "Danyccsf",
+      "name": "Dany Valverde Caldas",
+      "avatar_url": "https://avatars.githubusercontent.com/u/186502464?v=4",
+      "profile": "https://github.com/Danyccsf",
+      "contributions": [
+        "test"
+      ]
     }
   ],
   "repoType": "github",

@@ -17,7 +17,9 @@ if (fs.existsSync(typesDir)) {
 }
 fs.mkdirSync(typesDir, { recursive: true });
 
-const rawData = JSON.parse(fs.readFileSync(path.join(__dirname, '../docs/data.json')));
+const rawData = JSON.parse(
+  fs.readFileSync(path.join(__dirname, '../docs/data.json'))
+);
 
 // Pre-build constants lookup
 import { getAllEntries } from './shared-helpers.mjs';
@@ -40,47 +42,55 @@ function processStrandsFunctions() {
   const strandsMethods = [
     {
       name: 'instanceID',
-      overloads: [{
-        params: [],
-        return: {
-          type: { type: 'NameExpression', name: 'any' } // Return 'any' for strands nodes
+      overloads: [
+        {
+          params: [],
+          return: {
+            type: { type: 'NameExpression', name: 'any' } // Return 'any' for strands nodes
+          }
         }
-      }],
+      ],
       description: `Returns the ID when drawing many instances`,
       static: false
     },
     {
       name: 'discard',
-      overloads: [{
-        params: [],
-      }],
+      overloads: [
+        {
+          params: []
+        }
+      ],
       description: `Discards the current pixel`,
       static: false
     },
     {
       name: 'getTexture',
-      overloads: [{
-        params: [
-          {
-            name: 'tex',
-            type: { type: 'NameExpression', name: 'any' },
-            optional: false,
-          },
-          {
-            name: 'coord',
-            type: { type: 'NameExpression', name: 'any' },
-            optional: false,
-          },
-        ],
-        return: {
-          type: { type: 'NameExpression', name: 'any' } // Return 'any' for strands nodes
+      overloads: [
+        {
+          params: [
+            {
+              name: 'tex',
+              type: { type: 'NameExpression', name: 'any' },
+              optional: false
+            },
+            {
+              name: 'coord',
+              type: { type: 'NameExpression', name: 'any' },
+              optional: false
+            }
+          ],
+          return: {
+            type: { type: 'NameExpression', name: 'any' } // Return 'any' for strands nodes
+          }
         }
-      }],
+      ]
     }
   ];
 
   // Add ALL GLSL builtin functions (both isp5Function: true and false)
-  for (const [functionName, overloads] of Object.entries(builtInGLSLFunctions)) {
+  for (const [functionName, overloads] of Object.entries(
+    builtInGLSLFunctions
+  )) {
     // Create method definition with simplified any types for all overloads
     const method = {
       name: functionName,
@@ -113,52 +123,56 @@ function processStrandsFunctions() {
     const typeAliases = [];
 
     if (/^[ib]vec/.test(typeInfo.fnName)) {
-      pascalTypeName = typeInfo.fnName
-        .slice(0, 2).toUpperCase()
-        + typeInfo.fnName
-        .slice(2)
-        .toLowerCase();
+      pascalTypeName =
+        typeInfo.fnName.slice(0, 2).toUpperCase() +
+        typeInfo.fnName.slice(2).toLowerCase();
       typeAliases.push(pascalTypeName.replace('Vec', 'Vector'));
     } else {
-      pascalTypeName = typeInfo.fnName.charAt(0).toUpperCase()
-        + typeInfo.fnName.slice(1);
+      pascalTypeName =
+        typeInfo.fnName.charAt(0).toUpperCase() + typeInfo.fnName.slice(1);
       if (pascalTypeName === 'Sampler2D') {
-        typeAliases.push('Texture')
+        typeAliases.push('Texture');
       } else if (/^vec/.test(typeInfo.fnName)) {
         typeAliases.push(pascalTypeName.replace('Vec', 'Vector'));
       }
     }
 
-    typeMethods.push(...[pascalTypeName, ...typeAliases].flatMap((typeName) => [
-      {
-        name: `uniform${typeName}`,
-        overloads: [{
-          params: [
+    typeMethods.push(
+      ...[pascalTypeName, ...typeAliases].flatMap(typeName => [
+        {
+          name: `uniform${typeName}`,
+          overloads: [
             {
-              name: 'defaultValue',
-              type: { type: 'NameExpression', name: 'any' },
-              optional: true
+              params: [
+                {
+                  name: 'defaultValue',
+                  type: { type: 'NameExpression', name: 'any' },
+                  optional: true
+                }
+              ],
+              return: {
+                type: { type: 'NameExpression', name: 'any' }
+              }
             }
           ],
-          return: {
-            type: { type: 'NameExpression', name: 'any' }
-          }
-        }],
-        description: `Create a ${pascalTypeName} uniform variable`,
-        static: false
-      },
-      ...['varying', 'shared'].map((prefix) => ({
-        name: `${prefix}${typeName}`,
-        overloads: [{
-          params: [],
-          return: {
-            type: { type: 'NameExpression', name: 'any' }
-          }
-        }],
-        description: `Create a shared ${pascalTypeName} to pass data between hooks`,
-        static: false
-      }))
-    ]));
+          description: `Create a ${pascalTypeName} uniform variable`,
+          static: false
+        },
+        ...['varying', 'shared'].map(prefix => ({
+          name: `${prefix}${typeName}`,
+          overloads: [
+            {
+              params: [],
+              return: {
+                type: { type: 'NameExpression', name: 'any' }
+              }
+            }
+          ],
+          description: `Create a shared ${pascalTypeName} to pass data between hooks`,
+          static: false
+        }))
+      ])
+    );
   }
 
   // Add type casting functions (DataType constructor functions)
@@ -171,18 +185,20 @@ function processStrandsFunctions() {
     const typeInfo = DataType[type];
     const castingMethod = {
       name: typeInfo.fnName,
-      overloads: [{
-        params: [
-          {
-            name: 'value',
-            type: { type: 'NameExpression', name: 'any' },
-            optional: false
+      overloads: [
+        {
+          params: [
+            {
+              name: 'value',
+              type: { type: 'NameExpression', name: 'any' },
+              optional: false
+            }
+          ],
+          return: {
+            type: { type: 'NameExpression', name: 'any' }
           }
-        ],
-        return: {
-          type: { type: 'NameExpression', name: 'any' }
         }
-      }],
+      ],
       description: `GLSL type constructor for ${typeInfo.fnName}`,
       static: false
     };
@@ -199,10 +215,17 @@ function convertTypeToTypeScript(typeNode, options = {}) {
 
   // Validate that typeNode is always an object
   if (typeof typeNode !== 'object' || Array.isArray(typeNode)) {
-    throw new Error(`convertTypeToTypeScript expects an object, got: ${typeof typeNode} - ${JSON.stringify(typeNode)}`);
+    throw new Error(
+      `convertTypeToTypeScript expects an object, got: ${typeof typeNode} - ${JSON.stringify(typeNode)}`
+    );
   }
 
-  const { currentClass = null, isInsideNamespace = false, inGlobalMode = false, isConstantDef = false } = options;
+  const {
+    currentClass = null,
+    isInsideNamespace = false,
+    inGlobalMode = false,
+    isConstantDef = false
+  } = options;
 
   switch (typeNode.type) {
     case 'NameExpression': {
@@ -210,19 +233,19 @@ function convertTypeToTypeScript(typeNode, options = {}) {
 
       // Handle primitive types
       const primitiveTypes = {
-        'String': 'string',
-        'Number': 'number', 
-        'Integer': 'number',
-        'Boolean': 'boolean',
-        'Void': 'void',
-        'Object': 'object',
-        'Any': 'any',
-        'Array': 'any[]',
-        'Promise': 'Promise<any>',
-        'Function': 'Function',
-        'HTMLElement': 'HTMLElement',
-        'Event': 'Event',
-        'Request': 'Request'
+        String: 'string',
+        Number: 'number',
+        Integer: 'number',
+        Boolean: 'boolean',
+        Void: 'void',
+        Object: 'object',
+        Any: 'any',
+        Array: 'any[]',
+        Promise: 'Promise<any>',
+        Function: 'Function',
+        HTMLElement: 'HTMLElement',
+        Event: 'Event',
+        Request: 'Request'
       };
 
       if (primitiveTypes[typeName]) {
@@ -230,7 +253,10 @@ function convertTypeToTypeScript(typeNode, options = {}) {
       }
 
       // Handle self-referential types within the same class
-      if (currentClass && (typeName === `p5.${currentClass}` || typeName === currentClass)) {
+      if (
+        currentClass &&
+        (typeName === `p5.${currentClass}` || typeName === currentClass)
+      ) {
         return currentClass;
       }
 
@@ -279,7 +305,10 @@ function convertTypeToTypeScript(typeNode, options = {}) {
       const baseTypeName = typeNode.expression.name;
 
       if (baseTypeName === 'Array' && typeNode.applications.length === 1) {
-        const innerType = convertTypeToTypeScript(typeNode.applications[0], options);
+        const innerType = convertTypeToTypeScript(
+          typeNode.applications[0],
+          options
+        );
         return `${innerType}[]`;
       }
 
@@ -319,7 +348,9 @@ function convertTypeToTypeScript(typeNode, options = {}) {
       return 'undefined';
 
     case 'ArrayType': {
-      const innerTypes = typeNode.elements.map(e => convertTypeToTypeScript(e, options));
+      const innerTypes = typeNode.elements.map(e =>
+        convertTypeToTypeScript(e, options)
+      );
       return `[${innerTypes.join(', ')}]`;
     }
 
@@ -347,7 +378,10 @@ function convertTypeToTypeScript(typeNode, options = {}) {
 
 // Check if typedef represents a real object shape
 function hasTypedefProperties(typedefEntry) {
-  if (!Array.isArray(typedefEntry.properties) || typedefEntry.properties.length === 0) {
+  if (
+    !Array.isArray(typedefEntry.properties) ||
+    typedefEntry.properties.length === 0
+  ) {
     return false;
   }
   // Reject self-referential single-property typedefs
@@ -377,7 +411,11 @@ function convertFunctionTypeForInterface(typeNode, options) {
       if (currentParam && currentParam.type === 'ParameterType') {
         typeObj = currentParam.expression;
         paramName = currentParam.name ?? `p${i}`;
-      } else if (currentParam && typeof currentParam.type === 'object' && currentParam.type !== null) {
+      } else if (
+        currentParam &&
+        typeof currentParam.type === 'object' &&
+        currentParam.type !== null
+      ) {
         typeObj = currentParam.type;
         paramName = currentParam.name ?? `p${i}`;
       } else {
@@ -401,15 +439,21 @@ function convertFunctionTypeForInterface(typeNode, options) {
 }
 
 // Generate a TypeScript interface from a typedef with @property fields
-function generateTypedefInterface(name, typedefEntry, options = {}, indent = 2) {
+function generateTypedefInterface(
+  name,
+  typedefEntry,
+  options = {},
+  indent = 2
+) {
   const pad = ' '.repeat(indent);
   const innerPad = ' '.repeat(indent + 2);
   let output = '';
 
   if (typedefEntry.description) {
-    const descStr = typeof typedefEntry.description === 'string'
-      ? typedefEntry.description
-      : descriptionStringForTypeScript(typedefEntry.description);
+    const descStr =
+      typeof typedefEntry.description === 'string'
+        ? typedefEntry.description
+        : descriptionStringForTypeScript(typedefEntry.description);
     if (descStr) {
       output += `${pad}/**\n`;
       output += formatJSDocComment(descStr, indent) + '\n';
@@ -427,9 +471,10 @@ function generateTypedefInterface(name, typedefEntry, options = {}, indent = 2) 
     const optMark = isOptional ? '?' : '';
 
     if (prop.description) {
-      const propDescStr = typeof prop.description === 'string'
-        ? prop.description.trim()
-        : descriptionStringForTypeScript(prop.description);
+      const propDescStr =
+        typeof prop.description === 'string'
+          ? prop.description.trim()
+          : descriptionStringForTypeScript(prop.description);
       if (propDescStr) {
         output += `${innerPad}/** ${propDescStr} */\n`;
       }
@@ -443,7 +488,9 @@ function generateTypedefInterface(name, typedefEntry, options = {}, indent = 2) 
       const retPart = sig.substring(arrowIdx + 2).trim();
       output += `${innerPad}${propName}${paramsPart}: ${retPart};\n`;
     } else {
-      const tsType = rawType ? convertTypeToTypeScript(rawType, options) : 'any';
+      const tsType = rawType
+        ? convertTypeToTypeScript(rawType, options)
+        : 'any';
       output += `${innerPad}${propName}${optMark}: ${tsType};\n`;
     }
   }
@@ -459,7 +506,7 @@ const typescriptStrategy = {
     return context.module === 'Foundation';
   },
 
-  processDescription: (desc) => descriptionStringForTypeScript(desc),
+  processDescription: desc => descriptionStringForTypeScript(desc),
 
   processType: (type, param) => {
     // Return an object with the original type preserved
@@ -491,10 +538,7 @@ const typescriptStrategy = {
 const processed = processData(rawData, typescriptStrategy);
 
 function normalizeIdentifier(name) {
-  return (
-    '0123456789'.includes(name[0]) ||
-    name === 'class'
-  ) ? '$' + name : name;
+  return '0123456789'.includes(name[0]) || name === 'class' ? '$' + name : name;
 }
 
 function formatJSDocComment(text, indentLevel = 0) {
@@ -506,23 +550,23 @@ function formatJSDocComment(text, indentLevel = 0) {
     .map(line => line.trim())
     .reduce((acc, line) => {
       if (acc.length === 0 && line === '') return acc;
-      if (acc.length > 0 && line === '' && acc[acc.length - 1] === '') return acc;
+      if (acc.length > 0 && line === '' && acc[acc.length - 1] === '')
+        return acc;
       acc.push(line);
       return acc;
     }, [])
     .filter((line, i, arr) => i < arr.length - 1 || line !== '');
 
-  return lines
-    .map(line => `${indent} * ${line}`)
-    .join('\n');
+  return lines.map(line => `${indent} * ${line}`).join('\n');
 }
 
 function generateObjectInterface(param, allParams, options = {}) {
   // Check if this is an object parameter (either required or optional)
-  const isObjectParam = param.type && (
-    (param.type.type === 'OptionalType' && param.type.expression?.name === 'Object') ||
-    (param.type.type === 'NameExpression' && param.type.name === 'Object')
-  );
+  const isObjectParam =
+    param.type &&
+    ((param.type.type === 'OptionalType' &&
+      param.type.expression?.name === 'Object') ||
+      (param.type.type === 'NameExpression' && param.type.name === 'Object'));
 
   if (!isObjectParam || !param.name) {
     return null;
@@ -530,18 +574,18 @@ function generateObjectInterface(param, allParams, options = {}) {
 
   let nestedParams = [];
 
-
   // First, check if the parameter has a properties array (JSDoc properties field)
   if (param.properties && Array.isArray(param.properties)) {
-    nestedParams = param.properties.filter(prop => 
-      prop.name && prop.name.startsWith(param.name + '.')
+    nestedParams = param.properties.filter(
+      prop => prop.name && prop.name.startsWith(param.name + '.')
     );
   }
 
   // Fallback: Look for nested parameters with dot notation in allParams
   if (nestedParams.length === 0) {
-    nestedParams = allParams.filter(p => 
-      p.name && p.name.startsWith(param.name + '.') && p.name !== param.name
+    nestedParams = allParams.filter(
+      p =>
+        p.name && p.name.startsWith(param.name + '.') && p.name !== param.name
     );
   }
 
@@ -552,9 +596,14 @@ function generateObjectInterface(param, allParams, options = {}) {
   // Generate interface properties
   const properties = nestedParams.map(nestedParam => {
     const propName = nestedParam.name.substring(param.name.length + 1); // Remove 'paramName.' prefix
-    const propType = nestedParam.type ? convertTypeToTypeScript(nestedParam.type, options) : 'any';
+    const propType = nestedParam.type
+      ? convertTypeToTypeScript(nestedParam.type, options)
+      : 'any';
     // Properties are optional if they have a default value or are explicitly marked as optional
-    const isOptional = nestedParam.optional || nestedParam.type?.type === 'OptionalType' || nestedParam.default !== undefined;
+    const isOptional =
+      nestedParam.optional ||
+      nestedParam.type?.type === 'OptionalType' ||
+      nestedParam.default !== undefined;
     return `${propName}${isOptional ? '?' : ''}: ${propType}`;
   });
 
@@ -602,21 +651,31 @@ function generateMethodDeclaration(method, options = {}) {
     if (method.overloads?.[0]?.params) {
       method.overloads[0].params.forEach(param => {
         if (param.description) {
-          output += formatJSDocComment(`@param ${param.name} ${param.description}`, commentIndent) + '\n';
+          output +=
+            formatJSDocComment(
+              `@param ${param.name} ${param.description}`,
+              commentIndent
+            ) + '\n';
         }
       });
     }
 
     // Add return docs
     if (method.return?.description) {
-      output += formatJSDocComment(`@returns ${method.return.description}`, commentIndent) + '\n';
+      output +=
+        formatJSDocComment(
+          `@returns ${method.return.description}`,
+          commentIndent
+        ) + '\n';
     }
 
     output += `${indent} */\n`;
   }
 
   const staticPrefix = method.static ? 'static ' : '';
-  const declarationPrefix = globalFunction ? 'function ' : `${indent}${staticPrefix}`;
+  const declarationPrefix = globalFunction
+    ? 'function '
+    : `${indent}${staticPrefix}`;
 
   // Generate overload declarations
   if (method.overloads && method.overloads.length > 0) {
@@ -626,7 +685,11 @@ function generateMethodDeclaration(method, options = {}) {
         .join(', ');
 
       let returnType = 'void';
-      if (overload.chainable && !globalFunction && options.currentClass !== 'p5') {
+      if (
+        overload.chainable &&
+        !globalFunction &&
+        options.currentClass !== 'p5'
+      ) {
         returnType = options.currentClass || 'this';
         // TODO: Decide what should be chainable. Many of these are accidental / not thought through
       } else if (overload.return && overload.return.type) {
@@ -645,7 +708,9 @@ function generateMethodDeclaration(method, options = {}) {
 
 function generateClassDeclaration(classData) {
   let output = '';
-  const className = classData.name.startsWith('p5.') ? classData.name.substring(3) : classData.name;
+  const className = classData.name.startsWith('p5.')
+    ? classData.name.substring(3)
+    : classData.name;
   const actualClassName = className === 'Graphics' ? '__Graphics' : className;
 
   if (classData.description) {
@@ -654,14 +719,22 @@ function generateClassDeclaration(classData) {
     output += '   */\n';
   }
 
-  const extendsClause = classData.extends ? ` extends ${classData.extends}` : '';
+  const extendsClause = classData.extends
+    ? ` extends ${classData.extends}`
+    : '';
   output += `  class ${actualClassName}${extendsClause} {\n`;
 
   // Constructor
   if (classData.params?.length > 0) {
     output += '    constructor(';
     output += classData.params
-      .map(param => generateParamDeclaration(param, { currentClass: className, isInsideNamespace: true }, classData.params))
+      .map(param =>
+        generateParamDeclaration(
+          param,
+          { currentClass: className, isInsideNamespace: true },
+          classData.params
+        )
+      )
       .join(', ');
     output += ');\n\n';
   }
@@ -670,12 +743,14 @@ function generateClassDeclaration(classData) {
   const originalClassName = classData.name;
 
   // Class methods
-  const classMethodsList = Object.values(processed.classMethods[originalClassName] || {});
+  const classMethodsList = Object.values(
+    processed.classMethods[originalClassName] || {}
+  );
   const methodNames = new Set(classMethodsList.map(method => method.name));
 
   // Class properties
-  const classProperties = processed.classitems.filter(item => 
-    item.class === originalClassName && item.itemtype === 'property'
+  const classProperties = processed.classitems.filter(
+    item => item.class === originalClassName && item.itemtype === 'property'
   );
 
   classProperties.forEach(prop => {
@@ -720,7 +795,11 @@ function generateTypeDefinitions() {
   // First, define all constants at the top level with their actual values
   const seenConstants = new Set();
   const p5Constants = processed.classitems.filter(item => {
-    if (item.class === 'p5' && item.itemtype === 'property' && item.name in processed.consts) {
+    if (
+      item.class === 'p5' &&
+      item.itemtype === 'property' &&
+      item.name in processed.consts
+    ) {
       // Skip defineProperty, undefined and avoid duplicates
       if (item.name === 'defineProperty' || !item.name) {
         return false;
@@ -744,7 +823,10 @@ function generateTypeDefinitions() {
       output += formatJSDocComment(constant.description, 0) + '\n';
       output += ' */\n';
     }
-    const type = convertTypeToTypeScript(constant.type, { isInsideNamespace: false, isConstantDef: true });
+    const type = convertTypeToTypeScript(constant.type, {
+      isInsideNamespace: false,
+      isConstantDef: true
+    });
     const isMutable = mutableProperties.has(constant.name);
     const declaration = isMutable ? 'declare let' : 'declare const';
     output += `${declaration} ${constant.name}: ${type};\n\n`;
@@ -754,18 +836,23 @@ function generateTypeDefinitions() {
 
   // Generate main p5 class
   output += 'declare class p5 {\n';
-  output += '  constructor(sketch?: (p: p5) => void, node?: HTMLElement, sync?: boolean);\n\n';
+  output +=
+    '  constructor(sketch?: (p: p5) => void, node?: HTMLElement, sync?: boolean);\n\n';
 
   const p5Options = { currentClass: 'p5', isInsideNamespace: false };
 
   // Generate p5 static methods
-  const p5StaticMethods = Object.values(processed.classMethods.p5 || {}).filter(method => method.static);
+  const p5StaticMethods = Object.values(processed.classMethods.p5 || {}).filter(
+    method => method.static
+  );
   p5StaticMethods.forEach(method => {
     output += generateMethodDeclaration(method, p5Options);
   });
 
   // Generate p5 instance methods
-  const p5InstanceMethods = Object.values(processed.classMethods.p5 || {}).filter(method => !method.static);
+  const p5InstanceMethods = Object.values(
+    processed.classMethods.p5 || {}
+  ).filter(method => !method.static);
   p5InstanceMethods.forEach(method => {
     output += generateMethodDeclaration(method, p5Options);
   });
@@ -803,7 +890,12 @@ function generateTypeDefinitions() {
   const namespaceOptions = { isInsideNamespace: true };
   for (const [name, typedefEntry] of Object.entries(typedefs)) {
     if (hasTypedefProperties(typedefEntry)) {
-      output += generateTypedefInterface(name, typedefEntry, namespaceOptions, 2);
+      output += generateTypedefInterface(
+        name,
+        typedefEntry,
+        namespaceOptions,
+        2
+      );
     }
   }
 
@@ -816,7 +908,14 @@ function generateTypeDefinitions() {
 
   // Generate placeholder types for private classes that we need to be able to
   // reference, but have no public APIs
-  const privateClasses = ['Renderer', 'Renderer2D', 'RendererGL', 'FramebufferTexture', 'Texture', 'Quat'];
+  const privateClasses = [
+    'Renderer',
+    'Renderer2D',
+    'RendererGL',
+    'FramebufferTexture',
+    'Texture',
+    'Quat'
+  ];
   // Define base classes for private classes, if they should extend something
   const privateClassBases = { Renderer: 'Element' };
   for (const className of privateClasses) {
@@ -855,17 +954,26 @@ p5: P5;
     globalDefinitions += `${constant.name}: typeof P5.${constant.name};\n\n`;
   });
 
-  const globalP5Methods = Object.values(processed.classMethods.p5 || {})
-    .filter(method => !method.static && method.name !== 'p5');
+  const globalP5Methods = Object.values(processed.classMethods.p5 || {}).filter(
+    method => !method.static && method.name !== 'p5'
+  );
   globalP5Methods.forEach(method => {
-    globalDefinitions += generateMethodDeclaration(method, { currentClass: 'p5', isInsideNamespace: true, inGlobalMode: true });
+    globalDefinitions += generateMethodDeclaration(method, {
+      currentClass: 'p5',
+      isInsideNamespace: true,
+      inGlobalMode: true
+    });
   });
 
   // Add strands functions to global scope
   const conflictingDOMFunctions = ['length']; // Add other conflicting function names here as needed
   strandsMethods.forEach(method => {
     if (!conflictingDOMFunctions.includes(method.name)) {
-      globalDefinitions += generateMethodDeclaration(method, { currentClass: 'p5', isInsideNamespace: true, inGlobalMode: true });
+      globalDefinitions += generateMethodDeclaration(method, {
+        currentClass: 'p5',
+        isInsideNamespace: true,
+        inGlobalMode: true
+      });
     }
   });
 
@@ -884,17 +992,27 @@ p5: P5;
   globalDefinitions += '\n';
 
   // Mirror typedef interfaces for global-mode usage
-  const globalNamespaceOptions = { isInsideNamespace: true, inGlobalMode: true };
+  const globalNamespaceOptions = {
+    isInsideNamespace: true,
+    inGlobalMode: true
+  };
   for (const [name, typedefEntry] of Object.entries(typedefs)) {
     if (hasTypedefProperties(typedefEntry)) {
-      globalDefinitions += generateTypedefInterface(name, typedefEntry, globalNamespaceOptions, 2);
+      globalDefinitions += generateTypedefInterface(
+        name,
+        typedefEntry,
+        globalNamespaceOptions,
+        2
+      );
     }
   }
 
   // Add all real classes as both types and constructors
   Object.values(processed.classes).forEach(classData => {
     if (classData.name !== 'p5') {
-      const className = classData.name.startsWith('p5.') ? classData.name.substring(3) : classData.name;
+      const className = classData.name.startsWith('p5.')
+        ? classData.name.substring(3)
+        : classData.name;
       // For Graphics, use __Graphics for constructor
       if (className === 'Graphics') {
         globalDefinitions += `  type ${className} = P5.${className};\n`;
@@ -935,13 +1053,23 @@ p5: P5;
 
   // Also declare functions in global scope
   globalP5Methods.forEach(method => {
-    globalDefinitions += generateMethodDeclaration(method, { currentClass: 'p5', isInsideNamespace: true, inGlobalMode: true, globalFunction: true });
+    globalDefinitions += generateMethodDeclaration(method, {
+      currentClass: 'p5',
+      isInsideNamespace: true,
+      inGlobalMode: true,
+      globalFunction: true
+    });
   });
 
   // Add strands functions as global functions
   strandsMethods.forEach(method => {
     if (!conflictingDOMFunctions.includes(method.name)) {
-      globalDefinitions += generateMethodDeclaration(method, { currentClass: 'p5', isInsideNamespace: true, inGlobalMode: true, globalFunction: true });
+      globalDefinitions += generateMethodDeclaration(method, {
+        currentClass: 'p5',
+        isInsideNamespace: true,
+        inGlobalMode: true,
+        globalFunction: true
+      });
     }
   });
 
@@ -955,7 +1083,10 @@ p5: P5;
 const { instanceDefinitions, globalDefinitions } = generateTypeDefinitions();
 
 fs.writeFileSync(path.join(__dirname, '../types/p5.d.ts'), instanceDefinitions);
-fs.writeFileSync(path.join(__dirname, '../types/global.d.ts'), globalDefinitions);
+fs.writeFileSync(
+  path.join(__dirname, '../types/global.d.ts'),
+  globalDefinitions
+);
 
 console.log('TypeScript definitions generated successfully!');
 

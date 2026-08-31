@@ -22,7 +22,7 @@ CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
-export function parse (csv, options, reviver = v => v) {
+export function parse(csv, options, reviver = v => v) {
   const ctx = Object.create(null);
   ctx.options = options || {};
   ctx.reviver = reviver;
@@ -32,15 +32,24 @@ export function parse (csv, options, reviver = v => v) {
   ctx.col = 1;
   ctx.row = 1;
 
-  ctx.options.delimiter = ctx.options.delimiter === undefined ? '"' : options.delimiter;
-  if(ctx.options.delimiter.length > 1 || ctx.options.delimiter.length === 0)
-    throw Error(`CSVError: delimiter must be one character [${ctx.options.separator}]`);
+  ctx.options.delimiter =
+    ctx.options.delimiter === undefined ? '"' : options.delimiter;
+  if (ctx.options.delimiter.length > 1 || ctx.options.delimiter.length === 0)
+    throw Error(
+      `CSVError: delimiter must be one character [${ctx.options.separator}]`
+    );
 
-  ctx.options.separator = ctx.options.separator === undefined ? ',' : options.separator;
-  if(ctx.options.separator.length > 1 || ctx.options.separator.length === 0)
-    throw Error(`CSVError: separator must be one character [${ctx.options.separator}]`);
+  ctx.options.separator =
+    ctx.options.separator === undefined ? ',' : options.separator;
+  if (ctx.options.separator.length > 1 || ctx.options.separator.length === 0)
+    throw Error(
+      `CSVError: separator must be one character [${ctx.options.separator}]`
+    );
 
-  const lexer = new RegExp(`${escapeRegExp(ctx.options.delimiter)}|${escapeRegExp(ctx.options.separator)}|\r\n|\n|\r|[^${escapeRegExp(ctx.options.delimiter)}${escapeRegExp(ctx.options.separator)}\r\n]+`, 'y');
+  const lexer = new RegExp(
+    `${escapeRegExp(ctx.options.delimiter)}|${escapeRegExp(ctx.options.separator)}|\r\n|\n|\r|[^${escapeRegExp(ctx.options.delimiter)}${escapeRegExp(ctx.options.separator)}\r\n]+`,
+    'y'
+  );
   const isNewline = /^(\r\n|\n|\r)$/;
 
   let matches = [];
@@ -84,7 +93,9 @@ export function parse (csv, options, reviver = v => v) {
             break;
           default:
             state = 4;
-            throw Error(`CSVError: Illegal state [row:${ctx.row}, col:${ctx.col}]`);
+            throw Error(
+              `CSVError: Illegal state [row:${ctx.row}, col:${ctx.col}]`
+            );
         }
         break;
       case 3: // delimited input
@@ -114,7 +125,9 @@ export function parse (csv, options, reviver = v => v) {
             entryEnd(ctx);
             break;
           default:
-            throw Error(`CSVError: Illegal state [row:${ctx.row}, col:${ctx.col}]`);
+            throw Error(
+              `CSVError: Illegal state [row:${ctx.row}, col:${ctx.col}]`
+            );
         }
         break;
     }
@@ -129,7 +142,7 @@ export function parse (csv, options, reviver = v => v) {
   return ctx.output;
 }
 
-export function stringify (array, options = {}, replacer = v => v) {
+export function stringify(array, options = {}, replacer = v => v) {
   const ctx = Object.create(null);
   ctx.options = options;
   ctx.options.eof = ctx.options.eof !== undefined ? ctx.options.eof : true;
@@ -137,23 +150,36 @@ export function stringify (array, options = {}, replacer = v => v) {
   ctx.col = 1;
   ctx.output = '';
 
-  ctx.options.delimiter = ctx.options.delimiter === undefined ? '"' : options.delimiter;
-  if(ctx.options.delimiter.length > 1 || ctx.options.delimiter.length === 0)
-    throw Error(`CSVError: delimiter must be one character [${ctx.options.separator}]`);
+  ctx.options.delimiter =
+    ctx.options.delimiter === undefined ? '"' : options.delimiter;
+  if (ctx.options.delimiter.length > 1 || ctx.options.delimiter.length === 0)
+    throw Error(
+      `CSVError: delimiter must be one character [${ctx.options.separator}]`
+    );
 
-  ctx.options.separator = ctx.options.separator === undefined ? ',' : options.separator;
-  if(ctx.options.separator.length > 1 || ctx.options.separator.length === 0)
-    throw Error(`CSVError: separator must be one character [${ctx.options.separator}]`);
+  ctx.options.separator =
+    ctx.options.separator === undefined ? ',' : options.separator;
+  if (ctx.options.separator.length > 1 || ctx.options.separator.length === 0)
+    throw Error(
+      `CSVError: separator must be one character [${ctx.options.separator}]`
+    );
 
-  const needsDelimiters = new RegExp(`${escapeRegExp(ctx.options.delimiter)}|${escapeRegExp(ctx.options.separator)}|\r\n|\n|\r`);
+  const needsDelimiters = new RegExp(
+    `${escapeRegExp(ctx.options.delimiter)}|${escapeRegExp(ctx.options.separator)}|\r\n|\n|\r`
+  );
 
   array.forEach((row, rIdx) => {
     let entry = '';
     ctx.col = 1;
     row.forEach((col, cIdx) => {
       if (typeof col === 'string') {
-        col = col.replace(new RegExp(ctx.options.delimiter, 'g'), `${ctx.options.delimiter}${ctx.options.delimiter}`);
-        col = needsDelimiters.test(col) ? `${ctx.options.delimiter}${col}${ctx.options.delimiter}` : col;
+        col = col.replace(
+          new RegExp(ctx.options.delimiter, 'g'),
+          `${ctx.options.delimiter}${ctx.options.delimiter}`
+        );
+        col = needsDelimiters.test(col)
+          ? `${ctx.options.delimiter}${col}${ctx.options.delimiter}`
+          : col;
       }
       entry += replacer(col, ctx.row, ctx.col);
       if (cIdx !== row.length - 1) {
@@ -176,21 +202,21 @@ export function stringify (array, options = {}, replacer = v => v) {
   return ctx.output;
 }
 
-function valueEnd (ctx) {
+function valueEnd(ctx) {
   const value = ctx.options.typed ? inferType(ctx.value) : ctx.value;
   ctx.entry.push(ctx.reviver(value, ctx.row, ctx.col));
   ctx.value = '';
   ctx.col++;
 }
 
-function entryEnd (ctx) {
+function entryEnd(ctx) {
   ctx.output.push(ctx.entry);
   ctx.entry = [];
   ctx.row++;
   ctx.col = 1;
 }
 
-function inferType (value) {
+function inferType(value) {
   const isNumber = /.\./;
 
   switch (true) {
@@ -207,5 +233,5 @@ function inferType (value) {
 }
 
 function escapeRegExp(str) {
-  return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, '\\$&');
+  return str.replace(/[-\[\]/\{}\()\*+\?.\\^\$|]/g, '\\$&');
 }
