@@ -14,8 +14,9 @@ const INITIAL_BUFFER_STRIDES = {
 
 // The total number of properties per vertex, before additional
 // user attributes are added.
-const INITIAL_VERTEX_SIZE =
-  Object.values(INITIAL_BUFFER_STRIDES).reduce((acc, next) => acc + next);
+const INITIAL_VERTEX_SIZE = Object.values(INITIAL_BUFFER_STRIDES).reduce(
+  (acc, next) => acc + next
+);
 
 export class ShapeBuilder {
   constructor(renderer) {
@@ -50,7 +51,7 @@ export class ShapeBuilder {
   }
 
   constructFromContours(shape, contours) {
-    if (this._useUserVertexProperties){
+    if (this._useUserVertexProperties) {
       this._resetUserVertexProperties();
     }
     this.geometry.reset();
@@ -162,10 +163,10 @@ export class ShapeBuilder {
       ) {
         const proceed = window.confirm(
           '🌸 p5.js says:\n\n' +
-          `This shape has ${vertexCount} vertices. Tessellating shapes with this ` +
-          'many vertices can be very slow and may cause your browser to become ' +
-          'unresponsive.\n\n' +
-          'Do you want to continue tessellating this shape?'
+            `This shape has ${vertexCount} vertices. Tessellating shapes with this ` +
+            'many vertices can be very slow and may cause your browser to become ' +
+            'unresponsive.\n\n' +
+            'Do you want to continue tessellating this shape?'
         );
         if (!proceed) {
           return;
@@ -190,6 +191,15 @@ export class ShapeBuilder {
     }
 
     if (
+      !this.renderer.geometryBuilder &&
+      this.shapeMode === constants.TRIANGLE_FAN &&
+      !this.renderer.supportsTriangleFan()
+    ) {
+      this._convertFanToTriangles();
+      this.shapeMode = constants.TRIANGLES;
+    }
+
+    if (
       this.renderer.states.textureMode === constants.IMAGE &&
       this.renderer.states._tex !== null &&
       this.renderer.states._tex.width > 0 &&
@@ -205,9 +215,54 @@ export class ShapeBuilder {
     }
   }
 
+  _remapVertices(newIndices) {
+    this.geometry.vertices = newIndices.map(i => this.geometry.vertices[i]);
+    this.geometry.vertexNormals = newIndices.map(
+      i => this.geometry.vertexNormals[i]
+    );
+
+    const remapFlat = (arr, stride) => {
+      const result = [];
+      for (const i of newIndices) {
+        for (let j = 0; j < stride; j++) {
+          result.push(arr[i * stride + j]);
+        }
+      }
+      return result;
+    };
+
+    this.geometry.uvs = remapFlat(this.geometry.uvs, 2);
+    this.geometry.vertexColors = remapFlat(this.geometry.vertexColors, 4);
+    this.geometry.vertexStrokeColors = remapFlat(
+      this.geometry.vertexStrokeColors,
+      4
+    );
+
+    for (const propName in this.geometry.userVertexProperties) {
+      const prop = this.geometry.userVertexProperties[propName];
+      const size = prop.getDataSize();
+      const oldData = prop.getSrcArray();
+      prop.resetSrcArray();
+      for (const i of newIndices) {
+        prop.setCurrentData(oldData.slice(i * size, i * size + size));
+        prop.pushCurrentData();
+      }
+    }
+  }
+
+  _convertFanToTriangles() {
+    const n = this.geometry.vertices.length;
+    if (n < 3) return;
+    const newIndices = [];
+    for (let i = 2; i < n; i++) {
+      newIndices.push(0, i - 1, i);
+    }
+    this._remapVertices(newIndices);
+  }
+
   _resetUserVertexProperties() {
     const properties = this.geometry.userVertexProperties;
-    for (const propName in properties){
+    for (const propName in properties) {
       const prop = properties[propName];
       delete this.bufferStrides[propName];
       prop.delete();
@@ -223,10 +278,7 @@ export class ShapeBuilder {
    * @private
    * @returns  {Number[]} indices for custom shape vertices indicating edges.
    */
-  _calculateEdges(
-    shapeMode,
-    verts
-  ) {
+  _calculateEdges(shapeMode, verts) {
     const res = [];
     let i = 0;
     const contourIndices = this.contourIndices.slice();
@@ -308,14 +360,11 @@ export class ShapeBuilder {
     // const contours = [[]];
     const contours = [];
     for (let i = 0; i < this.geometry.vertices.length; i++) {
-      if (
-        this.contourIndices.length > 0 &&
-        this.contourIndices[0] === i
-      ) {
+      if (this.contourIndices.length > 0 && this.contourIndices[0] === i) {
         this.contourIndices.shift();
         contours.push([]);
       }
-      contours[contours.length-1].push(
+      contours[contours.length - 1].push(
         this.geometry.vertices[i].x,
         this.geometry.vertices[i].y,
         this.geometry.vertices[i].z,
@@ -334,7 +383,7 @@ export class ShapeBuilder {
         const start = i * prop.getDataSize();
         const end = start + prop.getDataSize();
         const vals = prop.getSrcArray().slice(start, end);
-        contours[contours.length-1].push(...vals);
+        contours[contours.length - 1].push(...vals);
       }
     }
 
@@ -373,7 +422,7 @@ export class ShapeBuilder {
     this.geometry.vertices = [];
     this.geometry.vertexNormals = [];
     this.geometry.uvs = [];
-    for (const propName in this.geometry.userVertexProperties){
+    for (const propName in this.geometry.userVertexProperties) {
       const prop = this.geometry.userVertexProperties[propName];
       prop.resetSrcArray();
     }
@@ -389,7 +438,7 @@ export class ShapeBuilder {
       );
       {
         let offset = 12;
-        for (const propName in this.geometry.userVertexProperties){
+        for (const propName in this.geometry.userVertexProperties) {
           const prop = this.geometry.userVertexProperties[propName];
           const size = prop.getDataSize();
           const start = j + offset;
@@ -412,15 +461,12 @@ export class ShapeBuilder {
       // We record index mappings in a Map so that once we have found a
       // corresponding vertex, we don't need to loop to find it again.
       const newIndex = new Map();
-      this.geometry.edges =
-        this.geometry.edges.map(edge => edge.map(origIdx => {
+      this.geometry.edges = this.geometry.edges.map(edge =>
+        edge.map(origIdx => {
           if (!newIndex.has(origIdx)) {
             const orig = originalVertices[origIdx];
             let newVertIndex = this.geometry.vertices.findIndex(
-              v =>
-                orig.x === v.x &&
-                orig.y === v.y &&
-                orig.z === v.z
+              v => orig.x === v.x && orig.y === v.y && orig.z === v.z
             );
             if (newVertIndex === -1) {
               // The tesselation process didn't output a vertex with the exact
@@ -428,16 +474,12 @@ export class ShapeBuilder {
               // doesn't happen often, but in this case, pick the closest point
               let closestDist = Infinity;
               let closestIndex = 0;
-              for (
-                let i = 0;
-                i < this.geometry.vertices.length;
-                i++
-              ) {
+              for (let i = 0; i < this.geometry.vertices.length; i++) {
                 const vert = this.geometry.vertices[i];
                 const dX = orig.x - vert.x;
                 const dY = orig.y - vert.y;
                 const dZ = orig.z - vert.z;
-                const dist = dX*dX + dY*dY + dZ*dZ;
+                const dist = dX * dX + dY * dY + dZ * dZ;
                 if (dist < closestDist) {
                   closestDist = dist;
                   closestIndex = i;
@@ -448,7 +490,8 @@ export class ShapeBuilder {
             newIndex.set(origIdx, newVertIndex);
           }
           return newIndex.get(origIdx);
-        }));
+        })
+      );
     }
     this.geometry.vertexColors = colors;
   }
@@ -515,11 +558,7 @@ export class ShapeBuilder {
     const z = contours[0] ? contours[0][2] : undefined;
     let allSameZ = true;
     for (const contour of contours) {
-      for (
-        let j = 0;
-        j < contour.length;
-        j += this.tessyVertexSize
-      ) {
+      for (let j = 0; j < contour.length; j += this.tessyVertexSize) {
         if (contour[j + 2] !== z) {
           allSameZ = false;
           break;
@@ -538,15 +577,8 @@ export class ShapeBuilder {
 
     for (const contour of contours) {
       this._tessy.gluTessBeginContour();
-      for (
-        let j = 0;
-        j < contour.length;
-        j += this.tessyVertexSize
-      ) {
-        const coords = contour.slice(
-          j,
-          j + this.tessyVertexSize
-        );
+      for (let j = 0; j < contour.length; j += this.tessyVertexSize) {
+        const coords = contour.slice(j, j + this.tessyVertexSize);
         this._tessy.gluTessVertex(coords, coords);
       }
       this._tessy.gluTessEndContour();
@@ -557,4 +589,4 @@ export class ShapeBuilder {
 
     return triangleVerts;
   }
-};
+}

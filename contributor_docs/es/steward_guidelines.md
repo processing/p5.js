@@ -11,16 +11,16 @@ Ya sea que seas nuevo contribuyendo para p5.js, que seas activo en los repositor
   - [Áreas](#areas)
   - [Convertirse en Steward](#becoming-a-steward)
   - [Comenzando como Steward](#getting-started-with-stewardship)
-- [Issues](steward_guidelines.md#issues) 
-  - [Informe de Errores](steward_guidelines.md#informe-de-errores) 
+- [Issues](steward_guidelines.md#issues)
+  - [Informe de Errores](steward_guidelines.md#informe-de-errores)
   - [Solicitud de Funcionalidades](steward_guidelines.md#solicitud-de-funcionalidades)
   - [Mejora de Funcionalidades](steward_guidelines.md#mejora-de-funcionalidades)
-  - [Discusión](steward_guidelines.md#discusión) 
+  - [Discusión](steward_guidelines.md#discusión)
 - [Pull Requests](steward_guidelines.md#pull-requests)
   - [Corrección Sencilla](steward_guidelines.md#correción-sencilla)
-  - [Corrección de Error](steward_guidelines.md#corrección-de-error) 
+  - [Corrección de Error](steward_guidelines.md#corrección-de-error)
   - [Nuevas Funcionalidades/Mejora de Funcionalidades](steward_guidelines.md#nuevas-funcionalidades/Mejora-de-funcionalidades)
-  - [Dependabot](steward_guidelines.md#dependabot) 
+  - [Dependabot](steward_guidelines.md#dependabot)
 - [Proceso de Construcción](steward_guidelines.md#proceso-de-construcción)
   - [Tarea Principal de Construcción](steward_guidelines.md#tarea-principal-de-construcción)
   - [Tarea Variada](steward_guidelines.md#tarea-variada)
@@ -31,9 +31,10 @@ Ya sea que seas nuevo contribuyendo para p5.js, que seas activo en los repositor
   - [Gestión de Notificaciones](steward_guidelines.md#gestión-de-notificaciones)
 
 ---
+
 ## Stewardship (Rol de Guía de Área)
 
-### Cuidado de la Comunidad 
+### Cuidado de la Comunidad
 
 Un ethos de código abierto incluye [accesibilidad, educación, colaboración, transparencia y agencia](https://www.opensourceethos.net/). Vivir y practicar estos valores mientras escribimos código juntos requiere un atento cuidado de la comunidad. Estas son las prácticas de cuidado comunitario que forman parte de nuestra definición de stewardship:
 
@@ -63,7 +64,7 @@ Existen diferentes áreas de trabajo de las cuales los stewards pueden ser respo
 - **DevOps**: Se refiere al proceso de compilación (build process), pruebas unitarias (unit testing) y otros aspectos de la experiencia de desarrollo
 - **Documentación**: Incluye tanto la referencia en el código base central que se expone en el sitio web, los documentos para contribuidores y otro contenido del sitio web
 - **i18n (Internacionalización / Traducción)**: Incluye la revisión de traducciones, particularmente para `es`, `hi`, `ko`, `zh`
-- **Gráficos**: Contiene subáreas de WebGL y [p5.strands](https://beta.p5js.org/tutorials/intro-to-p5-strands/)
+- **Gráficos**: Contiene subáreas de WebGL y [p5.strands](https://p5js.org/tutorials/intro-to-p5-strands/)
 - **Color**: Incluye Color, ColorMode, mejoras de accesibilidad relacionadas con el uso del color
 - **Tipografía**: Se refiere a todos los temas sobre el manejo de texto y fuentes
 - **Matemáticas**: Incluye tanto la Math API externa como mejoras internas de rendimiento
@@ -74,7 +75,7 @@ Existen diferentes áreas de trabajo de las cuales los stewards pueden ser respo
 
 Estas áreas de enfoque pueden cambiar con el tiempo dependiendo de las necesidades del proyecto, así que si estás pasando por el proceso de solicitar ser steward, ¡eres bienvenido a proponer nuevas áreas!
 
-### Convertirse en Steward 
+### Convertirse en Steward
 
 Hay dos formas de convertirse en steward:
 
@@ -85,14 +86,13 @@ Para permanecer como steward, debes contribuir como steward en al menos 1 de los
 
 ### Comenzando como Steward
 
-1. Mantén estas directrices a mano como referencia: cómo ayudar con nuevos issues, bugs y funcionalidades. Por ejemplo, la sección "Solicitud de Funcionalidades" incluye consejos sobre cómo usar la [declaración de acceso]([access.md](https://github.com/processing/p5.js/blob/dev-2.0/contributor_docs/es/access.md)) de p5.js como steward.
+1. Mantén estas directrices a mano como referencia: cómo ayudar con nuevos issues, bugs y funcionalidades. Por ejemplo, la sección "Solicitud de Funcionalidades" incluye consejos sobre cómo usar la [declaración de acceso](<[access.md](https://github.com/processing/p5.js/blob/dev-2.0/contributor_docs/es/access.md)>) de p5.js como steward.
 2. Al ayudar a responder preguntas técnicas o revisar, intenta aplicar la [directriz de la Processing Foundation sobre cómo responder preguntas](https://discourse.processing.org/t/guidelines-answering-questions/2145). Estas pueden ser especialmente útiles para dar retroalimentación técnica constructiva.
 3. Únete al [Discord de p5.js](https://discord.p5js.org). ¡En el canal `#contribute-to-p5` cualquier pregunta o propuesta de mejora sobre este proceso es bienvenida!
 
 ## _Issues_
 
 Alentamos a la mayoría de las contribuciones de código fuente a comenzar con un _issue_, y como tal, los _issues_ son el lugar donde la mayoría de las discusiones tendrán lugar. Los pasos a seguir al revisar un _issue_ dependerán del tipo de _issue_ que sea. El repositorio utiliza [Plantillas de _issues_ de GitHub](https://github.com/processing/p5.js/blob/main/.github/ISSUE_TEMPLATE), para organizar mejor los diferentes tipos de _issues_ y alentar a los autores de _issues_ a proporcionar toda la información relevante sobre sus _issues_. El primer paso al revisar el _issue_ a menudo será revisar la plantilla completada y determinar si necesita información adicional por ejemplo, porque algunos campos no se completaron o se utilizó la plantilla incorrecta.
-
 
 ### Informe de Errores
 
@@ -118,10 +118,9 @@ Los _issues_ de informes de errores deberían utilizar la plantilla de _Issue_ "
      - Agregue una etiqueta `help wanted` al _issue_ incidente y pida a alguien más con la configuración especificada en el _issue_ que intente replicar el error.
    - A veces, los _bugs_ (errores) solo ocurren al usar el editor web y no al probar localmente. En este caso, el _issue_ debería ser redirigido al [repositorio del editor web](https://github.com/processing/p5.js-web-editor).
    - Si la replicación es posible más tarde, regrese al paso 2.
-1. Si el error se origina en el código que el usuario proporcionó en el informe de error y no en el comportamiento de p5.js:
+4. Si el error se origina en el código que el usuario proporcionó en el informe de error y no en el comportamiento de p5.js:
    - Determine si la documentación de p5.js, la implementación de código o el sistema de errores amigable pueden mejorarse para evitar que se cometa el mismo error.
    - Redirija amablemente cualquier pregunta adicional al [foro](https://discourse.processing.org/) o al [Discord](https://discord.p5js.org) y cierre el _issue_ si no se van a realizar más cambios en p5.js.
-   
 
 ### Solicitud de Funcionalidades
 
@@ -135,7 +134,7 @@ Los _issues_ para solicitar funcionalidades deberían utilizar la plantilla "New
      - Por ejemplo, una solicitud para agregar una nueva forma primitiva de dibujo puede ser considerada, pero una solicitud para adoptar un protocolo de Internet de las cosas basado en el navegador probablemente estará fuera de alcance.
      - En general, el alcance de p5.js debería ser relativamente estrecho para evitar un exceso de características poco utilizadas.
      - Si una función no encaja en el alcance de p5.js, sugiere al autor del _issue_ que implemente la función como una biblioteca complementaria.
-     - Si no está claro si encaja o no, puede ser una buena idea sugerir hacer una biblioteca complementaria como una prueba de concepto. Esto ayuda a dar a los usuarios una forma de usar la funcionalidad, proporciona un ejemplo mucho más concreto de su uso e importancia, y no necesariamente necesita ser una solución tan completa como una función completamente integrada. Puede integrarse en el núcleo de p5.js más adelante si corresponde. 
+     - Si no está claro si encaja o no, puede ser una buena idea sugerir hacer una biblioteca complementaria como una prueba de concepto. Esto ayuda a dar a los usuarios una forma de usar la funcionalidad, proporciona un ejemplo mucho más concreto de su uso e importancia, y no necesariamente necesita ser una solución tan completa como una función completamente integrada. Puede integrarse en el núcleo de p5.js más adelante si corresponde.
    - ¿Es probable que la funcionalidad propuesta cause un cambio incompatible?
      - ¿Entrará en conflicto con las funcionalidades y variables existentes de p5.js?
      - ¿Entrará en conflicto con los _sketches_ (bocetos) típicos ya escritos para p5.js?
@@ -143,7 +142,6 @@ Los _issues_ para solicitar funcionalidades deberían utilizar la plantilla "New
    - ¿Se puede lograr la nueva función propuesta utilizando las funcionalidades existentes ya en p5.js,código JavaScript nativo relativamente simple, o bibliotecas existentes fáciles de usar?
      - Por ejemplo, en lugar de proporcionar una función de p5.js para unir una matriz de cadenas como `join(["Hello","world!"])`, debería preferirse el JavaScript nativo `["Hello","world!"].join()`.
 3. Si el requisito de acceso y otras consideraciones han sido cumplidas, al menos dos supervisores o responsables de mantenimiento deben aprobar la nueva solicitud de función antes de que comience el trabajo hacia una PR. El proceso de revisión de _pull request_ para nuevas funcionalidades está documentado a continuación.
-
 
 ### Mejora de funcionalidades
 
@@ -153,7 +151,6 @@ Las solicitudes de _issues_ de mejora de función deberían utilizar la plantill
 2. Los criterios de inclusión para las mejoras de función son similares a los de las solicitudes de nuevas funcionalidades, pero se debe prestar especial atención a los posibles cambios incompatibles.
    - Si se están modificando funcionalidades existentes, todas las firmas de funcionalidades válidas y documentadas previamente deben comportarse de la misma manera.
 3. Las mejoras de funcionalidades deben ser aprobadas por al menos un supervisor o responsable de mantenimiento antes de que comience el trabajo hacia una _pull request_. El proceso de revisión de _pull request_ para mejoras de funcionalidades está documentado a continuación.
-
 
 ### Discusión
 
@@ -165,7 +162,6 @@ Este tipo de _issue_ tiene una plantilla mínima de discusión y debería ser ut
 
 ---
 
-
 ## _Pull Requests_
 
 Casi todas las contribuciones de código a los repositorios de p5.js se realizan a través de Pull Request. Los supervisores y los responsables de mantenimiento pueden tener _push access_ (acceso de escritura) a los repositorios, pero aún se les anima a seguir el mismo proceso de _issue_ > _pull request_ > proceso de revisión al contribuir con código. Aquí están los pasos para revisar una _pull request_:
@@ -176,14 +172,12 @@ Casi todas las contribuciones de código a los repositorios de p5.js se realizan
   - Si bien esta excepción existe, la aplicaremos en la práctica solo mientras se siga alentando a los contribuyentes a abrir nuevos _issues_ primero. En otras palabras, si tienes dudas sobre si esta excepción se aplica, simplemente abre un _issue_ de todos modos.
 - Si una "pull request"no resuelve completamente el _issue_ referenciado, puedes editar la publicación original y cambiar "Resolves #OOOO" a "Addresses #OOOO" para que no cierre automáticamente el _issue_ original cuando la _pull request_ aplique _merge_ (se fusione).
 
-
 ### Correción Sencilla
 
 Correcciones simples, como la corrección de un pequeño error tipográfico, pueden fusionarse directamente por cualquier persona con acceso para fusionar. Después, revisa la pestaña "Files Changed" de _pull request_ para asegurarte de que la prueba automatizada de integración continua (CI) haya pasado.
 
 ![The "files changed" tab when viewing a pull request on GitHub](../images/files-changed.png)
 ![The "All checks have passed" indicator on a GitHub pull request, highlighted above the merge button](../images/all-checks-passed.png)
-
 
 ### Corrección de Error
 
@@ -209,13 +203,11 @@ Correcciones simples, como la corrección de un pequeño error tipográfico, pue
 
 `@all-contributors` `please` `add` `@[GitHub` `handle]` `for` `[contribution` `type]`
 
-
 ### Nuevas funcionalidades/Mejora de Funcionalidades
 
 El proceso para una _pull request_ de _new feature_ (nuevas funcionalidades),o _feature_enhacement_ (mejora de funcionalidades) es similar a las correcciones de errores,pero solo con una diferencia notable:
 
 - Una _pull request_ de nueva funcionalidad o mejora de funcionalidad debe ser revisada y aprobada por al menos dos supervisores o responsables de mantenimiento antes de que pueda ser fusionada.
-
 
 ### Dependabot
 
@@ -288,6 +280,7 @@ Para ejecutar las pruebas interactivamente en un entorno similar al navegador (�
 ```
 npx vitest --ui
 ```
+
 También se puede generar la cobertura de código usando las herramientas integradas de Vitest. Ejecuta:
 
 ```
@@ -296,18 +289,15 @@ npx vitest run --coverage
 
 Nota: El proceso de compilación de Browserify/Grunt (por ejemplo, `browserify`, `uglify`, `brfs-babel`) fue eliminado en la versión 2.
 
-
 ## Proceso de Lanzamiento
 
 Consulta [release\_process.md](release_process.md).
 
 ---
 
-
 ## Consejos y Trucos
 
 A veces, la cantidad de <em>issues</em> y PR que requieren revisión puede ser un poco abrumadora. Si bien intentamos implementar procesos que faciliten las cosas, hay algunos consejos y trucos que puedes utilizar para ayudar con la revisión de <em>issues</em> y PRs.
-
 
 ### Plantillas de Respuesta
 
@@ -315,26 +305,21 @@ Una característica útil de GitHub que puedes utilizar es la funcionalidad [Res
 
 A continuación, se muestran algunas de las Respuestas Guardadas que están siendo utilizadas por los mantenedores de p5.js. ¡Puedes usarlas tú mismo o crear las tuyas!
 
-
 ##### Cerrando: No se puede Reproducir
 
 > No podemos reproducir esto, pero no dudes en reabrir si puedes proporcionar un ejemplo de código que demuestre el problema. ¡Gracias!
-
 
 ##### Cerrando: Necesita Fragmento
 
 > Estoy cerrando esto por motivos organizativos. Por favor, reabre si puedes proporcionar un fragmento de código que ilustre el <em>issue</em>. ¡Gracias!
 
-
 ##### Cerrando: Usa el Foro
 
 > Los <em>issues</em> de GitHub aquí son un buen lugar para los <em>issues</em> y problemas con la biblioteca p5.js en sí. Para preguntas sobre cómo escribir tu propio código, pruebas o seguir tutoriales, el [foro](https://discourse.processing.org/) es el mejor lugar para publicar. ¡Gracias!
 
-
 ##### Cerrando: GSOC
 
 > ¡Gracias! El mejor lugar para discutir las propuestas de GSOC es en nuestro [foro](https://discourse.processing.org/c/summer-of-code).
-
 
 ##### Cerrando: Acceso
 
@@ -342,26 +327,21 @@ A continuación, se muestran algunas de las Respuestas Guardadas que están sien
 
 > No vemos una explicación más detallada de cómo esta cuestión [amplía el acceso](access.md), así que cerraré este <em>issue</em> por ahora. Si se puede agregar una declaración de acceso más detallada a la solicitud de función, no dudes en volver a abrirla. ¡Gracias!
 
-
 ##### Cerrando: Complemento
 
 > Creo que esta función está fuera del alcance de la API de p5.js (intentamos mantenerla lo más minimalista posible), pero podría ser un gran punto de partida para una biblioteca complementaria. Consulta la documentación aquí sobre cómo crear un complemento: [https://github.com/processing/p5.js/blob/main/contributor\_docs/creating\_libraries.md](creating_libraries.md)
-
 
 ##### Cerrando PR: Primero Necesita <em>Issue</em>
 
 > Gracias. Como recordatorio, primero deben abrirse <em>issues</em> antes de que se abran pull request y etiquetarse con el <em>issue</em>. Esto es necesario para realizar un seguimiento del desarrollo y mantener la discusión clara. ¡Gracias!
 
-
 ##### Aprobar <em>issue</em> para corrección
 
 > Puedes seguir adelante con una solución. Gracias.
 
-
 ##### PR Fusionado
 
 > Se ve bien. ¡Gracias!
-
 
 ### GitHub CLI
 
@@ -370,7 +350,6 @@ Revisar un PR complejo puede ser difícil con comandos de git complejos necesari
 Después de instalar GitHub CLI e iniciar sesión, revisar una PR localmente se puede hacer ejecutando el comando `gh pr checkout [id_del_pull_request]`, y el proceso de obtener un <em>fork</em> remoto, crear una rama y cambiar a la rama se realizan automáticamente para ti. Volver a la rama principal será lo mismo que cambiar de rama ejecutando `git checkout main`. ¡Incluso puedes dejar un comentario en el PR desde la CLI sin necesidad de visitar la página web en absoluto!
 
 También hay muchos otros comandos disponibles en GitHub CLI que puedes encontrar útiles o no, pero es una buena herramienta para tener en cualquier caso.
-
 
 ### Gestión de Notificaciones
 

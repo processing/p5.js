@@ -8,9 +8,9 @@ const mockAnchorElement = vi.mockObject({
 });
 const originalCreateElement = document.createElement;
 vi.spyOn(document, 'createElement').mockImplementation((...args) => {
-  if(args[0] !== 'a'){
+  if (args[0] !== 'a') {
     return originalCreateElement.apply(document, args);
-  }else{
+  } else {
     return mockAnchorElement;
   }
 });
@@ -31,29 +31,29 @@ expect.extend({
   }
 });
 
-suite('p5.Framebuffer', function() {
+suite('p5.Framebuffer', function () {
   let myp5;
   let prevPixelRatio;
 
-  beforeAll(function() {
+  beforeAll(function () {
     prevPixelRatio = window.devicePixelRatio;
     window.devicePixelRatio = 1;
-    myp5 = new p5(function(p) {
-      p.setup = function() {};
-      p.draw = function() {};
+    myp5 = new p5(function (p) {
+      p.setup = function () {};
+      p.draw = function () {};
     });
   });
 
-  afterAll(function() {
+  afterAll(function () {
     myp5.remove();
     window.devicePixelRatio = prevPixelRatio;
   });
 
-  afterEach(function(){
+  afterEach(function () {
     vi.clearAllMocks();
   });
 
-  suite('formats and channels', function() {
+  suite('formats and channels', function () {
     function testWithConfiguration(
       version,
       format,
@@ -61,44 +61,35 @@ suite('p5.Framebuffer', function() {
       antialias,
       depth
     ) {
-      test(
-        `framebuffers work with WebGL ${version}, ${format} ${channels} ${depth || 'no'} depth ${antialias ? ' antialiased' : ''}`,
-        function() {
-          myp5.createCanvas(10, 10, myp5.WEBGL);
-          myp5.setAttributes({ version });
+      test(`framebuffers work with WebGL ${version}, ${format} ${channels} ${depth || 'no'} depth ${antialias ? ' antialiased' : ''}`, function () {
+        myp5.createCanvas(10, 10, myp5.WEBGL);
+        myp5.setAttributes({ version });
 
-          // Draw a box to the framebuffer
-          const fbo = myp5.createFramebuffer({
-            format,
-            channels,
-            antialias,
-            depth: depth !== null,
-            depthFormat: depth
-          });
-          fbo.draw(() => {
-            myp5.background(255);
-            myp5.noStroke();
-            myp5.fill('red');
-            myp5.box(5, 5, 5);
-          });
-
-          // Draw the framebuffer to the canvas
-          myp5.background(0);
+        // Draw a box to the framebuffer
+        const fbo = myp5.createFramebuffer({
+          format,
+          channels,
+          antialias,
+          depth: depth !== null,
+          depthFormat: depth
+        });
+        fbo.draw(() => {
+          myp5.background(255);
           myp5.noStroke();
-          myp5.texture(fbo);
-          myp5.plane(myp5.width, -myp5.height);
+          myp5.fill('red');
+          myp5.box(5, 5, 5);
+        });
 
-          // Make sure it drew
-          assert.deepEqual(
-            myp5.get(0, 0),
-            [255, 255, 255, 255]
-          );
-          assert.deepEqual(
-            myp5.get(5, 5),
-            [255, 0, 0, 255]
-          );
-        }
-      );
+        // Draw the framebuffer to the canvas
+        myp5.background(0);
+        myp5.noStroke();
+        myp5.texture(fbo);
+        myp5.plane(myp5.width, -myp5.height);
+
+        // Make sure it drew
+        assert.deepEqual(myp5.get(0, 0), [255, 255, 255, 255]);
+        assert.deepEqual(myp5.get(5, 5), [255, 0, 0, 255]);
+      });
     }
 
     const versions = [1, 2];
@@ -125,7 +116,7 @@ suite('p5.Framebuffer', function() {
     }
   });
 
-  suite('sizing', function() {
+  suite('sizing', function () {
     let glStub;
 
     afterEach(() => {
@@ -134,7 +125,7 @@ suite('p5.Framebuffer', function() {
       }
     });
 
-    test('auto-sized framebuffers change size with their canvas', function() {
+    test('auto-sized framebuffers change size with their canvas', function () {
       myp5.createCanvas(10, 10, myp5.WEBGL);
       myp5.pixelDensity(1);
       const fbo = myp5.createFramebuffer();
@@ -154,7 +145,7 @@ suite('p5.Framebuffer', function() {
       expect(fbo.color.rawTexture()).not.to.equal(oldTexture);
     });
 
-    test('manually-sized framebuffers do not change size with their canvas', function() {
+    test('manually-sized framebuffers do not change size with their canvas', function () {
       myp5.createCanvas(10, 10, myp5.WEBGL);
       myp5.pixelDensity(3);
       const fbo = myp5.createFramebuffer({ width: 20, height: 20, density: 1 });
@@ -174,7 +165,7 @@ suite('p5.Framebuffer', function() {
       expect(fbo.color.rawTexture().texture).to.equal(oldTexture.texture);
     });
 
-    test('manually-sized framebuffers can be made auto-sized', function() {
+    test('manually-sized framebuffers can be made auto-sized', function () {
       myp5.createCanvas(10, 10, myp5.WEBGL);
       myp5.pixelDensity(3);
       const fbo = myp5.createFramebuffer({ width: 20, height: 20, density: 1 });
@@ -198,10 +189,10 @@ suite('p5.Framebuffer', function() {
       expect(fbo.color.rawTexture()).not.to.equal(oldTexture);
     });
 
-    suite('resizing', function() {
+    suite('resizing', function () {
       let fbo;
       let oldTexture;
-      beforeEach(function() {
+      beforeEach(function () {
         myp5.createCanvas(10, 10, myp5.WEBGL);
         myp5.pixelDensity(1);
         fbo = myp5.createFramebuffer();
@@ -211,7 +202,7 @@ suite('p5.Framebuffer', function() {
         fbo.pixelDensity(2);
       });
 
-      test('framebuffers can be resized', function() {
+      test('framebuffers can be resized', function () {
         expect(fbo.width).to.equal(5);
         expect(fbo.height).to.equal(15);
         expect(fbo.density).to.equal(2);
@@ -220,7 +211,7 @@ suite('p5.Framebuffer', function() {
         expect(fbo.color.rawTexture()).not.to.equal(oldTexture);
       });
 
-      test('resizing a framebuffer turns off auto-sizing', function() {
+      test('resizing a framebuffer turns off auto-sizing', function () {
         oldTexture = fbo.color.rawTexture();
 
         myp5.resizeCanvas(20, 20);
@@ -234,7 +225,7 @@ suite('p5.Framebuffer', function() {
         expect(fbo.color.rawTexture().texture).to.equal(oldTexture.texture);
       });
 
-      test('resizes the framebuffer by createFramebuffer based on max texture size', function() {
+      test('resizes the framebuffer by createFramebuffer based on max texture size', function () {
         myp5.createCanvas(10, 10, myp5.WEBGL);
         delete myp5._renderer._maxTextureSize;
         glStub = vi.spyOn(myp5._renderer, '_getMaxTextureSize');
@@ -246,7 +237,7 @@ suite('p5.Framebuffer', function() {
         expect(fbo.height).to.equal(100);
       });
 
-      test('resizes the framebuffer by resize method based on max texture size', function() {
+      test('resizes the framebuffer by resize method based on max texture size', function () {
         myp5.createCanvas(10, 10, myp5.WEBGL);
         delete myp5._renderer._maxTextureSize;
         glStub = vi.spyOn(myp5._renderer, '_getMaxTextureSize');
@@ -261,7 +252,7 @@ suite('p5.Framebuffer', function() {
     });
   });
 
-  suite('rendering', function() {
+  suite('rendering', function () {
     function setupAndReturnFramebuffer() {
       myp5.createCanvas(10, 10, myp5.WEBGL);
 
@@ -277,7 +268,7 @@ suite('p5.Framebuffer', function() {
       return fbo;
     }
 
-    test('rendering works with fbo.color as a texture', function() {
+    test('rendering works with fbo.color as a texture', function () {
       const fbo = setupAndReturnFramebuffer();
 
       // Draw the framebuffer to the canvas
@@ -286,13 +277,10 @@ suite('p5.Framebuffer', function() {
       myp5.texture(fbo.color);
       myp5.plane(myp5.width, -myp5.height);
 
-      assert.deepEqual(
-        myp5.get(5, 5),
-        [255, 0, 0, 255]
-      );
+      assert.deepEqual(myp5.get(5, 5), [255, 0, 0, 255]);
     });
 
-    test('rendering works with fbo as a texture', function() {
+    test('rendering works with fbo as a texture', function () {
       const fbo = setupAndReturnFramebuffer();
 
       // Draw the framebuffer to the canvas
@@ -301,13 +289,10 @@ suite('p5.Framebuffer', function() {
       myp5.texture(fbo);
       myp5.plane(myp5.width, -myp5.height);
 
-      assert.deepEqual(
-        myp5.get(5, 5),
-        [255, 0, 0, 255]
-      );
+      assert.deepEqual(myp5.get(5, 5), [255, 0, 0, 255]);
     });
 
-    test('rendering works with fbo.depth as a texture', function() {
+    test('rendering works with fbo.depth as a texture', function () {
       const fbo = setupAndReturnFramebuffer();
 
       // Draw the framebuffer to the canvas
@@ -321,7 +306,7 @@ suite('p5.Framebuffer', function() {
     });
   });
 
-  test('Framebuffers work on p5.Graphics', function() {
+  test('Framebuffers work on p5.Graphics', function () {
     const graphic = myp5.createGraphics(10, 10, myp5.WEBGL);
 
     // Draw a box to the framebuffer
@@ -340,18 +325,12 @@ suite('p5.Framebuffer', function() {
     graphic.plane(graphic.width, -graphic.height);
 
     // Make sure it drew
-    assert.deepEqual(
-      graphic.get(0, 0),
-      [255, 255, 255, 255]
-    );
-    assert.deepEqual(
-      graphic.get(5, 5),
-      [255, 0, 0, 255]
-    );
+    assert.deepEqual(graphic.get(0, 0), [255, 255, 255, 255]);
+    assert.deepEqual(graphic.get(5, 5), [255, 0, 0, 255]);
   });
 
-  suite('remove()', function() {
-    test('remove() cleans up textures', function() {
+  suite('remove()', function () {
+    test('remove() cleans up textures', function () {
       myp5.createCanvas(10, 10, myp5.WEBGL);
       const fbo = myp5.createFramebuffer();
       const numTextures = myp5._renderer.textures.size;
@@ -359,28 +338,25 @@ suite('p5.Framebuffer', function() {
       expect(myp5._renderer.textures.size).to.equal(numTextures - 2);
     });
 
-    test(
-      'remove() cleans up textures when the framebuffer has no depth',
-      function() {
-        myp5.createCanvas(10, 10, myp5.WEBGL);
-        const fbo = myp5.createFramebuffer({ depth: false });
-        const numTextures = myp5._renderer.textures.size;
-        fbo.remove();
-        expect(myp5._renderer.textures.size).to.equal(numTextures - 1);
-      }
-    );
+    test('remove() cleans up textures when the framebuffer has no depth', function () {
+      myp5.createCanvas(10, 10, myp5.WEBGL);
+      const fbo = myp5.createFramebuffer({ depth: false });
+      const numTextures = myp5._renderer.textures.size;
+      fbo.remove();
+      expect(myp5._renderer.textures.size).to.equal(numTextures - 1);
+    });
   });
 
-  suite('defaultCamera', function() {
+  suite('defaultCamera', function () {
     let fbo;
-    beforeEach(function() {
+    beforeEach(function () {
       myp5.createCanvas(10, 10, myp5.WEBGL);
       myp5.pixelDensity(1);
       fbo = myp5.createFramebuffer({ width: 5, height: 15 });
     });
 
-    suite('the default camera', function() {
-      test('it uses the aspect ratio of the framebuffer', function() {
+    suite('the default camera', function () {
+      test('it uses the aspect ratio of the framebuffer', function () {
         expect(fbo.defaultCamera.aspectRatio).to.equal(5 / 15);
         expect(fbo.defaultCamera.cameraFOV).to.be.closeTo(
           2.0 * Math.atan(15 / 2 / 800),
@@ -388,18 +364,32 @@ suite('p5.Framebuffer', function() {
         );
         const z = -800;
         const expectedCameraMatrix = [
-          1, 0, 0, 0,
-          0, 1, 0, 0,
-          0, 0, 1, 0,
-          0, 0, z, 1
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          z,
+          1
         ];
         for (let i = 0; i < expectedCameraMatrix.length; i++) {
-          expect(fbo.defaultCamera.cameraMatrix.mat4[i])
-            .to.be.closeTo(expectedCameraMatrix[i], 0.01);
+          expect(fbo.defaultCamera.cameraMatrix.mat4[i]).to.be.closeTo(
+            expectedCameraMatrix[i],
+            0.01
+          );
         }
       });
 
-      test('it updates the aspect ratio after resizing', function() {
+      test('it updates the aspect ratio after resizing', function () {
         fbo.resize(20, 10);
         expect(fbo.defaultCamera.aspectRatio).to.equal(2);
         expect(fbo.defaultCamera.cameraFOV).to.be.closeTo(
@@ -408,34 +398,48 @@ suite('p5.Framebuffer', function() {
         );
         const z = -800;
         const expectedCameraMatrix = [
-          1, 0, 0, 0,
-          0, 1, 0, 0,
-          0, 0, 1, 0,
-          0, 0, z, 1
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          z,
+          1
         ];
         for (let i = 0; i < expectedCameraMatrix.length; i++) {
-          expect(fbo.defaultCamera.cameraMatrix.mat4[i])
-            .to.be.closeTo(expectedCameraMatrix[i], 0.01);
+          expect(fbo.defaultCamera.cameraMatrix.mat4[i]).to.be.closeTo(
+            expectedCameraMatrix[i],
+            0.01
+          );
         }
       });
     });
   });
 
-  suite('get()', function() {
-    test('get(x, y) loads a pixel', function() {
+  suite('get()', function () {
+    test('get(x, y) loads a pixel', function () {
       myp5.createCanvas(20, 20, myp5.WEBGL);
       const fbo = myp5.createFramebuffer();
       fbo.draw(() => {
         myp5.noStroke();
 
         myp5.push();
-        myp5.translate(-myp5.width/2, -myp5.height/2);
+        myp5.translate(-myp5.width / 2, -myp5.height / 2);
         myp5.fill('red');
         myp5.sphere(5);
         myp5.pop();
 
         myp5.push();
-        myp5.translate(myp5.width/2, myp5.height/2);
+        myp5.translate(myp5.width / 2, myp5.height / 2);
         myp5.fill('blue');
         myp5.sphere(5);
         myp5.pop();
@@ -446,20 +450,20 @@ suite('p5.Framebuffer', function() {
       assert.deepEqual(fbo.get(19, 19), [0, 0, 255, 255]);
     });
 
-    test('get() creates a p5.Image with equivalent pixels', function() {
+    test('get() creates a p5.Image with equivalent pixels', function () {
       myp5.createCanvas(20, 20, myp5.WEBGL);
       const fbo = myp5.createFramebuffer();
       fbo.draw(() => {
         myp5.noStroke();
 
         myp5.push();
-        myp5.translate(-myp5.width/2, -myp5.height/2);
+        myp5.translate(-myp5.width / 2, -myp5.height / 2);
         myp5.fill('red');
         myp5.sphere(5);
         myp5.pop();
 
         myp5.push();
-        myp5.translate(myp5.width/2, myp5.height/2);
+        myp5.translate(myp5.width / 2, myp5.height / 2);
         myp5.fill('blue');
         myp5.sphere(5);
         myp5.pop();
@@ -476,7 +480,7 @@ suite('p5.Framebuffer', function() {
       }
     });
 
-    test('get() creates a p5.Image matching the source pixel density', function() {
+    test('get() creates a p5.Image matching the source pixel density', function () {
       const mainCanvas = myp5.createCanvas(20, 20, myp5.WEBGL);
       myp5.pixelDensity(2);
       const fbo = myp5.createFramebuffer();
@@ -485,13 +489,13 @@ suite('p5.Framebuffer', function() {
         myp5.background(255);
 
         myp5.push();
-        myp5.translate(-myp5.width/2, -myp5.height/2);
+        myp5.translate(-myp5.width / 2, -myp5.height / 2);
         myp5.fill('red');
         myp5.sphere(5);
         myp5.pop();
 
         myp5.push();
-        myp5.translate(myp5.width/2, myp5.height/2);
+        myp5.translate(myp5.width / 2, myp5.height / 2);
         myp5.fill('blue');
         myp5.sphere(5);
         myp5.pop();
@@ -512,45 +516,42 @@ suite('p5.Framebuffer', function() {
     });
   });
 
-  test(
-    'loadPixels works in arbitrary order for multiple framebuffers',
-    function() {
-      myp5.createCanvas(20, 20, myp5.WEBGL);
-      const fbo1 = myp5.createFramebuffer();
-      const fbo2 = myp5.createFramebuffer();
+  test('loadPixels works in arbitrary order for multiple framebuffers', function () {
+    myp5.createCanvas(20, 20, myp5.WEBGL);
+    const fbo1 = myp5.createFramebuffer();
+    const fbo2 = myp5.createFramebuffer();
 
-      fbo1.loadPixels();
-      fbo2.loadPixels();
-      for (let i = 0; i < fbo1.pixels.length; i += 4) {
-        // Set everything red
-        fbo1.pixels[i] = 255;
-        fbo1.pixels[i + 1] = 0;
-        fbo1.pixels[i + 2] = 0;
-        fbo1.pixels[i + 3] = 255;
-      }
-      for (let i = 0; i < fbo2.pixels.length; i += 4) {
-        // Set everything blue
-        fbo2.pixels[i] = 0;
-        fbo2.pixels[i + 1] = 0;
-        fbo2.pixels[i + 2] = 255;
-        fbo2.pixels[i + 3] = 255;
-      }
-      fbo2.updatePixels();
-      fbo1.updatePixels();
-
-      myp5.imageMode(myp5.CENTER);
-
-      myp5.clear();
-      myp5.image(fbo1, 0, 0);
-      assert.deepEqual(myp5.get(0, 0), [255, 0, 0, 255]);
-
-      myp5.clear();
-      myp5.image(fbo2, 0, 0);
-      assert.deepEqual(myp5.get(0, 0), [0, 0, 255, 255]);
+    fbo1.loadPixels();
+    fbo2.loadPixels();
+    for (let i = 0; i < fbo1.pixels.length; i += 4) {
+      // Set everything red
+      fbo1.pixels[i] = 255;
+      fbo1.pixels[i + 1] = 0;
+      fbo1.pixels[i + 2] = 0;
+      fbo1.pixels[i + 3] = 255;
     }
-  );
+    for (let i = 0; i < fbo2.pixels.length; i += 4) {
+      // Set everything blue
+      fbo2.pixels[i] = 0;
+      fbo2.pixels[i + 1] = 0;
+      fbo2.pixels[i + 2] = 255;
+      fbo2.pixels[i + 3] = 255;
+    }
+    fbo2.updatePixels();
+    fbo1.updatePixels();
 
-  test('Strokes work on and off of framebuffers', function() {
+    myp5.imageMode(myp5.CENTER);
+
+    myp5.clear();
+    myp5.image(fbo1, 0, 0);
+    assert.deepEqual(myp5.get(0, 0), [255, 0, 0, 255]);
+
+    myp5.clear();
+    myp5.image(fbo2, 0, 0);
+    assert.deepEqual(myp5.get(0, 0), [0, 0, 255, 255]);
+  });
+
+  test('Strokes work on and off of framebuffers', function () {
     myp5.createCanvas(20, 20, myp5.WEBGL);
     const fbo = myp5.createFramebuffer();
 
@@ -561,7 +562,7 @@ suite('p5.Framebuffer', function() {
       myp5.strokeWeight(20);
       myp5.beginShape();
       for (let i = 0; i < 20; i++) {
-        const angle = i/20*myp5.TWO_PI;
+        const angle = (i / 20) * myp5.TWO_PI;
         myp5.vertex(
           100 * myp5.cos(angle),
           // Add an offset to make sure results don't get flipped
@@ -582,19 +583,19 @@ suite('p5.Framebuffer', function() {
     assert.deepEqual(fboPixels, mainPixels);
   });
 
-  suite('nesting', function() {
+  suite('nesting', function () {
     for (const antialias of [false, true]) {
-      suite(`with antialiasing ${antialias ? 'on' : 'off'}`, function() {
+      suite(`with antialiasing ${antialias ? 'on' : 'off'}`, function () {
         let fbo1;
         let fbo2;
-        beforeEach(function() {
+        beforeEach(function () {
           myp5.createCanvas(10, 10, myp5.WEBGL);
           myp5.pixelDensity(1);
           fbo1 = myp5.createFramebuffer({ antialias });
           fbo2 = myp5.createFramebuffer({ antialias });
         });
 
-        test('one can nest active framebuffers', function() {
+        test('one can nest active framebuffers', function () {
           fbo1.begin();
           myp5.fill('red');
           myp5.circle(0, 0, 10);
@@ -610,8 +611,8 @@ suite('p5.Framebuffer', function() {
           assert.deepEqual(fbo2.get(5, 5), [0, 0, 255, 255]);
         });
 
-        test('end() in the wrong order throws an error', function() {
-          expect(function() {
+        test('end() in the wrong order throws an error', function () {
+          expect(function () {
             fbo1.begin();
             fbo2.begin();
             fbo1.end();
@@ -619,7 +620,7 @@ suite('p5.Framebuffer', function() {
           }).to.throw(/another Framebuffer is active/);
         });
 
-        test('one can read a nested framebuffer', function() {
+        test('one can read a nested framebuffer', function () {
           myp5.imageMode(myp5.CENTER);
 
           fbo1.begin();
@@ -639,37 +640,33 @@ suite('p5.Framebuffer', function() {
     }
   });
 
-  suite('texture filtering', function() {
-    test('can create a framebuffer that uses NEAREST texture filtering',
-      function() {
-        myp5.createCanvas(10, 10, myp5.WEBGL);
-        const fbo = myp5.createFramebuffer({
-          textureFiltering: myp5.NEAREST
-        });
-
-        assert.equal(
-          fbo.color.framebuffer.colorP5Texture.minFilter, myp5.NEAREST
-        );
-        assert.equal(
-          fbo.color.framebuffer.colorP5Texture.magFilter, myp5.NEAREST
-        );
+  suite('texture filtering', function () {
+    test('can create a framebuffer that uses NEAREST texture filtering', function () {
+      myp5.createCanvas(10, 10, myp5.WEBGL);
+      const fbo = myp5.createFramebuffer({
+        textureFiltering: myp5.NEAREST
       });
-    test('can create a framebuffer that uses LINEAR texture filtering',
-      function() {
-        myp5.createCanvas(10, 10, myp5.WEBGL);
-        // LINEAR should be the default
-        const fbo = myp5.createFramebuffer({});
 
-        assert.equal(
-          fbo.color.framebuffer.colorP5Texture.minFilter, myp5.LINEAR
-        );
-        assert.equal(
-          fbo.color.framebuffer.colorP5Texture.magFilter, myp5.LINEAR
-        );
-      });
+      assert.equal(
+        fbo.color.framebuffer.colorP5Texture.minFilter,
+        myp5.NEAREST
+      );
+      assert.equal(
+        fbo.color.framebuffer.colorP5Texture.magFilter,
+        myp5.NEAREST
+      );
+    });
+    test('can create a framebuffer that uses LINEAR texture filtering', function () {
+      myp5.createCanvas(10, 10, myp5.WEBGL);
+      // LINEAR should be the default
+      const fbo = myp5.createFramebuffer({});
+
+      assert.equal(fbo.color.framebuffer.colorP5Texture.minFilter, myp5.LINEAR);
+      assert.equal(fbo.color.framebuffer.colorP5Texture.magFilter, myp5.LINEAR);
+    });
   });
 
-  suite('saveCanvas', function() {
+  suite('saveCanvas', function () {
     test('should download a png file', async () => {
       myp5.createCanvas(100, 100, myp5.WEBGL);
       const fbo = myp5.createFramebuffer();

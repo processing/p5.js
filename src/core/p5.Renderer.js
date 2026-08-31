@@ -31,7 +31,7 @@ class ClonableObject {
   clone() {
     return new ClonableObject(this);
   }
-};
+}
 
 class Renderer {
   static states = {
@@ -71,9 +71,8 @@ class Renderer {
     this._isMainCanvas = isMainCanvas;
     this.pixels = [];
 
-    const defaultRatio = typeof window !== 'undefined' ?
-      Math.ceil(window.devicePixelRatio) :
-      1;
+    const defaultRatio =
+      typeof window !== 'undefined' ? Math.ceil(window.devicePixelRatio) : 1;
     if (isMainCanvas) {
       this._pixelDensity = defaultRatio;
     } else {
@@ -104,6 +103,12 @@ class Renderer {
     this._clipInvert = false;
 
     this._currentShape = undefined; // Lazily generate current shape
+
+    // Lazily cached by _individualTextureCoordinates(); initialized here
+    // (rather than computed) so subclasses can rely on their own
+    // constructor state when getSupportedIndividualVertexProperties()
+    // is first consulted.
+    this._supportsIndividualTextureCoordinates = undefined;
   }
 
   get currentShape() {
@@ -113,11 +118,9 @@ class Renderer {
     return this._currentShape;
   }
 
-  remove() {
+  remove() {}
 
-  }
-
-  pixelDensity(val){
+  pixelDensity(val) {
     let returnValue;
     if (typeof val === 'number') {
       if (val !== this._pixelDensity) {
@@ -158,12 +161,22 @@ class Renderer {
     }
   }
 
-  bezierVertex(x, y, z = 0, u = 0, v = 0) {
-    const position = new Vector(x, y, z);
-    const textureCoordinates = this.getSupportedIndividualVertexProperties()
-      .textureCoordinates
+  // Builds the per-vertex texture-coordinates argument, caching whether
+  // the renderer supports them so the descriptor object isn't rebuilt on
+  // every vertex call.
+  _individualTextureCoordinates(u, v) {
+    if (this._supportsIndividualTextureCoordinates === undefined) {
+      this._supportsIndividualTextureCoordinates =
+        this.getSupportedIndividualVertexProperties().textureCoordinates;
+    }
+    return this._supportsIndividualTextureCoordinates
       ? new Vector(u, v)
       : undefined;
+  }
+
+  bezierVertex(x, y, z = 0, u = 0, v = 0) {
+    const position = new Vector(x, y, z);
+    const textureCoordinates = this._individualTextureCoordinates(u, v);
     this.currentShape.bezierVertex(position, textureCoordinates);
   }
 
@@ -171,7 +184,10 @@ class Renderer {
     if (value === undefined) {
       return this.states.splineProperties[key];
     } else {
-      this.states.setValue('splineProperties', this.states.splineProperties.clone());
+      this.states.setValue(
+        'splineProperties',
+        this.states.splineProperties.clone()
+      );
       this.states.splineProperties[key] = value;
     }
     this.updateShapeProperties();
@@ -189,10 +205,7 @@ class Renderer {
 
   splineVertex(x, y, z = 0, u = 0, v = 0) {
     const position = new Vector(x, y, z);
-    const textureCoordinates = this.getSupportedIndividualVertexProperties()
-      .textureCoordinates
-      ? new Vector(u, v)
-      : undefined;
+    const textureCoordinates = this._individualTextureCoordinates(u, v);
     this.currentShape.splineVertex(position, textureCoordinates);
   }
 
@@ -229,10 +242,7 @@ class Renderer {
 
   vertex(x, y, z = 0, u = 0, v = 0) {
     const position = new Vector(x, y, z);
-    const textureCoordinates = this.getSupportedIndividualVertexProperties()
-      .textureCoordinates
-      ? new Vector(u, v)
-      : undefined;
+    const textureCoordinates = this._individualTextureCoordinates(u, v);
     this.currentShape.vertex(position, textureCoordinates);
   }
 
@@ -271,7 +281,9 @@ class Renderer {
 
   beginClip(options = {}) {
     if (this._clipping) {
-      throw new Error("It looks like you're trying to clip while already in the middle of clipping. Did you forget to endClip()?");
+      throw new Error(
+        "It looks like you're trying to clip while already in the middle of clipping. Did you forget to endClip()?"
+      );
     }
     this._clipping = true;
     this._clipInvert = options.invert;
@@ -279,7 +291,9 @@ class Renderer {
 
   endClip() {
     if (!this._clipping) {
-      throw new Error("It looks like you've called endClip() without beginClip(). Did you forget to call beginClip() first?");
+      throw new Error(
+        "It looks like you've called endClip() without beginClip(). Did you forget to call beginClip() first?"
+      );
     }
     this._clipping = false;
   }
@@ -297,7 +311,7 @@ class Renderer {
     const canvas = this.canvas;
 
     if (typeof x === 'undefined' && typeof y === 'undefined') {
-    // get()
+      // get()
       x = y = 0;
       w = this.width;
       h = this.height;
@@ -306,28 +320,26 @@ class Renderer {
       y *= pd;
 
       if (typeof w === 'undefined' && typeof h === 'undefined') {
-      // get(x,y)
+        // get(x,y)
         if (x < 0 || y < 0 || x >= canvas.width || y >= canvas.height) {
           return [0, 0, 0, 0];
         }
 
         return this._getPixel(x, y);
       }
-    // get(x,y,w,h)
+      // get(x,y,w,h)
     }
 
-    const region = new Image(w*pd, h*pd);
+    const region = new Image(w * pd, h * pd);
     region.pixelDensity(pd);
     region.canvas
       .getContext('2d')
-      .drawImage(canvas, x, y, w * pd, h * pd, 0, 0, w*pd, h*pd);
+      .drawImage(canvas, x, y, w * pd, h * pd, 0, 0, w * pd, h * pd);
 
     return region;
   }
 
-  scale(x, y){
-
-  }
+  scale(x, y) {}
 
   fill(...args) {
     if (args.length > 0) {
@@ -404,7 +416,7 @@ class Renderer {
   //// TEXT SUPPORT METHODS
   //////////////////////////////
 
-  _middleAlignOffset = function() {
+  _middleAlignOffset = function () {
     const { textFont, textSize } = this.states;
     const font = textFont?.font;
     const ctx = this.textDrawingContext();
@@ -418,9 +430,9 @@ class Renderer {
     }
     return metrics.alphabeticBaseline + sCapHeight / 2;
   };
-};
+}
 
-function renderer(p5, fn){
+function renderer(p5, fn) {
   /**
    * Main graphics and rendering context, as well as the base API
    * implementation for p5.js "core". To be used as the superclass for
