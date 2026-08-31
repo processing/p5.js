@@ -90,7 +90,7 @@ Please include the **@private** and **@internal** tags in docstrings, to make su
 
 ### Step 2: Register decorator
 
-Second, use `pattern` to register the decorator on various targets. You can use path comparison (as in the FES example above), or text:
+Second, use `pattern` to register the decorator on various targets. You can use a function that returns `true` if the decorator should apply or vice versa, or a string that matches the `p5` member path exactly:
 
 ```js
 p5.registerDecorator('p5.prototype.createVector', _exampleDecorator);
