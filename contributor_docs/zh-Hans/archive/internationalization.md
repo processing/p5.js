@@ -33,13 +33,13 @@ import { translator } from './internationalization';
 在没有国际化的情况下，您可能会直接记录一条消息。
 
 ```js
-console.log('Loading your sketch right now!')
+console.log('Loading your sketch right now!');
 ```
 
 相反，您可以使用 `translator`：
 
 ```js
-console.log(translator('sketch.loading'))
+console.log(translator('sketch.loading'));
 ```
 
 这会告诉翻译器以用户偏好的任何语言获取 "`sketch.loading`" 消息。
@@ -55,7 +55,7 @@ console.log('I couldnt find ' + file.name + '. Are you sure it's there?')
 会变成类似于
 
 ```js
-console.log(translator('fileLoading.notFound', { fileName: file.name }))
+console.log(translator('fileLoading.notFound', { fileName: file.name }));
 ```
 
 此类翻译期望使用特定名称的变量，请确保使用该名称。查看翻译文件（在 `translations/{YOUR_LANGUAGE}/` 中查找）以查看变量名称。您将在翻译键的对象路径下找到翻译。
@@ -85,6 +85,7 @@ console.log(translator('fileLoading.notFound', { fileName: file.name }))
 您还需要在 [`translations/index.js`](../translations/index.js) 和 [`translations/dev.js`](../translations/dev.js) 中添加一个条目。您可以按照该文件中对 `en` 和 `es` 使用的模式进行操作。
 
 ### 测试更改
+
 大部分翻译内容不包含在最终库中，而是托管在线，并在 p5.js 需要时自动下载。对这些翻译的更新仅在发布新版本的 p5.js 时才会进行。
 
 然而，如果您想查看您的更改（或尚未发布的任何其他更改），您可以简单地运行 `npm run dev`，这将构建 p5.js 并配置为使用本地计算机上存在的翻译文件，而不是互联网上的文件。

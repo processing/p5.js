@@ -4,11 +4,11 @@
  * @for p5
  */
 
-function textOutput(p5, fn){
+function textOutput(p5, fn) {
   //the functions in this file support updating the text output
 
   //updates textOutput
-  fn._updateTextOutput = function(idT) {
+  fn._updateTextOutput = function (idT) {
     if (this._renderer && this._renderer.isP3D) {
       if (!this._didOutputTextWebGLMessage) {
         this._didOutputTextWebGLMessage = true;
@@ -113,7 +113,8 @@ function textOutput(p5, fn){
         } else {
           _line = _line + `, at ${ingredients[x][y].pos}`;
           if (x !== 'point') {
-            _line = _line + `, covering ${ingredients[x][y].area}% of the canvas`;
+            _line =
+              _line + `, covering ${ingredients[x][y].area}% of the canvas`;
           }
           _line = _line + '.</li>';
         }
@@ -127,6 +128,6 @@ function textOutput(p5, fn){
 
 export default textOutput;
 
-if(typeof p5 !== 'undefined'){
+if (typeof p5 !== 'undefined') {
   textOutput(p5, p5.prototype);
 }

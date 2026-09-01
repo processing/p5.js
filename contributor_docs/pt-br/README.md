@@ -2,13 +2,13 @@ Olá! Obrigado pelo seu interesse em contribuir para o p5.js! Você pode começa
 
 # Estrutura de Diretório do Projeto
 
-* `src/` contém todo o código fonte da biblioteca, que é organizado topicamente em módulos separados. É nisso que você trabalhará se estiver mudando o p5.js.
-* `lib/` contém a versão final do p5.js destinada aos usuários para carregar seus esboços e projetos, incluídos nas formas compactada e não compactada. Essa é a saída quando os módulos do código-fonte são compilados em um único arquivo pelo [Grunt](https://gruntjs.com/).
-* `contributor_docs/` contém vários documentos em Markdown que provavelmente serão úteis para os desenvolvedores de p5.js, em particular porque explicam práticas e princípios.
-* `docs/` na verdade não contém docs! Em vez disso, ele contém o código usado para *gerar* o [manual de referência on-line](https://p5js.org/reference/).
-* `tests/` contém testes de unidade que garantem que a biblioteca continue funcionando corretamente conforme as alterações são feitas.
-* `tasks/` contém scripts que executam tarefas automatizadas relacionadas à construção, implantação e release de novas versões do p5.js.
-* `patches/` pode conter [patches Git](https://git-scm.com/docs/git-format-patch) de tempos em tempos, mas em quase todos os casos você pode ignorar completamente esse diretório.
+- `src/` contém todo o código fonte da biblioteca, que é organizado topicamente em módulos separados. É nisso que você trabalhará se estiver mudando o p5.js.
+- `lib/` contém a versão final do p5.js destinada aos usuários para carregar seus esboços e projetos, incluídos nas formas compactada e não compactada. Essa é a saída quando os módulos do código-fonte são compilados em um único arquivo pelo [Grunt](https://gruntjs.com/).
+- `contributor_docs/` contém vários documentos em Markdown que provavelmente serão úteis para os desenvolvedores de p5.js, em particular porque explicam práticas e princípios.
+- `docs/` na verdade não contém docs! Em vez disso, ele contém o código usado para _gerar_ o [manual de referência on-line](https://p5js.org/reference/).
+- `tests/` contém testes de unidade que garantem que a biblioteca continue funcionando corretamente conforme as alterações são feitas.
+- `tasks/` contém scripts que executam tarefas automatizadas relacionadas à construção, implantação e release de novas versões do p5.js.
+- `patches/` pode conter [patches Git](https://git-scm.com/docs/git-format-patch) de tempos em tempos, mas em quase todos os casos você pode ignorar completamente esse diretório.
 
 # Como Contribuir
 
@@ -24,7 +24,7 @@ Reconhecemos todos os tipos de contribuições. Este projeto segue a especifica�
 
 Além do código em si, também pode ser necessário fornecer alguma combinação do seguinte.
 
-- [documentação embutida](./inline_documentation.md) na forma de comentários de código, que explicam o código para outros desenvolvedores e usuários. Muitos desses comentários devem estar em conformidade com a sintaxe [JSDoc](https://usejsdoc.org) e serão publicados no site p5.js como parte do [manual de referência on-line](https://p5js.org/reference/ )
+- [documentação embutida](./inline_documentation.md) na forma de comentários de código, que explicam o código para outros desenvolvedores e usuários. Muitos desses comentários devem estar em conformidade com a sintaxe [JSDoc](https://usejsdoc.org) e serão publicados no site p5.js como parte do [manual de referência on-line](https://p5js.org/reference/)
 - [testes de unidade](./unit_testing.md), pequenos pedaços de código que são separados da biblioteca e são usados para verificar seu comportamento
 
 ## Exemplos

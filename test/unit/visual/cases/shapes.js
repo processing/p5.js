@@ -1,8 +1,8 @@
 import { visualSuite, visualTest } from '../visualTest';
 
-visualSuite('Shape drawing', function() {
+visualSuite('Shape drawing', function () {
   for (const mode of ['2D', 'WebGL']) {
-    visualSuite(`${mode} mode`, function() {
+    visualSuite(`${mode} mode`, function () {
       const setup = p5 => {
         p5.createCanvas(50, 50, mode === '2D' ? p5.P2D : p5.WEBGL);
         if (mode !== '2D') {
@@ -13,7 +13,7 @@ visualSuite('Shape drawing', function() {
         p5.stroke(0);
       };
 
-      visualTest('Drawing polylines', function(p5, screenshot) {
+      visualTest('Drawing polylines', function (p5, screenshot) {
         setup(p5);
         p5.beginShape();
         p5.vertex(10, 10);
@@ -25,7 +25,7 @@ visualSuite('Shape drawing', function() {
         screenshot();
       });
 
-      visualTest('Drawing with contours', function(p5, screenshot) {
+      visualTest('Drawing with contours', function (p5, screenshot) {
         setup(p5);
 
         const vertexCircle = (x, y, r, direction) => {
@@ -52,19 +52,19 @@ visualSuite('Shape drawing', function() {
         screenshot();
       });
 
-      visualTest('Drawing triangle fans', function(p5, screenshot) {
+      visualTest('Drawing triangle fans', function (p5, screenshot) {
         setup(p5);
         p5.beginShape(p5.TRIANGLE_FAN);
         p5.vertex(25, 25);
         for (let i = 0; i <= 12; i++) {
           const angle = p5.map(i, 0, 12, 0, p5.TWO_PI);
-          p5.vertex(25 + 10*p5.cos(angle), 25 + 10*p5.sin(angle));
+          p5.vertex(25 + 10 * p5.cos(angle), 25 + 10 * p5.sin(angle));
         }
         p5.endShape();
         screenshot();
       });
 
-      visualTest('Drawing triangle strips', function(p5, screenshot) {
+      visualTest('Drawing triangle strips', function (p5, screenshot) {
         setup(p5);
         p5.beginShape(p5.TRIANGLE_STRIP);
         p5.vertex(10, 10);
@@ -77,7 +77,7 @@ visualSuite('Shape drawing', function() {
         screenshot();
       });
 
-      visualTest('Drawing quad strips', function(p5, screenshot) {
+      visualTest('Drawing quad strips', function (p5, screenshot) {
         setup(p5);
         p5.beginShape(p5.QUAD_STRIP);
         p5.vertex(10, 10);
@@ -90,7 +90,7 @@ visualSuite('Shape drawing', function() {
         screenshot();
       });
 
-      visualTest('Drawing closed polylines', function(p5, screenshot) {
+      visualTest('Drawing closed polylines', function (p5, screenshot) {
         setup(p5);
         p5.beginShape();
         p5.vertex(10, 10);
@@ -102,7 +102,7 @@ visualSuite('Shape drawing', function() {
         screenshot();
       });
 
-      visualTest('Drawing with curves', function(p5, screenshot) {
+      visualTest('Drawing with curves', function (p5, screenshot) {
         setup(p5);
         p5.beginShape();
         p5.splineVertex(10, 10);
@@ -114,66 +114,75 @@ visualSuite('Shape drawing', function() {
         screenshot();
       });
 
-      visualTest('Drawing with curves in the middle of other shapes', function(p5, screenshot) {
-        setup(p5);
-        p5.beginShape();
-        p5.vertex(10, 10);
-        p5.vertex(40, 10);
-        p5.splineVertex(40, 40);
-        p5.splineVertex(10, 40);
-        p5.endShape(p5.CLOSE);
-        screenshot();
-      });
+      visualTest(
+        'Drawing with curves in the middle of other shapes',
+        function (p5, screenshot) {
+          setup(p5);
+          p5.beginShape();
+          p5.vertex(10, 10);
+          p5.vertex(40, 10);
+          p5.splineVertex(40, 40);
+          p5.splineVertex(10, 40);
+          p5.endShape(p5.CLOSE);
+          screenshot();
+        }
+      );
 
-      visualTest('Drawing with curves with hidden ends', function(p5, screenshot) {
-        setup(p5);
-        p5.beginShape();
-        p5.splineProperty('ends', p5.EXCLUDE);
-        p5.splineVertex(10, 10);
-        p5.splineVertex(15, 40);
-        p5.splineVertex(40, 35);
-        p5.splineVertex(25, 15);
-        p5.splineVertex(15, 25);
-        p5.endShape();
-        screenshot();
-      });
+      visualTest(
+        'Drawing with curves with hidden ends',
+        function (p5, screenshot) {
+          setup(p5);
+          p5.beginShape();
+          p5.splineProperty('ends', p5.EXCLUDE);
+          p5.splineVertex(10, 10);
+          p5.splineVertex(15, 40);
+          p5.splineVertex(40, 35);
+          p5.splineVertex(25, 15);
+          p5.splineVertex(15, 25);
+          p5.endShape();
+          screenshot();
+        }
+      );
 
-      visualTest('Drawing closed curves', function(p5, screenshot) {
+      visualTest('Drawing closed curves', function (p5, screenshot) {
         setup(p5);
-        p5.beginShape();
-        p5.splineVertex(10, 10);
-        p5.splineVertex(15, 40);
-        p5.splineVertex(40, 35);
-        p5.splineVertex(25, 15);
-        p5.splineVertex(15, 25);
-        p5.endShape(p5.CLOSE);
-        screenshot();
-      });
-
-      visualTest('Drawing simple closed curves', function(p5, screenshot) {
-        setup(p5);
-        p5.beginShape();
-        p5.splineVertex(10, 10);
-        p5.splineVertex(15, 40);
-        p5.splineVertex(40, 35);
-        p5.endShape(p5.CLOSE);
-        screenshot();
-      });
-
-      visualTest('Drawing with curves with tightness', function(p5, screenshot) {
-        setup(p5);
-        p5.splineProperty('tightness', -1);
         p5.beginShape();
         p5.splineVertex(10, 10);
         p5.splineVertex(15, 40);
         p5.splineVertex(40, 35);
         p5.splineVertex(25, 15);
         p5.splineVertex(15, 25);
-        p5.endShape();
+        p5.endShape(p5.CLOSE);
         screenshot();
       });
 
-      visualTest('Drawing closed curve loops', function(p5, screenshot) {
+      visualTest('Drawing simple closed curves', function (p5, screenshot) {
+        setup(p5);
+        p5.beginShape();
+        p5.splineVertex(10, 10);
+        p5.splineVertex(15, 40);
+        p5.splineVertex(40, 35);
+        p5.endShape(p5.CLOSE);
+        screenshot();
+      });
+
+      visualTest(
+        'Drawing with curves with tightness',
+        function (p5, screenshot) {
+          setup(p5);
+          p5.splineProperty('tightness', -1);
+          p5.beginShape();
+          p5.splineVertex(10, 10);
+          p5.splineVertex(15, 40);
+          p5.splineVertex(40, 35);
+          p5.splineVertex(25, 15);
+          p5.splineVertex(15, 25);
+          p5.endShape();
+          screenshot();
+        }
+      );
+
+      visualTest('Drawing closed curve loops', function (p5, screenshot) {
         setup(p5);
         p5.beginShape();
         p5.splineProperty('ends', p5.EXCLUDE);
@@ -190,7 +199,7 @@ visualSuite('Shape drawing', function() {
         screenshot();
       });
 
-      visualTest('Drawing with cubic beziers', function(p5, screenshot) {
+      visualTest('Drawing with cubic beziers', function (p5, screenshot) {
         setup(p5);
         p5.beginShape();
         p5.bezierVertex(10, 10);
@@ -206,7 +215,7 @@ visualSuite('Shape drawing', function() {
         screenshot();
       });
 
-      visualTest('Drawing with quadratic beziers', function(p5, screenshot) {
+      visualTest('Drawing with quadratic beziers', function (p5, screenshot) {
         setup(p5);
         p5.beginShape();
         p5.bezierOrder(2);
@@ -224,32 +233,35 @@ visualSuite('Shape drawing', function() {
         screenshot();
       });
 
-      visualTest('Combining quadratic and cubic beziers', function (p5, screenshot) {
-        setup(p5);
-        p5.strokeWeight(5);
-        p5.beginShape();
-        p5.vertex(10, 10);
-        p5.vertex(30, 10);
+      visualTest(
+        'Combining quadratic and cubic beziers',
+        function (p5, screenshot) {
+          setup(p5);
+          p5.strokeWeight(5);
+          p5.beginShape();
+          p5.vertex(10, 10);
+          p5.vertex(30, 10);
 
-        // Default cubic
-        p5.bezierVertex(35, 10);
-        p5.bezierVertex(40, 15);
-        p5.bezierVertex(40, 20);
+          // Default cubic
+          p5.bezierVertex(35, 10);
+          p5.bezierVertex(40, 15);
+          p5.bezierVertex(40, 20);
 
-        p5.vertex(40, 30);
+          p5.vertex(40, 30);
 
-        p5.bezierOrder(2);
-        p5.bezierVertex(40, 40);
-        p5.bezierVertex(30, 40);
+          p5.bezierOrder(2);
+          p5.bezierVertex(40, 40);
+          p5.bezierVertex(30, 40);
 
-        p5.vertex(10, 40);
+          p5.vertex(10, 40);
 
-        p5.endShape(p5.CLOSE);
+          p5.endShape(p5.CLOSE);
 
-        screenshot();
-      });
+          screenshot();
+        }
+      );
 
-      visualTest('Drawing with points', function(p5, screenshot) {
+      visualTest('Drawing with points', function (p5, screenshot) {
         setup(p5);
         p5.strokeWeight(5);
         p5.beginShape(p5.POINTS);
@@ -262,7 +274,7 @@ visualSuite('Shape drawing', function() {
         screenshot();
       });
 
-      visualTest('Drawing with lines', function(p5, screenshot) {
+      visualTest('Drawing with lines', function (p5, screenshot) {
         setup(p5);
         p5.beginShape(p5.LINES);
         p5.vertex(10, 10);
@@ -273,7 +285,7 @@ visualSuite('Shape drawing', function() {
         screenshot();
       });
 
-      visualTest('Drawing with triangles', function(p5, screenshot) {
+      visualTest('Drawing with triangles', function (p5, screenshot) {
         setup(p5);
         p5.beginShape(p5.TRIANGLES);
         p5.vertex(10, 10);
@@ -286,7 +298,7 @@ visualSuite('Shape drawing', function() {
         screenshot();
       });
 
-      visualTest('Drawing with quads', function(p5, screenshot) {
+      visualTest('Drawing with quads', function (p5, screenshot) {
         setup(p5);
         p5.beginShape(p5.QUADS);
         p5.vertex(10, 10);
@@ -301,74 +313,83 @@ visualSuite('Shape drawing', function() {
         screenshot();
       });
 
-      visualTest('Drawing rounded rectangles', function(p5, screenshot) {
+      visualTest('Drawing rounded rectangles', function (p5, screenshot) {
         setup(p5);
         p5.rect(5, 5, 40, 20, 5);
         p5.rect(5, 30, 40, 15, 2, 4, 6, 8);
         screenshot();
       });
 
-      visualTest('Drawing with a single closed contour', function(p5, screenshot) {
-        setup(p5);
-        p5.beginShape();
-        p5.vertex(10, 10);
-        p5.vertex(40, 10);
-        p5.vertex(40, 40);
-        p5.vertex(10, 40);
+      visualTest(
+        'Drawing with a single closed contour',
+        function (p5, screenshot) {
+          setup(p5);
+          p5.beginShape();
+          p5.vertex(10, 10);
+          p5.vertex(40, 10);
+          p5.vertex(40, 40);
+          p5.vertex(10, 40);
 
-        p5.beginContour();
-        p5.vertex(20, 20);
-        p5.vertex(20, 30);
-        p5.vertex(30, 30);
-        p5.vertex(30, 20);
-        p5.endContour(p5.CLOSE);
+          p5.beginContour();
+          p5.vertex(20, 20);
+          p5.vertex(20, 30);
+          p5.vertex(30, 30);
+          p5.vertex(30, 20);
+          p5.endContour(p5.CLOSE);
 
-        p5.endShape(p5.CLOSE);
-        screenshot();
-      });
+          p5.endShape(p5.CLOSE);
+          screenshot();
+        }
+      );
 
-      visualTest('Drawing with a single unclosed contour', function(p5, screenshot) {
-        setup(p5);
-        p5.beginShape();
-        p5.vertex(10, 10);
-        p5.vertex(40, 10);
-        p5.vertex(40, 40);
-        p5.vertex(10, 40);
+      visualTest(
+        'Drawing with a single unclosed contour',
+        function (p5, screenshot) {
+          setup(p5);
+          p5.beginShape();
+          p5.vertex(10, 10);
+          p5.vertex(40, 10);
+          p5.vertex(40, 40);
+          p5.vertex(10, 40);
 
-        p5.beginContour();
-        p5.vertex(20, 20);
-        p5.vertex(20, 30);
-        p5.vertex(30, 30);
-        p5.vertex(30, 20);
-        p5.endContour();
+          p5.beginContour();
+          p5.vertex(20, 20);
+          p5.vertex(20, 30);
+          p5.vertex(30, 30);
+          p5.vertex(30, 20);
+          p5.endContour();
 
-        p5.endShape(p5.CLOSE);
-        screenshot();
-      });
+          p5.endShape(p5.CLOSE);
+          screenshot();
+        }
+      );
 
-      visualTest('Drawing with every subshape in a contour', function(p5, screenshot) {
-        setup(p5);
-        p5.beginShape();
-        p5.beginContour();
-        p5.vertex(10, 10);
-        p5.vertex(40, 10);
-        p5.vertex(40, 40);
-        p5.vertex(10, 40);
-        p5.endContour(p5.CLOSE);
+      visualTest(
+        'Drawing with every subshape in a contour',
+        function (p5, screenshot) {
+          setup(p5);
+          p5.beginShape();
+          p5.beginContour();
+          p5.vertex(10, 10);
+          p5.vertex(40, 10);
+          p5.vertex(40, 40);
+          p5.vertex(10, 40);
+          p5.endContour(p5.CLOSE);
 
-        p5.beginContour();
-        p5.vertex(20, 20);
-        p5.vertex(20, 30);
-        p5.vertex(30, 30);
-        p5.vertex(30, 20);
-        p5.endContour(p5.CLOSE);
+          p5.beginContour();
+          p5.vertex(20, 20);
+          p5.vertex(20, 30);
+          p5.vertex(30, 30);
+          p5.vertex(30, 20);
+          p5.endContour(p5.CLOSE);
 
-        p5.endShape();
-        screenshot();
-      });
+          p5.endShape();
+          screenshot();
+        }
+      );
 
       if (mode === 'WebGL') {
-        visualTest('3D vertex coordinates', function(p5, screenshot) {
+        visualTest('3D vertex coordinates', function (p5, screenshot) {
           setup(p5);
 
           p5.beginShape(p5.QUAD_STRIP);
@@ -381,7 +402,7 @@ visualSuite('Shape drawing', function() {
           screenshot();
         });
 
-        visualTest('3D quadratic coordinates', function(p5, screenshot) {
+        visualTest('3D quadratic coordinates', function (p5, screenshot) {
           setup(p5);
 
           p5.beginShape();
@@ -395,7 +416,7 @@ visualSuite('Shape drawing', function() {
           screenshot();
         });
 
-        visualTest('3D cubic coordinates', function(p5, screenshot) {
+        visualTest('3D cubic coordinates', function (p5, screenshot) {
           setup(p5);
 
           p5.beginShape();
@@ -409,7 +430,7 @@ visualSuite('Shape drawing', function() {
           screenshot();
         });
 
-        visualTest('Texture coordinates', async function(p5, screenshot) {
+        visualTest('Texture coordinates', async function (p5, screenshot) {
           const tex = await p5.loadImage('test/unit/assets/cat.jpg');
           setup(p5);
           p5.texture(tex);
@@ -423,22 +444,25 @@ visualSuite('Shape drawing', function() {
           screenshot();
         });
 
-        visualTest('Normalized texture coordinates', async function(p5, screenshot) {
-          const tex = await p5.loadImage('test/unit/assets/cat.jpg');
-          setup(p5);
-          p5.texture(tex);
-          p5.textureMode(p5.NORMAL);
-          p5.beginShape(p5.QUAD_STRIP);
-          p5.vertex(10, 10, 0, 0, 0);
-          p5.vertex(45, 5, 0, 1, 0);
-          p5.vertex(15, 35, 0, 0, 1);
-          p5.vertex(40, 45, 0, 1, 1);
-          p5.endShape();
+        visualTest(
+          'Normalized texture coordinates',
+          async function (p5, screenshot) {
+            const tex = await p5.loadImage('test/unit/assets/cat.jpg');
+            setup(p5);
+            p5.texture(tex);
+            p5.textureMode(p5.NORMAL);
+            p5.beginShape(p5.QUAD_STRIP);
+            p5.vertex(10, 10, 0, 0, 0);
+            p5.vertex(45, 5, 0, 1, 0);
+            p5.vertex(15, 35, 0, 0, 1);
+            p5.vertex(40, 45, 0, 1, 1);
+            p5.endShape();
 
-          screenshot();
-        });
+            screenshot();
+          }
+        );
 
-        visualTest('Per-vertex fills', function(p5, screenshot) {
+        visualTest('Per-vertex fills', function (p5, screenshot) {
           setup(p5);
           p5.beginShape(p5.QUAD_STRIP);
           p5.fill(0);
@@ -454,7 +478,7 @@ visualSuite('Shape drawing', function() {
           screenshot();
         });
 
-        visualTest('Per-vertex strokes', function(p5, screenshot) {
+        visualTest('Per-vertex strokes', function (p5, screenshot) {
           setup(p5);
           p5.strokeWeight(5);
           p5.beginShape(p5.QUAD_STRIP);
@@ -471,7 +495,7 @@ visualSuite('Shape drawing', function() {
           screenshot();
         });
 
-        visualTest('Per-vertex normals', function(p5, screenshot) {
+        visualTest('Per-vertex normals', function (p5, screenshot) {
           setup(p5);
           p5.normalMaterial();
           p5.beginShape(p5.QUAD_STRIP);

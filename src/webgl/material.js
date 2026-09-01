@@ -4,14 +4,15 @@
  * @for p5
  */
 
-import * as constants from "../core/constants";
-import { Renderer3D } from "../core/p5.Renderer3D";
-import { Shader } from "./p5.Shader";
-import { request } from "../io/files";
-import { Color } from "../color/p5.Color";
+import * as constants from '../core/constants';
+import { Renderer3D } from '../core/p5.Renderer3D';
+import { Shader } from './p5.Shader';
+import { request } from '../io/files';
+import { Color } from '../color/p5.Color';
+import { markExperimental } from '../core/experimental';
 
 async function urlToStrandsCallback(url) {
-  const src = await fetch(url).then((res) => res.text());
+  const src = await fetch(url).then(res => res.text());
   return new Function(src);
 }
 
@@ -130,15 +131,15 @@ function material(p5, fn) {
     vertFilename,
     fragFilename,
     successCallback,
-    failureCallback,
+    failureCallback
   ) {
     // p5._validateParameters('loadShader', arguments);
 
     const loadedShader = new Shader();
 
     try {
-      loadedShader._vertSrc = (await request(vertFilename, "text")).data;
-      loadedShader._fragSrc = (await request(fragFilename, "text")).data;
+      loadedShader._vertSrc = (await request(vertFilename, 'text')).data;
+      loadedShader._fragSrc = (await request(fragFilename, 'text')).data;
 
       if (successCallback) {
         return successCallback(loadedShader) || loadedShader;
@@ -513,22 +514,26 @@ function material(p5, fn) {
   fn.loadFilterShader = async function (
     fragFilename,
     successCallback,
-    failureCallback,
+    failureCallback
   ) {
     // p5._validateParameters('loadFilterShader', arguments);
     try {
       // Load the fragment shader
       const fragSrc = await this.loadStrings(fragFilename);
-      const fragString = await fragSrc.join("\n");
+      const fragString = await fragSrc.join('\n');
 
       // Test if we've loaded GLSL or not by checking for the existence of `void main`
       let loadedShader;
       if (/void\s+main/.exec(fragString)) {
-        loadedShader = this._internal(() => this.createFilterShader(fragString, true));
+        loadedShader = this._internal(() =>
+          this.createFilterShader(fragString, true)
+        );
       } else {
-        loadedShader = this._internal(() => withGlobalStrands(this, () =>
-          this.baseFilterShader().modify(new Function(fragString)),
-        ));
+        loadedShader = this._internal(() =>
+          withGlobalStrands(this, () =>
+            this.baseFilterShader().modify(new Function(fragString))
+          )
+        );
       }
 
       if (successCallback) {
@@ -742,6 +747,7 @@ function material(p5, fn) {
   fn.buildFilterShader = function (callback, scope) {
     return this.baseFilterShader().modify(callback, scope);
   };
+  p5.registerDecorator('p5.prototype.buildFilterShader', markExperimental('p5.strands', p5));
 
   /**
    * Creates a <a href="#/p5.Shader">p5.Shader</a> object to be used with the
@@ -871,7 +877,7 @@ function material(p5, fn) {
         gl_Position = uProjectionMatrix * uModelViewMatrix * positionVec4;
       }
     `;
-    let vertSrc = fragSrc.includes("#version 300 es")
+    let vertSrc = fragSrc.includes('#version 300 es')
       ? defaultVertV2
       : defaultVertV1;
     const shader = new Shader(this._renderer, vertSrc, fragSrc);
@@ -1227,7 +1233,7 @@ function material(p5, fn) {
    * }
    */
   fn.strokeShader = function (s) {
-    this._assert3d("strokeShader");
+    this._assert3d('strokeShader');
     // p5._validateParameters('strokeShader', arguments);
 
     this._renderer.strokeShader(s);
@@ -1372,7 +1378,7 @@ function material(p5, fn) {
    * }
    */
   fn.imageShader = function (s) {
-    this._assert3d("imageShader");
+    this._assert3d('imageShader');
     // p5._validateParameters('imageShader', arguments);
 
     this._renderer.imageShader(s);
@@ -1570,6 +1576,7 @@ function material(p5, fn) {
   fn.buildMaterialShader = function (cb, scope) {
     return this.baseMaterialShader().modify(cb, scope);
   };
+  p5.registerDecorator('p5.prototype.buildMaterialShader', markExperimental('p5.strands', p5));
 
   /**
    * Loads a new shader from a file that can change how fills are drawn. Pass the resulting
@@ -1630,7 +1637,9 @@ function material(p5, fn) {
   fn.loadMaterialShader = async function (url, onSuccess, onFail) {
     try {
       const cb = await urlToStrandsCallback(url);
-      let shader = this._internal(() => withGlobalStrands(this, () => this.buildMaterialShader(cb)));
+      let shader = this._internal(() =>
+        withGlobalStrands(this, () => this.buildMaterialShader(cb))
+      );
       if (onSuccess) {
         shader = onSuccess(shader) || shader;
       }
@@ -1659,7 +1668,7 @@ function material(p5, fn) {
    * @returns {p5.Shader} The base material shader.
    */
   fn.baseMaterialShader = function () {
-    this._assert3d("baseMaterialShader");
+    this._assert3d('baseMaterialShader');
     return this._renderer.baseMaterialShader();
   };
 
@@ -1786,6 +1795,7 @@ function material(p5, fn) {
   fn.buildNormalShader = function (cb, scope) {
     return this.baseNormalShader().modify(cb, scope);
   };
+  p5.registerDecorator('p5.prototype.buildNormalShader', markExperimental('p5.strands', p5));
 
   /**
    * Loads a new shader from a file that can change how fills are drawn, based on the material used
@@ -1847,9 +1857,9 @@ function material(p5, fn) {
   fn.loadNormalShader = async function (url, onSuccess, onFail) {
     try {
       const cb = await urlToStrandsCallback(url);
-      let shader = this._internal(() => this.withGlobalStrands(this, () =>
-        this.buildNormalShader(cb),
-      ));
+      let shader = this._internal(() =>
+        this.withGlobalStrands(this, () => this.buildNormalShader(cb))
+      );
       if (onSuccess) {
         shader = onSuccess(shader) || shader;
       }
@@ -1879,7 +1889,7 @@ function material(p5, fn) {
    * @returns {p5.Shader} The base material shader.
    */
   fn.baseNormalShader = function () {
-    this._assert3d("baseNormalShader");
+    this._assert3d('baseNormalShader');
     return this._renderer.baseNormalShader();
   };
 
@@ -1950,6 +1960,7 @@ function material(p5, fn) {
   fn.buildColorShader = function (cb, scope) {
     return this.baseColorShader().modify(cb, scope);
   };
+  p5.registerDecorator('p5.prototype.buildColorShader', markExperimental('p5.strands', p5));
 
   /**
    * Loads a new shader from a file that can change how fills are drawn, based on the material used
@@ -2011,7 +2022,9 @@ function material(p5, fn) {
   fn.loadColorShader = async function (url, onSuccess, onFail) {
     try {
       const cb = await urlToStrandsCallback(url);
-      let shader = this._internal(() => withGlobalStrands(this, () => this.buildColorShader(cb)));
+      let shader = this._internal(() =>
+        withGlobalStrands(this, () => this.buildColorShader(cb))
+      );
       if (onSuccess) {
         shader = onSuccess(shader) || shader;
       }
@@ -2040,7 +2053,7 @@ function material(p5, fn) {
    * @returns {p5.Shader} The base color shader.
    */
   fn.baseColorShader = function () {
-    this._assert3d("baseColorShader");
+    this._assert3d('baseColorShader');
     return this._renderer.baseColorShader();
   };
 
@@ -2205,6 +2218,7 @@ function material(p5, fn) {
   fn.buildStrokeShader = function (cb, scope) {
     return this.baseStrokeShader().modify(cb, scope);
   };
+  p5.registerDecorator('p5.prototype.buildStrokeShader', markExperimental('p5.strands', p5));
 
   /**
    * Loads a new shader from a file that can change how strokes are drawn. Pass the resulting
@@ -2271,7 +2285,9 @@ function material(p5, fn) {
   fn.loadStrokeShader = async function (url, onSuccess, onFail) {
     try {
       const cb = await urlToStrandsCallback(url);
-      let shader = this._internal(() => withGlobalStrands(this, () => this.buildStrokeShader(cb)));
+      let shader = this._internal(() =>
+        withGlobalStrands(this, () => this.buildStrokeShader(cb))
+      );
       if (onSuccess) {
         shader = onSuccess(shader) || shader;
       }
@@ -2300,7 +2316,7 @@ function material(p5, fn) {
    * @returns {p5.Shader} The base material shader.
    */
   fn.baseStrokeShader = function () {
-    this._assert3d("baseStrokeShader");
+    this._assert3d('baseStrokeShader');
     return this._renderer.baseStrokeShader();
   };
 
@@ -2543,7 +2559,7 @@ function material(p5, fn) {
    * }
    */
   fn.texture = function (tex) {
-    this._assert3d("texture");
+    this._assert3d('texture');
     // p5._validateParameters('texture', arguments);
 
     // NOTE: make generic or remove need for
@@ -2552,6 +2568,442 @@ function material(p5, fn) {
     }
 
     this._renderer.texture(tex);
+
+    return this;
+  };
+
+  /**
+   * Sets a normal map to add surface detail to shapes under lighting.
+   *
+   * `normalTexture()` works like <a href="#/p5/texture">`texture()`</a>, but for a
+   * tangent-space normal map: an image whose red, green, and blue channels
+   * encode the direction of the surface normal (not brightness). Call it before
+   * drawing a shape and its surface normals get perturbed by the map, so lights
+   * react to detail that isn't actually in the geometry. This is the same kind
+   * of map glTF models use. Pass an optional `scale` to tune the strength.
+   *
+   * Call `normalTexture(null)` to turn it off, or scope it between
+   * <a href="#/p5/push">`push()`</a> and <a href="#/p5/pop">`pop()`</a>.
+   *
+   * <a href="#/p5/bumpTexture">`bumpTexture()`</a> creates a similar effect from
+   * a grayscale height map instead. The two are easy to mix up because they
+   * produce similar results, but they expect different images: a normal map is
+   * the blue-tinted kind that stores directions, while a bump map is grayscale
+   * and stores height. Only one can be active at a time, so setting one
+   * replaces the other.
+   *
+   * A light source is needed to see the effect. Models loaded with
+   * <a href="#/p5/loadModel">`loadModel()`</a> apply their own normal map from
+   * the `.mtl` file's `map_Bump`.
+   *
+   * Note: On a shape whose texture coordinates wrap all the way around, such as
+   * <a href="#/p5/sphere">`sphere()`</a>, the two edges of the image meet. The
+   * image has to tile for them to line up, otherwise a seam shows where they
+   * join.
+   *
+   * Note: `normalTexture()` can only be used in WebGL mode.
+   *
+   * @method normalTexture
+   * @param {p5.Image|p5.MediaElement|p5.Graphics|p5.Texture|p5.Framebuffer|p5.FramebufferTexture} tex normal map, or `null` to clear it.
+   * @param {Number} [scale=1] strength multiplier for the surface detail.
+   * @chainable
+   *
+   * @example
+   * // Click and drag the mouse to view the scene from different angles.
+   *
+   * let normalMap;
+   *
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *
+   *   // Build a normal map with diagonal ridges running across it.
+   *   normalMap = createImage(32, 32);
+   *   normalMap.loadPixels();
+   *   for (let y = 0; y < normalMap.height; y += 1) {
+   *     for (let x = 0; x < normalMap.width; x += 1) {
+   *       // Slope of the ridge at this point. The pattern repeats a whole
+   *       // number of times across the image so it tiles, which keeps it from
+   *       // showing a seam where the sphere's texture coordinates wrap around.
+   *       let s = sin(((x + y) / normalMap.width) * TWO_PI * 3) * 0.8;
+   *       let inv = 1 / sqrt(s * s + s * s + 1);
+   *       let i = (x + y * normalMap.width) * 4;
+   *
+   *       // Pack the normal direction into the color channels.
+   *       normalMap.pixels[i] = (s * inv * 0.5 + 0.5) * 255;
+   *       normalMap.pixels[i + 1] = (s * inv * 0.5 + 0.5) * 255;
+   *       normalMap.pixels[i + 2] = (inv * 0.5 + 0.5) * 255;
+   *       normalMap.pixels[i + 3] = 255;
+   *     }
+   *   }
+   *   normalMap.updatePixels();
+   *
+   *   describe('A gray sphere lit from the upper left. Diagonal ridges cover its surface.');
+   * }
+   *
+   * function draw() {
+   *   background(0);
+   *
+   *   // Enable orbiting with the mouse.
+   *   orbitControl();
+   *
+   *   // Rock the shape so the lighting shifts across it.
+   *   rotateY(sin(millis() * 0.002) * PI * 0.1);
+   *
+   *   // Light the sphere from the upper left.
+   *   ambientLight(60);
+   *   pointLight(255, 255, 255, -80, -80, 150);
+   *   noStroke();
+   *   fill(200);
+   *
+   *   // Tile the map so it wraps around the sphere without a seam.
+   *   textureWrap(REPEAT);
+   *
+   *   // Add the ridges without changing the geometry.
+   *   normalTexture(normalMap);
+   *   sphere(40);
+   * }
+   */
+  fn.normalTexture = function (tex, scale) {
+    this._assert3d('normalTexture');
+    this._renderer.normalTexture(tex || null, scale);
+
+    return this;
+  };
+
+  /**
+   * Sets a grayscale image that adds bumps and dents to a shape's surface.
+   *
+   * A bump map is a height map: the brightness of the image at each point is
+   * read as how high the surface is there, and p5.js works out which way the
+   * surface tilts from how quickly that height changes. Bright areas rise and
+   * dark areas sink, so lights react to detail that isn't in the geometry.
+   *
+   * `bumpTexture()` works like <a href="#/p5/texture">`texture()`</a>, but sets
+   * the bump map instead of the base color. The parameter, `tex`, is the image
+   * to use. Passing `null` clears it, as in `bumpTexture(null)`. The optional
+   * second parameter, `scale`, tunes how pronounced the bumps are. The map can
+   * also be scoped between <a href="#/p5/push">`push()`</a> and
+   * <a href="#/p5/pop">`pop()`</a>.
+   *
+   * <a href="#/p5/normalTexture">`normalTexture()`</a> creates a similar effect
+   * from a tangent-space normal map, the blue-tinted kind that stores
+   * directions rather than height. A bump map is usually easier to make by
+   * hand, since it's just a grayscale picture of where the surface is high and
+   * low. Only one can be active at a time, so setting one replaces the other.
+   *
+   * A light source is needed to see the effect.
+   *
+   * Note: On a shape whose texture coordinates wrap all the way around, such as
+   * <a href="#/p5/sphere">`sphere()`</a>, the two edges of the image meet. The
+   * image has to tile for them to line up. Because a bump map is read by
+   * comparing neighbouring pixels, also call
+   * <a href="#/p5/textureWrap">`textureWrap(REPEAT)`</a> so those comparisons
+   * carry across the join instead of stopping at the edge.
+   *
+   * Note: `bumpTexture()` can only be used in WebGL mode.
+   *
+   * @method bumpTexture
+   * @param {p5.Image|p5.MediaElement|p5.Graphics|p5.Texture|p5.Framebuffer|p5.FramebufferTexture} tex grayscale image to use as the bump map, or `null` to clear it.
+   * @param {Number} [scale=1] strength multiplier for the bumps.
+   * @chainable
+   *
+   * @example
+   * // Click and drag the mouse to view the scene from different angles.
+   *
+   * let bumpMap;
+   *
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *
+   *   // Build a grayscale height map with a grid of round bumps.
+   *   bumpMap = createImage(64, 64);
+   *   bumpMap.loadPixels();
+   *   for (let y = 0; y < bumpMap.height; y += 1) {
+   *     for (let x = 0; x < bumpMap.width; x += 1) {
+   *       // Bright where the surface is high, dark where it's low. The pattern
+   *       // repeats a whole number of times across the image so it tiles,
+   *       // which keeps it from showing a seam where the sphere's texture
+   *       // coordinates wrap around.
+   *       let h = sin((x / bumpMap.width) * TWO_PI * 4);
+   *       h *= sin((y / bumpMap.height) * TWO_PI * 4);
+   *       let v = (h * 0.5 + 0.5) * 255;
+   *       let i = (x + y * bumpMap.width) * 4;
+   *       bumpMap.pixels[i] = v;
+   *       bumpMap.pixels[i + 1] = v;
+   *       bumpMap.pixels[i + 2] = v;
+   *       bumpMap.pixels[i + 3] = 255;
+   *     }
+   *   }
+   *   bumpMap.updatePixels();
+   *
+   *   describe('A gray sphere lit from the upper left. A grid of round bumps covers its surface.');
+   * }
+   *
+   * function draw() {
+   *   background(0);
+   *
+   *   // Enable orbiting with the mouse.
+   *   orbitControl();
+   *
+   *   // Rock the shape so the lighting shifts across it.
+   *   rotateY(sin(millis() * 0.002) * PI * 0.1);
+   *
+   *   // Light the sphere from the upper left.
+   *   ambientLight(60);
+   *   pointLight(255, 255, 255, -80, -80, 150);
+   *   noStroke();
+   *   fill(200);
+   *
+   *   // Tile the map so it wraps around the sphere without a seam.
+   *   textureWrap(REPEAT);
+   *
+   *   // Highlights make the raised areas easier to pick out.
+   *   specularMaterial(255);
+   *   shininess(40);
+   *
+   *   // Raise the bumps without changing the geometry.
+   *   bumpTexture(bumpMap, 4);
+   *   sphere(40);
+   * }
+   */
+  fn.bumpTexture = function (tex, scale) {
+    this._assert3d('bumpTexture');
+    this._renderer.bumpTexture(tex || null, scale);
+
+    return this;
+  };
+
+  /**
+   * Sets an image that controls where a shape looks glossy.
+   *
+   * A specular map lets one shape mix polished and worn surfaces. It works like
+   * <a href="#/p5/texture">`texture()`</a>, but instead of setting the base color,
+   * the map's color at each point scales the highlight set by
+   * <a href="#/p5/specularMaterial">`specularMaterial()`</a>. Bright parts of the
+   * map stay shiny and dark parts look matte.
+   *
+   * The parameter, `tex`, is the image to use as the specular map. Passing
+   * `null` clears it, as in `specularTexture(null)`. The map can also be scoped
+   * between <a href="#/p5/push">`push()`</a> and <a href="#/p5/pop">`pop()`</a>.
+   *
+   * A light source is needed to see the effect. Models loaded with
+   * <a href="#/p5/loadModel">`loadModel()`</a> apply their own specular map from
+   * the `.mtl` file's `map_Ks`.
+   *
+   * Note: `specularTexture()` can only be used in WebGL mode.
+   *
+   * @method specularTexture
+   * @param {p5.Image|p5.MediaElement|p5.Graphics|p5.Texture|p5.Framebuffer|p5.FramebufferTexture} tex image to use as the specular map, or `null` to clear it.
+   * @chainable
+   *
+   * @example
+   * // Click and drag the mouse to view the scene from different angles.
+   *
+   * let specularMap;
+   *
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *
+   *   // Build a checkered map of white and black squares.
+   *   specularMap = createImage(64, 64);
+   *   specularMap.loadPixels();
+   *   for (let y = 0; y < specularMap.height; y += 1) {
+   *     for (let x = 0; x < specularMap.width; x += 1) {
+   *       // White squares stay glossy, black squares turn matte.
+   *       let isWhite = (floor(x / 8) + floor(y / 8)) % 2 === 0;
+   *       let v = isWhite ? 255 : 0;
+   *       let i = (x + y * specularMap.width) * 4;
+   *       specularMap.pixels[i] = v;
+   *       specularMap.pixels[i + 1] = v;
+   *       specularMap.pixels[i + 2] = v;
+   *       specularMap.pixels[i + 3] = 255;
+   *     }
+   *   }
+   *   specularMap.updatePixels();
+   *
+   *   describe('A dark red square lit from the front. Its surface alternates between glossy white squares and matte red ones, like a checkerboard.');
+   * }
+   *
+   * function draw() {
+   *   background(0);
+   *
+   *   // Enable orbiting with the mouse.
+   *   orbitControl();
+   *
+   *   // Rock the shape so the lighting shifts across it.
+   *   rotateY(sin(millis() * 0.002) * PI * 0.1);
+   *
+   *   // Light the surface head on so the highlight spreads across it.
+   *   ambientLight(50);
+   *   pointLight(255, 255, 255, 0, 0, 300);
+   *   noStroke();
+   *   fill(120, 40, 40);
+   *
+   *   // Turn on highlights, then vary them across the surface.
+   *   specularMaterial(255);
+   *   shininess(5);
+   *   specularTexture(specularMap);
+   *   plane(80, 80);
+   * }
+   */
+  fn.specularTexture = function (tex) {
+    this._assert3d('specularTexture');
+    this._renderer.specularTexture(tex || null);
+
+    return this;
+  };
+
+  /**
+   * Sets an image that controls the color a shape reflects from ambient light.
+   *
+   * An ambient map varies the color set by
+   * <a href="#/p5/ambientMaterial">`ambientMaterial()`</a> across a surface, so
+   * different parts of one shape can pick up ambient light differently. It works
+   * like <a href="#/p5/texture">`texture()`</a>, but the map's color is applied to
+   * the ambient term rather than the base color.
+   *
+   * The parameter, `tex`, is the image to use as the ambient map. Passing `null`
+   * clears it, as in `ambientTexture(null)`. The map can also be scoped between
+   * <a href="#/p5/push">`push()`</a> and <a href="#/p5/pop">`pop()`</a>.
+   *
+   * An <a href="#/p5/ambientLight">`ambientLight()`</a> is needed to see the
+   * effect. Models loaded with <a href="#/p5/loadModel">`loadModel()`</a> apply
+   * their own ambient map from the `.mtl` file's `map_Ka`.
+   *
+   * Note: `ambientTexture()` can only be used in WebGL mode.
+   *
+   * @method ambientTexture
+   * @param {p5.Image|p5.MediaElement|p5.Graphics|p5.Texture|p5.Framebuffer|p5.FramebufferTexture} tex image to use as the ambient map, or `null` to clear it.
+   * @chainable
+   *
+   * @example
+   * // Click and drag the mouse to view the scene from different angles.
+   *
+   * let ambientMap;
+   *
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *
+   *   // Build a map that fades from blue at the top to orange at the bottom.
+   *   ambientMap = createImage(32, 32);
+   *   ambientMap.loadPixels();
+   *   for (let y = 0; y < ambientMap.height; y += 1) {
+   *     for (let x = 0; x < ambientMap.width; x += 1) {
+   *       let t = y / (ambientMap.height - 1);
+   *       let i = (x + y * ambientMap.width) * 4;
+   *       ambientMap.pixels[i] = 60 + t * 195;
+   *       ambientMap.pixels[i + 1] = 90;
+   *       ambientMap.pixels[i + 2] = 255 - t * 195;
+   *       ambientMap.pixels[i + 3] = 255;
+   *     }
+   *   }
+   *   ambientMap.updatePixels();
+   *
+   *   describe('A sphere on a black background. Its color fades from blue at the top to orange at the bottom.');
+   * }
+   *
+   * function draw() {
+   *   background(0);
+   *
+   *   // Enable orbiting with the mouse.
+   *   orbitControl();
+   *
+   *   // Rock the shape so the lighting shifts across it.
+   *   rotateY(sin(millis() * 0.002) * PI * 0.1);
+   *
+   *   // Ambient light reveals the map's colors.
+   *   ambientLight(200);
+   *   noStroke();
+   *   fill(255);
+   *   ambientTexture(ambientMap);
+   *   sphere(40);
+   * }
+   */
+  fn.ambientTexture = function (tex) {
+    this._assert3d('ambientTexture');
+    this._renderer.ambientTexture(tex || null);
+
+    return this;
+  };
+
+  /**
+   * Sets an image that controls how tight a shape's highlights are.
+   *
+   * A shininess map varies the value set by
+   * <a href="#/p5/shininess">`shininess()`</a> across a surface. Only the map's
+   * red channel is read, and it scales the base shininess, so bright areas get
+   * a small, sharp highlight and dark areas get a broad, soft one. This lets a
+   * single shape look polished in some places and dull in others.
+   *
+   * The parameter, `tex`, is the image to use as the shininess map. Passing
+   * `null` clears it, as in `shininessTexture(null)`. The map can also be scoped
+   * between <a href="#/p5/push">`push()`</a> and <a href="#/p5/pop">`pop()`</a>.
+   *
+   * A light source and
+   * <a href="#/p5/specularMaterial">`specularMaterial()`</a> are needed to see the
+   * effect. Models loaded with <a href="#/p5/loadModel">`loadModel()`</a> apply
+   * their own shininess map from the `.mtl` file's `map_Ns`.
+   *
+   * Note: `shininessTexture()` can only be used in WebGL mode.
+   *
+   * @method shininessTexture
+   * @param {p5.Image|p5.MediaElement|p5.Graphics|p5.Texture|p5.Framebuffer|p5.FramebufferTexture} tex image to use as the shininess map, or `null` to clear it.
+   * @chainable
+   *
+   * @example
+   * // Click and drag the mouse to view the scene from different angles.
+   *
+   * let shininessMap;
+   *
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *
+   *   // Build a checkered map of bright and dark squares.
+   *   shininessMap = createImage(64, 64);
+   *   shininessMap.loadPixels();
+   *   for (let y = 0; y < shininessMap.height; y += 1) {
+   *     for (let x = 0; x < shininessMap.width; x += 1) {
+   *       // Only the red channel is read. Bright squares keep the full
+   *       // shininess, dark ones drop it so their highlight spreads out.
+   *       let isBright = (floor(x / 8) + floor(y / 8)) % 2 === 0;
+   *       let v = isBright ? 255 : 40;
+   *       let i = (x + y * shininessMap.width) * 4;
+   *       shininessMap.pixels[i] = v;
+   *       shininessMap.pixels[i + 1] = v;
+   *       shininessMap.pixels[i + 2] = v;
+   *       shininessMap.pixels[i + 3] = 255;
+   *     }
+   *   }
+   *   shininessMap.updatePixels();
+   *
+   *   describe('A blue square lit from the upper left. Its surface alternates between squares with tight highlights and squares with broader, softer ones.');
+   * }
+   *
+   * function draw() {
+   *   background(0);
+   *
+   *   // Enable orbiting with the mouse.
+   *   orbitControl();
+   *
+   *   // Rock the shape so the lighting shifts across it.
+   *   rotateY(sin(millis() * 0.002) * PI * 0.1);
+   *
+   *   // Light the surface from the upper left.
+   *   ambientLight(40);
+   *   pointLight(255, 255, 255, -60, -60, 180);
+   *   noStroke();
+   *   fill(60, 80, 160);
+   *
+   *   // Vary the size of the highlight across the surface.
+   *   specularMaterial(200);
+   *   shininess(120);
+   *   shininessTexture(shininessMap);
+   *   plane(80, 80);
+   * }
+   */
+  fn.shininessTexture = function (tex) {
+    this._assert3d('shininessTexture');
+    this._renderer.shininessTexture(tex || null);
 
     return this;
   };
@@ -2721,15 +3173,16 @@ function material(p5, fn) {
    * @return {(IMAGE|NORMAL)} The current texture mode, either IMAGE or NORMAL.
    */
   fn.textureMode = function (mode) {
-    if (typeof mode === 'undefined') { // getter
+    if (typeof mode === 'undefined') {
+      // getter
       return this._renderer.states.textureMode;
     }
     if (mode !== constants.IMAGE && mode !== constants.NORMAL) {
       console.warn(
-        `You tried to set ${mode} textureMode only supports IMAGE & NORMAL `,
+        `You tried to set ${mode} textureMode only supports IMAGE & NORMAL `
       );
     } else {
-      this._renderer.states.setValue("textureMode", mode);
+      this._renderer.states.setValue('textureMode', mode);
     }
   };
 
@@ -2994,7 +3447,8 @@ function material(p5, fn) {
    * @return {{x: (CLAMP|REPEAT|MIRROR), y: (CLAMP|REPEAT|MIRROR)}} The current texture wrapping for x and y.
    */
   fn.textureWrap = function (wrapX, wrapY = wrapX) {
-    if (typeof wrapX === 'undefined') { // getter
+    if (typeof wrapX === 'undefined') {
+      // getter
       return {
         x: this._renderer.states.textureWrapX,
         y: this._renderer.states.textureWrapY
@@ -3051,7 +3505,7 @@ function material(p5, fn) {
    * }
    */
   fn.normalMaterial = function (...args) {
-    this._assert3d("normalMaterial");
+    this._assert3d('normalMaterial');
     // p5._validateParameters('normalMaterial', args);
 
     this._renderer.normalMaterial(...args);
@@ -3257,16 +3711,16 @@ function material(p5, fn) {
    * @chainable
    */
   fn.ambientMaterial = function (v1, v2, v3) {
-    this._assert3d("ambientMaterial");
+    this._assert3d('ambientMaterial');
     // p5._validateParameters('ambientMaterial', arguments);
 
     const color = fn.color.apply(this, arguments);
-    this._renderer.states.setValue("_hasSetAmbient", true);
-    this._renderer.states.setValue("curAmbientColor", color._array);
-    this._renderer.states.setValue("_useNormalMaterial", false);
-    this._renderer.states.setValue("enableLighting", true);
+    this._renderer.states.setValue('_hasSetAmbient', true);
+    this._renderer.states.setValue('curAmbientColor', color._array);
+    this._renderer.states.setValue('_useNormalMaterial', false);
+    this._renderer.states.setValue('enableLighting', true);
     if (!this._renderer.states.fillColor) {
-      this._renderer.states.setValue("fillColor", new Color([1, 1, 1]));
+      this._renderer.states.setValue('fillColor', new Color([1, 1, 1]));
     }
     return this;
   };
@@ -3349,14 +3803,14 @@ function material(p5, fn) {
    * @chainable
    */
   fn.emissiveMaterial = function (v1, v2, v3, a) {
-    this._assert3d("emissiveMaterial");
+    this._assert3d('emissiveMaterial');
     // p5._validateParameters('emissiveMaterial', arguments);
 
     const color = fn.color.apply(this, arguments);
-    this._renderer.states.setValue("curEmissiveColor", color._array);
-    this._renderer.states.setValue("_useEmissiveMaterial", true);
-    this._renderer.states.setValue("_useNormalMaterial", false);
-    this._renderer.states.setValue("enableLighting", true);
+    this._renderer.states.setValue('curEmissiveColor', color._array);
+    this._renderer.states.setValue('_useEmissiveMaterial', true);
+    this._renderer.states.setValue('_useNormalMaterial', false);
+    this._renderer.states.setValue('enableLighting', true);
 
     return this;
   };
@@ -3589,14 +4043,14 @@ function material(p5, fn) {
    * @chainable
    */
   fn.specularMaterial = function (v1, v2, v3, alpha) {
-    this._assert3d("specularMaterial");
+    this._assert3d('specularMaterial');
     // p5._validateParameters('specularMaterial', arguments);
 
     const color = fn.color.apply(this, arguments);
-    this._renderer.states.setValue("curSpecularColor", color._array);
-    this._renderer.states.setValue("_useSpecularMaterial", true);
-    this._renderer.states.setValue("_useNormalMaterial", false);
-    this._renderer.states.setValue("enableLighting", true);
+    this._renderer.states.setValue('curSpecularColor', color._array);
+    this._renderer.states.setValue('_useSpecularMaterial', true);
+    this._renderer.states.setValue('_useNormalMaterial', false);
+    this._renderer.states.setValue('enableLighting', true);
 
     return this;
   };
@@ -3658,7 +4112,7 @@ function material(p5, fn) {
    * }
    */
   fn.shininess = function (shine) {
-    this._assert3d("shininess");
+    this._assert3d('shininess');
     // p5._validateParameters('shininess', arguments);
 
     this._renderer.shininess(shine);
@@ -3767,7 +4221,7 @@ function material(p5, fn) {
    * }
    */
   fn.metalness = function (metallic) {
-    this._assert3d("metalness");
+    this._assert3d('metalness');
 
     this._renderer.metalness(metallic);
 
@@ -3776,45 +4230,76 @@ function material(p5, fn) {
 
   Renderer3D.prototype.shader = function (s) {
     // Always set the shader as a fill shader
-    this.states.setValue("userFillShader", s);
-    this.states.setValue("_useNormalMaterial", false);
+    this.states.setValue('userFillShader', s);
+    this.states.setValue('_useNormalMaterial', false);
     s.ensureCompiledOnContext(this);
     s.setDefaultUniforms();
   };
 
   Renderer3D.prototype.strokeShader = function (s) {
-    this.states.setValue("userStrokeShader", s);
+    this.states.setValue('userStrokeShader', s);
     s.ensureCompiledOnContext(this);
     s.setDefaultUniforms();
   };
 
   Renderer3D.prototype.imageShader = function (s) {
-    this.states.setValue("userImageShader", s);
+    this.states.setValue('userImageShader', s);
     s.ensureCompiledOnContext(this);
     s.setDefaultUniforms();
   };
 
   Renderer3D.prototype.resetShader = function () {
-    this.states.setValue("userFillShader", null);
-    this.states.setValue("userStrokeShader", null);
-    this.states.setValue("userImageShader", null);
+    this.states.setValue('userFillShader', null);
+    this.states.setValue('userStrokeShader', null);
+    this.states.setValue('userImageShader', null);
   };
 
   Renderer3D.prototype.texture = function (tex) {
-    this.states.setValue("drawMode", constants.TEXTURE);
-    this.states.setValue("_useNormalMaterial", false);
-    this.states.setValue("_tex", tex);
-    this.states.setValue("fillColor", new Color([1, 1, 1]));
+    this.states.setValue('drawMode', constants.TEXTURE);
+    this.states.setValue('_useNormalMaterial', false);
+    this.states.setValue('_tex', tex);
+    this.states.setValue('fillColor', new Color([1, 1, 1]));
+  };
+
+  // normal maps and bump maps share one texture slot and differ only by the mode
+  // flag the shader reads, so only one can be active at a time and setting either
+  // replaces the other. null clears the map, back to the plain shader variant.
+  Renderer3D.prototype.normalTexture = function (tex, scale = 1) {
+    this.states.setValue('_normalTex', tex || null);
+    this.states.setValue('_normalScale', tex ? scale : 1);
+    this.states.setValue('_normalMapMode', 0);
+  };
+
+  Renderer3D.prototype.bumpTexture = function (tex, scale = 1) {
+    this.states.setValue('_normalTex', tex || null);
+    this.states.setValue('_normalScale', tex ? scale : 1);
+    this.states.setValue('_normalMapMode', tex ? 1 : 0);
+  };
+
+  // the remaining map setters mirror _applyPartState: setting a map also turns
+  // on the material term it modulates, so the map has something to affect.
+  Renderer3D.prototype.specularTexture = function (tex) {
+    this.states.setValue('_specularTex', tex || null);
+    if (tex) this.states.setValue('_useSpecularMaterial', true);
+  };
+
+  Renderer3D.prototype.ambientTexture = function (tex) {
+    this.states.setValue('_ambientTex', tex || null);
+    if (tex) this.states.setValue('_hasSetAmbient', true);
+  };
+
+  Renderer3D.prototype.shininessTexture = function (tex) {
+    this.states.setValue('_shininessTex', tex || null);
   };
 
   Renderer3D.prototype.normalMaterial = function (...args) {
-    this.states.setValue("drawMode", constants.FILL);
-    this.states.setValue("_useSpecularMaterial", false);
-    this.states.setValue("_useEmissiveMaterial", false);
-    this.states.setValue("_useNormalMaterial", true);
-    this.states.setValue("curFillColor", [1, 1, 1, 1]);
-    this.states.setValue("fillColor", new Color([1, 1, 1]));
-    this.states.setValue("strokeColor", null);
+    this.states.setValue('drawMode', constants.FILL);
+    this.states.setValue('_useSpecularMaterial', false);
+    this.states.setValue('_useEmissiveMaterial', false);
+    this.states.setValue('_useNormalMaterial', true);
+    this.states.setValue('curFillColor', [1, 1, 1, 1]);
+    this.states.setValue('fillColor', new Color([1, 1, 1]));
+    this.states.setValue('strokeColor', null);
   };
 
   // Renderer3D.prototype.ambientMaterial = function(v1, v2, v3) {
@@ -3830,17 +4315,17 @@ function material(p5, fn) {
     if (shine < 1) {
       shine = 1;
     }
-    this.states.setValue("_useShininess", shine);
+    this.states.setValue('_useShininess', shine);
   };
 
   Renderer3D.prototype.metalness = function (metallic) {
     const metalMix = 1 - Math.exp(-metallic / 100);
-    this.states.setValue("_useMetalness", metalMix);
+    this.states.setValue('_useMetalness', metalMix);
   };
 }
 
 export default material;
 
-if (typeof p5 !== "undefined") {
+if (typeof p5 !== 'undefined') {
   loading(p5, p5.prototype);
 }

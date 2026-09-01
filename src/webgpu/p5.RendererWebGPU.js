@@ -9,15 +9,27 @@ import { getStrokeDefs } from '../webgl/enums';
 import { DataType, INSTANCE_ID_VARYING_NAME } from '../strands/ir_types.js';
 
 import { colorVertexShader, colorFragmentShader } from './shaders/color';
-import { lineVertexShader, lineFragmentShader} from './shaders/line';
-import { materialVertexShader, materialFragmentShader } from './shaders/material';
+import { lineVertexShader, lineFragmentShader } from './shaders/line';
+import {
+  materialVertexShader,
+  materialFragmentShader
+} from './shaders/material';
 import { fontVertexShader, fontFragmentShader } from './shaders/font';
 import { blitVertexShader, blitFragmentShader } from './shaders/blit';
 import { wgslBackend } from './strands_wgslBackend';
 
-import { baseFilterVertexShader, baseFilterFragmentShader } from './shaders/filters/base';
-import { imageLightVertexShader, imageLightDiffusedFragmentShader, imageLightSpecularFragmentShader } from './shaders/imageLight';
+import {
+  baseFilterVertexShader,
+  baseFilterFragmentShader
+} from './shaders/filters/base';
+import {
+  imageLightVertexShader,
+  imageLightDiffusedFragmentShader,
+  imageLightSpecularFragmentShader
+} from './shaders/imageLight';
 import { baseComputeShader } from './shaders/compute';
+
+import { warnExperimental } from '../core/experimental';
 
 const FRAME_STATE = {
   PENDING: 0,
@@ -30,23 +42,36 @@ function rendererWebGPU(p5, fn) {
 
   // RendererWebGPU depends on these other classes being set up prior,
   // as it is optimized for being in a standalone build, not core
-  const {
-    Renderer3D,
-    Shader,
-    Texture,
-    MipmapTexture,
-    Image,
-    Camera,
-    RGBA,
-  } = p5;
+  const { Renderer3D, Shader, Texture, MipmapTexture, Image, Camera, RGBA } =
+    p5;
+
+  // Maps a WGSL storage element type to the typed array that reads it back
+  // correctly. Used to check what a buffer was created with against what the
+  // shader declares.
+  const STORAGE_ARRAY_TYPES = {
+    f32: Float32Array,
+    u32: Uint32Array,
+    i32: Int32Array
+  };
 
   class StorageBuffer {
-    constructor(buffer, size, renderer, schema = null) {
+    constructor(
+      buffer,
+      size,
+      renderer,
+      schema = null,
+      arrayType = Float32Array
+    ) {
       this._isStorageBuffer = true;
       this.buffer = buffer;
       this.size = size;
       this._renderer = renderer;
       this._schema = schema;
+      // Struct buffers are always packed as floats
+      this._arrayType = schema !== null ? Float32Array : arrayType;
+      // The element type this buffer has already been checked against, so
+      // the check is skipped on every later frame
+      this._checkedArrayType = undefined;
     }
 
     /**
@@ -58,7 +83,6 @@ function rendererWebGPU(p5, fn) {
      * let particles;
      * let computeShader;
      * let displayShader;
-     * let instance;
      * const numParticles = 100;
      *
      * async function setup() {
@@ -66,7 +90,6 @@ function rendererWebGPU(p5, fn) {
      *   particles = createStorage(makeParticles(width / 2, height / 2));
      *   computeShader = buildComputeShader(simulate);
      *   displayShader = buildMaterialShader(display);
-     *   instance = buildGeometry(drawParticle);
      *   describe('100 orange particles shooting outward.');
      * }
      *
@@ -83,10 +106,6 @@ function rendererWebGPU(p5, fn) {
      *   return data;
      * }
      *
-     * function drawParticle() {
-     *   sphere(2);
-     * }
-     *
      * function simulate() {
      *   let data = uniformStorage(particles);
      *   let idx = index.x;
@@ -96,7 +115,7 @@ function rendererWebGPU(p5, fn) {
      * function display() {
      *   let data = uniformStorage(particles);
      *   worldInputs.begin();
-     *   let pos = data[instanceID()].position;
+     *   let pos = data[instanceIndex].position;
      *   worldInputs.position.xy += pos - [width / 2, height / 2];
      *   worldInputs.end();
      * }
@@ -110,7 +129,7 @@ function rendererWebGPU(p5, fn) {
      *   noStroke();
      *   fill(255, 200, 50);
      *   shader(displayShader);
-     *   model(instance, numParticles);
+     *   instances(numParticles).sphere(2);
      * }
      * ```
      *
@@ -119,7 +138,7 @@ function rendererWebGPU(p5, fn) {
      * @beta
      * @webgpu
      * @webgpuOnly
-     * @param {Number[]|Float32Array|Object[]} data The new data to write into the buffer.
+     * @param {Number[]|Float32Array|Uint32Array|Int32Array|Object[]} data The new data to write into the buffer.
      */
     update(data) {
       const device = this._renderer.device;
@@ -141,8 +160,8 @@ function rendererWebGPU(p5, fn) {
         if (newSchema.structBody !== this._schema.structBody) {
           throw new Error(
             `update() data structure doesn't match the original.\n` +
-            `  Expected: ${this._schema.structBody}\n` +
-            `  Got:      ${newSchema.structBody}`
+              `  Expected: ${this._schema.structBody}\n` +
+              `  Got:      ${newSchema.structBody}`
           );
         }
 
@@ -154,24 +173,25 @@ function rendererWebGPU(p5, fn) {
         }
         device.queue.writeBuffer(this.buffer, 0, packed);
       } else {
-        // Buffer was created with a float array
-        let floatData;
-        if (data instanceof Float32Array) {
-          floatData = data;
+        // Buffer was created with a number array
+        const ArrayType = this._arrayType;
+        let typedData;
+        if (data instanceof ArrayType) {
+          typedData = data;
         } else if (Array.isArray(data)) {
-          floatData = new Float32Array(data);
+          typedData = new ArrayType(data);
         } else {
           throw new Error(
-            'update() expects a Float32Array or array of numbers for this buffer'
+            `update() expects a ${ArrayType.name} or array of numbers for this buffer`
           );
         }
 
-        if (floatData.byteLength > this.size) {
+        if (typedData.byteLength > this.size) {
           throw new Error(
-            `update() data (${floatData.byteLength} bytes) exceeds buffer size (${this.size} bytes)`
+            `update() data (${typedData.byteLength} bytes) exceeds buffer size (${this.size} bytes)`
           );
         }
-        device.queue.writeBuffer(this.buffer, 0, floatData);
+        device.queue.writeBuffer(this.buffer, 0, typedData);
       }
     }
 
@@ -179,9 +199,10 @@ function rendererWebGPU(p5, fn) {
      * Reads data from a storage buffer back into JavaScript.
      *
      * Copies data from the GPU to the CPU using a temporary buffer,
-     * so it must be awaited. Returns a `Float32Array` for number
-     * buffers, or an array of plain objects for struct buffers.
-     * 
+     * so it must be awaited. Returns a typed array (such as `Float32Array` or
+     * `Uint32Array`) for number buffers, or an array of plain objects for
+     * struct buffers.
+     *
      * Note: This is a GPU -> CPU read, so calling it often (like every frame)
      * can be slow.
      *
@@ -211,12 +232,47 @@ function rendererWebGPU(p5, fn) {
      * }
      * ```
      *
+     * While p5.strands is still growing, there may be WGSL features it doesn't
+     * cover yet. You can still reach for them by writing WGSL directly, and the
+     * buffer will read back as the right kind of typed array. Atomics are one
+     * example: WGSL only allows them on `u32` and `i32`, so a buffer used as
+     * `array<atomic<u32>>` should be created with a `Uint32Array`.
+     *
+     * ```js example
+     * let data;
+     * let computeShader;
+     *
+     * async function setup() {
+     *   await createCanvas(100, 100, WEBGPU);
+     *
+     *   data = createStorage(new Uint32Array([10, 20, 30, 40]));
+     *   computeShader = buildComputeShader({
+     *     computeDeclarations: `
+     *       @group(0) @binding(1) var<storage, read_write> counts: array<atomic<u32>>;
+     *     `,
+     *     'void iteration': `(index: vec3<i32>) {
+     *       let idx = index.x;
+     *       atomicAdd(&counts[idx], 5u);
+     *     }`
+     *   });
+     *   computeShader.setUniform('counts', data);
+     *   compute(computeShader, 4);
+     *
+     *   let result = await data.read();
+     *   // result is Uint32Array [15, 25, 35, 45]
+     *   for (let i = 0; i < result.length; i++) {
+     *     print(result[i]);
+     *   }
+     *   describe('Prints the values 15, 25, 35, 45 to the console.');
+     * }
+     * ```
+     *
      * @method read
      * @for p5.StorageBuffer
      * @beta
      * @webgpu
      * @webgpuOnly
-     * @returns {Promise<Float32Array|Object[]>}
+     * @returns {Promise<Float32Array|Uint32Array|Int32Array|Object[]>}
      */
     async read() {
       const device = this._renderer.device;
@@ -224,19 +280,28 @@ function rendererWebGPU(p5, fn) {
 
       const stagingBuffer = device.createBuffer({
         size: this.size,
-        usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ,
+        usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ
       });
 
       const commandEncoder = device.createCommandEncoder();
-      commandEncoder.copyBufferToBuffer(this.buffer, 0, stagingBuffer, 0, this.size);
+      commandEncoder.copyBufferToBuffer(
+        this.buffer,
+        0,
+        stagingBuffer,
+        0,
+        this.size
+      );
       device.queue.submit([commandEncoder.finish()]);
 
       await stagingBuffer.mapAsync(GPUMapMode.READ, 0, this.size);
       const mappedRange = stagingBuffer.getMappedRange(0, this.size);
 
       // Copy before unmapping because mapped memory becomes invalid after unmap
-      const rawCopy = new Float32Array(mappedRange.byteLength / 4);
-      rawCopy.set(new Float32Array(mappedRange));
+      const ArrayType = this._arrayType;
+      const rawCopy = new ArrayType(
+        mappedRange.byteLength / ArrayType.BYTES_PER_ELEMENT
+      );
+      rawCopy.set(new ArrayType(mappedRange));
 
       stagingBuffer.unmap();
       stagingBuffer.destroy();
@@ -316,7 +381,11 @@ function rendererWebGPU(p5, fn) {
 
       if (this._schema !== null) {
         // buffer was created with an array of structs
-        if (typeof value !== 'object' || value === null || Array.isArray(value)) {
+        if (
+          typeof value !== 'object' ||
+          value === null ||
+          Array.isArray(value)
+        ) {
           throw new Error(
             'set() expects a plain object matching the original struct format for this buffer'
           );
@@ -328,20 +397,24 @@ function rendererWebGPU(p5, fn) {
         if (byteOffset + stride > this.size) {
           throw new Error(
             `set() index ${index} is out of bounds for this buffer ` +
-            `(buffer holds ${Math.floor(this.size / stride)} elements)`
+              `(buffer holds ${Math.floor(this.size / stride)} elements)`
           );
         }
 
         // pack just this one element using the same logic as update()
         const packed = this._renderer._packStructArray([value], this._schema);
         // use packed.buffer (ArrayBuffer) so the size arg is always in bytes
-        device.queue.writeBuffer(this.buffer, byteOffset, packed.buffer, 0, stride);
+        device.queue.writeBuffer(
+          this.buffer,
+          byteOffset,
+          packed.buffer,
+          0,
+          stride
+        );
       } else {
         // buffer was created with a float array
         if (typeof value !== 'number') {
-          throw new Error(
-            'set() expects a number for this float buffer'
-          );
+          throw new Error('set() expects a number for this float buffer');
         }
 
         const byteOffset = index * 4;
@@ -349,11 +422,15 @@ function rendererWebGPU(p5, fn) {
         if (byteOffset + 4 > this.size) {
           throw new Error(
             `set() index ${index} is out of bounds for this buffer ` +
-            `(buffer holds ${Math.floor(this.size / 4)} floats)`
+              `(buffer holds ${Math.floor(this.size / 4)} floats)`
           );
         }
 
-        device.queue.writeBuffer(this.buffer, byteOffset, new Float32Array([value]));
+        device.queue.writeBuffer(
+          this.buffer,
+          byteOffset,
+          new Float32Array([value])
+        );
       }
     }
   }
@@ -374,7 +451,9 @@ function rendererWebGPU(p5, fn) {
 
   class RendererWebGPU extends Renderer3D {
     constructor(pInst, w, h, isMainCanvas, elt) {
-      super(pInst, w, h, isMainCanvas, elt)
+      super(pInst, w, h, isMainCanvas, elt);
+
+      warnExperimental(p5, pInst, 'webgpu');
 
       // Used to group draws into one big render pass
       this.activeRenderPass = null;
@@ -449,18 +528,23 @@ function rendererWebGPU(p5, fn) {
     _setAttributeDefaults(pInst) {
       const defaults = {
         forceFallbackAdapter: false,
-        powerPreference: 'high-performance',
+        powerPreference: 'high-performance'
       };
       if (pInst._webgpuAttributes === null) {
         pInst._webgpuAttributes = defaults;
       } else {
-        pInst._webgpuAttributes = Object.assign(defaults, pInst._webgpuAttributes);
+        pInst._webgpuAttributes = Object.assign(
+          defaults,
+          pInst._webgpuAttributes
+        );
       }
       return;
     }
 
     async _initContext() {
-      this.adapter = await navigator.gpu?.requestAdapter(this._webgpuAttributes);
+      this.adapter = await navigator.gpu?.requestAdapter(
+        this._webgpuAttributes
+      );
       this.device = await this.adapter?.requestDevice({
         // Todo: check support
         requiredFeatures: ['depth32float-stencil8']
@@ -475,7 +559,7 @@ function rendererWebGPU(p5, fn) {
         device: this.device,
         format: this.presentationFormat,
         usage: GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.COPY_SRC,
-        alphaMode: 'premultiplied',
+        alphaMode: 'premultiplied'
       });
 
       // TODO disablable stencil
@@ -486,16 +570,16 @@ function rendererWebGPU(p5, fn) {
     }
 
     async _setAttributes(key, value) {
-      if (typeof this._pInst._webgpuAttributes === "undefined") {
+      if (typeof this._pInst._webgpuAttributes === 'undefined') {
         console.log(
-          "You are trying to use setAttributes on a p5.Graphics object " +
-          "that does not use a WebGPU renderer."
+          'You are trying to use setAttributes on a p5.Graphics object ' +
+            'that does not use a WebGPU renderer.'
         );
         return;
       }
       let unchanged = true;
 
-      if (typeof value !== "undefined") {
+      if (typeof value !== 'undefined') {
         //first time modifying the attributes
         if (this._pInst._webgpuAttributes === null) {
           this._pInst._webgpuAttributes = {};
@@ -519,10 +603,8 @@ function rendererWebGPU(p5, fn) {
 
       if (!this._pInst._setupDone) {
         if (this.geometryBufferCache.numCached() > 0) {
-          p5._friendlyError(
-            "Sorry, Could not set the attributes, you need to call setAttributes() " +
-            "before calling the other drawing methods in setup()"
-          );
+          p5.FES
+            .log`Sorry, Could not set the attributes, you need to call setAttributes() before calling the other drawing methods in setup()`();
           return;
         }
       }
@@ -546,10 +628,10 @@ function rendererWebGPU(p5, fn) {
         size: {
           width: Math.ceil(this.width * this._pixelDensity),
           height: Math.ceil(this.height * this._pixelDensity),
-          depthOrArrayLayers: 1,
+          depthOrArrayLayers: 1
         },
         format: this.depthFormat,
-        usage: GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.COPY_SRC,
+        usage: GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.COPY_SRC
       });
       this.depthTextureView = this.depthTexture.createView();
 
@@ -575,38 +657,39 @@ function rendererWebGPU(p5, fn) {
 
       const colorAttachment = {
         view: activeFramebuffer
-          ? (activeFramebuffer.aaColorTexture
-              ? activeFramebuffer.aaColorTextureView
-              : activeFramebuffer.colorTextureView)
+          ? activeFramebuffer.aaColorTexture
+            ? activeFramebuffer.aaColorTextureView
+            : activeFramebuffer.colorTextureView
           : this._getCanvasColorTextureView(),
-        loadOp: "load",
-        storeOp: "store",
+        loadOp: 'load',
+        storeOp: 'store',
         // If using multisampled texture, resolve to non-multisampled texture
-        resolveTarget: activeFramebuffer && activeFramebuffer.aaColorTexture
-          ? activeFramebuffer.colorTextureView
-          : undefined,
+        resolveTarget:
+          activeFramebuffer && activeFramebuffer.aaColorTexture
+            ? activeFramebuffer.colorTextureView
+            : undefined
       };
 
       // Use framebuffer depth texture if active, otherwise use canvas depth texture
       const depthTextureView = activeFramebuffer
-        ? (activeFramebuffer.aaDepthTexture
-            ? activeFramebuffer.aaDepthTextureView
-            : activeFramebuffer.depthTextureView)
+        ? activeFramebuffer.aaDepthTexture
+          ? activeFramebuffer.aaDepthTextureView
+          : activeFramebuffer.depthTextureView
         : this.depthTextureView;
       const renderPassDescriptor = {
         colorAttachments: [colorAttachment],
         depthStencilAttachment: depthTextureView
           ? {
               view: depthTextureView,
-              depthLoadOp: "load",
-              depthStoreOp: "store",
+              depthLoadOp: 'load',
+              depthStoreOp: 'store',
               depthClearValue: 1.0,
-              stencilLoadOp: "load",
-              stencilStoreOp: "store",
+              stencilLoadOp: 'load',
+              stencilStoreOp: 'store',
               depthReadOnly: false,
-              stencilReadOnly: false,
+              stencilReadOnly: false
             }
-          : undefined,
+          : undefined
       };
       const commandEncoder = this.device.createCommandEncoder();
       const passEncoder = commandEncoder.beginRenderPass(renderPassDescriptor);
@@ -644,7 +727,10 @@ function rendererWebGPU(p5, fn) {
       // Note: a mid-draw-loop transition from UNPROMOTED back to PROMOTED
       // (i.e. calling background() some frames but not others) will still
       // lose intermediate UNPROMOTED frame content.
-      if (this._frameState !== FRAME_STATE.PROMOTED && !this.activeFramebuffer()) {
+      if (
+        this._frameState !== FRAME_STATE.PROMOTED &&
+        !this.activeFramebuffer()
+      ) {
         if (this._pInst.frameCount > 0) {
           this._frameState = FRAME_STATE.UNPROMOTED;
         } else {
@@ -662,39 +748,40 @@ function rendererWebGPU(p5, fn) {
 
       const colorAttachment = {
         view: activeFramebuffer
-          ? (activeFramebuffer.aaColorTexture
-              ? activeFramebuffer.aaColorTextureView
-              : activeFramebuffer.colorTextureView)
+          ? activeFramebuffer.aaColorTexture
+            ? activeFramebuffer.aaColorTextureView
+            : activeFramebuffer.colorTextureView
           : this._getCanvasColorTextureView(),
         clearValue: { r: _r * _a, g: _g * _a, b: _b * _a, a: _a },
         loadOp: 'clear',
         storeOp: 'store',
         // If using multisampled texture, resolve to non-multisampled texture
-        resolveTarget: activeFramebuffer && activeFramebuffer.aaColorTexture
-          ? activeFramebuffer.colorTextureView
-          : undefined,
+        resolveTarget:
+          activeFramebuffer && activeFramebuffer.aaColorTexture
+            ? activeFramebuffer.colorTextureView
+            : undefined
       };
 
       // Use framebuffer depth texture if active, otherwise use canvas depth texture
       const depthTextureView = activeFramebuffer
-        ? (activeFramebuffer.aaDepthTexture
-            ? activeFramebuffer.aaDepthTextureView
-            : activeFramebuffer.depthTextureView)
+        ? activeFramebuffer.aaDepthTexture
+          ? activeFramebuffer.aaDepthTextureView
+          : activeFramebuffer.depthTextureView
         : this.depthTextureView;
       const depthAttachment = depthTextureView
         ? {
-          view: depthTextureView,
-          depthClearValue: 1.0,
-          depthLoadOp: 'clear',
-          depthStoreOp: 'store',
-          stencilLoadOp: 'load',
-          stencilStoreOp: 'store',
-        }
+            view: depthTextureView,
+            depthClearValue: 1.0,
+            depthLoadOp: 'clear',
+            depthStoreOp: 'store',
+            stencilLoadOp: 'load',
+            stencilStoreOp: 'store'
+          }
         : undefined;
 
       const renderPassDescriptor = {
         colorAttachments: [colorAttachment],
-        ...(depthAttachment ? { depthStencilAttachment: depthAttachment } : {}),
+        ...(depthAttachment ? { depthStencilAttachment: depthAttachment } : {})
       };
 
       const passEncoder = commandEncoder.beginRenderPass(renderPassDescriptor);
@@ -718,9 +805,9 @@ function rendererWebGPU(p5, fn) {
 
       // Use framebuffer depth texture if active, otherwise use canvas depth texture
       const depthTextureView = activeFramebuffer
-        ? (activeFramebuffer.aaDepthTexture
-            ? activeFramebuffer.aaDepthTextureView
-            : activeFramebuffer.depthTextureView)
+        ? activeFramebuffer.aaDepthTexture
+          ? activeFramebuffer.aaDepthTextureView
+          : activeFramebuffer.depthTextureView
         : this.depthTextureView;
 
       if (!depthTextureView) {
@@ -734,12 +821,12 @@ function rendererWebGPU(p5, fn) {
         depthLoadOp: 'clear',
         depthStoreOp: 'store',
         stencilLoadOp: 'load',
-        stencilStoreOp: 'store',
+        stencilStoreOp: 'store'
       };
 
       const renderPassDescriptor = {
         colorAttachments: [], // No color attachments, we're only clearing depth
-        depthStencilAttachment: depthAttachment,
+        depthStencilAttachment: depthAttachment
       };
 
       const passEncoder = commandEncoder.beginRenderPass(renderPassDescriptor);
@@ -777,7 +864,11 @@ function rendererWebGPU(p5, fn) {
         const typed = this._normalizeBufferData(raw, Float32Array);
 
         // Get pooled buffer (may reuse existing or create new)
-        const pooledBufferInfo = this._getVertexBufferFromPool(geometry, dst, typed.byteLength);
+        const pooledBufferInfo = this._getVertexBufferFromPool(
+          geometry,
+          dst,
+          typed.byteLength
+        );
 
         // Create a copy of the data to avoid conflicts when geometry arrays are reset
         const dataCopy = new typed.constructor(typed);
@@ -813,7 +904,7 @@ function rendererWebGPU(p5, fn) {
       const buffer = device.createBuffer({
         size: Math.ceil((indices.length * indexType.BYTES_PER_ELEMENT) / 4) * 4,
         usage: GPUBufferUsage.INDEX | GPUBufferUsage.COPY_DST,
-        mappedAtCreation: true,
+        mappedAtCreation: true
       });
 
       // Write index data to buffer
@@ -826,7 +917,7 @@ function rendererWebGPU(p5, fn) {
     }
 
     _freeBuffers(buffers) {
-      const destroyIfExists = (buf) => {
+      const destroyIfExists = buf => {
         if (buf && buf.destroy) {
           buf.destroy();
         }
@@ -834,7 +925,7 @@ function rendererWebGPU(p5, fn) {
 
       destroyIfExists(buffers.indexBuffer);
 
-      const freeDefs = (defs) => {
+      const freeDefs = defs => {
         for (const def of defs) {
           destroyIfExists(buffers[def.dst]);
           buffers[def.dst] = null;
@@ -856,17 +947,21 @@ function rendererWebGPU(p5, fn) {
     _shaderOptions({ mode, compute, workgroupSize }) {
       if (compute) return { compute: true, workgroupSize };
       const activeFramebuffer = this.activeFramebuffer();
-      const format = activeFramebuffer ?
-        this._getWebGPUColorFormat(activeFramebuffer) :
-        this.presentationFormat;
+      const format = activeFramebuffer
+        ? this._getWebGPUColorFormat(activeFramebuffer)
+        : this.presentationFormat;
 
-      const requestedSampleCount = activeFramebuffer ?
-        (activeFramebuffer.antialias ? activeFramebuffer.antialiasSamples : 1) :
-        1;  // No MSAA needed when blitting already-antialiased textures to canvas
+      const requestedSampleCount = activeFramebuffer
+        ? activeFramebuffer.antialias
+          ? activeFramebuffer.antialiasSamples
+          : 1
+        : 1; // No MSAA needed when blitting already-antialiased textures to canvas
       const sampleCount = this._getValidSampleCount(requestedSampleCount);
 
       const depthFormat = activeFramebuffer
-        ? (activeFramebuffer.useDepth ? this._getWebGPUDepthFormat(activeFramebuffer) : undefined)
+        ? activeFramebuffer.useDepth
+          ? this._getWebGPUDepthFormat(activeFramebuffer)
+          : undefined
         : this.depthFormat;
 
       const drawTarget = this.drawTarget();
@@ -874,14 +969,17 @@ function rendererWebGPU(p5, fn) {
       const clipApplied = drawTarget._isClipApplied;
 
       return {
-        topology: mode === constants.TRIANGLE_STRIP ? 'triangle-strip' : 'triangle-list',
+        topology:
+          mode === constants.TRIANGLE_STRIP
+            ? 'triangle-strip'
+            : 'triangle-list',
         blendMode: this.states.curBlendMode,
         sampleCount,
         format,
         depthFormat,
         clipping,
-        clipApplied,
-      }
+        clipApplied
+      };
     }
 
     _shaderOptionsDifferent(newOptions) {
@@ -897,7 +995,9 @@ function rendererWebGPU(p5, fn) {
 
       if (shader.shaderType === 'compute') {
         // Compute shader initialization
-        shader.computeModule = device.createShaderModule({ code: shader.computeSrc() });
+        shader.computeModule = device.createShaderModule({
+          code: shader.computeSrc()
+        });
         shader._computePipelineCache = null;
         shader._workgroupSize = null;
 
@@ -924,7 +1024,15 @@ function rendererWebGPU(p5, fn) {
       shader.fragModule = device.createShaderModule({ code: shader.fragSrc() });
 
       shader._pipelineCache = new Map();
-      shader.getPipeline = ({ topology, blendMode, sampleCount, format, depthFormat, clipping, clipApplied }) => {
+      shader.getPipeline = ({
+        topology,
+        blendMode,
+        sampleCount,
+        format,
+        depthFormat,
+        clipping,
+        clipApplied
+      }) => {
         const key = `${topology}_${blendMode}_${sampleCount}_${format}_${depthFormat}_${clipping}_${clipApplied}`;
         if (!shader._pipelineCache.has(key)) {
           const pipeline = device.createRenderPipeline({
@@ -932,44 +1040,56 @@ function rendererWebGPU(p5, fn) {
             vertex: {
               module: shader.vertModule,
               entryPoint: 'main',
-              buffers: this._getVertexLayout(shader),
+              buffers: this._getVertexLayout(shader)
             },
             fragment: {
               module: shader.fragModule,
               entryPoint: 'main',
-              targets: [{
-                format,
-                blend: this._getBlendState(blendMode),
-              }],
+              targets: [
+                {
+                  format,
+                  blend: this._getBlendState(blendMode)
+                }
+              ]
             },
             primitive: { topology },
             multisample: { count: sampleCount },
-            ...(depthFormat ? {
-              depthStencil: {
-                format: depthFormat,
-                depthWriteEnabled: !clipping,
-                depthCompare: 'less-equal',
-                stencilFront: {
-                  compare: clipping ? 'always' : (clipApplied ? 'not-equal' : 'always'),
-                  failOp: 'keep',
-                  depthFailOp: 'keep',
-                  passOp: clipping ? 'replace' : 'keep',
-                },
-                stencilBack: {
-                  compare: clipping ? 'always' : (clipApplied ? 'not-equal' : 'always'),
-                  failOp: 'keep',
-                  depthFailOp: 'keep',
-                  passOp: clipping ? 'replace' : 'keep',
-                },
-                stencilReadMask: 0xFF,
-                stencilWriteMask: clipping ? 0xFF : 0x00,
-              },
-            } : {}),
+            ...(depthFormat
+              ? {
+                  depthStencil: {
+                    format: depthFormat,
+                    depthWriteEnabled: !clipping,
+                    depthCompare: 'less-equal',
+                    stencilFront: {
+                      compare: clipping
+                        ? 'always'
+                        : clipApplied
+                          ? 'not-equal'
+                          : 'always',
+                      failOp: 'keep',
+                      depthFailOp: 'keep',
+                      passOp: clipping ? 'replace' : 'keep'
+                    },
+                    stencilBack: {
+                      compare: clipping
+                        ? 'always'
+                        : clipApplied
+                          ? 'not-equal'
+                          : 'always',
+                      failOp: 'keep',
+                      depthFailOp: 'keep',
+                      passOp: clipping ? 'replace' : 'keep'
+                    },
+                    stencilReadMask: 0xff,
+                    stencilWriteMask: clipping ? 0xff : 0x00
+                  }
+                }
+              : {})
           });
           shader._pipelineCache.set(key, pipeline);
         }
         return shader._pipelineCache.get(key);
-      }
+      };
     }
 
     _finalizeShader(shader) {
@@ -983,10 +1103,7 @@ function rendererWebGPU(p5, fn) {
       for (const group of shader._uniformGroups) {
         // Calculate the size needed for this group's uniforms
         const groupUniforms = Object.values(group.uniforms);
-        const rawSize = Math.max(
-          0,
-          ...groupUniforms.map(u => u.offsetEnd)
-        );
+        const rawSize = Math.max(0, ...groupUniforms.map(u => u.offsetEnd));
         const alignedSize = Math.ceil(rawSize / 16) * 16;
 
         shader._uniformBufferGroups.push({
@@ -1003,7 +1120,7 @@ function rendererWebGPU(p5, fn) {
 
           dynamic: groupUniforms.some(u => u.name.startsWith('uModel')),
           buffersInUse: new Set(),
-          currentBuffer: null, // For caching
+          currentBuffer: null // For caching
         });
       }
 
@@ -1020,10 +1137,11 @@ function rendererWebGPU(p5, fn) {
         entries.push({
           bufferGroup,
           binding: bufferGroup.binding,
-          visibility: shader.shaderType === 'compute'
-            ? GPUShaderStage.COMPUTE
-            : GPUShaderStage.VERTEX | GPUShaderStage.FRAGMENT,
-          buffer: { type: 'uniform', hasDynamicOffset: bufferGroup.dynamic },
+          visibility:
+            shader.shaderType === 'compute'
+              ? GPUShaderStage.COMPUTE
+              : GPUShaderStage.VERTEX | GPUShaderStage.FRAGMENT,
+          buffer: { type: 'uniform', hasDynamicOffset: bufferGroup.dynamic }
         });
         structEntries.set(bufferGroup.group, entries);
       }
@@ -1043,13 +1161,13 @@ function rendererWebGPU(p5, fn) {
         entries.push({
           binding: sampler.binding,
           visibility: sampler.visibility,
-          sampler: sampler.type === 'sampler'
-            ? { type: 'filtering' }
-            : undefined,
-          texture: sampler.type === 'texture_2d<f32>'
-            ? { sampleType: 'float', viewDimension: '2d' }
-            : undefined,
-          uniform: sampler,
+          sampler:
+            sampler.type === 'sampler' ? { type: 'filtering' } : undefined,
+          texture:
+            sampler.type === 'texture_2d<f32>'
+              ? { sampleType: 'float', viewDimension: '2d' }
+              : undefined,
+          uniform: sampler
         });
 
         entries.sort((a, b) => a.binding - b.binding);
@@ -1065,9 +1183,10 @@ function rendererWebGPU(p5, fn) {
           binding: storage.binding,
           visibility: storage.visibility,
           buffer: {
-            type: storage.accessMode === 'read' ? 'read-only-storage' : 'storage'
+            type:
+              storage.accessMode === 'read' ? 'read-only-storage' : 'storage'
           },
-          storage: storage,
+          storage: storage
         });
 
         entries.sort((a, b) => a.binding - b.binding);
@@ -1090,7 +1209,7 @@ function rendererWebGPU(p5, fn) {
       // possibly cache bind groups if unchanged
       shader._lastDynamicBuffer = {};
       shader._pipelineLayout = this.device.createPipelineLayout({
-        bindGroupLayouts: shader._bindGroupLayouts,
+        bindGroupLayouts: shader._bindGroupLayouts
       });
       shader._compiled = true;
     }
@@ -1269,9 +1388,9 @@ function rendererWebGPU(p5, fn) {
             {
               shaderLocation: attr.location,
               offset: 0,
-              format,
-            },
-          ],
+              format
+            }
+          ]
         });
       }
       return layouts;
@@ -1287,8 +1406,9 @@ function rendererWebGPU(p5, fn) {
 
           // Get the vertex buffer info associated with this attribute
           const renderBuffer =
-            this.buffers[shader.shaderType].find(buf => buf.attr === attrName) ||
-            this.buffers.user.find(buf => buf.attr === attrName);
+            this.buffers[shader.shaderType].find(
+              buf => buf.attr === attrName
+            ) || this.buffers.user.find(buf => buf.attr === attrName);
           if (!renderBuffer) continue;
 
           buffers.push(renderBuffer);
@@ -1301,11 +1421,16 @@ function rendererWebGPU(p5, fn) {
 
     _getFormatFromSize(size) {
       switch (size) {
-        case 1: return 'float32';
-        case 2: return 'float32x2';
-        case 3: return 'float32x3';
-        case 4: return 'float32x4';
-        default: throw new Error(`Unsupported attribute size: ${size}`);
+        case 1:
+          return 'float32';
+        case 2:
+          return 'float32x2';
+        case 3:
+          return 'float32x3';
+        case 4:
+          return 'float32x4';
+        default:
+          throw new Error(`Unsupported attribute size: ${size}`);
       }
     }
 
@@ -1314,7 +1439,7 @@ function rendererWebGPU(p5, fn) {
     _updateViewport() {
       this._origViewport = {
         width: this.width,
-        height: this.height,
+        height: this.height
       };
       this._viewport = [0, 0, this.width, this.height];
     }
@@ -1354,9 +1479,9 @@ function rendererWebGPU(p5, fn) {
       const commandEncoder = this.device.createCommandEncoder();
 
       const depthTextureView = activeFramebuffer
-        ? (activeFramebuffer.aaDepthTexture
-            ? activeFramebuffer.aaDepthTextureView
-            : activeFramebuffer.depthTextureView)
+        ? activeFramebuffer.aaDepthTexture
+          ? activeFramebuffer.aaDepthTextureView
+          : activeFramebuffer.depthTextureView
         : this.depthTextureView;
 
       if (depthTextureView) {
@@ -1366,13 +1491,14 @@ function rendererWebGPU(p5, fn) {
           depthLoadOp: 'clear',
           depthStoreOp: 'store',
           stencilLoadOp: 'load',
-          stencilStoreOp: 'store',
+          stencilStoreOp: 'store'
         };
         const renderPassDescriptor = {
           colorAttachments: [],
-          depthStencilAttachment: depthAttachment,
+          depthStencilAttachment: depthAttachment
         };
-        const passEncoder = commandEncoder.beginRenderPass(renderPassDescriptor);
+        const passEncoder =
+          commandEncoder.beginRenderPass(renderPassDescriptor);
         passEncoder.end();
         this._pendingCommandEncoders.push(commandEncoder.finish());
         this._hasPendingDraws = true;
@@ -1405,8 +1531,10 @@ function rendererWebGPU(p5, fn) {
       const canvasTexture = this.drawingContext.getCurrentTexture();
 
       // Ensure mainFramebuffer matches canvas size
-      if (this.mainFramebuffer.width !== this.width ||
-          this.mainFramebuffer.height !== this.height) {
+      if (
+        this.mainFramebuffer.width !== this.width ||
+        this.mainFramebuffer.height !== this.height
+      ) {
         this.mainFramebuffer.resize(this.width, this.height);
       }
 
@@ -1418,17 +1546,17 @@ function rendererWebGPU(p5, fn) {
         {
           texture: canvasTexture,
           origin: { x: 0, y: 0, z: 0 },
-          mipLevel: 0,
+          mipLevel: 0
         },
         {
           texture: this.mainFramebuffer.colorTexture,
           origin: { x: 0, y: 0, z: 0 },
-          mipLevel: 0,
+          mipLevel: 0
         },
         {
           width: Math.ceil(this.width * this._pixelDensity),
           height: Math.ceil(this.height * this._pixelDensity),
-          depthOrArrayLayers: 1,
+          depthOrArrayLayers: 1
         }
       );
 
@@ -1437,17 +1565,17 @@ function rendererWebGPU(p5, fn) {
         {
           texture: this.depthTexture,
           origin: { x: 0, y: 0, z: 0 },
-          mipLevel: 0,
+          mipLevel: 0
         },
         {
           texture: this.mainFramebuffer.depthTexture,
           origin: { x: 0, y: 0, z: 0 },
-          mipLevel: 0,
+          mipLevel: 0
         },
         {
           width: Math.ceil(this.width * this._pixelDensity),
           height: Math.ceil(this.height * this._pixelDensity),
-          depthOrArrayLayers: 1,
+          depthOrArrayLayers: 1
         }
       );
 
@@ -1474,8 +1602,10 @@ function rendererWebGPU(p5, fn) {
       }
 
       // Ensure mainFramebuffer matches canvas size
-      if (this.mainFramebuffer.width !== this.width ||
-          this.mainFramebuffer.height !== this.height) {
+      if (
+        this.mainFramebuffer.width !== this.width ||
+        this.mainFramebuffer.height !== this.height
+      ) {
         this.mainFramebuffer.resize(this.width, this.height);
       }
 
@@ -1547,7 +1677,7 @@ function rendererWebGPU(p5, fn) {
       // No suitable buffer available, create a new one
       const newBuffer = this.device.createBuffer({
         size,
-        usage: GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST,
+        usage: GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST
       });
 
       const bufferInfo = {
@@ -1565,7 +1695,9 @@ function rendererWebGPU(p5, fn) {
       // Return buffers marked for return back to their pools for all registered geometries
       for (const geometry of this._geometriesWithPools) {
         if (geometry._vertexBuffersToReturn) {
-          for (const [dst, buffersToReturn] of Object.entries(geometry._vertexBuffersToReturn)) {
+          for (const [dst, buffersToReturn] of Object.entries(
+            geometry._vertexBuffersToReturn
+          )) {
             if (buffersToReturn.length > 0) {
               // Move all buffers from ToReturn back to pool
               const pool = geometry._vertexBufferPools[dst] || [];
@@ -1590,7 +1722,9 @@ function rendererWebGPU(p5, fn) {
     // Mark geometry buffers for return when geometry is reset/freed
     _markGeometryBuffersForReturn(geometry) {
       if (geometry._vertexBuffersInUse && geometry._vertexBuffersToReturn) {
-        for (const [dst, buffersInUse] of Object.entries(geometry._vertexBuffersInUse)) {
+        for (const [dst, buffersInUse] of Object.entries(
+          geometry._vertexBuffersInUse
+        )) {
           if (buffersInUse.length > 0) {
             // Move all buffers from InUse to ToReturn
             const buffersToReturn = geometry._vertexBuffersToReturn[dst] || [];
@@ -1619,7 +1753,7 @@ function rendererWebGPU(p5, fn) {
       // No buffers available, create a new one
       const newBuffer = this.device.createBuffer({
         size: bufferGroup.size,
-        usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
+        usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST
       });
       const newData = new Float32Array(bufferGroup.size / 4);
       const newDataView = new DataView(newData.buffer);
@@ -1638,7 +1772,8 @@ function rendererWebGPU(p5, fn) {
       let buffer;
       if (
         this.currentUniformBuffer &&
-        this.currentUniformBuffer.offset + bufferGroup.size < this.currentUniformBuffer.size
+        this.currentUniformBuffer.offset + bufferGroup.size <
+          this.currentUniformBuffer.size
       ) {
         // We can fit this next block of uniforms into the current active memory chunk
         buffer = this.currentUniformBuffer;
@@ -1661,13 +1796,13 @@ function rendererWebGPU(p5, fn) {
           buffer: this.device.createBuffer({
             size,
             usage: GPUBufferUsage.MAP_WRITE | GPUBufferUsage.COPY_SRC,
-            mappedAtCreation: true,
+            mappedAtCreation: true
           }),
           uniformBuffer: this.device.createBuffer({
             size,
-            usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
-          }),
-        }
+            usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST
+          })
+        };
 
         buffer.data = new Float32Array(buffer.buffer.getMappedRange());
         buffer.dataView = new DataView(buffer.data.buffer);
@@ -1721,7 +1856,7 @@ function rendererWebGPU(p5, fn) {
             bufferInfo.buffer.unmap();
             encoder.copyBufferToBuffer(
               bufferInfo.buffer,
-              bufferInfo.uniformBuffer,
+              bufferInfo.uniformBuffer
             );
           }
           commandsToSubmit.unshift(encoder.finish());
@@ -1732,19 +1867,19 @@ function rendererWebGPU(p5, fn) {
 
         for (const buf of this.activeUniformBuffers) {
           // buf.buffer = this.device.createBuffer({
-            // size: buf.size,
-            // usage: GPUBufferUsage.MAP_WRITE | GPUBufferUsage.COPY_SRC,
-            // mappedAtCreation: true,
+          // size: buf.size,
+          // usage: GPUBufferUsage.MAP_WRITE | GPUBufferUsage.COPY_SRC,
+          // mappedAtCreation: true,
           // });
           buf.offset = 0;
           buf.lastOffset = 0;
           // this.resettingUniformBuffers.push(
-            buf.buffer.mapAsync(GPUMapMode.WRITE).then(() => {
-              buf.data = new Float32Array(buf.buffer.getMappedRange());
-              buf.dataView = new DataView(buf.data.buffer);
-              this.uniformBufferPool.push(buf);
-              return buf;
-            })
+          buf.buffer.mapAsync(GPUMapMode.WRITE).then(() => {
+            buf.data = new Float32Array(buf.buffer.getMappedRange());
+            buf.dataView = new DataView(buf.data.buffer);
+            this.uniformBufferPool.push(buf);
+            return buf;
+          });
           // )
         }
         this.activeUniformBuffers = [];
@@ -1775,7 +1910,10 @@ function rendererWebGPU(p5, fn) {
       }
 
       // Resize canvas if dimensions changed
-      if (this._pixelReadCanvas.width !== width || this._pixelReadCanvas.height !== height) {
+      if (
+        this._pixelReadCanvas.width !== width ||
+        this._pixelReadCanvas.height !== height
+      ) {
         this._pixelReadCanvas.width = width;
         this._pixelReadCanvas.height = height;
       }
@@ -1841,7 +1979,10 @@ function rendererWebGPU(p5, fn) {
 
       if (this._frameState === FRAME_STATE.PROMOTED) {
         for (const { fbo, diff } of states) {
-          if (fbo !== this.mainFramebuffer || this._frameState !== FRAME_STATE.PROMOTED) {
+          if (
+            fbo !== this.mainFramebuffer ||
+            this._frameState !== FRAME_STATE.PROMOTED
+          ) {
             fbo.begin();
           }
           for (const key in diff) {
@@ -1860,7 +2001,10 @@ function rendererWebGPU(p5, fn) {
       if (!buffers) return;
 
       // If PENDING and no custom framebuffer, regular draw means PROMOTE
-      if (this._frameState === FRAME_STATE.PENDING && !this.activeFramebuffer()) {
+      if (
+        this._frameState === FRAME_STATE.PENDING &&
+        !this.activeFramebuffer()
+      ) {
         this._promoteToFramebufferWithoutCopy();
       }
 
@@ -1870,31 +2014,32 @@ function rendererWebGPU(p5, fn) {
       const currentShader = this._curShader;
       this.setupShaderBindGroups(currentShader, passEncoder, { mode, buffers });
       // Bind vertex buffers
-      for (const buffer of currentShader._vertexBuffers || this._getVertexBuffers(currentShader)) {
+      for (const buffer of currentShader._vertexBuffers ||
+        this._getVertexBuffers(currentShader)) {
         const location = currentShader.attributes[buffer.attr].location;
         const gpuBuffer = buffers[buffer.dst];
         passEncoder.setVertexBuffer(location, gpuBuffer, 0);
       }
 
-      if (currentShader.shaderType === "fill") {
+      if (currentShader.shaderType === 'fill') {
         // Bind index buffer and issue draw
         if (buffers.indexBuffer) {
-          const indexFormat = buffers.indexFormat || "uint16";
+          const indexFormat = buffers.indexFormat || 'uint16';
           passEncoder.setIndexBuffer(buffers.indexBuffer, indexFormat);
           passEncoder.drawIndexed(geometry.faces.length * 3, count, 0, 0, 0);
         } else {
           passEncoder.draw(geometry.vertices.length, count, 0, 0);
         }
-      } else if (currentShader.shaderType === "text") {
+      } else if (currentShader.shaderType === 'text') {
         if (!buffers.indexBuffer) {
-          throw new Error("Text geometry must have an index buffer");
+          throw new Error('Text geometry must have an index buffer');
         }
-        const indexFormat = buffers.indexFormat || "uint16";
+        const indexFormat = buffers.indexFormat || 'uint16';
         passEncoder.setIndexBuffer(buffers.indexBuffer, indexFormat);
         passEncoder.drawIndexed(geometry.faces.length * 3, count, 0, 0, 0);
       }
 
-      if (buffers.lineVerticesBuffer && currentShader.shaderType === "stroke") {
+      if (buffers.lineVerticesBuffer && currentShader.shaderType === 'stroke') {
         passEncoder.draw(geometry.lineVertices.length / 3, count, 0, 0);
       }
 
@@ -1932,14 +2077,25 @@ function rendererWebGPU(p5, fn) {
         if (bufferGroup.dynamic) {
           // Bind uniforms into a part of a big dynamic memory block because
           // the group changes often
-          const uniformBufferInfo = this._getDynamicUniformBufferFromPool(bufferGroup);
-          if (currentShader._lastDynamicBuffer[bufferGroup.cacheKey] !== uniformBufferInfo) {
+          const uniformBufferInfo =
+            this._getDynamicUniformBufferFromPool(bufferGroup);
+          if (
+            currentShader._lastDynamicBuffer[bufferGroup.cacheKey] !==
+            uniformBufferInfo
+          ) {
             currentShader._cachedBindGroup[bufferGroup.group] = undefined;
-            currentShader._lastDynamicBuffer[bufferGroup.cacheKey] = uniformBufferInfo;
+            currentShader._lastDynamicBuffer[bufferGroup.cacheKey] =
+              uniformBufferInfo;
           }
-          this._packUniformGroup(currentShader, bufferGroup.uniforms, uniformBufferInfo);
+          this._packUniformGroup(
+            currentShader,
+            bufferGroup.uniforms,
+            uniformBufferInfo
+          );
           uniformBufferInfo.lastOffset = uniformBufferInfo.offset;
-          uniformBufferInfo.offset += Math.ceil(bufferGroup.size / this.uniformBufferAlignment) * this.uniformBufferAlignment;
+          uniformBufferInfo.offset +=
+            Math.ceil(bufferGroup.size / this.uniformBufferAlignment) *
+            this.uniformBufferAlignment;
 
           // Make a shallow copy so that we keep track of the last offset for this uniform
           bufferGroup.currentDynamicBuffer = uniformBufferInfo;
@@ -1947,7 +2103,10 @@ function rendererWebGPU(p5, fn) {
         } else {
           // Bind uniforms to a binding-specific buffer, which may be cached for performance
           let bufferInfo;
-          const dataChanged = this._hasGroupDataChanged(currentShader, bufferGroup);
+          const dataChanged = this._hasGroupDataChanged(
+            currentShader,
+            bufferGroup
+          );
 
           if (!dataChanged && bufferGroup.currentBuffer) {
             // Reuse the cached buffer - no need to pack or write
@@ -1956,7 +2115,11 @@ function rendererWebGPU(p5, fn) {
           } else {
             // Data changed - get a new buffer and write to it
             bufferInfo = this._getUniformBufferFromPool(bufferGroup);
-            this._packUniformGroup(currentShader, bufferGroup.uniforms, bufferInfo);
+            this._packUniformGroup(
+              currentShader,
+              bufferGroup.uniforms,
+              bufferInfo
+            );
             this.device.queue.writeBuffer(
               bufferInfo.buffer,
               0,
@@ -1965,7 +2128,9 @@ function rendererWebGPU(p5, fn) {
               bufferInfo.data.byteLength
             );
 
-            currentShader.buffersDirty.delete(bufferGroup.group * 1000 + bufferGroup.binding);
+            currentShader.buffersDirty.delete(
+              bufferGroup.group * 1000 + bufferGroup.binding
+            );
             currentShader._cachedBindGroup[bufferGroup.group] = undefined;
 
             // Cache this buffer and data for next frame
@@ -2002,39 +2167,53 @@ function rendererWebGPU(p5, fn) {
             bufferGroup?.currentBuffer || bufferGroup?.currentDynamicBuffer;
           if (uniformBufferInfo) {
             if (bufferGroup.dynamic) {
-              this.dynamicEntryOffsets[dynamicOffsetIdx++] = bufferGroup.lastOffset;
+              this.dynamicEntryOffsets[dynamicOffsetIdx++] =
+                bufferGroup.lastOffset;
             }
             if (!bindGroup) {
               bgEntries.push({
                 binding: entry.binding,
                 resource: bufferGroup.dynamic
                   ? {
-                    buffer: uniformBufferInfo.uniformBuffer,
-                    offset: 0,
-                    size: Math.ceil(bufferGroup.size / this.uniformBufferAlignment) * this.uniformBufferAlignment,
-                  }
-                  : { buffer: uniformBufferInfo.buffer },
+                      buffer: uniformBufferInfo.uniformBuffer,
+                      offset: 0,
+                      size:
+                        Math.ceil(
+                          bufferGroup.size / this.uniformBufferAlignment
+                        ) * this.uniformBufferAlignment
+                    }
+                  : { buffer: uniformBufferInfo.buffer }
               });
             }
           } else if (entry.storage && !bindGroup) {
             // Storage buffer binding
             const uniform = currentShader.uniforms[entry.storage.name];
-            if (!uniform || !uniform._cachedData || !uniform._cachedData._isStorageBuffer) {
+            if (
+              !uniform ||
+              !uniform._cachedData ||
+              !uniform._cachedData._isStorageBuffer
+            ) {
               throw new Error(
                 `Storage buffer "${entry.storage.name}" not set. ` +
-                `Use shader.setUniform("${entry.storage.name}", storageBuffer)`
+                  `Use shader.setUniform("${entry.storage.name}", storageBuffer)`
               );
             }
+            this._checkStorageElementType(entry.storage, uniform._cachedData);
             bgEntries.push({
               binding: entry.binding,
-              resource: { buffer: uniform._cachedData.buffer },
+              resource: { buffer: uniform._cachedData.buffer }
             });
           } else if (!bindGroup) {
             bgEntries.push({
               binding: entry.binding,
-              resource: entry.uniform.type === 'sampler'
-                ? (entry.uniform.textureSource.texture || this._getEmptyTexture()).getSampler()
-                : (entry.uniform.texture || this._getEmptyTexture()).textureHandle.view,
+              resource:
+                entry.uniform.type === 'sampler'
+                  ? (
+                      entry.uniform.textureSource.texture ||
+                      this._getEmptyTexture()
+                    ).getSampler()
+                  : (entry.uniform.texture || this._getEmptyTexture())
+                      .textureHandle.view
             });
           }
         }
@@ -2043,15 +2222,12 @@ function rendererWebGPU(p5, fn) {
         if (!bindGroup) {
           bindGroup = this.device.createBindGroup({
             layout,
-            entries: bgEntries,
+            entries: bgEntries
           });
         }
         currentShader._cachedBindGroup[group] = bindGroup;
         if (dynamicOffsetIdx === 0) {
-          passEncoder.setBindGroup(
-            group,
-            bindGroup,
-          );
+          passEncoder.setBindGroup(group, bindGroup);
         } else {
           passEncoder.setBindGroup(
             group,
@@ -2084,7 +2260,10 @@ function rendererWebGPU(p5, fn) {
       // Duck typing instead of instanceof to avoid importing a separate
       // copy of the Color/Vector classes
       if (value?.isVector) {
-        value = value.values.length !== value.dimensions ? value.values.slice(0, value.dimensions) : value.values;
+        value =
+          value.values.length !== value.dimensions
+            ? value.values.slice(0, value.dimensions)
+            : value.values;
       } else if (value?.isColor) {
         value = value._getRGBA([1, 1, 1, 1]);
       }
@@ -2108,9 +2287,15 @@ function rendererWebGPU(p5, fn) {
       } else if (field.packInPlace) {
         // In-place packing for mat3: write directly to buffer with padding
         const base = byteOffset / 4;
-        floatView[base + 0] = value[0]; floatView[base + 1] = value[1]; floatView[base + 2] = value[2];
-        floatView[base + 4] = value[3]; floatView[base + 5] = value[4]; floatView[base + 6] = value[5];
-        floatView[base + 8] = value[6]; floatView[base + 9] = value[7]; floatView[base + 10] = value[8];
+        floatView[base + 0] = value[0];
+        floatView[base + 1] = value[1];
+        floatView[base + 2] = value[2];
+        floatView[base + 4] = value[3];
+        floatView[base + 5] = value[4];
+        floatView[base + 6] = value[5];
+        floatView[base + 8] = value[6];
+        floatView[base + 9] = value[7];
+        floatView[base + 10] = value[8];
       } else if (field.size === 4) {
         floatView.set([value], byteOffset / 4);
       } else {
@@ -2126,14 +2311,22 @@ function rendererWebGPU(p5, fn) {
       for (const uniform of groupUniforms) {
         const fullUniform = shader.uniforms[uniform.name];
         if (!fullUniform || fullUniform.isSampler) continue;
-        this._packField(fullUniform, fullUniform._mappedData, data, dataView, offset);
+        this._packField(
+          fullUniform,
+          fullUniform._mappedData,
+          data,
+          dataView,
+          offset
+        );
       }
     }
 
     _hasGroupDataChanged(shader, bufferGroup) {
       // First time
       if (!bufferGroup.currentBuffer) return true;
-      return shader.buffersDirty.has(bufferGroup.group * 1000 + bufferGroup.binding);
+      return shader.buffersDirty.has(
+        bufferGroup.group * 1000 + bufferGroup.binding
+      );
     }
 
     _parseStruct(shaderSource, structName) {
@@ -2150,10 +2343,9 @@ function rendererWebGPU(p5, fn) {
       let index = 0;
       let offset = 0;
 
-      const elementRegex =
-        /(?:@location\((\d+)\)\s+)?(\w+):\s*([^\n]+?),?\n/g
+      const elementRegex = /(?:@location\((\d+)\)\s+)?(\w+):\s*([^\n]+?),?\n/g;
 
-      const baseAlignAndSize = (type) => {
+      const baseAlignAndSize = type => {
         if (['f32', 'i32', 'u32', 'bool'].includes(type)) {
           return { align: 4, size: 4, items: 1, baseType: type };
         }
@@ -2178,17 +2370,25 @@ function rendererWebGPU(p5, fn) {
           const dim = parseInt(type[3]);
           const align = dim === 2 ? 8 : 16;
           // Each column must be aligned
-          const size = Math.ceil(dim * 4 / align) * align * dim;
+          const size = Math.ceil((dim * 4) / align) * align * dim;
           // For mat3, use in-place packing to avoid array allocation
-          const pack = dim === 3
-            ? (data) => [
-              ...data.slice(0, 3),
-              ...data.slice(3, 6),
-              ...data.slice(6, 9),
-            ]
-            : undefined;
+          const pack =
+            dim === 3
+              ? data => [
+                  ...data.slice(0, 3),
+                  ...data.slice(3, 6),
+                  ...data.slice(6, 9)
+                ]
+              : undefined;
           const packInPlace = dim === 3;
-          return { align, size, pack, packInPlace, items: dim * dim, baseType: 'f32' };
+          return {
+            align,
+            size,
+            pack,
+            packInPlace,
+            items: dim * dim,
+            baseType: 'f32'
+          };
         }
         if (/^array<.+>$/.test(type)) {
           const [, subtype, rawLength] = type.match(/^array<(.+),\s*(\d+)>/);
@@ -2197,14 +2397,14 @@ function rendererWebGPU(p5, fn) {
             align: elemAlign,
             size: elemSize,
             items: elemItems,
-            pack: elemPack = (data) => [...data],
+            pack: elemPack = data => [...data],
             baseType: elemBaseType
           } = baseAlignAndSize(subtype);
           const stride = Math.ceil(elemSize / elemAlign) * elemAlign;
-          const pack = (data) => {
+          const pack = data => {
             const result = [];
             for (let i = 0; i < data.length; i += elemItems) {
-              const elemData = elemPack(data.slice(i, elemItems))
+              const elemData = elemPack(data.slice(i, elemItems));
               result.push(...elemData);
               for (let j = 0; j < stride / 4 - elemData.length; j++) {
                 result.push(0);
@@ -2225,7 +2425,8 @@ function rendererWebGPU(p5, fn) {
 
       while ((match = elementRegex.exec(structBody)) !== null) {
         const [_, location, name, type] = match;
-        const { size, align, pack, packInPlace, baseType } = baseAlignAndSize(type);
+        const { size, align, pack, packInPlace, baseType } =
+          baseAlignAndSize(type);
         offset = Math.ceil(offset / align) * align;
         const offsetEnd = offset + size;
         elements[name] = {
@@ -2255,8 +2456,9 @@ function rendererWebGPU(p5, fn) {
     }
 
     _getShaderAttributes(shader) {
-      const mainMatch = /fn main\(.+:\s*([^\s\)]+)/.exec(shader._vertSrc);
-      if (!mainMatch) throw new Error("Can't find `fn main` in vertex shader source");
+      const mainMatch = /fn main\(.+:\s*([^\s)]+)/.exec(shader._vertSrc);
+      if (!mainMatch)
+        throw new Error("Can't find `fn main` in vertex shader source");
       const inputType = mainMatch[1];
 
       return this._parseStruct(shader.vertSrc(), inputType);
@@ -2270,10 +2472,14 @@ function rendererWebGPU(p5, fn) {
       // updated or cached all at once.
 
       const uniformGroups = [];
-      const uniformVarRegex = /@group\((\d+)\)\s+@binding\((\d+)\)\s+var<uniform>\s+(\w+)\s*:\s*(\w+);/g;
+      const uniformVarRegex =
+        /@group\((\d+)\)\s+@binding\((\d+)\)\s+var<uniform>\s+(\w+)\s*:\s*(\w+);/g;
 
       let match;
-      const src = shader.shaderType === 'compute' ? shader.computeSrc() : shader.vertSrc();
+      const src =
+        shader.shaderType === 'compute'
+          ? shader.computeSrc()
+          : shader.vertSrc();
       while ((match = uniformVarRegex.exec(src)) !== null) {
         const [_, groupNum, binding, varName, structType] = match;
         const bindingIndex = parseInt(binding);
@@ -2289,7 +2495,9 @@ function rendererWebGPU(p5, fn) {
       }
 
       if (uniformGroups.length === 0 && shader.shaderType !== 'compute') {
-        throw new Error('Expected at least one uniform struct bound to @group(0)');
+        throw new Error(
+          'Expected at least one uniform struct bound to @group(0)'
+        );
       }
 
       // While we're also keeping track of the groups, the API we expose
@@ -2297,7 +2505,9 @@ function rendererWebGPU(p5, fn) {
       // individual struct items in the group.)
       const allUniforms = {};
       for (const group of uniformGroups) {
-        for (const [uniformName, uniformData] of Object.entries(group.uniforms)) {
+        for (const [uniformName, uniformData] of Object.entries(
+          group.uniforms
+        )) {
           allUniforms[uniformName] = {
             ...uniformData,
             group: group.group,
@@ -2313,11 +2523,13 @@ function rendererWebGPU(p5, fn) {
       // Extract samplers from group bindings
       const samplers = {};
       // TODO: support other texture types
-      const samplerRegex = /@group\((\d+)\)\s*@binding\((\d+)\)\s*var\s+(\w+)\s*:\s*(texture_2d<f32>|sampler);/g;
+      const samplerRegex =
+        /@group\((\d+)\)\s*@binding\((\d+)\)\s*var\s+(\w+)\s*:\s*(texture_2d<f32>|sampler);/g;
 
       // Extract storage buffers
       const storageBuffers = {};
-      const storageRegex = /@group\((\d+)\)\s*@binding\((\d+)\)\s*var<storage,\s*(read|read_write)>\s+(\w+)\s*:\s*array<\w+>/g;
+      const storageRegex =
+        /@group\((\d+)\)\s*@binding\((\d+)\)\s*var<storage,\s*(read|read_write)>\s+(\w+)\s*:\s*array<(\w+|atomic<\w+>)>/g;
 
       // Track which bindings are taken by the struct properties we've parsed
       // (the rest should be textures/samplers)
@@ -2349,16 +2561,16 @@ function rendererWebGPU(p5, fn) {
             name,
             type,
             isSampler: true,
-            noData: type === 'sampler',
+            noData: type === 'sampler'
           };
         }
 
         for (const sampler of Object.values(samplers)) {
           if (sampler.type.startsWith('texture')) {
             const samplerName = sampler.name + '_sampler';
-            const samplerNode = Object
-              .values(samplers)
-              .find((s) => s.name === samplerName);
+            const samplerNode = Object.values(samplers).find(
+              s => s.name === samplerName
+            );
             if (!samplerNode) {
               throw new Error(
                 `Every shader texture needs an accompanying sampler. Could not find sampler ${samplerName} for texture ${sampler.name}`
@@ -2370,16 +2582,17 @@ function rendererWebGPU(p5, fn) {
 
         // Parse storage buffers
         while ((match = storageRegex.exec(src)) !== null) {
-          const [_, group, binding, accessMode, name] = match;
+          const [_, group, binding, accessMode, name, elementType] = match;
           const groupIndex = parseInt(group);
           const bindingIndex = parseInt(binding);
 
           const key = `${groupIndex},${bindingIndex}`;
           const existing = storageBuffers[key];
           // If any stage uses read_write, the bind group layout must use read_write
-          const finalAccessMode = (existing?.accessMode === 'read_write' || accessMode === 'read_write')
-            ? 'read_write'
-            : accessMode;
+          const finalAccessMode =
+            existing?.accessMode === 'read_write' || accessMode === 'read_write'
+              ? 'read_write'
+              : accessMode;
 
           storageBuffers[key] = {
             visibility: (existing?.visibility || 0) | visibility,
@@ -2388,15 +2601,27 @@ function rendererWebGPU(p5, fn) {
             name,
             accessMode: finalAccessMode, // 'read' or 'read_write'
             isStorage: true,
-            type: 'storage'
+            type: 'storage',
+            elementType, // e.g. 'f32', 'u32', 'atomic<u32>'
+            // Resolved here so the per-frame check is just a comparison
+            expectedArrayType: this._storageArrayTypeFor(elementType)
           };
         }
       }
 
-      // Store storage buffers on shader for later use
+      // Store storage buffers on shader for later use, keyed by name too so
+      // that setUniform() can look one up without scanning the whole list
       shader._storageBuffers = Object.values(storageBuffers);
+      shader._storageBuffersByName = {};
+      for (const storage of shader._storageBuffers) {
+        shader._storageBuffersByName[storage.name] = storage;
+      }
 
-      return [...Object.values(allUniforms).sort((a, b) => a.index - b.index), ...Object.values(samplers), ...Object.values(storageBuffers)];
+      return [
+        ...Object.values(allUniforms).sort((a, b) => a.index - b.index),
+        ...Object.values(samplers),
+        ...Object.values(storageBuffers)
+      ];
     }
 
     getNextBindingIndex({ vert, frag, compute }, group = 0) {
@@ -2427,7 +2652,17 @@ function rendererWebGPU(p5, fn) {
         uniform.texture =
           data instanceof Texture ? data : this.getTexture(data);
       } else if (!data?._isStorageBuffer) {
-        uniform._mappedData = this._mapUniformData(uniform, uniform._cachedData);
+        uniform._mappedData = this._mapUniformData(
+          uniform,
+          uniform._cachedData
+        );
+      } else if (shader._storageBuffersByName) {
+        // The shader has been parsed, so we know what element type it
+        // declares for this buffer and can check it early
+        this._checkStorageElementType(
+          shader._storageBuffersByName[uniform.name],
+          data
+        );
       }
       shader.buffersDirty.add(uniform.group * 1000 + uniform.binding);
     }
@@ -2444,11 +2679,11 @@ function rendererWebGPU(p5, fn) {
       const gpuTexture = this.device.createTexture({
         size: [width, height],
         format,
-        usage: usage || (
+        usage:
+          usage ||
           GPUTextureUsage.TEXTURE_BINDING |
-          GPUTextureUsage.COPY_DST |
-          GPUTextureUsage.RENDER_ATTACHMENT
-        ),
+            GPUTextureUsage.COPY_DST |
+            GPUTextureUsage.RENDER_ATTACHMENT
       });
       return { gpuTexture, view: gpuTexture.createView() };
     }
@@ -2491,12 +2726,12 @@ function rendererWebGPU(p5, fn) {
         [constants.CLAMP]: 'clamp-to-edge',
         [constants.REPEAT]: 'repeat',
         [constants.MIRROR]: 'mirror-repeat'
-      }
+      };
       const sampler = this.device.createSampler({
         magFilter: constantMapping[texture.magFilter],
         minFilter: constantMapping[texture.minFilter],
         addressModeU: constantMapping[texture.wrapS],
-        addressModeV: constantMapping[texture.wrapT],
+        addressModeV: constantMapping[texture.wrapT]
       });
       this.samplers.set(key, sampler);
       return sampler;
@@ -2508,24 +2743,30 @@ function rendererWebGPU(p5, fn) {
       this._postSubmitCallbacks.push(() => gpuTexture.destroy());
     }
 
-    _getLightShader() {
-      if (!this._defaultLightShader) {
-        this._defaultLightShader = new Shader(
+    // useTextureMaps selects a shader variant that carries the tangent attribute
+    // and normal-map sampling. plain lit materials get the variant without any of
+    // it (webgpu has no #ifdef, so the shader source is built per-flag).
+    _getLightShader(useTextureMaps = false) {
+      const cacheKey = useTextureMaps
+        ? '_defaultLightShaderWithMaps'
+        : '_defaultLightShader';
+      if (!this[cacheKey]) {
+        this[cacheKey] = new Shader(
           this,
-          materialVertexShader,
-          materialFragmentShader,
+          materialVertexShader({ useTextureMaps }),
+          materialFragmentShader({ useTextureMaps }),
           {
             vertex: {
-              "void beforeVertex": "() {}",
-              "Vertex getObjectInputs": "(inputs: Vertex) { return inputs; }",
-              "Vertex getWorldInputs": "(inputs: Vertex) { return inputs; }",
-              "Vertex getCameraInputs": "(inputs: Vertex) { return inputs; }",
-              "void afterVertex": "() {}",
+              'void beforeVertex': '() {}',
+              'Vertex getObjectInputs': '(inputs: Vertex) { return inputs; }',
+              'Vertex getWorldInputs': '(inputs: Vertex) { return inputs; }',
+              'Vertex getCameraInputs': '(inputs: Vertex) { return inputs; }',
+              'void afterVertex': '() {}'
             },
             fragment: {
-              "void beforeFragment": "() {}",
-              "Inputs getPixelInputs": "(inputs: Inputs) { return inputs; }",
-              "vec4f combineColors": `(components: ColorComponents) {
+              'void beforeFragment': '() {}',
+              'Inputs getPixelInputs': '(inputs: Inputs) { return inputs; }',
+              'vec4f combineColors': `(components: ColorComponents) {
                 var rgb = vec3<f32>(0.0);
                 rgb += components.diffuse * components.baseColor;
                 rgb += components.ambient * components.ambientColor;
@@ -2533,13 +2774,14 @@ function rendererWebGPU(p5, fn) {
                 rgb += components.emissive;
                 return vec4<f32>(rgb, components.opacity);
               }`,
-              "vec4f getFinalColor": "(color: vec4<f32>, texCoord: vec2<f32>) { return color; }",
-              "void afterFragment": "() {}",
-            },
+              'vec4f getFinalColor':
+                '(color: vec4<f32>, texCoord: vec2<f32>) { return color; }',
+              'void afterFragment': '() {}'
+            }
           }
         );
       }
-      return this._defaultLightShader;
+      return this[cacheKey];
     }
 
     _getColorShader() {
@@ -2550,17 +2792,18 @@ function rendererWebGPU(p5, fn) {
           colorFragmentShader,
           {
             vertex: {
-              "void beforeVertex": "() {}",
-              "Vertex getObjectInputs": "(inputs: Vertex) { return inputs; }",
-              "Vertex getWorldInputs": "(inputs: Vertex) { return inputs; }",
-              "Vertex getCameraInputs": "(inputs: Vertex) { return inputs; }",
-              "void afterVertex": "() {}",
+              'void beforeVertex': '() {}',
+              'Vertex getObjectInputs': '(inputs: Vertex) { return inputs; }',
+              'Vertex getWorldInputs': '(inputs: Vertex) { return inputs; }',
+              'Vertex getCameraInputs': '(inputs: Vertex) { return inputs; }',
+              'void afterVertex': '() {}'
             },
             fragment: {
-              "void beforeFragment": "() {}",
-              "vec4<f32> getFinalColor": "(color: vec4<f32>, texCoord: vec2<f32>) { return color; }",
-              "void afterFragment": "() {}",
-            },
+              'void beforeFragment': '() {}',
+              'vec4<f32> getFinalColor':
+                '(color: vec4<f32>, texCoord: vec2<f32>) { return color; }',
+              'void afterFragment': '() {}'
+            }
           }
         );
       }
@@ -2575,19 +2818,23 @@ function rendererWebGPU(p5, fn) {
           lineDefs + lineFragmentShader,
           {
             vertex: {
-              "void beforeVertex": "() {}",
-              "StrokeVertex getObjectInputs": "(inputs: StrokeVertex) { return inputs; }",
-              "StrokeVertex getWorldInputs": "(inputs: StrokeVertex) { return inputs; }",
-              "StrokeVertex getCameraInputs": "(inputs: StrokeVertex) { return inputs; }",
-              "void afterVertex": "() {}",
+              'void beforeVertex': '() {}',
+              'StrokeVertex getObjectInputs':
+                '(inputs: StrokeVertex) { return inputs; }',
+              'StrokeVertex getWorldInputs':
+                '(inputs: StrokeVertex) { return inputs; }',
+              'StrokeVertex getCameraInputs':
+                '(inputs: StrokeVertex) { return inputs; }',
+              'void afterVertex': '() {}'
             },
             fragment: {
-              "void beforeFragment": "() {}",
-              "Inputs getPixelInputs": "(inputs: Inputs) { return inputs; }",
-              "vec4<f32> getFinalColor": "(color: vec4<f32>, texCoord: vec2<f32>) { return color; }",
-              "bool shouldDiscard": "(outside: bool) { return outside; };",
-              "void afterFragment": "() {}",
-            },
+              'void beforeFragment': '() {}',
+              'Inputs getPixelInputs': '(inputs: Inputs) { return inputs; }',
+              'vec4<f32> getFinalColor':
+                '(color: vec4<f32>, texCoord: vec2<f32>) { return color; }',
+              'bool shouldDiscard': '(outside: bool) { return outside; };',
+              'void afterFragment': '() {}'
+            }
           }
         );
       }
@@ -2629,9 +2876,9 @@ function rendererWebGPU(p5, fn) {
 
       const activeFramebuffer = this.activeFramebuffer();
       const depthTextureView = activeFramebuffer
-        ? (activeFramebuffer.aaDepthTexture
-            ? activeFramebuffer.aaDepthTextureView
-            : activeFramebuffer.depthTextureView)
+        ? activeFramebuffer.aaDepthTexture
+          ? activeFramebuffer.aaDepthTextureView
+          : activeFramebuffer.depthTextureView
         : this.depthTextureView;
 
       if (!depthTextureView) {
@@ -2644,12 +2891,12 @@ function rendererWebGPU(p5, fn) {
         stencilStoreOp: 'store',
         stencilClearValue: 0,
         depthReadOnly: true,
-        stencilReadOnly: false,
+        stencilReadOnly: false
       };
 
       const renderPassDescriptor = {
         colorAttachments: [],
-        depthStencilAttachment: depthStencilAttachment,
+        depthStencilAttachment: depthStencilAttachment
       };
 
       const passEncoder = commandEncoder.beginRenderPass(renderPassDescriptor);
@@ -2671,9 +2918,9 @@ function rendererWebGPU(p5, fn) {
 
       const activeFramebuffer = this.activeFramebuffer();
       const depthTextureView = activeFramebuffer
-        ? (activeFramebuffer.aaDepthTexture
-            ? activeFramebuffer.aaDepthTextureView
-            : activeFramebuffer.depthTextureView)
+        ? activeFramebuffer.aaDepthTexture
+          ? activeFramebuffer.aaDepthTextureView
+          : activeFramebuffer.depthTextureView
         : this.depthTextureView;
 
       if (!depthTextureView) {
@@ -2686,12 +2933,12 @@ function rendererWebGPU(p5, fn) {
         stencilStoreOp: 'store',
         stencilClearValue: 1,
         depthReadOnly: true,
-        stencilReadOnly: false,
+        stencilReadOnly: false
       };
 
       const renderPassDescriptor = {
         colorAttachments: [],
-        depthStencilAttachment: depthStencilAttachment,
+        depthStencilAttachment: depthStencilAttachment
       };
 
       const passEncoder = commandEncoder.beginRenderPass(renderPassDescriptor);
@@ -2731,10 +2978,9 @@ function rendererWebGPU(p5, fn) {
         (_, condition, hookType, hookName, body) => {
           const target = condition === 'ifdef';
           if (
-            (
-              !!shader.hooks.modified.vertex[`${hookType} ${hookName}`] ||
-              !!shader.hooks.modified.fragment[`${hookType} ${hookName}`]
-            ) === target
+            (!!shader.hooks.modified.vertex[`${hookType} ${hookName}`] ||
+              !!shader.hooks.modified.fragment[`${hookType} ${hookName}`]) ===
+            target
           ) {
             return body;
           } else {
@@ -2743,14 +2989,23 @@ function rendererWebGPU(p5, fn) {
         }
       );
 
-      let [preMain, main, postMain] = src.split(/((?:@(?:vertex|fragment|compute)\s*(?:@workgroup_size\([^)]+\)\s*)?)?fn main[^{]+\{)/);
+      let [preMain, main, postMain] = src.split(
+        /((?:@(?:vertex|fragment|compute)\s*(?:@workgroup_size\([^)]+\)\s*)?)?fn main[^{]+\{)/
+      );
 
       const getBuiltinParamName = (mainSrc, builtinName) => {
-        const match = new RegExp(`@builtin\\s*\\(\\s*${builtinName}\\s*\\)\\s*(\\w+)\\s*:`).exec(mainSrc);
+        const match = new RegExp(
+          `@builtin\\s*\\(\\s*${builtinName}\\s*\\)\\s*(\\w+)\\s*:`
+        ).exec(mainSrc);
         return match ? match[1] : null;
       };
 
-      const ensureBuiltinParam = (mainSrc, builtinName, fallbackName, typeName) => {
+      const ensureBuiltinParam = (
+        mainSrc,
+        builtinName,
+        fallbackName,
+        typeName
+      ) => {
         const existingName = getBuiltinParamName(mainSrc, builtinName);
         if (existingName) {
           return { mainSrc, argName: existingName };
@@ -2765,16 +3020,22 @@ function rendererWebGPU(p5, fn) {
         return { mainSrc: injectedMain, argName: fallbackName };
       };
 
-      const getMainStructParameter = (mainSrc) => {
+      const getMainStructParameter = mainSrc => {
         const match = /fn main\s*\(\s*(\w+)\s*:\s*(\w+)/.exec(mainSrc);
         if (!match) return null;
         return { inputName: match[1], structName: match[2] };
       };
 
       const getStructBuiltinFieldName = (structName, builtinName) => {
-        const structMatch = new RegExp(`struct\\s+${structName}\\s*\\{([^}]*)\\}`, 's').exec(preMain);
+        const structMatch = new RegExp(
+          `struct\\s+${structName}\\s*\\{([^}]*)\\}`,
+          's'
+        ).exec(preMain);
         if (!structMatch) return null;
-        const fieldMatch = new RegExp(`@builtin\\s*\\(\\s*${builtinName}\\s*\\)\\s*(\\w+)\\s*:`, 's').exec(structMatch[1]);
+        const fieldMatch = new RegExp(
+          `@builtin\\s*\\(\\s*${builtinName}\\s*\\)\\s*(\\w+)\\s*:`,
+          's'
+        ).exec(structMatch[1]);
         return fieldMatch ? fieldMatch[1] : null;
       };
 
@@ -2788,10 +3049,20 @@ function rendererWebGPU(p5, fn) {
       let hookExtraArgs = [];
 
       if (shaderType === 'vertex') {
-        const ensuredInstance = ensureBuiltinParam(main, 'instance_index', 'instanceID', 'u32');
+        const ensuredInstance = ensureBuiltinParam(
+          main,
+          'instance_index',
+          'instanceID',
+          'u32'
+        );
         main = ensuredInstance.mainSrc;
 
-        const ensuredVertex = ensureBuiltinParam(main, 'vertex_index', '_p5VertexId', 'u32');
+        const ensuredVertex = ensureBuiltinParam(
+          main,
+          'vertex_index',
+          '_p5VertexId',
+          'u32'
+        );
         main = ensuredVertex.mainSrc;
 
         hookExtraParams = ['instanceID: u32', '_p5VertexId: u32'];
@@ -2803,7 +3074,10 @@ function rendererWebGPU(p5, fn) {
         if (!fragmentPositionArg) {
           const mainStructParam = getMainStructParameter(main);
           if (mainStructParam) {
-            const positionField = getStructBuiltinFieldName(mainStructParam.structName, 'position');
+            const positionField = getStructBuiltinFieldName(
+              mainStructParam.structName,
+              'position'
+            );
             if (positionField) {
               fragmentPositionArg = `${mainStructParam.inputName}.${positionField}`;
             }
@@ -2811,7 +3085,12 @@ function rendererWebGPU(p5, fn) {
         }
 
         if (!fragmentPositionArg) {
-          const ensuredPosition = ensureBuiltinParam(main, 'position', '_p5FragPos', 'vec4<f32>');
+          const ensuredPosition = ensureBuiltinParam(
+            main,
+            'position',
+            '_p5FragPos',
+            'vec4<f32>'
+          );
           main = ensuredPosition.mainSrc;
           fragmentPositionArg = ensuredPosition.argName;
         }
@@ -2819,7 +3098,12 @@ function rendererWebGPU(p5, fn) {
         hookExtraParams = ['_p5FragPos: vec4<f32>'];
         hookExtraArgs = [fragmentPositionArg];
       } else if (shaderType === 'compute') {
-        const ensuredGlobalId = ensureBuiltinParam(main, 'global_invocation_id', '_p5GlobalId', 'vec3<u32>');
+        const ensuredGlobalId = ensureBuiltinParam(
+          main,
+          'global_invocation_id',
+          '_p5GlobalId',
+          'vec3<u32>'
+        );
         main = ensuredGlobalId.mainSrc;
 
         hookExtraParams = ['_p5GlobalId: vec3<u32>'];
@@ -2840,11 +3124,29 @@ function rendererWebGPU(p5, fn) {
         // Find the next available binding in group 0
         // Use the source we're currently building (preMain) which has texture bindings. We can't call `fragSrc()`
         // or `vertSrc()` because we may be in one of those calls already, and might infinite loop
-        const nextBinding = this.getNextBindingIndex({
-          vert: shaderType === 'vertex' ? preMain + (shader.hooks.vertex?.declarations ?? '') + shader.hooks.declarations : shader._vertSrc,
-          frag: shaderType === 'fragment' ? preMain + (shader.hooks.fragment?.declarations ?? '') + shader.hooks.declarations : shader._fragSrc,
-          compute: shaderType === 'compute' ? preMain + (shader.hooks.compute?.declarations ?? '') + shader.hooks.declarations : shader._computeSrc,
-        }, 0);
+        const nextBinding = this.getNextBindingIndex(
+          {
+            vert:
+              shaderType === 'vertex'
+                ? preMain +
+                  (shader.hooks.vertex?.declarations ?? '') +
+                  shader.hooks.declarations
+                : shader._vertSrc,
+            frag:
+              shaderType === 'fragment'
+                ? preMain +
+                  (shader.hooks.fragment?.declarations ?? '') +
+                  shader.hooks.declarations
+                : shader._fragSrc,
+            compute:
+              shaderType === 'compute'
+                ? preMain +
+                  (shader.hooks.compute?.declarations ?? '') +
+                  shader.hooks.declarations
+                : shader._computeSrc
+          },
+          0
+        );
 
         // Create HookUniforms struct and binding
         const hookUniformsDecl = `
@@ -2855,7 +3157,10 @@ ${hookUniformFields}}
 @group(0) @binding(${nextBinding}) var<uniform> hooks: HookUniforms;
 `;
         // Insert before the first @group binding, or at the end if there are none
-        const replaced = preMain.replace(/(@group\(0\)\s+@binding)/, `${hookUniformsDecl}\n$1`);
+        const replaced = preMain.replace(
+          /(@group\(0\)\s+@binding)/,
+          `${hookUniformsDecl}\n$1`
+        );
         if (replaced === preMain) {
           // No @group bindings found in base shader, append to preMain
           preMain = preMain + '\n' + hookUniformsDecl;
@@ -2865,9 +3170,15 @@ ${hookUniformFields}}
       }
 
       // Handle varying variables by injecting them into VertexOutput and FragmentInput structs
-      if (shader.hooks.varyingVariables && shader.hooks.varyingVariables.length > 0) {
+      if (
+        shader.hooks.varyingVariables &&
+        shader.hooks.varyingVariables.length > 0
+      ) {
         // Generate struct members for varying variables
-        let nextLocationIndex = this._getNextAvailableLocation(preMain, shaderType);
+        let nextLocationIndex = this._getNextAvailableLocation(
+          preMain,
+          shaderType
+        );
         let varyingMembers = '';
 
         for (const varyingVar of shader.hooks.varyingVariables) {
@@ -2892,7 +3203,10 @@ ${hookUniformFields}}
       }
 
       // Add file-global varying variable declarations
-      if (shader.hooks.varyingVariables && shader.hooks.varyingVariables.length > 0) {
+      if (
+        shader.hooks.varyingVariables &&
+        shader.hooks.varyingVariables.length > 0
+      ) {
         let varyingDeclarations = '';
         for (const varyingVar of shader.hooks.varyingVariables) {
           // varyingVar is a string like "varName: vec3<f32>"
@@ -2915,9 +3229,15 @@ ${hookUniformFields}}
           const returnMatch = postMain.match(/return\s+(\w+)\s*;/);
           if (returnMatch) {
             const outputVarName = returnMatch[1];
-            copyStatements = copyStatements.replace(/OUTPUT_VAR/g, outputVarName);
+            copyStatements = copyStatements.replace(
+              /OUTPUT_VAR/g,
+              outputVarName
+            );
             // Insert before the return statement
-            postMain = postMain.replace(/(return\s+\w+\s*;)/g, `${copyStatements}  $1`);
+            postMain = postMain.replace(
+              /(return\s+\w+\s*;)/g,
+              `${copyStatements}  $1`
+            );
           }
         } else if (shaderType === 'fragment') {
           // In fragment shader, initialize varying variables from input struct at start of main
@@ -2939,9 +3259,15 @@ ${hookUniformFields}}
 
       // Handle instanceID varying for fragment access
       if (shader.hooks.instanceIDVarying) {
-        const { name, declaration, source, interpolation } = shader.hooks.instanceIDVarying;
-        const nextLocIndex = this._getNextAvailableLocation(preMain, shaderType);
-        const interpAttr = interpolation ? ` @interpolate(${interpolation})` : '';
+        const { name, declaration, source, interpolation } =
+          shader.hooks.instanceIDVarying;
+        const nextLocIndex = this._getNextAvailableLocation(
+          preMain,
+          shaderType
+        );
+        const interpAttr = interpolation
+          ? ` @interpolate(${interpolation})`
+          : '';
         const [varName, varType] = declaration.split(':').map(s => s.trim());
         const structMember = `@location(${nextLocIndex})${interpAttr} ${declaration},`;
 
@@ -2976,7 +3302,8 @@ ${hookUniformFields}}
           const mainStructParam = getMainStructParameter(main);
           if (mainStructParam) {
             const inputVarName = mainStructParam.inputName;
-            postMain = `\n  ${varName} = ${inputVarName}.${varName};\n` + postMain;
+            postMain =
+              `\n  ${varName} = ${inputVarName}.${varName};\n` + postMain;
           }
         }
       }
@@ -2991,7 +3318,9 @@ ${hookUniformFields}}
       }
       for (const hookDef in shader.hooks.helpers) {
         const [hookType, hookName] = hookDef.split(' ');
-        const [_, params, body] = /^(\([^\)]*\))((?:.|\n)*)$/.exec(shader.hooks.helpers[hookDef]);
+        const [_, params, body] = /^(\([^)]*\))((?:.|\n)*)$/.exec(
+          shader.hooks.helpers[hookDef]
+        );
         if (hookType === 'void') {
           hooks += `fn ${hookName}${params}${body}\n`;
         } else {
@@ -3008,7 +3337,9 @@ ${hookUniformFields}}
           shader.hooks.modified[shaderType][hookDef] ? 'true' : 'false'
         };\n`;
 
-        let [_, params, body] = /^(\([^\)]*\))((?:.|\n)*)$/.exec(shader.hooks[shaderType][hookDef]);
+        let [_, params, body] = /^(\([^)]*\))((?:.|\n)*)$/.exec(
+          shader.hooks[shaderType][hookDef]
+        );
 
         params = appendHookParams(params, hookExtraParams);
 
@@ -3024,7 +3355,7 @@ ${hookUniformFields}}
       // extra args from right to left so position shifts don't
       // invalidate earlier insertion points.
       if (hookExtraArgs.length > 0) {
-        const addHookArgs = (src) => {
+        const addHookArgs = src => {
           const insertions = [];
           let searchIdx = 0;
           let m;
@@ -3051,7 +3382,8 @@ ${hookUniformFields}}
 
           let result = src;
           for (const { pos, hasParams } of insertions) {
-            const insertion = (hasParams ? ', ' : '') + hookExtraArgs.join(', ');
+            const insertion =
+              (hasParams ? ', ' : '') + hookExtraArgs.join(', ');
             result = result.slice(0, pos) + insertion + result.slice(pos);
           }
           return result;
@@ -3066,10 +3398,13 @@ ${hookUniformFields}}
     _getNextAvailableLocation(shaderSource, shaderType) {
       // Parse existing struct to find the highest @location number
       let maxLocation = -1;
-      const structName = shaderType === 'vertex' ? 'VertexOutput' : 'FragmentInput';
+      const structName =
+        shaderType === 'vertex' ? 'VertexOutput' : 'FragmentInput';
 
       // Find the struct definition
-      const structMatch = shaderSource.match(new RegExp(`struct\\s+${structName}\\s*\\{([^}]*)\\}`, 's'));
+      const structMatch = shaderSource.match(
+        new RegExp(`struct\\s+${structName}\\s*\\{([^}]*)\\}`, 's')
+      );
       if (structMatch) {
         const structBody = structMatch[1];
 
@@ -3089,18 +3424,18 @@ ${hookUniformFields}}
     getShaderHookTypes(shader, hookName) {
       // Create mapping from WGSL types to DataType entries
       const wgslToDataType = {
-        'f32': DataType.float1,
+        f32: DataType.float1,
         'vec2<f32>': DataType.float2,
         'vec3<f32>': DataType.float3,
         'vec4<f32>': DataType.float4,
-        'vec2f': DataType.float2,
-        'vec3f': DataType.float3,
-        'vec4f': DataType.float4,
-        'i32': DataType.int1,
+        vec2f: DataType.float2,
+        vec3f: DataType.float3,
+        vec4f: DataType.float4,
+        i32: DataType.int1,
         'vec2<i32>': DataType.int2,
         'vec3<i32>': DataType.int3,
         'vec4<i32>': DataType.int4,
-        'bool': DataType.bool1,
+        bool: DataType.bool1,
         'vec2<bool>': DataType.bool2,
         'vec3<bool>': DataType.bool3,
         'vec4<bool>': DataType.bool4,
@@ -3127,14 +3462,18 @@ ${hookUniformFields}}
       const functionName = nameParts.pop();
       const returnType = nameParts.pop();
       const returnQualifiers = [...nameParts];
-      const parameterMatch = /\(([^\)]*)\)/.exec(body);
+      const parameterMatch = /\(([^)]*)\)/.exec(body);
       if (!parameterMatch) {
-        throw new Error(`Couldn't find function parameters in hook body:\n${body}`);
+        throw new Error(
+          `Couldn't find function parameters in hook body:\n${body}`
+        );
       }
 
       const structProperties = structName => {
         // WGSL struct parsing: struct StructName { field1: Type, field2: Type }
-        const structDefMatch = new RegExp(`struct\\s+${structName}\\s*{([^}]*)}`).exec(fullSrc);
+        const structDefMatch = new RegExp(
+          `struct\\s+${structName}\\s*{([^}]*)}`
+        ).exec(fullSrc);
         if (!structDefMatch) return undefined;
         const properties = [];
 
@@ -3145,7 +3484,8 @@ ${hookUniformFields}}
 
           // Remove location decorations and parse field
           // Format: [@location(N)] fieldName: Type
-          const fieldMatch = /(?:@location\([^)]*\)\s*)?(\w+)\s*:\s*([^,\s]+)/.exec(trimmed);
+          const fieldMatch =
+            /(?:@location\([^)]*\)\s*)?(\w+)\s*:\s*([^,\s]+)/.exec(trimmed);
           if (!fieldMatch) continue;
 
           const name = fieldMatch[1];
@@ -3167,35 +3507,38 @@ ${hookUniformFields}}
         return properties;
       };
 
-      const parameters = parameterMatch[1].split(',').map(paramString => {
-        // WGSL function parameters: name: type or name: binding<type>
-        const trimmed = paramString.trim();
-        if (!trimmed) return null;
+      const parameters = parameterMatch[1]
+        .split(',')
+        .map(paramString => {
+          // WGSL function parameters: name: type or name: binding<type>
+          const trimmed = paramString.trim();
+          if (!trimmed) return null;
 
-        const parts = trimmed.split(':').map(s => s.trim());
-        if (parts.length !== 2) return null;
+          const parts = trimmed.split(':').map(s => s.trim());
+          if (parts.length !== 2) return null;
 
-        const name = parts[0];
-        let typeName = parts[1];
+          const name = parts[0];
+          let typeName = parts[1];
 
-        // Handle texture bindings like "texture_2d<f32>" -> sampler2D DataType
-        if (typeName.includes('texture_2d')) {
-          typeName = 'texture_2d<f32>';
-        }
-
-        const dataType = wgslToDataType[typeName] || null;
-
-        const properties = structProperties(typeName);
-        return {
-          name,
-          type: {
-            typeName: typeName, // Keep native WGSL type name
-            qualifiers: [],
-            properties,
-            dataType: dataType
+          // Handle texture bindings like "texture_2d<f32>" -> sampler2D DataType
+          if (typeName.includes('texture_2d')) {
+            typeName = 'texture_2d<f32>';
           }
-        };
-      }).filter(Boolean);
+
+          const dataType = wgslToDataType[typeName] || null;
+
+          const properties = structProperties(typeName);
+          return {
+            name,
+            type: {
+              typeName: typeName, // Keep native WGSL type name
+              qualifiers: [],
+              properties,
+              dataType: dataType
+            }
+          };
+        })
+        .filter(Boolean);
 
       // Convert WGSL return type to DataType
       const returnDataType = wgslToDataType[returnType] || null;
@@ -3230,7 +3573,7 @@ ${hookUniformFields}}
         const bufferSize = Math.max(requiredSize, this.pixelReadBufferSize * 2);
         this.pixelReadBuffer = this.device.createBuffer({
           size: bufferSize,
-          usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ,
+          usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ
         });
         this.pixelReadBufferSize = bufferSize;
       }
@@ -3247,7 +3590,7 @@ ${hookUniformFields}}
     //////////////////////////////////////////////
 
     defaultFramebufferAlpha() {
-      return true
+      return true;
     }
 
     defaultFramebufferAntialias() {
@@ -3258,15 +3601,16 @@ ${hookUniformFields}}
       return true;
     }
 
-    createFramebufferResources(framebuffer) {
-    }
+    createFramebufferResources(framebuffer) {}
 
     validateFramebufferFormats(framebuffer) {
-      if (![
-        constants.UNSIGNED_BYTE,
-        constants.FLOAT,
-        constants.HALF_FLOAT
-      ].includes(framebuffer.format)) {
+      if (
+        ![
+          constants.UNSIGNED_BYTE,
+          constants.FLOAT,
+          constants.HALF_FLOAT
+        ].includes(framebuffer.format)
+      ) {
         console.warn(
           'Unknown Framebuffer format. ' +
             'Please use UNSIGNED_BYTE, FLOAT, or HALF_FLOAT. ' +
@@ -3275,10 +3619,12 @@ ${hookUniformFields}}
         framebuffer.format = constants.UNSIGNED_BYTE;
       }
 
-      if (framebuffer.useDepth && ![
-        constants.UNSIGNED_INT,
-        constants.FLOAT
-      ].includes(framebuffer.depthFormat)) {
+      if (
+        framebuffer.useDepth &&
+        ![constants.UNSIGNED_INT, constants.FLOAT].includes(
+          framebuffer.depthFormat
+        )
+      ) {
         console.warn(
           'Unknown Framebuffer depth format. ' +
             'Please use UNSIGNED_INT or FLOAT. Defaulting to FLOAT.'
@@ -3315,21 +3661,24 @@ ${hookUniformFields}}
         size: {
           width: framebuffer.width * framebuffer.density,
           height: framebuffer.height * framebuffer.density,
-          depthOrArrayLayers: 1,
+          depthOrArrayLayers: 1
         },
-        format: this._getWebGPUColorFormat(framebuffer),
+        format: this._getWebGPUColorFormat(framebuffer)
       };
 
       // Create non-multisampled texture for texture binding (always needed)
       const colorTextureDescriptor = {
         ...baseDescriptor,
-        usage: GPUTextureUsage.RENDER_ATTACHMENT |
-               GPUTextureUsage.TEXTURE_BINDING |
-               GPUTextureUsage.COPY_SRC |
-               (framebuffer._useCanvasFormat ? GPUTextureUsage.COPY_DST : 0),
-        sampleCount: 1,
+        usage:
+          GPUTextureUsage.RENDER_ATTACHMENT |
+          GPUTextureUsage.TEXTURE_BINDING |
+          GPUTextureUsage.COPY_SRC |
+          (framebuffer._useCanvasFormat ? GPUTextureUsage.COPY_DST : 0),
+        sampleCount: 1
       };
-      framebuffer.colorTexture = this.device.createTexture(colorTextureDescriptor);
+      framebuffer.colorTexture = this.device.createTexture(
+        colorTextureDescriptor
+      );
       framebuffer.colorTextureView = framebuffer.colorTexture.createView();
 
       // Create multisampled texture for rendering if antialiasing is enabled
@@ -3337,10 +3686,13 @@ ${hookUniformFields}}
         const aaColorTextureDescriptor = {
           ...baseDescriptor,
           usage: GPUTextureUsage.RENDER_ATTACHMENT,
-          sampleCount: this._getValidSampleCount(framebuffer.antialiasSamples),
+          sampleCount: this._getValidSampleCount(framebuffer.antialiasSamples)
         };
-        framebuffer.aaColorTexture = this.device.createTexture(aaColorTextureDescriptor);
-        framebuffer.aaColorTextureView = framebuffer.aaColorTexture.createView();
+        framebuffer.aaColorTexture = this.device.createTexture(
+          aaColorTextureDescriptor
+        );
+        framebuffer.aaColorTextureView =
+          framebuffer.aaColorTexture.createView();
       }
 
       if (framebuffer.useDepth) {
@@ -3348,20 +3700,23 @@ ${hookUniformFields}}
           size: {
             width: framebuffer.width * framebuffer.density,
             height: framebuffer.height * framebuffer.density,
-            depthOrArrayLayers: 1,
+            depthOrArrayLayers: 1
           },
-          format: this._getWebGPUDepthFormat(framebuffer),
+          format: this._getWebGPUDepthFormat(framebuffer)
         };
 
         // Create non-multisampled depth texture for texture binding (always needed)
         const depthTextureDescriptor = {
           ...depthBaseDescriptor,
-          usage: GPUTextureUsage.RENDER_ATTACHMENT |
-                 GPUTextureUsage.TEXTURE_BINDING |
-                 (framebuffer._useCanvasFormat ? GPUTextureUsage.COPY_DST : 0),
-          sampleCount: 1,
+          usage:
+            GPUTextureUsage.RENDER_ATTACHMENT |
+            GPUTextureUsage.TEXTURE_BINDING |
+            (framebuffer._useCanvasFormat ? GPUTextureUsage.COPY_DST : 0),
+          sampleCount: 1
         };
-        framebuffer.depthTexture = this.device.createTexture(depthTextureDescriptor);
+        framebuffer.depthTexture = this.device.createTexture(
+          depthTextureDescriptor
+        );
         framebuffer.depthTextureView = framebuffer.depthTexture.createView();
 
         // Create multisampled depth texture for rendering if antialiasing is enabled
@@ -3369,10 +3724,13 @@ ${hookUniformFields}}
           const aaDepthTextureDescriptor = {
             ...depthBaseDescriptor,
             usage: GPUTextureUsage.RENDER_ATTACHMENT,
-            sampleCount: this._getValidSampleCount(framebuffer.antialiasSamples),
+            sampleCount: this._getValidSampleCount(framebuffer.antialiasSamples)
           };
-          framebuffer.aaDepthTexture = this.device.createTexture(aaDepthTextureDescriptor);
-          framebuffer.aaDepthTextureView = framebuffer.aaDepthTexture.createView();
+          framebuffer.aaDepthTexture = this.device.createTexture(
+            aaDepthTextureDescriptor
+          );
+          framebuffer.aaDepthTextureView =
+            framebuffer.aaDepthTexture.createView();
         }
       }
 
@@ -3389,32 +3747,35 @@ ${hookUniformFields}}
         view: framebuffer.aaColorTexture
           ? framebuffer.aaColorTextureView
           : framebuffer.colorTextureView,
-        loadOp: "clear",
-        storeOp: "store",
+        loadOp: 'clear',
+        storeOp: 'store',
         clearValue: { r: 0, g: 0, b: 0, a: 0 },
         resolveTarget: framebuffer.aaColorTexture
           ? framebuffer.colorTextureView
-          : undefined,
+          : undefined
       };
 
       // Clear the depth texture if it exists
-      const depthTexture = framebuffer.aaDepthTexture || framebuffer.depthTexture;
-      const depthStencilAttachment = depthTexture ? {
-        view: framebuffer.aaDepthTexture
-          ? framebuffer.aaDepthTextureView
-          : framebuffer.depthTextureView,
-        depthLoadOp: "clear",
-        depthStoreOp: "store",
-        depthClearValue: 1.0,
-        stencilLoadOp: "clear",
-        stencilStoreOp: "store",
-        depthReadOnly: false,
-        stencilReadOnly: false,
-      } : undefined;
+      const depthTexture =
+        framebuffer.aaDepthTexture || framebuffer.depthTexture;
+      const depthStencilAttachment = depthTexture
+        ? {
+            view: framebuffer.aaDepthTexture
+              ? framebuffer.aaDepthTextureView
+              : framebuffer.depthTextureView,
+            depthLoadOp: 'clear',
+            depthStoreOp: 'store',
+            depthClearValue: 1.0,
+            stencilLoadOp: 'clear',
+            stencilStoreOp: 'store',
+            depthReadOnly: false,
+            stencilReadOnly: false
+          }
+        : undefined;
 
       const renderPassDescriptor = {
         colorAttachments: [colorAttachment],
-        depthStencilAttachment: depthStencilAttachment,
+        depthStencilAttachment: depthStencilAttachment
       };
 
       const passEncoder = commandEncoder.beginRenderPass(renderPassDescriptor);
@@ -3453,7 +3814,9 @@ ${hookUniformFields}}
         if (value.dimensions === 2) return 'vec2f';
         if (value.dimensions === 3) return 'vec3f';
         if (value.dimensions === 4) return 'vec4f';
-        throw new Error(`Unsupported vector dimension ${value.dimensions} for struct storage field`);
+        throw new Error(
+          `Unsupported vector dimension ${value.dimensions} for struct storage field`
+        );
       }
       if (value?.isColor) {
         return 'vec4f';
@@ -3462,9 +3825,13 @@ ${hookUniformFields}}
         if (value.length === 2) return 'vec2f';
         if (value.length === 3) return 'vec3f';
         if (value.length === 4) return 'vec4f';
-        throw new Error(`Unsupported array length ${value.length} for struct storage field`);
+        throw new Error(
+          `Unsupported array length ${value.length} for struct storage field`
+        );
       }
-      throw new Error(`Unsupported value type ${typeof value} for struct storage field`);
+      throw new Error(
+        `Unsupported value type ${typeof value} for struct storage field`
+      );
     }
 
     // Infers a struct schema from the first element of a struct array.
@@ -3491,16 +3858,16 @@ ${hookUniformFields}}
           ) {
             p5._friendlyError(
               `The "${name}" property in your storage data contains a nested object. ` +
-              `Make sure you only use properties with numbers, arrays of numbers, or p5.Vector.`,
+                `Make sure you only use properties with numbers, arrays of numbers, or p5.Vector.`,
               'createStorage'
             );
           }
         }
       }
 
-      const fieldLines = entries.map(([name, value]) =>
-        `  ${name}: ${this._jsValueToWgslType(value)},`
-      ).join('\n');
+      const fieldLines = entries
+        .map(([name, value]) => `  ${name}: ${this._jsValueToWgslType(value)},`)
+        .join('\n');
       const structBody = `{\n${fieldLines}\n}`;
       const elements = this._parseStruct(`struct _Tmp ${structBody}`, '_Tmp');
 
@@ -3513,9 +3880,11 @@ ${hookUniformFields}}
         const align = el.size <= 4 ? 4 : el.size <= 8 ? 8 : 16;
         maxAlign = Math.max(maxAlign, align);
         // Track original JS type for reconstruction during readback
-        const kind = value?.isVector ? 'vector'
-          : value?.isColor ? 'color'
-          : undefined;
+        const kind = value?.isVector
+          ? 'vector'
+          : value?.isColor
+            ? 'color'
+            : undefined;
         return {
           name,
           baseType: el.baseType,
@@ -3523,7 +3892,7 @@ ${hookUniformFields}}
           offset: el.offset,
           packInPlace: el.packInPlace ?? false,
           dim: el.size / 4,
-          kind,
+          kind
         };
       });
 
@@ -3544,7 +3913,13 @@ ${hookUniformFields}}
         const item = data[i];
         const baseOffset = i * stride;
         for (const field of fields) {
-          this._packField(field, item[field.name], floatView, dataView, baseOffset);
+          this._packField(
+            field,
+            item[field.name],
+            floatView,
+            dataView,
+            baseOffset
+          );
         }
       }
       return floatView;
@@ -3594,8 +3969,10 @@ ${hookUniformFields}}
                 // Scale back to the current colorMode range
                 const maxes = this.states.colorMaxes[this.states.colorMode];
                 item[field.name] = this._pInst.color(
-                  values[0] * maxes[0], values[1] * maxes[1],
-                  values[2] * maxes[2], values[3] * maxes[3]
+                  values[0] * maxes[0],
+                  values[1] * maxes[1],
+                  values[2] * maxes[2],
+                  values[3] * maxes[3]
                 );
               } else {
                 item[field.name] = values;
@@ -3609,24 +3986,71 @@ ${hookUniformFields}}
       return result;
     }
 
+    /**
+     * Resolves the WGSL element type a shader declares for a storage buffer
+     * into the typed array that reads it back correctly, unwrapping
+     * `atomic<T>` to `T`. Returns undefined for types we can't check.
+     * @private
+     */
+    _storageArrayTypeFor(elementType) {
+      if (!elementType) return undefined;
+      return STORAGE_ARRAY_TYPES[elementType.replace(/^atomic<(\w+)>$/, '$1')];
+    }
+
+    /**
+     * Warns when the typed array a storage buffer was created with doesn't
+     * match the element type the shader declares for it, since the bytes
+     * would otherwise be silently reinterpreted.
+     *
+     * Both call sites run every frame, so the result is cached on the buffer:
+     * after the first check this costs a property read and a comparison, and
+     * any warning is only ever logged once.
+     * @private
+     */
+    _checkStorageElementType(parsedStorage, storageBuffer) {
+      if (p5.disableFriendlyErrors) return;
+      // Resolved once when the shader was parsed
+      const expected = parsedStorage?.expectedArrayType;
+      if (!expected) return;
+      if (storageBuffer._checkedArrayType === expected) return;
+      storageBuffer._checkedArrayType = expected;
+
+      // Struct buffers are always packed as floats
+      if (storageBuffer._schema !== null) return;
+      if (storageBuffer._arrayType === expected) return;
+
+      p5._friendlyError(
+        `The storage buffer "${parsedStorage.name}" is declared as ` +
+          `array<${parsedStorage.elementType}> in the shader, but it was created ` +
+          `with a ${storageBuffer._arrayType.name}. Create it with a ` +
+          `${expected.name} instead so the values are read back correctly.`,
+        'createStorage'
+      );
+    }
+
     createStorage(dataOrCount) {
       const device = this.device;
 
       // Struct array: an array of plain objects
-      if (Array.isArray(dataOrCount) && dataOrCount.length > 0 &&
-          typeof dataOrCount[0] === 'object' && !Array.isArray(dataOrCount[0])) {
+      if (
+        Array.isArray(dataOrCount) &&
+        dataOrCount.length > 0 &&
+        typeof dataOrCount[0] === 'object' &&
+        !Array.isArray(dataOrCount[0])
+      ) {
         if (!p5.disableFriendlyErrors && dataOrCount.length > 1) {
           const firstKeys = Object.keys(dataOrCount[0]);
           let warned = false;
           for (let i = 1; i < dataOrCount.length; i++) {
             const el = dataOrCount[i];
             const elKeys = Object.keys(el);
-            const sameKeys = firstKeys.length === elKeys.length &&
+            const sameKeys =
+              firstKeys.length === elKeys.length &&
               firstKeys.every((k, j) => k === elKeys[j]);
             if (!sameKeys) {
               p5._friendlyError(
                 `Element ${i} has different fields than element 0. ` +
-                `All elements should have the same properties.`,
+                  `All elements should have the same properties.`,
                 'createStorage'
               );
               break;
@@ -3637,7 +4061,7 @@ ${hookUniformFields}}
               if (firstType !== elType) {
                 p5._friendlyError(
                   `The "${key}" property of element ${i} has type ${elType} ` +
-                  `but element 0 has type ${firstType}. Proporties should have the same type across all elements.`,
+                    `but element 0 has type ${firstType}. Proporties should have the same type across all elements.`,
                   'createStorage'
                 );
                 warned = true;
@@ -3652,8 +4076,11 @@ ${hookUniformFields}}
         const size = packed.byteLength;
         const buffer = device.createBuffer({
           size,
-          usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST | GPUBufferUsage.COPY_SRC,
-          mappedAtCreation: true,
+          usage:
+            GPUBufferUsage.STORAGE |
+            GPUBufferUsage.COPY_DST |
+            GPUBufferUsage.COPY_SRC,
+          mappedAtCreation: true
         });
         new Float32Array(buffer.getMappedRange()).set(packed);
         buffer.unmap();
@@ -3665,20 +4092,25 @@ ${hookUniformFields}}
       // Determine buffer size and initial data
       let size, initialData;
       if (typeof dataOrCount === 'number') {
-        // createStorage(count) - zero-initialized
+        // createStorage(count) - zero-initialized, nothing to infer a type from
         size = dataOrCount * 4; // floats are 4 bytes
         initialData = new Float32Array(dataOrCount);
       } else {
         // createStorage(array) - from data
-        if (dataOrCount instanceof Float32Array) {
+        if (
+          ArrayBuffer.isView(dataOrCount) &&
+          !(dataOrCount instanceof DataView)
+        ) {
           initialData = dataOrCount;
         } else if (Array.isArray(dataOrCount)) {
+          // Plain arrays default to floats for back compat
           initialData = new Float32Array(dataOrCount);
         } else {
-          throw new Error('createStorage expects a number or array/Float32Array');
+          throw new Error('createStorage expects a number or array/TypedArray');
         }
         size = initialData.byteLength;
       }
+      const ArrayType = initialData.constructor;
 
       // Align to 16 bytes (WGSL storage buffer alignment requirement)
       size = Math.ceil(size / 16) * 16;
@@ -3686,18 +4118,27 @@ ${hookUniformFields}}
       // Create storage buffer with STORAGE | COPY_DST | COPY_SRC usage
       const buffer = device.createBuffer({
         size,
-        usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST | GPUBufferUsage.COPY_SRC,
+        usage:
+          GPUBufferUsage.STORAGE |
+          GPUBufferUsage.COPY_DST |
+          GPUBufferUsage.COPY_SRC,
         mappedAtCreation: initialData.length > 0
       });
 
       // Write initial data if provided
       if (initialData.length > 0) {
-        const mapping = new Float32Array(buffer.getMappedRange());
+        const mapping = new ArrayType(buffer.getMappedRange());
         mapping.set(initialData);
         buffer.unmap();
       }
 
-      const storageBuffer = new StorageBuffer(buffer, size, this);
+      const storageBuffer = new StorageBuffer(
+        buffer,
+        size,
+        this,
+        null,
+        ArrayType
+      );
 
       // Track for cleanup
       this._storageBuffers.add(storageBuffer);
@@ -3725,9 +4166,13 @@ ${hookUniformFields}}
         return this.depthFormat;
       }
       if (framebuffer.useStencil) {
-        return framebuffer.depthFormat === constants.FLOAT ? 'depth32float-stencil8' : 'depth24plus-stencil8';
+        return framebuffer.depthFormat === constants.FLOAT
+          ? 'depth32float-stencil8'
+          : 'depth24plus-stencil8';
       } else {
-        return framebuffer.depthFormat === constants.FLOAT ? 'depth32float' : 'depth24plus';
+        return framebuffer.depthFormat === constants.FLOAT
+          ? 'depth32float'
+          : 'depth24plus';
       }
     }
 
@@ -3742,7 +4187,7 @@ ${hookUniformFields}}
     }
 
     deleteFramebufferTextures(framebuffer) {
-      this._deleteFramebufferTexture(framebuffer.color)
+      this._deleteFramebufferTexture(framebuffer.color);
       if (framebuffer.depth) this._deleteFramebufferTexture(framebuffer.depth);
     }
 
@@ -3762,8 +4207,7 @@ ${hookUniformFields}}
       }
     }
 
-    getFramebufferToBind(framebuffer) {
-    }
+    getFramebufferToBind(framebuffer) {}
 
     updateFramebufferTexture(framebuffer, property) {
       // No-op for WebGPU since antialiasing is handled at pipeline level
@@ -3791,7 +4235,7 @@ ${hookUniformFields}}
       // const stagingBuffer = this._ensurePixelReadBuffer(bufferSize);
       const stagingBuffer = this.device.createBuffer({
         size: bufferSize,
-        usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ,
+        usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ
       });
 
       const commandEncoder = this.device.createCommandEncoder();
@@ -3802,7 +4246,11 @@ ${hookUniformFields}}
           mipLevel: 0,
           aspect: 'all'
         },
-        { buffer: stagingBuffer, bytesPerRow: alignedBytesPerRow, rowsPerImage: height },
+        {
+          buffer: stagingBuffer,
+          bytesPerRow: alignedBytesPerRow,
+          rowsPerImage: height
+        },
         { width, height, depthOrArrayLayers: 1 }
       );
 
@@ -3817,7 +4265,9 @@ ${hookUniformFields}}
       // If alignment was needed, extract the actual pixel data
       let result;
       if (alignedBytesPerRow === unalignedBytesPerRow) {
-        result = new Uint8Array(mappedRange.slice(0, width * height * bytesPerPixel));
+        result = new Uint8Array(
+          mappedRange.slice(0, width * height * bytesPerPixel)
+        );
         stagingBuffer.unmap();
       } else {
         // Need to extract pixel data from aligned buffer
@@ -3826,7 +4276,10 @@ ${hookUniformFields}}
         for (let y = 0; y < height; y++) {
           const srcOffset = y * alignedBytesPerRow;
           const dstOffset = y * unalignedBytesPerRow;
-          result.set(mappedData.subarray(srcOffset, srcOffset + unalignedBytesPerRow), dstOffset);
+          result.set(
+            mappedData.subarray(srcOffset, srcOffset + unalignedBytesPerRow),
+            dstOffset
+          );
         }
         stagingBuffer.unmap();
       }
@@ -3865,7 +4318,6 @@ ${hookUniformFields}}
       const pixelData = new Uint8Array(mappedRange);
       const result = [pixelData[0], pixelData[1], pixelData[2], pixelData[3]];
 
-
       this._ensurePixelsAreRGBA(framebuffer, result);
 
       stagingBuffer.unmap();
@@ -3877,8 +4329,8 @@ ${hookUniformFields}}
       // await this.finishDraw();
       // const wasActive = this.activeFramebuffer() === framebuffer;
       // if (wasActive) {
-        // framebuffer.end();
-        // this.flushDraw()
+      // framebuffer.end();
+      // this.flushDraw()
       // }
       // Ensure all pending GPU work is complete before reading pixels
       // await this.queue.onSubmittedWorkDone();
@@ -3897,7 +4349,11 @@ ${hookUniformFields}}
         {
           texture: framebuffer.colorTexture,
           mipLevel: 0,
-          origin: { x: x * framebuffer.density, y: y * framebuffer.density, z: 0 }
+          origin: {
+            x: x * framebuffer.density,
+            y: y * framebuffer.density,
+            z: 0
+          }
         },
         { buffer: stagingBuffer, bytesPerRow: alignedBytesPerRow },
         { width, height, depthOrArrayLayers: 1 }
@@ -3910,7 +4366,9 @@ ${hookUniformFields}}
 
       let pixelData;
       if (alignedBytesPerRow === unalignedBytesPerRow) {
-        pixelData = new Uint8Array(mappedRange.slice(0, width * height * bytesPerPixel));
+        pixelData = new Uint8Array(
+          mappedRange.slice(0, width * height * bytesPerPixel)
+        );
       } else {
         // Need to extract pixel data from aligned buffer
         pixelData = new Uint8Array(width * height * bytesPerPixel);
@@ -3918,14 +4376,19 @@ ${hookUniformFields}}
         for (let y = 0; y < height; y++) {
           const srcOffset = y * alignedBytesPerRow;
           const dstOffset = y * unalignedBytesPerRow;
-          pixelData.set(mappedData.subarray(srcOffset, srcOffset + unalignedBytesPerRow), dstOffset);
+          pixelData.set(
+            mappedData.subarray(srcOffset, srcOffset + unalignedBytesPerRow),
+            dstOffset
+          );
         }
       }
       this._ensurePixelsAreRGBA(framebuffer, pixelData);
 
       // WebGPU doesn't need vertical flipping unlike WebGL
       const region = new Image(width, height);
-      region.imageData = region.canvas.getContext('2d').createImageData(width, height);
+      region.imageData = region.canvas
+        .getContext('2d')
+        .createImageData(width, height);
       region.imageData.data.set(pixelData);
       region.pixels = region.imageData.data;
       region.updatePixels();
@@ -3968,7 +4431,10 @@ ${hookUniformFields}}
 
     _ensurePixelsAreRGBA(framebuffer, result) {
       // Convert BGRA to RGBA if reading from canvas-format framebuffer on BGRA systems
-      if (framebuffer._useCanvasFormat && this.presentationFormat === 'bgra8unorm') {
+      if (
+        framebuffer._useCanvasFormat &&
+        this.presentationFormat === 'bgra8unorm'
+      ) {
         this._convertBGRtoRGB(result);
       }
     }
@@ -4001,7 +4467,6 @@ ${hookUniformFields}}
       return super.filter(...args);
     }
 
-
     baseFilterShader() {
       if (!this._baseFilterShader) {
         this._baseFilterShader = new Shader(
@@ -4011,13 +4476,13 @@ ${hookUniformFields}}
           {
             vertex: {},
             fragment: {
-              "vec4<f32> getColor": `(inputs: FilterInputs, canvasContent: texture_2d<f32>, canvasContent_sampler: sampler) -> vec4<f32> {
+              'vec4<f32> getColor': `(inputs: FilterInputs, canvasContent: texture_2d<f32>, canvasContent_sampler: sampler) -> vec4<f32> {
                 return textureSample(tex, tex_sampler, inputs.texCoord);
-              }`,
+              }`
             },
             hookAliases: {
-              'getColor': ['filterColor'],
-            },
+              getColor: ['filterColor']
+            }
           }
         );
       }
@@ -4026,15 +4491,11 @@ ${hookUniformFields}}
 
     baseComputeShader() {
       if (!this._baseComputeShader) {
-        this._baseComputeShader = new Shader(
-          this,
-          baseComputeShader,
-          {
-            compute: {
-              'void iteration': '(index: vec3<i32>) {}',
-            },
+        this._baseComputeShader = new Shader(this, baseComputeShader, {
+          compute: {
+            'void iteration': '(index: vec3<i32>) {}'
           }
-        );
+        });
       }
       return this._baseComputeShader;
     }
@@ -4073,11 +4534,14 @@ ${hookUniformFields}}
         size: {
           width: size,
           height: size,
-          depthOrArrayLayers: 1,
+          depthOrArrayLayers: 1
         },
         mipLevelCount: mipLevels,
         format: 'rgba8unorm',
-        usage: GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.COPY_DST | GPUTextureUsage.RENDER_ATTACHMENT,
+        usage:
+          GPUTextureUsage.TEXTURE_BINDING |
+          GPUTextureUsage.COPY_DST |
+          GPUTextureUsage.RENDER_ATTACHMENT
       };
 
       const gpuTexture = this.device.createTexture(textureDescriptor);
@@ -4104,17 +4568,17 @@ ${hookUniformFields}}
       commandEncoder.copyTextureToTexture(
         {
           texture: sourceTexture,
-          origin: { x: 0, y: 0, z: 0 },
+          origin: { x: 0, y: 0, z: 0 }
         },
         {
           texture: mipmapData.gpuTexture,
           mipLevel: mipLevel,
-          origin: { x: 0, y: 0, z: 0 },
+          origin: { x: 0, y: 0, z: 0 }
         },
         {
           width: width,
           height: height,
-          depthOrArrayLayers: 1,
+          depthOrArrayLayers: 1
         }
       );
 
@@ -4170,7 +4634,10 @@ ${hookUniformFields}}
       let pz = z;
 
       // we spread if we exceed GPU limits OR if it involves a large 1D dispatch
-      const exceedsLimits = x > MAX_THREADS_PER_DIM || y > MAX_THREADS_PER_DIM || z > MAX_THREADS_PER_DIM;
+      const exceedsLimits =
+        x > MAX_THREADS_PER_DIM ||
+        y > MAX_THREADS_PER_DIM ||
+        z > MAX_THREADS_PER_DIM;
       const isLarge1D = totalIterations > 1024 && y === 1 && z === 1;
 
       if (exceedsLimits || isLarge1D) {
@@ -4192,11 +4659,15 @@ ${hookUniformFields}}
       const passEncoder = commandEncoder.beginComputePass();
       this.setupShaderBindGroups(shader, passEncoder, {
         compute: true,
-        workgroupSize: [WORKGROUP_SIZE_X, WORKGROUP_SIZE_Y, WORKGROUP_SIZE_Z],
+        workgroupSize: [WORKGROUP_SIZE_X, WORKGROUP_SIZE_Y, WORKGROUP_SIZE_Z]
       });
 
       // Dispatch compute workgroups
-      passEncoder.dispatchWorkgroups(workgroupCountX, workgroupCountY, workgroupCountZ);
+      passEncoder.dispatchWorkgroups(
+        workgroupCountX,
+        workgroupCountY,
+        workgroupCountZ
+      );
 
       passEncoder.end();
       this.device.queue.submit([commandEncoder.finish()]);
@@ -4210,12 +4681,11 @@ ${hookUniformFields}}
   // TODO: move this and the duplicate in the WebGL renderer to another file
   fn.setAttributes = async function (key, value) {
     return this._renderer._setAttributes(key, value);
-  }
-
+  };
 }
 
 export default rendererWebGPU;
 
-if (typeof p5 !== "undefined") {
+if (typeof p5 !== 'undefined') {
   rendererWebGPU(p5, p5.prototype);
 }
