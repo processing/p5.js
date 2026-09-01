@@ -180,9 +180,9 @@ export const verifierUtils = {
           if (node.id.type === 'Identifier') {
             const category =
               node.init &&
-                ['ArrowFunctionExpression', 'FunctionExpression'].includes(
-                  node.init.type
-                )
+              ['ArrowFunctionExpression', 'FunctionExpression'].includes(
+                node.init.type
+              )
                 ? 'functions'
                 : 'variables';
             userDefinitions[category].push({
