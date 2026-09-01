@@ -40,7 +40,10 @@ suite('p5.GeometryPart', function () {
       ambientColor: null,
       specularColor: null,
       shininess: null,
-      texture: null
+      texture: null,
+      specularTexture: null,
+      ambientTexture: null,
+      shininessTexture: null
     });
   });
 

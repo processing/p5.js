@@ -13,6 +13,7 @@ suite('parseMtlData', function () {
       'map_Kd diffuse.png',
       'map_Ka ambient.png',
       'map_Ks specular.png',
+      'map_Ns shininess.png',
       'map_Bump -bm 0.5 bump.png'
     ].join('\n');
 
@@ -28,6 +29,7 @@ suite('parseMtlData', function () {
     expect(m.texturePath).toEqual('diffuse.png');
     expect(m.ambientTexturePath).toEqual('ambient.png');
     expect(m.specularTexturePath).toEqual('specular.png');
+    expect(m.shininessTexturePath).toEqual('shininess.png');
     // bump options like -bm precede the path, so the path is the last token.
     expect(m.bumpTexturePath).toEqual('bump.png');
   });
@@ -47,6 +49,21 @@ suite('parseMtlData', function () {
     const materials = parseMtlData('Kd 1 1 1\nnewmtl a\nKd 0 0 0');
     expect(materials.a.diffuseColor).toEqual([0, 0, 0]);
     expect(Object.keys(materials)).toEqual(['a']);
+  });
+
+  test('a Kd-only material parses without error', function () {
+    // the common case: a material that only sets a diffuse colour
+    const materials = parseMtlData('newmtl plain\nKd 0.2 0.4 0.6');
+    expect(materials.plain.diffuseColor).toEqual([0.2, 0.4, 0.6]);
+    expect(materials.plain.texturePath).toBeUndefined();
+  });
+
+  test('a malformed mtl does not throw', function () {
+    // an unknown token, a token missing its value, and a blank line
+    const mtl = 'newmtl weird\nKd 1 0 0\nfoo bar baz\nNs\n\nsomething_else';
+    expect(() => parseMtlData(mtl)).not.toThrow();
+    // the valid tokens around the junk are still read
+    expect(parseMtlData(mtl).weird.diffuseColor).toEqual([1, 0, 0]);
   });
 });
 
@@ -68,5 +85,39 @@ suite('mtlToPartState', function () {
     const state = mtlToPartState(undefined);
     expect(state.fill).toBeNull();
     expect(state.texture).toBeNull();
+  });
+
+  test('a specular map lands on the part state with a white base', function () {
+    const img = { width: 1, height: 1 };
+    const state = mtlToPartState({ specularTexture: img });
+    expect(state.specularTexture).toBe(img);
+    // with no explicit Ks, the base specular colour defaults to white so the
+    // map has something to modulate
+    expect(state.specularColor).toEqual([1, 1, 1]);
+  });
+
+  test('a specular map keeps an explicit Ks colour', function () {
+    const img = { width: 1, height: 1 };
+    const state = mtlToPartState({
+      specularColor: [0.5, 0.5, 0.5],
+      specularTexture: img
+    });
+    expect(state.specularTexture).toBe(img);
+    expect(state.specularColor).toEqual([0.5, 0.5, 0.5]);
+  });
+
+  test('an ambient map lands on the part state with a white base', function () {
+    const img = { width: 1, height: 1 };
+    const state = mtlToPartState({ ambientTexture: img });
+    expect(state.ambientTexture).toBe(img);
+    expect(state.ambientColor).toEqual([1, 1, 1]);
+  });
+
+  test('a shininess map lands on the part state', function () {
+    const img = { width: 1, height: 1 };
+    const state = mtlToPartState({ shininessTexture: img });
+    expect(state.shininessTexture).toBe(img);
+    // the map scales a base shininess, which defaults to 1
+    expect(state.shininess).toEqual(1);
   });
 });

@@ -1,6 +1,7 @@
 import { mockP5, mockP5Prototype, httpMock } from '../../js/mocks';
 import loading from '../../../src/webgl/loading';
 import { Geometry } from '../../../src/webgl/p5.Geometry';
+import { vi } from 'vitest';
 
 suite('loadModel', function () {
   const invalidFile = '404file';
@@ -128,6 +129,73 @@ suite('loadModel', function () {
       assert.ok(model.parts.every(p => p.partState.texture == null));
     } finally {
       delete mockP5Prototype.loadImage;
+    }
+  });
+
+  test('a single-material OBJ stays one part', async function () {
+    // eg1.obj has one real material, so it is not split
+    const model = await mockP5Prototype.loadModel(inconsistentColorObjFile);
+    assert.equal(model.parts.length, 1);
+    assert.equal(model.parts[0], model, 'the geometry is its own single part');
+  });
+
+  test('a 12-material OBJ splits into 12 parts', async function () {
+    const model = await mockP5Prototype.loadModel(
+      '/test/unit/assets/multi_material_12.obj'
+    );
+    assert.equal(model.parts.length, 12);
+    // every face still lands in exactly one part
+    const totalFaces = model.parts.reduce((s, p) => s + p.faces.length, 0);
+    assert.equal(totalFaces, model.faces.length);
+  });
+
+  test('parts get computed normals when the OBJ has none', async function () {
+    // textured.obj has no vn lines, so normals are computed before the split
+    const model = await mockP5Prototype.loadModel(
+      '/test/unit/assets/textured.obj'
+    );
+    assert.equal(model.parts.length, 2);
+    for (const part of model.parts) {
+      assert.equal(
+        part.vertexNormals.length,
+        part.vertices.length,
+        'each part has one computed normal per vertex'
+      );
+    }
+  });
+
+  test('each part carries its own localised uvs', async function () {
+    const model = await mockP5Prototype.loadModel(
+      '/test/unit/assets/textured.obj'
+    );
+    assert.equal(model.parts.length, 2);
+    for (const part of model.parts) {
+      assert.equal(
+        part.uvs.length,
+        part.vertices.length,
+        'each part has one uv per localised vertex'
+      );
+    }
+  });
+
+  test('a failed texture load warns instead of failing silently', async function () {
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    mockP5Prototype.loadImage = async () => {
+      throw new Error('Not Found');
+    };
+    try {
+      const model = await mockP5Prototype.loadModel(
+        '/test/unit/assets/textured.obj'
+      );
+      // the model still loads with both material parts
+      assert.equal(model.parts.length, 2);
+      // the failed texture is skipped, so no part carries it
+      assert.ok(model.parts.every(p => p.partState.texture == null));
+      // and the failure is surfaced, not silent
+      assert.ok(warnSpy.mock.calls.length > 0, 'a warning is emitted');
+    } finally {
+      delete mockP5Prototype.loadImage;
+      warnSpy.mockRestore();
     }
   });
 
