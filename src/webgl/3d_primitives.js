@@ -10,7 +10,7 @@ import { Vector } from '../math/p5.Vector';
 import { Geometry } from './p5.Geometry';
 import { Matrix } from '../math/p5.Matrix';
 
-function primitives3D(p5, fn){
+function primitives3D(p5, fn) {
   /**
    * Sets the stroke rendering mode to balance performance and visual features when drawing lines.
    *
@@ -303,7 +303,7 @@ function primitives3D(p5, fn){
    *   }
    * }
    */
-  fn.buildGeometry = function(callback) {
+  fn.buildGeometry = function (callback) {
     return this._renderer.buildGeometry(callback);
   };
 
@@ -392,7 +392,7 @@ function primitives3D(p5, fn){
    *   }
    * }
    */
-  fn.freeGeometry = function(geometry) {
+  fn.freeGeometry = function (geometry) {
     this._renderer.geometryBufferCache.freeBuffers(geometry.gid);
   };
 
@@ -488,12 +488,7 @@ function primitives3D(p5, fn){
    *   plane(30, 50);
    * }
    */
-  fn.plane = function(
-    width = 50,
-    height = width,
-    detailX = 1,
-    detailY = 1
-  ) {
+  fn.plane = function (width = 50, height = width, detailX = 1, detailY = 1) {
     this._assert3d('plane');
     // p5._validateParameters('plane', arguments);
 
@@ -617,7 +612,7 @@ function primitives3D(p5, fn){
    *   box(30, 50, 10);
    * }
    */
-  fn.box = function(width, height, depth, detailX, detailY) {
+  fn.box = function (width, height, depth, detailX, detailY) {
     this._assert3d('box');
     // p5._validateParameters('box', arguments);
 
@@ -736,7 +731,7 @@ function primitives3D(p5, fn){
    *   sphere(30, 24, 4);
    * }
    */
-  fn.sphere = function(radius = 50, detailX = 24, detailY = 16) {
+  fn.sphere = function (radius = 50, detailX = 24, detailY = 16) {
     this._assert3d('sphere');
     // p5._validateParameters('sphere', arguments);
 
@@ -935,7 +930,7 @@ function primitives3D(p5, fn){
    *   cylinder(30, 50, 24, 1, false, false);
    * }
    */
-  fn.cylinder = function(
+  fn.cylinder = function (
     radius = 50,
     height = radius,
     detailX = 24,
@@ -949,8 +944,10 @@ function primitives3D(p5, fn){
     this._renderer.cylinder(
       radius,
       height,
-      detailX, detailY,
-      bottomCap, topCap
+      detailX,
+      detailY,
+      bottomCap,
+      topCap
     );
 
     return this;
@@ -1139,7 +1136,7 @@ function primitives3D(p5, fn){
    *   cone(30, 50, 24, 1, false);
    * }
    */
-  fn.cone = function(
+  fn.cone = function (
     radius = 50,
     height = radius,
     detailX = 24,
@@ -1306,7 +1303,7 @@ function primitives3D(p5, fn){
    *   ellipsoid(30, 40, 50, 4, 3);
    * }
    */
-  fn.ellipsoid = function(
+  fn.ellipsoid = function (
     radiusX = 50,
     radiusY = radiusX,
     radiusZ = radiusX,
@@ -1455,7 +1452,7 @@ function primitives3D(p5, fn){
    *   torus(30, 15, 5, 3);
    * }
    */
-  fn.torus = function(radius, tubeRadius, detailX, detailY) {
+  fn.torus = function (radius, tubeRadius, detailX, detailY) {
     this._assert3d('torus');
     // p5._validateParameters('torus', arguments);
 
@@ -1499,7 +1496,7 @@ function primitives3D(p5, fn){
    *   point(0, -25);
    * }
    */
-  Renderer3D.prototype.point = function(x, y, z = 0) {
+  Renderer3D.prototype.point = function (x, y, z = 0) {
     this.beginShape(constants.POINTS);
     this.vertex(x, y, z);
     this.endShape();
@@ -1507,7 +1504,7 @@ function primitives3D(p5, fn){
     return this;
   };
 
-  Renderer3D.prototype.triangle = function(args) {
+  Renderer3D.prototype.triangle = function (args) {
     const x1 = args[0],
       y1 = args[1];
     const x2 = args[2],
@@ -1517,12 +1514,16 @@ function primitives3D(p5, fn){
 
     const gid = 'tri';
     if (!this.geometryInHash(gid)) {
-      const _triangle = function() {
+      const _triangle = function () {
         const vertices = [];
         vertices.push(new Vector(0, 0, 0));
         vertices.push(new Vector(1, 0, 0));
         vertices.push(new Vector(0, 1, 0));
-        this.edges = [[0, 1], [1, 2], [2, 0]];
+        this.edges = [
+          [0, 1],
+          [1, 2],
+          [2, 0]
+        ];
         this.vertices = vertices;
         this.faces = [[0, 1, 2]];
         this.uvs = [0, 0, 1, 0, 1, 1];
@@ -1543,12 +1544,26 @@ function primitives3D(p5, fn){
     const uModelMatrix = this.states.uModelMatrix.copy();
     try {
       // triangle orientation.
-      const orientation = Math.sign(x1*y2-x2*y1 + x2*y3-x3*y2 + x3*y1-x1*y3);
+      const orientation = Math.sign(
+        x1 * y2 - x2 * y1 + x2 * y3 - x3 * y2 + x3 * y1 - x1 * y3
+      );
       const mult = new Matrix([
-        x2 - x1, y2 - y1, 0, 0, // the resulting unit X-axis
-        x3 - x1, y3 - y1, 0, 0, // the resulting unit Y-axis
-        0, 0, orientation, 0,   // the resulting unit Z-axis (Reflect the specified order of vertices)
-        x1, y1, 0, 1            // the resulting origin
+        x2 - x1,
+        y2 - y1,
+        0,
+        0, // the resulting unit X-axis
+        x3 - x1,
+        y3 - y1,
+        0,
+        0, // the resulting unit Y-axis
+        0,
+        0,
+        orientation,
+        0, // the resulting unit Z-axis (Reflect the specified order of vertices)
+        x1,
+        y1,
+        0,
+        1 // the resulting origin
       ]).mult(this.states.uModelMatrix);
 
       this.states.setValue('uModelMatrix', mult);
@@ -1561,7 +1576,7 @@ function primitives3D(p5, fn){
     return this;
   };
 
-  Renderer3D.prototype.ellipse = function(args) {
+  Renderer3D.prototype.ellipse = function (args) {
     this.arc(
       args[0],
       args[1],
@@ -1574,7 +1589,7 @@ function primitives3D(p5, fn){
     );
   };
 
-  Renderer3D.prototype.arc = function(...args) {
+  Renderer3D.prototype.arc = function (...args) {
     const x = args[0];
     const y = args[1];
     const width = args[2];
@@ -1597,8 +1612,7 @@ function primitives3D(p5, fn){
     }
 
     if (!this.geometryInHash(gid)) {
-      const _arc = function() {
-
+      const _arc = function () {
         // if the start and stop angles are not the same, push vertices to the array
         if (start.toFixed(10) !== stop.toFixed(10)) {
           // if the mode specified is PIE or null, push the mid point of the arc in vertices
@@ -1693,7 +1707,7 @@ function primitives3D(p5, fn){
     return this;
   };
 
-  Renderer3D.prototype.rect = function(args) {
+  Renderer3D.prototype.rect = function (args) {
     const x = args[0];
     const y = args[1];
     const width = args[2];
@@ -1702,12 +1716,13 @@ function primitives3D(p5, fn){
     if (typeof args[4] === 'undefined') {
       // Use the retained mode for drawing rectangle,
       // if args for rounding rectangle is not provided by user.
-      const perPixelLighting = this._pInst._glAttributes?.perPixelLighting ?? true;
+      const perPixelLighting =
+        this._pInst._glAttributes?.perPixelLighting ?? true;
       const detailX = args[4] || (perPixelLighting ? 1 : 24);
       const detailY = args[5] || (perPixelLighting ? 1 : 16);
       const gid = `rect|${detailX}|${detailY}`;
       if (!this.geometryInHash(gid)) {
-        const _rect = function() {
+        const _rect = function () {
           for (let i = 0; i <= this.detailY; i++) {
             const v = i / this.detailY;
             for (let j = 0; j <= this.detailX; j++) {
@@ -1728,10 +1743,7 @@ function primitives3D(p5, fn){
           }
         };
         const rectGeom = new Geometry(detailX, detailY, _rect, this);
-        rectGeom
-          .computeFaces()
-          .computeNormals()
-          ._edgesToVertices();
+        rectGeom.computeFaces().computeNormals()._edgesToVertices();
         rectGeom.gid = gid;
         this.geometryBufferCache.ensureCached(rectGeom);
       }
@@ -1794,7 +1806,7 @@ function primitives3D(p5, fn){
       const prevOrder = this.bezierOrder();
       this.bezierOrder(3);
       this.beginShape();
-      const addUVs = (x, y) => [x, y, 0, (x - x1)/width, (y - y1)/height];
+      const addUVs = (x, y) => [x, y, 0, (x - x1) / width, (y - y1) / height];
       const rr = 0.5523; // kappa: 4*(sqrt(2)-1)/3, handle ratio for cubic bezier circle approximation
       if (tr !== 0) {
         this.vertex(...addUVs(x2 - tr, y1));
@@ -1836,52 +1848,63 @@ function primitives3D(p5, fn){
     return this;
   };
 
-  Renderer3D.prototype.quad = function(
-    x1, y1, z1,
-    x2, y2, z2,
-    x3, y3, z3,
-    x4, y4, z4,
-    detailX=2,
-    detailY=2
+  Renderer3D.prototype.quad = function (
+    x1,
+    y1,
+    z1,
+    x2,
+    y2,
+    z2,
+    x3,
+    y3,
+    z3,
+    x4,
+    y4,
+    z4,
+    detailX = 2,
+    detailY = 2
   ) {
-
-    const gid =
-      `quad|${x1}|${y1}|${z1}|${x2}|${y2}|${z2}|${x3}|${y3}|${z3}|${x4}|${y4}|${z4}|${detailX}|${detailY}`;
+    const gid = `quad|${x1}|${y1}|${z1}|${x2}|${y2}|${z2}|${x3}|${y3}|${z3}|${x4}|${y4}|${z4}|${detailX}|${detailY}`;
 
     if (!this.geometryInHash(gid)) {
-      const quadGeom = new Geometry(detailX, detailY, function() {
-        //algorithm adapted from c++ to js
-        //https://stackoverflow.com/questions/16989181/whats-the-correct-way-to-draw-a-distorted-plane-in-opengl/16993202#16993202
-        let xRes = 1.0 / (this.detailX - 1);
-        let yRes = 1.0 / (this.detailY - 1);
-        for (let y = 0; y < this.detailY; y++) {
-          for (let x = 0; x < this.detailX; x++) {
-            let pctx = x * xRes;
-            let pcty = y * yRes;
+      const quadGeom = new Geometry(
+        detailX,
+        detailY,
+        function () {
+          //algorithm adapted from c++ to js
+          //https://stackoverflow.com/questions/16989181/whats-the-correct-way-to-draw-a-distorted-plane-in-opengl/16993202#16993202
+          let xRes = 1.0 / (this.detailX - 1);
+          let yRes = 1.0 / (this.detailY - 1);
+          for (let y = 0; y < this.detailY; y++) {
+            for (let x = 0; x < this.detailX; x++) {
+              let pctx = x * xRes;
+              let pcty = y * yRes;
 
-            let linePt0x = (1 - pcty) * x1 + pcty * x4;
-            let linePt0y = (1 - pcty) * y1 + pcty * y4;
-            let linePt0z = (1 - pcty) * z1 + pcty * z4;
-            let linePt1x = (1 - pcty) * x2 + pcty * x3;
-            let linePt1y = (1 - pcty) * y2 + pcty * y3;
-            let linePt1z = (1 - pcty) * z2 + pcty * z3;
+              let linePt0x = (1 - pcty) * x1 + pcty * x4;
+              let linePt0y = (1 - pcty) * y1 + pcty * y4;
+              let linePt0z = (1 - pcty) * z1 + pcty * z4;
+              let linePt1x = (1 - pcty) * x2 + pcty * x3;
+              let linePt1y = (1 - pcty) * y2 + pcty * y3;
+              let linePt1z = (1 - pcty) * z2 + pcty * z3;
 
-            let ptx = (1 - pctx) * linePt0x + pctx * linePt1x;
-            let pty = (1 - pctx) * linePt0y + pctx * linePt1y;
-            let ptz = (1 - pctx) * linePt0z + pctx * linePt1z;
+              let ptx = (1 - pctx) * linePt0x + pctx * linePt1x;
+              let pty = (1 - pctx) * linePt0y + pctx * linePt1y;
+              let ptz = (1 - pctx) * linePt0z + pctx * linePt1z;
 
-            this.vertices.push(new Vector(ptx, pty, ptz));
-            this.uvs.push([pctx, pcty]);
+              this.vertices.push(new Vector(ptx, pty, ptz));
+              this.uvs.push([pctx, pcty]);
+            }
           }
-        }
-      }, this);
+        },
+        this
+      );
 
       quadGeom.faces = [];
-      for(let y = 0; y < detailY-1; y++){
-        for(let x = 0; x < detailX-1; x++){
+      for (let y = 0; y < detailY - 1; y++) {
+        for (let x = 0; x < detailX - 1; x++) {
           let pt0 = x + y * detailX;
-          let pt1 = (x + 1) + y * detailX;
-          let pt2 = (x + 1) + (y + 1) * detailX;
+          let pt1 = x + 1 + y * detailX;
+          let pt2 = x + 1 + (y + 1) * detailX;
           let pt3 = x + (y + 1) * detailX;
           quadGeom.faces.push([pt0, pt1, pt2]);
           quadGeom.faces.push([pt0, pt2, pt3]);
@@ -1906,7 +1929,7 @@ function primitives3D(p5, fn){
   //this implementation of bezier curve
   //is based on Bernstein polynomial
   // pretier-ignore
-  Renderer3D.prototype.bezier = function(
+  Renderer3D.prototype.bezier = function (
     x1,
     y1,
     z1, // x2
@@ -1941,7 +1964,7 @@ function primitives3D(p5, fn){
   };
 
   // pretier-ignore
-  Renderer3D.prototype.curve = function(
+  Renderer3D.prototype.curve = function (
     x1,
     y1,
     z1, // x2
@@ -1997,7 +2020,7 @@ function primitives3D(p5, fn){
    *   line(10, 10, 0, 60, 60, 20);
    * }
    */
-  Renderer3D.prototype.line = function(...args) {
+  Renderer3D.prototype.line = function (...args) {
     if (args.length === 6) {
       // TODO shapes refactor
       this.beginShape(constants.LINES);
@@ -2013,7 +2036,7 @@ function primitives3D(p5, fn){
     return this;
   };
 
-  Renderer3D.prototype.image = function(
+  Renderer3D.prototype.image = function (
     img,
     sx,
     sy,
@@ -2082,7 +2105,7 @@ function primitives3D(p5, fn){
    * and topRadius >= 0
    * If topRadius == 0, topCap should be false
    */
-  const _truncatedCone = function(
+  const _truncatedCone = function (
     bottomRadius,
     topRadius,
     height,
@@ -2186,14 +2209,14 @@ function primitives3D(p5, fn){
       for (ii = 0; ii < detailX; ++ii) {
         this.faces.push([
           startIndex + ii,
-          startIndex + (ii + 1) % detailX,
+          startIndex + ((ii + 1) % detailX),
           startIndex + detailX
         ]);
       }
     }
   };
 
-  Renderer3D.prototype.plane = function(
+  Renderer3D.prototype.plane = function (
     width = 50,
     height = width,
     detailX = 1,
@@ -2202,7 +2225,7 @@ function primitives3D(p5, fn){
     const gid = `plane|${detailX}|${detailY}`;
 
     if (!this.geometryInHash(gid)) {
-      const _plane = function() {
+      const _plane = function () {
         let u, v, p;
         for (let i = 0; i <= this.detailY; i++) {
           v = i / this.detailY;
@@ -2221,7 +2244,7 @@ function primitives3D(p5, fn){
       } else if (this.states.strokeColor) {
         console.log(
           'Cannot draw stroke on plane objects with more' +
-          ' than 1 detailX or 1 detailY'
+            ' than 1 detailX or 1 detailY'
         );
       }
       planeGeom.gid = gid;
@@ -2230,18 +2253,19 @@ function primitives3D(p5, fn){
 
     this._drawGeometryScaled(
       this.geometryBufferCache.getGeometryByID(gid),
-      width, height,
+      width,
+      height,
       1
     );
   };
 
-  Renderer3D.prototype.box = function(
+  Renderer3D.prototype.box = function (
     width = 50,
     height = width,
     depth = height,
     detailX,
     detailY
-  ){
+  ) {
     const perPixelLighting =
       this.attributes && this.attributes.perPixelLighting;
     if (typeof detailX === 'undefined') {
@@ -2253,7 +2277,7 @@ function primitives3D(p5, fn){
 
     const gid = `box|${detailX}|${detailY}`;
     if (!this.geometryInHash(gid)) {
-      const _box = function() {
+      const _box = function () {
         const cubeIndices = [
           [0, 4, 2, 6], // -1, 0, 0],// -x
           [1, 3, 5, 7], // +1, 0, 0],// +x
@@ -2305,7 +2329,7 @@ function primitives3D(p5, fn){
       } else if (this.states.strokeColor) {
         console.log(
           'Cannot draw stroke on box objects with more' +
-          ' than 4 detailX or 4 detailY'
+            ' than 4 detailX or 4 detailY'
         );
       }
       //initialize our geometry buffer with
@@ -2316,12 +2340,13 @@ function primitives3D(p5, fn){
     }
     this._drawGeometryScaled(
       this.geometryBufferCache.getGeometryByID(gid),
-      width, height,
+      width,
+      height,
       depth
     );
   };
 
-  Renderer3D.prototype.sphere = function(
+  Renderer3D.prototype.sphere = function (
     radius = 50,
     detailX = 24,
     detailY = 16
@@ -2329,7 +2354,7 @@ function primitives3D(p5, fn){
     this.ellipsoid(radius, radius, radius, detailX, detailY);
   };
 
-  Renderer3D.prototype.ellipsoid = function(
+  Renderer3D.prototype.ellipsoid = function (
     radiusX = 50,
     radiusY = radiusX,
     radiusZ = radiusX,
@@ -2339,7 +2364,7 @@ function primitives3D(p5, fn){
     const gid = `ellipsoid|${detailX}|${detailY}`;
 
     if (!this.geometryInHash(gid)) {
-      const _ellipsoid = function() {
+      const _ellipsoid = function () {
         for (let i = 0; i <= this.detailY; i++) {
           const v = i / this.detailY;
           const phi = Math.PI * v - Math.PI / 2;
@@ -2369,7 +2394,7 @@ function primitives3D(p5, fn){
       } else if (this.states.strokeColor) {
         console.log(
           'Cannot draw stroke on ellipsoids with more' +
-          ' than 24 detailX or 24 detailY'
+            ' than 24 detailX or 24 detailY'
         );
       }
       ellipsoidGeom.gid = gid;
@@ -2378,11 +2403,13 @@ function primitives3D(p5, fn){
 
     this._drawGeometryScaled(
       this.geometryBufferCache.getGeometryByID(gid),
-      radiusX, radiusY, radiusZ
+      radiusX,
+      radiusY,
+      radiusZ
     );
   };
 
-  Renderer3D.prototype.cylinder = function(
+  Renderer3D.prototype.cylinder = function (
     radius = 50,
     height = radius,
     detailX = 24,
@@ -2392,25 +2419,30 @@ function primitives3D(p5, fn){
   ) {
     const gid = `cylinder|${detailX}|${detailY}|${bottomCap}|${topCap}`;
     if (!this.geometryInHash(gid)) {
-      const cylinderGeom = new p5.Geometry(detailX, detailY, function() {
-        _truncatedCone.call(
-          this,
-          1,
-          1,
-          1,
-          detailX,
-          detailY,
-          bottomCap,
-          topCap
-        );
-      }, this);
+      const cylinderGeom = new p5.Geometry(
+        detailX,
+        detailY,
+        function () {
+          _truncatedCone.call(
+            this,
+            1,
+            1,
+            1,
+            detailX,
+            detailY,
+            bottomCap,
+            topCap
+          );
+        },
+        this
+      );
       // normals are computed in call to _truncatedCone
       if (detailX <= 24 && detailY <= 16) {
         cylinderGeom._makeTriangleEdges()._edgesToVertices();
       } else if (this.states.strokeColor) {
         console.log(
           'Cannot draw stroke on cylinder objects with more' +
-          ' than 24 detailX or 16 detailY'
+            ' than 24 detailX or 16 detailY'
         );
       }
       cylinderGeom.gid = gid;
@@ -2425,7 +2457,7 @@ function primitives3D(p5, fn){
     );
   };
 
-  Renderer3D.prototype.cone = function(
+  Renderer3D.prototype.cone = function (
     radius = 50,
     height = radius,
     detailX = 24,
@@ -2434,24 +2466,20 @@ function primitives3D(p5, fn){
   ) {
     const gid = `cone|${detailX}|${detailY}|${cap}`;
     if (!this.geometryInHash(gid)) {
-      const coneGeom = new Geometry(detailX, detailY, function() {
-        _truncatedCone.call(
-          this,
-          1,
-          0,
-          1,
-          detailX,
-          detailY,
-          cap,
-          false
-        );
-      }, this);
+      const coneGeom = new Geometry(
+        detailX,
+        detailY,
+        function () {
+          _truncatedCone.call(this, 1, 0, 1, detailX, detailY, cap, false);
+        },
+        this
+      );
       if (detailX <= 24 && detailY <= 16) {
         coneGeom._makeTriangleEdges()._edgesToVertices();
       } else if (this.states.strokeColor) {
         console.log(
           'Cannot draw stroke on cone objects with more' +
-          ' than 24 detailX or 16 detailY'
+            ' than 24 detailX or 16 detailY'
         );
       }
       coneGeom.gid = gid;
@@ -2466,7 +2494,7 @@ function primitives3D(p5, fn){
     );
   };
 
-  Renderer3D.prototype.torus = function(
+  Renderer3D.prototype.torus = function (
     radius = 50,
     tubeRadius = 10,
     detailX = 24,
@@ -2484,7 +2512,7 @@ function primitives3D(p5, fn){
     const gid = `torus|${tubeRatio}|${detailX}|${detailY}`;
 
     if (!this.geometryInHash(gid)) {
-      const _torus = function() {
+      const _torus = function () {
         for (let i = 0; i <= this.detailY; i++) {
           const v = i / this.detailY;
           const phi = 2 * Math.PI * v;
@@ -2519,7 +2547,7 @@ function primitives3D(p5, fn){
       } else if (this.states.strokeColor) {
         console.log(
           'Cannot draw strokes on torus object with more' +
-          ' than 24 detailX or 16 detailY'
+            ' than 24 detailX or 16 detailY'
         );
       }
       torusGeom.gid = gid;
@@ -2587,7 +2615,7 @@ function primitives3D(p5, fn){
    *   );
    * }
    */
-  fn.curveDetail = function(d) {
+  fn.curveDetail = function (d) {
     if (!(this._renderer instanceof Renderer3D)) {
       throw new Error(
         'curveDetail() only works in WebGL mode. Did you mean to call createCanvas(width, height, WEBGL)?'
@@ -2666,7 +2694,7 @@ function primitives3D(p5, fn){
    * </code>
    * </div>
    */
-  fn.instances = function(count) {
+  fn.instances = function (count) {
     this._assert3d('instances');
 
     if (typeof count !== 'number' || !isFinite(count) || count < 1) {
@@ -2683,33 +2711,36 @@ function primitives3D(p5, fn){
 
     // Each wrapped method: set _instanceCount, call the method with
     // the correct context, clear _instanceCount in finally so it never leaks.
-    const wrap = (method, ctx = r) => function(...args) {
-      r._instanceCount = count;
-      try {
-        method.apply(ctx, args);
-      } finally {
-        r._instanceCount = undefined;
-      }
-    };
+    const wrap = (method, ctx = r) =>
+      function (...args) {
+        r._instanceCount = count;
+        try {
+          method.apply(ctx, args);
+        } finally {
+          r._instanceCount = undefined;
+        }
+      };
 
     const result = {
-      sphere:    wrap(r.sphere),
-      box:       wrap(r.box),
-      plane:     wrap(r.plane),
+      sphere: wrap(r.sphere),
+      box: wrap(r.box),
+      plane: wrap(r.plane),
       ellipsoid: wrap(r.ellipsoid),
-      cylinder:  wrap(r.cylinder),
-      cone:      wrap(r.cone),
-      torus:     wrap(r.torus),
-      triangle:  wrap(this.triangle, this),
-      rect:      wrap(this.rect, this),
-      quad:      wrap(this.quad, this),
-      ellipse:   wrap(this.ellipse, this),
-      arc:       wrap(this.arc, this),
-      model:     wrap(r.model),
-      line:      wrap(this.line, this),
-      point:     wrap(this.point, this),
-      bezier:    wrap(this.bezier, this),
-      spline:    wrap(this.spline, this)
+      cylinder: wrap(r.cylinder),
+      cone: wrap(r.cone),
+      torus: wrap(r.torus),
+      triangle: wrap(this.triangle, this),
+      rect: wrap(this.rect, this),
+      quad: wrap(this.quad, this),
+      ellipse: wrap(this.ellipse, this),
+      circle: wrap(this.circle, this),
+      square: wrap(this.square, this),
+      arc: wrap(this.arc, this),
+      model: wrap(r.model),
+      line: wrap(this.line, this),
+      point: wrap(this.point, this),
+      bezier: wrap(this.bezier, this),
+      spline: wrap(this.spline, this)
     };
 
     if (typeof this.curve === 'function') {
@@ -2722,6 +2753,6 @@ function primitives3D(p5, fn){
 
 export default primitives3D;
 
-if(typeof p5 !== 'undefined'){
+if (typeof p5 !== 'undefined') {
   primitives3D(p5, p5.prototype);
 }

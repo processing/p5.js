@@ -25,7 +25,7 @@ const ignoreFunction = [
   'keyPressed',
   'keyReleased',
   'keyTyped',
-  'windowResized',
+  'windowResized'
   // 'name',
   // 'parent',
   // 'toString',
@@ -82,15 +82,19 @@ export const verifierUtils = {
       const ast = parse(code, {
         ecmaVersion: 'latest',
         sourceType: 'module',
-        locations: true  // This helps us get the line number.
+        locations: true // This helps us get the line number.
       });
 
       walk(ast, {
         VariableDeclarator(node) {
           if (node.id.type === 'Identifier') {
-            const category = node.init && ['ArrowFunctionExpression', 'FunctionExpression'].includes(node.init.type)
-              ? 'functions'
-              : 'variables';
+            const category =
+              node.init &&
+              ['ArrowFunctionExpression', 'FunctionExpression'].includes(
+                node.init.type
+              )
+                ? 'functions'
+                : 'variables';
             userDefinitions[category].push({
               name: node.id.name,
               line: node.loc.start.line + lineOffset
@@ -162,7 +166,7 @@ export const verifierUtils = {
     for (let { name, line } of allDefinitions) {
       const libDefinition = constants[name];
       if (libDefinition !== undefined) {
-        const message = generateFriendlyError('constant', name, line+1);
+        const message = generateFriendlyError('constant', name, line + 1);
         FES.log`${message}`();
         return true;
       }
@@ -173,13 +177,18 @@ export const verifierUtils = {
     //   - It is a member of p5.prototype
     //   - Its name does not start with `_`
     const globalFunctions = new Set(
-      Object.getOwnPropertyNames(p5.prototype)
-        .filter(key => !key.startsWith('_') && key !== 'constructor')
+      Object.getOwnPropertyNames(p5.prototype).filter(
+        key => !key.startsWith('_') && key !== 'constructor'
+      )
     );
 
     for (let { name, line } of allDefinitions) {
       if (!ignoreFunction.includes(name) && globalFunctions.has(name)) {
-        const message = generateFriendlyError(FES.log`function`, name, line+1);
+        const message = generateFriendlyError(
+          FES.log`function`,
+          name,
+          line + 1
+        );
         FES.log`${message}`();
         return true;
       }
@@ -212,15 +221,15 @@ export const verifierUtils = {
    */
   runFES: async function (p5) {
     const userCode = await verifierUtils.getUserCode();
-    const userDefinedVariablesAndFuncs = verifierUtils
-      .extractUserDefinedVariablesAndFuncs(userCode);
+    const userDefinedVariablesAndFuncs =
+      verifierUtils.extractUserDefinedVariablesAndFuncs(userCode);
 
     verifierUtils.checkForConstsAndFuncs(userDefinedVariablesAndFuncs, p5);
   }
 };
 
 function sketchVerifier(p5, _fn, lifecycles) {
-  lifecycles.presetup = async function() {
+  lifecycles.presetup = async function () {
     if (!p5.disableFriendlyErrors && !p5.disableSketchChecker) {
       verifierUtils.runFES(p5);
     }

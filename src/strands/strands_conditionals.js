@@ -6,11 +6,13 @@ import { createPhiNode } from './strands_phi_utils';
 export class StrandsConditional {
   constructor(strandsContext, condition, branchCallback) {
     // Condition must be a node...
-    this.branches = [{
-      condition,
-      branchCallback,
-      blockType: BlockType.IF_BODY
-    }];
+    this.branches = [
+      {
+        condition,
+        branchCallback,
+        blockType: BlockType.IF_BODY
+      }
+    ];
     this.ctx = strandsContext;
   }
   ElseIf(condition, branchCallback) {
@@ -30,7 +32,11 @@ export class StrandsConditional {
     const phiNodes = buildConditional(this.ctx, this);
     const assignments = {};
     for (const [varName, phiNode] of Object.entries(phiNodes)) {
-      assignments[varName] = createStrandsNode(phiNode.id, phiNode.dimension, this.ctx);
+      assignments[varName] = createStrandsNode(
+        phiNode.id,
+        phiNode.dimension,
+        this.ctx
+      );
     }
     return assignments;
   }
@@ -75,9 +81,14 @@ function buildConditional(strandsContext, conditional) {
     }
     for (const key in branchResults) {
       if (!phiBlockDependencies[key]) {
-        phiBlockDependencies[key] = [{ value: branchResults[key], blockId: branchContentBlock }];
+        phiBlockDependencies[key] = [
+          { value: branchResults[key], blockId: branchContentBlock }
+        ];
       } else {
-        phiBlockDependencies[key].push({ value: branchResults[key], blockId: branchContentBlock });
+        phiBlockDependencies[key].push({
+          value: branchResults[key],
+          blockId: branchContentBlock
+        });
       }
     }
     results.push(branchResults);
@@ -96,7 +107,11 @@ function buildConditional(strandsContext, conditional) {
   // Push the branch block for modification to avoid changing the ordering
   CFG.pushBlockForModification(cfg, branchBlock);
   for (const key in phiBlockDependencies) {
-    mergedAssignments[key] = createPhiNode(strandsContext, phiBlockDependencies[key], key);
+    mergedAssignments[key] = createPhiNode(
+      strandsContext,
+      phiBlockDependencies[key],
+      key
+    );
   }
   CFG.popBlock(cfg);
   for (let i = 0; i < results.length; i++) {
@@ -116,7 +131,10 @@ function buildConditional(strandsContext, conditional) {
           dependsOn: [phiNodeID, sourceNodeID],
           phiBlocks: []
         };
-        const assignmentID = DAG.getOrCreateNode(strandsContext.dag, assignmentNode);
+        const assignmentID = DAG.getOrCreateNode(
+          strandsContext.dag,
+          assignmentNode
+        );
         CFG.recordInBasicBlock(cfg, branchEndBlockID, assignmentID);
       }
     }

@@ -1,34 +1,34 @@
 import p5 from '../../../src/app.js';
-import rendererWebGPU from "../../../src/webgpu/p5.RendererWebGPU";
+import rendererWebGPU from '../../../src/webgpu/p5.RendererWebGPU';
 
 p5.registerAddon(rendererWebGPU);
 
-suite('WebGPU p5.RendererWebGPU', function() {
+suite('WebGPU p5.RendererWebGPU', function () {
   let myp5;
   let prevPixelRatio;
 
-  beforeAll(async function() {
+  beforeAll(async function () {
     prevPixelRatio = window.devicePixelRatio;
     window.devicePixelRatio = 1;
-    myp5 = new p5(function(p) {
-      p.setup = function() {};
+    myp5 = new p5(function (p) {
+      p.setup = function () {};
     });
   });
 
-  beforeEach(async function() {
+  beforeEach(async function () {
     await myp5.createCanvas(50, 50, myp5.WEBGPU);
   });
 
-  afterEach(function() {
+  afterEach(function () {
     myp5.remove();
   });
 
-  afterAll(function() {
+  afterAll(function () {
     window.devicePixelRatio = prevPixelRatio;
   });
 
-  suite('Buffer Pooling', function() {
-    test('drawing geometry twice reuses vertex buffers', async function() {
+  suite('Buffer Pooling', function () {
+    test('drawing geometry twice reuses vertex buffers', async function () {
       // Create a simple geometry
       const geom = myp5.buildGeometry(() => {
         myp5.triangle(0, 0, 10, 0, 5, 10);
@@ -42,7 +42,8 @@ suite('WebGPU p5.RendererWebGPU', function() {
       const poolForVertexBuffer = geom._vertexBufferPools?.vertexBuffer;
       expect(poolForVertexBuffer).to.exist;
       const initialPoolSize = poolForVertexBuffer.length;
-      const initialInUseSize = geom._vertexBuffersInUse?.vertexBuffer?.length || 0;
+      const initialInUseSize =
+        geom._vertexBuffersInUse?.vertexBuffer?.length || 0;
 
       // Draw the geometry again
       myp5.background(255);
@@ -50,14 +51,17 @@ suite('WebGPU p5.RendererWebGPU', function() {
 
       // Verify the pool hasn't grown - buffers should be reused
       const finalPoolSize = poolForVertexBuffer.length;
-      const finalInUseSize = geom._vertexBuffersInUse?.vertexBuffer?.length || 0;
+      const finalInUseSize =
+        geom._vertexBuffersInUse?.vertexBuffer?.length || 0;
 
       // Pool size should stay the same or be smaller (buffers moved from pool to in-use)
       // The total number of buffers (pool + in-use) should remain constant
-      expect(initialPoolSize + initialInUseSize).to.equal(finalPoolSize + finalInUseSize);
+      expect(initialPoolSize + initialInUseSize).to.equal(
+        finalPoolSize + finalInUseSize
+      );
     });
 
-    test('freeGeometry causes new buffer allocation on next draw', async function() {
+    test('freeGeometry causes new buffer allocation on next draw', async function () {
       // Create a simple geometry
       const geom = myp5.buildGeometry(() => {
         myp5.triangle(0, 0, 10, 0, 5, 10);
@@ -70,7 +74,8 @@ suite('WebGPU p5.RendererWebGPU', function() {
       // Get initial buffer count
       const poolForVertexBuffer = geom._vertexBufferPools?.vertexBuffer;
       expect(poolForVertexBuffer).to.exist;
-      const initialTotalBuffers = poolForVertexBuffer.length +
+      const initialTotalBuffers =
+        poolForVertexBuffer.length +
         (geom._vertexBuffersInUse?.vertexBuffer?.length || 0);
 
       // Free the geometry
@@ -81,7 +86,8 @@ suite('WebGPU p5.RendererWebGPU', function() {
       myp5.model(geom);
 
       // After freeGeometry, new buffers should be allocated
-      const finalTotalBuffers = poolForVertexBuffer.length +
+      const finalTotalBuffers =
+        poolForVertexBuffer.length +
         (geom._vertexBuffersInUse?.vertexBuffer?.length || 0);
 
       // We should have more buffers now since freeGeometry marks geometry as dirty
@@ -89,7 +95,7 @@ suite('WebGPU p5.RendererWebGPU', function() {
       expect(finalTotalBuffers).to.be.greaterThan(initialTotalBuffers);
     });
 
-    test('immediate mode geometry reuses buffers across frames', async function() {
+    test('immediate mode geometry reuses buffers across frames', async function () {
       // Function to draw the same shape using immediate mode
       const drawSameShape = () => {
         myp5.background(255);
@@ -106,10 +112,12 @@ suite('WebGPU p5.RendererWebGPU', function() {
 
       // Get the immediate mode geometry (shapeBuilder geometry)
       const immediateGeom = myp5._renderer.shapeBuilder.geometry;
-      const poolForVertexBuffer = immediateGeom._vertexBufferPools?.vertexBuffer;
+      const poolForVertexBuffer =
+        immediateGeom._vertexBufferPools?.vertexBuffer;
       expect(poolForVertexBuffer).to.exist;
 
-      const initialTotalBuffers = poolForVertexBuffer.length +
+      const initialTotalBuffers =
+        poolForVertexBuffer.length +
         (immediateGeom._vertexBuffersInUse?.vertexBuffer?.length || 0);
 
       // Draw the same shape for several more frames
@@ -118,31 +126,34 @@ suite('WebGPU p5.RendererWebGPU', function() {
         await myp5._renderer.finishDraw();
 
         // Check that total buffer count hasn't increased
-        const currentTotalBuffers = poolForVertexBuffer.length +
+        const currentTotalBuffers =
+          poolForVertexBuffer.length +
           (immediateGeom._vertexBuffersInUse?.vertexBuffer?.length || 0);
 
-        expect(currentTotalBuffers).to.equal(initialTotalBuffers,
-          `Buffer count should stay constant across frames (frame ${frame})`);
+        expect(currentTotalBuffers).to.equal(
+          initialTotalBuffers,
+          `Buffer count should stay constant across frames (frame ${frame})`
+        );
       }
     });
   });
 
-  suite('noSmooth()', function() {
-    test('disables antialiasing on the main canvas framebuffer', async function() {
+  suite('noSmooth()', function () {
+    test('disables antialiasing on the main canvas framebuffer', async function () {
       await myp5.noSmooth();
       expect(myp5._renderer.mainFramebuffer.antialias).to.equal(false);
     });
   });
 
-  suite('Stability', function() {
-    test('pixelDensity() after setAttributes() should not crash', async function() {
+  suite('Stability', function () {
+    test('pixelDensity() after setAttributes() should not crash', async function () {
       // This test simulates the issue where a synchronous call (pixelDensity)
       // happens before an asynchronous initialization (setAttributes -> _resetContext)
       // is complete.
       await new Promise((resolve, reject) => {
         try {
           myp5 = new p5(p => {
-            p.setup = async function() {
+            p.setup = async function () {
               try {
                 await p.createCanvas(100, 100, p.WEBGPU);
 
@@ -168,8 +179,8 @@ suite('WebGPU p5.RendererWebGPU', function() {
     });
   });
 
-  suite('StorageBuffer.read()', function() {
-    test('reads back float array data', async function() {
+  suite('StorageBuffer.read()', function () {
+    test('reads back float array data', async function () {
       const input = new Float32Array([1, 2, 3, 4]);
       const buf = myp5.createStorage(input);
 
@@ -182,10 +193,10 @@ suite('WebGPU p5.RendererWebGPU', function() {
       }
     });
 
-    test('reads back struct array data', async function() {
+    test('reads back struct array data', async function () {
       const input = [
         { x: 1.0, y: 2.0 },
-        { x: 3.0, y: 4.0 },
+        { x: 3.0, y: 4.0 }
       ];
       const buf = myp5.createStorage(input);
 
@@ -199,7 +210,7 @@ suite('WebGPU p5.RendererWebGPU', function() {
       }
     });
 
-    test('read after update returns new data', async function() {
+    test('read after update returns new data', async function () {
       const buf = myp5.createStorage(new Float32Array([10, 20, 30]));
       const updated = new Float32Array([100, 200, 300]);
       buf.update(updated);
@@ -211,10 +222,10 @@ suite('WebGPU p5.RendererWebGPU', function() {
       }
     });
 
-    test('reads back struct with vector fields as p5.Vector', async function() {
+    test('reads back struct with vector fields as p5.Vector', async function () {
       const input = [
         { position: myp5.createVector(1, 2), speed: 5.0 },
-        { position: myp5.createVector(3, 4), speed: 10.0 },
+        { position: myp5.createVector(3, 4), speed: 10.0 }
       ];
       const buf = myp5.createStorage(input);
 
@@ -233,15 +244,18 @@ suite('WebGPU p5.RendererWebGPU', function() {
       expect(result[1].speed).to.be.closeTo(10.0, 0.001);
     });
 
-    test('reads back data modified by a compute shader', async function() {
+    test('reads back data modified by a compute shader', async function () {
       const input = new Float32Array([1, 2, 3, 4]);
       const buf = myp5.createStorage(input);
 
-      const computeShader = myp5.buildComputeShader(() => {
-        const d = myp5.uniformStorage();
-        const idx = myp5.index.x;
-        d[idx] = d[idx] * 2;
-      }, { myp5 });
+      const computeShader = myp5.buildComputeShader(
+        () => {
+          const d = myp5.uniformStorage();
+          const idx = myp5.index.x;
+          d[idx] = d[idx] * 2;
+        },
+        { myp5 }
+      );
 
       computeShader.setUniform('d', buf);
       myp5.compute(computeShader, 4);
@@ -255,8 +269,8 @@ suite('WebGPU p5.RendererWebGPU', function() {
     });
   });
 
-  suite('StorageBuffer.set()', function() {
-    test('updates a single float value at the given index', async function() {
+  suite('StorageBuffer.set()', function () {
+    test('updates a single float value at the given index', async function () {
       const buf = myp5.createStorage(new Float32Array([1, 2, 3, 4]));
       buf.set(2, 9.5);
 
@@ -268,11 +282,11 @@ suite('WebGPU p5.RendererWebGPU', function() {
       expect(result[3]).to.be.closeTo(4, 0.001);
     });
 
-    test('updates a single struct element without touching neighbours', async function() {
+    test('updates a single struct element without touching neighbours', async function () {
       const input = [
         { x: 1.0, y: 2.0 },
         { x: 3.0, y: 4.0 },
-        { x: 5.0, y: 6.0 },
+        { x: 5.0, y: 6.0 }
       ];
       const buf = myp5.createStorage(input);
 
@@ -293,7 +307,7 @@ suite('WebGPU p5.RendererWebGPU', function() {
       expect(result[2].y).to.be.closeTo(6.0, 0.001);
     });
 
-    test('set() then read() reflects the new value immediately', async function() {
+    test('set() then read() reflects the new value immediately', async function () {
       const buf = myp5.createStorage(new Float32Array([0, 0, 0]));
       buf.set(0, 42);
 
@@ -301,39 +315,42 @@ suite('WebGPU p5.RendererWebGPU', function() {
       expect(result[0]).to.be.closeTo(42, 0.001);
     });
 
-    test('throws on out-of-bounds index for float buffer', function() {
+    test('throws on out-of-bounds index for float buffer', function () {
       const buf = myp5.createStorage(new Float32Array([1, 2, 3]));
       expect(() => buf.set(10, 5.0)).to.throw();
     });
 
-    test('throws on out-of-bounds index for struct buffer', function() {
+    test('throws on out-of-bounds index for struct buffer', function () {
       const buf = myp5.createStorage([{ x: 1.0 }, { x: 2.0 }]);
       expect(() => buf.set(99, { x: 3.0 })).to.throw();
     });
 
-    test('throws when passing a non-number to a float buffer', function() {
+    test('throws when passing a non-number to a float buffer', function () {
       const buf = myp5.createStorage(new Float32Array([1, 2, 3]));
       expect(() => buf.set(0, { x: 1 })).to.throw();
     });
 
-    test('throws when passing a non-object to a struct buffer', function() {
+    test('throws when passing a non-object to a struct buffer', function () {
       const buf = myp5.createStorage([{ x: 1.0 }, { x: 2.0 }]);
       expect(() => buf.set(0, 42)).to.throw();
     });
   });
 
-  suite('p5.strands', function() {
-    test('a uniform whose name matches a hook parameter name does not break', async function() {
+  suite('p5.strands', function () {
+    test('a uniform whose name matches a hook parameter name does not break', async function () {
       myp5.pixelDensity(1);
 
       // 'color' is the WGSL parameter name of the getFinalColor hook's first argument.
       // Creating a uniform with the same name used to cause a WGSL name clash.
-      const myShader = myp5.baseColorShader().modify(() => {
-        const color = myp5.uniformFloat('color', 0.5);
-        myp5.finalColor.begin();
-        myp5.finalColor.set([color, color, color, 1]);
-        myp5.finalColor.end();
-      }, { myp5 });
+      const myShader = myp5.baseColorShader().modify(
+        () => {
+          const color = myp5.uniformFloat('color', 0.5);
+          myp5.finalColor.begin();
+          myp5.finalColor.set([color, color, color, 1]);
+          myp5.finalColor.end();
+        },
+        { myp5 }
+      );
 
       myp5.background(0);
       myp5.noStroke();
