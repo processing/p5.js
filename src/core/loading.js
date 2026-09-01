@@ -51,6 +51,7 @@ function _createLoadingOverlay(pInst) {
   if (!overlay) {
     overlay = document.createElement('canvas');
     overlay.id = `${actualCanvas.id || 'defaultCanvas0'}_loadingOverlay`;
+    overlay.classList.add('loading-indicator');
     pInst._loadingOverlay = overlay;
 
     const ctx = overlay.getContext('2d');
