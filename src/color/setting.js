@@ -625,18 +625,9 @@ p5.prototype.clip = function(callback, options) {
 
 /**
  * @method background
- * @param {String} colorstring color string, possible formats include: integer
- *                         rgb() or rgba(), percentage rgb() or rgba(),
- *                         3-digit hex, 6-digit hex.
- * @param {Number} [a]         opacity of the background relative to current
- *                             color range (default is 0-255).
- * @chainable
- */
-
-/**
- * @method background
  * @param {Number} gray   specifies a value between white and black.
- * @param {Number} [a]
+ * @param {Number} [a]  opacity of the background relative to current
+ *                             color range (default is 0-255).
  * @chainable
  */
 
