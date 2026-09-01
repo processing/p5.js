@@ -2,6 +2,7 @@ import { parse } from 'acorn';
 import { simple as walk } from 'acorn-walk';
 import * as constants from '../core/constants';
 import { FES } from './fes';
+import { strandsBuiltinFunctions as builtInGLSLFunctions } from '../strands/strands_builtins';
 
 // List of functions to ignore as they either are meant to be re-defined or
 // generate false positive outputs.
@@ -78,6 +79,48 @@ export const verifierUtils = {
     // `lineOffset` here to correct them.
     const lineOffset = -1;
 
+    function isStrandsBuilderCall(node) {
+      if (node.type !== 'CallExpression' || !node.arguments?.length) return false;
+
+      const callee = node.callee;
+      // buildFilterShader(fn), ...
+      if (callee.type === 'Identifier' && /^build\w*Shader$/.test(callee.name)) {
+        return true;
+      }
+
+      // baseFilterShader().modify(fn), ...
+      if (
+        callee.type === 'MemberExpression' &&
+        callee.property?.type === 'Identifier' &&
+        callee.property.name === 'modify'
+      ) {
+        return true;
+      }
+      return false;
+    }
+
+    function recordCallbackBody(arg, strandsFunctionNames, strandsBodyRanges) {
+      if (!arg) return;
+
+      // named: buildFilterShader(displaceColorsCallback)
+      if (arg.type === 'Identifier') {
+        strandsFunctionNames.add(arg.name);
+        return;
+      }
+
+      // inline: buildFilterShader(() => { … }) / function () { … }
+      if (
+        arg.type === 'FunctionExpression' ||
+        arg.type === 'ArrowFunctionExpression'
+      ) {
+        if (arg.body?.type === 'BlockStatement') {
+          strandsBodyRanges.push([arg.body.start, arg.body.end]);
+        } else if (arg.start != null) {
+          strandsBodyRanges.push([arg.start, arg.end]);
+        }
+      }
+    }
+
     try {
       const ast = parse(code, {
         ecmaVersion: 'latest',
@@ -85,19 +128,67 @@ export const verifierUtils = {
         locations: true // This helps us get the line number.
       });
 
+      const strandsFunctionNames = new Set();
+      const strandsBodyRanges = [];
+
+      walk(ast, {
+        CallExpression(node) {
+          if (!isStrandsBuilderCall(node)) return;
+          recordCallbackBody(
+            node.arguments[0],
+            strandsFunctionNames,
+            strandsBodyRanges
+          );
+        }
+      });
+
+      // resolve named callbacks to body ranges
+      walk(ast, {
+        FunctionDeclaration(node) {
+          if (node.id && strandsFunctionNames.has(node.id.name) && node.body) {
+            strandsBodyRanges.push([node.body.start, node.body.end]);
+          }
+        },
+        VariableDeclarator(node) {
+          if (
+            node.id?.type === 'Identifier' &&
+            strandsFunctionNames.has(node.id.name) &&
+            node.init &&
+            (node.init.type === 'FunctionExpression' ||
+              node.init.type === 'ArrowFunctionExpression')
+          ) {
+            const body = node.init.body;
+            if (body?.type === 'BlockStatement') {
+              strandsBodyRanges.push([body.start, body.end]);
+            } else {
+              strandsBodyRanges.push([node.init.start, node.init.end]);
+            }
+          }
+        }
+      });
+
+      function isInsideStrands(node) {
+        if (node.start == null) return false;
+        for (const [s, e] of strandsBodyRanges) {
+          if (node.start >= s && node.start < e) return true;
+        }
+        return false;
+      }
+
       walk(ast, {
         VariableDeclarator(node) {
           if (node.id.type === 'Identifier') {
             const category =
               node.init &&
-              ['ArrowFunctionExpression', 'FunctionExpression'].includes(
-                node.init.type
-              )
+                ['ArrowFunctionExpression', 'FunctionExpression'].includes(
+                  node.init.type
+                )
                 ? 'functions'
                 : 'variables';
             userDefinitions[category].push({
               name: node.id.name,
-              line: node.loc.start.line + lineOffset
+              line: node.loc.start.line + lineOffset,
+              insideStrands: isInsideStrands(node)
             });
           }
         },
@@ -105,7 +196,8 @@ export const verifierUtils = {
           if (node.id && node.id.type === 'Identifier') {
             userDefinitions.functions.push({
               name: node.id.name,
-              line: node.loc.start.line + lineOffset
+              line: node.loc.start.line + lineOffset,
+              insideStrands: isInsideStrands(node)
             });
           }
         },
@@ -115,7 +207,8 @@ export const verifierUtils = {
           if (node.id && node.id.type === 'Identifier') {
             userDefinitions.variables.push({
               name: node.id.name,
-              line: node.loc.start.line + lineOffset
+              line: node.loc.start.line + lineOffset,
+              insideStrands: isInsideStrands(node)
             });
           }
         }
@@ -183,7 +276,7 @@ export const verifierUtils = {
     );
 
     for (let { name, line } of allDefinitions) {
-      if (!ignoreFunction.includes(name) && globalFunctions.has(name)) {
+      if (!ignoreFunction.includes(name) && globalFunctions.has(name) && !Object.hasOwn(builtInGLSLFunctions, name)) {
         const message = generateFriendlyError(
           FES.log`function`,
           name,
@@ -194,6 +287,19 @@ export const verifierUtils = {
       }
     }
 
+    // strands/GLSL check
+    for (const { name, line, insideStrands } of allDefinitions) {
+      if (!insideStrands) continue;
+      if (Object.hasOwn(builtInGLSLFunctions, name)) {
+        const message = generateFriendlyError(
+          'function',
+          name,
+          line + 1
+        );
+        FES.log`${message}`();
+        return true;
+      }
+    }
     return false;
   },
 
