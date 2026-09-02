@@ -2,6 +2,7 @@ import { suite, vi } from 'vitest';
 import p5 from '../../../src/app.js';
 import '../../js/chai_helpers';
 const toArray = typedArray => Array.from(typedArray);
+import { FES } from '../../../src/friendly_errors/fes';
 
 suite('p5.RendererGL', function () {
   var myp5;
@@ -89,6 +90,56 @@ suite('p5.RendererGL', function () {
   });
 
   suite('p5.strands', function () {
+    suite('experimental usage warning', function () {
+      let logSpy;
+      beforeEach(function() {
+        logSpy = vi.spyOn(FES, 'log');
+        myp5.createCanvas(5, 5, myp5.WEBGL);
+      });
+
+      afterEach(function() {
+        logSpy.mockRestore();
+      });
+
+      test('shader creation logs a warning', function() {
+        const shader = myp5.buildMaterialShader(() => {});
+        expect(logSpy).toHaveBeenCalled();
+        expect(logSpy.mock.calls.length).toEqual(1);
+      });
+
+      test('warning logs only once with multiple shaders', function() {
+        const shader = myp5.buildMaterialShader(() => {});
+        const shader2 = myp5.buildMaterialShader(() => {});
+        expect(logSpy).toHaveBeenCalled();
+        expect(logSpy.mock.calls.length).toEqual(1);
+      });
+
+      test('warning logs only once with multiple strands calls', function() {
+        const shader = myp5.buildMaterialShader(() => {});
+        const shader2 = myp5.buildFilterShader(() => {});
+        expect(logSpy).toHaveBeenCalled();
+        expect(logSpy.mock.calls.length).toEqual(1);
+      });
+
+      suite('with FES disabled', function() {
+        let prevDisableFriendlyErrors;
+
+        beforeEach(function() {
+          prevDisableFriendlyErrors = p5.disableFriendlyErrors;
+          p5.disableFriendlyErrors = true;
+        });
+
+        afterEach(function() {
+          p5.disableFriendlyErrors = prevDisableFriendlyErrors;
+        });
+
+        test('no warnings are logged', function() {
+          const shader = myp5.buildMaterialShader(() => {});
+          expect(logSpy).not.toHaveBeenCalled();
+        });
+      });
+    });
+
     test('a uniform whose name matches a hook parameter name does not break', function () {
       myp5.createCanvas(10, 10, myp5.WEBGL);
       myp5.pixelDensity(1);
