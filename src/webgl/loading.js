@@ -190,10 +190,21 @@ async function loadMaterialTextures(materials, modelPath, instance) {
 // as the aggregate; each part gets its own localised verts with faces re-indexed
 // against them, plus its material's state.
 function buildMaterialParts(model, faceMaterials, materials) {
-  // only split when there are genuinely multiple materials. a single material
-  // (or none) stays as the geometry's own part and renders as before. one group
-  // per material, plus a null group for faces before any usemtl so none drop.
+  // one group per material, plus a null group for faces before any usemtl so
+  // none drop.
   const names = [...new Set(faceMaterials)];
+
+  // one material covering every face. the geometry is already its own part, so
+  // hand it the state directly: splitting would duplicate every vertex to say
+  // the same thing, and would stop parts[0] being the geometry itself. without
+  // this a single material model never receives its maps at all.
+  if (names.length === 1 && names[0] != null) {
+    Object.assign(model.partState, mtlToPartState(materials[names[0]]));
+    return;
+  }
+
+  // nothing to split on: no materials, or one material alongside faces that
+  // were declared before any usemtl and so have none.
   if (names.filter(name => name != null).length < 2) return;
 
   const hasUvs = model.uvs.length > 0;
