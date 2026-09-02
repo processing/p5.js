@@ -6,7 +6,9 @@ The p5.js Decorators API is mainly aimed at addon authors (see also: guide for [
 
 ## When and Why to Use a Decorator
 
-Decorators are a design pattern for having **one place** where repeated logic is maintained (in our example, the [vector parameter validation](https://github.com/processing/p5.js/blob/522b89ecc85e6ba4442ba40c69d96c6a5d00c839/src/math/patch-vector.js#L85)), but it is still applied in multiple files. The purpose is avoiding duplicate code, because:
+Decorators are a design pattern for having **one place** where repeated logic is maintained (in our example, the [vector parameter validation](https://github.com/processing/p5.js/blob/522b89ecc85e6ba4442ba40c69d96c6a5d00c839/src/math/patch-vector.js#L85)), but it is still applied in multiple files. Decorators allow changing the behavior of existing functions without knowing how they are implemented, and without having to modify their source code.
+
+One common motivation is to avoid duplicate code, because:
 
 1. Duplicate code makes maintenance harder: when the validation logic has to be updated, the contributor has to remember all the different places where the update needs to be applied
 2. Duplicate code makes bugs or regressions more likely: when updates or fixes are not applied in all necessary places
@@ -42,23 +44,13 @@ Consider the example the Friendly Error System (FES) parameter validation ([code
           if (p5.disableFriendlyErrors) {
 
             // When this is called, the decorators' work is done;
-            // the original function is called with its original arguments
+            // the original function is called with the given arguments
             return target.apply(this, args);
           }
-          const wasInternalCall = this._isUserCall;
-          this._isUserCall = true;
-          try {
-            if (
-              !wasInternalCall &&
-              !p5.disableFriendlyErrors &&
-              !p5.disableParameterValidator
-            ) {
-              validate(name, args);
-            }
-            return target.apply(this, args);
-          } finally {
-            this._isUserCall = wasInternalCall;
-          }
+
+          // Additional logic could happen here; afterwards,
+          // the original function is also called with the givem arguments
+          return target.apply(this, args);
         };
       }
     }
@@ -101,4 +93,4 @@ Notice that `_exampleDecorator` is passed as a function. The Decorator API will 
 
 ## Contributing
 
-In p5.js, decorators are supported since [version 2.3.0](https://github.com/processing/p5.js/releases/tag/v2.3.0), and [partially implement the TC39 proposal](https://github.com/processing/p5.js/issues/8334). Unlike the TC39 proposal, the implementation in p5.js needs to be applied at runtime and after all addons are registered but before the p5 instance is created. Contribution to help maintain decorator usage in p5.js, its implementation, and documentation (especially documentation for addon authors) is welcome!
+In p5.js, decorators are supported since [version 2.3.0](https://github.com/processing/p5.js/releases/tag/v2.3.0), and follow [the TC39 proposal](https://github.com/tc39/proposal-decorators) as closely as possible. Unlike the TC39 proposal, the implementation in p5.js needs to be applied at runtime and after all addons are registered but before the p5 instance is created. Contribution to help maintain decorator usage in p5.js, its implementation, and documentation (especially documentation for addon authors) is welcome!
