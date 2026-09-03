@@ -31,6 +31,38 @@ suite('Vertex', function () {
     });
   });
 
+  suite('p5.prototype.bezierOrder', function () {
+    test('should be a function', function () {
+      assert.ok(myp5.bezierOrder);
+      assert.typeOf(myp5.bezierOrder,'function');
+    });
+
+    test('should warn when the order is not 2 or 3', function () {
+      const _friendlyErrorStub = vi.spyOn(p5, '_friendlyError');
+      myp5.bezierOrder(4);
+      expect(_friendlyErrorStub).toHaveBeenCalledTimes(1);
+    });
+
+    test('should not warn for an order of 2', function () {
+      const _friendlyErrorStub = vi.spyOn(p5, '_friendlyError');
+      myp5.bezierOrder(2);
+      expect(_friendlyErrorStub).not.toHaveBeenCalled();
+    });
+
+    test('should not warn for an order of 3', function () {
+      const _friendlyErrorStub = vi.spyOn(p5, '_friendlyError');
+      myp5.bezierOrder(3);
+      expect(_friendlyErrorStub).not.toHaveBeenCalled();
+    });
+
+    test('should not warn when reading the current order', function () {
+      const _friendlyErrorStub = vi.spyOn(p5, '_friendlyError');
+      myp5.bezierOrder();
+      expect(_friendlyErrorStub).not.toHaveBeenCalled();
+    });
+
+  });
+
   suite('p5.prototype.splineVertex', function () {
     test('should be a function', function () {
       assert.ok(myp5.splineVertex);
