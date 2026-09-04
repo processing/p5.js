@@ -21,10 +21,20 @@ export default function loading(p5, fn, lifecycles) {
   p5.registerDecorator('p5.prototype.resizeCanvas', _handleLoadingIndicator(true));
   p5.registerDecorator('p5.prototype.noCanvas', _handleLoadingIndicator(false));
 
+  /**
+   * Disables the loading indicator.
+   * Calling `noLoadingIndicator()` will disable the loading 
+   * indicator the following lines of code of the current sketch
+   *
+   * @method noLoadingIndicator
+   */
+  fn.noLoadingIndicator = function () {
+    this._loadingIndicatorDisabled = true;
+    _removeLoadingOverlay(this);
+    return this;
+  };
+
   lifecycles.presetup = function () {
-    if (typeof window === 'undefined') {
-      return;
-    }
     this._isSketchLoading = true;
   };
 
@@ -42,6 +52,10 @@ export default function loading(p5, fn, lifecycles) {
  * @param {p5} pInst The p5 instance.
  */
 function _createLoadingOverlay(pInst) {
+  if (pInst._loadingIndicatorDisabled) {
+    return;
+  }
+  
   const actualCanvas = pInst.canvas?.elt || pInst.canvas;
   if (!actualCanvas) return;
 
@@ -186,7 +200,7 @@ export function _handleLoadingIndicator(isLoading) {
 
       // Create loading overlay if canvas is loading
       if (isLoading) {
-        if (this._isSketchLoading) {
+        if (this._isSketchLoading && !this._loadingIndicatorDisabled) {
           _createLoadingOverlay(this);
         }
       } 

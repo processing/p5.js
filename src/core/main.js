@@ -654,7 +654,9 @@ p5.registerAddon(rendering);
 p5.registerAddon(renderer);
 p5.registerAddon(renderer2D);
 p5.registerAddon(graphics);
-p5.registerAddon(loading);
+if (typeof window !== 'undefined') {
+  p5.registerAddon(loading);
+}
 
 export default p5;
 
