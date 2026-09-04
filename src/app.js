@@ -59,6 +59,8 @@ import shader from './webgl/p5.Shader';
 p5.registerAddon(shader);
 import strands from './strands/p5.strands';
 p5.registerAddon(strands);
+import svg from './shape/svg/p5.svg';
+p5.registerAddon(svg);
 
 import { waitForDocumentReady, _globalInit } from './core/init';
 waitForDocumentReady().then(_globalInit);
