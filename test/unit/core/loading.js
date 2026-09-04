@@ -117,6 +117,23 @@ suite('Loading indicator', function () {
     assert.isNull(container.querySelector('.loading-indicator'), 'Loading indicator should be removed');
   });
 
+  test('disables the loading indicator', function () {
+    const p = Object.assign({}, mockP5Prototype, {
+      canvas,
+      _loadingIndicatorDisabled: false
+    });
+    const overlay = document.createElement('canvas');
+    overlay.classList.add('loading-indicator');
+    container.appendChild(overlay);
+    p._loadingOverlay = overlay;
+
+    const result = p.noLoadingIndicator();
+
+    assert.isTrue(p._loadingIndicatorDisabled);
+    assert.isNull(container.querySelector('.loading-indicator'));
+    assert.strictEqual(result, p);
+  });
+
   test('test multiple indicators for multiple instances', async function () {
     const instance1 = document.createElement('div');
     const instance2 = document.createElement('div');
