@@ -258,6 +258,11 @@ function loadingDisplaying(p5, fn) {
     if (typeof duration !== 'number') {
       throw TypeError('Duration parameter must be a number');
     }
+    // a non-positive duration captures zero frames, which later crashes
+    // in palette generation (frames[0] is undefined). reject early.
+    if (duration <= 0) {
+      throw RangeError('Duration parameter must be greater than 0');
+    }
 
     // extract variables for more comfortable use
     const delay = (options && options.delay) || 0; // in seconds
