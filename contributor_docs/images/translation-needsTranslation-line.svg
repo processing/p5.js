@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="920" height="360" viewBox="0 0 920 360" role="img" aria-labelledby="title desc">
+  <title id="title">Stub frontmatter with needsTranslation line</title>
+  <desc id="desc">Example of an auto-generated translation stub showing the needsTranslation flag and the comment telling translators to remove that line when done.</desc>
+  <rect width="920" height="360" fill="#0d1117" rx="8"/>
+  <text x="36" y="40" fill="#e6edf3" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif" font-size="18" font-weight="600">Stub frontmatter (before you translate)</text>
+  <text x="36" y="90" fill="#e6edf3" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace" font-size="16">---</text>
+  <text x="36" y="122" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace" font-size="16">
+    <tspan fill="#7ee787">needsTranslation</tspan><tspan fill="#e6edf3">: </tspan><tspan fill="#79c0ff">true</tspan><tspan fill="#8b949e">  # Remove this entire line after translation is complete</tspan>
+  </text>
+  <text x="36" y="154" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace" font-size="16">
+    <tspan fill="#7ee787">title</tspan><tspan fill="#e6edf3">: </tspan><tspan fill="#a5d6ff">p5.js Contributors Conference 2015</tspan>
+  </text>
+  <text x="36" y="186" fill="#e6edf3" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace" font-size="16">---</text>
+  <text x="36" y="230" fill="#8b949e" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace" font-size="15">{/* Auto-generated translation stub (es).</text>
+  <text x="36" y="256" fill="#8b949e" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace" font-size="15">  Translate from the English source, then remove the</text>
+  <text x="36" y="282" fill="#8b949e" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace" font-size="15">  needsTranslation line in the frontmatter. */}</text>
+</svg>

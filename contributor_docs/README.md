@@ -45,6 +45,10 @@ Most of the time we will stick with this workflow quite strictly and, especially
 
 **We see contributing to p5.js as a learning opportunity** and we don't measure success by only looking at the volume of contributions we received. There is no time limit on how long it takes you to complete a contribution, so take your time and work at your own pace (we may check in after a long period of inactivity). Ask for help from any of the stewards or maintainers if you need them and we'll try our best to support you. For information related to area stewards or general maintenance of p5.js GitHub repository, please check out the [steward guidelines](./steward_guidelines.md).
 
+## [Translate the website](./translating_the_website.md)
+
+Translating website content (examples, tutorials, events, and more) is one of the most common ways new contributors get started. Head over to [Translating the p5.js Website](./translating_the_website.md) for a short walkthrough: find a `needs translation` issue or stub, edit the MDX file, preview with `npm run dev`, and open a pull request.
+
 ## Non-source code contribution
 
 There are many more ways to contribute to p5.js through non-source code contribution than can be exhaustively listed here. Some of the ways may also involve working with some of the p5.js repositories (such as adding examples, writing tutorials for the website, etc.). Depending on what the planned contribution is, we may be able to support you in different ways so do reach out to us via any channel available to you (email, social media, [Discourse forum](https://discourse.processing.org/c/p5js/10), Discord, etc). Here are just some ways you can contribute:
