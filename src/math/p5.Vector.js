@@ -3688,6 +3688,14 @@ function vector(p5, fn) {
    */
 
   /**
+   * The w component of the vector
+   * @type {Number}
+   * @for p5.Vector
+   * @property w
+   * @name w
+   */
+
+  /**
    * The dimensions of the vector
    * @type {Number}
    * @for p5.Vector
