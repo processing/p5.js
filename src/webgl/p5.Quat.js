@@ -23,8 +23,8 @@ class Quat {
    * @chainable
    */
   static fromAxisAngle(angle, x, y, z) {
-    const w = Math.cos(angle/2);
-    const vec = new Vector(x, y, z).normalize().mult(Math.sin(angle/2));
+    const w = Math.cos(angle / 2);
+    const vec = new Vector(x, y, z).normalize().mult(Math.sin(angle / 2));
     return new Quat(w, vec.x, vec.y, vec.z);
   }
 
@@ -39,14 +39,24 @@ class Quat {
    * @chainable
    */
   multiply(quat) {
-
     return new Quat(
-      this.w * quat.w - this.vec.x * quat.vec.x - this.vec.y * quat.vec.y - this.vec.z * quat.vec.z,
-      this.w * quat.vec.x + this.vec.x * quat.w + this.vec.y * quat.vec.z - this.vec.z * quat.vec.y,
-      this.w * quat.vec.y - this.vec.x * quat.vec.z + this.vec.y * quat.w + this.vec.z * quat.vec.x,
-      this.w * quat.vec.z + this.vec.x * quat.vec.y - this.vec.y * quat.vec.x + this.vec.z * quat.w
+      this.w * quat.w -
+        this.vec.x * quat.vec.x -
+        this.vec.y * quat.vec.y -
+        this.vec.z * quat.vec.z,
+      this.w * quat.vec.x +
+        this.vec.x * quat.w +
+        this.vec.y * quat.vec.z -
+        this.vec.z * quat.vec.y,
+      this.w * quat.vec.y -
+        this.vec.x * quat.vec.z +
+        this.vec.y * quat.w +
+        this.vec.z * quat.vec.x,
+      this.w * quat.vec.z +
+        this.vec.x * quat.vec.y -
+        this.vec.y * quat.vec.x +
+        this.vec.z * quat.w
     );
-
   }
 
   /**
@@ -59,9 +69,9 @@ class Quat {
    * @param {p5.Vector} [p] vector to rotate on the axis quaternion
    */
   rotateVector(p) {
-    return Vector.mult( p, this.w*this.w - this.vec.dot(this.vec) )
-      .add( Vector.mult( this.vec, 2 * p.dot(this.vec) ) )
-      .add( Vector.mult( this.vec, 2 * this.w ).cross( p ) )
+    return Vector.mult(p, this.w * this.w - this.vec.dot(this.vec))
+      .add(Vector.mult(this.vec, 2 * p.dot(this.vec)))
+      .add(Vector.mult(this.vec, 2 * this.w).cross(p))
       .clampToZero();
   }
 
@@ -75,12 +85,14 @@ class Quat {
    * @chainable
    */
   rotateBy(axesQuat) {
-    return axesQuat.multiply(this).multiply(axesQuat.conjugate()).
-      vec.clampToZero();
+    return axesQuat
+      .multiply(this)
+      .multiply(axesQuat.conjugate())
+      .vec.clampToZero();
   }
 }
 
-function quat(p5, fn){
+function quat(p5, fn) {
   /**
    * A class to describe a Quaternion
    * for vector rotations in the p5js webgl renderer.
@@ -100,6 +112,6 @@ function quat(p5, fn){
 export default quat;
 export { Quat };
 
-if(typeof p5 !== 'undefined'){
+if (typeof p5 !== 'undefined') {
   quat(p5, p5.prototype);
 }

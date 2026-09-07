@@ -7,7 +7,7 @@ import {
   populateGLSLHooks,
   setWebGLTextureParams,
   setWebGLUniformValue
-} from "../webgl/utils";
+} from '../webgl/utils';
 import * as constants from '../core/constants';
 
 import { filterParamDefaults } from './const';
@@ -57,7 +57,7 @@ class FilterRenderer2D {
       webglVersion,
       states: {
         textureWrapX: constants.CLAMP,
-        textureWrapY: constants.CLAMP,
+        textureWrapY: constants.CLAMP
       },
       _arraysEqual: (a, b) => JSON.stringify(a) === JSON.stringify(b),
       _getEmptyTexture: () => {
@@ -68,25 +68,29 @@ class FilterRenderer2D {
         }
         return this._emptyTexture;
       },
-      _initShader: (shader) => {
+      _initShader: shader => {
         const gl = this.gl;
 
         const vertShader = gl.createShader(gl.VERTEX_SHADER);
         gl.shaderSource(vertShader, shader.vertSrc());
         gl.compileShader(vertShader);
         if (!gl.getShaderParameter(vertShader, gl.COMPILE_STATUS)) {
-          throw new Error(`Yikes! An error occurred compiling the vertex shader: ${
-            gl.getShaderInfoLog(vertShader)
-          }`);
+          throw new Error(
+            `Yikes! An error occurred compiling the vertex shader: ${gl.getShaderInfoLog(
+              vertShader
+            )}`
+          );
         }
 
         const fragShader = gl.createShader(gl.FRAGMENT_SHADER);
         gl.shaderSource(fragShader, shader.fragSrc());
         gl.compileShader(fragShader);
         if (!gl.getShaderParameter(fragShader, gl.COMPILE_STATUS)) {
-          throw new Error(`Darn! An error occurred compiling the fragment shader: ${
-            gl.getShaderInfoLog(fragShader)
-          }`);
+          throw new Error(
+            `Darn! An error occurred compiling the fragment shader: ${gl.getShaderInfoLog(
+              fragShader
+            )}`
+          );
         }
 
         const program = gl.createProgram();
@@ -104,7 +108,7 @@ class FilterRenderer2D {
         shader._vertShader = vertShader;
         shader._fragShader = fragShader;
       },
-      getTexture: (input) => {
+      getTexture: input => {
         let src = input;
         if (src instanceof Framebuffer) {
           src = src.color;
@@ -122,17 +126,17 @@ class FilterRenderer2D {
       populateHooks: (shader, src, shaderType) => {
         return populateGLSLHooks(shader, src, shaderType);
       },
-      _getShaderAttributes: (shader) => {
+      _getShaderAttributes: shader => {
         return getWebGLShaderAttributes(shader, this.gl);
       },
-      getUniformMetadata: (shader) => {
+      getUniformMetadata: shader => {
         return getWebGLUniformMetadata(shader, this.gl);
       },
       _finalizeShader: () => {},
-      _useShader: (shader) => {
+      _useShader: shader => {
         this.gl.useProgram(shader._glProgram);
       },
-      bindTexture: (tex) => {
+      bindTexture: tex => {
         // bind texture using gl context + glTarget and
         // generated gl texture object
         this.gl.bindTexture(this.gl.TEXTURE_2D, tex.getTexture().texture);
@@ -141,7 +145,7 @@ class FilterRenderer2D {
         // unbind per above, disable texturing on glTarget
         this.gl.bindTexture(this.gl.TEXTURE_2D, null);
       },
-      _unbindFramebufferTexture: (uniform) => {
+      _unbindFramebufferTexture: uniform => {
         // Make sure an empty texture is bound to the slot so that we don't
         // accidentally leave a framebuffer bound, causing a feedback loop
         // when something else tries to write to it
@@ -155,17 +159,35 @@ class FilterRenderer2D {
         const gl = this.gl;
         const tex = gl.createTexture();
         gl.bindTexture(gl.TEXTURE_2D, tex);
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width, height, 0,
-                           gl.RGBA, gl.UNSIGNED_BYTE, null);
+        gl.texImage2D(
+          gl.TEXTURE_2D,
+          0,
+          gl.RGBA,
+          width,
+          height,
+          0,
+          gl.RGBA,
+          gl.UNSIGNED_BYTE,
+          null
+        );
         // TODO use format and data type
-        return { texture: tex, glFormat: gl.RGBA, glDataType: gl.UNSIGNED_BYTE };
+        return {
+          texture: tex,
+          glFormat: gl.RGBA,
+          glDataType: gl.UNSIGNED_BYTE
+        };
       },
       uploadTextureFromSource: ({ texture, glFormat, glDataType }, source) => {
         const gl = this.gl;
         gl.bindTexture(gl.TEXTURE_2D, texture);
         gl.texImage2D(gl.TEXTURE_2D, 0, glFormat, glFormat, glDataType, source);
       },
-      uploadTextureFromData: ({ texture, glFormat, glDataType }, data, width, height) => {
+      uploadTextureFromData: (
+        { texture, glFormat, glDataType },
+        data,
+        width,
+        height
+      ) => {
         const gl = this.gl;
         gl.bindTexture(gl.TEXTURE_2D, texture);
         gl.texImage2D(
@@ -180,19 +202,31 @@ class FilterRenderer2D {
           data
         );
       },
-      setTextureParams: (texture) => {
-        return setWebGLTextureParams(texture, this.gl, this._renderer.webglVersion);
+      setTextureParams: texture => {
+        return setWebGLTextureParams(
+          texture,
+          this.gl,
+          this._renderer.webglVersion
+        );
       },
       updateUniformValue: (shader, uniform, data) => {
         return setWebGLUniformValue(
           shader,
           uniform,
           data,
-          (tex) => this._renderer.getTexture(tex),
+          tex => this._renderer.getTexture(tex),
           this.gl
         );
       },
-      _enableAttrib: (_shader, attr, size, type, normalized, stride, offset) => {
+      _enableAttrib: (
+        _shader,
+        attr,
+        size,
+        type,
+        normalized,
+        stride,
+        offset
+      ) => {
         const loc = attr.location;
         const gl = this.gl;
         // Enable register even if it is disabled
@@ -210,7 +244,7 @@ class FilterRenderer2D {
           offset || 0
         );
       },
-      _disableRemainingAttributes: (shader) => {
+      _disableRemainingAttributes: shader => {
         for (const location of this._renderer.registerEnabled.values()) {
           if (
             !Object.keys(shader.attributes).some(
@@ -231,8 +265,9 @@ class FilterRenderer2D {
       },
       baseFilterShader: () => this.baseFilterShader(),
       strandsBackend: glslBackend,
-      getShaderHookTypes: (shader, hookName) => getShaderHookTypes(shader, hookName),
-      uniformNameFromHookKey: (key) => key.slice(key.indexOf(' ') + 1),
+      getShaderHookTypes: (shader, hookName) =>
+        getShaderHookTypes(shader, hookName),
+      uniformNameFromHookKey: key => key.slice(key.indexOf(' ') + 1)
     };
 
     this._baseFilterShader = undefined;
@@ -303,14 +338,13 @@ class FilterRenderer2D {
             }`
           },
           hookAliases: {
-            'getColor': ['filterColor'],
-          },
+            getColor: ['filterColor']
+          }
         }
       );
     }
     return this._baseFilterShader;
   }
-
 
   getRandomFragmentShaderSnippet() {
     return randomGLSL;
@@ -331,8 +365,8 @@ class FilterRenderer2D {
     this.operation = operation;
     this.filterParameter = filterParameter;
 
-    let useDefaultParam = operation in filterParamDefaults &&
-      filterParameter === undefined;
+    let useDefaultParam =
+      operation in filterParamDefaults && filterParameter === undefined;
     if (useDefaultParam) {
       this.filterParameter = filterParamDefaults[operation];
     }
@@ -353,7 +387,9 @@ class FilterRenderer2D {
     }
 
     if (!this.operation) {
-      console.error('No operation set for FilterRenderer2D, cannot initialize shader.');
+      console.error(
+        'No operation set for FilterRenderer2D, cannot initialize shader.'
+      );
       return;
     }
 
@@ -364,7 +400,11 @@ class FilterRenderer2D {
     }
 
     // Use the shared makeFilterShader function from filterShaders.js
-    const newShader = makeFilterShader(this._renderer, this.operation, this.parentRenderer._pInst);
+    const newShader = makeFilterShader(
+      this._renderer,
+      this.operation,
+      this.parentRenderer._pInst
+    );
     this.filterShaders[this.operation] = newShader;
     this._shader = newShader;
   }
@@ -393,8 +433,9 @@ class FilterRenderer2D {
   _renderPass() {
     const gl = this.gl;
     this._shader.bindShader('fill');
-    const pixelDensity = this.parentRenderer.pixelDensity ?
-      this.parentRenderer.pixelDensity() : 1;
+    const pixelDensity = this.parentRenderer.pixelDensity
+      ? this.parentRenderer.pixelDensity()
+      : 1;
 
     const texelSize = [
       1 / (this.parentRenderer.width * pixelDensity),
@@ -406,7 +447,10 @@ class FilterRenderer2D {
     // Set uniforms for the shader
     this._shader.setUniform('tex0', canvasTexture);
     this._shader.setUniform('texelSize', texelSize);
-    this._shader.setUniform('canvasSize', [this.parentRenderer.width, this.parentRenderer.height]);
+    this._shader.setUniform('canvasSize', [
+      this.parentRenderer.width,
+      this.parentRenderer.height
+    ]);
     this._shader.setUniform('radius', Math.max(1, this.filterParameter));
     this._shader.setUniform('filterParameter', this.filterParameter);
     this._shader.setDefaultUniforms();
@@ -416,11 +460,7 @@ class FilterRenderer2D {
     this.parentRenderer.blendMode(constants.BLEND);
     this.parentRenderer.resetMatrix();
 
-
-    const identityMatrix = [1, 0, 0, 0,
-                            0, 1, 0, 0,
-                            0, 0, 1, 0,
-                            0, 0, 0, 1];
+    const identityMatrix = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
     this._shader.setUniform('uModelViewMatrix', identityMatrix);
     this._shader.setUniform('uProjectionMatrix', identityMatrix);
 
@@ -461,8 +501,10 @@ class FilterRenderer2D {
       this.parentRenderer.clear();
       this.parentRenderer.drawingContext.drawImage(
         this.canvas,
-        0, 0,
-        this.parentRenderer.width, this.parentRenderer.height
+        0,
+        0,
+        this.parentRenderer.width,
+        this.parentRenderer.height
       );
 
       // Vertical pass
@@ -472,8 +514,10 @@ class FilterRenderer2D {
       this.parentRenderer.clear();
       this.parentRenderer.drawingContext.drawImage(
         this.canvas,
-        0, 0,
-        this.parentRenderer.width, this.parentRenderer.height
+        0,
+        0,
+        this.parentRenderer.width,
+        this.parentRenderer.height
       );
     } else {
       // Single-pass filters
@@ -483,11 +527,12 @@ class FilterRenderer2D {
       // con
       this.parentRenderer.blendMode(constants.BLEND);
 
-
       this.parentRenderer.drawingContext.drawImage(
         this.canvas,
-        0, 0,
-        this.parentRenderer.width, this.parentRenderer.height
+        0,
+        0,
+        this.parentRenderer.width,
+        this.parentRenderer.height
       );
     }
     this.parentRenderer.pop();

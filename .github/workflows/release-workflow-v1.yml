@@ -18,10 +18,10 @@ jobs:
       INPUT_TOKEN: ${{ secrets.NPM_TOKEN }}
     steps:
       # 1. Setup
-      - uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
           persist-credentials: false
-      - uses: actions/setup-node@3235b876344d2a9aa001b8d1453c930bba69e610 # v3
+      - uses: actions/setup-node@3235b876344d2a9aa001b8d1453c930bba69e610 # v3.9.1
         with:
           node-version: 22 # Keep at 22 purposefully for v1
       - name: Check prerelease
@@ -77,16 +77,17 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
       - name: Publish to NPM
         if: ${{ steps.semver.outputs.is-prerelease != 'true' }}
-        uses: JS-DevTools/npm-publish@0f451a94170d1699fd50710966d48fb26194d939 # v1
+        uses: JS-DevTools/npm-publish@0f451a94170d1699fd50710966d48fb26194d939 # v1.4.3
         with:
           token: ${{ secrets.NPM_TOKEN }}
           
       # 4. Update p5.js website
       - name: Clone p5.js website
         if: ${{ steps.semver.outputs.is-prerelease != 'true' }}
-        uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
           repository: processing/p5.js-website
+          ref: 'v1'
           path: website
           fetch-depth: 0
           token: ${{ secrets.ACCESS_TOKEN }}
@@ -116,12 +117,12 @@ jobs:
           github_token: ${{ secrets.ACCESS_TOKEN }}
           branch: v1
           directory: website/
-          repository: processing/p5.js-website       
+          repository: processing/p5.js-website
 
       # 5. Update Bower files
       - name: Checkout Bower repo
         if: ${{ steps.semver.outputs.is-prerelease != 'true' }}
-        uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
           repository: processing/p5.js-release
           path: bower

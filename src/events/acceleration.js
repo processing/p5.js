@@ -5,14 +5,11 @@
  * @main Events
  */
 
-function acceleration(p5, fn, lifecycles){
-  lifecycles.presetup = function(){
-    const events = [
-      'deviceorientation',
-      'devicemotion'
-    ];
+function acceleration(p5, fn, lifecycles) {
+  lifecycles.presetup = function () {
+    const events = ['deviceorientation', 'devicemotion'];
 
-    for(const event of events){
+    for (const event of events) {
       window.addEventListener(event, this[`_on${event}`].bind(this), {
         passive: false,
         signal: this._removeSignal
@@ -20,8 +17,11 @@ function acceleration(p5, fn, lifecycles){
     }
 
     // Initialize device orientation value
-    this.deviceOrientation = typeof window !== 'undefined' &&
-			window.innerWidth / window.innerHeight > 1.0 ? 'landscape' : 'portrait';
+    this.deviceOrientation =
+      typeof window !== 'undefined' &&
+      window.innerWidth / window.innerHeight > 1.0
+        ? 'landscape'
+        : 'portrait';
   };
 
   /**
@@ -666,15 +666,9 @@ function acceleration(p5, fn, lifecycles){
       // so no conversion is needed.
       const rotZ = this._toDegrees(this.rotationZ);
       const pRotZ = this._toDegrees(this.pRotationZ);
-      if (
-        (rotZ - pRotZ > 0 && rotZ - pRotZ < 270) ||
-        rotZ - pRotZ < -270
-      ) {
+      if ((rotZ - pRotZ > 0 && rotZ - pRotZ < 270) || rotZ - pRotZ < -270) {
         rotateDirectionZ = 'clockwise';
-      } else if (
-        rotZ - pRotZ < 0 ||
-        rotZ - pRotZ > 270
-      ) {
+      } else if (rotZ - pRotZ < 0 || rotZ - pRotZ > 270) {
         rotateDirectionZ = 'counter-clockwise';
       }
       if (rotateDirectionZ !== this.pRotateDirectionZ) {
@@ -712,6 +706,6 @@ function acceleration(p5, fn, lifecycles){
 
 export default acceleration;
 
-if(typeof p5 !== 'undefined'){
+if (typeof p5 !== 'undefined') {
   acceleration(p5, p5.prototype);
 }

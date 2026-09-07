@@ -14,7 +14,7 @@
 
 ## 规划
 
-  我们通过 [GitHub Project](https://github.com/orgs/processing/projects/5) 来组织issues，并将它们分为以下几类：
+我们通过 [GitHub Project](https://github.com/orgs/processing/projects/5) 来组织issues，并将它们分为以下几类：
 
 - **系统级修改** 涉及长期目标，并对代码产生深远影响。在开始实施之前，此类变更需要进行充分的讨论和全面的规划。
 - **尚无解决方案的 bugs** 是指那些还需要通过调试来确定具体原因的错误报告。在确定具体原因之前，这些 bugs 还不适合进行修复；一旦原因明确，我们便可以开始讨论最佳的修复方法。
@@ -66,15 +66,15 @@
 在添加新测试时，如果该功能在2D模式下也有效，那么为了确保一致性，最好的方法之一就是检查在两种模式下生成的像素是否相同。以下是一个单元测试的示例：
 
 ```js
-test('coplanar strokes match 2D', function() {
-  const getColors = function(mode) {
+test('coplanar strokes match 2D', function () {
+  const getColors = function (mode) {
     myp5.createCanvas(20, 20, mode);
     myp5.pixelDensity(1);
     myp5.background(255);
     myp5.strokeCap(myp5.SQUARE);
     myp5.strokeJoin(myp5.MITER);
     if (mode === myp5.WEBGL) {
-      myp5.translate(-myp5.width/2, -myp5.height/2);
+      myp5.translate(-myp5.width / 2, -myp5.height / 2);
     }
     myp5.stroke('black');
     myp5.strokeWeight(4);
@@ -94,7 +94,7 @@ test('coplanar strokes match 2D', function() {
 如果一个功能只适用于 WebGL ，我们通常会检查其中的几个像素，而不是将像素与 2D 模式的结果进行比较，以确保它们的颜色符合我们的预期。在不久的将来，我们可能会将其改进为一个更加强劲且稳定的系统，并且该系统会与我们期望结果的完整图像快照进行比较，而非其中的几个像素。但在现有情况下，以下是一个像素颜色检查的示例：
 
 ```js
-test('color interpolation', function() {
+test('color interpolation', function () {
   const renderer = myp5.createCanvas(256, 256, myp5.WEBGL);
   // upper color: (200, 0, 0, 255);
   // lower color: (0, 0, 200, 255);
@@ -129,22 +129,23 @@ let avgFrameRates = [];
 let frameRateSum = 0;
 const numSamples = 30;
 function setup() {
-  // ...
-  frameRateP = createP();
-  frameRateP.position(0, 0);
+  // ...
+  frameRateP = createP();
+  frameRateP.position(0, 0);
 }
 function draw() {
-  // ...
-  const rate = frameRate() / numSamples;
-  avgFrameRates.push(rate);
-  frameRateSum += rate;
-  if (avgFrameRates.length > numSamples) {
-    frameRateSum -= avgFrameRates.shift();
-  }
- 
-  frameRateP.html(round(frameRateSum) + ' avg fps');
+  // ...
+  const rate = frameRate() / numSamples;
+  avgFrameRates.push(rate);
+  frameRateSum += rate;
+  if (avgFrameRates.length > numSamples) {
+    frameRateSum -= avgFrameRates.shift();
+  }
+
+  frameRateP.html(round(frameRateSum) + ' avg fps');
 }
 ```
+
 以下是我们会进行测试的一些情况，因为它们会对渲染管线的不同部分造成压力：
 
 - 几个非常复杂的形状 （例如，一个大型 3D 模型或一段长曲线）

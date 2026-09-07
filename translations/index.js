@@ -22,11 +22,4 @@ export default {
  * dev.js, which is another file in this folder.
  * @private
  */
-export const languages = [
-  'en',
-  'es',
-  'ko',
-  'zh',
-  'hi',
-  'ja'
-];
+export const languages = ['en', 'es', 'ko', 'zh', 'hi', 'ja'];

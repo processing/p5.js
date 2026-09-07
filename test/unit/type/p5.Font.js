@@ -1,13 +1,13 @@
 import p5 from '../../../src/app.js';
-import {_sanitizeFontName} from '../../../src/type/p5.Font.js';
+import { _sanitizeFontName } from '../../../src/type/p5.Font.js';
 
 suite('p5.Font', function () {
   var myp5;
 
   beforeEach(function () {
     myp5 = new p5(function (p) {
-      p.setup = function () { };
-      p.draw = function () { };
+      p.setup = function () {};
+      p.draw = function () {};
     });
   });
 
@@ -41,14 +41,14 @@ suite('p5.Font', function () {
     assert.property(bbox, 'h');
   });
 
-   test('fontBounds no NaN (multiline + CENTER)', async () => {
-     const pFont = await myp5.loadFont(fontFile);
-     myp5.textAlign(myp5.CENTER, myp5.CENTER);
-     const b = pFont.fontBounds('Hello,\nWorld!', 50, 50, 24);
-     expect(b.x).not.toBeNaN();
-     expect(b.y).not.toBeNaN();
-     expect(b.w).not.toBeNaN();
-     expect(b.h).not.toBeNaN();
+  test('fontBounds no NaN (multiline + CENTER)', async () => {
+    const pFont = await myp5.loadFont(fontFile);
+    myp5.textAlign(myp5.CENTER, myp5.CENTER);
+    const b = pFont.fontBounds('Hello,\nWorld!', 50, 50, 24);
+    expect(b.x).not.toBeNaN();
+    expect(b.y).not.toBeNaN();
+    expect(b.w).not.toBeNaN();
+    expect(b.h).not.toBeNaN();
   });
 
   suite('textToPoints', () => {
@@ -65,7 +65,9 @@ suite('p5.Font', function () {
       const font = await myp5.loadFont(fontFile);
       myp5.textSize(50);
       const pts = font.textToPoints('T', 0, 0);
-      const simplifiedPts = font.textToPoints('T', 0, 0, { simplifyThreshold: Math.PI * 0.01 });
+      const simplifiedPts = font.textToPoints('T', 0, 0, {
+        simplifyThreshold: Math.PI * 0.01
+      });
       expect(pts.length).toBeGreaterThan(simplifiedPts.length);
     });
   });

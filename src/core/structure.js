@@ -4,7 +4,7 @@
  * @for p5
  */
 
-function structure(p5, fn){
+function structure(p5, fn) {
   /**
    * Stops the code in <a href="#/p5/draw">draw()</a> from running repeatedly.
    *
@@ -109,7 +109,7 @@ function structure(p5, fn){
    *   circle(x, y, 20);
    * }
    */
-  fn.noLoop = function() {
+  fn.noLoop = function () {
     this._loop = false;
   };
 
@@ -194,7 +194,7 @@ function structure(p5, fn){
    *   circle(x, y, 20);
    * }
    */
-  fn.loop = function() {
+  fn.loop = function () {
     if (!this._loop) {
       this._loop = true;
       if (this._setupDone) {
@@ -240,7 +240,7 @@ function structure(p5, fn){
    *   }
    * }
    */
-  fn.isLooping = function() {
+  fn.isLooping = function () {
     return this._loop;
   };
 
@@ -323,7 +323,7 @@ function structure(p5, fn){
    *   await redraw(3);
    * }
    */
-  fn.redraw = async function(n) {
+  fn.redraw = async function (n) {
     if (this._inUserDraw || !this._setupDone) {
       return;
     }
@@ -544,6 +544,6 @@ function structure(p5, fn){
 
 export default structure;
 
-if(typeof p5 !== 'undefined'){
+if (typeof p5 !== 'undefined') {
   structure(p5, p5.prototype);
 }

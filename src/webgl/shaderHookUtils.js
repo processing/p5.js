@@ -17,12 +17,14 @@ export function getShaderHookTypes(shader, hookName) {
   const functionName = nameParts.pop();
   const returnType = nameParts.pop();
   const returnQualifiers = [...nameParts];
-  const parameterMatch = /\(([^\)]*)\)/.exec(body);
+  const parameterMatch = /\(([^)]*)\)/.exec(body);
   if (!parameterMatch) {
     throw new Error(`Couldn't find function parameters in hook body:\n${body}`);
   }
   const structProperties = structName => {
-    const structDefMatch = new RegExp(`struct\\s+${structName}\\s*{([^}]*)}`).exec(fullSrc);
+    const structDefMatch = new RegExp(
+      `struct\\s+${structName}\\s*{([^}]*)}`
+    ).exec(fullSrc);
     if (!structDefMatch) return undefined;
     const properties = [];
     for (const defSrc of structDefMatch[1].split(';')) {
@@ -39,7 +41,7 @@ export function getShaderHookTypes(shader, hookName) {
             typeName,
             qualifiers: [],
             properties: typeProperties,
-            dataType,
+            dataType
           }
         });
       }
@@ -60,7 +62,7 @@ export function getShaderHookTypes(shader, hookName) {
         typeName,
         qualifiers,
         properties,
-        dataType,
+        dataType
       }
     };
   });
@@ -71,7 +73,7 @@ export function getShaderHookTypes(shader, hookName) {
       typeName: returnType,
       qualifiers: returnQualifiers,
       properties: structProperties(returnType),
-      dataType,
+      dataType
     },
     parameters
   };

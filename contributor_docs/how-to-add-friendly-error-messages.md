@@ -4,12 +4,10 @@
 
 This guide walks you through the steps to write Friendly Error (FE) messages using the Friendly Error System (FES, 🌸). If your new method supports custom error handling or outputs custom logs for the user, you may want to write FE messages for it. All these messages are dynamically generated through the [i18next](https://www.i18next.com/)-based `translator()` method, which allows p5.js to provide translations of the error messages matching the user environment.
 
-
 ## ❗️No translations in `p5.min.js`
 
 - We've integrated \[i18next] into our codebase. However, its usage is limited to the unminified build of p5.js. The minified version, `p5.min.js`, includes only the basic framework of our internationalization code without actual implementation.
 - In both the Browserify build task and `src/core/init.js`, there is specific logic to avoid loading or setting up translations in the minified build. As a result, adding translations does not affect the size of `p5.min.js`.
-
 
 ## Prerequisites
 
@@ -21,8 +19,6 @@ Before we begin, identify which one of the following cases describes your case b
   - Go to [📥 Adding File Loading Errors Using FES](#-handling-file-loading-error-messages-with-fes).
 - You have written code that detects when an error has occurred and you want to show a Friendly Error.
   - Go to [🐈 Adding Library Error Messages Using FES](#-adding-library-error-messages-using-fes).
-
-
 
 ## ✅ Adding parameter validation using FES
 
@@ -65,7 +61,6 @@ From the above example, FES will look for the parameter list to validate argumen
  * @param  {Number} d  diameter of the circle.
 ```
 
-
 ### Step 2 – Call `p5._validateParameters()`
 
 Now go back to the implementation of your method and call `validate_params()` following the format: `p5._validateParameters('[name of your method]', arguments);`. 
@@ -79,15 +74,14 @@ p5._validateParameters('circle', arguments);
 This is usually called before anything else happens in the method to avoid going any further if the provided arguments don't match our expectations. For example, it is called on the first line of the `circle()` method:
 
 ```js
-p5.prototype.circle = function() {
-  p5._validateParameters('circle', arguments);
-  const args = Array.prototype.slice.call(arguments, 0, 2);
-  args.push(arguments[2]);
-  args.push(arguments[2]);
-  return this._renderEllipse(...args);
+p5.prototype.circle = function () {
+  p5._validateParameters('circle', arguments);
+  const args = Array.prototype.slice.call(arguments, 0, 2);
+  args.push(arguments[2]);
+  args.push(arguments[2]);
+  return this._renderEllipse(...args);
 };
 ```
-
 
 ### Step 3 – Build and test your code for typical cases
 
@@ -129,7 +123,6 @@ The code above should generate the following FE messages:
 
 Congratulations 🎈! You are now done adding parameter validation for your new method.
 
-
 ## 📥 Handling file loading error messages with FES
 
 ### Step 1 – Check the list of file loading error cases<a id="step-1"></a>
@@ -156,7 +149,6 @@ case 3:
 
 If there is already a number associated with the scenario you are handling, remember the case number, and skip ahead to [**Step 4**](#step-4). If you can’t find a matching case from `fileLoadErrorCases`,  please go to [**Step 2**](#step-2) to create a new case.
 
-
 ### Step 2 – Discuss adding a new error case on the issue board<a id="step-2"></a>
 
 Next, you will file an issue ticket to discuss creating a new case or confirm your case is not a duplicate of the existing cases. Write a short paragraph describing your new method and the scenario where a user will run into this particular file load error. Then write another short paragraph describing error handling in your method and what type of file it loads.
@@ -166,7 +158,6 @@ Go to the [issue board](https://github.com/processing/p5.js/issues), press the "
 Add a title along the lines of “Adding a new case to `fileLoadErrorCases`: \[a high-level description of your file load error case].” For the “Increasing access” section, enter a short paragraph on the typical scenario you prepared at the beginning of this step.
 
 Then, check the “Friendly Errors” box for the “Most appropriate sub-area of p5.js?” question. Lastly, for the “Feature enhancement details” section, enter your paragraph detailing your error handling and what file types it loads.
-
 
 ### Step 3 – Add a new case to `fileLoadErrorCases`<a id="step-3"></a>
 
@@ -184,7 +175,6 @@ case {{next available case number}}:
 
 In the example above, anything in double angle brackets (`{{}}`) is something that you should replace. For instance, if the previous case number was 11, your code should start with `case 12:` with no double braces in your final code. 
 
-
 ### Step 4 – Call `p5._friendlyFileLoadError()`<a id="step-4"></a>
 
 After adding your case, you can now call `p5._friendlyFileLoadError([case number], [file path])` inside your error handling statements.
@@ -193,19 +183,18 @@ For example, please take a look at `loadStrings()` method loading a string-based
 
 ```js
 p5.prototype.httpDo.call(
-  this,
-  args[0],
-  'GET',
-  'text',
-  data => {
-    // [... code omitted ...]
-  },
-  function(err) {
-    // Error handling
-    p5._friendlyFileLoadError(3, args[0]);
-    // [... code omitted ...]
-  }
- );
+  this,
+  args[0],
+  'GET',
+  'text',
+  data => {
+    // [... code omitted ...]
+  },
+  function (err) {
+    // Error handling
+    p5._friendlyFileLoadError(3, args[0]); // [... code omitted ...]
+  }
+);
 ```
 
 We can see how the error callback function calls `p5._friendlyFileLoadError(3, [the first argument, which is a file path])` to generate the following FE message:
@@ -217,8 +206,6 @@ We can see how the error callback function calls `p5._friendlyFileLoadError(3, [
 
 Congratulations 🎈! You are now done implementing FE for your method with file loading.
 
-
-
 ## 🐈 Adding Library Error Messages Using FES
 
 ### Step 1 – Write code to detect when an error has occurred
@@ -229,8 +216,6 @@ First, look for typical error cases that users may run into using your method an
 
 \
 
-
-
 ### Step 2 – Call `p5._friendlyError()`
 
 To generate FE messages, all you need to do is call `p5._friendlyError()` inside your error handling statements following the format: `p5._friendlyError('[custom message]', '[method name]');`. Replace everything inside (and including) the square brackets with your own values.
@@ -239,8 +224,8 @@ For example, the following code will produce a FE message for `bezierVertex()`:
 
 ```js
 p5._friendlyError(
-  'vertex() must be used once before calling bezierVertex()',
-  'bezierVertex'
+  'vertex() must be used once before calling bezierVertex()',
+  'bezierVertex'
 );
 ```
 
@@ -251,7 +236,6 @@ This should generate the following FE messages:
 ```
 
 Congratulations 🎈! You are now done adding library error messages for your method.
-
 
 ## ✏️ Writing Friendly Error Messages for international audiences
 
@@ -277,15 +261,12 @@ The above parameter validation message will be shown in Korean if the browser is
 
 [Friendly Errors i18n Book](https://almchung.github.io/p5-fes-i18n-book/) is a public project, and you can contribute to the book through [this separate repo.](https://github.com/almchung/p5-fes-i18n-book)
 
-
 ## 🔍 Optional: Unit tests
 
 Please consider adding unit tests for your new FE messages to detect bugs early and to ensure your code is delivering intended messages to our users. Also, unit tests are a good way to make sure other contributor’s new code does not accidentally break or interfere with the functionality of your code. Here are a few good guides on unit testing:
 
 - [Unit Testing and Test Driven Development](https://archive.p5js.org/learn/tdd.html) by Andy Timmons
 - [Contributors Doc: Unit Testing](./unit_testing.md)
-
-
 
 Example:
 
@@ -298,7 +279,6 @@ suite('validateParameters: multi-format', function() {
   });
 }
 ```
-
 
 ## Conclusion
 

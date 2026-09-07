@@ -14,7 +14,7 @@ import { Graphics } from '../core/p5.Graphics';
 import { FramebufferTexture } from './p5.Framebuffer';
 
 class Texture {
-  constructor (renderer, obj, settings = {}) {
+  constructor(renderer, obj, settings = {}) {
     this._renderer = renderer;
 
     this.src = obj;
@@ -72,7 +72,8 @@ class Texture {
     this.isSrcP5Image = obj instanceof Image;
     this.isSrcP5Graphics = obj instanceof Graphics;
     this.isSrcP5Renderer = obj instanceof Renderer;
-    this.isImageData = typeof ImageData !== 'undefined' && obj instanceof ImageData;
+    this.isImageData =
+      typeof ImageData !== 'undefined' && obj instanceof ImageData;
     this.isSrcMediaElement =
       typeof MediaElement !== 'undefined' && obj instanceof MediaElement;
     this.isSrcHTMLElement =
@@ -90,17 +91,14 @@ class Texture {
     }
   }
 
-  _getTextureDataFromSource () {
+  _getTextureDataFromSource() {
     let textureData;
     if (this.isFramebufferTexture) {
       textureData = this.src.rawTexture();
     } else if (this.isSrcP5Image) {
-    // param is a p5.Image
+      // param is a p5.Image
       textureData = this.src.canvas;
-    } else if (
-      this.isSrcMediaElement ||
-      this.isSrcHTMLElement
-    ) {
+    } else if (this.isSrcMediaElement || this.isSrcHTMLElement) {
       // createCapture elements that are flipped need
       // to go through a canvas
       if (this.isSrcMediaElement && this.src.flipped) {
@@ -132,10 +130,12 @@ class Texture {
         format: this.format,
         dataType: this.dataType,
         width: textureData.width,
-        height: textureData.height,
+        height: textureData.height
       });
     } else {
-      this.textureHandle = this._renderer.createFramebufferTextureHandle(this.src);
+      this.textureHandle = this._renderer.createFramebufferTextureHandle(
+        this.src
+      );
     }
 
     this._renderer.setTextureParams(this, {
@@ -156,10 +156,7 @@ class Texture {
       );
     } else if (!this.isFramebufferTexture) {
       // this.update()
-      this._renderer.uploadTextureFromSource(
-        this.textureHandle,
-        textureData
-      );
+      this._renderer.uploadTextureFromSource(this.textureHandle, textureData);
     }
 
     this.unbindTexture();
@@ -283,7 +280,7 @@ class Texture {
     return this;
   }
 
-  unbindTexture () {
+  unbindTexture() {
     this._renderer.unbindTexture();
   }
 
@@ -343,7 +340,7 @@ class MipmapTexture extends Texture {
         format: this.format,
         dataType: this.dataType,
         width: this.width,
-        height: this.height,
+        height: this.height
       });
     } else {
       // WebGPU path: levels is a mipmapData object with pre-built GPU texture
@@ -356,7 +353,7 @@ class MipmapTexture extends Texture {
         format: levels.format,
         dataType: 'uint8',
         width: this.width,
-        height: this.height,
+        height: this.height
       });
     }
 
@@ -371,7 +368,7 @@ class MipmapTexture extends Texture {
   update() {}
 }
 
-function texture(p5, fn){
+function texture(p5, fn) {
   /**
    * Texture class for WEBGL Mode
    * @private
@@ -411,6 +408,6 @@ function texture(p5, fn){
 export default texture;
 export { Texture, MipmapTexture };
 
-if(typeof p5 !== 'undefined'){
+if (typeof p5 !== 'undefined') {
   texture(p5, p5.prototype);
 }

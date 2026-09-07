@@ -33,7 +33,7 @@ function setup() {
 
 function draw() {
   background(220);
-  
+
   for (const s of state) {
     s.pos.add(s.vel)
     for (const axis of ['x', 'y']) {
@@ -47,7 +47,7 @@ function draw() {
       }
     }
   }
-  
+
   const drawCircles = () => {
     for (const s of state) {
       push()
@@ -71,64 +71,79 @@ function draw() {
   } else {
     drawCircles()
   }
-  
+
   fps.html(round(frameRate()))
 }
 ```
 
-
 ### test/bench/dave.bench.js (2) 35272ms
+
 - **Dave bench test (2) 35268ms**
   - **TEST CPU TRANSFORMS true**: 0.7533 ops/sec ±3.80% (10 samples)
   - **TEST CPU TRANSFORMS false**: 0.9418 ops/sec ±0.20% (10 samples) _fastest_
 
 #### Summary
+
 - **TEST CPU TRANSFORMS false** is 1.25x faster than **TEST CPU TRANSFORMS true**
 
 ### Separated
+
 #### test/bench/dave.bench.js (2) 27912ms
+
 - **Dave bench test (2) 27909ms**
   - **TEST CPU TRANSFORMS false**: 0.5350 ops/sec ±4.39% (10 samples)
   - **TEST CPU TRANSFORMS true**: _skipped_
 
 #### test/bench/dave.bench.js (2) 19331ms
+
 - **Dave bench test (2) 19327ms**
   - **TEST CPU TRANSFORMS false**: _skipped_
   - **TEST CPU TRANSFORMS true**: 0.7519 ops/sec ±3.80% (10 samples)
 
 ### Comparing
+
 #### DEV v2.1.5 /Users/cristianbanuelos/repos/p5.js.git/bench
+
 - **test/bench/dave.bench.js (2) 15671ms**
   - **Dave bench test (2) 15667ms**
     - **TEST CPU TRANSFORMS false**: 0.9719 ops/sec ±1.36% (2 samples) _fastest_
     - **TEST CPU TRANSFORMS true**: 0.8170 ops/sec ±15.16% (2 samples)
 
 #### Summary
+
 - **TEST CPU TRANSFORMS false** is 1.19x faster than **TEST CPU TRANSFORMS true**
 
 #### DEV v2.1.5 /Users/cristianbanuelos/repos/p5.js.git/bench
+
 - **test/bench/dave.bench.js (2) 15915ms**
   - **Dave bench test (2) 15905ms**
     - **TEST CPU TRANSFORMS true**: 0.7961 ops/sec ±4.86% (2 samples)
     - **TEST CPU TRANSFORMS false**: 0.9286 ops/sec ±36.88% (2 samples) _fastest_
 
 #### Summary
+
 - **TEST CPU TRANSFORMS false** is 1.17x faster than **TEST CPU TRANSFORMS true**
 
 ## With 1000 Elements
+
 ### test/bench/dave.bench.js (2) 151509ms
+
 - **Dave bench test (2) 151505ms**
   - **TEST CPU TRANSFORMS true**: 0.0582 ops/sec ±0.00% (1 sample)
   - **TEST CPU TRANSFORMS false**: 0.0912 ops/sec ±0.00% (1 sample) _fastest_
 
 #### Summary
+
 - **TEST CPU TRANSFORMS false** is 1.57x faster than **TEST CPU TRANSFORMS true**
 
 ### 1000 Elements Second Run
+
 #### test/bench/dave.bench.js (2) 150601ms
+
 - **Dave bench test (2) 150597ms**
   - **TEST CPU TRANSFORMS true**: 0.0589 ops/sec ±0.00% (1 sample)
   - **TEST CPU TRANSFORMS false**: 0.0914 ops/sec ±0.00% (1 sample) _fastest_
 
 #### Summary
+
 - **TEST CPU TRANSFORMS false** is 1.55x faster than **TEST CPU TRANSFORMS true**

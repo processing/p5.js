@@ -4,15 +4,15 @@ import { Vector } from './p5.Vector.js';
  * @private
  * @internal
  */
-export function _defaultEmptyVector(target){
-  return function(...args){
-    if(args.length === 0){
+export function _defaultEmptyVector(target) {
+  return function (...args) {
+    if (args.length === 0) {
       this.constructor._friendlyError(
         'In 1.x, createVector() was a shortcut for createVector(0, 0, 0). In 2.x, p5.js has vectors of any dimension, so you must provide your desired number of zeros. Use createVector(0, 0) for a 2D vector and createVector(0, 0, 0) for a 3D vector.',
         'p5.createVector'
       );
       return target.call(this, 0, 0, 0);
-    }else{
+    } else {
       if (Array.isArray(args[0])) {
         args = args[0];
       }
@@ -21,13 +21,12 @@ export function _defaultEmptyVector(target){
   };
 }
 
-
 /**
  * @private
  * @internal
  */
-export function _validatedVectorOperation(expectsSoloNumberArgument){
-  return function(target){
+export function _validatedVectorOperation(expectsSoloNumberArgument) {
+  return function (target) {
     return function (...args) {
       if (args.length === 0) {
         // No arguments? No action
@@ -38,14 +37,14 @@ export function _validatedVectorOperation(expectsSoloNumberArgument){
       } else if (Array.isArray(args[0])) {
         // First argument is an array? Great, keep it!
         args = args[0];
-      } else if (args.length === 1){
+      } else if (args.length === 1) {
         // Special case for a solo numeric arguments only applies sometimes
         if (expectsSoloNumberArgument) {
           args = args[0];
         }
       }
 
-      if(Array.isArray(args)){
+      if (Array.isArray(args)) {
         for (let i = 0; i < args.length; i++) {
           const v = args[i];
           if (typeof v !== 'number' || !Number.isFinite(v)) {
@@ -82,13 +81,26 @@ export function _validatedVectorOperation(expectsSoloNumberArgument){
  * These ensure that the arguments are consistently formatted, and that
  * pre-conditions are met.
  */
-export default function vectorValidation(p5, fn, lifecycles){
-
+export default function vectorValidation(p5, fn, lifecycles) {
   p5.registerDecorator('p5.prototype.createVector', _defaultEmptyVector);
-  p5.registerDecorator('p5.Vector.prototype.mult', _validatedVectorOperation(true));
-  p5.registerDecorator('p5.Vector.prototype.rem', _validatedVectorOperation(true));
-  p5.registerDecorator('p5.Vector.prototype.div', _validatedVectorOperation(true));
-  p5.registerDecorator('p5.Vector.prototype.add', _validatedVectorOperation(false));
-  p5.registerDecorator('p5.Vector.prototype.sub', _validatedVectorOperation(false));
-
+  p5.registerDecorator(
+    'p5.Vector.prototype.mult',
+    _validatedVectorOperation(true)
+  );
+  p5.registerDecorator(
+    'p5.Vector.prototype.rem',
+    _validatedVectorOperation(true)
+  );
+  p5.registerDecorator(
+    'p5.Vector.prototype.div',
+    _validatedVectorOperation(true)
+  );
+  p5.registerDecorator(
+    'p5.Vector.prototype.add',
+    _validatedVectorOperation(false)
+  );
+  p5.registerDecorator(
+    'p5.Vector.prototype.sub',
+    _validatedVectorOperation(false)
+  );
 }

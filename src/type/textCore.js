@@ -661,7 +661,6 @@ function textCore(p5, fn) {
    * @returns {NORMAL|BOLD|ITALIC|BOLDITALIC}
    */
 
-
   /**
    * Calculates the width of the given text string in pixels.
    *
@@ -1314,30 +1313,51 @@ function textCore(p5, fn) {
     textLeading: { default: 15 },
     textSize: { default: 12 },
     textWrap: { default: fn.WORD },
-    fontStretch: { default: fn.NORMAL, isShorthand: true },  // font-stretch: { default:  normal | ultra-condensed | extra-condensed | condensed | semi-condensed | semi-expanded | expanded | extra-expanded | ultra-expanded }
-    fontWeight: { default: fn.NORMAL, isShorthand: true },   // font-stretch: { default:  normal | ultra-condensed | extra-condensed | condensed | semi-condensed | semi-expanded | expanded | extra-expanded | ultra-expanded }
-    lineHeight: { default: fn.NORMAL, isShorthand: true },   // line-height: { default:  normal | number | length | percentage }
-    fontVariant: { default: fn.NORMAL, isShorthand: true },  // font-variant: { default:  normal | small-caps }
-    fontStyle: { default: fn.NORMAL, isShorthand: true },    // font-style: { default:  normal | italic | oblique } [was 'textStyle' in v1]
+    fontStretch: { default: fn.NORMAL, isShorthand: true }, // font-stretch: { default:  normal | ultra-condensed | extra-condensed | condensed | semi-condensed | semi-expanded | expanded | extra-expanded | ultra-expanded }
+    fontWeight: { default: fn.NORMAL, isShorthand: true }, // font-stretch: { default:  normal | ultra-condensed | extra-condensed | condensed | semi-condensed | semi-expanded | expanded | extra-expanded | ultra-expanded }
+    lineHeight: { default: fn.NORMAL, isShorthand: true }, // line-height: { default:  normal | number | length | percentage }
+    fontVariant: { default: fn.NORMAL, isShorthand: true }, // font-variant: { default:  normal | small-caps }
+    fontStyle: { default: fn.NORMAL, isShorthand: true }, // font-style: { default:  normal | italic | oblique } [was 'textStyle' in v1]
     direction: { default: 'inherit' } // direction: { default: inherit | ltr | rtl }
   };
 
   // note: font must be first here otherwise it may reset other properties
-  const ContextTextProps = ['font', 'direction', 'fontKerning', 'fontStretch', 'fontVariantCaps', 'letterSpacing', 'textAlign', 'textBaseline', 'textRendering', 'wordSpacing'];
+  const ContextTextProps = [
+    'font',
+    'direction',
+    'fontKerning',
+    'fontStretch',
+    'fontVariantCaps',
+    'letterSpacing',
+    'textAlign',
+    'textBaseline',
+    'textRendering',
+    'wordSpacing'
+  ];
 
   // shorthand font properties that can be set with context2d.font
-  const ShorthandFontProps = Object.keys(RendererTextProps)
-    .filter(p => RendererTextProps[p].isShorthand);
+  const ShorthandFontProps = Object.keys(RendererTextProps).filter(
+    p => RendererTextProps[p].isShorthand
+  );
 
   // allowable values for font-stretch property for context2d.font
-  const FontStretchKeys = ['ultra-condensed', 'extra-condensed', 'condensed', 'semi-condensed', 'normal', 'semi-expanded', 'expanded', 'extra-expanded', 'ultra-expanded'];
+  const FontStretchKeys = [
+    'ultra-condensed',
+    'extra-condensed',
+    'condensed',
+    'semi-condensed',
+    'normal',
+    'semi-expanded',
+    'expanded',
+    'extra-expanded',
+    'ultra-expanded'
+  ];
 
   let contextQueue, cachedDiv; // lazy
 
   ////////////////////////////// start API ///////////////////////////////
 
   Renderer.prototype.text = function (str, x, y, width, height) {
-
     let setBaseline = this.textDrawingContext().textBaseline; // store baseline
 
     // adjust {x,y,w,h} properties based on rectMode
@@ -1370,8 +1390,10 @@ function textCore(p5, fn) {
     return this._computeBounds(
       textCoreConstants._TEXT_BOUNDS,
       str,
-      x, y,
-      width, height
+      x,
+      y,
+      width,
+      height
     ).bounds;
   };
 
@@ -1390,8 +1412,10 @@ function textCore(p5, fn) {
     return this._computeBounds(
       textCoreConstants._FONT_BOUNDS,
       str,
-      x, y,
-      width, height
+      x,
+      y,
+      width,
+      height
     ).bounds;
   };
 
@@ -1453,12 +1477,11 @@ function textCore(p5, fn) {
     return this.textDrawingContext().measureText('_').fontBoundingBoxDescent;
   };
 
-
   // setters/getters for text properties //////////////////////////
 
   Renderer.prototype.textAlign = function (h, v) {
-
-    if (arguments.length === 0) {  // the getter
+    if (arguments.length === 0) {
+      // the getter
       return {
         horizontal: this.states.textAlign,
         vertical: this.states.textBaseline
@@ -1503,7 +1526,6 @@ function textCore(p5, fn) {
    * @private
    */
   Renderer.prototype.textFont = function (font, size, options) {
-
     if (arguments.length === 0) {
       return this._currentTextFont();
     }
@@ -1513,14 +1535,12 @@ function textCore(p5, fn) {
     // do we have a custon loaded font ?
     if (font instanceof p5.Font) {
       family = font.face.family;
-    }
-    else if (font.data instanceof Uint8Array) {
+    } else if (font.data instanceof Uint8Array) {
       family = font.name.fontFamily;
       if (font.name?.fontSubfamily) {
         family += '-' + font.name.fontSubfamily;
       }
-    }
-    else if (typeof font === 'string') {
+    } else if (typeof font === 'string') {
       // direct set the font-string if it contains size
       if (typeof size === 'undefined' && /[.0-9]+(%|em|p[xt])/.test(family)) {
         //console.log('direct set font-string: ', family);
@@ -1565,7 +1585,8 @@ function textCore(p5, fn) {
     let style = getComputedStyle(el);
     ShorthandFontProps.forEach(prop => {
       this.states[prop] = style[prop];
-      if (debug) console.log('  this.states.' + prop + '="' + style[prop] + '"');
+      if (debug)
+        console.log('  this.states.' + prop + '="' + style[prop] + '"');
     });
 
     return { family: style.fontFamily, size: style.fontSize };
@@ -1598,7 +1619,6 @@ function textCore(p5, fn) {
    * @private
    */
   Renderer.prototype.textSize = function (size) {
-
     // the setter
     if (typeof size !== 'undefined') {
       this._setTextSize(size);
@@ -1609,7 +1629,6 @@ function textCore(p5, fn) {
   };
 
   Renderer.prototype.textStyle = function (style) {
-
     // the setter
     if (typeof style !== 'undefined') {
       this.states.setValue('fontStyle', style);
@@ -1620,7 +1639,6 @@ function textCore(p5, fn) {
   };
 
   Renderer.prototype.textWrap = function (wrapStyle) {
-
     if (wrapStyle === fn.WORD || wrapStyle === fn.CHAR) {
       this.states.setValue('textWrap', wrapStyle);
       // no need to apply text properties here as not a context property
@@ -1630,7 +1648,6 @@ function textCore(p5, fn) {
   };
 
   Renderer.prototype.textDirection = function (direction) {
-
     if (typeof direction !== 'undefined') {
       this.states.setValue('direction', direction);
       return this._applyTextProperties();
@@ -1646,8 +1663,8 @@ function textCore(p5, fn) {
    * @private
    */
   Renderer.prototype.textProperty = function (prop, value, opts) {
-
-    let modified = false, debug = opts?.debug || false;
+    let modified = false,
+      debug = opts?.debug || false;
 
     // getter: return option from this.states or this.textDrawingContext()
     if (typeof value === 'undefined') {
@@ -1673,8 +1690,7 @@ function textCore(p5, fn) {
     else if (prop in this.textCanvas().style) {
       this._setCanvasStyleProperty(prop, value, debug);
       modified = true;
-    }
-    else {
+    } else {
       console.warn('Ignoring unknown text option: "' + prop + '"\n'); // FES?
     }
 
@@ -1687,7 +1703,6 @@ function textCore(p5, fn) {
    * @private
    */
   Renderer.prototype.textProperties = function (properties) {
-
     // setter
     if (typeof properties !== 'undefined') {
       Object.keys(properties).forEach(opt => {
@@ -1707,8 +1722,8 @@ function textCore(p5, fn) {
     Object.keys(RendererTextProps).forEach(p => {
       if (RendererTextProps[p]?.type === 'Context2d') {
         properties[p] = context[p];
-      }
-      else { // a renderer.states property
+      } else {
+        // a renderer.states property
         if (p === 'textFont') {
           // avoid circular ref. inside textFont
           let current = this._currentTextFont();
@@ -1717,8 +1732,7 @@ function textCore(p5, fn) {
             delete current._pInst;
           }
           properties[p] = current;
-        }
-        else {
+        } else {
           properties[p] = this.states[p];
         }
       }
@@ -1727,7 +1741,9 @@ function textCore(p5, fn) {
     return properties;
   };
 
-  Renderer.prototype.textMode = function () { /* no-op for processing api */ };
+  Renderer.prototype.textMode = function () {
+    /* no-op for processing api */
+  };
 
   /////////////////////////////// end API ////////////////////////////////
 
@@ -1743,11 +1759,12 @@ function textCore(p5, fn) {
   Renderer.prototype._computeBounds = function (
     type,
     str,
-    x, y,
-    width, height,
+    x,
+    y,
+    width,
+    height,
     opts
   ) {
-
     let context = this.textDrawingContext();
     let setBaseline = context.textBaseline;
     let { textLeading, textAlign } = this.states;
@@ -1759,13 +1776,22 @@ function textCore(p5, fn) {
     let lines = this._processLines(str, width, height);
 
     // get the adjusted positions [x,y] for each line
-    let boxes = lines.map((line, i) => this[type].bind(this)
-    (line, x, y + i * textLeading));
+    let boxes = lines.map((line, i) =>
+      this[type].bind(this)(line, x, y + i * textLeading)
+    );
 
-    if (lines.length > 1 && typeof width !== 'undefined') { // fix for #7984
+    if (lines.length > 1 && typeof width !== 'undefined') {
+      // fix for #7984
       // adjust the bounding boxes for horizontal text alignment in 2d
       // the WebGL mode version does additional alignment adjustments
-      boxes.forEach(bb => bb.x += p5.Renderer2D.prototype._xAlignOffset.call(this, textAlign, width));
+      boxes.forEach(
+        bb =>
+          (bb.x += p5.Renderer2D.prototype._xAlignOffset.call(
+            this,
+            textAlign,
+            width
+          ))
+      );
     }
 
     // adjust the bounding boxes for vertical text alignment in 2d
@@ -1775,7 +1801,6 @@ function textCore(p5, fn) {
     // get the bounds for the text block
     let bounds = boxes[0];
     if (lines.length > 1) {
-
       // get the bounds for the multi-line text block
       bounds = this._aggregateBounds(boxes);
 
@@ -1785,7 +1810,8 @@ function textCore(p5, fn) {
       }
     }
 
-    if (0 && opts?.ignoreRectMode) { // draw bounds for debugging
+    if (0 && opts?.ignoreRectMode) {
+      // draw bounds for debugging
       let ss = context.strokeStyle;
       context.strokeStyle = 'green';
       context.strokeRect(bounds.x, bounds.y, bounds.w, bounds.h);
@@ -1802,7 +1828,6 @@ function textCore(p5, fn) {
    * @private
   */
   Renderer.prototype._rectModeAdjust = function (x, y, width, height) {
-
     if (typeof width !== 'undefined') {
       switch (this.states.rectMode) {
         case fn.CENTER:
@@ -1825,7 +1850,6 @@ function textCore(p5, fn) {
    * @private
   */
   Renderer.prototype._setCanvasStyleProperty = function (opt, val, debug) {
-
     let value = val.toString(); // ensure its a string
 
     if (debug) console.log('canvas.style.' + opt + '="' + value + '"');
@@ -1840,12 +1864,17 @@ function textCore(p5, fn) {
 
     // check if the value was set successfully
     if (this.textCanvas().style[opt] !== value) {
-
       // fails on precision for floating points, also quotes and spaces
 
-      if (0) console.warn(`Unable to set '${opt}' property` // FES?
-        + ' on canvas.style. It may not be supported. Expected "'
-        + value + '" but got: "' + this.textCanvas().style[opt] + "'");
+      if (0)
+        console.warn(
+          `Unable to set '${opt}' property` + // FES?
+            ' on canvas.style. It may not be supported. Expected "' +
+            value +
+            '" but got: "' +
+            this.textCanvas().style[opt] +
+            "'"
+        );
     }
   };
 
@@ -1855,11 +1884,14 @@ function textCore(p5, fn) {
    * @private
   */
   Renderer.prototype._handleFontVariationSettings = function (
-    value, debug = false
+    value,
+    debug = false
   ) {
     // check if the value is a string or an object
     if (typeof value === 'object') {
-      value = Object.keys(value).map(k => k + ' ' + value[k]).join(', ');
+      value = Object.keys(value)
+        .map(k => k + ' ' + value[k])
+        .join(', ');
     }
     let values = value.split(CommaDelimRe);
     values.forEach(v => {
@@ -1877,21 +1909,23 @@ function textCore(p5, fn) {
             if (this.states.fontWeight !== val) this.textWeight(val);
             return val;
           case 'wdth':
-            if (0) { // attempt to map font-stretch to allowed keywords
+            if (0) {
+              // attempt to map font-stretch to allowed keywords
               const FontStretchMap = {
                 'ultra-condensed': 50,
                 'extra-condensed': 62.5,
-                'condensed': 75,
+                condensed: 75,
                 'semi-condensed': 87.5,
-                'normal': 100,
+                normal: 100,
                 'semi-expanded': 112.5,
-                'expanded': 125,
+                expanded: 125,
                 'extra-expanded': 150,
                 'ultra-expanded': 200
               };
               let values = Object.values(FontStretchMap);
-              const indexArr = values
-                .map(function (k) { return Math.abs(k - val); });
+              const indexArr = values.map(function (k) {
+                return Math.abs(k - val);
+              });
               const min = Math.min.apply(Math, indexArr);
               let idx = indexArr.indexOf(min);
               let stretch = Object.keys(FontStretchMap)[idx];
@@ -1899,10 +1933,12 @@ function textCore(p5, fn) {
             }
             break;
           case 'ital':
-            if (debug) console.log('setting font-style=' + (val ? 'italic' : 'normal'));
+            if (debug)
+              console.log('setting font-style=' + (val ? 'italic' : 'normal'));
             break;
           case 'slnt':
-            if (debug) console.log('setting font-style=' + (val ? 'oblique' : 'normal'));
+            if (debug)
+              console.log('setting font-style=' + (val ? 'oblique' : 'normal'));
             break;
           case 'opsz':
             if (debug) console.log('setting font-optical-size=' + val);
@@ -1912,16 +1948,12 @@ function textCore(p5, fn) {
     });
   };
 
-
-
-
   /*
     For properties not directly managed by the renderer in this.states
       we check if it has a mapping to a property in this.states
     Otherwise, add the property to the context-queue for later application
   */
   Renderer.prototype._setContextProperty = function (prop, val, debug = false) {
-
     // check if the value is actually different, else short-circuit
     if (this.textDrawingContext()[prop] === val) {
       return this._pInst;
@@ -1938,7 +1970,6 @@ function textCore(p5, fn) {
      Adjust parameters (x,y,w,h) based on current rectMode
   */
   Renderer.prototype._handleRectMode = function (x, y, width, height) {
-
     let rectMode = this.states.rectMode;
 
     if (typeof width !== 'undefined') {
@@ -2009,7 +2040,6 @@ function textCore(p5, fn) {
     return cachedDiv;
   };
 
-
   /*
     Aggregate the bounding boxes of multiple lines of text
     @param {Array} bboxes - the bounding boxes to aggregate
@@ -2032,7 +2062,6 @@ function textCore(p5, fn) {
   //   let w = Math.max(...bboxes.map(b => (b.x - tx) + b.w));
   //   let h = bboxes[bboxes.length - 1].y - bboxes[0].y + bboxes[bboxes.length - 1].h;
 
-
   //   return { x, y, w, h };
   // };
 
@@ -2044,8 +2073,8 @@ function textCore(p5, fn) {
    * @private
   */
   Renderer.prototype._processLines = function (str, width, height) {
-
-    if (typeof width !== 'undefined') { // only for text with bounds
+    if (typeof width !== 'undefined') {
+      // only for text with bounds
       let drawingContext = this.textDrawingContext();
       if (drawingContext.textBaseline === fn.BASELINE) {
         this.drawingContext.textBaseline = fn.TOP;
@@ -2055,8 +2084,8 @@ function textCore(p5, fn) {
     let lines = this._splitOnBreaks(str.toString());
     let hasLineBreaks = lines.length > 1;
     let hasWidth = typeof width !== 'undefined';
-    let exceedsWidth = hasWidth &&
-      lines.some(l => this._textWidthSingle(l) > width);
+    let exceedsWidth =
+      hasWidth && lines.some(l => this._textWidthSingle(l) > width);
     let { textLeading: leading, textWrap } = this.states;
 
     //if (!hasLineBreaks && !exceedsWidth) return lines; // a single-line
@@ -2066,7 +2095,6 @@ function textCore(p5, fn) {
 
     // handle height truncation
     if (hasWidth && typeof height !== 'undefined') {
-
       if (typeof leading === 'undefined') {
         throw Error('leading is required if height is specified');
       }
@@ -2110,7 +2138,6 @@ function textCore(p5, fn) {
   */
   Renderer.prototype._rectModeAlign = function (bb, width, height) {
     if (typeof width !== 'undefined') {
-
       switch (this.states.rectMode) {
         case fn.CENTER:
           bb.x -= (width - bb.w) / 2;
@@ -2133,7 +2160,6 @@ function textCore(p5, fn) {
 
   Renderer.prototype._rectModeAlignRevert = function (bb, width, height) {
     if (typeof width !== 'undefined') {
-
       switch (this.states.rectMode) {
         case fn.CENTER:
           bb.x += (width - bb.w) / 2;
@@ -2175,7 +2201,6 @@ function textCore(p5, fn) {
     Get the (tight) bounds of a single line of text based on its actual bounding box
   */
   Renderer.prototype._textBoundsSingle = function (s, x = 0, y = 0) {
-
     let metrics = this.textDrawingContext().measureText(s);
     let asc = metrics.actualBoundingBoxAscent;
     let desc = metrics.actualBoundingBoxDescent;
@@ -2188,12 +2213,11 @@ function textCore(p5, fn) {
     Get the (loose) bounds of a single line of text based on its font's bounding box
   */
   Renderer.prototype._fontBoundsSingle = function (s, x = 0, y = 0) {
-
     let metrics = this.textDrawingContext().measureText(s);
     let asc = metrics.fontBoundingBoxAscent;
     let desc = metrics.fontBoundingBoxDescent;
     x -= this._xAlignOffset(this.states.textAlign, metrics.width);
-    return { x, y: y - asc, w: metrics.width, h: asc + desc };;
+    return { x, y: y - asc, w: metrics.width, h: asc + desc };
   };
 
   /*
@@ -2202,7 +2226,6 @@ function textCore(p5, fn) {
     @returns {boolean} - true if the size was changed, false otherwise
    */
   Renderer.prototype._setTextSize = function (theSize) {
-
     if (typeof theSize === 'string') {
       // parse the size string via computed style, eg '2em'
       theSize = this._fontSizePx(theSize);
@@ -2210,19 +2233,20 @@ function textCore(p5, fn) {
 
     // should be a number now
     if (typeof theSize === 'number') {
-
       // set it in `this.states` if its been changed
       if (this.states.textSize !== theSize) {
         this.states.setValue('textSize', theSize);
 
         // handle leading here, if not set otherwise
         if (!this.states.leadingSet) {
-          this.states.setValue('textLeading', this.states.textSize * LeadingScale);
+          this.states.setValue(
+            'textLeading',
+            this.states.textSize * LeadingScale
+          );
         }
         return true; // size was changed
       }
-    }
-    else {
+    } else {
       console.warn('textSize: invalid size: ' + theSize);
     }
 
@@ -2243,9 +2267,12 @@ function textCore(p5, fn) {
     maxWidth = Infinity,
     opts = {}
   ) {
-
     let splitter = opts.splitChar ?? (textWrap === fn.WORD ? ' ' : '');
-    let line, testLine, testWidth, words, newLines = [];
+    let line,
+      testLine,
+      testWidth,
+      words,
+      newLines = [];
 
     for (let lidx = 0; lidx < lines.length; lidx++) {
       line = '';
@@ -2277,15 +2304,19 @@ function textCore(p5, fn) {
     Parse the font-family string to handle complex names, fallbacks, etc.
   */
   Renderer.prototype._parseFontFamily = function (familyStr) {
-
     let parts = familyStr.split(CommaDelimRe);
-    let family = parts.map(part => {
-      part = part.trim();
-      if ((part.indexOf(' ') > -1 || SpecialCharRe.test(part)) && !QuotedRe.test(part)) {
-        part = `"${part}"`; // quote font names with spaces
-      }
-      return part;
-    }).join(', ');
+    let family = parts
+      .map(part => {
+        part = part.trim();
+        if (
+          (part.indexOf(' ') > -1 || SpecialCharRe.test(part)) &&
+          !QuotedRe.test(part)
+        ) {
+          part = `"${part}"`; // quote font names with spaces
+        }
+        return part;
+      })
+      .join(', ');
 
     return family;
   };
@@ -2304,21 +2335,16 @@ function textCore(p5, fn) {
       - line-height must immediately follow font-size, preceded by "/", eg 16px/3.
       - font-family must be the last value specified.
     */
-    let {
-      textFont,
-      textSize,
-      lineHeight,
-      fontStyle,
-      fontWeight,
-      fontVariant
-    } = this.states;
+    let { textFont, textSize, lineHeight, fontStyle, fontWeight, fontVariant } =
+      this.states;
     let drawingContext = this.textDrawingContext();
 
     let family = this._parseFontFamily(textFont.family);
     let style = fontStyle !== fn.NORMAL ? `${fontStyle} ` : '';
     let weight = fontWeight !== fn.NORMAL ? `${fontWeight} ` : '';
     let variant = fontVariant !== fn.NORMAL ? `${fontVariant} ` : '';
-    let fsize = `${textSize}px` + (lineHeight !== fn.NORMAL ? `/${lineHeight} ` : ' ');
+    let fsize =
+      `${textSize}px` + (lineHeight !== fn.NORMAL ? `/${lineHeight} ` : ' ');
     let fontString = `${style}${variant}${weight}${fsize}${family}`.trim();
     //console.log('fontString="' + fontString + '"');
 
@@ -2343,7 +2369,6 @@ function textCore(p5, fn) {
     Then apply any properties in the context-queue
    */
   Renderer.prototype._applyTextProperties = function (debug = false) {
-
     this._applyFontString();
 
     // set these after the font so they're not overridden
@@ -2360,14 +2385,16 @@ function textCore(p5, fn) {
 
     // apply each property in queue after the font so they're not overridden
     while (contextQueue?.length) {
-
       let [prop, val] = contextQueue.shift();
-      if (debug) console.log('apply context property "' + prop + '" = "' + val + '"');
+      if (debug)
+        console.log('apply context property "' + prop + '" = "' + val + '"');
       context[prop] = val;
 
       // check if the value was set successfully
       if (context[prop] !== val) {
-        console.warn(`Unable to set '${prop}' property on context2d. It may not be supported.`); // FES?
+        console.warn(
+          `Unable to set '${prop}' property on context2d. It may not be supported.`
+        ); // FES?
         console.log('Expected "' + val + '" but got: "' + context[prop] + '"');
       }
     }

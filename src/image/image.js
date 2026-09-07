@@ -12,7 +12,7 @@ import * as omggif from 'omggif';
 import { Element } from '../dom/p5.Element';
 import { Framebuffer } from '../webgl/p5.Framebuffer';
 
-function image(p5, fn){
+function image(p5, fn) {
   /**
    * Creates a new <a href="#/p5.Image">p5.Image</a> object.
    *
@@ -136,7 +136,7 @@ function image(p5, fn){
    *   describe('A black square drawn in the middle of a gray square.');
    * }
    */
-  fn.createImage = function(width, height) {
+  fn.createImage = function (width, height) {
     // p5._validateParameters('createImage', arguments);
     return new p5.Image(width, height);
   };
@@ -247,7 +247,7 @@ function image(p5, fn){
    *  @param  {String} [filename]
    *  @param  {String} [extension]
    */
-  fn.saveCanvas = function(...args) {
+  fn.saveCanvas = function (...args) {
     // copy arguments to array
     let htmlCanvas, filename, extension, temporaryGraphics;
 
@@ -259,8 +259,10 @@ function image(p5, fn){
       args.shift();
     } else if (args[0] instanceof Framebuffer) {
       const framebuffer = args[0];
-      temporaryGraphics = this.createGraphics(framebuffer.width,
-        framebuffer.height);
+      temporaryGraphics = this.createGraphics(
+        framebuffer.width,
+        framebuffer.height
+      );
       temporaryGraphics.pixelDensity(framebuffer.pixelDensity());
       framebuffer.loadPixels();
       temporaryGraphics.loadPixels();
@@ -281,9 +283,7 @@ function image(p5, fn){
     }
 
     extension =
-      extension ||
-      fn._checkFileExtension(filename, extension)[1] ||
-      'png';
+      extension || fn._checkFileExtension(filename, extension)[1] || 'png';
 
     let mimeType;
     switch (extension) {
@@ -302,14 +302,14 @@ function image(p5, fn){
 
     htmlCanvas.toBlob(blob => {
       fn.downloadFile(blob, filename, extension);
-      if(temporaryGraphics) temporaryGraphics.remove();
+      if (temporaryGraphics) temporaryGraphics.remove();
     }, mimeType);
   };
 
   // this is the old saveGif, left here for compatibility purposes
   // the only place I found it being used was on image/p5.Image.js, on the
   // save function. that has been changed to use this function.
-  fn.encodeAndDownloadGif = function(pImg, filename) {
+  fn.encodeAndDownloadGif = function (pImg, filename) {
     const props = pImg.gifProperties;
 
     //convert loopLimit back into Netscape Block formatting
@@ -362,13 +362,11 @@ function image(p5, fn){
 
     // Now to build the global palette
     // Sort all the unique palettes in descending order of their occurrence
-    const palettesSortedByFreq = Object.keys(paletteFreqsAndFrames)
-      .sort(function(
-        a,
-        b
-      ) {
+    const palettesSortedByFreq = Object.keys(paletteFreqsAndFrames).sort(
+      function (a, b) {
         return paletteFreqsAndFrames[b].freq - paletteFreqsAndFrames[a].freq;
-      });
+      }
+    );
 
     // The initial global palette is the one with the most occurrence
     const globalPalette = palettesSortedByFreq[0]
@@ -630,7 +628,7 @@ function image(p5, fn){
    *   }
    * }
    */
-  fn.saveFrames = function(fName, ext, _duration, _fps, callback) {
+  fn.saveFrames = function (fName, ext, _duration, _fps, callback) {
     // p5._validateParameters('saveFrames', arguments);
     let duration = _duration || 3;
     duration = Math.max(Math.min(duration, 15), 0);
@@ -660,7 +658,7 @@ function image(p5, fn){
     }, duration + 0.01);
   };
 
-  fn._makeFrame = function(filename, extension, _cnv) {
+  fn._makeFrame = function (filename, extension, _cnv) {
     let cnv;
     if (this) {
       cnv = this._curElement.elt;
@@ -701,6 +699,6 @@ function image(p5, fn){
 
 export default image;
 
-if(typeof p5 !== 'undefined'){
+if (typeof p5 !== 'undefined') {
   image(p5, p5.prototype);
 }

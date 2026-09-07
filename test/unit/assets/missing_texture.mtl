@@ -1,0 +1,6 @@
+newmtl m0
+Kd 1 0 0
+map_Kd does_not_exist.png
+
+newmtl m1
+Kd 0 0 1

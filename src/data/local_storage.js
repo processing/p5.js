@@ -5,7 +5,7 @@
  * This module defines the p5 methods for working with local storage
  */
 
-function storage(p5, fn){
+function storage(p5, fn) {
   /**
    * Stores a value in the web browser's local storage.
    *
@@ -111,7 +111,7 @@ function storage(p5, fn){
    *   circle(50, 50, 30);
    * }
    */
-  fn.storeItem = function(key, value) {
+  fn.storeItem = function (key, value) {
     if (typeof key !== 'string') {
       p5._friendlyError(
         `The argument that you passed to storeItem() - ${key} is not a string.`,
@@ -126,7 +126,10 @@ function storage(p5, fn){
     }
 
     if (typeof value === 'undefined') {
-      p5._friendlyError('You cannot store undefined variables using storeItem().', 'storeItem');
+      p5._friendlyError(
+        'You cannot store undefined variables using storeItem().',
+        'storeItem'
+      );
     }
     let type = typeof value;
     switch (type) {
@@ -260,7 +263,7 @@ function storage(p5, fn){
    *   circle(50, 50, 30);
    * }
    */
-  fn.getItem = function(key) {
+  fn.getItem = function (key) {
     let value = localStorage.getItem(key);
     const type = localStorage.getItem(`${key}p5TypeID`);
     if (typeof type === 'undefined') {
@@ -418,7 +421,7 @@ function storage(p5, fn){
    *   removeItem('score');
    * }
    */
-  fn.removeItem = function(key) {
+  fn.removeItem = function (key) {
     if (typeof key !== 'string') {
       p5._friendlyError(
         `The argument that you passed to removeItem() - ${key} is not a string.`,
@@ -432,6 +435,6 @@ function storage(p5, fn){
 
 export default storage;
 
-if(typeof p5 !== 'undefined'){
+if (typeof p5 !== 'undefined') {
   storage(p5, p5.prototype);
 }

@@ -1,7 +1,7 @@
 import { visualSuite, visualTest } from '../visualTest';
 
-visualSuite('Noise', function() {
-  visualTest('Drawn as values', function(p5, screenshot) {
+visualSuite('Noise', function () {
+  visualTest('Drawn as values', function (p5, screenshot) {
     p5.createCanvas(50, 50);
     p5.background(255);
     p5.strokeWeight(2);
@@ -15,17 +15,24 @@ visualSuite('Noise', function() {
     screenshot();
   });
 
-  visualTest('Drawn in a shader', function(p5, screenshot) {
-    p5.createCanvas(50, 50, p5.WEBGL);
-    const shader = p5.baseFilterShader().modify(() => {
-      p5.getColor(inputs => {
-        const value = p5.clamp(p5.noise(inputs.texCoord * 4) * 2, 0, 1);
-        return [value, value, value, 1];
-      });
-    }, { p5 });
-    p5.filter(shader);
-    screenshot();
-  }, { skip: true });
+  visualTest(
+    'Drawn in a shader',
+    function (p5, screenshot) {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      const shader = p5.baseFilterShader().modify(
+        () => {
+          p5.getColor(inputs => {
+            const value = p5.clamp(p5.noise(inputs.texCoord * 4) * 2, 0, 1);
+            return [value, value, value, 1];
+          });
+        },
+        { p5 }
+      );
+      p5.filter(shader);
+      screenshot();
+    },
+    { skip: true }
+  );
   // TODO(dave): Figure out why the noise shader looks different on CI and
   // re-enable this test
 });

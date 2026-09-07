@@ -10,11 +10,15 @@ export function createPhiNode(strandsContext, phiInputs, varName) {
   }
 
   // Get dimension and baseType from first valid input, skipping ASSIGN_ON_USE nodes
-  const inputNodes = validInputs.map((input) => DAG.getNodeDataFromID(strandsContext.dag, input.value.id));
+  const inputNodes = validInputs.map(input =>
+    DAG.getNodeDataFromID(strandsContext.dag, input.value.id)
+  );
 
   // Find first non-ASSIGN_ON_USE input to determine type
-  let typeSource = inputNodes.find((input) => input.baseType !== BaseType.ASSIGN_ON_USE && input.dimension) ??
-    inputNodes.find((input) => input.baseType !== BaseType.ASSIGN_ON_USE);
+  let typeSource =
+    inputNodes.find(
+      input => input.baseType !== BaseType.ASSIGN_ON_USE && input.dimension
+    ) ?? inputNodes.find(input => input.baseType !== BaseType.ASSIGN_ON_USE);
 
   // If all are ASSIGN_ON_USE, fall back to first input
   if (!typeSource) {
@@ -28,7 +32,12 @@ export function createPhiNode(strandsContext, phiInputs, varName) {
   if (baseType !== BaseType.ASSIGN_ON_USE) {
     for (const input of inputNodes) {
       if (input.baseType === BaseType.ASSIGN_ON_USE) {
-        DAG.propagateTypeToAssignOnUse(strandsContext.dag, input.id, baseType, dimension);
+        DAG.propagateTypeToAssignOnUse(
+          strandsContext.dag,
+          input.id,
+          baseType,
+          dimension
+        );
       }
     }
   }
@@ -42,7 +51,11 @@ export function createPhiNode(strandsContext, phiInputs, varName) {
     phiInputs // Store the full phi input information
   };
   const id = DAG.getOrCreateNode(strandsContext.dag, nodeData);
-  CFG.recordInBasicBlock(strandsContext.cfg, strandsContext.cfg.currentBlock, id);
+  CFG.recordInBasicBlock(
+    strandsContext.cfg,
+    strandsContext.cfg.currentBlock,
+    id
+  );
   return {
     id,
     dimension,

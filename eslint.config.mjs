@@ -208,15 +208,13 @@ export default defineConfig([
   },
   {
     name: 'p5/test-files',
-    files: [
-      'test/unit/**/*.js'
-    ],
+    files: ['test/unit/**/*.js'],
     languageOptions: {
       globals: {
         ...globals.vitest,
         // @todo test/js/helpers.js
-        'assert': false,
-        'expect': false
+        assert: false,
+        expect: false
       }
     }
   },

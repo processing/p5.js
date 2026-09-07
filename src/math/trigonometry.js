@@ -6,7 +6,7 @@
 
 import * as constants from '../core/constants';
 
-function trigonometry(p5, fn){
+function trigonometry(p5, fn) {
   /**
    * A `String` constant that's used to set the
    * <a href="#/p5/angleMode">angleMode()</a>.
@@ -42,7 +42,7 @@ function trigonometry(p5, fn){
    *   describe('The bottom half of a circle drawn on a gray background. The bottom-right quarter is red. The bottom-left quarter is blue.');
    * }
    */
-  const DEGREES = fn.DEGREES = 'degrees';
+  const DEGREES = (fn.DEGREES = 'degrees');
 
   /**
    * A `String` constant that's used to set the
@@ -84,7 +84,7 @@ function trigonometry(p5, fn){
    *   describe('The bottom half of a circle drawn on a gray background. The bottom-right quarter is red. The bottom-left quarter is blue.');
    * }
    */
-  const RADIANS = fn.RADIANS = 'radians';
+  const RADIANS = (fn.RADIANS = 'radians');
 
   /*
    * all DEGREES/RADIANS conversion should be done in the p5 instance
@@ -186,7 +186,7 @@ function trigonometry(p5, fn){
    * @param  {Number} value value whose arc cosine is to be returned.
    * @return {Number}       arc cosine of the given value.
    */
-  fn.acos = function(ratio) {
+  fn.acos = function (ratio) {
     return this._fromRadians(Math.acos(ratio));
   };
 
@@ -284,7 +284,7 @@ function trigonometry(p5, fn){
    * @param  {Number} value value whose arc sine is to be returned.
    * @return {Number}       arc sine of the given value.
    */
-  fn.asin = function(ratio) {
+  fn.asin = function (ratio) {
     return this._fromRadians(Math.asin(ratio));
   };
 
@@ -385,7 +385,7 @@ function trigonometry(p5, fn){
    * @param  {Number} value value whose arc tangent is to be returned.
    * @return {Number}       arc tangent of the given value.
    */
-  fn.atan = function(ratio) {
+  fn.atan = function (ratio) {
     return this._fromRadians(Math.atan(ratio));
   };
 
@@ -455,7 +455,7 @@ function trigonometry(p5, fn){
    *   rect(-30, -5, 60, 10);
    * }
    */
-  fn.atan2 = function(y, x) {
+  fn.atan2 = function (y, x) {
     return this._fromRadians(Math.atan2(y, x));
   };
 
@@ -569,7 +569,7 @@ function trigonometry(p5, fn){
    * @param  {Number} angle the angle, in radians by default, or according to if <a href="/reference/p5/angleMode/">angleMode()</a> setting (RADIANS or DEGREES).
    * @return {Number}       cosine of the angle.
    */
-  fn.cos = function(angle) {
+  fn.cos = function (angle) {
     return Math.cos(this._toRadians(angle));
   };
 
@@ -683,7 +683,7 @@ function trigonometry(p5, fn){
    * @param  {Number} angle the angle, in radians by default, or according to if <a href="/reference/p5/angleMode/">angleMode()</a> setting (RADIANS or DEGREES).
    * @return {Number}       sine of the angle.
    */
-  fn.sin = function(angle) {
+  fn.sin = function (angle) {
     return Math.sin(this._toRadians(angle));
   };
 
@@ -761,7 +761,7 @@ function trigonometry(p5, fn){
    * @param  {Number} angle the angle, in radians by default, or according to if <a href="/reference/p5/angleMode/">angleMode()</a> setting (RADIANS or DEGREES).
    * @return {Number}       tangent of the angle.
    */
-  fn.tan = function(angle) {
+  fn.tan = function (angle) {
     return Math.tan(this._toRadians(angle));
   };
 
@@ -1086,7 +1086,7 @@ function trigonometry(p5, fn){
    * @method angleMode
    * @return {(RADIANS|DEGREES)} mode either RADIANS or DEGREES
    */
-  fn.angleMode = function(mode) {
+  fn.angleMode = function (mode) {
     // p5._validateParameters('angleMode', arguments);
     if (typeof mode === 'undefined') {
       return this._angleMode;
@@ -1094,11 +1094,11 @@ function trigonometry(p5, fn){
       const prevMode = this._angleMode;
 
       // No change
-      if(mode === prevMode) return;
+      if (mode === prevMode) return;
 
       // Otherwise adjust pRotation according to new mode
       // This is necessary for acceleration events to work properly
-      if(mode === RADIANS) {
+      if (mode === RADIANS) {
         // Change pRotation to radians
         this.pRotationX = this.pRotationX * constants.DEG_TO_RAD;
         this.pRotationY = this.pRotationY * constants.DEG_TO_RAD;
@@ -1122,7 +1122,7 @@ function trigonometry(p5, fn){
    * @param {Number} angle
    * @returns {Number}
    */
-  fn._toRadians = function(angle) {
+  fn._toRadians = function (angle) {
     // returns undefined if no argument
     if (typeof angle !== 'undefined' && this._angleMode === DEGREES) {
       return angle * constants.DEG_TO_RAD;
@@ -1138,7 +1138,7 @@ function trigonometry(p5, fn){
    * @param {Number} angle
    * @returns {Number}
    */
-  fn._toDegrees = function(angle) {
+  fn._toDegrees = function (angle) {
     if (this._angleMode === RADIANS) {
       return angle * constants.RAD_TO_DEG;
     }
@@ -1153,7 +1153,7 @@ function trigonometry(p5, fn){
    * @param {Number} angle
    * @returns {Number}
    */
-  fn._fromRadians = function(angle) {
+  fn._fromRadians = function (angle) {
     if (this._angleMode === DEGREES) {
       return angle * constants.RAD_TO_DEG;
     }
@@ -1168,7 +1168,7 @@ function trigonometry(p5, fn){
    * @param {Number} angle
    * @returns {Number}
    */
-  fn._fromDegrees = function(angle) {
+  fn._fromDegrees = function (angle) {
     if (this._angleMode === RADIANS) {
       return angle * constants.DEG_TO_RAD;
     }
@@ -1178,6 +1178,6 @@ function trigonometry(p5, fn){
 
 export default trigonometry;
 
-if(typeof p5 !== 'undefined'){
+if (typeof p5 !== 'undefined') {
   trigonometry(p5, p5.prototype);
 }

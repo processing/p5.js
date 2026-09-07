@@ -1,35 +1,85 @@
 import p5 from '../../../src/app.js';
 import { vi } from 'vitest';
 
-suite('p5.Geometry', function() {
+suite('p5.Geometry', function () {
   let myp5;
 
-  beforeAll(function() {
-    myp5 = new p5(function(p) {
-      p.setup = function() {};
-      p.draw = function() {};
+  beforeAll(function () {
+    myp5 = new p5(function (p) {
+      p.setup = function () {};
+      p.draw = function () {};
     });
   });
 
-  afterAll(function() {
+  afterAll(function () {
     myp5.remove();
   });
 
-  suite('generating edge geometry', function() {
+  suite('computeTangents', function () {
+    test('a uv-mapped triangle gets a +u tangent with correct handedness',
+      function () {
+        const geom = new p5.Geometry();
+        // triangle in the xy plane, facing +z, uvs aligned to x (u) and y (v)
+        geom.vertices.push(
+          myp5.createVector(0, 0, 0),
+          myp5.createVector(1, 0, 0),
+          myp5.createVector(0, 1, 0)
+        );
+        geom.uvs.push(0, 0, 1, 0, 0, 1);
+        geom.vertexNormals.push(
+          myp5.createVector(0, 0, 1),
+          myp5.createVector(0, 0, 1),
+          myp5.createVector(0, 0, 1)
+        );
+        geom.faces.push([0, 1, 2]);
+
+        geom.computeTangents();
+
+        // 4 components per vertex (x, y, z, handedness)
+        expect(geom.vertexTangents.length).toEqual(12);
+        // tangent points along +u (the +x direction here), handedness +1
+        for (let i = 0; i < 3; i++) {
+          expect(geom.vertexTangents[i * 4]).toBeCloseTo(1, 5);
+          expect(geom.vertexTangents[i * 4 + 1]).toBeCloseTo(0, 5);
+          expect(geom.vertexTangents[i * 4 + 2]).toBeCloseTo(0, 5);
+          expect(geom.vertexTangents[i * 4 + 3]).toEqual(1);
+        }
+      }
+    );
+
+    test('no uvs means no tangents', function () {
+      const geom = new p5.Geometry();
+      geom.vertices.push(
+        myp5.createVector(0, 0, 0),
+        myp5.createVector(1, 0, 0),
+        myp5.createVector(0, 1, 0)
+      );
+      geom.vertexNormals.push(
+        myp5.createVector(0, 0, 1),
+        myp5.createVector(0, 0, 1),
+        myp5.createVector(0, 0, 1)
+      );
+      geom.faces.push([0, 1, 2]);
+      geom.computeTangents();
+      expect(geom.vertexTangents.length).toEqual(0);
+    });
+  });
+
+  suite('generating edge geometry', function () {
     let geom;
 
-    beforeEach(function() {
+    beforeEach(function () {
       geom = new p5.Geometry(undefined, undefined, undefined, myp5._renderer);
       vi.spyOn(geom, '_addCap');
       vi.spyOn(geom, '_addJoin');
       vi.spyOn(geom, '_addSegment');
     });
 
-    afterEach(function() {
+    afterEach(function () {
       vi.restoreAllMocks();
     });
 
-    test('single polyline', function() {
+    test('single polyline', function () {
       geom.vertices.push(
         myp5.createVector(0, 0),
         myp5.createVector(0, 100),
@@ -44,7 +94,7 @@ suite('p5.Geometry', function() {
       expect(geom._addJoin).toHaveBeenCalledTimes(2);
     });
 
-    test('straight line', function() {
+    test('straight line', function () {
       geom.vertices.push(
         myp5.createVector(0, 0),
         myp5.createVector(0, 100),
@@ -59,7 +109,7 @@ suite('p5.Geometry', function() {
       expect(geom._addJoin).toHaveBeenCalledTimes(0);
     });
 
-    test('two disconnected polylines', function() {
+    test('two disconnected polylines', function () {
       geom.vertices.push(
         myp5.createVector(0, 0),
         myp5.createVector(0, 100),
@@ -74,7 +124,7 @@ suite('p5.Geometry', function() {
       expect(geom._addJoin).toHaveBeenCalledTimes(0);
     });
 
-    test('polyline that loops back', function() {
+    test('polyline that loops back', function () {
       geom.vertices.push(
         myp5.createVector(0, 0),
         myp5.createVector(0, 100),
@@ -89,7 +139,7 @@ suite('p5.Geometry', function() {
       expect(geom._addJoin).toHaveBeenCalledTimes(4);
     });
 
-    test('calculateBoundingBox()', function() {
+    test('calculateBoundingBox()', function () {
       geom.vertices.push(
         myp5.createVector(0, 0, 0),
         myp5.createVector(10, 20, 30),
@@ -102,8 +152,7 @@ suite('p5.Geometry', function() {
       assert.deepEqual(boundingBox.offset.array(), [2.5, 10, 15]);
     });
 
-
-    test('degenerate edge in the middle', function() {
+    test('degenerate edge in the middle', function () {
       geom.vertices.push(
         myp5.createVector(0, 0),
         myp5.createVector(0, 100),
@@ -121,7 +170,7 @@ suite('p5.Geometry', function() {
       expect(geom._addJoin).toHaveBeenCalledTimes(2);
     });
 
-    test('degenerate edge at the end', function() {
+    test('degenerate edge at the end', function () {
       geom.vertices.push(
         myp5.createVector(0, 0),
         myp5.createVector(0, 100),
@@ -139,7 +188,7 @@ suite('p5.Geometry', function() {
       expect(geom._addJoin).toHaveBeenCalledTimes(2);
     });
 
-    test('degenerate edge between two disconnected polylines', function() {
+    test('degenerate edge between two disconnected polylines', function () {
       geom.vertices.push(
         myp5.createVector(0, 0),
         myp5.createVector(0, 100),
@@ -156,7 +205,7 @@ suite('p5.Geometry', function() {
     });
   });
 
-  suite('buildGeometry', function() {
+  suite('buildGeometry', function () {
     const checkLights = () => myp5.lights();
     const checkMaterials = () => {
       myp5.fill('#ffea30');
@@ -198,77 +247,86 @@ suite('p5.Geometry', function() {
       }
     }
 
-    test('Transforms are applied to models', function() {
-      assertGeometryRendersMatch(function() {
-        myp5.push();
-        myp5.translate(0, -20);
-        for (let i = 0; i < 4; i++) {
-          myp5.box(8);
-          myp5.translate(0, 40/3);
-          myp5.rotateY(myp5.PI * 0.2);
-        }
-        myp5.pop();
-      }, [checkMaterials]);
-    });
-
-    test('Immediate mode constructs are translated correctly', function() {
-      assertGeometryRendersMatch(function() {
-        myp5.scale(1/6);
-        myp5.push();
-        myp5.translate(100, -50);
-        myp5.scale(0.5);
-        myp5.rotateX(myp5.PI/4);
-        myp5.cone();
-        myp5.pop();
-        myp5.cone();
-
-        myp5.beginShape();
-        myp5.bezierOrder(2);
-        myp5.bezierVertex(-20, -50);
-
-        myp5.bezierVertex(-40, -70);
-        myp5.bezierVertex(0, -60);
-        myp5.endShape();
-
-        myp5.beginShape(myp5.TRIANGLE_STRIP);
-        for (let y = 20; y <= 60; y += 10) {
-          for (let x of [20, 60]) {
-            myp5.vertex(x, y);
+    test('Transforms are applied to models', function () {
+      assertGeometryRendersMatch(
+        function () {
+          myp5.push();
+          myp5.translate(0, -20);
+          for (let i = 0; i < 4; i++) {
+            myp5.box(8);
+            myp5.translate(0, 40 / 3);
+            myp5.rotateY(myp5.PI * 0.2);
           }
-        }
-        myp5.endShape();
-
-        myp5.beginShape();
-        myp5.vertex(-100, -120);
-        myp5.vertex(-120, -110);
-        myp5.vertex(-105, -100);
-        myp5.endShape();
-      }, [checkLights, checkMaterials, checkNormals]);
+          myp5.pop();
+        },
+        [checkMaterials]
+      );
     });
 
-    test('Vertex colors are captured', function() {
-      assertGeometryRendersMatch(function() {
-        myp5.push();
-        myp5.translate(0, -10);
-        myp5.fill('red');
-        myp5.sphere(5, 10, 5);
-        myp5.pop();
+    test('Immediate mode constructs are translated correctly', function () {
+      assertGeometryRendersMatch(
+        function () {
+          myp5.scale(1 / 6);
+          myp5.push();
+          myp5.translate(100, -50);
+          myp5.scale(0.5);
+          myp5.rotateX(myp5.PI / 4);
+          myp5.cone();
+          myp5.pop();
+          myp5.cone();
 
-        myp5.push();
-        myp5.translate(-10, 10);
-        myp5.fill('lime');
-        myp5.sphere(5, 10, 5);
-        myp5.pop();
+          myp5.beginShape();
+          myp5.bezierOrder(2);
+          myp5.bezierVertex(-20, -50);
 
-        myp5.push();
-        myp5.translate(10, 10);
-        myp5.fill('blue');
-        myp5.sphere(5, 10, 5);
-        myp5.pop();
-      }, [checkLights]);
+          myp5.bezierVertex(-40, -70);
+          myp5.bezierVertex(0, -60);
+          myp5.endShape();
+
+          myp5.beginShape(myp5.TRIANGLE_STRIP);
+          for (let y = 20; y <= 60; y += 10) {
+            for (let x of [20, 60]) {
+              myp5.vertex(x, y);
+            }
+          }
+          myp5.endShape();
+
+          myp5.beginShape();
+          myp5.vertex(-100, -120);
+          myp5.vertex(-120, -110);
+          myp5.vertex(-105, -100);
+          myp5.endShape();
+        },
+        [checkLights, checkMaterials, checkNormals]
+      );
     });
 
-    test('freeGeometry() cleans up resources', function() {
+    test('Vertex colors are captured', function () {
+      assertGeometryRendersMatch(
+        function () {
+          myp5.push();
+          myp5.translate(0, -10);
+          myp5.fill('red');
+          myp5.sphere(5, 10, 5);
+          myp5.pop();
+
+          myp5.push();
+          myp5.translate(-10, 10);
+          myp5.fill('lime');
+          myp5.sphere(5, 10, 5);
+          myp5.pop();
+
+          myp5.push();
+          myp5.translate(10, 10);
+          myp5.fill('blue');
+          myp5.sphere(5, 10, 5);
+          myp5.pop();
+        },
+        [checkLights]
+      );
+    });
+
+    test('freeGeometry() cleans up resources', function () {
       myp5.createCanvas(10, 10, myp5.WEBGL);
       myp5.pixelDensity(1);
 
@@ -328,5 +386,172 @@ suite('p5.Geometry', function() {
       expect(geom.vertices.length).toBeGreaterThan(0);
       expect(geom.faces.length).toEqual(0);
     });
+
+    test('a texture change splits the build into parts', function() {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+      const texA = myp5.createGraphics(10, 10);
+      const texB = myp5.createGraphics(10, 10);
+      const geom = myp5.buildGeometry(() => {
+        myp5.texture(texA);
+        myp5.box(8);
+        myp5.texture(texB);
+        myp5.sphere(8);
+      });
+      // one part per material, in draw order
+      expect(geom.parts.length).toEqual(2);
+      expect(geom.parts[0].partState.texture).not.toBeNull();
+      expect(geom.parts[1].partState.texture).not.toBeNull();
+      expect(geom.parts[0].partState.texture)
+        .not.toEqual(geom.parts[1].partState.texture);
+    });
+
+    test('custom vertex attributes survive the multi-material part split',
+      function() {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+        const texA = myp5.createGraphics(10, 10);
+        const texB = myp5.createGraphics(10, 10);
+        const geom = myp5.buildGeometry(() => {
+          // first material: aCustom values in 1..3
+          myp5.texture(texA);
+          myp5.beginShape(myp5.TRIANGLES);
+          myp5.vertexProperty('aCustom', 1);
+          myp5.vertex(-10, -10, 0);
+          myp5.vertexProperty('aCustom', 2);
+          myp5.vertex(10, -10, 0);
+          myp5.vertexProperty('aCustom', 3);
+          myp5.vertex(0, 10, 0);
+          myp5.endShape();
+          // second material: aCustom values in 4..6
+          myp5.texture(texB);
+          myp5.beginShape(myp5.TRIANGLES);
+          myp5.vertexProperty('aCustom', 4);
+          myp5.vertex(-10, -10, 0);
+          myp5.vertexProperty('aCustom', 5);
+          myp5.vertex(10, -10, 0);
+          myp5.vertexProperty('aCustom', 6);
+          myp5.vertex(0, 10, 0);
+          myp5.endShape();
+        });
+
+        // the texture change still splits into two parts even with a custom attr
+        expect(geom.parts.length).toEqual(2);
+
+        const a0 = geom.parts[0].userVertexProperties.aCustom;
+        const a1 = geom.parts[1].userVertexProperties.aCustom;
+        expect(a0).toBeTruthy();
+        expect(a1).toBeTruthy();
+        // one value per vertex, aligned to each part
+        expect(a0.getSrcArray().length).toEqual(geom.parts[0].vertices.length);
+        expect(a1.getSrcArray().length).toEqual(geom.parts[1].vertices.length);
+        // and each part only carries its own draw's values
+        expect(a0.getSrcArray().every(v => v >= 1 && v <= 3)).toBe(true);
+        expect(a1.getSrcArray().every(v => v >= 4 && v <= 6)).toBe(true);
+      }
+    );
+
+    test('a fill change alone does not split the build', function() {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+      const geom = myp5.buildGeometry(() => {
+        myp5.fill('red');
+        myp5.box(8);
+        myp5.fill('blue');
+        myp5.sphere(8);
+      });
+      // fill bakes into vertexColors, so the geometry stays a single part
+      expect(geom.parts.length).toEqual(1);
+      expect(geom.vertexColors.length).toBeGreaterThan(0);
+    });
+
+    test('per-part materials render the same as drawing them directly',
+      function() {
+        assertGeometryRendersMatch(function() {
+          myp5.push();
+          myp5.translate(-10, 0);
+          myp5.specularMaterial(255, 0, 0);
+          myp5.shininess(50);
+          myp5.box(8);
+          myp5.pop();
+          myp5.push();
+          myp5.translate(10, 0);
+          myp5.specularMaterial(0, 0, 255);
+          myp5.shininess(200);
+          myp5.box(8);
+          myp5.pop();
+        }, [checkLights]);
+      }
+    );
+
+    test('instancing draws every material part with the instance count',
+      function() {
+        const renderer = myp5.createCanvas(50, 50, myp5.WEBGL);
+        const texA = myp5.createGraphics(10, 10);
+        const texB = myp5.createGraphics(10, 10);
+        const geom = myp5.buildGeometry(() => {
+          myp5.texture(texA);
+          myp5.box(8);
+          myp5.texture(texB);
+          myp5.sphere(8);
+        });
+        expect(geom.parts.length).toEqual(2);
+
+        const fillSpy = vi.spyOn(renderer, '_drawFills');
+        myp5.background(255);
+        myp5.fill(255);
+        myp5.model(geom, 4);
+
+        // one instanced draw per part, each carrying the same instance count
+        expect(fillSpy).toHaveBeenCalledTimes(geom.parts.length);
+        for (const call of fillSpy.mock.calls) {
+          expect(call[1].count).toEqual(4);
+        }
+        fillSpy.mockRestore();
+      }
+    );
+
+    test('drawing a multi-material model leaves the caller material intact',
+      function() {
+        const renderer = myp5.createCanvas(50, 50, myp5.WEBGL);
+        const geom = myp5.buildGeometry(() => {
+          myp5.texture(myp5.createGraphics(10, 10));
+          myp5.box(8);
+          myp5.specularMaterial(255, 0, 0);
+          myp5.shininess(99);
+          myp5.sphere(8);
+        });
+
+        // whatever the sketch set before the call has to survive it, otherwise
+        // the next shape silently picks up the model's material
+        const callerTex = myp5.createGraphics(10, 10);
+        myp5.background(255);
+        myp5.texture(callerTex);
+        myp5.shininess(7);
+        myp5.model(geom);
+
+        expect(renderer.states._tex).toBe(callerTex);
+        expect(renderer.states._useShininess).toEqual(7);
+      }
+    );
+
+    test('a multi-material model can be drawn inside buildGeometry',
+      function() {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+        const inner = myp5.buildGeometry(() => {
+          myp5.texture(myp5.createGraphics(10, 10));
+          myp5.box(8);
+          myp5.texture(myp5.createGraphics(10, 10));
+          myp5.sphere(8);
+        });
+        expect(inner.parts.length).toEqual(2);
+
+        const outer = myp5.buildGeometry(() => {
+          myp5.model(inner);
+        });
+        // the geometry comes through whole. the materials flatten to whatever
+        // the callback had set, since the builder follows renderer state rather
+        // than the parts of a model handed to it
+        expect(outer.vertices.length).toEqual(inner.vertices.length);
+        expect(outer.faces.length).toEqual(inner.faces.length);
+      }
+    );
   });
 });

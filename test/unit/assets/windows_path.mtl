@@ -1,0 +1,6 @@
+newmtl winA
+Kd 1 1 1
+map_Kd textures\cat.jpg
+
+newmtl winB
+Kd 0 1 1

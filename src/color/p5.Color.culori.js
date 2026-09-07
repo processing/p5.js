@@ -4,63 +4,33 @@ export class Color {
   mode;
   array;
 
-  static addColorMode(mode, definition){
+  static addColorMode(mode, definition) {}
 
-  }
+  constructor(vals) {}
 
-  constructor(vals){
+  toString() {}
 
-  }
+  setRed(new_red) {}
 
-  toString(){
+  setGreen(new_green) {}
 
-  }
+  setBlue(new_blue) {}
 
-  setRed(new_red){
+  setAlpha(new_alpha) {}
 
-  }
+  _getRed() {}
 
-  setGreen(new_green){
+  _getGreen() {}
 
-  }
+  _getBlue() {}
 
-  setBlue(new_blue){
+  _getAlpha() {}
 
-  }
+  _getHue() {}
 
-  setAlpha(new_alpha){
+  _getSaturation() {}
 
-  }
+  _getBrightness() {}
 
-  _getRed(){
-
-  }
-
-  _getGreen(){
-
-  }
-
-  _getBlue(){
-
-  }
-
-  _getAlpha(){
-
-  }
-
-  _getHue(){
-
-  }
-
-  _getSaturation(){
-
-  }
-
-  _getBrightness(){
-
-  }
-
-  _getLightness(){
-
-  }
+  _getLightness() {}
 }

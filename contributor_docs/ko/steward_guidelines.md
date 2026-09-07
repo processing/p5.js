@@ -4,7 +4,6 @@
 
 방금 스튜어드(steward)로 참여하셨거나, p5.js의 숙련된 유지관리자(maintainer)거나, 그 사이 어딘가에 있으시거나, 이 안내서에는 p5.js에 효과적으로 기여하는 데 도움이 되는 정보는 물론 팁과 요령이 포함되어 있습니다. 여기에 작성된 대부분의 내용은 달리 명시되지 않는 한 지침에 불과하므, 여기서 보여지는 절차들은 여러분의 작업 흐름에 맞게 조정할 수 있습니다.
 
-
 ## 목차
 
 - [이슈(Issues)](steward_guidelines.md#issues)
@@ -28,11 +27,9 @@
 
 ---
 
-
 ## 이슈(Issues)
 
 우리는 대부분의 소스 코드 기여가 이슈(Issue)에서 시작하는 것을 권장하며, 따라서 이슈는 대부분의 논의가 이루어지는 곳입니다. 문제를 검토할 때 취해야 할 단계는 문제의 종류에 따라 달라집니다. 리포지토리(repo)는 다양한 유형의 문제를 더 잘 정리하고 문제 작성자가 문제에 대한 정보를 모두 제공하도록 권장하기 위해 [깃허브 이슈 템플릿(templates)](https://github.com/processing/p5.js/blob/main/.github/ISSUE_TEMPLATE)을 사용합니다. 문제를 검토하는 첫 번째 단계는 종종 입력된 템플릿을 살펴보고 추가 정보가 필요한지 여부를 결정하는 것입니다 (예: 일부 필드가 입력되지 않았거나 잘못된 템플릿이 사용되었을 경우).
-
 
 ### 버그 보고
 
@@ -62,14 +59,13 @@
    - p5.js의 문서화, 코드 구현 또는 친근한 오류 시스템(friendly error system)을 개선하여 동일한 오류가 발생하지 않도록 할 수 있는지 판단합니다.
    - 추가 질문이 있으면 [포럼(forum)](https://discourse.processing.org/) 또는 [디스코드(Discord)](https://discord.p5js.org) 로 리디렉션하고 p5.js에 더 이상 변경사항이 없다면 이슈를 종결(close)하세요.
 
-
 ### 기능 요청
 
 기능 요청은 "새로운 기능 요청(New Feature Request)" 이슈 템플릿(template)을 사용해야 합니다. 새로운 기능을 요청하기 위해서는 다음과 같은 과정이 일반적입니다:
 
 1. 기능 요청은 p5.js의 접근성 향상을 위한 노력의 일환으로, 해당 분야에서 역사적으로 소외된 커뮤니티에서 p5.js의 접근성을 높이는 방법에 대한 사례가 되어야 합니다. 자세한 내용은 [이 곳](access.md)에서 볼 수 있습니다.
-    - 기능 요청에 "접근성 향상(Increasing Access)" 필드가 충분히 입력되지 않은 경우, 이슈 작성자에게 이 기능이 어떻게 접근성을 높이는지 질문할 수 있습니다.
-    - 기능의 접근성 설명은 이슈 검토자를 포함한 커뮤니티의 다른 구성원이 제공할 수 있습니다.
+   - 기능 요청에 "접근성 향상(Increasing Access)" 필드가 충분히 입력되지 않은 경우, 이슈 작성자에게 이 기능이 어떻게 접근성을 높이는지 질문할 수 있습니다.
+   - 기능의 접근성 설명은 이슈 검토자를 포함한 커뮤니티의 다른 구성원이 제공할 수 있습니다.
 2. 새로운 기능 요청은 다음 기준에 따라 포함 여부를 평가할 수 있습니다.
    - 해당 기능이 p5.js의 프로젝트 범위와 [디자인 원칙](design_principles.md)에 적합한가요?
      - 예를 들어, 새로운 기본 도형을 추가하는 요청은 고려될 수 있지만, 브라우저 기반 IOT 프로토콜 추가 요청은 고려 범위에서 벗어날 가능성이 높습니다.
@@ -83,7 +79,6 @@
    - 제안된 새로운 기능이 p5.js에 이미 있는 기능, 비교적 간단한 순수 자바스크립트 코드나 기존의 사용하기 쉬운 라이브러리를 사용하여 만들어질 수 있나요?
      - 예를 들어, 문자열 배열을 연결하기 위해 p5.js 함수 `join(["Hello", "world!"])`보다는 자바스크립트 기본 문법인 `["Hello", "world!"].join()`가 우선시됩니다.
 3. 접근성 요구 사항과 나머지 고려 사항이 충족된 경우, PR을 시작하기 전에 최소 2명의 스튜어드 또는 유지관리자가 새로운 기능 요청을 승인해야 합니다. 새로운 기능에 대한 PR 검토 과정은 아래에 설명되어 있습니다.
-
 
 ### 기능 향상
 
@@ -104,15 +99,14 @@
 
 ---
 
-
 ## 풀 리퀘스트(Pull Requests)
 
 p5.js 리포지토리(repository)에 대한 대부분의 코드 기여는 풀 리퀘스트(pull request)를 통해 이루어집니다. 스튜어드와 유지관리자는 리포지토리에 대한 푸시(push) 권한이 있지만 코드 기여 시 똑같이 이슈 > PR > 검토 과정을 거치도록 권장합니다. PR을 검토하는 단계는 다음과 같습니다:
 
 - 풀 리퀘스트 템플릿은 [이 곳](https://github.com/processing/p5.js/blob/main/.github/PULL_REQUEST_TEMPLATE.md)에서 확인할 수 있습니다.
 - 거의 모든 풀 리퀘스트는 먼저 관련 이슈를 열고 논의해야 합니다. 즉, 관련 [이슈 작업 절차(workflow)](steward_guidelines.md#issues)를 먼저 따른 뒤에 스튜어드나 유지관리자가 검토해야 합니다.
-    - 절차가 적용되지 않는 유일한 경우는 매우 간단한 오타 수정 뿐이며, 이슈를 열 필요가 없고 특정 분야의 스튜어드가 아니더라도 리포지토리에 대한 병합(merge) 권한이 있는 모든 사람이 병합할 수 있습니다.
-    - 이러한 예외가 존재하지만, 우리는 기여자들이 새로운 이슈를 먼저 열도록 권장합니다. 즉, 예외가 적용될지 잘 모르겠다면 어쨌든 이슈를 열어보세요!
+  - 절차가 적용되지 않는 유일한 경우는 매우 간단한 오타 수정 뿐이며, 이슈를 열 필요가 없고 특정 분야의 스튜어드가 아니더라도 리포지토리에 대한 병합(merge) 권한이 있는 모든 사람이 병합할 수 있습니다.
+  - 이러한 예외가 존재하지만, 우리는 기여자들이 새로운 이슈를 먼저 열도록 권장합니다. 즉, 예외가 적용될지 잘 모르겠다면 어쨌든 이슈를 열어보세요!
 - 제시된 이슈가 풀 리퀘스트를 통해 완전히 해결되지 않았다면, 원본 게시물(post)의 "Resolves #OOOO"를 "Addresses #OOOO"로 수정하여 PR 병합 시에 원본 이슈가 자동으로 닫히지 않게끔 할 수 있습니다.
 
 ### 간단한 수정
@@ -122,7 +116,6 @@ p5.js 리포지토리(repository)에 대한 대부분의 코드 기여는 풀 �
 ![The "files changed" tab when viewing a pull request on GitHub](../images/files-changed.png)
 
 ![The "All checks have passed" indicator on a GitHub pull request, highlighted above the merge button](../images/all-checks-passed.png)
-
 
 ### 버그 수정
 
@@ -146,22 +139,20 @@ p5.js 리포지토리(repository)에 대한 대부분의 코드 기여는 풀 �
 5. 한 번 PR이 검토되고 더 이상 변경이 필요하지 않으면 스튜어드는 추가 댓글이 있든 없든 이전 단계에서 “승인(Approve)” 옵션을 선택하여 PR을 “승인(Approved)”으로 표시할 수 있습니다. 그런 다음 스튜어드는 원한다면 다른 스튜어드나 유지관리자에게 추가 검토를 요청할 수 있고, 병합(merge) 권한이 있다면 PR을 병합하거나 유지관리자에게 병합을 요청할 수 있습니다.
 
 6. 새로운 기여자를 [README.md](http://readme.md/) 파일의 기여자 목록에 추가하려면 @[all-contributors](https://allcontributors.org/docs/en/emoji-key) 봇을 호출해야 합니다. 각각의 기여 유형은 아래의 `[contribution` `type]`에 표시할 수 있고, 사용할 수 있는 기여 유형의 전체 목록은 위 링크에서 확인할 수 있습니다.
-    
-    ![images/suggest-change.png](../images/suggest-change.png)
-    
-    ![images/suggested-value-change.png](../images/suggested-value-change.png)
-    
-    ![images/suggestion-preview.png](../images/suggestion-preview.png)
+
+   ![images/suggest-change.png](../images/suggest-change.png)
+
+   ![images/suggested-value-change.png](../images/suggested-value-change.png)
+
+   ![images/suggestion-preview.png](../images/suggestion-preview.png)
 
 `@all-contributors` `please` `add` `@[GitHub` `handle]` `for` `[contribution` `type]`
-
 
 ### 새로운 기능/기능 향상
 
 새로운 기능 또는 기능 향상 PR은 버그 수정과 비슷하지만 한 가지 주목해야 할 차이점이 있습니다:
 
 - 새로운 기능/기능 향상 PR은 병합(merge)되기 전에 적어도 두 명의 스튜어드 또는 유지관리자의 검토와 승인을 받아야 합니다.
-
 
 ### 디펜다봇(Dependabot)
 
@@ -174,13 +165,11 @@ p5.js 리포지토리(repository)에 대한 대부분의 코드 기여는 풀 �
 
 ---
 
-
 ## 빌드 과정
 
 이 섹션에서는 일반적인 빌드 설정이나 명령어는 다루지 않고, 대신 뒤에서 무슨 일이 일어나고 있는지 자세히 설명합니다.
 
 Gruntfile.js 파일에는 p5.js에 대한 주요 빌드 정의들이 포함되어 있습니다. 라이브러리와 문서를 구축하는 데 사용된 다양한 도구 중에는 Grunt, Browserify, YUIDoc, ESLint, Babel, Uglify, Mocha가 포함되어 있지만 이게 다는 아닙니다. `default` 작업으로 시작하여 거기서부터 거꾸로 작업하는 것이 우리에게 도움될 수 있습니다. 이 시점에는 아래의 설명을 따라가며 Gruntfile.js를 열어보는 것이 도움될 수 있습니다.
-
 
 ### 주요 빌드 작업
 
@@ -189,7 +178,6 @@ grunt.registerTask('default', ['lint', 'test']);
 ```
 
 `grunt` 또는 npm 스크립트 `npm test`를 열었을 때, `lint`와 `test`로 구성된 기본 작업이 실행됩니다.
-
 
 #### `lint` 작업
 
@@ -203,16 +191,15 @@ grunt.registerTask('lint', ['lint:source', 'lint:samples']);
 
 `lint:samples` 다음은 `eslint-samples:source`로, [./tasks/build/eslint-samples.js](tasks/build/eslint-samples.js)에 정의되어 있는 사용자 작성 작업입니다; 이는 문서 예제 코드가 p5.js의 나머지 부분와 동일한 코딩 규칙을 따르는지 확인하기 위해 ESLint를 실행할 것입니다 (예제를 린트(lint)하기 전에 JSON 파일을 빌드해야 하기 때문에 여기서 `yui`는 먼저 실행됩니다).
 
-
 #### `test` 작업
 
 ```js
 grunt.registerTask('test', [
-  'build',
-  'connect:server',
-  'mochaChrome',
-  'mochaTest',
-  'nyc:report'
+  'build',
+  'connect:server',
+  'mochaChrome',
+  'mochaTest',
+  'nyc:report'
 ]);
 ```
 
@@ -220,10 +207,10 @@ grunt.registerTask('test', [
 
 ```js
 grunt.registerTask('build', [
-  'browserify',
-  'browserify:min',
-  'uglify',
-  'browserify:test'
+  'browserify',
+  'browserify:min',
+  'uglify',
+  'browserify:test'
 ]);
 ```
 
@@ -233,7 +220,7 @@ grunt.registerTask('build', [
 - `uglify`는 `browserify:min` 의 출력 파일을 가져와 최종적으로 p5.min.js로 최소화합니다 (이 단계의 구성은 메인 Gruntfile.js에 있습니다).
 - `browserify:test`는 [Istanbul](https://istanbul.js.org/)을 사용하여 전체 p5.js와 동일한 버전으로 빌드됩니다. 단, 테스트 코드 커버리지(test code coverage) 보고를 위해 추가된 코드를 제외하고 빌드됩니다.
 
-먼저,  `fs.readFileSync()` node.js 전용 코드의 사용은  `brfs-babel`을 사용하여 파일의 실제 내용으로 대체됩니다. 이는 WebGL 코드에서 별도의 파일로 작성된 소스 코드로부터 셰이더(shader) 코드를 삽입(inline)하기 위해 사용됩니다.
+먼저, `fs.readFileSync()` node.js 전용 코드의 사용은 `brfs-babel`을 사용하여 파일의 실제 내용으로 대체됩니다. 이는 WebGL 코드에서 별도의 파일로 작성된 소스 코드로부터 셰이더(shader) 코드를 삽입(inline)하기 위해 사용됩니다.
 
 다음으로, node_modules의 모든 종속성(dependency)을 포함한 소스 코드가 Babel을 사용하여 package.json에서 정의된 Browserslist 요구 사항에 맞춰 트랜스파일(transpile)하고, ES6 import문(import statement)을 browserify가 이해하는 CommonJS require()로 변환합니다. 이를 통해 브라우저 호환성에 대한 걱정 없이 ES6 이상에서 사용할 수 있는 최신 구문(syntax)을 사용할 수 있게 됩니다.
 
@@ -251,7 +238,7 @@ connect:server
 mochaChrome
 ```
 
-이 단계는 [./tasks/test/mocha-chrome.js](tasks/test/mocha-chrome.js)에 정의되어 있습니다. Puppeteer를 사용해 원격 제어가 가능한 크롬의 헤드리스 버전을 가동하고, `./test` 폴더에 있는 HTML 파일과 관련된 테스트를 실행합니다. 여기에는 라이브러리의 축소되지 않은 버전과 축소된 버전을 단위 테스트(unit test) 모음에 대해 테스트하는 것은 물론, 모든 레퍼런스 예제를 테스트하는 것도 포함되어 있습니다. 
+이 단계는 [./tasks/test/mocha-chrome.js](tasks/test/mocha-chrome.js)에 정의되어 있습니다. Puppeteer를 사용해 원격 제어가 가능한 크롬의 헤드리스 버전을 가동하고, `./test` 폴더에 있는 HTML 파일과 관련된 테스트를 실행합니다. 여기에는 라이브러리의 축소되지 않은 버전과 축소된 버전을 단위 테스트(unit test) 모음에 대해 테스트하는 것은 물론, 모든 레퍼런스 예제를 테스트하는 것도 포함되어 있습니다.
 
 ```
 mochaTest
@@ -267,7 +254,6 @@ nyc:report
 
 여기까지 우리는 Gruntfile.js 의 기본적인 환경 구성(configuration) 작업을 다루어 보았습니다.
 
-
 ### 기타 작업
 
 모든 단계는 `npx grunt [step]`으로 직접 실행할 수 있습니다. 위에서 다루지는 않았지만 특정 상황에서 유용할 수 있는 몇 가지 작업도 있습니다.
@@ -280,16 +266,15 @@ grunt yui:dev
 
 `grunt` `yui:dev`는 인라인 문서의 레퍼런스 작업을 할 때 유용한데, 빌드된 파일을 p5.js 저장소(repository)에서 로컬 p5.js 웹사이트 저장소로 이동할 필요도, 변경사항이 생길 때마다 웹사이트를 다시 빌드할 필요도 없기 때문입니다. 그저 브라우저에서 약간 단순화된 레퍼런스 버전으로 변경사항을 미리 보면 됩니다. 이렇게 하면 변경사항이 웹사이트에 올바르게 표시되는지 여부를 확인할 수 있습니다. 이는 인라인 문서를 수정하는 경우에만 해당된다는 것을 알아두세요. 스타일 및 레이아웃 작업을 포함한 레퍼런스 페이지 자체에 대한 변경사항은 웹사이트 저장소에서 생성 및 테스트해야 합니다.
 
-
 ```
 grunt watch
 grunt watch:main
 grunt watch:quick
 ```
 
-워치(Watch) 작업은 여러 파일의 변경사항을 감시하고, 관련 작업을 실행하여 변경된 파일에 따라 레퍼런스나 라이브러리를 빌드합니다. 이러한 작업은 범위의 차이를 제외하면 모두 동일한 작업을 수행합니다. 
+워치(Watch) 작업은 여러 파일의 변경사항을 감시하고, 관련 작업을 실행하여 변경된 파일에 따라 레퍼런스나 라이브러리를 빌드합니다. 이러한 작업은 범위의 차이를 제외하면 모두 동일한 작업을 수행합니다.
 
-`watch` 작업은 소스 코드의 변경사항을 감지할 때 모든 빌드와 테스트를 실행합니다. 마치 전체 기본 작업을 실행하는 것처럼 보일 거예요. 
+`watch` 작업은 소스 코드의 변경사항을 감지할 때 모든 빌드와 테스트를 실행합니다. 마치 전체 기본 작업을 실행하는 것처럼 보일 거예요.
 
 `watch:main` 작업은 라이브러리 빌드와 테스트를 실행하지만, 소스 코드의 변경사항을 감지해도 레퍼런스를 다시 빌드하지는 않습니다.
 
@@ -299,18 +284,15 @@ grunt watch:quick
 
 ---
 
-
 ## 배포 과정
 
 [release\_process.md](release_process.md)를 확인하세요.
 
 ---
 
-
 ## 팁과 요령
 
 때때로 검토가 필요한 이슈와 PR의 수가 너무 많아질 수도 있습니다. 보다 용이한 이슈 및 PR 검토를 위한 팁과 요령 몇 가지를 알려드립니다.
-
 
 ### 회신 양식 (Reply Template)
 
@@ -318,64 +300,63 @@ grunt watch:quick
 
 다음은 p5.js 유지관리자(maintainer)가 사용하는 **저장된 회신**의 일부입니다. 이를 사용하거나 직접 만들어 보세요!
 
-
 ##### 종결(Closing): 재현할 수 없음
+
 > We're not able to reproduce this, but please feel free to reopen if you can provide a code sample that demonstrates the issue. Thanks!
 
 > 이것을 재현할 수는 없지만, 이 이슈를 보여줄 수 있는 샘플 코드를 제공할 수 있다면 다시 열어주세요. 감사합니다!
 
-
 ##### 종결(Closing): 스니펫 필요
->I'm closing this for organizational purposes. Please reopen if you can provide a code snippet that illustrates the issue. Thanks!
+
+> I'm closing this for organizational purposes. Please reopen if you can provide a code snippet that illustrates the issue. Thanks!
 
 > 조직 운영 및 관리 차원에서 이 이슈를 종결합니다. 이 이슈를 설명하는 코드 스니펫을 제공할 수 있다면 다시 열어주세요. 감사합니다!
 
-
 ##### 종결(Closing): 포럼 사용
->The GitHub issues here are a good place for bugs and issues with the p5.js library itself. For questions about writing your own code, tests, or following tutorials, the [forum](https://discourse.processing.org/) is the best place to post. Thanks!
+
+> The GitHub issues here are a good place for bugs and issues with the p5.js library itself. For questions about writing your own code, tests, or following tutorials, the [forum](https://discourse.processing.org/) is the best place to post. Thanks!
 
 > 깃허브 이슈는 p5.js 라이브러리 자체의 버그나 이슈를 올리는 곳입니다. 여러분의 코드나 테스트, 또는 튜토리얼에 대한 것에 대한 질문을 하고 싶다면 [포럼](https://discourse.processing.org/)만한 곳이 없을 거에요. 감사합니다!
 
-
 ##### 종결(Closing): GSOC
->Thanks! The best place to discuss GSOC proposals is on our [forum](https://discourse.processing.org/c/summer-of-code).
+
+> Thanks! The best place to discuss GSOC proposals is on our [forum](https://discourse.processing.org/c/summer-of-code).
 
 > 감사합니다! GSOC 제안을 논의하고 싶다면 우리의 [포럼](https://discourse.processing.org/c/summer-of-code)만한 곳이 없답니다.
 
-
 ##### 종결(Closing): 접근성
->I'm not seeing a lot of interest in this feature, and we don't have a clear explanation of how it [expands access](access.md), so I will close this for now. If an access statement can be added to the issue request, please feel welcome to reopen.
+
+> I'm not seeing a lot of interest in this feature, and we don't have a clear explanation of how it [expands access](access.md), so I will close this for now. If an access statement can be added to the issue request, please feel welcome to reopen.
 
 > 우리는 이 기능으로부터 큰 이점을 찾을 수 없고, 어떻게 [접근성을 확장](access.md)하는지에 대한 명확한 설명이 없으므로 일단 이 이슈를 종결하겠습니다. 이슈 요청에 접근성 설명을 추가할 수 있게 되면 언제든지 다시 열어주세요.
 
->We do not see a further explanation of how this issue [expands access](access.md), so I will close this issue for now. If a more detailed access statement can be added to the feature request, please feel welcome to reopen it. Thank you!
+> We do not see a further explanation of how this issue [expands access](access.md), so I will close this issue for now. If a more detailed access statement can be added to the feature request, please feel welcome to reopen it. Thank you!
 
 > 이 이슈로 인해 어떻게 [접근성이 확장](access.md)되는지에 대한 추가 설명이 없으므로 일단 이 이슈를 종결하겠습니다. 기능 요청에 더 자세한 접근성 설명을 추가할 수 있게 되면 언제든지 다시 열어주세요. 감사합니다!
 
-
 ##### 종결(Closing): 애드온(Addon, 부가 기능)
->I think this function is beyond the scope of the p5.js API (we try to keep it as minimal as possible), but it could be a great starting point for an addon library. See the docs here for how to create an addon: [https://github.com/processing/p5.js/blob/main/contributor\_docs/creating\_libraries.md](creating_libraries.md)
+
+> I think this function is beyond the scope of the p5.js API (we try to keep it as minimal as possible), but it could be a great starting point for an addon library. See the docs here for how to create an addon: [https://github.com/processing/p5.js/blob/main/contributor\_docs/creating\_libraries.md](creating_libraries.md)
 
 > 기능이 p5.js API 범위를 벗어나는 것 같지만 (우리는 최소한의 크기를 유지하고 싶어요), 애드온 라이브러리를 만드는 좋은 시작점이 될 것 같습니다. 애드온을 생성하는 방법을 알고 싶다면 이 문서를 확인해 보세요. [https://github.com/processing/p5.js/blob/main/contributor\_docs/creating\_libraries.md](creating_libraries.md)
 
-
 ##### PR 종결(Closing): 이슈가 먼저 필요함
->Thank you. As a reminder, issues need to be opened before pull requests are opened and tagged with the issue. This is necessary for tracking development and keeping discussion clear. Thanks!
+
+> Thank you. As a reminder, issues need to be opened before pull requests are opened and tagged with the issue. This is necessary for tracking development and keeping discussion clear. Thanks!
 
 > 감사합니다. 참고로, 풀 리퀘스트를 게시하고 이슈에 태그를 지정하기 전에 먼저 이슈를 게시해야 합니다. 이는 개발을 추적하고 토론을 명확하게 유지하는 데 필요해요. 감사합니다!
 
-
 ##### 이슈 해결 승인
->You can go ahead with a fix. Thanks.
+
+> You can go ahead with a fix. Thanks.
 
 > 계속 해결해도 됩니다. 감사합니다!
 
-
 ##### PR 병합
->Looks good. Thanks!
+
+> Looks good. Thanks!
 
 > 괜찮아 보이는데요? 감사합니다!
-
 
 ### 깃허브 CLI
 
@@ -384,7 +365,6 @@ grunt watch:quick
 CLI를 설치하고 로그인하고 `gh pr checkout [pull_request_id]` 명령어를 실행하면 로컬에서 PR 검토가 가능하며, 원격 포크 가져오기, 브랜치 생성, 브랜치 체크아웃 과정이 모두 자동으로 수행됩니다. main 브랜치로 돌아가는 것은 `git checkout main`으로 브랜치를 전환하는 것과 같습니다. 심지어 웹사이트를 방문하지 않고도 CLI에서 PR에 댓글을 남길 수도 있습니다!
 
 깃허브 CLI에는 유용할 수도, 그렇지 않을 수도 있는 수많은 명령어가 있지만, 여전히 사용하기에 좋은 도구입니다.
-
 
 ### 알림 관리
 
@@ -396,4 +376,4 @@ CLI를 설치하고 로그인하고 `gh pr checkout [pull_request_id]` 명령어
 
 경우에 따라 보기가 활성화된 저장소에 대한 이메일을 GitHub로부터 수신할 수도 있으며, [알림 설정 페이지](https://github.com/settings/notifications)에서 (아예 구독 취소하는 것을 포함한) 사용자 설정을 할 수 있습니다.
 
-작업 방식에 맞는 알림 방식을 선택하는 과정에서, 여러분은 이슈 및 PR 검토 사안을 직접 찾아내야 하는 귀찮음과, 깃허브의 끝없는 알림 압박 사이의 선택지에 서 있게 됩니다. 여기에는 균형 잡힌 선택이 필요한데, 만약 처음이라면 스튜어드는 **이슈**와 **풀 리퀘스트**에 대해 이 저장소에 **보기**를 활성화하고, "참여, @멘션 및 사용자 정의"에 대한 이메일만 수신하도록 설정하는 것을 추천합니다. 
+작업 방식에 맞는 알림 방식을 선택하는 과정에서, 여러분은 이슈 및 PR 검토 사안을 직접 찾아내야 하는 귀찮음과, 깃허브의 끝없는 알림 압박 사이의 선택지에 서 있게 됩니다. 여기에는 균형 잡힌 선택이 필요한데, 만약 처음이라면 스튜어드는 **이슈**와 **풀 리퀘스트**에 대해 이 저장소에 **보기**를 활성화하고, "참여, @멘션 및 사용자 정의"에 대한 이메일만 수신하도록 설정하는 것을 추천합니다.

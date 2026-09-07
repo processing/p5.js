@@ -1,15 +1,17 @@
 import { default as vector, Vector } from '../../../src/math/p5.Vector.js';
 import { default as math } from '../../../src/math/math.js';
-import { _defaultEmptyVector, _validatedVectorOperation } from '../../../src/math/patch-vector.js';
+import {
+  _defaultEmptyVector,
+  _validatedVectorOperation
+} from '../../../src/math/patch-vector.js';
 import { vi } from 'vitest';
-
 
 suite('p5.Vector', function () {
   var v;
 
   let FESCalled = false;
   const mockP5 = {
-    _friendlyError: function(msg, func) {
+    _friendlyError: function (msg, func) {
       FESCalled = true;
       console.warn(msg);
     }
@@ -30,11 +32,26 @@ suite('p5.Vector', function () {
     );
 
     // The following mocks simulate the validation decorator
-    Vector.prototype.add = _validatedVectorOperation(false)(Vector.prototype.add, options);
-    Vector.prototype.sub = _validatedVectorOperation(false)(Vector.prototype.sub, options);
-    Vector.prototype.mult = _validatedVectorOperation(true)(Vector.prototype.mult, options);
-    Vector.prototype.rem = _validatedVectorOperation(true)(Vector.prototype.rem, options);
-    Vector.prototype.div = _validatedVectorOperation(true)(Vector.prototype.div, options);
+    Vector.prototype.add = _validatedVectorOperation(false)(
+      Vector.prototype.add,
+      options
+    );
+    Vector.prototype.sub = _validatedVectorOperation(false)(
+      Vector.prototype.sub,
+      options
+    );
+    Vector.prototype.mult = _validatedVectorOperation(true)(
+      Vector.prototype.mult,
+      options
+    );
+    Vector.prototype.rem = _validatedVectorOperation(true)(
+      Vector.prototype.rem,
+      options
+    );
+    Vector.prototype.div = _validatedVectorOperation(true)(
+      Vector.prototype.div,
+      options
+    );
   });
 
   afterEach(function () {});
@@ -102,7 +119,6 @@ suite('p5.Vector', function () {
     });
   });
 
-
   suite.todo('p5.prototype.createVector()', function () {
     beforeEach(function () {
       v = mockP5Prototype.createVector();
@@ -116,7 +132,7 @@ suite('p5.Vector', function () {
     });
 
     test('should have values be initialized to 0,0,0', function () {
-      assert.deepEqual(v.values, [0,0,0]);
+      assert.deepEqual(v.values, [0, 0, 0]);
     });
 
     test('should have dimensions initialized to 3', function () {
@@ -296,15 +312,12 @@ suite('p5.Vector', function () {
         expect(v1.angleBetween(v2)).to.equal(0);
       });
 
-      test.todo(
-        'between [0,3,0] and [0,-3,0] should be 180 degrees',
-        function () {
-          mockP5Prototype.angleMode(DEGREES);
-          v1 = new Vector(0, 3, 0);
-          v2 = new Vector(0, -3, 0);
-          expect(v1.angleBetween(v2)).to.be.closeTo(180, 0.01);
-        }
-      );
+      test.todo('between [0,3,0] and [0,-3,0] should be 180 degrees', function () {
+        mockP5Prototype.angleMode(DEGREES);
+        v1 = new Vector(0, 3, 0);
+        v2 = new Vector(0, -3, 0);
+        expect(v1.angleBetween(v2)).to.be.closeTo(180, 0.01);
+      });
 
       test('between [1,0,0] and [2,2,0] should be 1/4 PI radians', function () {
         v1 = new Vector(1, 0, 0);
@@ -358,15 +371,12 @@ suite('p5.Vector', function () {
         expect(Vector.angleBetween(v2, v1)).to.be.NaN;
       });
 
-      test.todo(
-        'between [1,0,0] and [0,-1,0] should be -90 degrees',
-        function () {
-          mockP5Prototype.angleMode(DEGREES);
-          v1 = new Vector(1, 0, 0);
-          v2 = new Vector(0, -1, 0);
-          expect(Vector.angleBetween(v1, v2)).to.be.closeTo(-90, 0.01);
-        }
-      );
+      test.todo('between [1,0,0] and [0,-1,0] should be -90 degrees', function () {
+        mockP5Prototype.angleMode(DEGREES);
+        v1 = new Vector(1, 0, 0);
+        v2 = new Vector(0, -1, 0);
+        expect(Vector.angleBetween(v1, v2)).to.be.closeTo(-90, 0.01);
+      });
 
       test('between [0,3,0] and [0,-3,0] should be PI radians', function () {
         v1 = new Vector(0, 3, 0);
@@ -1018,7 +1028,6 @@ suite('p5.Vector', function () {
     });
   });
 
-
   suite('smaller dimension', function () {
     let v1, v2, v3;
     beforeEach(function () {
@@ -1052,10 +1061,10 @@ suite('p5.Vector', function () {
     });
 
     test('should be prioritized in div()', function () {
-      assert.deepEqual(v1.div(v2).values, [1/2]);
+      assert.deepEqual(v1.div(v2).values, [1 / 2]);
       expect(v1.div(v2).dimensions).to.eql(1);
 
-      assert.deepEqual(v3.div(v2).values, [2, 5/3]);
+      assert.deepEqual(v3.div(v2).values, [2, 5 / 3]);
       expect(v3.div(v2).dimensions).to.eql(2);
     });
 
@@ -1397,7 +1406,7 @@ suite('p5.Vector', function () {
 
   suite('heading', function () {
     beforeEach(function () {
-      v = new Vector(0,0,0);
+      v = new Vector(0, 0, 0);
     });
 
     suite('p5.Vector.prototype.heading() [INSTANCE]', function () {
@@ -1487,10 +1496,10 @@ suite('p5.Vector', function () {
       expect(v.lerp()).to.eql(v);
     });
 
-    suite('with p5.Vector', function() {
-      test('should call lerp with 4 arguments', function() {
+    suite('with p5.Vector', function () {
+      test('should call lerp with 4 arguments', function () {
         vi.spyOn(v, 'lerp');
-        v.lerp(new Vector(1,2,3), 1);
+        v.lerp(new Vector(1, 2, 3), 1);
         expect(v.lerp).toHaveBeenCalledWith(1, 2, 3, 1);
       });
     });
@@ -1725,35 +1734,19 @@ suite('p5.Vector', function () {
         incoming_x = 1;
         incoming_y = 1;
         incoming_z = 1;
-        original_incoming = new Vector(
-          incoming_x,
-          incoming_y,
-          incoming_z
-        );
+        original_incoming = new Vector(incoming_x, incoming_y, incoming_z);
 
         x_normal = new Vector(3, 0, 0);
         y_normal = new Vector(0, 3, 0);
         z_normal = new Vector(0, 0, 3);
 
-        x_bounce_incoming = new Vector(
-          incoming_x,
-          incoming_y,
-          incoming_z
-        );
+        x_bounce_incoming = new Vector(incoming_x, incoming_y, incoming_z);
         x_bounce_outgoing = x_bounce_incoming.reflect(x_normal);
 
-        y_bounce_incoming = new Vector(
-          incoming_x,
-          incoming_y,
-          incoming_z
-        );
+        y_bounce_incoming = new Vector(incoming_x, incoming_y, incoming_z);
         y_bounce_outgoing = y_bounce_incoming.reflect(y_normal);
 
-        z_bounce_incoming = new Vector(
-          incoming_x,
-          incoming_y,
-          incoming_z
-        );
+        z_bounce_incoming = new Vector(incoming_x, incoming_y, incoming_z);
         z_bounce_outgoing = z_bounce_incoming.reflect(z_normal);
       });
 
@@ -1836,11 +1829,7 @@ suite('p5.Vector', function () {
         incoming_x = 1;
         incoming_y = 1;
         incoming_z = 1;
-        original_incoming = new Vector(
-          incoming_x,
-          incoming_y,
-          incoming_z
-        );
+        original_incoming = new Vector(incoming_x, incoming_y, incoming_z);
         x_target = new Vector(0, 0, 0);
         y_target = new Vector(0, 0, 0);
         z_target = new Vector(0, 0, 0);
@@ -1849,33 +1838,21 @@ suite('p5.Vector', function () {
         y_normal = new Vector(0, 3, 0);
         z_normal = new Vector(0, 0, 3);
 
-        x_bounce_incoming = new Vector(
-          incoming_x,
-          incoming_y,
-          incoming_z
-        );
+        x_bounce_incoming = new Vector(incoming_x, incoming_y, incoming_z);
         x_bounce_outgoing = Vector.reflect(
           x_bounce_incoming,
           x_normal,
           x_target
         );
 
-        y_bounce_incoming = new Vector(
-          incoming_x,
-          incoming_y,
-          incoming_z
-        );
+        y_bounce_incoming = new Vector(incoming_x, incoming_y, incoming_z);
         y_bounce_outgoing = Vector.reflect(
           y_bounce_incoming,
           y_normal,
           y_target
         );
 
-        z_bounce_incoming = new Vector(
-          incoming_x,
-          incoming_y,
-          incoming_z
-        );
+        z_bounce_incoming = new Vector(incoming_x, incoming_y, incoming_z);
         z_bounce_outgoing = Vector.reflect(
           z_bounce_incoming,
           z_normal,
@@ -2034,6 +2011,25 @@ suite('p5.Vector', function () {
         const v1 = new Vector(0, -1, 1);
         expect(v1.equals(0, -1, 1)).to.be.true;
       });
+
+      test('should be symmetric when dimensions differ', function () {
+        const v3d = new Vector(1, 2, 3);
+        const v4d = new Vector(1, 2, 3, 4);
+        expect(v3d.equals(v4d)).to.equal(v4d.equals(v3d));
+      });
+
+      test('should compare up to the shorter length when dimensions differ', function () {
+        const v3d = new Vector(1, 2, 3);
+        const v4d = new Vector(1, 2, 3, 4);
+        expect(v3d.equals(v4d)).to.be.true;
+      });
+
+      test('should return false when values differ within the shorter length', function () {
+        const v3d = new Vector(1, 2, 3);
+        const v4d = new Vector(1, 2, 9, 4);
+        expect(v3d.equals(v4d)).to.be.false;
+        expect(v4d.equals(v3d)).to.be.false;
+      });
     });
 
     suite('p5.Vector.equals() [CLASS]', function () {
@@ -2064,6 +2060,18 @@ suite('p5.Vector', function () {
         const a2 = [0, -1, 1];
         expect(Vector.equals(a1, a2)).to.be.true;
       });
+
+      test('should be symmetric when dimensions differ', function () {
+        const v3d = new Vector(1, 2, 3);
+        const v4d = new Vector(1, 2, 3, 4);
+        expect(Vector.equals(v3d, v4d)).to.equal(Vector.equals(v4d, v3d));
+      });
+
+      test('should compare up to the shorter length when dimensions differ', function () {
+        const v3d = new Vector(1, 2, 3);
+        const v4d = new Vector(1, 2, 3, 4);
+        expect(Vector.equals(v3d, v4d)).to.be.true;
+      });
     });
   });
 
@@ -2089,14 +2097,12 @@ suite('p5.Vector', function () {
       assert.equal(vect.getValue(3), 4);
     });
 
-    test('should throw friendly error if attempting to get element outside length',
-      function () {
-        let vect = new Vector(1, 2, 3, 4);
-        FESCalled = false;
-        assert.equal(vect.getValue(5), undefined);
-        assert.equal(FESCalled, true);
-      }
-    );
+    test('should throw friendly error if attempting to get element outside length', function () {
+      let vect = new Vector(1, 2, 3, 4);
+      FESCalled = false;
+      assert.equal(vect.getValue(5), undefined);
+      assert.equal(FESCalled, true);
+    });
   });
 
   suite('set value', function () {
@@ -2109,14 +2115,12 @@ suite('p5.Vector', function () {
       assert.equal(vect.getValue(3), 4);
     });
 
-    test('should throw friendly error if attempting to set element outside lenght',
-      function () {
-        let vect = new Vector(1, 2, 3, 4);
-        FESCalled = false;
-        vect.setValue(100, 7);
-        assert.equal(FESCalled, true);
-      }
-    );
+    test('should throw friendly error if attempting to set element outside lenght', function () {
+      let vect = new Vector(1, 2, 3, 4);
+      FESCalled = false;
+      vect.setValue(100, 7);
+      assert.equal(FESCalled, true);
+    });
   });
 
   describe('get w', () => {

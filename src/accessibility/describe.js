@@ -4,7 +4,7 @@
  * @for p5
  */
 
-function describe(p5, fn){
+function describe(p5, fn) {
   const descContainer = '_Description'; //Fallback container
   const fallbackDescId = '_fallbackDesc'; //Fallback description
   const fallbackTableId = '_fallbackTable'; //Fallback Table
@@ -110,7 +110,7 @@ function describe(p5, fn){
    *   describe(`A green circle at (${x}, 50) moves from left to right on a gray square.`, LABEL);
    * }
    */
-  fn.describe = function(text, display) {
+  fn.describe = function (text, display) {
     // p5._validateParameters('describe', arguments);
     if (typeof text !== 'string') {
       return;
@@ -229,7 +229,7 @@ function describe(p5, fn){
    * }
    */
 
-  fn.describeElement = function(name, text, display) {
+  fn.describeElement = function (name, text, display) {
     // p5._validateParameters('describeElement', arguments);
     if (typeof text !== 'string' || typeof name !== 'string') {
       return;
@@ -313,7 +313,7 @@ function describe(p5, fn){
    */
 
   //creates HTML structure for canvas descriptions
-  fn._describeHTML = function(type, text) {
+  fn._describeHTML = function (type, text) {
     const cnvId = this.canvas.id;
     if (type === 'fallback') {
       //if there is no description container
@@ -401,7 +401,7 @@ function describe(p5, fn){
   }
 
   //creates HTML structure for element descriptions
-  fn._describeElementHTML = function(type, name, text) {
+  fn._describeElementHTML = function (type, name, text) {
     const cnvId = this.canvas.id;
     if (type === 'fallback') {
       //if there is no description container
@@ -487,6 +487,6 @@ function describe(p5, fn){
 
 export default describe;
 
-if(typeof p5 !== 'undefined'){
+if (typeof p5 !== 'undefined') {
   describe(p5, p5.prototype);
 }

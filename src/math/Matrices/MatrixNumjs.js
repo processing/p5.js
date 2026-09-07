@@ -41,7 +41,7 @@ if (typeof Float32Array !== 'undefined') {
  * }
  */
 // const matrixEngine = "numjs";
-export class MatrixNumjs extends MatrixInterface{
+export class MatrixNumjs extends MatrixInterface {
   constructor(...args) {
     // This is default behavior when object
     super(...args);
@@ -124,7 +124,6 @@ export class MatrixNumjs extends MatrixInterface{
     }
     return this;
   }
-
 
   /**
    * Gets a copy of the vector, returns a MatrixNumjs object.
@@ -958,4 +957,3 @@ export class MatrixNumjs extends MatrixInterface{
   //  0.0,0.0,0.0,1.0
   //];
 }
-

@@ -1,24 +1,24 @@
 import p5 from '../../../src/app.js';
 
-suite.todo('pixels', function() {
+suite.todo('pixels', function () {
   var myp5;
 
-  beforeAll(function() {
-    new p5(function(p) {
-      p.setup = function() {
+  beforeAll(function () {
+    new p5(function (p) {
+      p.setup = function () {
         myp5 = p;
       };
     });
   });
 
-  afterAll(function() {
+  afterAll(function () {
     myp5.remove();
   });
 
-  suite('p5.Image.get', function() {
+  suite('p5.Image.get', function () {
     var img;
 
-    beforeAll(function() {
+    beforeAll(function () {
       //create a 50 x 50 half red half green image
       img = myp5.createImage(50, 50);
       img.loadPixels();
@@ -40,21 +40,21 @@ suite.todo('pixels', function() {
       img.updatePixels();
     });
 
-    test('get(x,y) works with integers', function() {
+    test('get(x,y) works with integers', function () {
       assert.deepEqual(img.get(25, 25), [255, 0, 0, 255]);
       assert.deepEqual(img.get(25, 26), [0, 0, 255, 255]);
       assert.deepEqual(img.get(0, 0), [255, 0, 0, 255]);
       assert.deepEqual(img.get(49, 49), [0, 0, 255, 255]);
     });
 
-    test('get(x,y) returns 0s for out of bounds arguments', function() {
+    test('get(x,y) returns 0s for out of bounds arguments', function () {
       assert.deepEqual(img.get(25, -1), [0, 0, 0, 0]);
       assert.deepEqual(img.get(-1, 26), [0, 0, 0, 0]);
       assert.deepEqual(img.get(25, 50), [0, 0, 0, 0]);
       assert.deepEqual(img.get(50, 26), [0, 0, 0, 0]);
     });
 
-    test('get() returns a copy when no arguments are supplied', function() {
+    test('get() returns a copy when no arguments are supplied', function () {
       var copy = img.get();
       assert.instanceOf(copy, p5.Image);
       assert.equal(copy.width, img.width);
@@ -66,7 +66,7 @@ suite.todo('pixels', function() {
       assert.deepEqual(copy.get(49, 49), [0, 0, 255, 255]);
     });
 
-    test('get(x,y,w,h) works', function() {
+    test('get(x,y,w,h) works', function () {
       for (var w = 1; w < img.width + 5; w += 2) {
         for (var x = -w * 2; x <= img.width + w * 2; x += 4) {
           var copy = img.get(x, x, w, w);
@@ -78,26 +78,26 @@ suite.todo('pixels', function() {
       }
     });
 
-    test('rounds down when given decimal numbers', function() {
+    test('rounds down when given decimal numbers', function () {
       assert.deepEqual(img.get(25, 25.999), img.get(25, 25));
     });
   });
 
-  suite('p5.Image.pixels', function() {
-    test('should be an array of pixels', function() {
+  suite('p5.Image.pixels', function () {
+    test('should be an array of pixels', function () {
       let img = myp5.createImage(10, 10);
       img.loadPixels();
       assert.typeOf(img.pixels, 'Uint8ClampedArray');
     });
 
-    test('should store r, g, b, a values for each pixel', function() {
+    test('should store r, g, b, a values for each pixel', function () {
       let img = myp5.createImage(10, 10);
       myp5.pixelDensity(1);
       img.loadPixels();
       assert.strictEqual(img.pixels.length, 400);
     });
 
-    test('should store correct r, g, b, a values for each pixel', function() {
+    test('should store correct r, g, b, a values for each pixel', function () {
       let img = myp5.createImage(10, 10);
       myp5.pixelDensity(1);
       img.loadPixels();
@@ -114,9 +114,9 @@ suite.todo('pixels', function() {
     });
   });
 
-  suite('p5.Image.set', function() {
+  suite('p5.Image.set', function () {
     /* Parameter Validation missing */
-    test('set(x,y) changes color of pixel (x, y)', function() {
+    test('set(x,y) changes color of pixel (x, y)', function () {
       let img = myp5.createImage(50, 50);
       img.loadPixels();
       img.set(0, 0, myp5.color(255, 34, 19));
@@ -125,8 +125,8 @@ suite.todo('pixels', function() {
     });
   });
 
-  suite('p5.Image.blend', function() {
-    test('should copy a region of pixels using the specified blend mode', function() {
+  suite('p5.Image.blend', function () {
+    test('should copy a region of pixels using the specified blend mode', function () {
       let img = myp5.createImage(50, 50);
       let img2 = myp5.createImage(50, 50);
       img.loadPixels();
@@ -154,8 +154,8 @@ suite.todo('pixels', function() {
     });
   });
 
-  suite('p5.Image.copy', function() {
-    test('should copy a region of pixels', function() {
+  suite('p5.Image.copy', function () {
+    test('should copy a region of pixels', function () {
       let img = myp5.createImage(50, 50);
       let img2 = myp5.createImage(50, 50);
       img.loadPixels();

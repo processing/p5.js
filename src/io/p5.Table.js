@@ -11,10 +11,10 @@ class Table {
     this.rows = [];
   }
 
-  toString(separator=',') {
+  toString(separator = ',') {
     let rows = this.rows.map(row => row.arr);
 
-    if(!this.columns.some(column => column === null)){
+    if (!this.columns.some(column => column === null)) {
       rows = [this.columns, ...rows];
     }
 
@@ -77,12 +77,12 @@ class Table {
    *   describe('no image displayed');
    * }
    */
-  addRow (row) {
-  // make sure it is a valid TableRow
+  addRow(row) {
+    // make sure it is a valid TableRow
     const r = row || new p5.TableRow();
 
     if (typeof r.arr === 'undefined' || typeof r.obj === 'undefined') {
-    //r = new p5.prototype.TableRow(r);
+      //r = new p5.prototype.TableRow(r);
       throw new Error(`invalid TableRow: ${r}`);
     }
     r.table = this;
@@ -129,7 +129,7 @@ class Table {
    *   describe('no image displayed');
    * }
    */
-  removeRow (id) {
+  removeRow(id) {
     this.rows[id].table = null; // remove reference to table
     const chunk = this.rows.splice(id + 1, this.rows.length);
     this.rows.pop();
@@ -170,7 +170,7 @@ class Table {
    *   describe('no image displayed');
    * }
    */
-  getRow (r) {
+  getRow(r) {
     return this.rows[r];
   }
 
@@ -218,7 +218,7 @@ class Table {
    *   describe('no image displayed');
    * }
    */
-  getRows () {
+  getRows() {
     return this.rows;
   }
 
@@ -260,8 +260,8 @@ class Table {
    *   describe('no image displayed');
    * }
    */
-  findRow (value, column) {
-  // try the Object
+  findRow(value, column) {
+    // try the Object
     if (typeof column === 'string') {
       for (let i = 0; i < this.rows.length; i++) {
         if (this.rows[i].obj[this.columns.indexOf(column)] === value) {
@@ -269,7 +269,7 @@ class Table {
         }
       }
     } else {
-    // try the Array
+      // try the Array
       for (let j = 0; j < this.rows.length; j++) {
         if (this.rows[j].arr[column] === value) {
           return this.rows[j];
@@ -323,7 +323,7 @@ class Table {
    *   describe('no image displayed');
    * }
    */
-  findRows (value, column) {
+  findRows(value, column) {
     const ret = [];
     if (typeof column === 'string') {
       for (let i = 0; i < this.rows.length; i++) {
@@ -332,7 +332,7 @@ class Table {
         }
       }
     } else {
-    // try the Array
+      // try the Array
       for (let j = 0; j < this.rows.length; j++) {
         if (this.rows[j].arr[column] === value) {
           ret.push(this.rows[j]);
@@ -380,7 +380,7 @@ class Table {
    *   describe('no image displayed');
    * }
    */
-  matchRow (regexp, column) {
+  matchRow(regexp, column) {
     if (typeof column === 'number') {
       for (let j = 0; j < this.rows.length; j++) {
         if (this.rows[j].arr[column].match(regexp)) {
@@ -454,7 +454,7 @@ class Table {
    *   }
    * }
    */
-  matchRows (regexp, column) {
+  matchRows(regexp, column) {
     const ret = [];
     if (typeof column === 'number') {
       for (let j = 0; j < this.rows.length; j++) {
@@ -503,7 +503,7 @@ class Table {
    *   describe('no image displayed');
    * }
    */
-  getColumn (value) {
+  getColumn(value) {
     const ret = [];
     if (typeof value === 'string') {
       for (let i = 0; i < this.rows.length; i++) {
@@ -555,7 +555,7 @@ class Table {
    *   describe('no image displayed');
    * }
    */
-  clearRows () {
+  clearRows() {
     delete this.rows;
     this.rows = [];
   }
@@ -597,7 +597,7 @@ class Table {
    *   describe('no image displayed');
    * }
    */
-  addColumn (title) {
+  addColumn(title) {
     const t = title || null;
     this.columns.push(t);
   }
@@ -628,7 +628,7 @@ class Table {
    *   text('There are ' + numOfColumn + ' columns in the table.', 100, 50);
    * }
    */
-  getColumnCount () {
+  getColumnCount() {
     return this.columns.length;
   }
 
@@ -658,7 +658,7 @@ class Table {
    *   text('There are ' + table.getRowCount() + ' rows in the table.', 100, 50);
    * }
    */
-  getRowCount () {
+  getRowCount() {
     return this.rows.length;
   }
 
@@ -698,7 +698,7 @@ class Table {
    * //  0  "Lion"   "Mamal"
    * //  1  "Snake"  "Reptile"
    */
-  removeTokens (chars, column) {
+  removeTokens(chars, column) {
     const escape = s => s.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
     const charArray = [];
     for (let i = 0; i < chars.length; i++) {
@@ -766,7 +766,7 @@ class Table {
    * //  0  "Lion"   "Mamal"
    * //  1  "Snake"  "Reptile"
    */
-  trim (column) {
+  trim(column) {
     const regex = new RegExp(' ', 'g');
 
     if (typeof column === 'undefined') {
@@ -833,11 +833,11 @@ class Table {
    *   describe('no image displayed');
    * }
    */
-  removeColumn (c) {
+  removeColumn(c) {
     let cString;
     let cNumber;
     if (typeof c === 'string') {
-    // find the position of c in the columns
+      // find the position of c in the columns
       cString = c;
       cNumber = this.columns.indexOf(c);
     } else {
@@ -903,7 +903,7 @@ class Table {
    *   describe('no image displayed');
    * }
    */
-  set (row, column, value) {
+  set(row, column, value) {
     this.rows[row].set(column, value);
   }
 
@@ -944,7 +944,7 @@ class Table {
    *   describe('no image displayed');
    * }
    */
-  setNum (row, column, value) {
+  setNum(row, column, value) {
     this.rows[row].setNum(column, value);
   }
 
@@ -994,7 +994,7 @@ class Table {
    *   describe('no image displayed');
    * }
    */
-  setString (row, column, value) {
+  setString(row, column, value) {
     this.rows[row].setString(column, value);
   }
 
@@ -1035,8 +1035,8 @@ class Table {
    *   describe('no image displayed');
    * }
    */
-  get (row, column) {
-    if(typeof column === 'string'){
+  get(row, column) {
+    if (typeof column === 'string') {
       return this.rows[row].get(this.columns.indexOf(column));
     } else {
       return this.rows[row].get(column);
@@ -1076,7 +1076,7 @@ class Table {
    *   describe('no image displayed');
    * }
    */
-  getNum (row, column) {
+  getNum(row, column) {
     return this.rows[row].getNum(column);
   }
 
@@ -1130,7 +1130,7 @@ class Table {
    *   describe('no image displayed');
    * }
    */
-  getString (row, column) {
+  getString(row, column) {
     return this.rows[row].getString(column);
   }
 
@@ -1169,7 +1169,7 @@ class Table {
    *   describe('no image displayed');
    * }
    */
-  getObject (headerColumn) {
+  getObject(headerColumn) {
     const tableObject = {};
     let obj, cPos, index;
 
@@ -1225,16 +1225,16 @@ class Table {
    *   describe('no image displayed');
    * }
    */
-  getArray () {
+  getArray() {
     const tableArray = [];
     for (let i = 0; i < this.rows.length; i++) {
       tableArray.push(this.rows[i].arr);
     }
     return tableArray;
   }
-};
+}
 
-function table(p5, fn){
+function table(p5, fn) {
   /**
    *  Table Options
    *  Generic class for handling tabular data, typically from a
@@ -1312,6 +1312,6 @@ function table(p5, fn){
 
 export default table;
 
-if(typeof p5 !== 'undefined'){
+if (typeof p5 !== 'undefined') {
   table(p5, p5.prototype);
 }

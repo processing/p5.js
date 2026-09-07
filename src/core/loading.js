@@ -16,7 +16,7 @@
  * @param {*} lifecycles Lifecycle hooks for the sketch
  */
 export default function loading(p5, fn, lifecycles) {
-  lifecycles.presetup = function() {
+  lifecycles.presetup = function () {
     if (typeof window === 'undefined' || this._loadingIndicator) {
       return;
     }
@@ -31,7 +31,7 @@ export default function loading(p5, fn, lifecycles) {
     this._loadingIndicator = createLoadingIndicator(container);
   };
 
-  lifecycles.postsetup = function() {
+  lifecycles.postsetup = function () {
     if (this._loadingIndicator) {
       this._loadingIndicator.remove();
       this._loadingIndicator = null;
@@ -51,7 +51,8 @@ function createLoadingIndicator(container) {
   if (!document.getElementById('p5-loading-style')) {
     const loadingStyle = document.createElement('style');
     loadingStyle.id = 'p5-loading-style';
-    loadingStyle.textContent = '@keyframes p5-loading-spin { to { transform: rotate(360deg); } }';
+    loadingStyle.textContent =
+      '@keyframes p5-loading-spin { to { transform: rotate(360deg); } }';
     document.head.appendChild(loadingStyle);
   }
 

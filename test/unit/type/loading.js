@@ -5,8 +5,8 @@ suite('Loading Fonts', function () {
 
   beforeEach(function () {
     myp5 = new p5(function (p) {
-      p.setup = function () { };
-      p.draw = function () { };
+      p.setup = function () {};
+      p.draw = function () {};
     });
   });
 
@@ -18,7 +18,9 @@ suite('Loading Fonts', function () {
   const fontFile = 'test/unit/assets/acmesa.ttf';
 
   test('loadFont on zlib compressed fonts works', async () => {
-    const font = await myp5.loadFont('https://fonts.gstatic.com/s/montserrat/v29/JTUFjIg1_i6t8kCHKm459Wx7xQYXK0vOoz6jq6R8aXw.woff');
+    const font = await myp5.loadFont(
+      'https://fonts.gstatic.com/s/montserrat/v29/JTUFjIg1_i6t8kCHKm459Wx7xQYXK0vOoz6jq6R8aXw.woff'
+    );
     expect(font.data).toBeTruthy();
   });
 
@@ -29,24 +31,23 @@ suite('Loading Fonts', function () {
     assert.isTrue(pFont instanceof p5.Font);
   });
 
-  test('loadFont.then', async () => new Promise(done => {
+  test('loadFont.then', async () =>
+    new Promise(done => {
+      myp5.loadFont(fontFile, 'acmesa').then(pFont => {
+        assert.ok(pFont, 'acmesa.ttf loaded');
+        assert.equal(pFont.name, 'acmesa');
+        assert.isTrue(pFont instanceof p5.Font);
+        done();
+      });
+    }));
 
-    myp5.loadFont(fontFile, 'acmesa').then(pFont => {
-      assert.ok(pFont, 'acmesa.ttf loaded');
-      assert.equal(pFont.name, 'acmesa');
-      assert.isTrue(pFont instanceof p5.Font);
-      done();
-    });
-
-  }));
-
-  test.skip('loadFont.callback', async () => new Promise(done => {
-    myp5.loadFont(fontFile, pFont => {
-      assert.ok(pFont, 'acmesa.ttf loaded');
-      assert.equal(pFont.name, 'A.C.M.E. Secret Agent');
-      assert.isTrue(pFont instanceof p5.Font);
-      done();
-    });
-  }));
-
+  test.skip('loadFont.callback', async () =>
+    new Promise(done => {
+      myp5.loadFont(fontFile, pFont => {
+        assert.ok(pFont, 'acmesa.ttf loaded');
+        assert.equal(pFont.name, 'A.C.M.E. Secret Agent');
+        assert.isTrue(pFont instanceof p5.Font);
+        done();
+      });
+    }));
 });

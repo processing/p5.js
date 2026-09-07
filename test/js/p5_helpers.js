@@ -3,23 +3,25 @@ import p5 from '../../src/app.js';
 
 export function promisedSketch(sketch_fn) {
   var myInstance;
-  var promise = new Promise(function(resolve, reject) {
-    myInstance = new p5(function(sketch) {
+  var promise = new Promise(function (resolve, reject) {
+    myInstance = new p5(function (sketch) {
       return sketch_fn(sketch, resolve, reject);
     });
   });
 
-  promise.catch(function() {}).then(function() {
-    myInstance.remove();
-  });
+  promise
+    .catch(function () {})
+    .then(function () {
+      myInstance.remove();
+    });
   return promise;
 }
 
 export function testSketchWithPromise(name, sketch_fn) {
-  var test_fn = function() {
+  var test_fn = function () {
     return promisedSketch(sketch_fn);
   };
-  test_fn.toString = function() {
+  test_fn.toString = function () {
     return sketch_fn.toString();
   };
   return test(name, test_fn);
@@ -35,11 +37,11 @@ export function parallelSketches(sketch_fns) {
   var resultPromises = [];
   var endCallbacks = [];
   for (let i = 0; i < sketch_fns.length; i++) {
-    setupPromises[i] = new Promise(function(resolve) {
-      resultPromises[i] = promisedSketch(function(sketch, _resolve, _reject) {
+    setupPromises[i] = new Promise(function (resolve) {
+      resultPromises[i] = promisedSketch(function (sketch, _resolve, _reject) {
         sketch_fns[i](sketch, _resolve, _reject);
         var old_setup = sketch.setup;
-        sketch.setup = function() {
+        sketch.setup = function () {
           if (old_setup) {
             old_setup();
           }
@@ -82,7 +84,7 @@ export function createP5Iframe(html) {
 
   return {
     elt: elt,
-    teardown: function() {
+    teardown: function () {
       elt.parentNode.removeChild(elt);
     }
   };

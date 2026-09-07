@@ -1,8 +1,20 @@
 import noiseGLSL from './shaders/functions/noise3DGLSL.glsl';
 import randomGLSL from './shaders/functions/randomGLSL.glsl';
 import randomVertGLSL from './shaders/functions/randomVertGLSL.glsl';
-import { NodeType, OpCodeToSymbol, BlockType, OpCode, NodeTypeToName, isStructType, BaseType, StatementType, DataType, INSTANCE_ID_VARYING_NAME, HOOK_PARAM_PREFIX } from "../strands/ir_types";
-import { getNodeDataFromID, extractNodeTypeInfo } from "../strands/ir_dag";
+import {
+  NodeType,
+  OpCodeToSymbol,
+  BlockType,
+  OpCode,
+  NodeTypeToName,
+  isStructType,
+  BaseType,
+  StatementType,
+  DataType,
+  INSTANCE_ID_VARYING_NAME,
+  HOOK_PARAM_PREFIX
+} from '../strands/ir_types';
+import { getNodeDataFromID, extractNodeTypeInfo } from '../strands/ir_dag';
 import * as FES from '../strands/strands_FES';
 import * as build from '../strands/ir_builders';
 function shouldCreateTemp(dag, nodeID) {
@@ -13,22 +25,22 @@ function shouldCreateTemp(dag, nodeID) {
   return uses.length > 1;
 }
 const TypeNames = {
-  'float1': 'float',
-  'float2': 'vec2',
-  'float3': 'vec3',
-  'float4': 'vec4',
-  'int1': 'int',
-  'int2': 'ivec2',
-  'int3': 'ivec3',
-  'int4': 'ivec4',
-  'bool1': 'bool',
-  'bool2': 'bvec2',
-  'bool3': 'bvec3',
-  'bool4': 'bvec4',
-  'mat2': 'mat2x2',
-  'mat3': 'mat3x3',
-  'mat4': 'mat4x4',
-}
+  float1: 'float',
+  float2: 'vec2',
+  float3: 'vec3',
+  float4: 'vec4',
+  int1: 'int',
+  int2: 'ivec2',
+  int3: 'ivec3',
+  int4: 'ivec4',
+  bool1: 'bool',
+  bool2: 'bvec2',
+  bool3: 'bvec3',
+  bool4: 'bvec4',
+  mat2: 'mat2x2',
+  mat3: 'mat3x3',
+  mat4: 'mat4x4'
+};
 const cfgHandlers = {
   [BlockType.DEFAULT]: (blockID, strandsContext, generationContext) => {
     const { dag, cfg } = strandsContext;
@@ -36,7 +48,11 @@ const cfgHandlers = {
     for (const nodeID of instructions) {
       const nodeType = dag.nodeTypes[nodeID];
       if (shouldCreateTemp(dag, nodeID)) {
-        const declaration = glslBackend.generateDeclaration(generationContext, dag, nodeID);
+        const declaration = glslBackend.generateDeclaration(
+          generationContext,
+          dag,
+          nodeID
+        );
         generationContext.write(declaration);
       }
       if (nodeType === NodeType.STATEMENT) {
@@ -80,7 +96,11 @@ const cfgHandlers = {
   [BlockType.IF_COND](blockID, strandsContext, generationContext) {
     const { dag, cfg } = strandsContext;
     const conditionID = cfg.blockConditions[blockID];
-    const condExpr = glslBackend.generateExpression(generationContext, dag, conditionID);
+    const condExpr = glslBackend.generateExpression(
+      generationContext,
+      dag,
+      conditionID
+    );
     generationContext.write(`if (${condExpr})`);
     this[BlockType.DEFAULT](blockID, strandsContext, generationContext);
   },
@@ -124,7 +144,11 @@ const cfgHandlers = {
       generationContext.suppressSemicolon = isLast;
 
       if (shouldCreateTemp(dag, nodeID)) {
-        const declaration = glslBackend.generateDeclaration(generationContext, dag, nodeID);
+        const declaration = glslBackend.generateDeclaration(
+          generationContext,
+          dag,
+          nodeID
+        );
         generationContext.write(declaration);
       }
       if (node.nodeType === NodeType.STATEMENT) {
@@ -156,20 +180,26 @@ const cfgHandlers = {
             const sourceNodeID = node.dependsOn[branchIndex];
             const tempName = generationContext.tempNames[nodeID];
             if (tempName && sourceNodeID !== null) {
-              const sourceExpr = glslBackend.generateExpression(generationContext, dag, sourceNodeID);
+              const sourceExpr = glslBackend.generateExpression(
+                generationContext,
+                dag,
+                sourceNodeID
+              );
               generationContext.write(`${tempName} = ${sourceExpr};`);
             }
           }
         }
       }
     }
-  },
-}
+  }
+};
 export const glslBackend = {
   hookEntry(hookType) {
-    const firstLine = `(${hookType.parameters.flatMap((param) => {
-      return `${param.qualifiers?.length ? param.qualifiers.join(' ') : ''}${param.type.typeName} ${HOOK_PARAM_PREFIX}${param.name}`;
-    }).join(', ')}) {`;
+    const firstLine = `(${hookType.parameters
+      .flatMap(param => {
+        return `${param.qualifiers?.length ? param.qualifiers.join(' ') : ''}${param.type.typeName} ${HOOK_PARAM_PREFIX}${param.name}`;
+      })
+      .join(', ')}) {`;
     return firstLine;
   },
   getNoiseShaderSnippet() {
@@ -182,7 +212,7 @@ export const glslBackend = {
     return randomVertGLSL;
   },
   getTypeName(baseType, dimension) {
-    const primitiveTypeName = TypeNames[baseType + dimension]
+    const primitiveTypeName = TypeNames[baseType + dimension];
     if (!primitiveTypeName) {
       return baseType;
     }
@@ -225,8 +255,16 @@ export const glslBackend = {
     const sourceNodeID = node.dependsOn[1];
 
     // Generate the target expression (could be variable or swizzle)
-    const targetExpr = this.generateExpression(generationContext, dag, targetNodeID);
-    const sourceExpr = this.generateExpression(generationContext, dag, sourceNodeID);
+    const targetExpr = this.generateExpression(
+      generationContext,
+      dag,
+      targetNodeID
+    );
+    const sourceExpr = this.generateExpression(
+      generationContext,
+      dag,
+      sourceNodeID
+    );
     const semicolon = generationContext.suppressSemicolon ? '' : ';';
 
     // Generate assignment if we have both target and source
@@ -242,7 +280,12 @@ export const glslBackend = {
     const typeName = this.getTypeName(T.baseType, T.dimension);
     return `${typeName} ${tmp} = ${expr};`;
   },
-  generateReturnStatement(strandsContext, generationContext, rootNodeID, returnType) {
+  generateReturnStatement(
+    strandsContext,
+    generationContext,
+    rootNodeID,
+    returnType
+  ) {
     if (!returnType) {
       generationContext.write('return;');
       return;
@@ -253,15 +296,21 @@ export const glslBackend = {
       const structTypeInfo = returnType;
       for (let i = 0; i < structTypeInfo.properties.length; i++) {
         const prop = structTypeInfo.properties[i];
-        const val = this.generateExpression(generationContext, dag, rootNode.dependsOn[i]);
+        const val = this.generateExpression(
+          generationContext,
+          dag,
+          rootNode.dependsOn[i]
+        );
         if (prop.name !== val) {
           generationContext.write(
             `${rootNode.identifier}.${prop.name} = ${val};`
-          )
+          );
         }
       }
     }
-    generationContext.write(`return ${this.generateExpression(generationContext, dag, rootNodeID)};`);
+    generationContext.write(
+      `return ${this.generateExpression(generationContext, dag, rootNodeID)};`
+    );
   },
   generateExpression(generationContext, dag, nodeID) {
     const node = getNodeDataFromID(dag, nodeID);
@@ -270,136 +319,184 @@ export const glslBackend = {
     }
     switch (node.nodeType) {
       case NodeType.LITERAL:
-      if (node.baseType === BaseType.FLOAT) {
-        return node.value.toFixed(4);
-      }
-      else {
-        return node.value;
-      }
+        if (node.baseType === BaseType.FLOAT) {
+          return node.value.toFixed(4);
+        } else {
+          return node.value;
+        }
       case NodeType.VARIABLE:
-      // Track shared variable usage context
-      if (generationContext.shaderContext && generationContext.strandsContext?.sharedVariables?.has(node.identifier)) {
-        const sharedVar = generationContext.strandsContext.sharedVariables.get(node.identifier);
-        if (generationContext.shaderContext === 'vertex') {
-          sharedVar.usedInVertex = true;
-        } else if (generationContext.shaderContext === 'fragment') {
-          sharedVar.usedInFragment = true;
-        }
-      }
-
-      // Detect instanceID usage in fragment context and rewrite to varying name
-      if (node.identifier === this.instanceIdReference() && generationContext.shaderContext === 'fragment') {
-        generationContext.strandsContext._instanceIDUsedInFragment = true;
-        return INSTANCE_ID_VARYING_NAME;
-      }
-
-      return node.identifier;
-      case NodeType.OPERATION:
-      const useParantheses = node.usedBy.length > 0;
-      if (node.opCode === OpCode.Nary.CONSTRUCTOR) {
-        // TODO: differentiate casts and constructors for more efficient codegen.
-        // if (node.dependsOn.length === 1 && node.dimension === 1) {
-        //   return this.generateExpression(generationContext, dag, node.dependsOn[0]);
-        // }
-        if (node.baseType === BaseType.SAMPLER2D) {
-          return this.generateExpression(generationContext, dag, node.dependsOn[0]);
-        }
-        const T = this.getTypeName(node.baseType, node.dimension);
-        const deps = node.dependsOn.map((dep) => this.generateExpression(generationContext, dag, dep));
-        return `${T}(${deps.join(', ')})`;
-      }
-      if (node.opCode === OpCode.Nary.FUNCTION_CALL) {
-        const functionArgs = node.dependsOn.map(arg =>this.generateExpression(generationContext, dag, arg));
-        return `${node.identifier}(${functionArgs.join(', ')})`;
-      }
-      if (node.opCode === OpCode.Nary.TERNARY) {
-        const [condID, trueID, falseID] = node.dependsOn;
-        const cond = this.generateExpression(generationContext, dag, condID);
-        const trueExpr = this.generateExpression(generationContext, dag, trueID);
-        const falseExpr = this.generateExpression(generationContext, dag, falseID);
-        return `(${cond} ? ${trueExpr} : ${falseExpr})`;
-      }
-      if (node.opCode === OpCode.Binary.MEMBER_ACCESS) {
-        const [lID, rID] = node.dependsOn;
-        const lName = this.generateExpression(generationContext, dag, lID);
-        const rName = this.generateExpression(generationContext, dag, rID);
-        return `${lName}.${rName}`;
-      }
-      if (node.opCode === OpCode.Unary.SWIZZLE) {
-        const parentID = node.dependsOn[0];
-        const parentExpr = this.generateExpression(generationContext, dag, parentID);
-        return `${parentExpr}.${node.swizzle}`;
-      }
-      if (node.opCode === OpCode.Binary.ARRAY_ACCESS) {
-        const [bufferID, indexID] = node.dependsOn;
-        const bufferExpr = this.generateExpression(generationContext, dag, bufferID);
-        const indexExpr = this.generateExpression(generationContext, dag, indexID);
-        return `${bufferExpr}[${indexExpr}]`;
-      }
-      if (node.dependsOn.length === 2) {
-        const [lID, rID] = node.dependsOn;
-        const left  = this.generateExpression(generationContext, dag, lID);
-        const right = this.generateExpression(generationContext, dag, rID);
-
-        // Special case for modulo: use mod() function for floats in GLSL
-        if (node.opCode === OpCode.Binary.MODULO) {
-          const leftNode = getNodeDataFromID(dag, lID);
-          const rightNode = getNodeDataFromID(dag, rID);
-          // If either operand is float, use mod() function
-          if (leftNode.baseType === BaseType.FLOAT || rightNode.baseType === BaseType.FLOAT) {
-            return `mod(${left}, ${right})`;
-          }
-          // For integers, use % operator
-          return `(${left} % ${right})`;
-        }
-
-        const opSym = OpCodeToSymbol[node.opCode];
-        if (useParantheses) {
-          return `(${left} ${opSym} ${right})`;
-        } else {
-          return `${left} ${opSym} ${right}`;
-        }
-      }
-      if (node.opCode === OpCode.Unary.LOGICAL_NOT
-        || node.opCode === OpCode.Unary.NEGATE
-        || node.opCode === OpCode.Unary.PLUS
+        // Track shared variable usage context
+        if (
+          generationContext.shaderContext &&
+          generationContext.strandsContext?.sharedVariables?.has(
+            node.identifier
+          )
         ) {
-        const [i] = node.dependsOn;
-        const val  = this.generateExpression(generationContext, dag, i);
-        const sym  = OpCodeToSymbol[node.opCode];
-        return `${sym}${val}`;
-      }
-      case NodeType.PHI:
-      // Phi nodes represent conditional merging of values
-      // If this phi node has an identifier (like varying variables), use that
-      if (node.identifier) {
-        return node.identifier;
-      }
-      // Otherwise, they should have been declared as temporary variables
-      // and assigned in the appropriate branches
-      if (generationContext.tempNames?.[nodeID]) {
-        return generationContext.tempNames[nodeID];
-      } else {
-        // If no temp was created, this phi node only has one input
-        // so we can just use that directly
-        const validInputs = node.dependsOn.filter(id => id !== null);
-        if (validInputs.length > 0) {
-          return this.generateExpression(generationContext, dag, validInputs[0]);
-        } else {
-          throw new Error(`No valid inputs for node`)
-          // Fallback: create a default value
-          const typeName = this.getTypeName(node.baseType, node.dimension);
-          if (node.dimension === 1) {
-            return node.baseType === BaseType.FLOAT ? '0.0' : '0';
-          } else {
-            return `${typeName}(0.0)`;
+          const sharedVar =
+            generationContext.strandsContext.sharedVariables.get(
+              node.identifier
+            );
+          if (generationContext.shaderContext === 'vertex') {
+            sharedVar.usedInVertex = true;
+          } else if (generationContext.shaderContext === 'fragment') {
+            sharedVar.usedInFragment = true;
           }
         }
-      }
+
+        // Detect instanceID usage in fragment context and rewrite to varying name
+        if (
+          node.identifier === this.instanceIdReference() &&
+          generationContext.shaderContext === 'fragment'
+        ) {
+          generationContext.strandsContext._instanceIDUsedInFragment = true;
+          return INSTANCE_ID_VARYING_NAME;
+        }
+
+        return node.identifier;
+      case NodeType.OPERATION:
+        const useParantheses = node.usedBy.length > 0;
+        if (node.opCode === OpCode.Nary.CONSTRUCTOR) {
+          // TODO: differentiate casts and constructors for more efficient codegen.
+          // if (node.dependsOn.length === 1 && node.dimension === 1) {
+          //   return this.generateExpression(generationContext, dag, node.dependsOn[0]);
+          // }
+          if (node.baseType === BaseType.SAMPLER2D) {
+            return this.generateExpression(
+              generationContext,
+              dag,
+              node.dependsOn[0]
+            );
+          }
+          const T = this.getTypeName(node.baseType, node.dimension);
+          const deps = node.dependsOn.map(dep =>
+            this.generateExpression(generationContext, dag, dep)
+          );
+          return `${T}(${deps.join(', ')})`;
+        }
+        if (node.opCode === OpCode.Nary.FUNCTION_CALL) {
+          const functionArgs = node.dependsOn.map(arg =>
+            this.generateExpression(generationContext, dag, arg)
+          );
+          return `${node.identifier}(${functionArgs.join(', ')})`;
+        }
+        if (node.opCode === OpCode.Nary.TERNARY) {
+          const [condID, trueID, falseID] = node.dependsOn;
+          const cond = this.generateExpression(generationContext, dag, condID);
+          const trueExpr = this.generateExpression(
+            generationContext,
+            dag,
+            trueID
+          );
+          const falseExpr = this.generateExpression(
+            generationContext,
+            dag,
+            falseID
+          );
+          return `(${cond} ? ${trueExpr} : ${falseExpr})`;
+        }
+        if (node.opCode === OpCode.Binary.MEMBER_ACCESS) {
+          const [lID, rID] = node.dependsOn;
+          const lName = this.generateExpression(generationContext, dag, lID);
+          const rName = this.generateExpression(generationContext, dag, rID);
+          return `${lName}.${rName}`;
+        }
+        if (node.opCode === OpCode.Unary.SWIZZLE) {
+          const parentID = node.dependsOn[0];
+          const parentExpr = this.generateExpression(
+            generationContext,
+            dag,
+            parentID
+          );
+          return `${parentExpr}.${node.swizzle}`;
+        }
+        if (node.opCode === OpCode.Binary.ARRAY_ACCESS) {
+          const [bufferID, indexID] = node.dependsOn;
+          const bufferExpr = this.generateExpression(
+            generationContext,
+            dag,
+            bufferID
+          );
+          const indexExpr = this.generateExpression(
+            generationContext,
+            dag,
+            indexID
+          );
+          return `${bufferExpr}[${indexExpr}]`;
+        }
+        if (node.dependsOn.length === 2) {
+          const [lID, rID] = node.dependsOn;
+          const left = this.generateExpression(generationContext, dag, lID);
+          const right = this.generateExpression(generationContext, dag, rID);
+
+          // Special case for modulo: use mod() function for floats in GLSL
+          if (node.opCode === OpCode.Binary.MODULO) {
+            const leftNode = getNodeDataFromID(dag, lID);
+            const rightNode = getNodeDataFromID(dag, rID);
+            // If either operand is float, use mod() function
+            if (
+              leftNode.baseType === BaseType.FLOAT ||
+              rightNode.baseType === BaseType.FLOAT
+            ) {
+              return `mod(${left}, ${right})`;
+            }
+            // For integers, use % operator
+            return `(${left} % ${right})`;
+          }
+
+          const opSym = OpCodeToSymbol[node.opCode];
+          if (useParantheses) {
+            return `(${left} ${opSym} ${right})`;
+          } else {
+            return `${left} ${opSym} ${right}`;
+          }
+        }
+        if (
+          node.opCode === OpCode.Unary.LOGICAL_NOT ||
+          node.opCode === OpCode.Unary.NEGATE ||
+          node.opCode === OpCode.Unary.PLUS
+        ) {
+          const [i] = node.dependsOn;
+          const val = this.generateExpression(generationContext, dag, i);
+          const sym = OpCodeToSymbol[node.opCode];
+          return `${sym}${val}`;
+        }
+      case NodeType.PHI:
+        // Phi nodes represent conditional merging of values
+        // If this phi node has an identifier (like varying variables), use that
+        if (node.identifier) {
+          return node.identifier;
+        }
+        // Otherwise, they should have been declared as temporary variables
+        // and assigned in the appropriate branches
+        if (generationContext.tempNames?.[nodeID]) {
+          return generationContext.tempNames[nodeID];
+        } else {
+          // If no temp was created, this phi node only has one input
+          // so we can just use that directly
+          const validInputs = node.dependsOn.filter(id => id !== null);
+          if (validInputs.length > 0) {
+            return this.generateExpression(
+              generationContext,
+              dag,
+              validInputs[0]
+            );
+          } else {
+            throw new Error(`No valid inputs for node`);
+            // Fallback: create a default value
+            const typeName = this.getTypeName(node.baseType, node.dimension);
+            if (node.dimension === 1) {
+              return node.baseType === BaseType.FLOAT ? '0.0' : '0';
+            } else {
+              return `${typeName}(0.0)`;
+            }
+          }
+        }
       case NodeType.ASSIGNMENT:
-      FES.internalError(`ASSIGNMENT nodes should not be used as expressions`)
+        FES.internalError(`ASSIGNMENT nodes should not be used as expressions`);
       default:
-      FES.internalError(`${NodeTypeToName[node.nodeType]} code generation not implemented yet`)
+        FES.internalError(
+          `${NodeTypeToName[node.nodeType]} code generation not implemented yet`
+        );
     }
   },
   generateBlock(blockID, strandsContext, generationContext) {
@@ -411,12 +508,19 @@ export const glslBackend = {
   createGetTextureCall(strandsContext, args) {
     // In GLSL, getTexture is straightforward - just pass through the args
     // First argument should be a texture (sampler2D), second should be coordinates
-    const { id, dimension } = build.functionCallNode(strandsContext, 'getTexture', args, {
-      overloads: [{
-        params: [DataType.sampler2D, DataType.float2],
-        returnType: DataType.float4
-      }]
-    });
+    const { id, dimension } = build.functionCallNode(
+      strandsContext,
+      'getTexture',
+      args,
+      {
+        overloads: [
+          {
+            params: [DataType.sampler2D, DataType.float2],
+            returnType: DataType.float4
+          }
+        ]
+      }
+    );
     return { id, dimension };
   },
 
@@ -425,6 +529,11 @@ export const glslBackend = {
   },
 
   generateInstanceIDVarying() {
-    return { name: INSTANCE_ID_VARYING_NAME, declaration: `int ${INSTANCE_ID_VARYING_NAME}`, source: 'gl_InstanceID', interpolation: 'flat' };
-  },
-}
+    return {
+      name: INSTANCE_ID_VARYING_NAME,
+      declaration: `int ${INSTANCE_ID_VARYING_NAME}`,
+      source: 'gl_InstanceID',
+      interpolation: 'flat'
+    };
+  }
+};

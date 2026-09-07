@@ -1,4 +1,10 @@
-import { NodeTypeRequiredFields, NodeTypeToName, BasePriority, StatementType, BaseType } from './ir_types';
+import {
+  NodeTypeRequiredFields,
+  NodeTypeToName,
+  BasePriority,
+  StatementType,
+  BaseType
+} from './ir_types';
 import * as FES from './strands_FES';
 
 /////////////////////////////////
@@ -19,7 +25,7 @@ export function createDirectedAcyclicGraph() {
     dependsOn: [],
     usedBy: [],
     statementTypes: [],
-    swizzles: [],
+    swizzles: []
   };
 
   return graph;
@@ -30,11 +36,11 @@ export function getOrCreateNode(graph, node) {
   // const existing = graph.cache.get(key);
 
   // if (existing !== undefined) {
-    // return existing;
+  // return existing;
   // } else {
-    const id = createNode(graph, node);
-    // graph.cache.set(key, id);
-    return id;
+  const id = createNode(graph, node);
+  // graph.cache.set(key, id);
+  return id;
   // }
 }
 
@@ -50,7 +56,7 @@ export function createNodeData(data = {}) {
     swizzle: data.swizzle ?? null,
     dependsOn: Array.isArray(data.dependsOn) ? data.dependsOn : [],
     usedBy: Array.isArray(data.usedBy) ? data.usedBy : [],
-    phiBlocks: Array.isArray(data.phiBlocks) ? data.phiBlocks : [],
+    phiBlocks: Array.isArray(data.phiBlocks) ? data.phiBlocks : []
   };
   validateNode(node);
   return node;
@@ -69,20 +75,26 @@ export function getNodeDataFromID(graph, id) {
     dimension: graph.dimensions[id],
     baseType: graph.baseTypes[id],
     statementType: graph.statementTypes[id],
-    swizzle: graph.swizzles[id],
-  }
+    swizzle: graph.swizzles[id]
+  };
 }
 
 export function extractNodeTypeInfo(dag, nodeID) {
   return {
     baseType: dag.baseTypes[nodeID],
     dimension: dag.dimensions[nodeID],
-    priority: BasePriority[dag.baseTypes[nodeID]],
+    priority: BasePriority[dag.baseTypes[nodeID]]
   };
 }
 
 // Propagate a known type to an ASSIGN_ON_USE node and all its ASSIGN_ON_USE dependencies
-export function propagateTypeToAssignOnUse(dag, nodeId, baseType, dimension, visited = new Set()) {
+export function propagateTypeToAssignOnUse(
+  dag,
+  nodeId,
+  baseType,
+  dimension,
+  visited = new Set()
+) {
   // Avoid infinite loops
   if (visited.has(nodeId)) {
     return;
@@ -123,7 +135,7 @@ function createNode(graph, node) {
   graph.dependsOn[id] = node.dependsOn.slice();
   graph.usedBy[id] = node.usedBy;
   graph.phiBlocks[id] = node.phiBlocks.slice();
-  graph.baseTypes[id] = node.baseType
+  graph.baseTypes[id] = node.baseType;
   graph.dimensions[id] = node.dimension;
   graph.statementTypes[id] = node.statementType;
   graph.swizzles[id] = node.swizzle;
@@ -142,11 +154,13 @@ function getNodeKey(node) {
   return key;
 }
 
-function validateNode(node){
+function validateNode(node) {
   const nodeType = node.nodeType;
   const requiredFields = NodeTypeRequiredFields[nodeType];
   if (requiredFields.length === 2) {
-    FES.internalError(`Required fields for node type '${NodeTypeToName[nodeType]}' not defined. Please add them to the utils.js file in p5.strands!`)
+    FES.internalError(
+      `Required fields for node type '${NodeTypeToName[nodeType]}' not defined. Please add them to the utils.js file in p5.strands!`
+    );
   }
   const missingFields = [];
   for (const field of requiredFields) {
@@ -158,6 +172,8 @@ function validateNode(node){
     throw new Error('Undefined dependency!');
   }
   if (missingFields.length > 0) {
-    FES.internalError(`Missing fields ${missingFields.join(', ')} for a node type '${NodeTypeToName[nodeType]}'.`);
+    FES.internalError(
+      `Missing fields ${missingFields.join(', ')} for a node type '${NodeTypeToName[nodeType]}'.`
+    );
   }
 }

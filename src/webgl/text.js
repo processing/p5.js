@@ -5,12 +5,12 @@ import { Geometry } from './p5.Geometry';
 import { Font, arrayCommandsToObjects } from '../type/p5.Font';
 
 function text(p5, fn) {
-  Renderer3D.prototype.maxCachedGlyphs = function() {
+  Renderer3D.prototype.maxCachedGlyphs = function () {
     // TODO: use more than vibes to find a good value for this
     return 200;
   };
 
-  Font.prototype._getFontInfo = function(axs) {
+  Font.prototype._getFontInfo = function (axs) {
     // For WebGL, a cache of font data to use on the GPU.
     this._fontInfos = this._fontInfos || {};
 
@@ -241,7 +241,7 @@ function text(p5, fn) {
          * find the minimum & maximum value in a list of values
          */
         function minMax(rg, min, max) {
-          for (let i = rg.length; i-- > 0; ) {
+          for (let i = rg.length; i-- > 0;) {
             const v = rg[i];
             if (min > v) min = v;
             if (max < v) max = v;

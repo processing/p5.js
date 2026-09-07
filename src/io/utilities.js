@@ -7,7 +7,7 @@ function downloadFile(data, fName, extension) {
     saveData = new Blob([data]);
   }
 
-  if(document){
+  if (document) {
     const url = URL.createObjectURL(saveData);
     const link = document.createElement('a');
     link.href = url;

@@ -16,7 +16,6 @@
  */
 
 const Filters = {
-
   /*
    * Helper functions
    */
@@ -42,7 +41,8 @@ const Filters = {
         return canvas
           .getContext('2d')
           .getImageData(0, 0, canvas.width, canvas.height).data;
-      } else if (canvas.getContext('webgl')) { //Check WebGL context support
+      } else if (canvas.getContext('webgl')) {
+        //Check WebGL context support
         const gl = canvas.getContext('webgl');
         // Calculate the size of pixel data
         // (4 bytes per pixel - one byte for each RGBA channel).
@@ -107,7 +107,6 @@ const Filters = {
     }
   },
 
-
   /**
    * Returns the ImageData object for a canvas.
    * https://developer.mozilla.org/en-US/docs/Web/API/ImageData
@@ -127,7 +126,6 @@ const Filters = {
         .getImageData(0, 0, canvas.width, canvas.height);
     }
   },
-
 
   /**
    * Returns a blank ImageData object.
@@ -166,7 +164,11 @@ const Filters = {
   apply(canvas, func, filterParam) {
     const pixelsState = canvas.getContext('2d');
     const imageData = pixelsState.getImageData(
-      0, 0, canvas.width, canvas.height);
+      0,
+      0,
+      canvas.width,
+      canvas.height
+    );
 
     //Filters can either return a new ImageData object, or just modify
     //the one they received.
@@ -182,7 +184,8 @@ const Filters = {
         canvas.width,
         canvas.height
       );
-    } else {  //Restore the original pixel.
+    } else {
+      //Restore the original pixel.
       pixelsState.putImageData(
         imageData,
         0,
@@ -312,9 +315,9 @@ const Filters = {
       const blevel = pixels[i + 2];
 
       // New pixel value by posterizing each color.
-      pixels[i] = ((rlevel * level) >> 8) * 255 / levels1;
-      pixels[i + 1] = ((glevel * level) >> 8) * 255 / levels1;
-      pixels[i + 2] = ((blevel * level) >> 8) * 255 / levels1;
+      pixels[i] = (((rlevel * level) >> 8) * 255) / levels1;
+      pixels[i + 1] = (((glevel * level) >> 8) * 255) / levels1;
+      pixels[i + 2] = (((blevel * level) >> 8) * 255) / levels1;
     }
   },
 
@@ -658,7 +661,5 @@ function blurARGB(canvas, radius) {
   }
   Filters._setPixels(pixels, argb);
 }
-
-
 
 export default Filters;
