@@ -16,7 +16,7 @@ function loadingDisplaying(p5, fn){
    *
    * This static property defines how large, in terms of dimension, a gif image
    * is allowed to be loaded into a p5 sketch. The default value is
-   * 100,000,000. This means an image's width multiplied by its height must not
+   * 16,000,000. This means an image's width multiplied by its height must not
    * exceed 100,000,000. For example, an image with width 10,000 and height
    * 10,000 is just enough, as well as an image with width 5000 and height
    * 20,000. An image with width 20,000 and height 20,000 is not allowed and
