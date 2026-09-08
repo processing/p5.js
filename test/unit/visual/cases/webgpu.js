@@ -459,6 +459,117 @@ visualSuite('WebGPU', function () {
     );
 
     visualTest(
+      'Writing to createStorageList() data',
+      async function (p5, screenshot) {
+        await p5.createCanvas(50, 50, p5.WEBGPU);
+
+        // 8 cells in a 2x4 grid. Left column cells become rects, right become circles.
+        // Positions are in p5's coordinate system (center origin).
+        const cellData = p5.createStorage([
+          { pos: [-12.5, -18.75] }, { pos: [12.5, -18.75] },
+          { pos: [-12.5,  -6.25] }, { pos: [12.5,  -6.25] },
+          { pos: [-12.5,   6.25] }, { pos: [12.5,   6.25] },
+          { pos: [-12.5,  18.75] }, { pos: [12.5,  18.75] }
+        ]);
+        const CELL_COUNT = 8;
+
+        const rectList = p5.createStorageList(CELL_COUNT, { pos: [0, 0] });
+        const circleList = p5.createStorageList(CELL_COUNT, { pos: [0, 0] });
+
+        // Classify cells by x position into separate lists so each draw
+        // call can use the GPU-side length via indirect draw.
+        const classifyShader = p5.buildComputeShader(
+          () => {
+            const cells = p5.uniformStorage('cells', cellData);
+            const rects = p5.uniformStorage('rects', rectList);
+            const circles = p5.uniformStorage('circles', circleList);
+            const i = p5.index.x;
+            if (cells[i].pos.x < 0) {
+              rects.push({ pos: cells[i].pos });
+            } else {
+              circles.push({ pos: cells[i].pos });
+            }
+          },
+          { p5, cellData, rectList, circleList }
+        );
+        p5.compute(classifyShader, CELL_COUNT);
+
+        const rectShader = p5.baseMaterialShader().modify(
+          () => {
+            const rects = p5.uniformStorage('rects', rectList);
+            p5.getWorldInputs(inputs => {
+              inputs.position.xy += rects[p5.instanceIndex].pos;
+              return inputs;
+            });
+          },
+          { p5, rectList }
+        );
+
+        const circleShader = p5.baseMaterialShader().modify(
+          () => {
+            const circles = p5.uniformStorage('circles', circleList);
+            p5.getWorldInputs(inputs => {
+              inputs.position.xy += circles[p5.instanceIndex].pos;
+              return inputs;
+            });
+          },
+          { p5, circleList }
+        );
+
+        p5.background(220);
+        p5.noStroke();
+
+        p5.fill(0, 0, 200);
+        p5.shader(rectShader);
+        p5.instances(rectList).rect(-10, -5, 20, 10);
+
+        p5.fill(0, 180, 0);
+        p5.shader(circleShader);
+        p5.instances(circleList).circle(0, 0, 10);
+
+        await screenshot();
+      }
+    );
+
+    visualTest(
+      'instances() using createStorage() element count',
+      async function (p5, screenshot) {
+        await p5.createCanvas(50, 50, p5.WEBGPU);
+
+        const particles = p5.createStorage([
+          { pos: [-15, -15] },
+          { pos: [  0, -15] },
+          { pos: [ 15, -15] },
+          { pos: [-15,   0] },
+          { pos: [  0,   0] },
+          { pos: [ 15,   0] },
+          { pos: [-15,  15] },
+          { pos: [  0,  15] },
+          { pos: [ 15,  15] }
+        ]);
+
+        const dotShader = p5.baseMaterialShader().modify(
+          () => {
+            const buf = p5.uniformStorage('buf', particles);
+            p5.getWorldInputs(inputs => {
+              inputs.position.xy += buf[p5.instanceIndex].pos;
+              return inputs;
+            });
+          },
+          { p5, particles }
+        );
+
+        p5.background(220);
+        p5.noStroke();
+        p5.fill(200, 50, 50);
+        p5.shader(dotShader);
+        p5.instances(particles).circle(0, 0, 8);
+
+        await screenshot();
+      }
+    );
+
+    visualTest(
       'random() colors a basic shader (WebGPU)',
       async function (p5, screenshot) {
         await p5.createCanvas(50, 50, p5.WEBGPU);
