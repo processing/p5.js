@@ -218,7 +218,7 @@ function buildPropertyPath(memberExpr) {
     const propName = current.property.name || current.property.value;
     if (isSwizzle(propName)) {
       current = current.object;
-      break;
+      continue;
     }
     parts.unshift(propName);
     current = current.object;
@@ -564,8 +564,13 @@ const ASTCallbacks = {
       // Only inject the variable name if the first argument isn't already a string
       if (
         node.init.arguments.length === 0 ||
-        node.init.arguments[0].type !== 'Literal' ||
-        typeof node.init.arguments[0].value !== 'string'
+        !(
+          (
+            node.init.arguments[0].type === 'Literal' &&
+            typeof node.init.arguments[0].value === 'string'
+          ) ||
+          node.init.arguments[0].type === 'TemplateLiteral'
+        )
       ) {
         const uniformName = getOrCreateInternalShaderName(
           state.shaderNameMap,

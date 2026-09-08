@@ -24,6 +24,7 @@ import { Image } from '../image/p5.Image';
 import { Texture } from '../webgl/p5.Texture';
 import { makeFilterShader } from '../core/filterShaders';
 import { getStrokeDefs } from '../webgl/enums';
+import { markExperimental } from '../core/experimental';
 
 const { STROKE_CAP_ENUM, STROKE_JOIN_ENUM } = getStrokeDefs(() => '');
 
@@ -151,6 +152,11 @@ export class Renderer3D extends Renderer {
     this.states._specularTex = null;
     this.states._ambientTex = null;
     this.states._shininessTex = null;
+    this.states._normalTex = null;
+    this.states._normalScale = 1;
+    // how to read _normalTex: 0 = tangent-space normal map (rgb is the normal),
+    // 1 = bump map (brightness is height, the normal comes from its slope)
+    this.states._normalMapMode = 0;
     this.states.textureMode = constants.IMAGE;
     this.states.textureWrapX = constants.CLAMP;
     this.states.textureWrapY = constants.CLAMP;
@@ -295,7 +301,17 @@ export class Renderer3D extends Renderer {
         ),
         new RenderBuffer(2, 'uvs', 'uvBuffer', 'aTexCoord', this, arr =>
           arr.flat()
-        )
+        ),
+        // surface tangents for normal mapping. [x, y, z, handedness] per vertex.
+        // only computed for models with a normal map, and only read by the map
+        // shader variant; defaults to a dummy so the attribute stays valid.
+        new RenderBuffer(
+          4,
+          'vertexTangents',
+          'tangentBuffer',
+          'aTangent',
+          this
+        ).default(geometry => geometry.vertices.flatMap(() => [0, 0, 0, 1]))
       ],
       stroke: [
         new RenderBuffer(
@@ -640,6 +656,19 @@ export class Renderer3D extends Renderer {
     this._useVertexColor =
       geometry.vertexColors.length > 0 && !geometry.vertexColors.isDefault;
 
+    // a normal map needs per-vertex tangents. loaded models compute them at load,
+    // but geometry drawn with normalTexture() (built shapes, immediate mode) won't
+    // have them, so build them on demand once (cached on the geometry).
+    if (
+      this.states._normalTex &&
+      geometry.computeTangents &&
+      (!geometry.vertexTangents || geometry.vertexTangents.length === 0) &&
+      geometry.uvs.length > 0 &&
+      geometry.vertexNormals.length > 0
+    ) {
+      geometry.computeTangents();
+    }
+
     const shader =
       !this._drawingFilter && this.states.userFillShader
         ? this.states.userFillShader
@@ -701,6 +730,13 @@ export class Renderer3D extends Renderer {
     }
     if (partState.shininessTexture) {
       this.states.setValue('_shininessTex', partState.shininessTexture);
+    }
+    if (partState.normalTexture) {
+      this.states.setValue('_normalTex', partState.normalTexture);
+      if (partState.normalScale != null) {
+        this.states.setValue('_normalScale', partState.normalScale);
+      }
+      this.states.setValue('_normalMapMode', partState.normalMapMode ?? 0);
     }
   }
 
@@ -1483,13 +1519,14 @@ export class Renderer3D extends Renderer {
   }
 
   // true when the current material has any mtl texture map bound (specular,
-  // ambient or shininess). drives both shader-variant selection and whether
-  // the map uniforms are worth binding at all.
+  // ambient, shininess or normal). drives both shader-variant selection and
+  // whether the map uniforms are worth binding at all.
   _hasActiveTextureMap() {
     return !!(
       this.states._specularTex ||
       this.states._ambientTex ||
-      this.states._shininessTex
+      this.states._shininessTex ||
+      this.states._normalTex
     );
   }
 
@@ -1601,7 +1638,8 @@ export class Renderer3D extends Renderer {
     // mtl texture maps only exist in the USE_TEXTURE_MAPS shader variant, which
     // is only selected when a part actually binds one. so for the common case
     // (lit scene, no maps) we skip all of these setUniform calls entirely and
-    // the plain phong shader carries none of the map uniforms.
+    // the plain phong shader carries none of the map uniforms. bind all four
+    // pairs together since the variant declares all of them.
     if (this._hasActiveTextureMap()) {
       // specular map (map_Ks)
       fillShader.setUniform('uHasSpecularTex', !!this.states._specularTex);
@@ -1615,6 +1653,19 @@ export class Renderer3D extends Renderer {
         'uShininessSampler',
         this.states._shininessTex || empty
       );
+      // normal map (map_Bump): perturbs the surface normal in tangent space
+      fillShader.setUniform('uHasNormalMap', !!this.states._normalTex);
+      fillShader.setUniform('uNormalSampler', this.states._normalTex || empty);
+      fillShader.setUniform('uNormalScale', this.states._normalScale);
+      fillShader.setUniform('uNormalMapMode', this.states._normalMapMode);
+      // a bump map reads its neighbours to find the slope, so it needs to know
+      // how far apart texels are. falls back to a sane size for sources that
+      // don't report their dimensions.
+      const normalTex = this.states._normalTex;
+      fillShader.setUniform('uNormalTexelSize', [
+        1 / (normalTex && normalTex.width ? normalTex.width : 256),
+        1 / (normalTex && normalTex.height ? normalTex.height : 256)
+      ]);
     }
     fillShader.setUniform(
       'uTint',
@@ -2292,8 +2343,8 @@ function renderer3D(p5, fn) {
    * @beta
    * @webgpu
    * @webgpuOnly
-   * @param {Number|Array|Float32Array|Object[]} dataOrCount Either a number specifying the count of floats,
-   *   an array/Float32Array of floats, or an array of objects describing struct elements.
+   * @param {Number|Array|Float32Array|Uint32Array|Int32Array|Object[]} dataOrCount Either a number specifying the count of elements,
+   *   an array/TypedArray of values, or an array of objects describing struct elements.
    * @returns {p5.StorageBuffer} A storage buffer.
    */
   fn.createStorage = function (dataOrCount) {
@@ -2306,6 +2357,7 @@ function renderer3D(p5, fn) {
     }
     return this._renderer.createStorage(dataOrCount);
   };
+  p5.registerDecorator('p5.prototype.createStorage', markExperimental('webgpu', p5));
 
   /**
    * Returns the default shader used for compute operations.
@@ -2501,6 +2553,7 @@ function renderer3D(p5, fn) {
     }
     return this.baseComputeShader().modify(cb, context, { hook: 'iteration' });
   };
+  p5.registerDecorator('p5.prototype.buildComputeShader', markExperimental('webgpu', p5));
 
   /**
    * Dispatches a compute shader to run on the GPU.

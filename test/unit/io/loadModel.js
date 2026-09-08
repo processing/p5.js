@@ -117,6 +117,26 @@ suite('loadModel', function () {
     }
   });
 
+  test('a normal-mapped OBJ carries the normal map on its part', async function () {
+    const fakeImage = { width: 1, height: 1 };
+    mockP5Prototype.loadImage = async () => fakeImage;
+    try {
+      const model = await mockP5Prototype.loadModel(
+        '/test/unit/assets/normal_mapped.obj'
+      );
+      // two materials, so two parts
+      assert.equal(model.parts.length, 2);
+      // the part with the normal map carries it
+      const normalMapped = model.parts.find(p => p.partState.normalTexture);
+      assert.ok(normalMapped, 'a part has the normal map');
+      assert.equal(normalMapped.partState.normalTexture, fakeImage);
+      // norm means read it as a normal map, not as heights
+      assert.equal(normalMapped.partState.normalMapMode, 0);
+    } finally {
+      delete mockP5Prototype.loadImage;
+    }
+  });
+
   test('a texture that fails to load is skipped without failing the model', async function () {
     mockP5Prototype.loadImage = async () => {
       throw new Error('Not Found');
@@ -137,6 +157,25 @@ suite('loadModel', function () {
     const model = await mockP5Prototype.loadModel(inconsistentColorObjFile);
     assert.equal(model.parts.length, 1);
     assert.equal(model.parts[0], model, 'the geometry is its own single part');
+  });
+
+  test('a single-material OBJ still receives its maps', async function () {
+    const fakeImage = { width: 1, height: 1 };
+    mockP5Prototype.loadImage = async () => fakeImage;
+    try {
+      const model = await mockP5Prototype.loadModel(
+        '/test/unit/assets/single_material_textured.obj'
+      );
+      // one material, so no split: the geometry stays its own only part
+      assert.equal(model.parts.length, 1);
+      assert.equal(model.parts[0], model);
+      // and it carries the material's state rather than dropping it
+      assert.equal(model.partState.texture, fakeImage);
+      assert.equal(model.partState.shininess, 60);
+      assert.deepEqual(model.partState.specularColor, [0.5, 0.5, 0.5]);
+    } finally {
+      delete mockP5Prototype.loadImage;
+    }
   });
 
   test('a 12-material OBJ splits into 12 parts', async function () {
@@ -286,5 +325,80 @@ suite('loadModel', function () {
       negativeModel.faces.length,
       'Face count should match'
     );
+  });
+
+  suite('multi-material edge cases', function () {
+    test('a two-material OBJ splits into one part per material', async function () {
+      const model = await mockP5Prototype.loadModel(
+        '/test/unit/assets/multi_material_2.obj'
+      );
+      assert.equal(model.parts.length, 2);
+      assert.deepEqual(model.parts[0].partState.fill, [1, 0, 0, 1]);
+      assert.deepEqual(model.parts[1].partState.fill, [0, 0, 1, 1]);
+      // every face lands in exactly one part
+      const total = model.parts.reduce((sum, p) => sum + p.faces.length, 0);
+      assert.equal(total, model.faces.length);
+    });
+
+    test('usemtl naming a material the mtl does not define still loads', async function () {
+      const model = await mockP5Prototype.loadModel(
+        '/test/unit/assets/unknown_material.obj'
+      );
+      // the unknown group falls back to an empty material instead of throwing
+      assert.equal(model.parts.length, 2);
+      assert.deepEqual(model.parts[0].partState.fill, [0, 1, 0, 1]);
+      assert.isNull(model.parts[1].partState.fill);
+      const total = model.parts.reduce((sum, p) => sum + p.faces.length, 0);
+      assert.equal(total, model.faces.length);
+    });
+
+    test('a material used in two separate groups collects into one part', async function () {
+      const model = await mockP5Prototype.loadModel(
+        '/test/unit/assets/duplicate_usemtl.obj'
+      );
+      // grouping is by material name, so the two 'a' groups share a part
+      assert.equal(model.parts.length, 2);
+      assert.deepEqual(
+        model.parts.map(p => p.faces.length).sort(),
+        [1, 2]
+      );
+      const total = model.parts.reduce((sum, p) => sum + p.faces.length, 0);
+      assert.equal(total, model.faces.length);
+    });
+
+    test('an OBJ with no vn lines gets normals computed per part', async function () {
+      const model = await mockP5Prototype.loadModel(
+        '/test/unit/assets/no_normals.obj'
+      );
+      assert.equal(model.parts.length, 2);
+      for (const part of model.parts) {
+        assert.equal(part.vertexNormals.length, part.vertices.length);
+      }
+    });
+
+    test('an OBJ with no mtllib loads as plain geometry', async function () {
+      const model = await mockP5Prototype.loadModel(
+        '/test/unit/assets/no_mtl.obj'
+      );
+      assert.isAbove(model.vertices.length, 0);
+      assert.isAbove(model.faces.length, 0);
+    });
+
+    test('windows-style texture paths are resolved with forward slashes', async function () {
+      const requested = [];
+      mockP5Prototype.loadImage = async url => {
+        requested.push(url);
+        return { width: 1, height: 1 };
+      };
+      try {
+        await mockP5Prototype.loadModel('/test/unit/assets/windows_path.obj');
+        // the mtl writes `textures\cat.jpg`, which no server would resolve
+        assert.equal(requested.length, 1);
+        assert.notInclude(requested[0], '\\');
+        assert.include(requested[0], 'textures/cat.jpg');
+      } finally {
+        delete mockP5Prototype.loadImage;
+      }
+    });
   });
 });

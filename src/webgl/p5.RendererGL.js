@@ -744,6 +744,7 @@ class RendererGL extends Renderer3D {
         this[cacheKey] = new Shader(
           this,
           this._webGL2CompatibilityPrefix('vert', 'highp') +
+            mapsDefine +
             defaultShaders.phongVert,
           this._webGL2CompatibilityPrefix('frag', 'highp') +
             mapsDefine +

@@ -894,6 +894,31 @@ suite('p5.Shader', function () {
       assert.approximately(pixelColor[2], 204, 5);
     });
 
+    test('handle custom uniform names with template strings', () => {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+      const testShader = myp5.baseMaterialShader().modify(
+        () => {
+          // Variable name is 'brightness' but uniform name is 'customBrightness'
+          const brightness = myp5.uniformFloat(`customBrightness`, () => 0.8);
+          myp5.getPixelInputs(inputs => {
+            inputs.color = [brightness, brightness, brightness, 1.0];
+            return inputs;
+          });
+        },
+        { myp5 }
+      );
+
+      myp5.noStroke();
+      myp5.shader(testShader);
+      myp5.plane(myp5.width, myp5.height);
+
+      // Check that the shader uses the automatic value (0.8)
+      const pixelColor = myp5.get(25, 25);
+      assert.approximately(pixelColor[0], 204, 5); // 0.8 * 255 = 204
+      assert.approximately(pixelColor[1], 204, 5);
+      assert.approximately(pixelColor[2], 204, 5);
+    });
+
     test('handle custom uniform names with manual setUniform', () => {
       myp5.createCanvas(50, 50, myp5.WEBGL);
       const testShader = myp5.baseMaterialShader().modify(

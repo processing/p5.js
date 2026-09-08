@@ -10,6 +10,18 @@ const mockAnchorElement = vi.mockObject({
   download: null,
   click: () => {}
 });
+
+let onDownload = null;
+
+mockAnchorElement.click.mockImplementation(()=>{
+  if(onDownload) onDownload();
+});
+
+const downloadHappened = () =>
+  new Promise(resolve =>{
+    onDownload = resolve;
+  });
+
 const originalCreateElement = document.createElement;
 vi.spyOn(document, 'createElement').mockImplementation((...args) => {
   if (args[0] !== 'a') {
@@ -61,10 +73,6 @@ expect.extend({
   }
 });
 
-const wait = async time => {
-  return new Promise(resolve => setTimeout(resolve, time));
-};
-
 suite('Downloading', () => {
   beforeAll(async function () {
     image(mockP5, mockP5Prototype);
@@ -75,6 +83,10 @@ suite('Downloading', () => {
 
   afterEach(() => {
     vi.clearAllMocks();
+  });
+
+  beforeEach(() => {
+    onDownload = null;
   });
 
   suite('downloading animated gifs', function () {
@@ -112,24 +124,30 @@ suite('Downloading', () => {
     });
 
     test('should download a png file', async () => {
+      const downloaded = downloadHappened();
       mockP5Prototype.saveCanvas();
-      await wait(100);
+      await downloaded;
+
       expect(document.createElement).toHaveBeenCalledTimes(1);
       expect(mockAnchorElement.click).toHaveBeenCalledTimes(1);
       assert.equal(mockAnchorElement.download, 'untitled.png');
     });
 
     test('should download a jpg file I', async () => {
+      const downloaded = downloadHappened();
       mockP5Prototype.saveCanvas('filename.jpg');
-      await wait(100);
+      await downloaded;
+
       expect(document.createElement).toHaveBeenCalledTimes(1);
       expect(mockAnchorElement.click).toHaveBeenCalledTimes(1);
       assert.equal(mockAnchorElement.download, 'filename.jpg');
     });
 
     test('should download a jpg file II', async () => {
+      const downloaded = downloadHappened();
       mockP5Prototype.saveCanvas('filename', 'jpg');
-      await wait(100);
+      await downloaded;
+
       expect(document.createElement).toHaveBeenCalledTimes(1);
       expect(mockAnchorElement.click).toHaveBeenCalledTimes(1);
       assert.equal(mockAnchorElement.download, 'filename.jpg');

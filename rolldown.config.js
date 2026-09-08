@@ -70,6 +70,27 @@ export default defineConfig([
       // })
     ]
   },
+  //// Addon module builds (e.g. WebGPU) ////
+  ...['webgpu'].map(module => ({
+    input: `src/${module}/index.js`,
+    output: [
+      {
+        file: `./lib/p5.${module}.js`,
+        format: 'iife'
+      },
+      {
+        file: `./lib/p5.${module}.min.js`,
+        format: 'iife',
+        minify: true
+      },
+      {
+        file: `./lib/p5.${module}.esm.js`,
+        format: 'esm'
+      }
+    ],
+    external: ['../core/main'],
+    plugins
+  })),
   //// ESM source build ////
   {
     input: Object.fromEntries(

@@ -412,6 +412,23 @@ visualSuite('WebGL', function () {
       }
     );
     visualTest(
+      'a bump-mapped sphere shows surface detail under light',
+      async function (p5, screenshot) {
+        p5.createCanvas(50, 50, p5.WEBGL);
+        // bump_sphere.obj is a 2-material sphere using map_Bump on both halves, so
+        // under a light the whole surface shows bump detail
+        const model = await new Promise(resolve =>
+          p5.loadModel('test/unit/assets/bump_sphere.obj', resolve)
+        );
+        p5.background(255);
+        p5.pointLight(255, 255, 255, 100, -100, 200);
+        p5.noStroke();
+        p5.scale(22);
+        p5.model(model);
+        screenshot();
+      }
+    );
+    visualTest(
       'multi-material OBJ renders each material part',
       async function (p5, screenshot) {
         p5.createCanvas(50, 50, p5.WEBGL);
@@ -428,6 +445,38 @@ visualSuite('WebGL', function () {
         screenshot();
       }
     );
+
+    visualTest(
+      'normalTexture() adds surface detail to a built shape',
+      function (p5, screenshot) {
+        p5.createCanvas(50, 50, p5.WEBGL);
+        // a procedural tangent-space normal map with diagonal ridges
+        const nmap = p5.createImage(32, 32);
+        nmap.loadPixels();
+        for (let y = 0; y < nmap.height; y++) {
+          for (let x = 0; x < nmap.width; x++) {
+            const s = Math.sin(((x + y) / nmap.width) * Math.PI * 6) * 0.8;
+            const nx = s, ny = s, nz = 1;
+            const inv = 1 / Math.sqrt(nx * nx + ny * ny + nz * nz);
+            const off = (x + y * nmap.width) * 4;
+            nmap.pixels[off] = (nx * inv * 0.5 + 0.5) * 255;
+            nmap.pixels[off + 1] = (ny * inv * 0.5 + 0.5) * 255;
+            nmap.pixels[off + 2] = (nz * inv * 0.5 + 0.5) * 255;
+            nmap.pixels[off + 3] = 255;
+          }
+        }
+        nmap.updatePixels();
+        p5.background(255);
+        p5.pointLight(255, 255, 255, 50, -50, 200);
+        p5.noStroke();
+        p5.fill(200);
+        // tangents are built on demand for a shape that has none of its own
+        p5.normalTexture(nmap);
+        p5.sphere(20);
+        screenshot();
+      }
+    );
+
     visualTest(
       'a slice with a missing texture falls back to its colour',
       async function (p5, screenshot) {
@@ -445,6 +494,7 @@ visualSuite('WebGL', function () {
         screenshot();
       }
     );
+
     visualTest(
       'a 12-material OBJ renders every material',
       async function (p5, screenshot) {
@@ -459,6 +509,7 @@ visualSuite('WebGL', function () {
         screenshot();
       }
     );
+
     visualTest(
       'a single-material OBJ renders through the part path',
       async function (p5, screenshot) {
@@ -1414,6 +1465,38 @@ visualSuite('WebGL', function () {
       p5.instances(count).spline(-5, 5, 0, -2, -5, 0, 2, 5, 0, 5, -5, 0);
       screenshot();
     });
+
+    visualTest(
+      'conditional swizzle assignment inside of branching',
+      (p5, screenshot) => {
+        p5.createCanvas(50, 50, p5.WEBGL);
+        const shader = p5.baseMaterialShader().modify(
+          () => {
+            p5.worldInputs.begin();
+            // For the first instance, bump the circle vertices out to +/- 15
+            // to turn it into a square. The second instance remains a circle
+            if (p5.instanceIndex < 1) {
+              p5.worldInputs.position.x = p5.sign(p5.worldInputs.position.x) * 15;
+              p5.worldInputs.position.y = p5.sign(p5.worldInputs.position.y) * 15;
+            }
+            // Spread the instances out horizontally to be side by side
+            p5.worldInputs.position += [
+              (p5.instanceIndex - 0.5) * 30,
+              0,
+              0
+            ];
+            p5.worldInputs.end();
+          },
+          { p5 }
+        );
+        p5.background(200);
+        p5.noStroke();
+        p5.fill(255, 0, 0);
+        p5.shader(shader);
+        p5.instances(2).circle(0, 0, 20);
+        screenshot();
+      }
+    );
   });
 
   visualSuite('p5.strands', () => {
