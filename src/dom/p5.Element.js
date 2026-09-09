@@ -2069,7 +2069,7 @@ class Element {
 
           // Load each one and trigger the callback
           for (const f of files) {
-            File._load(f, callback);
+            File._load(f, callback, this._pInst);
           }
         },
         this

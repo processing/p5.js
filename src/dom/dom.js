@@ -1819,9 +1819,10 @@ function dom(p5, fn) {
   fn.createFileInput = function (callback, multiple = false) {
     // p5._validateParameters('createFileInput', arguments);
 
+    const pInst = this;
     const handleFileSelect = function (event) {
       for (const file of event.target.files) {
-        File._load(file, callback);
+        File._load(file, callback, pInst);
       }
     };
 
