@@ -2336,9 +2336,10 @@ class Vector {
    * returns a new <a href="#/p5.Vector">p5.Vector</a> object and doesn't change
    * the originals.
    *
-   * @param {...Number} values  target vector components
-   * @param  {Number}   amt     amount of interpolation between 0.0 (old vector)
-   *                            and 1.0 (new vector). 0.5 is halfway between.
+   * @param {...Number} args target vector components followed by the
+   *                         interpolation amount. The last argument is always
+   *                         `amt` (0.0 keeps the old vector, 1.0 the new
+   *                         vector, 0.5 is halfway between).
    * @chainable
    *
    * @example
