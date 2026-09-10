@@ -19,9 +19,10 @@ import { StrandsFor } from './strands_for';
 import { buildTernary } from './strands_ternary';
 import * as CFG from './ir_cfg';
 import * as DAG from './ir_dag';
-import * as FES from './strands_FES';
-import { getNodeDataFromID } from './ir_dag';
-import { StrandsNode, createStrandsNode } from './strands_node';
+import * as FES from './strands_FES'
+import { getNodeDataFromID } from './ir_dag'
+import { StrandsNode, createStrandsNode } from './strands_node'
+import { installTransformAPI } from './strands_transform'
 import {
   getOrCreateInternalShaderName,
   isReservedStrandsName,
@@ -1050,6 +1051,10 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
       }
     });
   }
+
+  // Matrix constructors and transform helpers live in strands_transform.js so
+  // that each one sits next to its own reference documentation.
+  installTransformAPI(p5, fn, strandsContext, augmentFn);
 
   // Storage buffer uniform function for compute shaders
   fn.uniformStorage = function (name, bufferOrSchema) {
