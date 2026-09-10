@@ -126,11 +126,11 @@ class p5 {
     };
 
     if (typeof window !== 'undefined') {
-      window.addEventListener('focus', focusHandler);
-      window.addEventListener('blur', blurHandler);
-      p5.lifecycleHooks.remove.push(function () {
-        window.removeEventListener('focus', focusHandler);
-        window.removeEventListener('blur', blurHandler);
+      window.addEventListener('focus', focusHandler, {
+        signal: this._removeSignal
+      });
+      window.addEventListener('blur', blurHandler, {
+        signal: this._removeSignal
       });
 
       // Initialization complete, start runtime
