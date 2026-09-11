@@ -41,6 +41,44 @@ suite('p5.Image', function () {
     });
   });
 
+  suite('p5.Image.prototype.pixelDensity', function () {
+    test('it sets and gets pixel density', function () {
+      const img = myp5.createImage(100, 100);
+      assert.strictEqual(img.pixelDensity(), 1);
+      img.pixelDensity(2);
+      assert.strictEqual(img.pixelDensity(), 2);
+      assert.strictEqual(img.width, 50);
+      assert.strictEqual(img.height, 50);
+      assert.strictEqual(img.canvas.width, 100);
+      assert.strictEqual(img.canvas.height, 100);
+    });
+
+    test('repeated calls are idempotent and can be restored', function () {
+      const img = myp5.createImage(100, 100);
+      img.pixelDensity(2);
+      assert.strictEqual(img.width, 50);
+      assert.strictEqual(img.height, 50);
+
+      // Calling again should not divide dimensions further
+      img.pixelDensity(2);
+      assert.strictEqual(img.width, 50);
+      assert.strictEqual(img.height, 50);
+
+      // Resetting to 1 restores original logical dimensions
+      img.pixelDensity(1);
+      assert.strictEqual(img.width, 100);
+      assert.strictEqual(img.height, 100);
+    });
+
+    test('setting non-positive density defaults to 1', function () {
+      const img = myp5.createImage(100, 100);
+      img.pixelDensity(0);
+      assert.strictEqual(img.pixelDensity(), 1);
+      assert.strictEqual(img.width, 100);
+      assert.strictEqual(img.height, 100);
+    });
+  });
+
   suite('p5.Image.prototype.resize', function () {
     test('it should resize the image', function () {
       let img = myp5.createImage(10, 17);
@@ -48,6 +86,35 @@ suite('p5.Image', function () {
       img.resize(10, 30);
       assert.strictEqual(img.width, 10);
       assert.strictEqual(img.height, 30);
+    });
+
+    test('it should resize backing canvas with pixel density > 1', function () {
+      const img = myp5.createImage(100, 100);
+      img.pixelDensity(2);
+      assert.strictEqual(img.width, 50);
+      assert.strictEqual(img.height, 50);
+
+      img.resize(40, 60);
+      assert.strictEqual(img.width, 40);
+      assert.strictEqual(img.height, 60);
+      assert.strictEqual(img.canvas.width, 80);
+      assert.strictEqual(img.canvas.height, 120);
+    });
+
+    test('it allows get() and set() across full logical dimensions after resize with high pixel density', function () {
+      const img = myp5.createImage(100, 100);
+      img.pixelDensity(2);
+      img.resize(50, 50);
+
+      const red = myp5.color(255, 0, 0, 255);
+      img.set(30, 30, red);
+      img.updatePixels();
+
+      const pixel = img.get(30, 30);
+      assert.strictEqual(pixel[0], 255);
+      assert.strictEqual(pixel[1], 0);
+      assert.strictEqual(pixel[2], 0);
+      assert.strictEqual(pixel[3], 255);
     });
   });
 
