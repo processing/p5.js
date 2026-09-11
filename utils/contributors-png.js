@@ -23,7 +23,7 @@ async function loadAvatar(url) {
 
     const buffer = Buffer.from(await res.arrayBuffer());
     return await loadImage(buffer);
-  } catch {
+  } catch (err) {
     return null;
   }
 }
