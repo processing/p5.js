@@ -214,6 +214,46 @@ export function binaryOpNode(
     }
   }
 
+  const leftDim = dag.dimensions[finalLeftNodeID];
+  const rightDim = dag.dimensions[finalRightNodeID];
+  const leftBase = dag.baseTypes[finalLeftNodeID];
+  const rightBase = dag.baseTypes[finalRightNodeID];
+
+  const isOrdering = [
+    OpCode.Binary.LESS_THAN,
+    OpCode.Binary.LESS_EQUAL,
+    OpCode.Binary.GREATER_THAN,
+    OpCode.Binary.GREATER_EQUAL,
+  ].includes(opCode);
+  const isEquality = opCode === OpCode.Binary.EQUAL || opCode === OpCode.Binary.NOT_EQUAL;
+  const isLogical  = opCode === OpCode.Binary.LOGICAL_AND || opCode === OpCode.Binary.LOGICAL_OR;
+
+  if (isOrdering) {
+    if (leftDim > 1 || rightDim > 1) {
+      FES.userError(
+        'type error',
+        `${OpCodeToSymbol[opCode]} is only defined for scalars. ` +
+        `Got ${leftBase}${leftDim} ${OpCodeToSymbol[opCode]} ${rightBase}${rightDim}.`
+      );
+    }
+  } else if (isEquality) {
+    if ((leftDim > 1 || rightDim > 1) && (leftDim !== rightDim || leftBase !== rightBase)) {
+      FES.userError(
+        'type error',
+        `Equality comparisons between vectors require matching dimensions and base types. ` +
+        `Got ${leftBase}${leftDim} ${OpCodeToSymbol[opCode]} ${rightBase}${rightDim}.`
+      );
+    }
+  } else if (isLogical) {
+    if (leftBase !== BaseType.BOOL || rightBase !== BaseType.BOOL || leftDim !== 1 || rightDim !== 1) {
+      FES.userError(
+        'type error',
+        `${OpCodeToSymbol[opCode]} requires two bool scalars. ` +
+        `Got ${leftBase}${leftDim} ${OpCodeToSymbol[opCode]} ${rightBase}${rightDim}.`
+      );
+    }
+  }
+
   if (booleanOpCode[opCode]) {
     cast.toType.baseType = BaseType.BOOL;
     cast.toType.dimension = 1;
