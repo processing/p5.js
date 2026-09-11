@@ -5,8 +5,6 @@ if (typeof Float32Array !== 'undefined') {
   isMatrixArray = x => Array.isArray(x) || x instanceof Float32Array;
 }
 export class MatrixInterface {
-  // Private field to store the matrix
-  #matrix = null;
   constructor(...args) {
     if (this.constructor === MatrixInterface) {
       throw new Error("Class is of abstract type and can't be instantiated");
