@@ -217,8 +217,8 @@ suite('p5.Texture', function () {
     });
     test('Set global wrap mode to clamp', function () {
       myp5.textureWrap(myp5.CLAMP);
-      var tex1 = myp5._renderer.getTexture(texImg1);
-      var tex2 = myp5._renderer.getTexture(texImg2);
+      myp5._renderer.getTexture(texImg1);
+      myp5._renderer.getTexture(texImg2);
       expect(texParamSpy).toHaveBeenCalledWith(
         myp5._renderer.GL.TEXTURE_2D,
         myp5._renderer.GL.TEXTURE_WRAP_S,
@@ -242,8 +242,8 @@ suite('p5.Texture', function () {
     });
     test('Set global wrap mode to repeat', function () {
       myp5.textureWrap(myp5.REPEAT);
-      var tex1 = myp5._renderer.getTexture(texImg1);
-      var tex2 = myp5._renderer.getTexture(texImg2);
+      myp5._renderer.getTexture(texImg1);
+      myp5._renderer.getTexture(texImg2);
       expect(texParamSpy).toHaveBeenCalledWith(
         myp5._renderer.GL.TEXTURE_2D,
         myp5._renderer.GL.TEXTURE_WRAP_S,
@@ -267,8 +267,8 @@ suite('p5.Texture', function () {
     });
     test('Set global wrap mode to mirror', function () {
       myp5.textureWrap(myp5.MIRROR);
-      var tex1 = myp5._renderer.getTexture(texImg1);
-      var tex2 = myp5._renderer.getTexture(texImg2);
+      myp5._renderer.getTexture(texImg1);
+      myp5._renderer.getTexture(texImg2);
       expect(texParamSpy).toHaveBeenCalledWith(
         myp5._renderer.GL.TEXTURE_2D,
         myp5._renderer.GL.TEXTURE_WRAP_S,

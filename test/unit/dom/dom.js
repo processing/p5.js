@@ -822,6 +822,17 @@ suite('DOM', function () {
       assert.deepEqual(options, remainingOptions);
     });
 
+    test('calling remove() without arguments should remove radio element from DOM and _elements', function () {
+      const radio = mockP5Prototype.createRadio();
+      assert.isTrue(document.body.contains(radio.elt));
+      assert.isTrue(mockP5Prototype._elements.includes(radio));
+
+      radio.remove();
+
+      assert.isFalse(document.body.contains(radio.elt));
+      assert.isFalse(mockP5Prototype._elements.includes(radio));
+    });
+
     test('calling value() should return selected value', function () {
       const options = ['Monday', 'Friday', 'Saturday', 'Sunday'];
       const selectedValue = options[1];
@@ -950,11 +961,14 @@ suite('DOM', function () {
     });
 
     const emptyCallback = () => {};
-    const createDummyFile = filename => {
-      return new File(['testFileBlob'], filename, {
-        type: 'text/plain'
-      });
-    };
+    // Commented out along with its only callers: the file-input tests further
+    // down in this suite. Restore this together with them.
+    //
+    // const createDummyFile = filename => {
+    //   return new File(['testFileBlob'], filename, {
+    //     type: 'text/plain'
+    //   });
+    // };
 
     test('should be a function', function () {
       assert.isFunction(mockP5Prototype.createFileInput);
@@ -1067,6 +1081,17 @@ suite('DOM', function () {
       assert.deepEqual(document.body.childElementCount, 1);
       const remainingElement = document.body.children[0];
       assert.instanceOf(remainingElement, HTMLCanvasElement);
+    });
+
+    test('removeElements() removes createRadio element from DOM and _elements', function () {
+      const radio = mockP5Prototype.createRadio();
+      assert.isTrue(document.body.contains(radio.elt));
+      assert.isTrue(mockP5Prototype._elements.includes(radio));
+
+      mockP5Prototype.removeElements();
+
+      assert.isFalse(document.body.contains(radio.elt));
+      assert.isFalse(mockP5Prototype._elements.includes(radio));
     });
   });
 

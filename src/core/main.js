@@ -407,7 +407,7 @@ class p5 {
       for (const p in p5.prototype) {
         try {
           delete window[p];
-        } catch (x) {
+        } catch {
           window[p] = undefined;
         }
       }
@@ -415,7 +415,7 @@ class p5 {
         if (this.hasOwnProperty(p2)) {
           try {
             delete window[p2];
-          } catch (x) {
+          } catch {
             window[p2] = undefined;
           }
         }
