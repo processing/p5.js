@@ -12,6 +12,40 @@ import { GIFEncoder, quantize, nearestColorIndex } from 'gifenc';
 
 function loadingDisplaying(p5, fn) {
   /**
+   * The largest possible number of pixels a gif frame can contain.
+   *
+   * This static property defines how large, in terms of dimension, a gif image
+   * is allowed to be loaded into a p5 sketch. The default value is
+   * 16,000,000. This means an image's width multiplied by its height must not
+   * exceed 100,000,000. For example, an image with width 10,000 and height
+   * 10,000 is just enough, as well as an image with width 5000 and height
+   * 20,000. An image with width 20,000 and height 20,000 is not allowed and
+   * will cause an error when it is loaded.
+   *
+   * To avoid this error, you should try to reduce the image dimension of the
+   * gif. If that is not possible or not desirable, you can set
+   * `MAX_GIF_PIXELS` to a higher value instead.
+   *
+   * @static
+   * @property {Boolean} MAX_GIF_PIXELS
+   *
+   * @example
+   * // META: norender
+   * // Increase the maximum pixel counts to 200,000,000
+   * p5.MAX_GIF_PIXELS = 200_000_000;
+   *
+   * let img;
+   * async function setup() {
+   *   createCanvas(100, 100);
+   *
+   *   background(200);
+   *
+   *   img = await loadImage('./a-large-animated.gif');
+   * }
+   */
+  p5.MAX_GIF_PIXELS = 4000 * 4000; // 4 Channel per pixels for total of 64MB
+
+  /**
    * Loads an image to create a <a href="#/p5.Image">p5.Image</a> object.
    *
    * `loadImage()` interprets the first parameter one of three ways. If the path
@@ -623,6 +657,13 @@ function loadingDisplaying(p5, fn) {
     pImg.height = pImg.canvas.height = gifReader.height;
     const frames = [];
     const numFrames = gifReader.numFrames();
+
+    if (pImg.width * pImg.height > p5.MAX_GIF_PIXELS) {
+      // GIF is too big, refuse to proceed
+      p5.FES.log`The GIF is over the maximum allowed dimension. Try to shrink the image or set p5.MAX_GIF_PIXELS to a higher value.`();
+      throw new Error("The GIF is over the maximum allowed dimension.");
+    }
+
     let framePixels = new Uint8ClampedArray(pImg.width * pImg.height * 4);
 
     const loadGIFFrameIntoImage = (frameNum, gifReader) => {

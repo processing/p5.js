@@ -10,6 +10,12 @@ const plugins = [
 
 export default defineConfig({
   test: {
+    // Emit machine-readable results alongside the terminal output so
+    // visual-report.js can tell a failed test apart from one that never ran.
+    reporters: ['default', 'json'],
+    outputFile: {
+      json: './test/unit/visual/test-results.json'
+    },
     projects: [
       {
         plugins,
