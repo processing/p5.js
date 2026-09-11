@@ -437,13 +437,6 @@ export class Renderer3D extends Renderer {
     }
   }
 
-  remove() {
-    this.wrappedElt.remove();
-    this.wrappedElt = null;
-    this.canvas = null;
-    this.elt = null;
-  }
-
   //////////////////////////////////////////////
   // Geometry Building
   //////////////////////////////////////////////
@@ -2176,6 +2169,10 @@ export class Renderer3D extends Renderer {
     if (this._textCanvas) {
       this._textCanvas.parentElement.removeChild(this._textCanvas);
     }
+    this.wrappedElt.remove();
+    this.wrappedElt = null;
+    this.canvas = null;
+    this.elt = null;
     super.remove();
   }
 }
