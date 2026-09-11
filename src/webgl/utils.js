@@ -1,4 +1,5 @@
 import * as constants from '../core/constants';
+import { INSTANCE_ID_VARYING_NAME } from '../strands/ir_types';
 import { Texture } from './p5.Texture';
 
 /**

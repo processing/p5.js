@@ -2,6 +2,7 @@ import {
   NodeTypeRequiredFields,
   NodeTypeToName,
   BasePriority,
+  StatementType,
   BaseType
 } from './ir_types';
 import * as FES from './strands_FES';
@@ -146,6 +147,11 @@ function createNode(graph, node) {
     graph.usedBy[dep].push(id);
   }
   return id;
+}
+
+function getNodeKey(node) {
+  const key = JSON.stringify(node);
+  return key;
 }
 
 function validateNode(node) {

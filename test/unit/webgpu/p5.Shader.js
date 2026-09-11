@@ -691,9 +691,6 @@ suite('WebGPU p5.Shader', function () {
 
         const testShader = myp5.baseFilterShader().modify(
           () => {
-            // The constant comparisons below are the subject of this test: they
-            // exercise how p5.strands transpiles boolean intermediate variables.
-            /* oxlint-disable no-constant-binary-expression */
             myp5.getColor((inputs, canvasContent) => {
               let value = 1;
               let condition = 1 > 2;
@@ -708,7 +705,6 @@ suite('WebGPU p5.Shader', function () {
 
               return [0.4, 0, 0, 1];
             });
-            /* oxlint-enable no-constant-binary-expression */
           },
           { myp5 }
         );
@@ -727,9 +723,6 @@ suite('WebGPU p5.Shader', function () {
 
         const testShader = myp5.baseFilterShader().modify(
           () => {
-            // The constant comparisons below are the subject of this test: they
-            // exercise how p5.strands transpiles boolean intermediate variables.
-            /* oxlint-disable no-constant-binary-expression */
             const conditionMet = () => {
               let condition = 1 > 2;
               let value = 1;
@@ -738,7 +731,6 @@ suite('WebGPU p5.Shader', function () {
               }
               return !condition;
             };
-            /* oxlint-enable no-constant-binary-expression */
             myp5.getColor((inputs, canvasContent) => {
               if (conditionMet()) {
                 return [1, 0, 0, 1];
@@ -1624,8 +1616,7 @@ suite('WebGPU p5.Shader', function () {
       test('simple vector multiplication in filter shader', async () => {
         await myp5.createCanvas(50, 50, myp5.WEBGPU);
 
-        // Compiling the shader without throwing is what this test checks.
-        myp5.baseFilterShader().modify(
+        const testShader = myp5.baseFilterShader().modify(
           () => {
             myp5.getColor((inputs, canvasContent) => {
               // Test simple scalar * vector operation
@@ -1888,12 +1879,9 @@ suite('WebGPU p5.Shader', function () {
           () => {
             const buf = myp5.uniformStorage();
             const id = myp5.index.x;
-            if (id === 0) {
+            if (id == 0) {
               buf[0] = 1.0;
               return;
-              // The statement after the early return is the subject of this
-              // test: p5.strands must not emit it.
-              /* oxlint-disable-next-line no-unreachable */
               buf[0] = 2.0; // Should not execute
             }
           },
@@ -2077,8 +2065,6 @@ suite('WebGPU p5.Shader', function () {
         expect(() => {
           myp5.baseMaterialShader().modify(
             () => {
-              // The shared variable is consumed by the p5.strands transpiler, not by JS.
-              /* oxlint-disable-next-line no-unused-vars */
               let worldPosX = myp5.sharedVec3();
               myp5.getWorldInputs(inputs => {
                 worldPosX = inputs.position.x; // scalar → vec3, valid broadcast
@@ -2096,8 +2082,6 @@ suite('WebGPU p5.Shader', function () {
         expect(() => {
           myp5.baseMaterialShader().modify(
             () => {
-              // The shared variable is consumed by the p5.strands transpiler, not by JS.
-              /* oxlint-disable-next-line no-unused-vars */
               let myVec = myp5.sharedVec3();
               myp5.getWorldInputs(inputs => {
                 myVec = inputs.position.xy; // vec2 → vec3 mismatch
@@ -2132,8 +2116,6 @@ suite('WebGPU p5.Shader', function () {
         expect(() => {
           myp5.baseMaterialShader().modify(
             () => {
-              // The shared variable is consumed by the p5.strands transpiler, not by JS.
-              /* oxlint-disable-next-line no-unused-vars */
               let myVec = myp5.sharedVec3();
               myp5.getWorldInputs(inputs => {
                 myVec = inputs.position; // vec3 → vec3, OK
