@@ -5,7 +5,7 @@
 
 import { Element } from './p5.Element';
 // import { friendlyAutoplayError } from '../friendly_errors/fes_core';
-import { FES, TL } from '../friendly_errors/fes';
+import { FES } from '../friendly_errors/fes';
 
 /**
  * @typedef {'video'} VIDEO
@@ -934,7 +934,7 @@ class MediaElement extends Element {
       try {
         audioContext = obj.context;
         mainOutput = audioContext.destination;
-      } catch (e) {
+      } catch {
         throw 'connect() is meant to be used with Web Audio API or p5.sound.js';
       }
     }
@@ -1639,7 +1639,7 @@ function media(p5, fn) {
           } else {
             domElement.src = window.URL.createObjectURL(stream);
           }
-        } catch (err) {
+        } catch {
           domElement.src = stream;
         }
       })

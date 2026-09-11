@@ -5,9 +5,7 @@ import {
   DataType,
   BaseType,
   structType,
-  TypeInfoFromGLSLName,
   isStructType,
-  OpCode,
   StatementType,
   NodeType,
   HOOK_PARAM_PREFIX

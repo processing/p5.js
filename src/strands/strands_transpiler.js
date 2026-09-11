@@ -1912,6 +1912,7 @@ function transformHelperFunctionEarlyReturns(ast, names) {
 
 // Wraps each callback with a uniform context guard, eliminating the need
 // to repeat the early-return check at the top of every handler.
+/* oxlint-disable-next-line no-unused-vars */
 function makeGuardedCallbacks(callbacks) {
   const guarded = {};
   for (const [name, fn] of Object.entries(callbacks)) {
