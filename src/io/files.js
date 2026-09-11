@@ -1668,7 +1668,7 @@ function files(p5, fn) {
           fn.saveJSON(args[0], args[1], args[2]);
           return;
         case 'txt':
-          fn.saveStrings(args[0], args[1], args[2]);
+          fn.saveStrings(args[0], args[1], args[2], args[3]);  // Takes the third argument
           return;
         // =================================================
         // OPTION 3: decide based on object...
