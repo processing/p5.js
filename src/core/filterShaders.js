@@ -101,7 +101,7 @@ export function makeFilterShader(renderer, operation, p5) {
             const maxSamples = 64.0;
 
             let numSamples = p5.floor(radius * 7.0);
-            if (p5.mod(numSamples, 2) == 0.0) {
+            if (p5.mod(numSamples, 2) === 0.0) {
               numSamples++;
             }
 
@@ -162,7 +162,7 @@ export function makeFilterShader(renderer, operation, p5) {
 
             for (let x = -1; x <= 1; x++) {
               for (let y = -1; y <= 1; y++) {
-                if (x != 0 || y != 0) {
+                if (x !== 0 || y !== 0) {
                   const offset = p5.vec2(x, y) * inputs.texelSize;
                   const neighborColor = p5.getTexture(
                     canvasContent,
@@ -198,7 +198,7 @@ export function makeFilterShader(renderer, operation, p5) {
 
             for (let x = -1; x <= 1; x++) {
               for (let y = -1; y <= 1; y++) {
-                if (x != 0 || y != 0) {
+                if (x !== 0 || y !== 0) {
                   const offset = p5.vec2(x, y) * inputs.texelSize;
                   const neighborColor = p5.getTexture(
                     canvasContent,

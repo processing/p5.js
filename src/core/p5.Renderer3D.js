@@ -437,6 +437,7 @@ export class Renderer3D extends Renderer {
     }
   }
 
+  /* oxlint-disable-next-line no-dupe-class-members */
   remove() {
     this.wrappedElt.remove();
     this.wrappedElt = null;
@@ -1351,7 +1352,7 @@ export class Renderer3D extends Renderer {
     for (const savedKey in props) {
       try {
         this.drawingContext[savedKey] = props[savedKey];
-      } catch (err) {
+      } catch {
         // ignore read-only property errors
       }
     }
@@ -1934,6 +1935,7 @@ export class Renderer3D extends Renderer {
       throw Error('_yAlignOffset: height is required');
     }
 
+    /* oxlint-disable-next-line no-unused-vars */
     let { textLeading, textBaseline, textSize, textFont } = this.states;
     let yOff = 0,
       numLines = dataArr.length;

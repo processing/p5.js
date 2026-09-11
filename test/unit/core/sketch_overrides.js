@@ -1,16 +1,6 @@
 import { verifierUtils } from '../../../src/friendly_errors/sketch_verifier.js';
 
 suite('Sketch Verifier', function () {
-  const mockP5 = {
-    _validateParameters: vi.fn(),
-    Color: function () {},
-    Vector: function () {},
-    prototype: {
-      rect: function () {},
-      ellipse: function () {}
-    }
-  };
-
   afterEach(() => {
     vi.restoreAllMocks();
     vi.unstubAllGlobals();
