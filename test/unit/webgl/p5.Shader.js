@@ -3781,6 +3781,118 @@ suite('p5.Shader', function () {
       assert.include(errMsg, 'float4');
     });
 
+    test('ordering comparison with a vector operand throws a clear strands type error', () => {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+
+      try {
+        myp5.baseMaterialShader().modify(
+          () => {
+            myp5.getFinalColor(color => {
+              if (color < 2) {
+                color = [1, 1, 1, 1];
+              }
+              return color;
+            });
+          },
+          { myp5 }
+        );
+      } catch (e) {
+        /* expected */
+      }
+
+      assert.isAbove(
+        mockUserError.mock.calls.length,
+        0,
+        'FES.userError should have been called'
+      );
+      const errMsg = mockUserError.mock.calls[0][1];
+      assert.include(errMsg, '<');
+      assert.include(errMsg, 'only defined for scalars');
+    });
+
+    test('ordering comparison between scalars is allowed', () => {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+
+      myp5.baseMaterialShader().modify(
+        () => {
+          myp5.getFinalColor(color => {
+            if (color.r < 0.5) {
+              color = [1, 1, 1, 1];
+            }
+            return color;
+          });
+        },
+        { myp5 }
+      );
+
+      assert.equal(mockUserError.mock.calls.length, 0);
+    });
+
+    test('equality comparison between matching vectors is allowed', () => {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+
+      myp5.baseMaterialShader().modify(
+        () => {
+          myp5.getFinalColor(color => {
+            if (color.equalTo([1, 1, 1, 1])) {
+              color = [1, 1, 1, 1];
+            }
+            return color;
+          });
+        },
+        { myp5 }
+      );
+
+      assert.equal(mockUserError.mock.calls.length, 0);
+    });
+
+    test('logical and with non-boolean operands throws a clear strands type error', () => {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+
+      try {
+        myp5.baseMaterialShader().modify(
+          () => {
+            myp5.getFinalColor(color => {
+              if (color.r && color.g) {
+                color = [1, 1, 1, 1];
+              }
+              return color;
+            });
+          },
+          { myp5 }
+        );
+      } catch (e) {
+        /* expected */
+      }
+
+      assert.isAbove(
+        mockUserError.mock.calls.length,
+        0,
+        'FES.userError should have been called'
+      );
+      const errMsg = mockUserError.mock.calls[0][1];
+      assert.include(errMsg, '&&');
+      assert.include(errMsg, 'requires two bool scalars');
+    });
+
+    test('logical and between two boolean scalars is allowed', () => {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+
+      myp5.baseMaterialShader().modify(
+        () => {
+          myp5.getFinalColor(color => {
+            if (color.r < 0.5 && color.g > 0.5) {
+              color = [1, 1, 1, 1];
+            }
+            return color;
+          });
+        },
+        { myp5 }
+      );
+
+      assert.equal(mockUserError.mock.calls.length, 0);
+    });
+
     test('shows a helpful error for web editor loop protection', () => {
       myp5.createCanvas(50, 50, myp5.WEBGL);
 
