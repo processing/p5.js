@@ -918,6 +918,7 @@ class Image {
 
   _copyHelper(dstImage, srcImage, sx, sy, sw, sh, dx, dy, dw, dh) {
     const s = srcImage.canvas.width / srcImage.width;
+    const d = dstImage.canvas.width / dstImage.width;
     // adjust coord system for 3D when renderer
     // ie top-left = -width/2, -height/2
     let sxMod = 0;
@@ -951,10 +952,10 @@ class Image {
         s * (sy + syMod),
         s * sw,
         s * sh,
-        dx,
-        dy,
-        dw,
-        dh
+        d * dx,
+        d * dy,
+        d * dw,
+        d * dh
       );
     }
   }
