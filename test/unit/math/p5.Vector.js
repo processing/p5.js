@@ -616,6 +616,41 @@ suite('p5.Vector', function () {
       });
     });
 
+    suite('with negative divisors', function () {
+      let v;
+      beforeEach(function () {
+        v = new Vector(3, 4, 5);
+      });
+
+      test('should calculate remainder with a negative number', function () {
+        v.rem(-2);
+        expect(v.x).to.eql(1);
+        expect(v.y).to.eql(0);
+        expect(v.z).to.eql(1);
+      });
+
+      test('should calculate remainder with negative numbers', function () {
+        v.rem(-2, 3, -4);
+        expect(v.x).to.eql(1);
+        expect(v.y).to.eql(1);
+        expect(v.z).to.eql(1);
+      });
+
+      test('should calculate remainder with an array containing negative numbers', function () {
+        v.rem([-2, 3, -4]);
+        expect(v.x).to.eql(1);
+        expect(v.y).to.eql(1);
+        expect(v.z).to.eql(1);
+      });
+
+      test('should calculate remainder with a p5.Vector containing negative numbers', function () {
+        v.rem(new Vector(-2, 3, -4));
+        expect(v.x).to.eql(1);
+        expect(v.y).to.eql(1);
+        expect(v.z).to.eql(1);
+      });
+    });
+
     suite('with Arrays', function () {
       test('should return remainder of vector components for 3D vector', function () {
         v.rem([2, 3, 0]);
