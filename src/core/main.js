@@ -242,8 +242,14 @@ class p5 {
     this._millisStart = globalThis.performance.now();
 
     const context = this._isGlobal ? window : this;
-    if (typeof context.setup === 'function') {
-      await context.setup();
+    try {
+      if (typeof context.setup === 'function') {
+        await context.setup();
+      }
+    } 
+    catch (error) {
+      await this._runLifecycleHook('postsetup');
+      throw error;
     }
     if (this.hitCriticalError) return;
 

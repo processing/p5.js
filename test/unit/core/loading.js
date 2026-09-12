@@ -68,7 +68,8 @@ suite('Loading indicator', function () {
         p.circle(p.width / 2, p.height / 2, 100);
 
         p.circle(p.mouseX, p.mouseY, 20);
-      } finally {
+      } 
+      finally {
         lifecycles.postsetup.call(p);
       }
     })();
@@ -88,6 +89,42 @@ suite('Loading indicator', function () {
       [200, 200, 100],
       [12, 34, 20]
     ]);
+  });
+
+  test('removes loading indicator when setup rejects', async function () {
+    const p = {
+      canvas,
+      _isSketchLoading: false
+    };
+    const setupError = new Error('setup failed');
+
+    lifecycles.presetup.call(p);
+
+    const overlay = document.createElement('canvas');
+    overlay.classList.add('loading-indicator');
+    container.appendChild(overlay);
+    p._loadingOverlay = overlay;
+
+    const setupPromise = (async function setup() {
+      try {
+        await Promise.reject(setupError);
+      } 
+      finally {
+        lifecycles.postsetup.call(p);
+      }
+    })();
+
+    let rejectedPromise;
+    try {
+      await setupPromise;
+    } 
+    catch (error) {
+      rejectedPromise = error;
+    }
+
+    assert.strictEqual(rejectedPromise, setupError);
+    assert.isFalse(p._isSketchLoading);
+    assert.isNull(container.querySelector('.loading-indicator'));
   });
 
   test('test the loading indicator in an instance', function () {
@@ -197,8 +234,10 @@ suite('Loading indicator', function () {
       }
       try {
         await load1(2000);
-      } finally {
+      } 
+      finally {
         lifecycles.postsetup.call(p1);
+
       }
     })();
 
@@ -212,7 +251,8 @@ suite('Loading indicator', function () {
       }
       try {
         await load2(4000);
-      } finally {
+      } 
+      finally {
         lifecycles.postsetup.call(p2);
       }
     })();
