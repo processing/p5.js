@@ -20,6 +20,46 @@ class File {
     this.name = file.name;
     this.size = file.size;
     this.data = undefined;
+    this._isBlobUrl = false;
+  }
+
+  /**
+   * Revokes the Blob URL associated with this file, if one was created.
+   *
+   * When video or audio files are loaded via
+   * <a href="#/p5/createFileInput">createFileInput()</a> or
+   * <a href="#/p5.Element/drop">myElement.drop()</a>, p5 creates a Blob URL
+   * pointing to the media in browser memory. Calling `revoke()` releases that
+   * resource immediately instead of waiting for the sketch to be removed.
+   *
+   * @method revoke
+   * @for p5.File
+   *
+   * @example
+   * // Load a video file and revoke its URL when finished.
+   * let video;
+   *
+   * function setup() {
+   *   createCanvas(100, 100);
+   *   createFileInput(handleFile);
+   * }
+   *
+   * function handleFile(file) {
+   *   if (file.type === 'video') {
+   *     video = createVideo(file.data);
+   *     // Explicitly release the Blob URL when no longer needed:
+   *     file.revoke();
+   *   }
+   * }
+   */
+  revoke() {
+    if (this._isBlobUrl && this.data) {
+      URL.revokeObjectURL(this.data);
+      if (this._pInst && this._pInst._blobUrls) {
+        this._pInst._blobUrls.delete(this.data);
+      }
+      this._isBlobUrl = false;
+    }
   }
 
   static _createLoader(theFile, callback) {
@@ -42,7 +82,7 @@ class File {
     return reader;
   }
 
-  static _load(f, callback) {
+  static _load(f, callback, pInst) {
     // Text or data?
     // This should likely be improved
     if (/^text\//.test(f.type) || f.type === 'application/json') {
@@ -50,8 +90,12 @@ class File {
     } else if (!/^(video|audio)\//.test(f.type)) {
       File._createLoader(f, callback).readAsDataURL(f);
     } else {
-      const file = new File(f);
+      const file = new File(f, pInst);
       file.data = URL.createObjectURL(f);
+      file._isBlobUrl = true;
+      if (pInst && pInst._blobUrls) {
+        pInst._blobUrls.add(file.data);
+      }
       callback(file);
     }
   }

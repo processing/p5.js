@@ -1,7 +1,9 @@
 import { testSketchWithPromise } from '../../js/p5_helpers';
 
 import { mockP5, mockP5Prototype } from '../../js/mocks';
+import p5 from '../../../src/app.js';
 import dom from '../../../src/dom/dom';
+import file, { File as P5File } from '../../../src/dom/p5.File';
 import { Element } from '../../../src/dom/p5.Element';
 import creatingReading from '../../../src/color/creating_reading';
 import p5Color from '../../../src/color/p5.Color';
@@ -9,6 +11,7 @@ import p5Color from '../../../src/color/p5.Color';
 suite('DOM', function () {
   beforeAll(() => {
     dom(mockP5, mockP5Prototype);
+    file(mockP5, mockP5Prototype);
     creatingReading(mockP5, mockP5Prototype);
     p5Color(mockP5, mockP5Prototype, {});
   });
@@ -1497,9 +1500,136 @@ suite('DOM', function () {
 
   // p5.MediaElement.prototype._onTimeUpdate
 
-  // p5.File
+  suite('p5.File and Blob URL lifecycle', function () {
+    let myp5;
 
-  // p5.File._createLoader
+    afterEach(async function () {
+      if (myp5) {
+        await myp5.remove();
+        myp5 = null;
+      }
+      document.body.innerHTML = '';
+    });
 
-  // p5.File._load
+    test('Blob URLs created by _load() for audio/video are tracked on the p5 instance', function () {
+      myp5 = new p5(function () {});
+      const videoBlob = new Blob(['dummy video content'], { type: 'video/mp4' });
+      const videoFile = new File([videoBlob], 'test.mp4', { type: 'video/mp4' });
+
+      let loadedFile;
+      P5File._load(
+        videoFile,
+        f => {
+          loadedFile = f;
+        },
+        myp5
+      );
+
+      assert.instanceOf(loadedFile, P5File);
+      assert.match(loadedFile.data, /^blob:/);
+      assert.isTrue(myp5._blobUrls.has(loadedFile.data));
+      assert.equal(myp5._blobUrls.size, 1);
+    });
+
+    test('p5.remove() revokes tracked Blob URLs and clears _blobUrls', async function () {
+      myp5 = new p5(function () {});
+      const audioBlob = new Blob(['dummy audio content'], { type: 'audio/wav' });
+      const audioFile = new File([audioBlob], 'test.wav', { type: 'audio/wav' });
+
+      let loadedFile;
+      P5File._load(
+        audioFile,
+        f => {
+          loadedFile = f;
+        },
+        myp5
+      );
+
+      const blobUrl = loadedFile.data;
+      assert.isTrue(myp5._blobUrls.has(blobUrl));
+
+      const revokeSpy = vi.spyOn(URL, 'revokeObjectURL');
+      await myp5.remove();
+
+      expect(revokeSpy).toHaveBeenCalledWith(blobUrl);
+      assert.equal(myp5._blobUrls.size, 0);
+      revokeSpy.mockRestore();
+    });
+
+    test('file.revoke() revokes the URL, removes it from pInst._blobUrls, and is idempotent', async function () {
+      myp5 = new p5(function () {});
+      const videoBlob = new Blob(['dummy video content'], { type: 'video/mp4' });
+      const videoFile = new File([videoBlob], 'test.mp4', { type: 'video/mp4' });
+
+      let loadedFile;
+      P5File._load(
+        videoFile,
+        f => {
+          loadedFile = f;
+        },
+        myp5
+      );
+
+      const blobUrl = loadedFile.data;
+      assert.isTrue(myp5._blobUrls.has(blobUrl));
+
+      const revokeSpy = vi.spyOn(URL, 'revokeObjectURL');
+      loadedFile.revoke();
+
+      expect(revokeSpy).toHaveBeenCalledTimes(1);
+      expect(revokeSpy).toHaveBeenCalledWith(blobUrl);
+      assert.isFalse(myp5._blobUrls.has(blobUrl));
+
+      // Calling revoke() a second time is an idempotent no-op
+      loadedFile.revoke();
+      expect(revokeSpy).toHaveBeenCalledTimes(1);
+
+      // Subsequent p5.remove() will not double revoke
+      revokeSpy.mockClear();
+      await myp5.remove();
+      expect(revokeSpy).not.toHaveBeenCalledWith(blobUrl);
+
+      revokeSpy.mockRestore();
+    });
+
+    test('createFileInput passes pInst so loaded media files are tracked', function () {
+      myp5 = new p5(function () {});
+      let loadedFile;
+      const fileInput = myp5.createFileInput(f => {
+        loadedFile = f;
+      });
+
+      const videoBlob = new Blob(['video data'], { type: 'video/mp4' });
+      const testFile = new File([videoBlob], 'input.mp4', { type: 'video/mp4' });
+
+      const dt = new DataTransfer();
+      dt.items.add(testFile);
+      fileInput.elt.files = dt.files;
+      fileInput.elt.dispatchEvent(new Event('change'));
+
+      assert.isDefined(loadedFile);
+      assert.match(loadedFile.data, /^blob:/);
+      assert.isTrue(myp5._blobUrls.has(loadedFile.data));
+    });
+
+    test('element.drop() passes pInst so dropped media files are tracked', function () {
+      myp5 = new p5(function () {});
+      let loadedFile;
+      const dropZone = myp5.createDiv();
+      dropZone.drop(f => {
+        loadedFile = f;
+      });
+
+      const videoBlob = new Blob(['video data'], { type: 'video/mp4' });
+      const testFile = new File([videoBlob], 'drop.mp4', { type: 'video/mp4' });
+
+      const event = new Event('drop');
+      event.dataTransfer = { files: [testFile] };
+      dropZone.elt.dispatchEvent(event);
+
+      assert.isDefined(loadedFile);
+      assert.match(loadedFile.data, /^blob:/);
+      assert.isTrue(myp5._blobUrls.has(loadedFile.data));
+    });
+  });
 });
