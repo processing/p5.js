@@ -173,6 +173,10 @@ function _removeLoadingOverlay(pInst) {
 function _drawLoadingIndicator(ctx, x, y, t) {
   let rotationSpeed = 3.25;
   let indicatorSize = 1.5;
+  
+  // Semi-transparent gray background
+  ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+  ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
   ctx.save();
   ctx.translate(x, y);
