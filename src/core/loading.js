@@ -22,14 +22,21 @@ export default function loading(p5, fn, lifecycles) {
   p5.registerDecorator('p5.prototype.noCanvas', _handleLoadingIndicator(false));
 
   /**
-   * Disables the loading indicator.
-   * Calling `noLoadingIndicator()` will disable the loading 
-   * indicator the following lines of code of the current sketch
+   * Sets a custom loading animation for the current sketch.
    *
-   * @method noLoadingIndicator
+   * Calling `loadingAnimation()` without a callback disables the loading
+   * animation. Calling it with a callback replaces the default animation.
+   * The callback receives the overlay's 2D rendering context, its width,
+   * its height, and the current animation frame. The callback's `this` value
+   * is the current p5 instance.
+   *
+   * @method loadingAnimation
+   * @param {Function} [callback] Function used to draw each animation frame.
+   * @chainable
    */
-  fn.noLoadingIndicator = function () {
-    this._loadingIndicatorDisabled = true;
+  fn.loadingAnimation = function (callback) {
+    this._hasCustomLoading = true;
+    this._loadingAnimation = callback;
     _removeLoadingOverlay(this);
     return this;
   };
@@ -52,7 +59,7 @@ export default function loading(p5, fn, lifecycles) {
  * @param {p5} pInst The p5 instance.
  */
 function _createLoadingOverlay(pInst) {
-  if (pInst._loadingIndicatorDisabled) {
+  if (pInst._hasCustomLoading && typeof pInst._loadingAnimation !== 'function') {
     return;
   }
   
@@ -72,15 +79,29 @@ function _createLoadingOverlay(pInst) {
     let frameCount = 0;
 
     const animate = () => {
-      if (!pInst._isSketchLoading) return;
-
+      if (!pInst._isSketchLoading) {
+        return;
+      }
+      
       ctx.clearRect(0, 0, overlay.width, overlay.height);
-      _drawLoadingIndicator(
-        ctx,
-        overlay.width / 2,
-        overlay.height / 2,
-        frameCount++
-      );
+      const frame = frameCount++;
+      if (pInst._hasCustomLoading) {
+        pInst._loadingAnimation.call(
+          pInst,
+          ctx,
+          overlay.width,
+          overlay.height,
+          frame
+        );
+      } 
+      else {
+        _drawLoadingIndicator(
+          ctx,
+          overlay.width / 2,
+          overlay.height / 2,
+          frame
+        );
+      }
 
       pInst._loadingOverlayFrame = requestAnimationFrame(animate);
     };
@@ -200,10 +221,10 @@ export function _handleLoadingIndicator(isLoading) {
 
       // Create loading overlay if canvas is loading
       if (isLoading) {
-        if (this._isSketchLoading && !this._loadingIndicatorDisabled) {
+        if (this._isSketchLoading) {
           _createLoadingOverlay(this);
         }
-      } 
+      }
 
       // Remove loading overlay if canvas isn't loading
       else {

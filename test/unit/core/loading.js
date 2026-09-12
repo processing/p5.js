@@ -117,21 +117,36 @@ suite('Loading indicator', function () {
     assert.isNull(container.querySelector('.loading-indicator'), 'Loading indicator should be removed');
   });
 
-  test('disables the loading indicator', function () {
+  test('disables the loading animation without a callback', function () {
     const p = Object.assign({}, mockP5Prototype, {
       canvas,
-      _loadingIndicatorDisabled: false
+      _hasCustomLoading: false
     });
     const overlay = document.createElement('canvas');
     overlay.classList.add('loading-indicator');
     container.appendChild(overlay);
     p._loadingOverlay = overlay;
 
-    const result = p.noLoadingIndicator();
+    const result = p.loadingAnimation();
 
-    assert.isTrue(p._loadingIndicatorDisabled);
+    assert.isTrue(p._hasCustomLoading);
+    assert.isUndefined(p._loadingAnimation);
     assert.isNull(container.querySelector('.loading-indicator'));
     assert.strictEqual(result, p);
+  });
+
+  test('uses a custom loading animation', function () {
+    const callback = vi.fn();
+    const p = Object.assign({}, mockP5Prototype, {
+      canvas,
+      _isSketchLoading: true
+    });
+
+    p.loadingAnimation(callback);
+
+    assert.isTrue(p._hasCustomLoading);
+    assert.strictEqual(p._loadingAnimation, callback);
+    assert.strictEqual(p.loadingAnimation(callback), p);
   });
 
   test('test multiple indicators for multiple instances', async function () {
