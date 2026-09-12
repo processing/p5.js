@@ -8,6 +8,7 @@
  * drawing images to the main display canvas.
  */
 import Filters from './filters';
+import { Color } from '../color/p5.Color';
 import { Renderer } from '../core/p5.Renderer';
 import { downloadFile, _checkFileExtension } from '../io/utilities';
 
@@ -56,9 +57,9 @@ class Image {
 
       this._pixelDensity = density;
 
-      // Adjust canvas dimensions based on pixel density
-      this.width /= density;
-      this.height /= density;
+      // Adjust logical dimensions based on physical canvas dimensions and pixel density
+      this.width = this.canvas.width / density;
+      this.height = this.canvas.height / density;
 
       return this; // Return the image instance for chaining if needed
     } else {
@@ -611,7 +612,7 @@ class Image {
           a = imgOrCol[3];
           //this.updatePixels.call(this);
         }
-      } else if (imgOrCol instanceof p5.Color) {
+      } else if (imgOrCol instanceof Color) {
         if (idx < pixelsState.pixels.length) {
           [r, g, b, a] = imgOrCol._getRGBA([255, 255, 255, 255]);
           //this.updatePixels.call(this);
@@ -721,20 +722,24 @@ class Image {
 
     // auto-resize
     if (width === 0 && height === 0) {
-      width = this.canvas.width;
-      height = this.canvas.height;
+      width = this.width;
+      height = this.height;
     } else if (width === 0) {
-      width = (this.canvas.width * height) / this.canvas.height;
+      width = (this.width * height) / this.height;
     } else if (height === 0) {
-      height = (this.canvas.height * width) / this.canvas.width;
+      height = (this.height * width) / this.width;
     }
 
     width = Math.floor(width);
     height = Math.floor(height);
 
+    const pd = this._pixelDensity;
+    const canvasWidth = Math.floor(width * pd);
+    const canvasHeight = Math.floor(height * pd);
+
     const tempCanvas = document.createElement('canvas');
-    tempCanvas.width = width;
-    tempCanvas.height = height;
+    tempCanvas.width = canvasWidth;
+    tempCanvas.height = canvasHeight;
 
     if (this.gifProperties) {
       const props = this.gifProperties;
@@ -755,8 +760,8 @@ class Image {
       };
       for (let i = 0; i < props.numFrames; i++) {
         const resizedImageData = this.drawingContext.createImageData(
-          width,
-          height
+          canvasWidth,
+          canvasHeight
         );
         nearestNeighbor(props.frames[i].image, resizedImageData);
         props.frames[i].image = resizedImageData;
@@ -773,25 +778,27 @@ class Image {
         this.canvas.height,
         0,
         0,
-        tempCanvas.width,
-        tempCanvas.height
+        canvasWidth,
+        canvasHeight
       );
 
     // Resize the original canvas, which will clear its contents
-    this.canvas.width = this.width = width;
-    this.canvas.height = this.height = height;
+    this.width = width;
+    this.height = height;
+    this.canvas.width = canvasWidth;
+    this.canvas.height = canvasHeight;
 
     //Copy the image back
     this.drawingContext.drawImage(
       tempCanvas,
       0,
       0,
-      width,
-      height,
+      canvasWidth,
+      canvasHeight,
       0,
       0,
-      width,
-      height
+      canvasWidth,
+      canvasHeight
     );
 
     if (this.pixels.length > 0) {
