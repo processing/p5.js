@@ -8,7 +8,6 @@
  * drawing images to the main display canvas.
  */
 import Filters from './filters';
-import { Color } from '../color/p5.Color';
 import { Renderer } from '../core/p5.Renderer';
 import { downloadFile, _checkFileExtension } from '../io/utilities';
 
@@ -612,7 +611,8 @@ class Image {
           a = imgOrCol[3];
           //this.updatePixels.call(this);
         }
-      } else if (imgOrCol instanceof Color) {
+      // Duck typing instead of instanceof Color to avoid importing Color across modules
+      } else if (imgOrCol?.isColor) {
         if (idx < pixelsState.pixels.length) {
           [r, g, b, a] = imgOrCol._getRGBA([255, 255, 255, 255]);
           //this.updatePixels.call(this);
