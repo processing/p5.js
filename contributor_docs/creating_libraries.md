@@ -126,8 +126,6 @@ You can access p5.js functions and variables such as `circle()` and `PI` in your
 
 <details>
 <summary>You should always use the “<code>function()</code>” keyword to attach methods to the <code>fn</code> argument object.</summary> Don’t use the arrow function syntax “<code>() =></code>” because the value of “<code>this</code>” when using the “<code>function()</code>” keyword is the created object (i.e., the p5 sketch), but with the arrow function syntax, the value of “<code>this</code>” is whatever the value of “<code>this</code>” is when the arrow function is defined. In the example below, “<code>this</code>” will refer to “<code>window</code>” instead of the p5 sketch, which is usually not what we want.
-</details>
-
 ```js
 function loadCSVAddon(p5, fn, lifecycles) {
   fn.loadCSV = filename => {
@@ -138,6 +136,7 @@ function loadCSVAddon(p5, fn, lifecycles) {
   };
 }
 ```
+</details>
 
 ```js
 function loadCSVAddon(p5, fn, lifecycles) {
