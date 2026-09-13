@@ -1,4 +1,3 @@
-import { vi } from 'vitest';
 import p5 from '../../../../src/app';
 import { visualSuite, visualTest } from '../visualTest';
 import rendererWebGPU from '../../../../src/webgpu/p5.RendererWebGPU';

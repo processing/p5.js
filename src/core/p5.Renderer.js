@@ -452,6 +452,7 @@ function renderer(p5, fn) {
  * Adapted from http://stackoverflow.com/a/25355178
  * @private
  */
+/* oxlint-disable-next-line no-unused-vars */
 function calculateOffset(object) {
   let currentLeft = 0,
     currentTop = 0;
