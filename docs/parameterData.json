@@ -2153,7 +2153,8 @@
       "overloads": [
         [
           "Number",
-          "Number"
+          "Number",
+          "...Number[]"
         ],
         [
           "Number[]"
@@ -2338,7 +2339,8 @@
       "overloads": [
         [
           "Number",
-          "Number"
+          "Number",
+          "...Number[]"
         ],
         [
           "Number[]"

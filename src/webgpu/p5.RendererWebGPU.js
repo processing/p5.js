@@ -6,7 +6,7 @@
 
 import * as constants from '../core/constants';
 import { getStrokeDefs } from '../webgl/enums';
-import { DataType, INSTANCE_ID_VARYING_NAME } from '../strands/ir_types.js';
+import { DataType } from '../strands/ir_types.js';
 
 import { colorVertexShader, colorFragmentShader } from './shaders/color';
 import { lineVertexShader, lineFragmentShader } from './shaders/line';
@@ -28,6 +28,8 @@ import {
   imageLightSpecularFragmentShader
 } from './shaders/imageLight';
 import { baseComputeShader } from './shaders/compute';
+
+import { warnExperimental } from '../core/experimental';
 
 const FRAME_STATE = {
   PENDING: 0,
@@ -719,6 +721,8 @@ function rendererWebGPU(p5, fn) {
   class RendererWebGPU extends Renderer3D {
     constructor(pInst, w, h, isMainCanvas, elt) {
       super(pInst, w, h, isMainCanvas, elt);
+
+      warnExperimental(p5, pInst, 'webgpu');
 
       // Used to group draws into one big render pass
       this.activeRenderPass = null;
@@ -2798,7 +2802,7 @@ function rendererWebGPU(p5, fn) {
       };
 
       while ((match = elementRegex.exec(structBody)) !== null) {
-        const [_, location, name, type] = match;
+        const [, location, name, type] = match;
         const { size, align, pack, packInPlace, baseType } =
           baseAlignAndSize(type);
         offset = Math.ceil(offset / align) * align;
@@ -2855,7 +2859,7 @@ function rendererWebGPU(p5, fn) {
           ? shader.computeSrc()
           : shader.vertSrc();
       while ((match = uniformVarRegex.exec(src)) !== null) {
-        const [_, groupNum, binding, varName, structType] = match;
+        const [, groupNum, binding, varName, structType] = match;
         const bindingIndex = parseInt(binding);
         const uniforms = this._parseStruct(src, structType);
 
@@ -2923,7 +2927,7 @@ function rendererWebGPU(p5, fn) {
 
         let match;
         while ((match = samplerRegex.exec(src)) !== null) {
-          const [_, group, binding, name, type] = match;
+          const [, group, binding, name, type] = match;
           const groupIndex = parseInt(group);
           const bindingIndex = parseInt(binding);
           // Skip struct uniform bindings which we've already parsed
@@ -2958,7 +2962,7 @@ function rendererWebGPU(p5, fn) {
 
         // Parse storage buffers
         while ((match = storageRegex.exec(src)) !== null) {
-          const [_, group, binding, accessMode, name, elementType] = match;
+          const [, group, binding, accessMode, name, elementType] = match;
           const groupIndex = parseInt(group);
           const bindingIndex = parseInt(binding);
 
@@ -3010,10 +3014,10 @@ function rendererWebGPU(p5, fn) {
       if (frag) sources.push([frag, GPUShaderStage.FRAGMENT]);
       if (compute) sources.push([compute, GPUShaderStage.COMPUTE]);
 
-      for (const [src, visibility] of sources) {
+      for (const [src] of sources) {
         let match;
         while ((match = bindingRegex.exec(src)) !== null) {
-          const [_, groupIndex, bindingIndex] = match;
+          const [, groupIndex, bindingIndex] = match;
           if (parseInt(groupIndex) === group) {
             maxBindingIndex = Math.max(maxBindingIndex, parseInt(bindingIndex));
           }
@@ -3635,7 +3639,7 @@ ${hookUniformFields}}
 
       // Handle instanceID varying for fragment access
       if (shader.hooks.instanceIDVarying) {
-        const { name, declaration, source, interpolation } =
+        const { declaration, source, interpolation } =
           shader.hooks.instanceIDVarying;
         const nextLocIndex = this._getNextAvailableLocation(
           preMain,
@@ -3644,7 +3648,7 @@ ${hookUniformFields}}
         const interpAttr = interpolation
           ? ` @interpolate(${interpolation})`
           : '';
-        const [varName, varType] = declaration.split(':').map(s => s.trim());
+        const [varName] = declaration.split(':').map(s => s.trim());
         const structMember = `@location(${nextLocIndex})${interpAttr} ${declaration},`;
 
         if (shaderType === 'vertex') {
@@ -3694,7 +3698,7 @@ ${hookUniformFields}}
       }
       for (const hookDef in shader.hooks.helpers) {
         const [hookType, hookName] = hookDef.split(' ');
-        const [_, params, body] = /^(\([^)]*\))((?:.|\n)*)$/.exec(
+        const [, params, body] = /^(\([^)]*\))((?:.|\n)*)$/.exec(
           shader.hooks.helpers[hookDef]
         );
         if (hookType === 'void') {
@@ -3713,7 +3717,7 @@ ${hookUniformFields}}
           shader.hooks.modified[shaderType][hookDef] ? 'true' : 'false'
         };\n`;
 
-        let [_, params, body] = /^(\([^)]*\))((?:.|\n)*)$/.exec(
+        let [, params, body] = /^(\([^)]*\))((?:.|\n)*)$/.exec(
           shader.hooks[shaderType][hookDef]
         );
 
