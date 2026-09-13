@@ -477,7 +477,7 @@ suite('WebGPU p5.RendererWebGPU', function () {
       );
       device.queue.submit([encoder.finish()]);
       await stagingBuffer.mapAsync(GPUMapMode.READ);
-      const rawCounter = new Uint32Array(stagingBuffer.getMappedRange())[0];
+      const rawCounter = new Int32Array(stagingBuffer.getMappedRange())[0];
       stagingBuffer.unmap();
       stagingBuffer.destroy();
 

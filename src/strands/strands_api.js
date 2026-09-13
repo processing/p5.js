@@ -8,6 +8,7 @@ import {
   isStructType,
   StatementType,
   NodeType,
+  OpCode,
   HOOK_PARAM_PREFIX
   // isNativeType
 } from './ir_types';

@@ -326,28 +326,29 @@ export const wgslBackend = {
       const bufTypeName = `${name}_buf`;
       const bufDecl =
         `${elementTypeDecl}` +
-        `struct ${bufTypeName} { data: array<${elementTypeName}, ${maxCapacity}>, length: atomic<u32> }\n` +
+        `struct ${bufTypeName} { data: array<${elementTypeName}, ${maxCapacity}>, length: atomic<i32> }\n` +
         `@group(0) @binding(${bindingIndex}) var<storage, read_write> ${name}: ${bufTypeName};`;
 
       const pushParam = schema ? `element: ${elementTypeName}` : `value: f32`;
       const pushStore = schema ? `${name}.data[_idx] = element;` : `${name}.data[_idx] = value;`;
       const pushFn =
         `fn _p5_push_${name}(${pushParam}) {\n` +
-        `  let _idx = atomicAdd(&${name}.length, 1u);\n` +
-        `  atomicMin(&${name}.length, ${maxCapacity}u);\n` +
-        `  if (_idx < ${maxCapacity}u) { ${pushStore} }\n` +
+        `  let _idx = atomicAdd(&${name}.length, 1);\n` +
+        `  atomicMin(&${name}.length, ${maxCapacity});\n` +
+        `  if (_idx < ${maxCapacity}) { ${pushStore} }\n` +
         `}`;
 
       const popReturnType = schema ? elementTypeName : 'f32';
       const popFn =
         `fn _p5_pop_${name}() -> ${popReturnType} {\n` +
-        `  let _idx = atomicSub(&${name}.length, 1u);\n` +
-        `  return ${name}.data[_idx - 1u];\n` +
+        `  let _idx = atomicSub(&${name}.length, 1);\n` +
+        `  atomicMax(&${name}.length, 0);\n` +
+        `  return ${name}.data[_idx - 1];\n` +
         `}`;
 
       const lengthFn =
         `fn _p5_length_${name}() -> i32 {\n` +
-        `  return i32(atomicLoad(&${name}.length));\n` +
+        `  return atomicLoad(&${name}.length);\n` +
         `}`;
 
       strandsContext.computeDeclarations.add(bufDecl);

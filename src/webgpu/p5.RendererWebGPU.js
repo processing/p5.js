@@ -637,7 +637,7 @@ function rendererWebGPU(p5, fn) {
       device.queue.writeBuffer(
         this.buffer,
         this._lengthOffset,
-        new Uint32Array([this._cpuLength])
+        new Int32Array([this._cpuLength])
       );
     }
 
@@ -674,7 +674,7 @@ function rendererWebGPU(p5, fn) {
       const mapped = stagingBuffer.getMappedRange();
 
       const length = Math.min(
-        new DataView(mapped).getUint32(this._lengthOffset, true),
+        new DataView(mapped).getInt32(this._lengthOffset, true),
         this.maxCapacity
       );
 
@@ -4575,7 +4575,7 @@ ${hookUniformFields}}
       if (initialDataPacked !== null) {
         new Float32Array(mapped).set(initialDataPacked);
       }
-      new Uint32Array(mapped, lengthOffset, 1).set([initialCount]);
+      new Int32Array(mapped, lengthOffset, 1).set([initialCount]);
       buffer.unmap();
 
       const storageList = new StorageList(
