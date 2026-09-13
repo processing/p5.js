@@ -613,6 +613,7 @@ function rendererWebGPU(p5, fn) {
      *   matching the list's schema for struct lists.
      */
     push(element) {
+      // TODO: make this method work after the GPU has touched the data?
       if (this._cpuLength >= this.maxCapacity) {
         throw new Error(
           `StorageList is full (maxCapacity: ${this.maxCapacity})`
@@ -635,6 +636,46 @@ function rendererWebGPU(p5, fn) {
       );
       this._cpuLength++;
       device.queue.writeBuffer(
+        this.buffer,
+        this._lengthOffset,
+        new Int32Array([this._cpuLength])
+      );
+    }
+
+    /**
+     * Replaces the contents of the list with new data from JavaScript,
+     * updating the element count to match.
+     *
+     * For a list of numbers, `update` takes in an array of numbers (or
+     * a `Float32Array`.) For a list of objects, pass an array of plain
+     * objects with the same properties present as when you created the list.
+     *
+     * @method update
+     * @for p5.StorageList
+     * @beta
+     * @webgpu
+     * @webgpuOnly
+     * @param {Number[]|Float32Array|Object[]} data The new data to write.
+     */
+    update(data) {
+      if (this._schema) {
+        if (!Array.isArray(data) || data.length === 0 || typeof data[0] !== 'object') {
+          throw new Error('update() expects an array of objects matching the list schema');
+        }
+        if (data.length > this.maxCapacity) {
+          throw new Error(`update() data length ${data.length} exceeds maxCapacity ${this.maxCapacity}`);
+        }
+        const packed = this._renderer._packStructArray(data, this._schema);
+        this._renderer.device.queue.writeBuffer(this.buffer, 0, packed);
+      } else {
+        let typedData = data instanceof Float32Array ? data : new Float32Array(data);
+        if (typedData.length > this.maxCapacity) {
+          throw new Error(`update() data length ${typedData.length} exceeds maxCapacity ${this.maxCapacity}`);
+        }
+        this._renderer.device.queue.writeBuffer(this.buffer, 0, typedData);
+      }
+      this._cpuLength = data.length;
+      this._renderer.device.queue.writeBuffer(
         this.buffer,
         this._lengthOffset,
         new Int32Array([this._cpuLength])

@@ -504,6 +504,57 @@ suite('WebGPU p5.RendererWebGPU', function () {
       expect(values.has(1)).to.be.true;
       expect(values.has(2)).to.be.true;
     });
+
+    test('pop() returns a pushed value and decrements the counter', async function () {
+      const list = myp5.createStorageList(5);
+      const out = myp5.createStorage(new Float32Array([0]));
+
+      const shader = myp5.buildComputeShader(
+        () => {
+          const l = myp5.uniformStorage('l', list);
+          const o = myp5.uniformStorage('o', out);
+          l.push(42.0);
+          o[0] = l.pop();
+        },
+        { myp5, list, out }
+      );
+      myp5.compute(shader, 1);
+
+      const result = await out.read();
+      expect(result[0]).to.be.closeTo(42.0, 0.001);
+
+      const listResult = await list.read();
+      expect(listResult.length).to.equal(0);
+    });
+
+    test('raw GPU counter stays at 0 after popping from an empty list', async function () {
+      const list = myp5.createStorageList(5);
+
+      const shader = myp5.buildComputeShader(
+        () => {
+          const l = myp5.uniformStorage('l', list);
+          l.pop();
+        },
+        { myp5, list }
+      );
+      myp5.compute(shader, 1);
+      myp5._renderer.flushDraw();
+
+      const device = myp5._renderer.device;
+      const stagingBuffer = device.createBuffer({
+        size: 4,
+        usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ
+      });
+      const encoder = device.createCommandEncoder();
+      encoder.copyBufferToBuffer(list.buffer, list._lengthOffset, stagingBuffer, 0, 4);
+      device.queue.submit([encoder.finish()]);
+      await stagingBuffer.mapAsync(GPUMapMode.READ);
+      const rawCounter = new Int32Array(stagingBuffer.getMappedRange())[0];
+      stagingBuffer.unmap();
+      stagingBuffer.destroy();
+
+      expect(rawCounter).to.equal(0);
+    });
   });
 
   suite('StorageList.push() (CPU)', function () {
@@ -603,6 +654,59 @@ suite('WebGPU p5.RendererWebGPU', function () {
       expect(values.has(5)).to.be.true;
       expect(values.has(10)).to.be.true;
       expect(values.has(3)).to.be.true;
+    });
+  });
+
+  suite('StorageList.update()', function () {
+    test('update() with fewer elements reduces the readable length', async function () {
+      const list = myp5.createStorageList(5);
+      list.push(1.0);
+      list.push(2.0);
+      list.push(3.0);
+
+      list.update(new Float32Array([10.0]));
+
+      const result = await list.read();
+      expect(result.length).to.equal(1);
+      expect(result[0]).to.be.closeTo(10.0, 0.001);
+    });
+
+    test('update() replaces struct contents and updates the count', async function () {
+      const list = myp5.createStorageList(5, { x: 0.0 });
+      list.push({ x: 1.0 });
+      list.push({ x: 2.0 });
+      list.push({ x: 3.0 });
+
+      list.update([{ x: 99.0 }]);
+
+      const result = await list.read();
+      expect(result.length).to.equal(1);
+      expect(result[0].x).to.be.closeTo(99.0, 0.001);
+    });
+
+    test('raw GPU counter matches the new element count after update()', async function () {
+      const list = myp5.createStorageList(5);
+      list.push(1.0);
+      list.push(2.0);
+      list.push(3.0);
+
+      list.update(new Float32Array([10.0, 20.0]));
+      myp5._renderer.flushDraw();
+
+      const device = myp5._renderer.device;
+      const stagingBuffer = device.createBuffer({
+        size: 4,
+        usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ
+      });
+      const encoder = device.createCommandEncoder();
+      encoder.copyBufferToBuffer(list.buffer, list._lengthOffset, stagingBuffer, 0, 4);
+      device.queue.submit([encoder.finish()]);
+      await stagingBuffer.mapAsync(GPUMapMode.READ);
+      const rawCounter = new Int32Array(stagingBuffer.getMappedRange())[0];
+      stagingBuffer.unmap();
+      stagingBuffer.destroy();
+
+      expect(rawCounter).to.equal(2);
     });
   });
 
