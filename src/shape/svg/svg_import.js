@@ -1,3 +1,9 @@
+/**
+ * @module Shape
+ * @submodule p5.svg
+ * @for p5
+ */
+
 import { ShapeRecorder, ShapeNode, TransformStack } from "./svg_recorder.js";
 
 // Map of standard SVG path commands (moveto, lineto, curveto, arcto, closepath) and their expected parameter signatures.
@@ -1479,16 +1485,95 @@ export function SVGImportAddon(p5, fn, lifecycles) {
         return importer.import(svg);
     }
 
-    // Synchronously converts an SVG string or DOM element into a RecordedShape instance.
+  /**
+   * Parses an SVG string or DOM element synchronously and returns a
+   * <a href="#/p5/p5.RecordedShape/">p5.RecordedShape</a>.
+   *
+   * Use this when SVG content is already available in memory. To load from
+   * a file or URL, use <a href="#/p5/loadSVG">loadSVG()</a> instead.
+   *
+   * ```js example
+   * const inlineSvg = `
+   * <svg width="200" height="200" xmlns="http://www.w3.org/2000/svg">
+   *   <rect x="20" y="20" width="160" height="160" fill="lightblue" stroke="blue" stroke-width="4" />
+   *   <circle cx="100" cy="100" r="50" fill="yellow" />
+   * </svg>
+   * `;
+   *
+   * let importedShape;
+   *
+   * function setup() {
+   *   createCanvas(400, 400);
+   *
+   *   // Parse the SVG string directly, no async needed
+   *   importedShape = createSVG(inlineSvg);
+   * }
+   *
+   * function draw() {
+   *   background(240);
+   *   shape(importedShape);
+   * }
+   * ```
+   *
+   * @method createSVG
+   * @param {String|SVGElement} svgSource a raw SVG string or an SVG DOM element.
+   * @return {p5.RecordedShape} the parsed shape.
+   * @beta
+   */
     fn.createSVG = function (input) {
         return createSVGText(this, input);
     };
 
-    // Asynchronously loads an external SVG file from a URL path,
-    // returning a Promise that resolves to a RecordedShape instance.
-
-
-
+  /**
+   * Asynchronously loads an SVG file from `path` and returns a
+   * <a href="#/p5/p5.RecordedShape/">p5.RecordedShape</a>.
+   *
+   * The recommended approach is `async/await` in `setup()`. For SVG content
+   * already in memory, use <a href="#/p5/createSVG">createSVG()</a> instead.
+   *
+   * Once loaded, you can inspect and edit the underlying SVG elements using
+   * standard DOM methods via the `sourceSVG` property (e.g. `querySelector()`
+   * and `setAttribute()`), and re-parse the modified element using
+   * <a href="#/p5/createSVG">createSVG()</a>.
+   *
+   * ```js example
+   * let botLogo;
+   *
+   * async function setup() {
+   *   createCanvas(500, 500);
+   *
+   *   try {
+   *     // loadSVG returns a promise; await the resolved RecordedShape
+   *     botLogo = await loadSVG('/assets/img/p5js.svg');
+   *     console.log('SVG Loaded successfully!');
+   *   } catch (err) {
+   *     console.error('Failed to load SVG:', err);
+   *   }
+   * }
+   *
+   * function draw() {
+   *   background(255);
+   *
+   *   // Render the SVG once it is fully loaded
+   *   if (botLogo) {
+   *     shape(botLogo);
+   *   } else {
+   *     fill(100);
+   *     text('Loading SVG...', 20, 30);
+   *   }
+   * }
+   * ```
+   *
+   * @method loadSVG
+   * @param {String} path path or URL of the SVG file.
+   * @param {Function} [successCallback] function called with the
+   *                                     <a href="#/p5/p5.RecordedShape/">p5.RecordedShape</a>
+   *                                     on success.
+   * @param {Function} [failureCallback] function called with the error if
+   *                                     loading fails.
+   * @return {Promise<p5.RecordedShape>} a Promise resolving to the parsed shape.
+   * @beta
+   */
     fn.loadSVG = async function (
         path,
         successCallback,

@@ -1,5 +1,5 @@
 /**
- * @module SVG
+ * @module Shape
  * @submodule p5.svg
  * @for p5
  */

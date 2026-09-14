@@ -1,3 +1,9 @@
+/**
+ * @module Shape
+ * @submodule p5.svg
+ * @for p5
+ */
+
 import {
   ShapeNode,
   BackgroundNode,
@@ -7,9 +13,23 @@ import {
 } from "./svg_recorder.js";
 
 /**
- * Represents a recorded p5 shape that can be exported as SVG.
+ * A container for recorded p5 drawing commands that can be exported
+ * as an SVG document or replayed onto the canvas.
  *
- * @class
+ * Use <a href="#/p5/createShape">createShape()</a> or
+ * <a href="#/p5/buildShape">buildShape()</a> to record shapes, or
+ * <a href="#/p5/loadSVG">loadSVG()</a> / <a href="#/p5/createSVG">createSVG()</a>
+ * to import external SVGs into a RecordedShape.
+ *
+ * @class p5.RecordedShape
+ * @property {SVGElement} [sourceSVG] reference to the underlying browser DOM
+ *   SVGElement when imported via `createSVG()` or `loadSVG()`.
+ * @property {Object} [viewBox] parsed `{ x, y, width, height }` from the SVG
+ *   `viewBox` attribute.
+ * @property {Number} [width] width defined on the root `<svg>` element.
+ * @property {Number} [height] height defined on the root `<svg>` element.
+ * @property {Object} [coordinateBounds] resolved coordinate bounds
+ *   `{ x, y, width, height }` used for `CORNER` and `CENTER` alignments.
  * @beta
  */
 class RecordedShape {
@@ -19,6 +39,21 @@ class RecordedShape {
     this.data = null;
   }
 
+  /**
+   * Starts capturing drawing commands into this shape container.
+   *
+   * **Options:**
+   * - `draw` (Boolean, optional): If `true`, drawing commands will be drawn onto
+   *   the canvas in addition to being recorded. If `false` (default), commands
+   *   are recorded silently without rendering.
+   *
+   * @method begin
+   * @for p5.RecordedShape
+   * @param {Object} [options] recording options.
+   * @param {Boolean} [options.draw=false] whether to draw commands onto the
+   *                                       canvas in addition to being recorded.
+   * @beta
+   */
   begin(options = {}) {
     this.recorder = new ShapeRecorder(this.p5, {
       draw: options ? (options.draw ?? false) : false
@@ -27,6 +62,13 @@ class RecordedShape {
     this.recorder.start();
   }
 
+  /**
+   * Stops capturing drawing commands and finalizes the shape.
+   *
+   * @method end
+   * @for p5.RecordedShape
+   * @beta
+   */
   end() {
     if (!this.recorder) {
       console.warn('end() called without a matching begin().');
@@ -957,13 +999,130 @@ export function SVGExportAddon(p5, fn, lifecycles) {
     URL.revokeObjectURL(url);
   }
 
-  // Instantiates a new RecordedShape vector container.
+  /**
+   * Creates a new <a href="#/p5/p5.RecordedShape/">p5.RecordedShape</a> instance.
+   *
+   * Use this when you need fine-grained control over when recording starts
+   * and stops. Call <a href="#/p5.RecordedShape/begin">begin()</a> to start
+   * capturing drawing commands and <a href="#/p5.RecordedShape/end">end()</a>
+   * to stop. For a simpler callback-based API, use
+   * <a href="#/p5/buildShape">buildShape()</a>.
+   *
+   * ```js example
+   * let customShape;
+   *
+   * function setup() {
+   *   createCanvas(400, 400);
+   *
+   *   // Create the shape instance
+   *   customShape = createShape();
+   *
+   *   // Start recording
+   *   customShape.begin({ draw: true });
+   *
+   *   background(220);
+   *   fill(0, 150, 255);
+   * }
+   *
+   * function draw() {
+   *   // Record user drawing coordinates
+   *   if (mouseIsPressed) {
+   *     circle(mouseX, mouseY, 20);
+   *   }
+   * }
+   *
+   * function keyPressed() {
+   *   if (key === 's') {
+   *     // End recording and save
+   *     customShape.end();
+   *     saveSVG(customShape, 'brush-stroke.svg');
+   *     noLoop();
+   *   }
+   * }
+   * ```
+   *
+   * @method createShape
+   * @return {p5.RecordedShape} a new, empty recorded shape container.
+   * @beta
+   */
   fn.createShape = function () {
     return new RecordedShape(this);
   };
 
-  // Helper function that records drawing commands executed inside the provided callback
-  // into a RecordedShape instance, automatically calling begin() and end().
+  /**
+   * Records drawing commands executed inside `callback` into a
+   * <a href="#/p5/p5.RecordedShape/">p5.RecordedShape</a> and returns it.
+   *
+   * `buildShape` is the easiest way to record a self-contained drawing block.
+   * It intercepts p5.js drawing commands within the callback and stores them.
+   * `begin()` and `end()` are called automatically.
+   *
+   * **Options:**
+   * - `draw` (Boolean, optional): If `true`, the drawing commands will be drawn
+   *   onto the canvas in addition to being recorded. If `false` (default), they
+   *   are only recorded silently without rendering.
+   *
+   * ```js example
+   * let drawing;
+   *
+   * function setup() {
+   *   createCanvas(400, 400);
+   *
+   *   // Record drawing commands silently
+   *   drawing = buildShape(() => {
+   *     fill(255, 0, 0);
+   *     rect(50, 50, 100, 100);
+   *     circle(300, 300, 80);
+   *   });
+   * }
+   *
+   * function draw() {
+   *   background(240);
+   *   shape(drawing);
+   * }
+   *
+   * function keyPressed() {
+   *   if (key === 's') {
+   *     // Save the SVG file
+   *     saveSVG(drawing, 'my-drawing.svg');
+   *   }
+   * }
+   * ```
+   *
+   * ```js example
+   * let drawing;
+   *
+   * function setup() {
+   *   createCanvas(400, 400);
+   *
+   *   // Record drawing commands and render them on the screen canvas simultaneously
+   *   drawing = buildShape(() => {
+   *     background(240);
+   *     strokeWeight(4);
+   *     stroke(0);
+   *     line(0, 0, width, height);
+   *   }, { draw: true });
+   * }
+   *
+   * function keyPressed() {
+   *   if (key === 's') {
+   *     // Save the SVG file
+   *     saveSVG(drawing, 'diagonal-line.svg');
+   *   }
+   * }
+   * ```
+   *
+   * @method buildShape
+   * @param {Function} callback a function containing the drawing instructions.
+   * @param {Object} [options] recording options.
+   * @param {Boolean} [options.draw=false] if `true`, the drawing commands will
+   *                                       be drawn onto the canvas in addition
+   *                                       to being recorded. If `false` (default),
+   *                                       they are only recorded silently without
+   *                                       rendering.
+   * @return {p5.RecordedShape} the recorded shape.
+   * @beta
+   */
   fn.buildShape = function (callback, options = {}) {
     const shape = this.createShape();
     shape.begin(options);
@@ -977,7 +1136,35 @@ export function SVGExportAddon(p5, fn, lifecycles) {
     return shape;
   };
 
-  // Generates a valid SVG 2.0 XML string from a RecordedShape instance.
+  /**
+   * Returns a valid SVG 2.0 XML string from a
+   * <a href="#/p5/p5.RecordedShape/">p5.RecordedShape</a>.
+   *
+   * Useful for injecting SVG markup into the DOM or sending it to a server.
+   * To download a file directly, use
+   * <a href="#/p5/saveSVG">saveSVG()</a> instead.
+   *
+   * ```js example
+   * function setup() {
+   *   createCanvas(200, 200);
+   *
+   *   const star = buildShape(() => {
+   *     circle(100, 100, 50);
+   *   });
+   *
+   *   const xmlString = getSVG(star);
+   *   console.log(xmlString); // Outputs: <svg ...><circle ...></svg>
+   *
+   *   // You could insert this directly into an HTML element:
+   *   // document.getElementById('svg-container').innerHTML = xmlString;
+   * }
+   * ```
+   *
+   * @method getSVG
+   * @param {p5.RecordedShape} record the recorded shape to serialize.
+   * @return {String} the SVG XML string.
+   * @beta
+   */
   fn.getSVG = function (record) {
     const visitor = new SVGVisitor(this);
     record.toSVGElement(visitor);
@@ -1198,6 +1385,171 @@ export function SVGExportAddon(p5, fn, lifecycles) {
     }
   }
 
+  /**
+   * Draws a <a href="#/p5/p5.RecordedShape/">p5.RecordedShape</a> onto the canvas.
+   *
+   * You can draw/replay a previously recorded shape object onto the screen canvas
+   * using the `shape()` function. This enables a retained graphics pipeline
+   * similar to Processing `PShape`.
+   *
+   * When rendering an imported SVG or recorded shape with `shape()`, you can
+   * also pass position coordinates `(x, y)` and an `options` configuration object
+   * to control alignment and scaling directly without manually wrapping calls
+   * in `push()`, `translate()`, `scale()`, and `pop()`.
+   *
+   * **Options include:**
+   * - `align`: Alignment mode for positioning:
+   *   - `CORNER` (default): Aligns the top-left corner of the shape's coordinate
+   *     bounds to `(x, y)`. Normalizes any non-zero viewBox offsets.
+   *   - `CENTER`: Centers the shape's bounding box precisely at `(x, y)`.
+   *   - `VIEWBOX`: Preserves raw SVG coordinates without bounding box offset
+   *     normalization, translating the origin `(0, 0)` directly to `(x, y)`.
+   * - `scale`: Scaling factor to apply:
+   *   - Uniform scaling: A single number (e.g. `{ scale: 0.5 }` or `{ scale: 2 }`).
+   *   - Non-uniform scaling: An object with independent axes
+   *     (e.g. `{ scale: { x: 1.5, y: 0.8 } }`).
+   *
+   * When `x`, `y`, `scale`, or non-zero alignment offsets are applied, `shape()`
+   * automatically wraps transformations inside `push()` and `pop()`. Subsequent
+   * drawing operations on the canvas remain completely unaffected.
+   *
+   * ```js example
+   * let starShape;
+   *
+   * function setup() {
+   *   createCanvas(400, 400);
+   *
+   *   // Record the star shape once
+   *   starShape = buildShape(() => {
+   *     beginShape();
+   *     vertex(0, -50);
+   *     vertex(14, -20);
+   *     vertex(47, -15);
+   *     vertex(23, 7);
+   *     vertex(29, 40);
+   *     vertex(0, 25);
+   *     vertex(-29, 40);
+   *     vertex(-23, 7);
+   *     vertex(-47, -15);
+   *     vertex(-14, -20);
+   *     endShape(CLOSE);
+   *   });
+   * }
+   *
+   * function draw() {
+   *   background(255);
+   *
+   *   // Replay/render the shape at different positions with scaling/rotation
+   *   push();
+   *   translate(100, 100);
+   *   fill(255, 204, 0);
+   *   shape(starShape);
+   *   pop();
+   *
+   *   push();
+   *   translate(250, 250);
+   *   scale(1.5);
+   *   fill(0, 204, 255);
+   *   shape(starShape);
+   *   pop();
+   * }
+   * ```
+   *
+   * ```js example
+   * let icon;
+   *
+   * async function setup() {
+   *   createCanvas(400, 400);
+   *   icon = await loadSVG('/assets/img/p5js.svg');
+   * }
+   *
+   * function draw() {
+   *   background(240);
+   *
+   *   if (icon) {
+   *     // Aligns the center of the SVG icon to canvas center (200, 200)
+   *     shape(icon, width / 2, height / 2, {
+   *       align: CENTER,
+   *       scale: 0.75
+   *     });
+   *   }
+   * }
+   * ```
+   *
+   * ```js example
+   * let logo;
+   *
+   * async function setup() {
+   *   createCanvas(400, 400);
+   *   logo = await loadSVG('/assets/img/p5js.svg');
+   * }
+   *
+   * function draw() {
+   *   background(245);
+   *
+   *   if (logo) {
+   *     // CORNER alignment: aligns top-left corner of shape bounds to (100, 100)
+   *     shape(logo, 100, 100, {
+   *       align: CORNER,
+   *       scale: 0.8
+   *     });
+   *   }
+   * }
+   * ```
+   *
+   * ```js example
+   * let logo;
+   *
+   * async function setup() {
+   *   createCanvas(400, 400);
+   *   logo = await loadSVG('/assets/img/p5js.svg');
+   * }
+   *
+   * function draw() {
+   *   background(245);
+   *
+   *   if (logo) {
+   *     // VIEWBOX alignment: translates the origin (0, 0) directly to (100, 100)
+   *     shape(logo, 100, 100, {
+   *       align: VIEWBOX,
+   *       scale: 0.8
+   *     });
+   *   }
+   * }
+   * ```
+   *
+   * ```js example
+   * let flower;
+   *
+   * async function setup() {
+   *   createCanvas(400, 400);
+   *   flower = await loadSVG('/assets/img/p5js.svg');
+   * }
+   *
+   * function draw() {
+   *   background(255);
+   *
+   *   if (flower) {
+   *     // Non-uniform scaling: stretches independently along x and y axes
+   *     shape(flower, width / 2, height / 2, {
+   *       align: CENTER,
+   *       scale: { x: 0.5, y: 0.8 }
+   *     });
+   *   }
+   * }
+   * ```
+   *
+   * @method shape
+   * @param {p5.RecordedShape} record the imported or recorded shape object to render.
+   * @param {Number} [x=0] x-coordinate to anchor the shape.
+   * @param {Number} [y=0] y-coordinate to anchor the shape.
+   * @param {Object} [options] placement options.
+   * @param {String} [options.align] alignment mode: `CORNER` (default),
+   *                                 `CENTER`, or `VIEWBOX`.
+   * @param {Number|Object} [options.scale] uniform scale factor (`Number`), or
+   *                                        per-axis `{ x, y }` object.
+   * @beta
+   */
   fn.shape = function (record, x = 0, y = 0, options = {}) {
     const replay = new CanvasReplay(this);
     const placement = resolveShapePlacement(record, x, y, options);
@@ -1212,6 +1564,50 @@ export function SVGExportAddon(p5, fn, lifecycles) {
     }
   };
 
+  /**
+   * Downloads the sketch or a recorded shape as an SVG file. Supports two modes:
+   *
+   * **Deferred frame export**: queues an automatic SVG export for a frame
+   * using p5.js lifecycle hooks (`predraw` and `postdraw`):
+   * `saveSVG([filename])`
+   *
+   * Shape recording automatically starts at `predraw` and stops at `postdraw`,
+   * exporting the complete SVG immediately after the frame finishes drawing.
+   * When called in `setup()`, it captures the first frame of `draw()`. When
+   * called in `draw()` or event handlers (`keyPressed`, `mousePressed`), it
+   * schedules and captures on the next frame.
+   *
+   * **Direct shape export**: immediately exports an existing
+   * <a href="#/p5/p5.RecordedShape/">p5.RecordedShape</a>:
+   * `saveSVG(record, [filename])`
+   *
+   * ```js example
+   * function setup() {
+   *   createCanvas(400, 400);
+   * }
+   *
+   * function draw() {
+   *   background(220);
+   *   fill(0, 120, 255);
+   *   circle(mouseX, mouseY, 50);
+   * }
+   *
+   * function keyPressed() {
+   *   if (key === 's') {
+   *     // Queues export for the next frame
+   *     saveSVG('interactive-frame.svg');
+   *   }
+   * }
+   * ```
+   *
+   * @method saveSVG
+   * @param {p5.RecordedShape|String} [recordOrFilename] a
+   *   <a href="#/p5/p5.RecordedShape/">p5.RecordedShape</a> to export directly,
+   *   or a filename string for deferred frame export.
+   * @param {String} [filename='drawing.svg'] the downloaded file name.
+   *                 Only used when the first argument is a RecordedShape.
+   * @beta
+   */
   fn.saveSVG = function (arg1, arg2 = 'drawing.svg') {
     // Existing API: saveSVG(recordedShape, filename)
     if (arg1 instanceof RecordedShape || (arg1 && typeof arg1.toSVGElement === 'function')) {
