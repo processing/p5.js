@@ -10,34 +10,34 @@ import {
 // on p5.prototype. It hooks into predraw and postdraw lifecycles to automatically capture drawing commands
 // when saveSVG() is called without explicit shape parameters.
 export function SVGExportAddon(p5, fn, lifecycles) {
-  let pendingExport = null;
+  fn.pendingExport = null;
 
   if (lifecycles) {
     // Hook predraw lifecycle to begin recording when an automatic export is requested via saveSVG()
     lifecycles.predraw = function () {
-      if (!pendingExport || pendingExport.shape) {
+      if (!this.pendingExport || this.pendingExport.shape) {
         return;
       }
 
-      pendingExport.shape = this.createShape();
-      pendingExport.shape.begin({ draw: true });
+      this.pendingExport.shape = this.createShape();
+      this.pendingExport.shape.begin({ draw: true });
     };
 
     // Hook postdraw lifecycle to finish recording and trigger SVG export/download at frame end
     lifecycles.postdraw = function () {
-      if (!pendingExport || !pendingExport.shape) {
+      if (!this.pendingExport || !this.pendingExport.shape) {
         return;
       }
 
-      pendingExport.shape.end();
+      this.pendingExport.shape.end();
 
       exportRecordedShape(
         this,
-        pendingExport.shape,
-        pendingExport.filename
+        this.pendingExport.shape,
+        this.pendingExport.filename
       );
 
-      pendingExport = null;
+      this.pendingExport = null;
     };
   }
 
@@ -1215,12 +1215,12 @@ export function SVGExportAddon(p5, fn, lifecycles) {
 
     // New API: saveSVG(filename) or saveSVG()
     if (typeof arg1 === 'string') {
-      pendingExport = {
+      this.pendingExport = {
         filename: arg1,
         p5: this
       };
     } else if (typeof arg1 === 'undefined') {
-      pendingExport = {
+      this.pendingExport = {
         filename: arg2,
         p5: this
       };
