@@ -22,14 +22,6 @@ import {
  * to import external SVGs into a RecordedShape.
  *
  * @class p5.RecordedShape
- * @property {SVGElement} [sourceSVG] reference to the underlying browser DOM
- *   SVGElement when imported via `createSVG()` or `loadSVG()`.
- * @property {Object} [viewBox] parsed `{ x, y, width, height }` from the SVG
- *   `viewBox` attribute.
- * @property {Number} [width] width defined on the root `<svg>` element.
- * @property {Number} [height] height defined on the root `<svg>` element.
- * @property {Object} [coordinateBounds] resolved coordinate bounds
- *   `{ x, y, width, height }` used for `CORNER` and `CENTER` alignments.
  * @beta
  */
 class RecordedShape {
