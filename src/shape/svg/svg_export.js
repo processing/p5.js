@@ -6,10 +6,50 @@ import {
   ShapeRecorder
 } from "./svg_recorder.js";
 
+/**
+ * Represents a recorded p5 shape that can be exported as SVG.
+ *
+ * @class
+ * @beta
+ */
+class RecordedShape {
+  constructor(pInst) {
+    this.p5 = pInst;
+    this.recorder = undefined;
+    this.data = null;
+  }
+
+  begin(options = {}) {
+    this.recorder = new ShapeRecorder(this.p5, {
+      draw: options ? (options.draw ?? false) : false
+    });
+    this.p5.push();
+    this.recorder.start();
+  }
+
+  end() {
+    if (!this.recorder) {
+      console.warn('end() called without a matching begin().');
+      return;
+    }
+    this.recorder.stop();
+    this.data = this.recorder.getRecord();
+    delete this.recorder;
+    this.p5.pop();
+  }
+
+  toSVGElement(visitor) {
+    if (this.data) {
+      this.data.toSVGElement(visitor);
+    }
+  }
+}
+
 // SVGExportAddon registers vector shape recording, SVG XML generation, and file download utilities
 // on p5.prototype. It hooks into predraw and postdraw lifecycles to automatically capture drawing commands
 // when saveSVG() is called without explicit shape parameters.
 export function SVGExportAddon(p5, fn, lifecycles) {
+  p5.RecordedShape = RecordedShape;
   fn.pendingExport = null;
 
   if (lifecycles) {
@@ -169,40 +209,6 @@ export function SVGExportAddon(p5, fn, lifecycles) {
     };
   };
 
-  // RecordedShape manages the lifecycle of a recorded vector shape session.
-  // Calling begin() starts ShapeRecorder capture, and end() finalizes the AST data graph.
-  class RecordedShape {
-    constructor(pInst) {
-      this.p5 = pInst;
-      this.recorder = undefined;
-      this.data = null;
-    }
-
-    begin(options = {}) {
-      this.recorder = new ShapeRecorder(this.p5, {
-        draw: options ? (options.draw ?? false) : false
-      });
-      this.p5.push();
-      this.recorder.start();
-    }
-
-    end() {
-      if (!this.recorder) {
-        console.warn('end() called without a matching begin().');
-        return;
-      }
-      this.recorder.stop();
-      this.data = this.recorder.getRecord();
-      delete this.recorder;
-      this.p5.pop();
-    }
-
-    toSVGElement(visitor) {
-      if (this.data) {
-        this.data.toSVGElement(visitor);
-      }
-    }
-  }
 
   // SVGVisitor implements the Visitor pattern over p5 geometry primitives and ShapeRecorder AST nodes.
   // It traverses RecordedShape data graphs to construct valid SVG 2.0 XML DOM elements.
