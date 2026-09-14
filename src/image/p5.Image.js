@@ -48,13 +48,7 @@ class Image {
     if (typeof density !== 'undefined') {
       // Setter: set the density and handle resize
       if (density <= 0) {
-        const errorObj = {
-          type: 'INVALID_VALUE',
-          format: { types: ['Number'] },
-          position: 1
-        };
-
-        // p5._friendlyParamError(errorObj, 'pixelDensity');
+        // TODO: report an INVALID_VALUE param error through the FES here.
 
         // Default to 1 in case of an invalid value
         density = 1;
