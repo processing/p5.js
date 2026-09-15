@@ -51,6 +51,110 @@ suite('p5.Image', function () {
     });
   });
 
+  suite('p5.Image.prototype.copy', function () {
+    test('it copies correctly to destination with pixel density > 1', function () {
+      let src = myp5.createImage(50, 50);
+      src.loadPixels();
+      for (let i = 0; i < src.pixels.length; i += 4) {
+        src.pixels[i] = 255;
+        src.pixels[i + 3] = 255;
+      }
+      src.updatePixels();
+
+      let dst = myp5.createImage(100, 100);
+      dst.pixelDensity(2);
+      // dst.width is 50, dst.height is 50, dst.canvas is 100x100
+      dst.copy(src, 0, 0, 50, 50, 0, 0, 50, 50);
+
+      // (35, 35) maps to physical (70, 70), which without the fix was outside
+      // the unscaled 50x50 copy region on the 100x100 canvas.
+      let col = dst.get(35, 35);
+      assert.strictEqual(col[0], 255, 'red channel at (35, 35)');
+      assert.strictEqual(col[3], 255, 'alpha channel at (35, 35)');
+    });
+
+    test('it copies correctly when both source and destination have pixel density > 1', function () {
+      let src = myp5.createImage(50, 50);
+      src.pixelDensity(2);
+      src.loadPixels();
+      for (let i = 0; i < src.pixels.length; i += 4) {
+        src.pixels[i] = 255;
+        src.pixels[i + 3] = 255;
+      }
+      src.updatePixels();
+
+      let dst = myp5.createImage(100, 100);
+      dst.pixelDensity(2);
+      dst.copy(src, 0, 0, 25, 25, 0, 0, 50, 50);
+
+      let col = dst.get(35, 35);
+      assert.strictEqual(col[0], 255, 'red channel at (35, 35)');
+      assert.strictEqual(col[3], 255, 'alpha channel at (35, 35)');
+    });
+  });
+
+  suite('p5.Image.prototype.blend', function () {
+    test('it blends correctly to destination with pixel density > 1', function () {
+      let src = myp5.createImage(50, 50);
+      src.loadPixels();
+      for (let i = 0; i < src.pixels.length; i += 4) {
+        src.pixels[i] = 255;
+        src.pixels[i + 3] = 255;
+      }
+      src.updatePixels();
+
+      let dst = myp5.createImage(100, 100);
+      dst.pixelDensity(2);
+      dst.blend(src, 0, 0, 50, 50, 0, 0, 50, 50, myp5.BLEND);
+
+      let col = dst.get(35, 35);
+      assert.strictEqual(col[0], 255, 'red channel at (35, 35)');
+      assert.strictEqual(col[3], 255, 'alpha channel at (35, 35)');
+    });
+  });
+
+  suite('p5.Image.prototype.mask (high-DPI)', function () {
+    test('mask does not double-scale destination when pixelDensity > 1', function () {
+      // Create a 50x50 image with pixelDensity 2 (canvas is 100x100),
+      // filled solid white fully opaque.
+      let img = myp5.createImage(100, 100);
+      img.pixelDensity(2);
+      img.loadPixels();
+      for (let i = 0; i < img.pixels.length; i += 4) {
+        img.pixels[i] = 255;
+        img.pixels[i + 1] = 255;
+        img.pixels[i + 2] = 255;
+        img.pixels[i + 3] = 255;
+      }
+      img.updatePixels();
+
+      // Create a fully opaque mask of the same logical size.
+      let maskImg = myp5.createImage(100, 100);
+      maskImg.pixelDensity(2);
+      maskImg.loadPixels();
+      for (let i = 0; i < maskImg.pixels.length; i += 4) {
+        maskImg.pixels[i] = 255;
+        maskImg.pixels[i + 1] = 255;
+        maskImg.pixels[i + 2] = 255;
+        maskImg.pixels[i + 3] = 255;
+      }
+      maskImg.updatePixels();
+
+      img.mask(maskImg);
+
+      // Without the fix, double-scaling would cause the mask to draw at
+      // 2x the canvas size, leaving parts of the original image unmasked
+      // or producing incorrect results. Check a pixel in the bottom-right
+      // quadrant that would be affected by double-scaling.
+      let col = img.get(35, 35);
+      assert.strictEqual(col[3], 255, 'alpha at (35, 35) should be 255 (fully opaque)');
+
+      // Also check a corner pixel
+      let corner = img.get(49, 49);
+      assert.strictEqual(corner[3], 255, 'alpha at (49, 49) should be 255 (fully opaque)');
+    });
+  });
+
   suite.todo('p5.Image.prototype.mask', function () {
     for (const density of [1, 2]) {
       test(`it should mask the image at pixel density ${density}`, function () {
