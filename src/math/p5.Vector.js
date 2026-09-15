@@ -652,11 +652,11 @@ class Vector {
 
     if (Array.isArray(args)) {
       for (let i = 0; i < this.values.length; i++) {
-        if (args[i] > 0) {
+        if (Math.abs(args[i]) > 0) {
           this.values[i] = this.values[i] % args[i];
         }
       }
-    } else if (args > 0) {
+    } else if (Math.abs(args) > 0) {
       for (let i = 0; i < this.values.length; i++) {
         this.values[i] = this.values[i] % args;
       }
