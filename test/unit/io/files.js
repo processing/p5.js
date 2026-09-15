@@ -5,7 +5,7 @@ import { vi } from 'vitest';
 const mockAnchorElement = vi.mockObject({
   href: null,
   download: null,
-  click: () => {}
+  click: () => { }
 });
 const originalCreateElement = document.createElement;
 vi.spyOn(document, 'createElement').mockImplementation((...args) => {
@@ -185,6 +185,17 @@ suite('Files', function () {
         mockP5Prototype.save(myStrings, 'filename');
 
         const saveData = new Blob([myStrings.join('\n')]);
+        expect(document.createElement).toHaveBeenCalledTimes(1);
+        expect(mockAnchorElement.click).toHaveBeenCalledTimes(1);
+        expect(URL.createObjectURL).toHaveBeenCalledWith(saveData);
+        assert.equal(mockAnchorElement.download, 'filename.txt');
+      });
+
+      test('should preserve CRLF when saving a text file', async () => {
+        const myStrings = ['aaa', 'bbb'];
+        mockP5Prototype.save(myStrings, 'filename', 'txt', true);
+
+        const saveData = new Blob([myStrings.join('\r\n')]);
         expect(document.createElement).toHaveBeenCalledTimes(1);
         expect(mockAnchorElement.click).toHaveBeenCalledTimes(1);
         expect(URL.createObjectURL).toHaveBeenCalledWith(saveData);
