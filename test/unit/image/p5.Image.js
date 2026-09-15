@@ -113,6 +113,48 @@ suite('p5.Image', function () {
     });
   });
 
+  suite('p5.Image.prototype.mask (high-DPI)', function () {
+    test('mask does not double-scale destination when pixelDensity > 1', function () {
+      // Create a 50x50 image with pixelDensity 2 (canvas is 100x100),
+      // filled solid white fully opaque.
+      let img = myp5.createImage(100, 100);
+      img.pixelDensity(2);
+      img.loadPixels();
+      for (let i = 0; i < img.pixels.length; i += 4) {
+        img.pixels[i] = 255;
+        img.pixels[i + 1] = 255;
+        img.pixels[i + 2] = 255;
+        img.pixels[i + 3] = 255;
+      }
+      img.updatePixels();
+
+      // Create a fully opaque mask of the same logical size.
+      let maskImg = myp5.createImage(100, 100);
+      maskImg.pixelDensity(2);
+      maskImg.loadPixels();
+      for (let i = 0; i < maskImg.pixels.length; i += 4) {
+        maskImg.pixels[i] = 255;
+        maskImg.pixels[i + 1] = 255;
+        maskImg.pixels[i + 2] = 255;
+        maskImg.pixels[i + 3] = 255;
+      }
+      maskImg.updatePixels();
+
+      img.mask(maskImg);
+
+      // Without the fix, double-scaling would cause the mask to draw at
+      // 2x the canvas size, leaving parts of the original image unmasked
+      // or producing incorrect results. Check a pixel in the bottom-right
+      // quadrant that would be affected by double-scaling.
+      let col = img.get(35, 35);
+      assert.strictEqual(col[3], 255, 'alpha at (35, 35) should be 255 (fully opaque)');
+
+      // Also check a corner pixel
+      let corner = img.get(49, 49);
+      assert.strictEqual(corner[3], 255, 'alpha at (49, 49) should be 255 (fully opaque)');
+    });
+  });
+
   suite.todo('p5.Image.prototype.mask', function () {
     for (const density of [1, 2]) {
       test(`it should mask the image at pixel density ${density}`, function () {

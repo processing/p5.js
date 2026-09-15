@@ -1010,8 +1010,8 @@ class Image {
       maskScaleFactor * p5Image.height,
       0,
       0,
-      imgScaleFactor * this.width,
-      imgScaleFactor * this.height
+      this.width,
+      this.height
     ];
 
     this.drawingContext.globalCompositeOperation = 'destination-in';
