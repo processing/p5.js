@@ -36,8 +36,9 @@ class File {
    * @for p5.File
    *
    * @example
-   * // Load a video file and revoke its URL when finished.
+   * // Load a video file and release its URL when replacing it.
    * let video;
+   * let previousFile;
    *
    * function setup() {
    *   createCanvas(100, 100);
@@ -46,9 +47,13 @@ class File {
    *
    * function handleFile(file) {
    *   if (file.type === 'video') {
+   *     if (video) {
+   *       video.remove();
+   *       previousFile.revoke();
+   *     }
+   *
    *     video = createVideo(file.data);
-   *     // Explicitly release the Blob URL when no longer needed:
-   *     file.revoke();
+   *     previousFile = file;
    *   }
    * }
    */
