@@ -5,8 +5,6 @@ import p5 from '../../../src/app.js';
 
 // TODO: Is it possible to test this without a runtime?
 suite('outputs', function () {
-  let myID = 'myCanvasID';
-
   beforeAll(function () {
     outputs(mockP5, mockP5Prototype);
     textOutput(mockP5, mockP5Prototype);
