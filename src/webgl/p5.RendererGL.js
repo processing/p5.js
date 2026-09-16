@@ -466,6 +466,9 @@ class RendererGL extends Renderer3D {
       this._viewport = this.drawingContext.getParameter(
         this.drawingContext.VIEWPORT
       );
+
+      this.rendererType = constants.WEBGL;
+      this._pInst.rendererType = this.rendererType;
     }
   }
 

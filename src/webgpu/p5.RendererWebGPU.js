@@ -861,12 +861,14 @@ function rendererWebGPU(p5, fn) {
       this.device = await this.adapter?.requestDevice({
         // Todo: check support
         requiredFeatures: ['depth32float-stencil8']
-      });
-      if (!this.device) {
+      }).catch(() => null);
+      this.drawingContext = this.canvas.getContext('webgpu');
+
+      if (!this.device || !this.drawingContext) {
         throw new Error('Your browser does not support WebGPU.');
       }
+
       this.queue = this.device.queue;
-      this.drawingContext = this.canvas.getContext('webgpu');
       this.presentationFormat = navigator.gpu.getPreferredCanvasFormat();
       this.drawingContext.configure({
         device: this.device,
@@ -880,6 +882,9 @@ function rendererWebGPU(p5, fn) {
       this._updateSize();
       this._update();
       this.flushDraw();
+
+      this.rendererType = constants.WEBGPU;
+      this._pInst.rendererType = this.rendererType;
     }
 
     async _setAttributes(key, value) {
