@@ -506,6 +506,25 @@ suite('p5.Shader', function () {
       }).not.toThrowError();
     });
 
+    test('handles hook assignments joined with the comma operator', () => {
+      myp5.createCanvas(5, 5, myp5.WEBGL);
+      expect(() => {
+        // Minifiers join statements with commas. Passed as source text so the
+        // test does not depend on how the test file itself is transformed.
+        const myShader = myp5.buildMaterialShader(
+          `({ myp5 }) => {
+            let pos = myp5.sharedVec4();
+            myp5.worldInputs.begin(), pos = [myp5.worldInputs.position / 200, 1], myp5.worldInputs.end();
+            myp5.pixelInputs.begin(), myp5.pixelInputs.color = pos, myp5.pixelInputs.end();
+          }`,
+          { myp5 }
+        );
+        myp5.noStroke();
+        myp5.shader(myShader);
+        myp5.plane(myp5.width, myp5.height);
+      }).not.toThrowError();
+    });
+
     test('buildMaterialShader forwards scope to modify', () => {
       myp5.createCanvas(5, 5, myp5.WEBGL);
       expect(() => {

@@ -104,6 +104,17 @@ function collectUniformCallbackNames(ast) {
   return names;
 }
 
+// Turn an expression node into a call expression in place, dropping the fields
+// of its previous type.
+function replaceWithCall(node, callee, args) {
+  for (const key of Object.keys(node)) {
+    if (!['start', 'end', 'loc', 'range'].includes(key)) delete node[key];
+  }
+  node.type = 'CallExpression';
+  node.callee = callee;
+  node.arguments = args;
+}
+
 function nodeIsVarying(node) {
   return (
     node &&
@@ -703,11 +714,12 @@ const ASTCallbacks = {
       node.right = rightReplacementNode;
     }
     // Handle direct varying variable assignment: myVarying = value
+    // The assignment is rewritten as a call expression in place rather than a
+    // statement, since it may sit inside a larger expression such as a comma list.
     if (state.varyings[node.left.name]) {
-      node.type = 'ExpressionStatement';
-      node.expression = {
-        type: 'CallExpression',
-        callee: {
+      replaceWithCall(
+        node,
+        {
           type: 'MemberExpression',
           object: {
             type: 'Identifier',
@@ -718,8 +730,8 @@ const ASTCallbacks = {
             name: 'bridge'
           }
         },
-        arguments: [node.right]
-      };
+        [node.right]
+      );
     }
     // Handle swizzle assignment to varying variable: myVarying.xyz = value
     // Note: node.left.object might be worldPos.getValue() due to prior Identifier transformation
@@ -767,10 +779,9 @@ const ASTCallbacks = {
 
       if (varyingName) {
         const swizzlePattern = node.left.property.name;
-        node.type = 'ExpressionStatement';
-        node.expression = {
-          type: 'CallExpression',
-          callee: {
+        replaceWithCall(
+          node,
+          {
             type: 'MemberExpression',
             object: {
               type: 'Identifier',
@@ -781,14 +792,14 @@ const ASTCallbacks = {
               name: 'bridgeSwizzle'
             }
           },
-          arguments: [
+          [
             {
               type: 'Literal',
               value: swizzlePattern
             },
             node.right
           ]
-        };
+        );
       }
     }
   },
@@ -1688,7 +1699,7 @@ function transformFunctionSetCalls(functionNode) {
 
     // 2. Transform all .set() calls to assignments
     const transformSetToAssignment = {
-      CallExpression(node, state, ancestors) {
+      CallExpression(node) {
         // Check if this is a .set() call for this hook
         if (
           node.callee?.type === 'MemberExpression' &&
@@ -1697,25 +1708,15 @@ function transformFunctionSetCalls(functionNode) {
         ) {
           const currentExprString = escodegen.generate(node.callee.object);
           if (currentExprString === exprString && node.arguments.length > 0) {
-            // Find the parent statement
-            let parentStmt = null;
-            for (let i = ancestors.length - 1; i >= 0; i--) {
-              if (ancestors[i].type === 'ExpressionStatement') {
-                parentStmt = ancestors[i];
-                break;
-              }
-            }
-
-            if (parentStmt) {
-              // Replace the .set() call with an assignment
-              parentStmt.type = 'ExpressionStatement';
-              parentStmt.expression = {
-                type: 'AssignmentExpression',
-                operator: '=',
-                left: { type: 'Identifier', name: intermediateVarName },
-                right: node.arguments[0]
-              };
-            }
+            // Replace the .set() call itself with an assignment, so any
+            // other expressions sharing its statement (e.g. a comma list) survive.
+            const value = node.arguments[0];
+            delete node.callee;
+            delete node.arguments;
+            node.type = 'AssignmentExpression';
+            node.operator = '=';
+            node.left = { type: 'Identifier', name: intermediateVarName };
+            node.right = value;
           }
         }
       }
