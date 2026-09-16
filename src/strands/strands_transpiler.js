@@ -2013,17 +2013,19 @@ function runControlFlowPass(ast, uniformCallbackNames) {
 }
 
 function buildStrandsCallback(p5, ast, scope) {
-  const transpiledSource = escodegen.generate(ast);
   const scopeKeys = Object.keys(scope);
-  const match =
-    /\(?\s*(?:function)?\s*\w*\s*\(([^)]*)\)\s*(?:=>)?\s*{((?:.|\n)*)}\s*;?\s*\)?/.exec(
-      transpiledSource
-    );
-  if (!match) {
-    console.log(transpiledSource);
+  // The source is wrapped in parentheses before parsing, so the callback is the
+  // program's single expression. Reading its params and body from the AST
+  // handles every parameter form, including `param => { ... }`.
+  const fn = ast.body.length === 1 && ast.body[0].expression;
+  if (
+    !fn ||
+    !['FunctionExpression', 'ArrowFunctionExpression'].includes(fn.type)
+  ) {
+    console.log(escodegen.generate(ast));
     throw new Error('Could not parse p5.strands function!');
   }
-  const params = match[1].split(/,\s*/).filter(param => !!param.trim());
+  const params = fn.params.map(param => escodegen.generate(param));
   let paramVals, paramNames;
   if (params.length > 0) {
     paramNames = params;
@@ -2032,7 +2034,9 @@ function buildStrandsCallback(p5, ast, scope) {
     paramNames = scopeKeys;
     paramVals = scopeKeys.map(key => scope[key]);
   }
-  const body = match[2];
+  const body = fn.body.type === 'BlockStatement'
+    ? fn.body.body.map(statement => escodegen.generate(statement)).join('\n')
+    : `return ${escodegen.generate(fn.body)};`;
   try {
     const internalStrandsCallback = new Function('__p5', ...paramNames, body);
     // Create a parameter called __p5, not just p5, because users of instance mode

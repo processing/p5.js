@@ -506,6 +506,27 @@ suite('p5.Shader', function () {
       }).not.toThrowError();
     });
 
+    test('accepts an arrow function with an unparenthesized parameter', () => {
+      myp5.createCanvas(5, 5, myp5.WEBGL);
+      expect(() => {
+        // Passed as source text so the test does not depend on how the test
+        // file itself is transformed.
+        const myShader = myp5.buildMaterialShader(
+          `param => {
+            const { myp5 } = param;
+            myp5.getPixelInputs(inputs => {
+              inputs.color = [1, 0, 0, 1];
+              return inputs;
+            });
+          }`,
+          { myp5 }
+        );
+        myp5.noStroke();
+        myp5.shader(myShader);
+        myp5.plane(myp5.width, myp5.height);
+      }).not.toThrowError();
+    });
+
     test('buildMaterialShader forwards scope to modify', () => {
       myp5.createCanvas(5, 5, myp5.WEBGL);
       expect(() => {
