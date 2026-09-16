@@ -91,6 +91,17 @@ suite('Files', function () {
       expect(URL.createObjectURL).toHaveBeenCalledWith(saveData);
       assert.equal(mockAnchorElement.download, 'myfile.txt');
     });
+
+    test('should download a file with expected contents with CRLF when extension is omitted', async () => {
+      const strings = ['some', 'words'];
+      mockP5Prototype.saveStrings(strings, 'myfile.txt', true);
+
+      const saveData = new Blob([strings.join('\r\n')]);
+      expect(document.createElement).toHaveBeenCalledTimes(1);
+      expect(mockAnchorElement.click).toHaveBeenCalledTimes(1);
+      expect(URL.createObjectURL).toHaveBeenCalledWith(saveData);
+      assert.equal(mockAnchorElement.download, 'myfile.txt');
+    });
   });
 
   // saveJSON()
@@ -185,6 +196,28 @@ suite('Files', function () {
         mockP5Prototype.save(myStrings, 'filename');
 
         const saveData = new Blob([myStrings.join('\n')]);
+        expect(document.createElement).toHaveBeenCalledTimes(1);
+        expect(mockAnchorElement.click).toHaveBeenCalledTimes(1);
+        expect(URL.createObjectURL).toHaveBeenCalledWith(saveData);
+        assert.equal(mockAnchorElement.download, 'filename.txt');
+      });
+
+      test('should download a text file with CRLF when isCRLF is passed as 4th arg', async () => {
+        const myStrings = ['aaa', 'bbb'];
+        mockP5Prototype.save(myStrings, 'filename', 'txt', true);
+
+        const saveData = new Blob([myStrings.join('\r\n')]);
+        expect(document.createElement).toHaveBeenCalledTimes(1);
+        expect(mockAnchorElement.click).toHaveBeenCalledTimes(1);
+        expect(URL.createObjectURL).toHaveBeenCalledWith(saveData);
+        assert.equal(mockAnchorElement.download, 'filename.txt');
+      });
+
+      test('should download a text file with CRLF when isCRLF is passed as 3rd arg with extension in filename', async () => {
+        const myStrings = ['aaa', 'bbb'];
+        mockP5Prototype.save(myStrings, 'filename.txt', true);
+
+        const saveData = new Blob([myStrings.join('\r\n')]);
         expect(document.createElement).toHaveBeenCalledTimes(1);
         expect(mockAnchorElement.click).toHaveBeenCalledTimes(1);
         expect(URL.createObjectURL).toHaveBeenCalledWith(saveData);
