@@ -533,6 +533,14 @@ function loading(p5, fn) {
   /**
    * @method loadModel
    * @param  {String|Request} path
+   * @param  {Boolean} [normalize]
+   * @param  {function(p5.Geometry)} [successCallback]
+   * @param  {function(Event)} [failureCallback]
+   * @return {Promise<p5.Geometry>} new <a href="#/p5.Geometry">p5.Geometry</a> object.
+   */
+  /**
+   * @method loadModel
+   * @param  {String|Request} path
    * @param  {String} [fileType]
    * @param  {function(p5.Geometry)} [successCallback]
    * @param  {function(Event)} [failureCallback]

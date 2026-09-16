@@ -964,6 +964,12 @@
         ],
         [
           "String|Request",
+          "Boolean?",
+          "function(p5.Geometry)?",
+          "function(Event)?"
+        ],
+        [
+          "String|Request",
           "String?",
           "function(p5.Geometry)?",
           "function(Event)?"

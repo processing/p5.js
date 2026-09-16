@@ -380,6 +380,26 @@ suite('Validate Params', function () {
     });
   });
 
+  suite('validateParams: loadModel normalize overload', function () {
+    const onLoad = () => {};
+    test('loadModel(): accepts normalize as the second argument', function () {
+      const result = mockP5Prototype._validate('p5.loadModel', ['model.obj', true]);
+      assert.isTrue(result.success);
+    });
+    test('loadModel(): accepts normalize followed by a callback', function () {
+      const result = mockP5Prototype._validate('p5.loadModel', ['model.obj', true, onLoad]);
+      assert.isTrue(result.success);
+    });
+    test('loadModel(): still accepts a file type and normalize', function () {
+      const result = mockP5Prototype._validate('p5.loadModel', ['model', '.obj', true]);
+      assert.isTrue(result.success);
+    });
+    test('loadModel(): still rejects a number as the second argument', function () {
+      const result = mockP5Prototype._validate('p5.loadModel', ['model.obj', 5]);
+      assert.isFalse(result.success);
+    });
+  });
+
   suite('validateParams: variadic min/max', function () {
     ['min', 'max'].forEach(fn => {
       test(`${fn}(): works with two numbers`, function () {
