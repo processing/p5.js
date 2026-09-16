@@ -45,7 +45,6 @@ export const mockP5Prototype = {
     id: 'myCanvasID'
   },
   _elements: [],
-  _blobUrls: new Set(),
   _renderer: {
     states: rendererStates
   }
