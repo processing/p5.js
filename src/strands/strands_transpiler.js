@@ -442,6 +442,29 @@ function addCopyingAndReturn(functionBody, varsToReturn, sourcePrefix = null) {
   });
 }
 
+/**
+ * Rewrites `node` in place into the call expression
+ * `object.methodName(...args)`.
+ *
+ * The rewritten node stays an *expression*, so it is still valid wherever the
+ * original one was: inside a comma (sequence) expression, a ternary, or a call
+ * argument. Turning it into an ExpressionStatement instead would make
+ * escodegen emit a `;` in those positions, producing invalid JavaScript.
+ */
+function replaceWithMethodCall(node, object, methodName, args) {
+  delete node.operator;
+  delete node.left;
+  delete node.right;
+  node.type = 'CallExpression';
+  node.callee = {
+    type: 'MemberExpression',
+    computed: false,
+    object,
+    property: { type: 'Identifier', name: methodName }
+  };
+  node.arguments = args;
+}
+
 const ASTCallbacks = {
   UnaryExpression(node, state, ancestors) {
     if (
@@ -704,22 +727,12 @@ const ASTCallbacks = {
     }
     // Handle direct varying variable assignment: myVarying = value
     if (state.varyings[node.left.name]) {
-      node.type = 'ExpressionStatement';
-      node.expression = {
-        type: 'CallExpression',
-        callee: {
-          type: 'MemberExpression',
-          object: {
-            type: 'Identifier',
-            name: node.left.name
-          },
-          property: {
-            type: 'Identifier',
-            name: 'bridge'
-          }
-        },
-        arguments: [node.right]
-      };
+      replaceWithMethodCall(
+        node,
+        { type: 'Identifier', name: node.left.name },
+        'bridge',
+        [node.right]
+      );
     }
     // Handle swizzle assignment to varying variable: myVarying.xyz = value
     // Note: node.left.object might be worldPos.getValue() due to prior Identifier transformation
@@ -729,22 +742,9 @@ const ASTCallbacks = {
         const value = node.right;
         const callee = source.object;
         const member = source.property;
-        node.right = undefined;
-        node.left = undefined;
-        node.operator = undefined;
-        node.callee = {
-          type: 'MemberExpression',
-          object: callee,
-          property: {
-            type: 'Identifier',
-            name: 'set'
-          }
-        };
-        node.arguments = [member, value];
-        node.type = 'CallExpression';
+        replaceWithMethodCall(node, callee, 'set', [member, value]);
         return;
       }
-
       let varyingName = null;
 
       // Check if it's a direct identifier: myVarying.xyz
@@ -767,28 +767,12 @@ const ASTCallbacks = {
 
       if (varyingName) {
         const swizzlePattern = node.left.property.name;
-        node.type = 'ExpressionStatement';
-        node.expression = {
-          type: 'CallExpression',
-          callee: {
-            type: 'MemberExpression',
-            object: {
-              type: 'Identifier',
-              name: varyingName
-            },
-            property: {
-              type: 'Identifier',
-              name: 'bridgeSwizzle'
-            }
-          },
-          arguments: [
-            {
-              type: 'Literal',
-              value: swizzlePattern
-            },
-            node.right
-          ]
-        };
+        replaceWithMethodCall(
+          node,
+          { type: 'Identifier', name: varyingName },
+          'bridgeSwizzle',
+          [{ type: 'Literal', value: swizzlePattern }, node.right]
+        );
       }
     }
   },
@@ -1607,7 +1591,28 @@ function functionHasSetInControlFlow(functionNode) {
 
   return hasSetInControlFlow;
 }
-
+/**
+ * Does this statement contain a `<hook>.<methodName>()` call?
+ *
+ * Also looks inside comma (sequence) expressions, so that minified-style code
+ * such as `hook.begin(), doSomething();` is still recognised.
+ */
+function statementCallsHookMethod(stmt, methodName, exprString) {
+  if (stmt.type !== 'ExpressionStatement') {
+    return false;
+  }
+  const expressions =
+    stmt.expression?.type === 'SequenceExpression'
+      ? stmt.expression.expressions
+      : [stmt.expression];
+  return expressions.some(
+    expr =>
+      expr?.type === 'CallExpression' &&
+      expr.callee?.type === 'MemberExpression' &&
+      expr.callee?.property?.name === methodName &&
+      escodegen.generate(expr.callee.object) === exprString
+  );
+}
 // Transform a function to use __setValue pattern instead of .set() calls in branches/loops
 function transformFunctionSetCalls(functionNode) {
   if (!functionNode.body || functionNode.body.type !== 'BlockStatement') {
@@ -1662,20 +1667,11 @@ function transformFunctionSetCalls(functionNode) {
 
     let beginCallIndex = -1;
     for (let i = 0; i < functionNode.body.body.length; i++) {
-      const stmt = functionNode.body.body[i];
       if (
-        stmt.type === 'ExpressionStatement' &&
-        stmt.expression?.type === 'CallExpression' &&
-        stmt.expression?.callee?.type === 'MemberExpression' &&
-        stmt.expression?.callee?.property?.name === 'begin'
+        statementCallsHookMethod(functionNode.body.body[i], 'begin', exprString)
       ) {
-        const beginExprString = escodegen.generate(
-          stmt.expression.callee.object
-        );
-        if (beginExprString === exprString) {
-          beginCallIndex = i;
-          break;
-        }
+        beginCallIndex = i;
+        break;
       }
     }
 
@@ -1697,25 +1693,16 @@ function transformFunctionSetCalls(functionNode) {
         ) {
           const currentExprString = escodegen.generate(node.callee.object);
           if (currentExprString === exprString && node.arguments.length > 0) {
-            // Find the parent statement
-            let parentStmt = null;
-            for (let i = ancestors.length - 1; i >= 0; i--) {
-              if (ancestors[i].type === 'ExpressionStatement') {
-                parentStmt = ancestors[i];
-                break;
-              }
-            }
-
-            if (parentStmt) {
-              // Replace the .set() call with an assignment
-              parentStmt.type = 'ExpressionStatement';
-              parentStmt.expression = {
-                type: 'AssignmentExpression',
-                operator: '=',
-                left: { type: 'Identifier', name: intermediateVarName },
-                right: node.arguments[0]
-              };
-            }
+             // Replace the .set() call itself with an assignment, in place.
+            // Replacing the enclosing statement instead would discard any
+            // sibling expressions when the call is part of a comma expression.
+            const value = node.arguments[0];
+            delete node.callee;
+            delete node.arguments;
+            node.type = 'AssignmentExpression';
+            node.operator = '=';
+            node.left = { type: 'Identifier', name: intermediateVarName };
+            node.right = value;
           }
         }
       }
@@ -1741,18 +1728,11 @@ function transformFunctionSetCalls(functionNode) {
     // Find the .end() call for this hook
     let endCallIndex = -1;
     for (let i = 0; i < functionNode.body.body.length; i++) {
-      const stmt = functionNode.body.body[i];
       if (
-        stmt.type === 'ExpressionStatement' &&
-        stmt.expression?.type === 'CallExpression' &&
-        stmt.expression?.callee?.type === 'MemberExpression' &&
-        stmt.expression?.callee?.property?.name === 'end'
+        statementCallsHookMethod(functionNode.body.body[i], 'end', exprString)
       ) {
-        const endExprString = escodegen.generate(stmt.expression.callee.object);
-        if (endExprString === exprString) {
-          endCallIndex = i;
-          break;
-        }
+        endCallIndex = i;
+        break;
       }
     }
 
