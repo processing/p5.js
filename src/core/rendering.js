@@ -166,15 +166,11 @@ function rendering(p5, fn) {
     }
 
     if (this._renderer.contextReady) {
-      return this._renderer.contextReady.then(() => this._renderer).catch(() => {
+      return this._renderer.contextReady.then(() => this._renderer).catch((e) => {
         if (selectedRenderer !== constants.WEBGPU) {
           throw new Error('Failed to create canvas.');
         }
-        if (!renderers[constants.WEBGL]) {
-          throw new Error('Your browser does not support WebGPU.');
-        }
-        p5.FES
-          .log`Your browser does not support WebGPU. Falling back to WebGL renderer.`();
+        p5.FES.log`${e.message} Falling back to WebGL renderer.`();
         const failed = this._renderer;
         try {
           failed.remove();

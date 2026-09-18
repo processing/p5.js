@@ -855,17 +855,32 @@ function rendererWebGPU(p5, fn) {
     }
 
     async _initContext() {
-      this.adapter = await navigator.gpu?.requestAdapter(
+      if (!navigator.gpu) {
+        throw new Error(
+          'WebGPU is not supported by this browser.'
+        );
+      }
+      this.adapter = await navigator.gpu.requestAdapter(
         this._webgpuAttributes
       );
-      this.device = await this.adapter?.requestDevice({
-        // Todo: check support
+      if (!this.adapter) {
+        throw new Error(
+          'No compatible GPU could be found for WebGPU on this device.'
+        );
+      }
+      this.device = await this.adapter.requestDevice({
         requiredFeatures: ['depth32float-stencil8']
       }).catch(() => null);
+      if (!this.device) {
+        throw new Error(
+          'WebGPU is available, but a WebGPU device could not be created on this system.'
+        );
+      }
       this.drawingContext = this.canvas.getContext('webgpu');
-
-      if (!this.device || !this.drawingContext) {
-        throw new Error('Your browser does not support WebGPU.');
+      if (!this.drawingContext) {
+        throw new Error(
+          'WebGPU is available, but the drawing context could not be created for this canvas.'
+        );
       }
 
       this.queue = this.device.queue;
