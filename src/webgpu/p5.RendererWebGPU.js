@@ -6,7 +6,7 @@
 
 import * as constants from '../core/constants';
 import { getStrokeDefs } from '../webgl/enums';
-import { DataType, INSTANCE_ID_VARYING_NAME } from '../strands/ir_types.js';
+import { DataType } from '../strands/ir_types.js';
 
 import { colorVertexShader, colorFragmentShader } from './shaders/color';
 import { lineVertexShader, lineFragmentShader } from './shaders/line';
@@ -29,6 +29,8 @@ import {
 } from './shaders/imageLight';
 import { baseComputeShader } from './shaders/compute';
 
+import { warnExperimental } from '../core/experimental';
+
 const FRAME_STATE = {
   PENDING: 0,
   UNPROMOTED: 1,
@@ -43,13 +45,35 @@ function rendererWebGPU(p5, fn) {
   const { Renderer3D, Shader, Texture, MipmapTexture, Image, Camera, RGBA } =
     p5;
 
+  // Maps a WGSL storage element type to the typed array that reads it back
+  // correctly. Used to check what a buffer was created with against what the
+  // shader declares.
+  const STORAGE_ARRAY_TYPES = {
+    f32: Float32Array,
+    u32: Uint32Array,
+    i32: Int32Array
+  };
+
   class StorageBuffer {
-    constructor(buffer, size, renderer, schema = null) {
+    constructor(
+      buffer,
+      size,
+      renderer,
+      schema = null,
+      arrayType = Float32Array,
+      length = null
+    ) {
       this._isStorageBuffer = true;
       this.buffer = buffer;
       this.size = size;
+      this.length = length;
       this._renderer = renderer;
       this._schema = schema;
+      // Struct buffers are always packed as floats
+      this._arrayType = schema !== null ? Float32Array : arrayType;
+      // The element type this buffer has already been checked against, so
+      // the check is skipped on every later frame
+      this._checkedArrayType = undefined;
     }
 
     /**
@@ -116,7 +140,7 @@ function rendererWebGPU(p5, fn) {
      * @beta
      * @webgpu
      * @webgpuOnly
-     * @param {Number[]|Float32Array|Object[]} data The new data to write into the buffer.
+     * @param {Number[]|Float32Array|Uint32Array|Int32Array|Object[]} data The new data to write into the buffer.
      */
     update(data) {
       const device = this._renderer.device;
@@ -151,24 +175,25 @@ function rendererWebGPU(p5, fn) {
         }
         device.queue.writeBuffer(this.buffer, 0, packed);
       } else {
-        // Buffer was created with a float array
-        let floatData;
-        if (data instanceof Float32Array) {
-          floatData = data;
+        // Buffer was created with a number array
+        const ArrayType = this._arrayType;
+        let typedData;
+        if (data instanceof ArrayType) {
+          typedData = data;
         } else if (Array.isArray(data)) {
-          floatData = new Float32Array(data);
+          typedData = new ArrayType(data);
         } else {
           throw new Error(
-            'update() expects a Float32Array or array of numbers for this buffer'
+            `update() expects a ${ArrayType.name} or array of numbers for this buffer`
           );
         }
 
-        if (floatData.byteLength > this.size) {
+        if (typedData.byteLength > this.size) {
           throw new Error(
-            `update() data (${floatData.byteLength} bytes) exceeds buffer size (${this.size} bytes)`
+            `update() data (${typedData.byteLength} bytes) exceeds buffer size (${this.size} bytes)`
           );
         }
-        device.queue.writeBuffer(this.buffer, 0, floatData);
+        device.queue.writeBuffer(this.buffer, 0, typedData);
       }
     }
 
@@ -176,8 +201,9 @@ function rendererWebGPU(p5, fn) {
      * Reads data from a storage buffer back into JavaScript.
      *
      * Copies data from the GPU to the CPU using a temporary buffer,
-     * so it must be awaited. Returns a `Float32Array` for number
-     * buffers, or an array of plain objects for struct buffers.
+     * so it must be awaited. Returns a typed array (such as `Float32Array` or
+     * `Uint32Array`) for number buffers, or an array of plain objects for
+     * struct buffers.
      *
      * Note: This is a GPU -> CPU read, so calling it often (like every frame)
      * can be slow.
@@ -208,12 +234,47 @@ function rendererWebGPU(p5, fn) {
      * }
      * ```
      *
+     * While p5.strands is still growing, there may be WGSL features it doesn't
+     * cover yet. You can still reach for them by writing WGSL directly, and the
+     * buffer will read back as the right kind of typed array. Atomics are one
+     * example: WGSL only allows them on `u32` and `i32`, so a buffer used as
+     * `array<atomic<u32>>` should be created with a `Uint32Array`.
+     *
+     * ```js example
+     * let data;
+     * let computeShader;
+     *
+     * async function setup() {
+     *   await createCanvas(100, 100, WEBGPU);
+     *
+     *   data = createStorage(new Uint32Array([10, 20, 30, 40]));
+     *   computeShader = buildComputeShader({
+     *     computeDeclarations: `
+     *       @group(0) @binding(1) var<storage, read_write> counts: array<atomic<u32>>;
+     *     `,
+     *     'void iteration': `(index: vec3<i32>) {
+     *       let idx = index.x;
+     *       atomicAdd(&counts[idx], 5u);
+     *     }`
+     *   });
+     *   computeShader.setUniform('counts', data);
+     *   compute(computeShader, 4);
+     *
+     *   let result = await data.read();
+     *   // result is Uint32Array [15, 25, 35, 45]
+     *   for (let i = 0; i < result.length; i++) {
+     *     print(result[i]);
+     *   }
+     *   describe('Prints the values 15, 25, 35, 45 to the console.');
+     * }
+     * ```
+     *
      * @method read
      * @for p5.StorageBuffer
      * @beta
      * @webgpu
      * @webgpuOnly
-     * @returns {Promise<Float32Array|Object[]>}
+     * @returns {Promise<Float32Array|Uint32Array|Int32Array|Object[]>}
      */
     async read() {
       const device = this._renderer.device;
@@ -238,8 +299,11 @@ function rendererWebGPU(p5, fn) {
       const mappedRange = stagingBuffer.getMappedRange(0, this.size);
 
       // Copy before unmapping because mapped memory becomes invalid after unmap
-      const rawCopy = new Float32Array(mappedRange.byteLength / 4);
-      rawCopy.set(new Float32Array(mappedRange));
+      const ArrayType = this._arrayType;
+      const rawCopy = new ArrayType(
+        mappedRange.byteLength / ArrayType.BYTES_PER_ELEMENT
+      );
+      rawCopy.set(new ArrayType(mappedRange));
 
       stagingBuffer.unmap();
       stagingBuffer.destroy();
@@ -387,9 +451,319 @@ function rendererWebGPU(p5, fn) {
    */
   p5.StorageBuffer = StorageBuffer;
 
+  class StorageList {
+    constructor(buffer, lengthOffset, maxCapacity, renderer, schema = null, initialCount = 0) {
+      this._isStorageList = true;
+      this.buffer = buffer;
+      this._lengthOffset = lengthOffset;
+      this.maxCapacity = maxCapacity;
+      this._renderer = renderer;
+      this._schema = schema;
+      this._stride = schema ? schema.stride : 4;
+      this._cpuLength = initialCount;
+    }
+
+    /**
+     * Empties the list.
+     *
+     * @method clear
+     * @for p5.StorageList
+     * @beta
+     * @webgpu
+     * @webgpuOnly
+     */
+    clear() {
+      this._cpuLength = 0;
+      const encoder = this._renderer.device.createCommandEncoder();
+      encoder.clearBuffer(this.buffer, this._lengthOffset, 4);
+      this._renderer._pendingCommandEncoders.push(encoder.finish());
+      this._renderer._hasPendingDraws = true;
+    }
+
+    /**
+     * Appends one element to the list. This can be called from your sketch's
+     * JavaScript or from within a <a href="#/p5/buildComputeShader">compute shader.</a> Use this to seed a list
+     * before any compute shaders run. Calling `push()` after a GPU compute pass
+     * that has already modified the list will produce undefined ordering.
+     *
+     * For a float list, pass a number. For a struct list, pass a plain object
+     * whose properties match the schema.
+     *
+     * ```js example
+     * let positions;
+     * let drawShader;
+     * const COUNT = 5;
+     *
+     * async function setup() {
+     *   await createCanvas(200, 200, WEBGPU);
+     *
+     *   positions = createStorageList(COUNT, { pos: createVector(0, 0) });
+     *   for (let i = 0; i < COUNT; i++) {
+     *     positions.push({
+     *       pos: createVector(
+     *         random(-1, 1) * width / 2,
+     *         random(-1, 1) * height / 2
+     *       )
+     *     });
+     *   }
+     *
+     *   drawShader = buildMaterialShader(() => {
+     *     let data = uniformStorage(positions);
+     *     worldInputs.begin();
+     *     worldInputs.position.xy += data[instanceIndex].pos;
+     *     worldInputs.end();
+     *   });
+     *
+     *   describe('Five circles placed at random positions.');
+     * }
+     *
+     * function draw() {
+     *   background(220);
+     *   noStroke();
+     *   shader(drawShader);
+     *   instances(positions).circle(0, 0, 20);
+     * }
+     * ```
+     *
+     * You can also use `push()` from compute shaders. This approach can often
+     * be faster as no data needs to transfer from the CPU to the GPU.
+     *
+     * ```js example
+     * let particles, nextParticles;
+     * let removeOld, emitNew;
+     * let drawParticles;
+     * const MAX_PARTICLES = 300;
+     *
+     * async function setup() {
+     *   await createCanvas(200, 200, WEBGPU);
+     *
+     *   const schema = { position: createVector(0, 0), velocity: createVector(0, 0), life: 0 };
+     *   particles = createStorageList(MAX_PARTICLES, schema);
+     *   nextParticles = createStorageList(MAX_PARTICLES, schema);
+     *
+     *   // Seed an initial burst from JavaScript so something is visible on frame 1.
+     *   for (let i = 0; i < 20; i++) {
+     *     let angle = random(TWO_PI);
+     *     particles.push({
+     *       position: createVector(0, 0),
+     *       velocity: createVector(cos(angle) * 2, sin(angle) * 2 - 2.5),
+     *       life: random(0.5, 1.0)
+     *     });
+     *   }
+     *
+     *   removeOld = buildComputeShader(() => {
+     *     let src = uniformStorage(() => particles);
+     *     let dst = uniformStorage(() => nextParticles);
+     *     if (index.x < src.length) {
+     *       let p = src[index.x];
+     *       p.velocity.y += 0.08;
+     *       p.position += p.velocity;
+     *       p.life -= 0.02;
+     *       if (p.life > 0) {
+     *         dst.push(p);
+     *       }
+     *     }
+     *   });
+     *
+     *   emitNew = buildComputeShader(() => {
+     *     let dst = uniformStorage(() => nextParticles);
+     *     let angle = random() * TWO_PI;
+     *     dst.push({
+     *       position: [mouseX, mouseY] - [width, height] / 2,
+     *       velocity: [cos(angle), sin(angle) - 2.5],
+     *       life: 1.0
+     *     });
+     *   });
+     *
+     *   drawParticles = buildMaterialShader(() => {
+     *     let particleData = uniformStorage(() => particles);
+     *     let p = particleData[instanceIndex];
+     *     worldInputs.begin();
+     *     worldInputs.position.xy += p.position;
+     *     worldInputs.end();
+     *     finalColor.begin();
+     *     finalColor.set([1, p.life * 0.4, 0, p.life]);
+     *     finalColor.end();
+     *   });
+     *
+     *   describe('Orange particles emitting from the cursor, falling with gravity.');
+     * }
+     *
+     * function draw() {
+     *   background(0);
+     *   noStroke();
+     *
+     *   nextParticles.clear();
+     *   compute(removeOld, MAX_PARTICLES);
+     *   compute(emitNew, 5);
+     *   [particles, nextParticles] = [nextParticles, particles];
+     *
+     *   shader(drawParticles);
+     *   blendMode(ADD);
+     *   instances(particles).circle(0, 0, 4);
+     * }
+     * ```
+     *
+     * @method push
+     * @for p5.StorageList
+     * @beta
+     * @webgpu
+     * @webgpuOnly
+     * @param {Number|Object} element A number for float lists, or a plain object
+     *   matching the list's schema for struct lists.
+     */
+    push(element) {
+      // TODO: make this method work after the GPU has touched the data?
+      if (this._cpuLength >= this.maxCapacity) {
+        throw new Error(
+          `StorageList is full (maxCapacity: ${this.maxCapacity})`
+        );
+      }
+      const device = this._renderer.device;
+      let packed;
+      if (this._schema) {
+        packed = this._renderer._packStructArray([element], this._schema);
+      } else {
+        if (typeof element !== 'number') {
+          throw new Error('Float StorageList.push() expects a number');
+        }
+        packed = new Float32Array([element]);
+      }
+      device.queue.writeBuffer(
+        this.buffer,
+        this._cpuLength * this._stride,
+        packed
+      );
+      this._cpuLength++;
+      device.queue.writeBuffer(
+        this.buffer,
+        this._lengthOffset,
+        new Int32Array([this._cpuLength])
+      );
+    }
+
+    /**
+     * Replaces the contents of the list with new data from JavaScript,
+     * updating the element count to match.
+     *
+     * For a list of numbers, `update` takes in an array of numbers (or
+     * a `Float32Array`.) For a list of objects, pass an array of plain
+     * objects with the same properties present as when you created the list.
+     *
+     * @method update
+     * @for p5.StorageList
+     * @beta
+     * @webgpu
+     * @webgpuOnly
+     * @param {Number[]|Float32Array|Object[]} data The new data to write.
+     */
+    update(data) {
+      if (this._schema) {
+        if (!Array.isArray(data) || data.length === 0 || typeof data[0] !== 'object') {
+          throw new Error('update() expects an array of objects matching the list schema');
+        }
+        if (data.length > this.maxCapacity) {
+          throw new Error(`update() data length ${data.length} exceeds maxCapacity ${this.maxCapacity}`);
+        }
+        const packed = this._renderer._packStructArray(data, this._schema);
+        this._renderer.device.queue.writeBuffer(this.buffer, 0, packed);
+      } else {
+        let typedData = data instanceof Float32Array ? data : new Float32Array(data);
+        if (typedData.length > this.maxCapacity) {
+          throw new Error(`update() data length ${typedData.length} exceeds maxCapacity ${this.maxCapacity}`);
+        }
+        this._renderer.device.queue.writeBuffer(this.buffer, 0, typedData);
+      }
+      this._cpuLength = data.length;
+      this._renderer.device.queue.writeBuffer(
+        this.buffer,
+        this._lengthOffset,
+        new Int32Array([this._cpuLength])
+      );
+    }
+
+    /**
+     * Reads the current contents of the list back to JavaScript.
+     *
+     * It returns a `Float32Array` for float lists, or an array of plain objects
+     * for struct lists.
+     *
+     * Note: This is a GPU-to-CPU read. Calling it frequently can be slow.
+     *
+     * @method read
+     * @for p5.StorageList
+     * @beta
+     * @webgpu
+     * @webgpuOnly
+     * @returns {Promise<Float32Array|Object[]>}
+     */
+    async read() {
+      const device = this._renderer.device;
+      this._renderer.flushDraw();
+
+      const totalSize = this.buffer.size;
+      const stagingBuffer = device.createBuffer({
+        size: totalSize,
+        usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ
+      });
+
+      const encoder = device.createCommandEncoder();
+      encoder.copyBufferToBuffer(this.buffer, 0, stagingBuffer, 0, totalSize);
+      device.queue.submit([encoder.finish()]);
+
+      await stagingBuffer.mapAsync(GPUMapMode.READ);
+      const mapped = stagingBuffer.getMappedRange();
+
+      const length = Math.min(
+        new DataView(mapped).getInt32(this._lengthOffset, true),
+        this.maxCapacity
+      );
+
+      let result;
+      const stride = this._schema ? this._schema.stride : 4;
+      if (this._schema) {
+        const byteLen = length * stride;
+        const rawCopy = new Float32Array(byteLen / 4);
+        if (byteLen > 0) {
+          rawCopy.set(new Float32Array(mapped, 0, byteLen / 4));
+        }
+        result = this._renderer._unpackStructArray(rawCopy, this._schema);
+      } else {
+        const rawCopy = new Float32Array(length);
+        if (length > 0) {
+          rawCopy.set(new Float32Array(mapped, 0, length));
+        }
+        result = rawCopy;
+      }
+
+      stagingBuffer.unmap();
+      stagingBuffer.destroy();
+
+      return result;
+    }
+  }
+
+  /**
+   * A variable-length buffer that compute can push to and pop from, like
+   * a JavaScript array.
+   *
+   * This is only available in WebGPU mode.
+   *
+   * Note: <a href="#/p5/createStorageList">`createStorageList()`</a> is the
+   * recommended way to create an instance of this class.
+   *
+   * @class p5.StorageList
+   * @beta
+   * @webgpu
+   * @webgpuOnly
+   */
+  p5.StorageList = StorageList;
+
   class RendererWebGPU extends Renderer3D {
     constructor(pInst, w, h, isMainCanvas, elt) {
       super(pInst, w, h, isMainCanvas, elt);
+
+      warnExperimental(p5, pInst, 'webgpu');
 
       // Used to group draws into one big render pass
       this.activeRenderPass = null;
@@ -440,6 +814,9 @@ function rendererWebGPU(p5, fn) {
 
       // Storage buffers for compute shaders
       this._storageBuffers = new Set();
+
+      // Temporary indirect draw buffers created during a frame; destroyed after submit
+      this._tempBuffers = [];
 
       // 2D canvas for pixel reading fallback
       this._pixelReadCanvas = null;
@@ -1801,6 +2178,16 @@ function rendererWebGPU(p5, fn) {
         // Submit the commands
         this.queue.submit(commandsToSubmit);
 
+        const tempBuffers = this._tempBuffers;
+        this._tempBuffers = [];
+        if (tempBuffers.length > 0) {
+          this._postSubmitCallbacks.push(() => {
+            for (const buf of tempBuffers) {
+              buf.destroy();
+            }
+          });
+        }
+
         for (const buf of this.activeUniformBuffers) {
           // buf.buffer = this.device.createBuffer({
           // size: buf.size,
@@ -1944,10 +2331,17 @@ function rendererWebGPU(p5, fn) {
         this._promoteToFramebufferWithoutCopy();
       }
 
+      const currentShader = this._curShader;
+      const instanceList = this._instanceList;
+
+      if (instanceList) {
+        this._drawBuffersIndirect(geometry, buffers, currentShader, mode, instanceList);
+        return;
+      }
+
       this._beginActiveRenderPass();
       const passEncoder = this.activeRenderPass;
 
-      const currentShader = this._curShader;
       this.setupShaderBindGroups(currentShader, passEncoder, { mode, buffers });
       // Bind vertex buffers
       for (const buffer of currentShader._vertexBuffers ||
@@ -1980,6 +2374,94 @@ function rendererWebGPU(p5, fn) {
       }
 
       // Mark that we have pending draws that need submission
+      this._hasPendingDraws = true;
+    }
+
+    // Handles draw calls where instance count comes from a StorageList on the GPU.
+    // Each call creates a fresh indirect buffer so that multiple draws in the same
+    // frame with different geometries don't overwrite each other's indexCount slot
+    // before the GPU reads it.
+    _drawBuffersIndirect(geometry, buffers, currentShader, mode, instanceList) {
+      // End the current render pass so we can issue the buffer copy command
+      // before starting the new render pass that contains the draw.
+      this._finishActiveRenderPass();
+
+      // indexCount and vertexCount are geometry-specific; write them to a
+      // fresh indirect buffer so concurrent draws don't clobber each other.
+      // Use mappedAtCreation so the geometry counts are committed at buffer
+      // creation time, with no race against the copyBufferToBuffer below.
+      const isIndexed =
+        !!buffers.indexBuffer && currentShader.shaderType !== 'stroke';
+
+      const indirectBuffer = this.device.createBuffer({
+        size: 20, // 5 u32s: indexCount/vertexCount, instanceCount, firstIndex/firstVertex, baseVertex, firstInstance
+        usage: GPUBufferUsage.INDIRECT | GPUBufferUsage.COPY_DST,
+        mappedAtCreation: true
+      });
+      const indirectInit = new Uint32Array(indirectBuffer.getMappedRange());
+      if (currentShader.shaderType === 'stroke') {
+        // drawIndirect: [vertexCount, instanceCount, firstVertex, firstInstance, (padding)]
+        indirectInit[0] = geometry.lineVertices
+          ? geometry.lineVertices.length / 3
+          : 0;
+      } else if (isIndexed) {
+        // drawIndexedIndirect: [indexCount, instanceCount, firstIndex, baseVertex, firstInstance]
+        indirectInit[0] = geometry.faces.length * 3;
+      } else {
+        // drawIndirect: [vertexCount, instanceCount, firstVertex, firstInstance, (padding)]
+        indirectInit[0] = geometry.vertices.length;
+      }
+      // Slot 1 (instanceCount) is intentionally left 0; copyBufferToBuffer below
+      // overwrites it with the GPU-side list length before the draw.
+      indirectBuffer.unmap();
+      this._tempBuffers.push(indirectBuffer);
+
+      // Copy the GPU-side length into instanceCount slot (offset 4)
+      const copyEncoder = this.device.createCommandEncoder();
+      copyEncoder.copyBufferToBuffer(
+        instanceList.buffer,
+        instanceList._lengthOffset,
+        indirectBuffer,
+        4,
+        4
+      );
+      this._pendingCommandEncoders.push(copyEncoder.finish());
+
+      this._beginActiveRenderPass();
+      const passEncoder = this.activeRenderPass;
+
+      this.setupShaderBindGroups(currentShader, passEncoder, { mode, buffers });
+      for (const buffer of currentShader._vertexBuffers ||
+        this._getVertexBuffers(currentShader)) {
+        const location = currentShader.attributes[buffer.attr].location;
+        const gpuBuffer = buffers[buffer.dst];
+        passEncoder.setVertexBuffer(location, gpuBuffer, 0);
+      }
+
+      if (currentShader.shaderType === 'fill') {
+        if (isIndexed) {
+          passEncoder.setIndexBuffer(
+            buffers.indexBuffer,
+            buffers.indexFormat || 'uint16'
+          );
+          passEncoder.drawIndexedIndirect(indirectBuffer, 0);
+        } else {
+          passEncoder.drawIndirect(indirectBuffer, 0);
+        }
+      } else if (currentShader.shaderType === 'stroke') {
+        if (buffers.lineVerticesBuffer) {
+          passEncoder.drawIndirect(indirectBuffer, 0);
+        }
+      } else if (currentShader.shaderType === 'text') {
+        if (buffers.indexBuffer) {
+          passEncoder.setIndexBuffer(
+            buffers.indexBuffer,
+            buffers.indexFormat || 'uint16'
+          );
+          passEncoder.drawIndexedIndirect(indirectBuffer, 0);
+        }
+      }
+
       this._hasPendingDraws = true;
     }
 
@@ -2127,13 +2609,15 @@ function rendererWebGPU(p5, fn) {
             if (
               !uniform ||
               !uniform._cachedData ||
-              !uniform._cachedData._isStorageBuffer
+              (!uniform._cachedData._isStorageBuffer &&
+                !uniform._cachedData._isStorageList)
             ) {
               throw new Error(
                 `Storage buffer "${entry.storage.name}" not set. ` +
                   `Use shader.setUniform("${entry.storage.name}", storageBuffer)`
               );
             }
+            this._checkStorageElementType(entry.storage, uniform._cachedData);
             bgEntries.push({
               binding: entry.binding,
               resource: { buffer: uniform._cachedData.buffer }
@@ -2359,7 +2843,7 @@ function rendererWebGPU(p5, fn) {
       };
 
       while ((match = elementRegex.exec(structBody)) !== null) {
-        const [_, location, name, type] = match;
+        const [, location, name, type] = match;
         const { size, align, pack, packInPlace, baseType } =
           baseAlignAndSize(type);
         offset = Math.ceil(offset / align) * align;
@@ -2416,7 +2900,7 @@ function rendererWebGPU(p5, fn) {
           ? shader.computeSrc()
           : shader.vertSrc();
       while ((match = uniformVarRegex.exec(src)) !== null) {
-        const [_, groupNum, binding, varName, structType] = match;
+        const [, groupNum, binding, varName, structType] = match;
         const bindingIndex = parseInt(binding);
         const uniforms = this._parseStruct(src, structType);
 
@@ -2463,8 +2947,10 @@ function rendererWebGPU(p5, fn) {
 
       // Extract storage buffers
       const storageBuffers = {};
+      // Matches plain array bindings (array<T> or array<T, N>), standalone atomic
+      // bindings (atomic<T>), and named struct type bindings used by StorageList.
       const storageRegex =
-        /@group\((\d+)\)\s*@binding\((\d+)\)\s*var<storage,\s*(read|read_write)>\s+(\w+)\s*:\s*array<\w+>/g;
+        /@group\((\d+)\)\s*@binding\((\d+)\)\s*var<storage,\s*(read|read_write)>\s+(\w+)\s*:\s*(array<[\w<>, ]+>|atomic<\w+>|\w+)/g;
 
       // Track which bindings are taken by the struct properties we've parsed
       // (the rest should be textures/samplers)
@@ -2482,7 +2968,7 @@ function rendererWebGPU(p5, fn) {
 
         let match;
         while ((match = samplerRegex.exec(src)) !== null) {
-          const [_, group, binding, name, type] = match;
+          const [, group, binding, name, type] = match;
           const groupIndex = parseInt(group);
           const bindingIndex = parseInt(binding);
           // Skip struct uniform bindings which we've already parsed
@@ -2517,7 +3003,7 @@ function rendererWebGPU(p5, fn) {
 
         // Parse storage buffers
         while ((match = storageRegex.exec(src)) !== null) {
-          const [_, group, binding, accessMode, name] = match;
+          const [, group, binding, accessMode, name, elementType] = match;
           const groupIndex = parseInt(group);
           const bindingIndex = parseInt(binding);
 
@@ -2536,13 +3022,21 @@ function rendererWebGPU(p5, fn) {
             name,
             accessMode: finalAccessMode, // 'read' or 'read_write'
             isStorage: true,
-            type: 'storage'
+            type: 'storage',
+            elementType, // e.g. 'f32', 'u32', 'atomic<u32>'
+            // Resolved here so the per-frame check is just a comparison
+            expectedArrayType: this._storageArrayTypeFor(elementType)
           };
         }
       }
 
-      // Store storage buffers on shader for later use
+      // Store storage buffers on shader for later use, keyed by name too so
+      // that setUniform() can look one up without scanning the whole list
       shader._storageBuffers = Object.values(storageBuffers);
+      shader._storageBuffersByName = {};
+      for (const storage of shader._storageBuffers) {
+        shader._storageBuffersByName[storage.name] = storage;
+      }
 
       return [
         ...Object.values(allUniforms).sort((a, b) => a.index - b.index),
@@ -2561,10 +3055,10 @@ function rendererWebGPU(p5, fn) {
       if (frag) sources.push([frag, GPUShaderStage.FRAGMENT]);
       if (compute) sources.push([compute, GPUShaderStage.COMPUTE]);
 
-      for (const [src, visibility] of sources) {
+      for (const [src] of sources) {
         let match;
         while ((match = bindingRegex.exec(src)) !== null) {
-          const [_, groupIndex, bindingIndex] = match;
+          const [, groupIndex, bindingIndex] = match;
           if (parseInt(groupIndex) === group) {
             maxBindingIndex = Math.max(maxBindingIndex, parseInt(bindingIndex));
           }
@@ -2582,6 +3076,13 @@ function rendererWebGPU(p5, fn) {
         uniform._mappedData = this._mapUniformData(
           uniform,
           uniform._cachedData
+        );
+      } else if (shader._storageBuffersByName) {
+        // The shader has been parsed, so we know what element type it
+        // declares for this buffer and can check it early
+        this._checkStorageElementType(
+          shader._storageBuffersByName[uniform.name],
+          data
         );
       }
       shader.buffersDirty.add(uniform.group * 1000 + uniform.binding);
@@ -3179,7 +3680,7 @@ ${hookUniformFields}}
 
       // Handle instanceID varying for fragment access
       if (shader.hooks.instanceIDVarying) {
-        const { name, declaration, source, interpolation } =
+        const { declaration, source, interpolation } =
           shader.hooks.instanceIDVarying;
         const nextLocIndex = this._getNextAvailableLocation(
           preMain,
@@ -3188,7 +3689,7 @@ ${hookUniformFields}}
         const interpAttr = interpolation
           ? ` @interpolate(${interpolation})`
           : '';
-        const [varName, varType] = declaration.split(':').map(s => s.trim());
+        const [varName] = declaration.split(':').map(s => s.trim());
         const structMember = `@location(${nextLocIndex})${interpAttr} ${declaration},`;
 
         if (shaderType === 'vertex') {
@@ -3238,7 +3739,7 @@ ${hookUniformFields}}
       }
       for (const hookDef in shader.hooks.helpers) {
         const [hookType, hookName] = hookDef.split(' ');
-        const [_, params, body] = /^(\([^)]*\))((?:.|\n)*)$/.exec(
+        const [, params, body] = /^(\([^)]*\))((?:.|\n)*)$/.exec(
           shader.hooks.helpers[hookDef]
         );
         if (hookType === 'void') {
@@ -3257,7 +3758,7 @@ ${hookUniformFields}}
           shader.hooks.modified[shaderType][hookDef] ? 'true' : 'false'
         };\n`;
 
-        let [_, params, body] = /^(\([^)]*\))((?:.|\n)*)$/.exec(
+        let [, params, body] = /^(\([^)]*\))((?:.|\n)*)$/.exec(
           shader.hooks[shaderType][hookDef]
         );
 
@@ -3906,6 +4407,48 @@ ${hookUniformFields}}
       return result;
     }
 
+    /**
+     * Resolves the WGSL element type a shader declares for a storage buffer
+     * into the typed array that reads it back correctly, unwrapping
+     * `atomic<T>` to `T`. Returns undefined for types we can't check.
+     * @private
+     */
+    _storageArrayTypeFor(elementType) {
+      if (!elementType) return undefined;
+      return STORAGE_ARRAY_TYPES[elementType.replace(/^atomic<(\w+)>$/, '$1')];
+    }
+
+    /**
+     * Warns when the typed array a storage buffer was created with doesn't
+     * match the element type the shader declares for it, since the bytes
+     * would otherwise be silently reinterpreted.
+     *
+     * Both call sites run every frame, so the result is cached on the buffer:
+     * after the first check this costs a property read and a comparison, and
+     * any warning is only ever logged once.
+     * @private
+     */
+    _checkStorageElementType(parsedStorage, storageBuffer) {
+      if (p5.disableFriendlyErrors) return;
+      // Resolved once when the shader was parsed
+      const expected = parsedStorage?.expectedArrayType;
+      if (!expected) return;
+      if (storageBuffer._checkedArrayType === expected) return;
+      storageBuffer._checkedArrayType = expected;
+
+      // Struct buffers are always packed as floats
+      if (storageBuffer._schema !== null) return;
+      if (storageBuffer._arrayType === expected) return;
+
+      p5._friendlyError(
+        `The storage buffer "${parsedStorage.name}" is declared as ` +
+          `array<${parsedStorage.elementType}> in the shader, but it was created ` +
+          `with a ${storageBuffer._arrayType.name}. Create it with a ` +
+          `${expected.name} instead so the values are read back correctly.`,
+        'createStorage'
+      );
+    }
+
     createStorage(dataOrCount) {
       const device = this.device;
 
@@ -3962,7 +4505,7 @@ ${hookUniformFields}}
         });
         new Float32Array(buffer.getMappedRange()).set(packed);
         buffer.unmap();
-        const storageBuffer = new StorageBuffer(buffer, size, this, schema);
+        const storageBuffer = new StorageBuffer(buffer, size, this, schema, Float32Array, dataOrCount.length);
         this._storageBuffers.add(storageBuffer);
         return storageBuffer;
       }
@@ -3970,22 +4513,25 @@ ${hookUniformFields}}
       // Determine buffer size and initial data
       let size, initialData;
       if (typeof dataOrCount === 'number') {
-        // createStorage(count) - zero-initialized
+        // createStorage(count) - zero-initialized, nothing to infer a type from
         size = dataOrCount * 4; // floats are 4 bytes
         initialData = new Float32Array(dataOrCount);
       } else {
         // createStorage(array) - from data
-        if (dataOrCount instanceof Float32Array) {
+        if (
+          ArrayBuffer.isView(dataOrCount) &&
+          !(dataOrCount instanceof DataView)
+        ) {
           initialData = dataOrCount;
         } else if (Array.isArray(dataOrCount)) {
+          // Plain arrays default to floats for back compat
           initialData = new Float32Array(dataOrCount);
         } else {
-          throw new Error(
-            'createStorage expects a number or array/Float32Array'
-          );
+          throw new Error('createStorage expects a number or array/TypedArray');
         }
         size = initialData.byteLength;
       }
+      const ArrayType = initialData.constructor;
 
       // Align to 16 bytes (WGSL storage buffer alignment requirement)
       size = Math.ceil(size / 16) * 16;
@@ -4002,17 +4548,87 @@ ${hookUniformFields}}
 
       // Write initial data if provided
       if (initialData.length > 0) {
-        const mapping = new Float32Array(buffer.getMappedRange());
+        const mapping = new ArrayType(buffer.getMappedRange());
         mapping.set(initialData);
         buffer.unmap();
       }
 
-      const storageBuffer = new StorageBuffer(buffer, size, this);
+      const storageBuffer = new StorageBuffer(
+        buffer,
+        size,
+        this,
+        null,
+        ArrayType,
+        initialData.length
+      );
 
       // Track for cleanup
       this._storageBuffers.add(storageBuffer);
 
       return storageBuffer;
+    }
+
+    createStorageList(maxCapacity, schemaOrData) {
+      const device = this.device;
+
+      let schema = null;
+      let initialCount = 0;
+      let initialDataPacked = null;
+
+      if (
+        Array.isArray(schemaOrData) &&
+        schemaOrData.length > 0 &&
+        typeof schemaOrData[0] === 'object' &&
+        !Array.isArray(schemaOrData[0])
+      ) {
+        schema = this._inferStructSchema(schemaOrData[0]);
+        initialDataPacked = this._packStructArray(schemaOrData, schema);
+        initialCount = schemaOrData.length;
+      } else if (
+        schemaOrData !== undefined &&
+        typeof schemaOrData === 'object' &&
+        !Array.isArray(schemaOrData)
+      ) {
+        // Plain schema template object -- only used to infer layout
+        schema = this._inferStructSchema(schemaOrData);
+      }
+
+      const stride = schema ? schema.stride : 4;
+      // Length field (u32) follows the data array at a 4-byte aligned offset.
+      // Strides are always multiples of 4, so no padding is needed between
+      // the last element and the length field.
+      const lengthOffset = maxCapacity * stride;
+      const totalSize = Math.max(
+        Math.ceil((lengthOffset + 4) / 16) * 16,
+        16
+      );
+
+      const buffer = device.createBuffer({
+        size: totalSize,
+        usage:
+          GPUBufferUsage.STORAGE |
+          GPUBufferUsage.COPY_DST |
+          GPUBufferUsage.COPY_SRC,
+        mappedAtCreation: true
+      });
+
+      const mapped = buffer.getMappedRange();
+      if (initialDataPacked !== null) {
+        new Float32Array(mapped).set(initialDataPacked);
+      }
+      new Int32Array(mapped, lengthOffset, 1).set([initialCount]);
+      buffer.unmap();
+
+      const storageList = new StorageList(
+        buffer,
+        lengthOffset,
+        maxCapacity,
+        this,
+        schema,
+        initialCount
+      );
+      this._storageBuffers.add(storageList);
+      return storageList;
     }
 
     _getWebGPUColorFormat(framebuffer) {
@@ -4518,11 +5134,17 @@ ${hookUniformFields}}
         pz = 1;
       }
 
-      shader.setUniform('uPhysicalCount', [px, py, pz]);
-
       const workgroupCountX = Math.ceil(px / WORKGROUP_SIZE_X);
       const workgroupCountY = Math.ceil(py / WORKGROUP_SIZE_Y);
       const workgroupCountZ = Math.ceil(pz / WORKGROUP_SIZE_Z);
+
+      // Use actual dispatch width as stride, not px: extra threads beyond px are
+      // still launched and would collide with threads in the next row if px were used.
+      shader.setUniform('uPhysicalCount', [
+        workgroupCountX * WORKGROUP_SIZE_X,
+        workgroupCountY * WORKGROUP_SIZE_Y,
+        workgroupCountZ * WORKGROUP_SIZE_Z
+      ]);
 
       const commandEncoder = this.device.createCommandEncoder();
       const passEncoder = commandEncoder.beginComputePass();
@@ -4539,7 +5161,10 @@ ${hookUniformFields}}
       );
 
       passEncoder.end();
-      this.device.queue.submit([commandEncoder.finish()]);
+      // Queue alongside pending draws so the copy and render in flushDraw()
+      // are guaranteed to execute after the compute in the same submit batch.
+      this._pendingCommandEncoders.push(commandEncoder.finish());
+      this._hasPendingDraws = true;
     }
   }
 

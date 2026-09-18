@@ -2005,6 +2005,9 @@ export class Matrix extends MatrixInterface {
    * @return {Number} Determinant of our 4×4 matrix
    * @private
    */
+  // Kept private until the determinant API is made public; see the skipped
+  // 'Determinant' tests in test/unit/math/p5.Matrix.js.
+  // oxlint-disable-next-line no-unused-private-class-members
   #determinant4x4() {
     if (this.#sqDimention !== 4) {
       throw new Error(

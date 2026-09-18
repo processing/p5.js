@@ -380,6 +380,35 @@ suite('Validate Params', function () {
     });
   });
 
+  suite('validateParams: variadic min/max', function () {
+    ['min', 'max'].forEach(fn => {
+      test(`${fn}(): works with two numbers`, function () {
+        const result = mockP5Prototype._validate(`p5.${fn}`, [1, 2]);
+        assert.isTrue(result.success);
+      });
+      test(`${fn}(): works with more than two numbers`, function () {
+        const result = mockP5Prototype._validate(`p5.${fn}`, [1, 2, 3, 4]);
+        assert.isTrue(result.success);
+      });
+      test(`${fn}(): works with a single array of numbers`, function () {
+        const result = mockP5Prototype._validate(`p5.${fn}`, [[1, 2, 3, 4]]);
+        assert.isTrue(result.success);
+      });
+      test(`${fn}(): fails with no args`, function () {
+        const result = mockP5Prototype._validate(`p5.${fn}`, []);
+        assert.isFalse(result.success);
+      });
+      test(`${fn}(): fails with a single number`, function () {
+        const result = mockP5Prototype._validate(`p5.${fn}`, [5]);
+        assert.isFalse(result.success);
+      });
+      test(`${fn}(): fails with a non-number among the rest`, function () {
+        const result = mockP5Prototype._validate(`p5.${fn}`, [1, 2, '3', 4]);
+        assert.isFalse(result.success);
+      });
+    });
+  });
+
   suite('validateParams: rest arguments', function () {
     test('createVector(): works with no args', function () {
       const result = mockP5Prototype._validate('p5.createVector', []);

@@ -8,7 +8,9 @@ If you are looking to contribute outside of the p5.js repositories (writing tuto
 
 This is a relatively long and comprehensive document but we will try to signpost all steps and points as clearly as possible. Do utilize the table of contents to find sections relevant to you. Feel free to skip sections if they are not relevant to your planned contributions.
 
-**If you are a new contributor, you may want to start with the first section, “All about issues.” If you just want a step-by-step setup of the development process, you can look at the “Quick Get Started For Developers” section.**
+**If you are a new contributor**, be sure to check this entire document, as well as the [AI Usage Policy](https://github.com/processing/p5.js/blob/main/AI_USAGE_POLICY.md). We recommend new contributors work on one topic at a time: this means asking for assignment on one issue at a time, or submitting one PR at a time. This helps reduce overlapping work, and it helps us be more efficient with reviews. Please be mindful that almost all reviews are done by volunteers.
+
+Please note that consistently violating the contributor guidelines, the AI usage policy, and/or the code of conduct may result in temporary or permanent suspension of user accounts. We expect contributors to respond to feedback: even if you do not implement something someone asks, we expect you to reply to the comments.
 
 # Table of Contents
 
