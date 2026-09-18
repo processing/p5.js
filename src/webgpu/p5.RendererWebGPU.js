@@ -763,6 +763,9 @@ function rendererWebGPU(p5, fn) {
     constructor(pInst, w, h, isMainCanvas, elt) {
       super(pInst, w, h, isMainCanvas, elt);
 
+      this.rendererType = constants.WEBGPU;
+      this._pInst.rendererType = this.rendererType;
+
       warnExperimental(p5, pInst, 'webgpu');
 
       // Used to group draws into one big render pass
@@ -897,9 +900,6 @@ function rendererWebGPU(p5, fn) {
       this._updateSize();
       this._update();
       this.flushDraw();
-
-      this.rendererType = constants.WEBGPU;
-      this._pInst.rendererType = this.rendererType;
     }
 
     async _setAttributes(key, value) {

@@ -745,6 +745,25 @@ suite('WebGPU p5.RendererWebGPU', function () {
       expect(myp5.rendererType).to.equal(myp5.WEBGPU);
       expect(myp5._renderer.rendererType).to.equal(myp5.WEBGPU);
     });
+
+    test('reports WEBGPU synchronously before context init resolves', function () {
+      const initStub = vi
+        .spyOn(p5.RendererWebGPU.prototype, '_initContext')
+        .mockImplementation(() => new Promise(() => {}));
+      myp5.rendererType = myp5.P2D;
+      let renderer = null;
+      try {
+        renderer = new p5.RendererWebGPU(myp5, 50, 50, false);
+        expect(renderer.rendererType).to.equal(myp5.WEBGPU);
+        expect(myp5.rendererType).to.equal(myp5.WEBGPU);
+      } finally {
+        initStub.mockRestore();
+        if (renderer) {
+          renderer.canvas.remove();
+        }
+        myp5.rendererType = myp5.WEBGPU;
+      }
+    });
   });
 
   suite('_initContext error detection', function () {
