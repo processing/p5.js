@@ -3908,6 +3908,140 @@ suite('p5.Shader', function () {
       assert.equal(mockUserError.mock.calls.length, 0);
     });
 
+    test('ordering comparison with a boolean operand throws a clear strands type error', () => {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+
+      try {
+        myp5.baseMaterialShader().modify(
+          () => {
+            myp5.getFinalColor(color => {
+              if (myp5.bool(true) < 0.5) {
+                color = [1, 1, 1, 1];
+              }
+              return color;
+            });
+          },
+          { myp5 }
+        );
+      } catch (e) {
+        /* expected */
+      }
+
+      assert.isAbove(
+        mockUserError.mock.calls.length,
+        0,
+        'FES.userError should have been called'
+      );
+      const errMsg = mockUserError.mock.calls[0][1];
+      assert.include(errMsg, '<');
+      assert.include(errMsg, 'not defined for boolean values');
+    });
+
+    test('ordering comparison between two booleans throws a clear strands type error', () => {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+
+      try {
+        myp5.baseMaterialShader().modify(
+          () => {
+            myp5.getFinalColor(color => {
+              if (myp5.bool(true) > myp5.bool(false)) {
+                color = [1, 1, 1, 1];
+              }
+              return color;
+            });
+          },
+          { myp5 }
+        );
+      } catch (e) {
+        /* expected */
+      }
+
+      assert.isAbove(
+        mockUserError.mock.calls.length,
+        0,
+        'FES.userError should have been called'
+      );
+      const errMsg = mockUserError.mock.calls[0][1];
+      assert.include(errMsg, '>');
+      assert.include(errMsg, 'not defined for boolean values');
+    });
+
+    test('equality comparison between boolean and numeric types throws a clear strands type error', () => {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+
+      try {
+        myp5.baseMaterialShader().modify(
+          () => {
+            myp5.getFinalColor(color => {
+              if (myp5.bool(true).equalTo(1.0)) {
+                color = [1, 1, 1, 1];
+              }
+              return color;
+            });
+          },
+          { myp5 }
+        );
+      } catch (e) {
+        /* expected */
+      }
+
+      assert.isAbove(
+        mockUserError.mock.calls.length,
+        0,
+        'FES.userError should have been called'
+      );
+      const errMsg = mockUserError.mock.calls[0][1];
+      assert.include(errMsg, '==');
+      assert.include(errMsg, 'between boolean and numeric');
+    });
+
+    test('inequality comparison between numeric and boolean types throws a clear strands type error', () => {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+
+      try {
+        myp5.baseMaterialShader().modify(
+          () => {
+            myp5.getFinalColor(color => {
+              if (myp5.float(1.0).notEqual(myp5.bool(false))) {
+                color = [1, 1, 1, 1];
+              }
+              return color;
+            });
+          },
+          { myp5 }
+        );
+      } catch (e) {
+        /* expected */
+      }
+
+      assert.isAbove(
+        mockUserError.mock.calls.length,
+        0,
+        'FES.userError should have been called'
+      );
+      const errMsg = mockUserError.mock.calls[0][1];
+      assert.include(errMsg, '!=');
+      assert.include(errMsg, 'between boolean and numeric');
+    });
+
+    test('equality comparison between two booleans is allowed', () => {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+
+      myp5.baseMaterialShader().modify(
+        () => {
+          myp5.getFinalColor(color => {
+            if (myp5.bool(true).equalTo(myp5.bool(false))) {
+              color = [1, 1, 1, 1];
+            }
+            return color;
+          });
+        },
+        { myp5 }
+      );
+
+      assert.equal(mockUserError.mock.calls.length, 0);
+    });    
+    
     test('shows a helpful error for web editor loop protection', () => {
       myp5.createCanvas(50, 50, myp5.WEBGL);
 
