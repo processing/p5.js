@@ -235,12 +235,24 @@ export function binaryOpNode(
         `${OpCodeToSymbol[opCode]} is only defined for scalars. ` +
         `Got ${leftBase}${leftDim} ${OpCodeToSymbol[opCode]} ${rightBase}${rightDim}.`
       );
+    } else if (leftBase === BaseType.BOOL || rightBase === BaseType.BOOL) {
+      FES.userError(
+        'type error',
+        `${OpCodeToSymbol[opCode]} is not defined for boolean values. ` +
+        `Got ${leftBase}${leftDim} ${OpCodeToSymbol[opCode]} ${rightBase}${rightDim}.`
+      );
     }
   } else if (isEquality) {
     if ((leftDim > 1 || rightDim > 1) && (leftDim !== rightDim || leftBase !== rightBase)) {
       FES.userError(
         'type error',
         `Equality comparisons between vectors require matching dimensions and base types. ` +
+        `Got ${leftBase}${leftDim} ${OpCodeToSymbol[opCode]} ${rightBase}${rightDim}.`
+      );
+    } else if ((leftBase === BaseType.BOOL) !== (rightBase === BaseType.BOOL)) {
+      FES.userError(
+        'type error',
+        `Equality comparisons between boolean and numeric types are not allowed. ` +
         `Got ${leftBase}${leftDim} ${OpCodeToSymbol[opCode]} ${rightBase}${rightDim}.`
       );
     }
