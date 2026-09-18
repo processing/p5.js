@@ -830,7 +830,7 @@ function generateTypeDefinitions() {
 
   let globalDefinitions = `// This file is auto-generated from JSDoc documentation
 
-import P5 from './p5';
+import P5 from './p5.js';
 
 declare global {
 interface Window {

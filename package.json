@@ -13,7 +13,8 @@
     "test:types": "tsc test/types/*.ts --noEmit --lib es2022,dom",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
-    "generate-types": "npm run docs && node utils/typescript.mjs"
+    "generate-types": "npm run docs && node utils/typescript.mjs",
+    "prepack": "npm run generate-types"
   },
   "lint-staged": {
     "src/**/*.js": "eslint",
