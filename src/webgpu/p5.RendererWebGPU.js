@@ -763,6 +763,9 @@ function rendererWebGPU(p5, fn) {
     constructor(pInst, w, h, isMainCanvas, elt) {
       super(pInst, w, h, isMainCanvas, elt);
 
+      this.rendererType = constants.WEBGPU;
+      this._pInst.rendererType = this.rendererType;
+
       warnExperimental(p5, pInst, 'webgpu');
 
       // Used to group draws into one big render pass
@@ -855,18 +858,35 @@ function rendererWebGPU(p5, fn) {
     }
 
     async _initContext() {
-      this.adapter = await navigator.gpu?.requestAdapter(
+      if (!navigator.gpu) {
+        throw new Error(
+          'WebGPU is not supported by this browser.'
+        );
+      }
+      this.adapter = await navigator.gpu.requestAdapter(
         this._webgpuAttributes
       );
-      this.device = await this.adapter?.requestDevice({
-        // Todo: check support
-        requiredFeatures: ['depth32float-stencil8']
-      });
-      if (!this.device) {
-        throw new Error('Your browser does not support WebGPU.');
+      if (!this.adapter) {
+        throw new Error(
+          'No compatible GPU could be found for WebGPU on this device.'
+        );
       }
-      this.queue = this.device.queue;
+      this.device = await this.adapter.requestDevice({
+        requiredFeatures: ['depth32float-stencil8']
+      }).catch(() => null);
+      if (!this.device) {
+        throw new Error(
+          'WebGPU is available, but a WebGPU device could not be created on this system.'
+        );
+      }
       this.drawingContext = this.canvas.getContext('webgpu');
+      if (!this.drawingContext) {
+        throw new Error(
+          'WebGPU is available, but the drawing context could not be created for this canvas.'
+        );
+      }
+
+      this.queue = this.device.queue;
       this.presentationFormat = navigator.gpu.getPreferredCanvasFormat();
       this.drawingContext.configure({
         device: this.device,
