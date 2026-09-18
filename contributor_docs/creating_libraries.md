@@ -315,6 +315,54 @@ Please note that in the above example, if the user does not define `function myA
 
 Overall, this custom actions approach supports accessing the custom action functions in both global mode and instance mode with the same code, simplifying your code from what it otherwise may need to be.
 
+## Adding state to your addon
+
+Most addons need to remember something between calls. p5.js keeps two kinds of state in two different places, and the difference that matters is whether `push()` and `pop()` should restore it.
+
+**State that** `push()` **and** `pop()` **leave alone**
+
+This is ordinary per-sketch state, such as a cache or a configuration flag. Give it a default on the `fn` argument, which is an alias for `p5.prototype`, then read and write it through `this` inside your methods and lifecycle hooks.
+
+```js
+function loadCSVAddon(p5, fn, lifecycles) {
+  fn.csvCache = null;
+
+  fn.loadCSV = async function (filename) {
+    this.csvCache = await fetch(filename).then((response) => response.text());
+    return this.csvCache;
+  };
+}
+```
+
+The default on `fn` is shared, but the first write through `this` creates a property on that sketch instance which shadows it. Each sketch on the page therefore gets its own value from the moment it writes one.
+
+It is worth being deliberate about this, because the shorter-looking alternative does not do the same thing. A variable declared in the addon function's own scope reads like addon state and is not:
+
+```js
+function loadCSVAddon(p5, fn, lifecycles) {
+  let csvCache = null; // shared by every sketch on the page
+
+  fn.loadCSV = async function (filename) {
+    csvCache = await fetch(filename).then((response) => response.text());
+    return csvCache;
+  };
+}
+```
+
+The addon function runs once when the addon is registered, not once per sketch, so every p5 instance on the page reads and writes that same variable. With two sketches loaded, one will overwrite the other's cache.
+
+**State that** `push()` **and** `pop()` **restore**
+
+Drawing state belongs on the renderer, at `this._renderer.states`, alongside built-in state such as the current fill and stroke weight. Write it with `setValue()` rather than by assignment:
+
+```js
+this._renderer.states.setValue('myProperty', value);
+```
+
+Assigning directly, as in `this._renderer.states.myProperty = value`, appears to work and then quietly breaks `pop()`.
+
+The reason is how the restore is implemented. A `States` object keeps a private record of which keys have changed since the last `push()`, and `setValue()` is what writes to that record, saving the previous value the first time a key changes. `push()` takes that record and puts it on a stack, and `pop()` takes it back off and reinstates the saved values. A direct assignment changes the value without ever telling the record, so when `pop()` runs there is nothing to restore and the change survives past the `pop()` that should have undone it.
+
 ## Next steps
 
 Below are some extra tips about authoring your addon library.
