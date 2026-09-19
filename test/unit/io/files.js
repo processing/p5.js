@@ -181,7 +181,7 @@ suite('Files', function() {
 
       test('should preserve CRLF when saving a text file without an extension', async () => {
         const myStrings = ['aaa', 'bbb'];
-        mockP5Prototype.save(myStrings, 'filename', undefined, true);
+        mockP5Prototype.save(myStrings, 'filename', true);
 
         const saveData = new Blob([myStrings.join('\r\n')]);
         expect(document.createElement).toHaveBeenCalledTimes(1);
@@ -192,7 +192,7 @@ suite('Files', function() {
 
       test('should preserve CRLF when saving a text file', async () => {
         const myStrings = ['aaa', 'bbb'];
-        mockP5Prototype.save(myStrings, 'filename', 'txt', true);
+        mockP5Prototype.save(myStrings, 'filename.txt', true);
 
         const saveData = new Blob([myStrings.join('\r\n')]);
         expect(document.createElement).toHaveBeenCalledTimes(1);
