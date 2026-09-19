@@ -2174,6 +2174,17 @@ function customShapes(p5, fn) {
    * @returns {Number} The current Bézier order.
    */
   fn.bezierOrder = function (order) {
+    if (
+      !p5.disableFriendlyErrors &&
+      order !== undefined &&
+      order !== 2 &&
+      order !== 3
+    ) {
+      p5._friendlyError(
+        `bezierOrder() expects an order of 2 or 3, but received ${order}.`,
+        'bezierOrder'
+      );
+    }
     return this._renderer.bezierOrder(order);
   };
 
