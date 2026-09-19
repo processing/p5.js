@@ -1146,6 +1146,7 @@ function files(p5, fn) {
         case 'xml':
         // NOTE: still need to normalize type handling/mapping
         // datatype = 'xml';
+        // falls through
         case 'txt':
         default:
           datatype = 'text';
@@ -2127,6 +2128,7 @@ function files(p5, fn) {
    *
    *  @private
    */
+  /* oxlint-disable-next-line no-unused-vars */
   function destroyClickedElement(event) {
     document.body.removeChild(event.target);
   }
