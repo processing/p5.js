@@ -179,6 +179,17 @@ suite('Files', function() {
         assert.equal(mockAnchorElement.download, 'filename.txt');
       });
 
+      test('should preserve CRLF when saving a text file without an extension', async () => {
+        const myStrings = ['aaa', 'bbb'];
+        mockP5Prototype.save(myStrings, 'filename', undefined, true);
+
+        const saveData = new Blob([myStrings.join('\r\n')]);
+        expect(document.createElement).toHaveBeenCalledTimes(1);
+        expect(mockAnchorElement.click).toHaveBeenCalledTimes(1);
+        expect(URL.createObjectURL).toHaveBeenCalledWith(saveData);
+        assert.equal(mockAnchorElement.download, 'filename.txt');
+      });
+
       test('should preserve CRLF when saving a text file', async () => {
         const myStrings = ['aaa', 'bbb'];
         mockP5Prototype.save(myStrings, 'filename', 'txt', true);
