@@ -3831,7 +3831,7 @@ suite('p5.Shader', function () {
           },
           { myp5 }
         );
-      } catch (e) {
+      } catch {
         /* expected */
       }
 
@@ -3843,6 +3843,8 @@ suite('p5.Shader', function () {
       const errMsg = mockUserError.mock.calls[0][1];
       assert.include(errMsg, '<');
       assert.include(errMsg, 'only defined for scalars');
+      assert.include(errMsg, 'float4');
+      assert.include(errMsg, 'float1');
     });
 
     test('ordering comparison between scalars is allowed', () => {
@@ -3896,7 +3898,7 @@ suite('p5.Shader', function () {
           },
           { myp5 }
         );
-      } catch (e) {
+      } catch {
         /* expected */
       }
 
@@ -3943,7 +3945,7 @@ suite('p5.Shader', function () {
           },
           { myp5 }
         );
-      } catch (e) {
+      } catch {
         /* expected */
       }
 
@@ -3972,7 +3974,7 @@ suite('p5.Shader', function () {
           },
           { myp5 }
         );
-      } catch (e) {
+      } catch {
         /* expected */
       }
 
@@ -4001,7 +4003,7 @@ suite('p5.Shader', function () {
           },
           { myp5 }
         );
-      } catch (e) {
+      } catch {
         /* expected */
       }
 
@@ -4030,7 +4032,7 @@ suite('p5.Shader', function () {
           },
           { myp5 }
         );
-      } catch (e) {
+      } catch {
         /* expected */
       }
 
@@ -4060,8 +4062,8 @@ suite('p5.Shader', function () {
       );
 
       assert.equal(mockUserError.mock.calls.length, 0);
-    });    
-    
+    });
+
     test('shows a helpful error for web editor loop protection', () => {
       myp5.createCanvas(50, 50, myp5.WEBGL);
 
