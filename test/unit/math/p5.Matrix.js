@@ -406,15 +406,13 @@ suite('p5.Matrix', function () {
       ]);
     });
 
-    // TODO: matrix transpose This needs to be added to the legacy tests
-    it.skip('should transpose a 3x3 matrix correctly', () => {
+    it('should transpose a 3x3 matrix correctly', () => {
       const mat = new p5.Matrix([1, 2, 3, 4, 5, 6, 7, 8, 9]);
       mat.transpose(mat);
       expect(mat.mat3).toEqual([1, 4, 7, 2, 5, 8, 3, 6, 9]);
     });
 
-    // TODO: matrix transpose This needs to be added to the legacy tests
-    it.skip('should transpose a 3x3 matrix from an array correctly', () => {
+    it('should transpose a 3x3 matrix from an array correctly', () => {
       const mat = new p5.Matrix([1, 2, 3, 4, 5, 6, 7, 8, 9]);
 
       mat.transpose([1, 2, 3, 4, 5, 6, 7, 8, 9]);

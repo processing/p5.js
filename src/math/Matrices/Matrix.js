@@ -1774,9 +1774,10 @@ export class Matrix extends MatrixInterface {
    */
   #transposeNxN() {
     const n = this.#sqDimention;
+    const source = this.matrix.slice();
     for (let i = 0; i < n; i++) {
       for (let j = 0; j < n; j++) {
-        this.matrix[i * n + j] = this.matrix[j * n + i];
+        this.matrix[i * n + j] = source[j * n + i];
       }
     }
     return this;
@@ -1790,7 +1791,6 @@ export class Matrix extends MatrixInterface {
    * @chainable
    */
   #transpose4x4(a) {
-    console.log('====> 4x4');
     let a01, a02, a03, a12, a13, a23;
     if (a instanceof Matrix) {
       a01 = a.matrix[1];
@@ -1856,21 +1856,21 @@ export class Matrix extends MatrixInterface {
    * @chainable
    */
   #transpose3x3(mat3) {
-    if (mat3 === undefined) {
-      mat3 = this.mat3;
+    const source = mat3 instanceof Matrix ? mat3.mat3 : mat3 ?? this.mat3;
+    if (!source) {
+      return this;
     }
-    const a01 = mat3[1];
-    const a02 = mat3[2];
-    const a12 = mat3[5];
-    this.mat3[0] = mat3[0];
-    this.mat3[1] = mat3[3];
-    this.mat3[2] = mat3[6];
-    this.mat3[3] = a01;
-    this.mat3[4] = mat3[4];
-    this.mat3[5] = mat3[7];
-    this.mat3[6] = a02;
-    this.mat3[7] = a12;
-    this.mat3[8] = mat3[8];
+
+    const sourceCopy = Array.from(source);
+    this.matrix[0] = sourceCopy[0];
+    this.matrix[1] = sourceCopy[3];
+    this.matrix[2] = sourceCopy[6];
+    this.matrix[3] = sourceCopy[1];
+    this.matrix[4] = sourceCopy[4];
+    this.matrix[5] = sourceCopy[7];
+    this.matrix[6] = sourceCopy[2];
+    this.matrix[7] = sourceCopy[5];
+    this.matrix[8] = sourceCopy[8];
 
     return this;
   }
