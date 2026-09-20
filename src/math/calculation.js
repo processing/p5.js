@@ -973,6 +973,7 @@ function calculation(p5, fn) {
    * @method max
    * @param  {Number} n0 first number to compare.
    * @param  {Number} n1 second number to compare.
+   * @param  {...Number} rest additional numbers to compare.
    * @return {Number}             maximum number.
    */
   /**
@@ -1092,6 +1093,7 @@ function calculation(p5, fn) {
    * @method min
    * @param  {Number} n0 first number to compare.
    * @param  {Number} n1 second number to compare.
+   * @param  {...Number} rest additional numbers to compare.
    * @return {Number}             minimum number.
    */
   /**

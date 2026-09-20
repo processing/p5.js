@@ -57,7 +57,7 @@ Once triggered, it will run the following steps:
 4. Update website files
    1. Clone the website repository
    2. Copy `data.json` and `data.min.json` to the right location
-   3. Copy `p5.min.js` and `p5.sound.min.js` to the right location
+   3. Copy `p5.min.js` to the right location
    4. Update `data.yml` file with latest version number
    5. Update `en.json` file based on `data.min.json`
    6. Commit and push the changes back to the website repository

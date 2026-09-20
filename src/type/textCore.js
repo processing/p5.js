@@ -23,7 +23,7 @@ function textCore(p5, fn) {
   const LinebreakRe = /\r?\n/g;
   const CommaDelimRe = /,\s+/;
   const QuotedRe = /^".*"$/;
-  const SpecialCharRe = /[^\x00-\x7F]/; // Non-ascii
+  const SpecialCharRe = /\P{ASCII}/u; // Non-ascii
   const TabsRe = /\t/g;
 
   const FontVariationSettings = 'fontVariationSettings';
@@ -1810,14 +1810,6 @@ function textCore(p5, fn) {
       }
     }
 
-    if (0 && opts?.ignoreRectMode) {
-      // draw bounds for debugging
-      let ss = context.strokeStyle;
-      context.strokeStyle = 'green';
-      context.strokeRect(bounds.x, bounds.y, bounds.w, bounds.h);
-      context.strokeStyle = ss;
-    }
-
     context.textBaseline = setBaseline; // restore baseline
 
     return { bounds, lines };
@@ -1866,7 +1858,7 @@ function textCore(p5, fn) {
     if (this.textCanvas().style[opt] !== value) {
       // fails on precision for floating points, also quotes and spaces
 
-      if (0)
+      if (debug)
         console.warn(
           `Unable to set '${opt}' property` + // FES?
             ' on canvas.style. It may not be supported. Expected "' +
@@ -1909,28 +1901,8 @@ function textCore(p5, fn) {
             if (this.states.fontWeight !== val) this.textWeight(val);
             return val;
           case 'wdth':
-            if (0) {
-              // attempt to map font-stretch to allowed keywords
-              const FontStretchMap = {
-                'ultra-condensed': 50,
-                'extra-condensed': 62.5,
-                condensed: 75,
-                'semi-condensed': 87.5,
-                normal: 100,
-                'semi-expanded': 112.5,
-                expanded: 125,
-                'extra-expanded': 150,
-                'ultra-expanded': 200
-              };
-              let values = Object.values(FontStretchMap);
-              const indexArr = values.map(function (k) {
-                return Math.abs(k - val);
-              });
-              const min = Math.min.apply(Math, indexArr);
-              let idx = indexArr.indexOf(min);
-              let stretch = Object.keys(FontStretchMap)[idx];
-              this.states.setValue('fontStretch', stretch);
-            }
+            // TODO: map the numeric 'wdth' axis onto the allowed font-stretch
+            // keywords (ultra-condensed ... ultra-expanded) by nearest value.
             break;
           case 'ital':
             if (debug)
