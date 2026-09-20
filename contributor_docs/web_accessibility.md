@@ -10,14 +10,12 @@ If you want to use p5.js with a screen reader, visit the [Using p5.js with a Scr
 
 The canvas HTML element is a grid of pixels. It doesn’t provide any screen reader-accessible information about the shapes drawn on it. p5.js has several functions that make the canvas more accessible to screen readers by providing [fallback text](https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Basic_usage#accessible_content) descriptions. I’ll describe some of the details around the implementation of these functions.
 
-
 ## Prerequisites
 
 - p5.js foundation
 - Contributor guidelines with local development setup
 - Looking inside p5.js
 - How to label your p5.js code
-
 
 ## Library-generated accessible outputs for basic shapes
 
@@ -31,11 +29,11 @@ function setup() {
 }
 
 function draw() {
-  background("#ccccff");
+  background('#ccccff');
   textOutput();
-  fill("orange");
+  fill('orange');
   ellipse(100, 100, 50);
-  fill("fuchsia");
+  fill('fuchsia');
   rect(300, 300, 50, 50);
 }
 ```
@@ -54,40 +52,59 @@ This description is followed by a list of shapes where the color, position, and 
 Each element can be selected to get more details. A table of elements is also provided. In this table, each element’s shape, color, location, coordinates, and area are described:
 
 > orange circle location=top left area=1%\
-> fuchsia square   location = bottom right area = 2%
+> fuchsia square location = bottom right area = 2%
 
 <details>
 <summary>This generates the following HTML:</summary>
 
 ```html
-<canvas id="defaultCanvas0" class="p5Canvas" style="width: 400px; height: 400px;" width="400" height="400">
-  <div id="defaultCanvas0accessibleOutput" role="region" aria-label="Canvas Outputs">
+<canvas
+  id="defaultCanvas0"
+  class="p5Canvas"
+  style="width: 400px; height: 400px;"
+  width="400"
+  height="400"
+>
+  <div
+    id="defaultCanvas0accessibleOutput"
+    role="region"
+    aria-label="Canvas Outputs"
+  >
     <div id="defaultCanvas0textOutput">
       Text Output
-      <div id="defaultCanvas0textOutputSummary" aria-label="text output summary">
+      <div
+        id="defaultCanvas0textOutputSummary"
+        aria-label="text output summary"
+      >
         <p id="defaultCanvas0textOutput_summary">
-          Your output is a, 400 by 400 pixels, white canvas containing the following 2 shapes:
+          Your output is a, 400 by 400 pixels, white canvas containing the
+          following 2 shapes:
         </p>
         <ul id="defaultCanvas0textOutput_list">
           <li>
-            <a href="#defaultCanvas0textOutputshape0">orange circle</a>, at top left, covering 1% of the canvas.
+            <a href="#defaultCanvas0textOutputshape0">orange circle</a>, at top
+            left, covering 1% of the canvas.
           </li>
           <li>
-            <a href="#defaultCanvas0textOutputshape1">fuchsia square</a>, at bottom right, covering 2% of the canvas.
+            <a href="#defaultCanvas0textOutputshape1">fuchsia square</a>, at
+            bottom right, covering 2% of the canvas.
           </li>
         </ul>
       </div>
-      <table id="defaultCanvas0textOutput_shapeDetails" summary="text output shape details">
+      <table
+        id="defaultCanvas0textOutput_shapeDetails"
+        summary="text output shape details"
+      >
         <tbody>
           <tr id="defaultCanvas0textOutputshape0">
             <th>orange circle</th>
             <td>location = top left</td>
-            <td> area = 1%</td>
+            <td>area = 1%</td>
           </tr>
           <tr id="defaultCanvas0textOutputshape1">
             <th>fuchsia square</th>
             <td>location = bottom right</td>
-            <td> area = 2%</td>
+            <td>area = 2%</td>
           </tr>
         </tbody>
       </table>
@@ -109,8 +126,8 @@ Each shape’s description is placed in a cell of the table depending on its loc
 
 These descriptions can be selected individually to get more details. A list of elements where shape, color, location, and area are described is also available:
 
-- *orange circle, location = top left, area = 1 %*
-- *fuchsia square, location = bottom right, area = 2 %*
+- _orange circle, location = top left, area = 1 %_
+- _fuchsia square, location = bottom right, area = 2 %_
 
 <details>
 <summary>
@@ -118,8 +135,18 @@ The generated HTML is as follows:
 </summary>
 
 ```html
-<canvas id="defaultCanvas0" class="p5Canvas" style="width: 400px; height: 400px;" width="400" height="400">
-  <div id="defaultCanvas0accessibleOutput" role="region" aria-label="Canvas Outputs">
+<canvas
+  id="defaultCanvas0"
+  class="p5Canvas"
+  style="width: 400px; height: 400px;"
+  width="400"
+  height="400"
+>
+  <div
+    id="defaultCanvas0accessibleOutput"
+    role="region"
+    aria-label="Canvas Outputs"
+  >
     <div id="defaultCanvas0gridOutput">
       Grid Output
       <p id="defaultCanvas0gridOutput_summary" aria-label="grid output summary">
@@ -138,14 +165,23 @@ The generated HTML is as follows:
           <tr></tr>
           <tr></tr>
           <tr>
-            <td><a href="#defaultCanvas0gridOutputshape1">fuchsia square</a></td>
+            <td>
+              <a href="#defaultCanvas0gridOutputshape1">fuchsia square</a>
+            </td>
           </tr>
           <tr></tr>
         </tbody>
       </table>
-      <ul id="defaultCanvas0gridOutput_shapeDetails" aria-label="grid output shape details">
-        <li id="defaultCanvas0gridOutputshape0">orange circle, location = top left, area = 1 %</li>
-        <li id="defaultCanvas0gridOutputshape1">fuchsia square, location = bottom right, area = 2 %</li>
+      <ul
+        id="defaultCanvas0gridOutput_shapeDetails"
+        aria-label="grid output shape details"
+      >
+        <li id="defaultCanvas0gridOutputshape0">
+          orange circle, location = top left, area = 1 %
+        </li>
+        <li id="defaultCanvas0gridOutputshape1">
+          fuchsia square, location = bottom right, area = 2 %
+        </li>
       </ul>
     </div>
   </div>
@@ -158,11 +194,9 @@ If a user passes `LABEL` as an argument to either of these functions, an additio
 
 ![A p5.js canvas, with the text descriptions described earlier present below it](images/sketch-text-output.png)
 
-
 ### Outputs structure
 
 Although `textOutput()` and `gridOutput()` are located in [src/accessibility/outputs.js](https://github.com/processing/p5.js/blob/main/src/accessibility/outputs.js), the outputs are created and updated using functions distributed across the library. This section details the different functions that support the accessible outputs.
-
 
 #### outputs.js
 
@@ -208,7 +242,6 @@ When `this._accessibleOutputs.text` or `this._accessibleOutputs.text` are `true`
 - `_accsBackground()` is called in:
   - `p5.Renderer2D.prototype.background()`
 
-
 #### textOutput.js
 
 [src/accessibility/textOutput.js](https://github.com/processing/p5.js/blob/main/src/accessibility/textOutput.js) contains all the methods that update the text output. The main method in this file is `_updateTextOutput()` which is called by `_updateAccsOutput()` in [src/accessibility/outputs.js](https://github.com/processing/p5.js/blob/main/src/accessibility/outputs.js) when `this._accessibleOutputs.text` or `this._accessibleOutputs.textLabel` are `true.`
@@ -218,7 +251,6 @@ When `this._accessibleOutputs.text` or `this._accessibleOutputs.text` are `true`
 - `_textSummary()`: Builds the content of the text output summary.
 - `_shapeDetails()`: Builds the text output table that contains shape details.
 - `_shapeList()`: Builds the list of shapes of the text output.
-
 
 #### gridOutput.js
 
@@ -230,13 +262,11 @@ When `this._accessibleOutputs.text` or `this._accessibleOutputs.text` are `true`
 - `_gridMap()`: Builds a grid that maps the location of shapes on the canvas.
 - `_gridShapeDetails()`: Builds the list of shapes of the grid output, each line of the list includes details about the shape.
 
-
 #### color\_namer.js
 
 When creating screen reader-accessible outputs, naming the colors used in the canvas is important. [src/accessibility/color\_namer.js](https://github.com/processing/p5.js/blob/main/src/accessibility/color_namer.js) contains `_rgbColorName()` a method that receives RGBA values and returns a color name. This function is called by `_accsBackground()` and `_accsCanvasColors` in [src/accessibility/outputs.js](https://github.com/processing/p5.js/blob/main/src/accessibility/outputs.js).
 
 `_rgbColorName()` uses `p5.color_conversion._rgbaToHSBA()` to get the HSV values of the color and then uses `_calculateColor()` to get the color name. The function `_calculateColor()` in this file comes from [colorNamer.js](https://github.com/MathuraMG/color-namer), which was developed as part of a [2018 Processing Foundation fellowship](https://medium.com/processing-foundation/making-p5-js-accessible-e2ce366e05a0) and in consultation with blind screen reader expert users. This function returns color names by comparing HSV values to those stored in the `colorLookUp` array, returning the closest color name as a string.
-
 
 ## User-generated accessible canvas descriptions
 
@@ -268,7 +298,6 @@ function setup() {
 The page will output:
 
 ![A p5.js canvas, with a description below reading, "A pink square with a red heart in the bottom-right corner."](images/sketch-text-output2.png)
-
 
 ### describeElement()
 

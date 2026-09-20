@@ -4,7 +4,7 @@
  * @for p5
  */
 
-function conversion(p5, fn){
+function conversion(p5, fn) {
   /**
    * Converts a `String` to a floating point (decimal) `Number`.
    *
@@ -73,7 +73,7 @@ function conversion(p5, fn){
    * @param {String[]} ns array of strings to convert.
    * @return {Number[]} converted numbers.
    */
-  fn.float = function(str) {
+  fn.float = function (str) {
     if (str instanceof Array) {
       return str.map(parseFloat);
     }
@@ -191,7 +191,7 @@ function conversion(p5, fn){
    * @param {Array} ns values to convert.
    * @return {Number[]} converted numbers.
    */
-  fn.int = function(n, radix = 10) {
+  fn.int = function (n, radix = 10) {
     if (n === Infinity || n === 'Infinity') {
       return Infinity;
     } else if (n === -Infinity || n === '-Infinity') {
@@ -298,7 +298,7 @@ function conversion(p5, fn){
    *   describe('The text "123456" written in black on a gray background.');
    * }
    */
-  fn.str = function(n) {
+  fn.str = function (n) {
     if (n instanceof Array) {
       return n.map(fn.str);
     } else {
@@ -411,7 +411,7 @@ function conversion(p5, fn){
    * @param {Array} ns values to convert.
    * @return {Boolean[]} converted Boolean values.
    */
-  fn.boolean = function(n) {
+  fn.boolean = function (n) {
     if (typeof n === 'number') {
       return n !== 0;
     } else if (typeof n === 'string') {
@@ -545,10 +545,10 @@ function conversion(p5, fn){
    * @param {Array} ns values to convert.
    * @return {Number[]} converted byte values.
    */
-  fn.byte = function(n) {
+  fn.byte = function (n) {
     const nn = fn.int(n, 10);
     if (typeof nn === 'number') {
-      return (nn + 128) % 256 - 128;
+      return ((nn + 128) % 256) - 128;
     } else if (nn instanceof Array) {
       return nn.map(fn.byte);
     }
@@ -653,7 +653,7 @@ function conversion(p5, fn){
    * @param {Array} ns values to convert.
    * @return {String[]} converted single-character strings.
    */
-  fn.char = function(n) {
+  fn.char = function (n) {
     if (typeof n === 'number' && !isNaN(n)) {
       return String.fromCharCode(n);
     } else if (n instanceof Array) {
@@ -735,7 +735,7 @@ function conversion(p5, fn){
    * @param {String[]} ns values to convert.
    * @return {Number[]} converted numbers.
    */
-  fn.unchar = function(n) {
+  fn.unchar = function (n) {
     if (typeof n === 'string' && n.length === 1) {
       return n.charCodeAt(0);
     } else if (n instanceof Array) {
@@ -847,7 +847,7 @@ function conversion(p5, fn){
    * @param {Number} [digits]
    * @return {String[]} converted hexadecimal values.
    */
-  fn.hex = function(n, digits) {
+  fn.hex = function (n, digits) {
     digits = digits === undefined || digits === null ? (digits = 8) : digits;
     if (n instanceof Array) {
       return n.map(n => fn.hex(n, digits));
@@ -858,9 +858,7 @@ function conversion(p5, fn){
       if (n < 0) {
         n = 0xffffffff + n + 1;
       }
-      let hex = Number(n)
-        .toString(16)
-        .toUpperCase();
+      let hex = Number(n).toString(16).toUpperCase();
       while (hex.length < digits) {
         hex = `0${hex}`;
       }
@@ -946,7 +944,7 @@ function conversion(p5, fn){
    * @param {String[]} ns values to convert.
    * @return {Number[]} converted numbers.
    */
-  fn.unhex = function(n) {
+  fn.unhex = function (n) {
     if (n instanceof Array) {
       return n.map(fn.unhex);
     } else {
@@ -957,6 +955,6 @@ function conversion(p5, fn){
 
 export default conversion;
 
-if(typeof p5 !== 'undefined'){
+if (typeof p5 !== 'undefined') {
   conversion(p5, p5.prototype);
 }

@@ -8,7 +8,7 @@ import * as constants from './constants';
 import { Framebuffer } from '../webgl/p5.Framebuffer';
 
 let renderers;
-function rendering(p5, fn){
+function rendering(p5, fn) {
   // Extend additional renderers object to p5 class, new renderer can be similarly attached
   if (!p5.renderers) {
     p5.renderers = {};
@@ -129,22 +129,24 @@ function rendering(p5, fn){
 
     let selectedRenderer = constants.P2D;
     // Check third argument whether it is renderer constants
-    if(Reflect.ownKeys(renderers).includes(renderer)){
+    if (Reflect.ownKeys(renderers).includes(renderer)) {
       selectedRenderer = renderer;
-    }else{
+    } else {
       args.unshift(renderer);
     }
 
     if (!renderers[selectedRenderer]) {
       if (selectedRenderer === constants.WEBGPU) {
-        p5.FES.log`To create a WEBGPU canvas, remember to add the WebGPU add-on to your project.`();
+        p5.FES
+          .log`To create a WEBGPU canvas, remember to add the WebGPU add-on to your project.`();
       } else {
-        p5.FES.log`We weren't able to find a renderer called ${selectedRenderer}.`();
+        p5.FES
+          .log`We weren't able to find a renderer called ${selectedRenderer}.`();
       }
     }
 
     // Init our graphics renderer
-    if(this._renderer) this._renderer.remove();
+    if (this._renderer) this._renderer.remove();
     this._renderer = new renderers[selectedRenderer](this, w, h, true, ...args);
     this._defaultGraphicsCreated = true;
     this._elements.push(this._renderer);
@@ -153,7 +155,7 @@ function rendering(p5, fn){
     // Make the renderer own `pixels`
     if (!Object.hasOwn(this, 'pixels')) {
       Object.defineProperty(this, 'pixels', {
-        get(){
+        get() {
           return this._renderer?.pixels;
         }
       });
@@ -678,6 +680,6 @@ function rendering(p5, fn){
 export default rendering;
 export { renderers };
 
-if(typeof p5 !== 'undefined'){
+if (typeof p5 !== 'undefined') {
   rendering(p5, p5.prototype);
 }

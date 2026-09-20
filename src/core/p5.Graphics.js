@@ -42,31 +42,31 @@ class Graphics {
     return this.canvas;
   }
 
-  get deltaTime(){
+  get deltaTime() {
     return this._pInst.deltaTime;
   }
 
-  get canvas(){
+  get canvas() {
     return this._renderer?.canvas;
   }
 
-  get drawingContext(){
+  get drawingContext() {
     return this._renderer.drawingContext;
   }
 
-  get width(){
+  get width() {
     return this._renderer?.width;
   }
 
-  get height(){
+  get height() {
     return this._renderer?.height;
   }
 
-  get pixels(){
+  get pixels() {
     return this._renderer?.pixels;
   }
 
-  pixelDensity(val){
+  pixelDensity(val) {
     let returnValue;
     if (typeof val === 'number') {
       if (val !== this._renderer._pixelDensity) {
@@ -80,7 +80,7 @@ class Graphics {
     return returnValue;
   }
 
-  resizeCanvas(w, h){
+  resizeCanvas(w, h) {
     this._renderer.resize(w, h);
   }
 
@@ -550,7 +550,7 @@ class Graphics {
       throw new Error(
         `${name}() is only supported in WEBGL mode. If you'd like to use 3D graphics and WebGL, see  https://p5js.org/examples/form-3d-primitives.html for more information.`
       );
-  };
+  }
 
   _initializeInstanceVariables() {
     this._accessibleOutputs = {
@@ -571,9 +571,9 @@ class Graphics {
 
     this._downKeys = {}; //Holds the key codes of currently pressed keys
   }
-};
+}
 
-function graphics(p5, fn){
+function graphics(p5, fn) {
   /**
    * A class to describe a drawing surface that's separate from the main canvas.
    *

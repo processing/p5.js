@@ -4,7 +4,6 @@
 
 If you're reading this page, you're probably interested in helping work on WebGL mode. Thank you, we're grateful for your help! This page exists to help explain how we structure WebGL contributions and to offer some tips for making changes.
 
-
 ## Resources
 
 - Read our [p5.js WebGL architecture overview](webgl_mode_architecture.md) to understand how WebGL mode differs from 2D mode. This will be a valuable reference for some implementation specifics for shaders, strokes, and more.
@@ -12,7 +11,6 @@ If you're reading this page, you're probably interested in helping work on WebGL
 - It can be helpful to know a bit about the browser's WebGL API, which is what p5.js's WebGL mode is built on top of:
   - [WebGL fundamentals](https://webglfundamentals.org/) goes over many core rendering concepts
   - [The Book of Shaders](https://thebookofshaders.com/) explains many techniques used in WebGL shaders
-
 
 ## Planning
 
@@ -27,7 +25,6 @@ We organize open issues [in a GitHub Project](https://github.com/orgs/processing
 - **Feature requests** are all other code change requests. These need a bit of discussion to make sure they are things that fit into WebGL mode's roadmap.
 - **Documentation** issues are ones that don't need a code change but instead need better documentation of p5.js's behavior.
 
-
 ## Where to Put Code
 
 Everything related to WebGL is in the `src/webgl` subdirectory. Within that directory, top-level p5.js functions are split into files based on subject area: commands to set light go in `lighting.js`; commands to set materials go in `materials.js`.
@@ -36,36 +33,29 @@ When implementing user-facing classes, we generally try to have one file per cla
 
 `p5.RendererGL` is a large class that handles a lot of behavior. For this reason, rather than having one large class file, its functionality is split into many files based on what subject area it is. Here is a description of the files we split `p5.RendererGL` across, and what to put in each one:
 
-
 #### `p5.RendererGL.js`
 
 Initialization and core functionality.
-
 
 #### `p5.RendererGL.Immediate.js`
 
 Functionality related to **immediate mode** drawing (shapes that will not get stored and reused, such as `beginShape()` and `endShape()`)
 
-
 #### `p5.RendererGL.Retained.js`
 
 Functionality related to **retained mode** drawing (shapes that have been stored for reuse, such as `sphere()`)
-
 
 #### `material.js`
 
 Management of blend modes
 
-
 #### `3d_primitives.js`
 
 User-facing functions that draw shapes, such as `triangle()`. These define the geometry of the shapes. The rendering of those shapes then happens in `p5.RendererGL.Retained.js` or `p5.RendererGL.Immediate.js`, treating the geometry input as a generic shape.
 
-
 #### `Text.js`
 
 Functionality and utility classes for text rendering.
-
 
 ## Testing WebGL Changes
 
@@ -76,15 +66,15 @@ There are a lot of ways one can use the functions in p5.js. It's hard to manuall
 When adding a new test, if the feature is something that also works in 2D mode, one of the best ways to check for consistency is to check that the resulting pixels are the same in both modes. Here's one example of that in a unit test:
 
 ```js
-test('coplanar strokes match 2D', function() {
-  const getColors = function(mode) {
+test('coplanar strokes match 2D', function () {
+  const getColors = function (mode) {
     myp5.createCanvas(20, 20, mode);
     myp5.pixelDensity(1);
     myp5.background(255);
     myp5.strokeCap(myp5.SQUARE);
     myp5.strokeJoin(myp5.MITER);
     if (mode === myp5.WEBGL) {
-      myp5.translate(-myp5.width/2, -myp5.height/2);
+      myp5.translate(-myp5.width / 2, -myp5.height / 2);
     }
     myp5.stroke('black');
     myp5.strokeWeight(4);
@@ -104,7 +94,7 @@ This doesn't always work because you can't turn off antialiasing in 2D mode, and
 If a feature is WebGL-only, rather than comparing pixels to 2D mode, we often check a few pixels to ensure their color is what we expect. One day, we might turn this into a more robust system that compares against full image snapshots of our expected results rather than a few pixels, but for now, here is an example of a pixel color check:
 
 ```js
-test('color interpolation', function() {
+test('color interpolation', function () {
   const renderer = myp5.createCanvas(256, 256, myp5.WEBGL);
   // upper color: (200, 0, 0, 255);
   // lower color: (0, 0, 200, 255);
@@ -123,7 +113,6 @@ test('color interpolation', function() {
   assert.deepEqual(myp5.get(128, 128), [100, 0, 100, 255]);
 });
 ```
-
 
 ### Performance Testing
 

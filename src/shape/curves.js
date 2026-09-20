@@ -4,7 +4,7 @@
  * @for p5
  */
 
-function curves(p5, fn){
+function curves(p5, fn) {
   /**
    * Draws a Bézier curve.
    *
@@ -185,7 +185,7 @@ function curves(p5, fn){
    * @param  {Number} z4 z-coordinate of the second anchor point.
    * @chainable
    */
-  fn.bezier = function(...args) {
+  fn.bezier = function (...args) {
     // p5._validateParameters('bezier', args);
 
     // if the current stroke and fill settings wouldn't result in something
@@ -309,7 +309,7 @@ function curves(p5, fn){
    *   circle(x, y, 5);
    * }
    */
-  fn.bezierPoint = function(a, b, c, d, t) {
+  fn.bezierPoint = function (a, b, c, d, t) {
     // p5._validateParameters('bezierPoint', arguments);
 
     const adjustedT = 1 - t;
@@ -423,7 +423,7 @@ function curves(p5, fn){
    *   );
    * }
    */
-  fn.bezierTangent = function(a, b, c, d, t) {
+  fn.bezierTangent = function (a, b, c, d, t) {
     // p5._validateParameters('bezierTangent', arguments);
 
     const adjustedT = 1 - t;
@@ -677,7 +677,7 @@ function curves(p5, fn){
    * @param  {Number} z4 z-coordinate of point p3.
    * @chainable
    */
-  fn.spline = function(...args) {
+  fn.spline = function (...args) {
     if (
       !this._renderer.states.strokeColor &&
       !this._renderer.states.fillColor
@@ -853,14 +853,14 @@ function curves(p5, fn){
    *   text('t = ' + nf(t, 1, 2) + ' (p1→p2)', 8, 16);
    * }
    */
-  fn.splinePoint = function(a, b, c, d, t) {
+  fn.splinePoint = function (a, b, c, d, t) {
     const s = this._renderer.states.splineProperties.tightness,
       t3 = t * t * t,
       t2 = t * t,
-      f1 = (s - 1) / 2 * t3 + (1 - s) * t2 + (s - 1) / 2 * t,
-      f2 = (s + 3) / 2 * t3 + (-5 - s) / 2 * t2 + 1.0,
-      f3 = (-3 - s) / 2 * t3 + (s + 2) * t2 + (1 - s) / 2 * t,
-      f4 = (1 - s) / 2 * t3 + (s - 1) / 2 * t2;
+      f1 = ((s - 1) / 2) * t3 + (1 - s) * t2 + ((s - 1) / 2) * t,
+      f2 = ((s + 3) / 2) * t3 + ((-5 - s) / 2) * t2 + 1.0,
+      f3 = ((-3 - s) / 2) * t3 + (s + 2) * t2 + ((1 - s) / 2) * t,
+      f4 = ((1 - s) / 2) * t3 + ((s - 1) / 2) * t2;
     return a * f1 + b * f2 + c * f3 + d * f4;
   };
 
@@ -1001,20 +1001,20 @@ function curves(p5, fn){
    *   );
    * }
    */
-  fn.splineTangent = function(a, b, c, d, t) {
+  fn.splineTangent = function (a, b, c, d, t) {
     const s = this._renderer.states.splineProperties.tightness,
       tt3 = t * t * 3,
       t2 = t * 2,
-      f1 = (s - 1) / 2 * tt3 + (1 - s) * t2 + (s - 1) / 2,
-      f2 = (s + 3) / 2 * tt3 + (-5 - s) / 2 * t2,
-      f3 = (-3 - s) / 2 * tt3 + (s + 2) * t2 + (1 - s) / 2,
-      f4 = (1 - s) / 2 * tt3 + (s - 1) / 2 * t2;
+      f1 = ((s - 1) / 2) * tt3 + (1 - s) * t2 + (s - 1) / 2,
+      f2 = ((s + 3) / 2) * tt3 + ((-5 - s) / 2) * t2,
+      f3 = ((-3 - s) / 2) * tt3 + (s + 2) * t2 + (1 - s) / 2,
+      f4 = ((1 - s) / 2) * tt3 + ((s - 1) / 2) * t2;
     return a * f1 + b * f2 + c * f3 + d * f4;
   };
 }
 
 export default curves;
 
-if(typeof p5 !== 'undefined'){
+if (typeof p5 !== 'undefined') {
   curves(p5, p5.prototype);
 }

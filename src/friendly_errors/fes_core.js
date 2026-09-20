@@ -23,10 +23,15 @@
  * https://github.com/processing/p5.js/blob/main/contributor_docs/fes_reference_dev_notes.md
  */
 import { errorTable, entryPoints } from './browser_errors';
-import { errorStackParser, processStack, printFriendlyStack, getFriendlyStack } from './stacktrace';
+import {
+  errorStackParser,
+  processStack,
+  printFriendlyStack,
+  getFriendlyStack
+} from './stacktrace';
 import { FES } from './fes';
 
-function fesCore(p5, fn, lifecycles){
+function fesCore(p5, fn, lifecycles) {
   // This is a lazily-defined list of p5 symbols that may be
   // misused by beginners at top-level code, outside of setup/draw. We'd like
   // to detect these errors and help the user by suggesting they move them
@@ -83,9 +88,7 @@ function fesCore(p5, fn, lifecycles){
   const EDIT_DIST_THRESHOLD = 2;
 
   if (typeof IS_MINIFIED !== 'undefined') {
-    p5._friendlyError =
-      p5._checkForUserDefinedFunctions =
-      () => {};
+    p5._friendlyError = p5._checkForUserDefinedFunctions = () => {};
   } else {
     /**
      * Takes a message and a p5 function func, and adds a link pointing to
@@ -111,9 +114,9 @@ function fesCore(p5, fn, lifecycles){
           methodParts.length === 1 ? func : methodParts.slice(2).join('/');
 
         //Whenever func having p5.[Class] is encountered, we need to have the error link as mentioned below else different link
-        if(funcName.startsWith('p5.')){
+        if (funcName.startsWith('p5.')) {
           msgWithReference = FES.log`${message} (https://p5js.org/reference/${referenceSection}.${funcName})`;
-        }else{
+        } else {
           msgWithReference = FES.log`${message} (https://p5js.org/reference/${referenceSection}/${funcName})`;
         }
       }
@@ -146,7 +149,7 @@ function fesCore(p5, fn, lifecycles){
      * @param  {String}         message   Message to be printed
      * @param  {String}         [func]    Name of the function linked to error
      */
-    p5._friendlyError = function(message, func) {
+    p5._friendlyError = function (message, func) {
       if (p5.disableFriendlyErrors) return;
       p5._report(message, func);
     };
@@ -160,7 +163,7 @@ function fesCore(p5, fn, lifecycles){
      *
      * @private
      */
-    p5.isPreloadSupported = function() {
+    p5.isPreloadSupported = function () {
       return false;
     };
 
@@ -207,9 +210,11 @@ function fesCore(p5, fn, lifecycles){
           !context[fxns[lowercase]] &&
           typeof context[prop] === 'function'
         ) {
-          FES.log`It seems that you may have accidentally written ${prop} instead of ${fxns[lowercase]}. Please correct it if it's not intentional.`({
-            reference: fxns[lowercase]
-          });
+          FES.log`It seems that you may have accidentally written ${prop} instead of ${fxns[lowercase]}. Please correct it if it's not intentional.`(
+            {
+              reference: fxns[lowercase]
+            }
+          );
         }
       }
     };
@@ -290,8 +295,8 @@ function fesCore(p5, fn, lifecycles){
         // this is already done in the suggestions variable, one link for each
         // suggestion.
         msg({
-          reference: matchedSymbols.length === 1 ?
-            matchedSymbols[0].name : undefined
+          reference:
+            matchedSymbols.length === 1 ? matchedSymbols[0].name : undefined
         });
         return true;
       }
@@ -385,10 +390,7 @@ function fesCore(p5, fn, lifecycles){
       let stacktrace = errorStackParser.parse(error);
       // process the stacktrace from the browser and simplify it to give
       // friendlyStack.
-      let [isInternal, friendlyStack] = processStack(
-        error,
-        stacktrace
-      );
+      let [isInternal, friendlyStack] = processStack(error, stacktrace);
 
       // if this is an internal library error, the type of the error is not relevant,
       // only the user code that lead to it is.
@@ -501,9 +503,10 @@ function fesCore(p5, fn, lifecycles){
 
               if (friendlyStack) {
                 const msg = getFriendlyStack(friendlyStack);
-                if(msg) FES.log`${msg}`({
-                  prefix: false
-                });
+                if (msg)
+                  FES.log`${msg}`({
+                    prefix: false
+                  });
               }
               break;
             }
@@ -657,4 +660,4 @@ function computeEditDistance(w1, w2) {
   }
 
   return cur[l2];
-};
+}

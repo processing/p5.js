@@ -9,16 +9,16 @@ const mockAnchorElement = vi.mockObject({
 });
 const originalCreateElement = document.createElement;
 vi.spyOn(document, 'createElement').mockImplementation((...args) => {
-  if(args[0] !== 'a'){
+  if (args[0] !== 'a') {
     return originalCreateElement.apply(document, args);
-  }else{
+  } else {
     return mockAnchorElement;
   }
 });
 vi.spyOn(URL, 'createObjectURL');
 
-suite('Files', function() {
-  beforeAll(async function() {
+suite('Files', function () {
+  beforeAll(async function () {
     files(mockP5, mockP5Prototype);
     await httpMock.start({ quiet: true });
   });
@@ -28,35 +28,44 @@ suite('Files', function() {
   });
 
   // httpDo
-  suite('httpDo()', function() {
-    test('should work when provided with just a path', async function() {
-      const data = await mockP5Prototype.httpDo('/test/unit/assets/sentences.txt');
+  suite('httpDo()', function () {
+    test('should work when provided with just a path', async function () {
+      const data = await mockP5Prototype.httpDo(
+        '/test/unit/assets/sentences.txt'
+      );
       assert.ok(data);
       assert.isString(data);
     });
 
-    test('should accept method parameter', async function() {
-      const data = await mockP5Prototype.httpDo('/test/unit/assets/sentences.txt', 'GET');
+    test('should accept method parameter', async function () {
+      const data = await mockP5Prototype.httpDo(
+        '/test/unit/assets/sentences.txt',
+        'GET'
+      );
       assert.ok(data);
       assert.isString(data);
     });
 
-    test('should accept method and type parameter together', async function() {
-      const data = await mockP5Prototype.httpDo('/test/unit/assets/sentences.txt', 'GET', 'text');
+    test('should accept method and type parameter together', async function () {
+      const data = await mockP5Prototype.httpDo(
+        '/test/unit/assets/sentences.txt',
+        'GET',
+        'text'
+      );
       assert.ok(data);
       assert.isString(data);
     });
 
-    test('should handle promise error correctly', async function() {
-      await expect(mockP5Prototype.httpDo('/test/unit/assets/sen.txt'))
-        .rejects
-        .toThrow('Not Found');
+    test('should handle promise error correctly', async function () {
+      await expect(
+        mockP5Prototype.httpDo('/test/unit/assets/sen.txt')
+      ).rejects.toThrow('Not Found');
     });
   });
 
   // saveStrings()
-  suite('p5.prototype.saveStrings', function() {
-    test('should be a function', function() {
+  suite('p5.prototype.saveStrings', function () {
+    test('should be a function', function () {
       assert.ok(mockP5Prototype.saveStrings);
       assert.typeOf(mockP5Prototype.saveStrings, 'function');
     });
@@ -85,8 +94,8 @@ suite('Files', function() {
   });
 
   // saveJSON()
-  suite('p5.prototype.saveJSON', function() {
-    test('should be a function', function() {
+  suite('p5.prototype.saveJSON', function () {
+    test('should be a function', function () {
       assert.ok(mockP5Prototype.saveJSON);
       assert.typeOf(mockP5Prototype.saveJSON, 'function');
     });
@@ -104,8 +113,8 @@ suite('Files', function() {
   });
 
   // writeFile()
-  suite('p5.prototype.writeFile', function() {
-    test('should be a function', function() {
+  suite('p5.prototype.writeFile', function () {
+    test('should be a function', function () {
       assert.ok(mockP5Prototype.writeFile);
       assert.typeOf(mockP5Prototype.writeFile, 'function');
     });
@@ -123,8 +132,8 @@ suite('Files', function() {
   });
 
   // downloadFile()
-  suite('p5.prototype.downloadFile', function() {
-    test('should be a function', function() {
+  suite('p5.prototype.downloadFile', function () {
+    test('should be a function', function () {
       assert.ok(mockP5Prototype.downloadFile);
       assert.typeOf(mockP5Prototype.downloadFile, 'function');
     });
@@ -143,9 +152,9 @@ suite('Files', function() {
   });
 
   // save()
-  suite('p5.prototype.save', function() {
-    suite('saving images', function() {
-      test('should be a function', function() {
+  suite('p5.prototype.save', function () {
+    suite('saving images', function () {
+      test('should be a function', function () {
         assert.ok(mockP5Prototype.save);
         assert.typeOf(mockP5Prototype.save, 'function');
       });
@@ -155,19 +164,22 @@ suite('Files', function() {
       test('should call saveCanvas', async () => {
         mockP5Prototype.save();
         expect(mockP5Prototype.saveCanvas).toHaveBeenCalledTimes(1);
-        expect(mockP5Prototype.saveCanvas)
-          .toHaveBeenCalledWith(mockP5Prototype.elt);
+        expect(mockP5Prototype.saveCanvas).toHaveBeenCalledWith(
+          mockP5Prototype.elt
+        );
       });
 
       test('should call saveCanvas with filename', async () => {
         mockP5Prototype.save('filename.jpg');
         expect(mockP5Prototype.saveCanvas).toHaveBeenCalledTimes(1);
-        expect(mockP5Prototype.saveCanvas)
-          .toHaveBeenCalledWith(mockP5Prototype.elt, 'filename.jpg');
+        expect(mockP5Prototype.saveCanvas).toHaveBeenCalledWith(
+          mockP5Prototype.elt,
+          'filename.jpg'
+        );
       });
     });
 
-    suite('saving strings and json', function() {
+    suite('saving strings and json', function () {
       test('should download a text file', async () => {
         const myStrings = ['aaa', 'bbb'];
         mockP5Prototype.save(myStrings, 'filename');

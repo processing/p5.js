@@ -4,7 +4,7 @@
  */
 
 class XML {
-  constructor(DOM){
+  constructor(DOM) {
     if (!DOM) {
       const xmlDoc = document.implementation.createDocument(null, 'doc');
       this.DOM = xmlDoc.createElement('root');
@@ -470,7 +470,7 @@ class XML {
     if (node instanceof XML) {
       this.DOM.appendChild(node.DOM);
     } else {
-    // PEND
+      // PEND
     }
   }
 
@@ -1142,7 +1142,7 @@ function elementsToP5XML(elements) {
   return arr;
 }
 
-function xml(p5, fn){
+function xml(p5, fn) {
   /**
    * A class to describe an XML object.
    *
@@ -1199,6 +1199,6 @@ function xml(p5, fn){
 export default xml;
 export { XML };
 
-if(typeof p5 !== 'undefined'){
+if (typeof p5 !== 'undefined') {
   xml(p5, p5.prototype);
 }

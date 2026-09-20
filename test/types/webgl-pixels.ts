@@ -1,211 +1,244 @@
 // From https://openprocessing.org/sketch/2308573
 
-import '../../types/global'
+import '../../types/global';
 // Fake matter.js import
-declare const Matter: any
+declare const Matter: any;
 
-let engine: any
-let blobs: Blob[] = []
-let metaballShader: p5.Shader
-let spheremap: p5.Image
-let renderer: p5.RendererGL
+let engine: any;
+let blobs: Blob[] = [];
+let metaballShader: p5.Shader;
+let spheremap: p5.Image;
+let renderer: p5.RendererGL;
 
 async function setup() {
-	spheremap = await loadImage('https://deckard.openprocessing.org/user67809/visual2181338/h987a85d77bacbc3b232fb87ce6fe440a/dusseldorf_bridge.jpg')
-	renderer = createCanvas(600, 600, WEBGL)
-	metaballShader = createShader(vert, frag)
-	setupScene()
-	blobs.push(new Blob(random(-1,1)*100, 50, 100, '#f3e17e'))
-	blobs.push(new Blob(random(-1,1)*100, -150, 100, '#dd483c'))
-	blobs.push(new Blob(random(-1,1)*100, -350, 50, '#4b8a5f'))
-	blobs.push(new Blob(random(-1,1)*100, -550, 50, '#0d150b'))
+  spheremap = await loadImage(
+    'https://deckard.openprocessing.org/user67809/visual2181338/h987a85d77bacbc3b232fb87ce6fe440a/dusseldorf_bridge.jpg'
+  );
+  renderer = createCanvas(600, 600, WEBGL);
+  metaballShader = createShader(vert, frag);
+  setupScene();
+  blobs.push(new Blob(random(-1, 1) * 100, 50, 100, '#f3e17e'));
+  blobs.push(new Blob(random(-1, 1) * 100, -150, 100, '#dd483c'));
+  blobs.push(new Blob(random(-1, 1) * 100, -350, 50, '#4b8a5f'));
+  blobs.push(new Blob(random(-1, 1) * 100, -550, 50, '#0d150b'));
 }
 
 function setupScene() {
-	engine = Matter.Engine.create()
-	
-	const ground = Matter.Bodies.rectangle(0, height / 2 + 30, width, 60, {
-    isStatic: true,
-  })
-  const wallLeft = Matter.Bodies.rectangle(-width/2 - 30, 0, 60, 3 * height, {
-    isStatic: true,
-  })
-  const wallRight = Matter.Bodies.rectangle(width/2 + 30, 0, 60, 3 * height, {
-    isStatic: true,
-  })
-	Matter.World.add(engine.world, [ground, wallLeft, wallRight])
+  engine = Matter.Engine.create();
+
+  const ground = Matter.Bodies.rectangle(0, height / 2 + 30, width, 60, {
+    isStatic: true
+  });
+  const wallLeft = Matter.Bodies.rectangle(-width / 2 - 30, 0, 60, 3 * height, {
+    isStatic: true
+  });
+  const wallRight = Matter.Bodies.rectangle(width / 2 + 30, 0, 60, 3 * height, {
+    isStatic: true
+  });
+  Matter.World.add(engine.world, [ground, wallLeft, wallRight]);
 }
 
 function draw() {
-	background('#faf8e2')
-	// translate(width/2, height/2)
-	
-	for (const blob of blobs) {
-		blob.update()
-	}
-	Matter.Engine.update(engine, 1000 / 60)
-	
-	for (const blob of blobs) {
-		blob.drawBlob()
-	}
+  background('#faf8e2');
+  // translate(width/2, height/2)
+
+  for (const blob of blobs) {
+    blob.update();
+  }
+  Matter.Engine.update(engine, 1000 / 60);
+
+  for (const blob of blobs) {
+    blob.drawBlob();
+  }
 }
 
-const BLOB_NODE_SIZE = 20
-const BLOB_NODE_R = 15
-const BLOB_NODE_AREA = Math.PI * BLOB_NODE_SIZE * BLOB_NODE_SIZE
+const BLOB_NODE_SIZE = 20;
+const BLOB_NODE_R = 15;
+const BLOB_NODE_AREA = Math.PI * BLOB_NODE_SIZE * BLOB_NODE_SIZE;
 
 class Blob {
-  c: p5.Color
-  nodes: any[]
-  springs: any[]
-  tex: p5.Image
+  c: p5.Color;
+  nodes: any[];
+  springs: any[];
+  tex: p5.Image;
 
-	constructor(x, y, r, c) {
-		this.nodes = []
-		this.springs = []
-		this.c = color(c)
-		this.tex = createImage(20, 20)
-		this.tex.loadPixels()
-		for (let i = 0; i < this.tex.pixels.length; i++) {
-			this.tex.pixels[i] = 255
-		}
+  constructor(x, y, r, c) {
+    this.nodes = [];
+    this.springs = [];
+    this.c = color(c);
+    this.tex = createImage(20, 20);
+    this.tex.loadPixels();
+    for (let i = 0; i < this.tex.pixels.length; i++) {
+      this.tex.pixels[i] = 255;
+    }
     // @ts-ignore
-		renderer.getTexture(this.tex).setInterpolation(NEAREST, NEAREST)
-		
-		const a = PI * r * r
-		const numBlobs = ceil(a / BLOB_NODE_AREA)
-		
-		while (this.nodes.length < numBlobs) {
-			const rx = random(-r, r)
-			const ry = random(-r, r)
-			if (Math.hypot(rx, ry) > r) continue
-			
-			const vert = Matter.Bodies.circle(x + rx, y + ry, BLOB_NODE_R, { inertia: Infinity, friction: 0.015 })
-			this.nodes.push(vert)
-		}
-		
-		Matter.World.add(engine.world, this.nodes)
-	}
-	
-	bin(x: number, y: number) {
-		return [round(x/80), round(y/80)]
-	}
-	
-	nodeBin(node) {
-		return this.bin(node.position.x, node.position.y)
-	}
-	
-	adjacentBins(node) {
-		const [x, y] = this.nodeBin(node)
-		const bins: [number, number][] = []
-		for (const dx of [-1, 0, 1]) {
-			for (const dy of [-1, 0, 1]) {
-				bins.push([x + dx, y + dy])
-			}
-		}
-		return bins
-	}
-	
-	binKey(bin) {
-		return bin.join(',')
-	}
-	
-	binnedNodes() {
-		const bins = {}
-		for (const node of this.nodes) {
-			const binKey = this.binKey(this.nodeBin(node))
-			if (!bins[binKey]) {
-				bins[binKey] = []
-			}
-			bins[binKey].push(node)
-		}
-		return bins
-	}
-	
-	update() {
-		Matter.World.remove(engine.world, this.springs)
-		this.springs = []
-		const bins = this.binnedNodes()
-		for (const node of this.nodes) {
-			const binsToCheck = this.adjacentBins(node)
-			for (const bin of binsToCheck) {
-				const key = this.binKey(bin)
-				if (!bins[key]) continue
-				for (const other of bins[key]) {
-					if (other === node) continue
-					this.springs.push(Matter.Constraint.create({
-						bodyA: node,
-						pointA: { x: 0, y: 0 },
-						bodyB: other,
-						pointB: { x: 0, y: 0 },
-						stiffness: map(
-							Math.hypot(node.position.x - other.position.x, node.position.y - other.position.y),
-							0, 12*BLOB_NODE_SIZE,
-							0.02, 0.03,
-							true
-						),
-						damping: 0.001,
-						// length: 0,
-						length: max(
-							2 * BLOB_NODE_SIZE,
-							Math.hypot(node.position.x - other.position.x, node.position.y - other.position.y) * 0.975
-						),
-					}))
-				}
-			}
-		}
-		Matter.World.add(engine.world, this.springs)
-	}
-	
-	drawBlob() {
-		const minX = Math.min(...this.nodes.map((n) => n.position.x)) - 4 * BLOB_NODE_SIZE
-		const maxX = Math.max(...this.nodes.map((n) => n.position.x)) + 4 * BLOB_NODE_SIZE
-		const minY = Math.min(...this.nodes.map((n) => n.position.y)) - 4 * BLOB_NODE_SIZE
-		const maxY = Math.max(...this.nodes.map((n) => n.position.y)) + 4 * BLOB_NODE_SIZE
-		const x = (maxX + minX)/2
-		const y = (maxY + minY)/2
-		const w = maxX - minX
-		const h = maxY - minY
-		
-		this.nodes.forEach((node, i) => {
-			this.tex.pixels[i * 4 + 0] = map(node.position.x, minX, maxX, 0, 255, true)
-			this.tex.pixels[i * 4 + 1] = map(node.position.y, minY, maxY, 0, 255, true)
-		})
-		this.tex.updatePixels()
-		
-		push()
-		translate(x, y)
-		noStroke()
-		shader(metaballShader)
-		metaballShader.setUniform('bbox', [minX, minY, maxX, maxY])
-		metaballShader.setUniform('k', BLOB_NODE_SIZE * 3)
-		metaballShader.setUniform('numNodes', this.nodes.length)
-		metaballShader.setUniform('data', this.tex)
-		metaballShader.setUniform('r', BLOB_NODE_R)
+    renderer.getTexture(this.tex).setInterpolation(NEAREST, NEAREST);
+
+    const a = PI * r * r;
+    const numBlobs = ceil(a / BLOB_NODE_AREA);
+
+    while (this.nodes.length < numBlobs) {
+      const rx = random(-r, r);
+      const ry = random(-r, r);
+      if (Math.hypot(rx, ry) > r) continue;
+
+      const vert = Matter.Bodies.circle(x + rx, y + ry, BLOB_NODE_R, {
+        inertia: Infinity,
+        friction: 0.015
+      });
+      this.nodes.push(vert);
+    }
+
+    Matter.World.add(engine.world, this.nodes);
+  }
+
+  bin(x: number, y: number) {
+    return [round(x / 80), round(y / 80)];
+  }
+
+  nodeBin(node) {
+    return this.bin(node.position.x, node.position.y);
+  }
+
+  adjacentBins(node) {
+    const [x, y] = this.nodeBin(node);
+    const bins: [number, number][] = [];
+    for (const dx of [-1, 0, 1]) {
+      for (const dy of [-1, 0, 1]) {
+        bins.push([x + dx, y + dy]);
+      }
+    }
+    return bins;
+  }
+
+  binKey(bin) {
+    return bin.join(',');
+  }
+
+  binnedNodes() {
+    const bins = {};
+    for (const node of this.nodes) {
+      const binKey = this.binKey(this.nodeBin(node));
+      if (!bins[binKey]) {
+        bins[binKey] = [];
+      }
+      bins[binKey].push(node);
+    }
+    return bins;
+  }
+
+  update() {
+    Matter.World.remove(engine.world, this.springs);
+    this.springs = [];
+    const bins = this.binnedNodes();
+    for (const node of this.nodes) {
+      const binsToCheck = this.adjacentBins(node);
+      for (const bin of binsToCheck) {
+        const key = this.binKey(bin);
+        if (!bins[key]) continue;
+        for (const other of bins[key]) {
+          if (other === node) continue;
+          this.springs.push(
+            Matter.Constraint.create({
+              bodyA: node,
+              pointA: { x: 0, y: 0 },
+              bodyB: other,
+              pointB: { x: 0, y: 0 },
+              stiffness: map(
+                Math.hypot(
+                  node.position.x - other.position.x,
+                  node.position.y - other.position.y
+                ),
+                0,
+                12 * BLOB_NODE_SIZE,
+                0.02,
+                0.03,
+                true
+              ),
+              damping: 0.001,
+              // length: 0,
+              length: max(
+                2 * BLOB_NODE_SIZE,
+                Math.hypot(
+                  node.position.x - other.position.x,
+                  node.position.y - other.position.y
+                ) * 0.975
+              )
+            })
+          );
+        }
+      }
+    }
+    Matter.World.add(engine.world, this.springs);
+  }
+
+  drawBlob() {
+    const minX =
+      Math.min(...this.nodes.map(n => n.position.x)) - 4 * BLOB_NODE_SIZE;
+    const maxX =
+      Math.max(...this.nodes.map(n => n.position.x)) + 4 * BLOB_NODE_SIZE;
+    const minY =
+      Math.min(...this.nodes.map(n => n.position.y)) - 4 * BLOB_NODE_SIZE;
+    const maxY =
+      Math.max(...this.nodes.map(n => n.position.y)) + 4 * BLOB_NODE_SIZE;
+    const x = (maxX + minX) / 2;
+    const y = (maxY + minY) / 2;
+    const w = maxX - minX;
+    const h = maxY - minY;
+
+    this.nodes.forEach((node, i) => {
+      this.tex.pixels[i * 4 + 0] = map(
+        node.position.x,
+        minX,
+        maxX,
+        0,
+        255,
+        true
+      );
+      this.tex.pixels[i * 4 + 1] = map(
+        node.position.y,
+        minY,
+        maxY,
+        0,
+        255,
+        true
+      );
+    });
+    this.tex.updatePixels();
+
+    push();
+    translate(x, y);
+    noStroke();
+    shader(metaballShader);
+    metaballShader.setUniform('bbox', [minX, minY, maxX, maxY]);
+    metaballShader.setUniform('k', BLOB_NODE_SIZE * 3);
+    metaballShader.setUniform('numNodes', this.nodes.length);
+    metaballShader.setUniform('data', this.tex);
+    metaballShader.setUniform('r', BLOB_NODE_R);
     // TODO: make this a public API
     // @ts-ignore
-		metaballShader.setUniform('c', this.c.array())
-		metaballShader.setUniform('spheremap', spheremap)
-		plane(w, h)
-		pop()
-	}
-	
-	draw2D() {
-		fill(this.c)
-		stroke(this.c)
-		strokeWeight(2 * BLOB_NODE_R)
-		strokeJoin(ROUND)
-		const hull = convexHull(this.nodes.map(n => n.position))
-		beginShape()
-		for (const { x, y } of hull) vertex(x, y)
-		endShape(CLOSE)
-		
-		noStroke()
-		fill(0)
-		for (const node of this.nodes) {
-			circle(node.position.x, node.position.y, BLOB_NODE_R * 2)
-		}
-	}
+    metaballShader.setUniform('c', this.c.array());
+    metaballShader.setUniform('spheremap', spheremap);
+    plane(w, h);
+    pop();
+  }
+
+  draw2D() {
+    fill(this.c);
+    stroke(this.c);
+    strokeWeight(2 * BLOB_NODE_R);
+    strokeJoin(ROUND);
+    const hull = convexHull(this.nodes.map(n => n.position));
+    beginShape();
+    for (const { x, y } of hull) vertex(x, y);
+    endShape(CLOSE);
+
+    noStroke();
+    fill(0);
+    for (const node of this.nodes) {
+      circle(node.position.x, node.position.y, BLOB_NODE_R * 2);
+    }
+  }
 }
 
 let vert = `#version 300 es
@@ -232,7 +265,7 @@ void main() {
 
   // Pass along data to the fragment shader
   vTexCoord = aTexCoord;
-}`
+}`;
 
 let frag = `#version 300 es
 precision highp float;
@@ -310,39 +343,39 @@ void main() {
 	// outColor = normal;
 	
 	fragColor = vec4(outColor, 1.) * (1. - smoothstep(0., 0.01, dist));
-}`
+}`;
 
 const comparison = (a: p5.Vector, b: p5.Vector) => {
-  return a.x == b.x ? a.y - b.y : a.x - b.x
-}
+  return a.x == b.x ? a.y - b.y : a.x - b.x;
+};
 
 const cross = (a: p5.Vector, b: p5.Vector, o: p5.Vector) => {
-  return (a.x - o.x) * (b.y - o.y) - (a.y - o.y) * (b.x - o.x)
-}
+  return (a.x - o.x) * (b.y - o.y) - (a.y - o.y) * (b.x - o.x);
+};
 
 function convexHull(points: p5.Vector[]) {
-  points.sort(comparison)
-  const L: p5.Vector[] = []
+  points.sort(comparison);
+  const L: p5.Vector[] = [];
   for (let i = 0; i < points.length; i++) {
     while (
       L.length >= 2 &&
       cross(L[L.length - 2], L[L.length - 1], points[i]) <= 0
     ) {
-      L.pop()
+      L.pop();
     }
-    L.push(points[i])
+    L.push(points[i]);
   }
-  const U: p5.Vector[] = []
+  const U: p5.Vector[] = [];
   for (let i = points.length - 1; i >= 0; i--) {
     while (
       U.length >= 2 &&
       cross(U[U.length - 2], U[U.length - 1], points[i]) <= 0
     ) {
-      U.pop()
+      U.pop();
     }
-    U.push(points[i])
+    U.push(points[i]);
   }
-  L.pop()
-  U.pop()
-  return L.concat(U)
+  L.pop();
+  U.pop();
+  return L.concat(U);
 }

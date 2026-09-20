@@ -34,6 +34,7 @@ preview/
 __screenshots__/
 actual-screenshots/
 visual-report.html
+test/unit/visual/test-results.json
 
 todo.md
 

@@ -13,7 +13,6 @@ var other = Float32Array.from([
 
 var mat3 = Float32Array.from([1, 2, 3, 4, 5, 6, 7, 8, 9]);
 
-
 suite('p5.Matrix', function () {
   var myp5;
 
@@ -39,7 +38,6 @@ suite('p5.Matrix', function () {
         [].slice.call(m.mat4),
         [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]
       );
-
     });
 
     test('new p5.Matrix(array)', function () {
@@ -64,7 +62,6 @@ suite('p5.Matrix', function () {
       expect(toArray(m.mat4)).toEqual([
         1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1
       ]);
-
     });
   });
 
@@ -154,12 +151,10 @@ suite('p5.Matrix', function () {
   suite.todo('add', () => {});
 
   suite('mult', function () {
-
     var mm = [
       30, 70, 110, 150, 70, 174, 278, 382, 110, 278, 446, 614, 150, 382, 614,
       846
     ];
-
 
     test('self', function () {
       var m = new p5.Matrix(mat4.slice());
@@ -172,7 +167,6 @@ suite('p5.Matrix', function () {
           542, 600
         ]
       );
-
     });
 
     test('p5.Matrix', function () {
@@ -196,12 +190,10 @@ suite('p5.Matrix', function () {
   });
 
   suite('apply', function () {
-
     var am = [
       276, 304, 332, 360, 304, 336, 368, 400, 332, 368, 404, 440, 360, 400, 440,
       480
     ];
-
 
     test('self', function () {
       var m = new p5.Matrix(mat4.slice());
@@ -214,7 +206,6 @@ suite('p5.Matrix', function () {
           542, 600
         ]
       );
-
     });
 
     test('p5.Matrix', function () {
@@ -238,9 +229,7 @@ suite('p5.Matrix', function () {
   });
 
   suite('scale', function () {
-
     var sm = [2, 4, 6, 8, 15, 18, 21, 24, 45, 50, 55, 60, 13, 14, 15, 16];
-
 
     var mat4 = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16];
     test('p5.Vector', function () {
@@ -267,14 +256,12 @@ suite('p5.Matrix', function () {
   });
 
   suite('rotate', function () {
-
     var rm = Float32Array.from([
       1.433447866601989, 2.5241247073503885, 3.6148015480987885,
       4.7054783888471885, 6.460371405020393, 7.054586073938033,
       7.648800742855675, 8.243015411773316, 7.950398010346969,
       9.157598472697025, 10.36479893504708, 11.571999397397136, 13, 14, 15, 16
     ]);
-
 
     test('p5.Vector', function () {
       var m = new p5.Matrix(mat4.slice());
@@ -329,19 +316,19 @@ suite('p5.Matrix', function () {
       const multMatrix = new p5.Matrix([1, 1, 1, 0, 1, 1, 1, 0, 1]);
       // When taking a matrix as an argument
       m.mult(multMatrix);
-      expect(toArray(m.mat3)).toEqual([ 4, 3, 6, 10, 9, 15, 16, 15, 24 ]);
+      expect(toArray(m.mat3)).toEqual([4, 3, 6, 10, 9, 15, 16, 15, 24]);
     });
 
     test('mult a 3x3 matrix with array as argument', function () {
       const m = new p5.Matrix([1, 2, 3, 4, 5, 6, 7, 8, 9]);
       m.mult([1, 1, 1, 0, 1, 1, 1, 0, 1]);
-      expect(toArray(m.mat3)).toEqual([ 4, 3, 6, 10, 9, 15, 16, 15, 24 ]);
+      expect(toArray(m.mat3)).toEqual([4, 3, 6, 10, 9, 15, 16, 15, 24]);
     });
 
     test('mult a 3x3 matrix with arguments non array', function () {
       const m = new p5.Matrix([1, 2, 3, 4, 5, 6, 7, 8, 9]);
       m.mult(1, 1, 1, 0, 1, 1, 1, 0, 1);
-      expect(toArray(m.mat3)).toEqual([ 4, 3, 6, 10, 9, 15, 16, 15, 24 ]);
+      expect(toArray(m.mat3)).toEqual([4, 3, 6, 10, 9, 15, 16, 15, 24]);
     });
 
     test('column() and row()', function () {
@@ -435,7 +422,8 @@ suite('p5.Matrix', function () {
       expect(mat.mat3).toEqual([1, 4, 7, 2, 5, 8, 3, 6, 9]);
     });
   });
-  describe.skip('Determinant', () => { // TODO: Cristian, when this is public we'll add tests
+  describe.skip('Determinant', () => {
+    // TODO: Cristian, when this is public we'll add tests
     it('should calculate the determinant of a 4x4 matrix', () => {
       const mat4 = new p5.Matrix([
         1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1
@@ -494,8 +482,9 @@ suite('p5.Matrix', function () {
       const matrix = new p5.Matrix([1, 2, 3, 0, 1, 4, 5, 6, 0]);
       const invertedMatrix = matrix.invert();
 
-      expect(toArray(invertedMatrix.mat3))
-        .toEqual([-24, 18, 5, 20, -15, -4, -5, 4, 1]);
+      expect(toArray(invertedMatrix.mat3)).toEqual([
+        -24, 18, 5, 20, -15, -4, -5, 4, 1
+      ]);
     });
 
     it('should return null for a non-invertible 3x3 matrix', () => {

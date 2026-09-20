@@ -5,9 +5,19 @@
  */
 
 import * as constants from '../core/constants';
-import { RGB, RGBP3, HSL, HSB, HWB, LAB, LCH, OKLAB, OKLCH } from './creating_reading';
+import {
+  RGB,
+  RGBP3,
+  HSL,
+  HSB,
+  HWB,
+  LAB,
+  LCH,
+  OKLAB,
+  OKLCH
+} from './creating_reading';
 
-function setting(p5, fn){
+function setting(p5, fn) {
   /**
    * Starts defining a shape that will mask any shapes drawn afterward.
    *
@@ -163,7 +173,7 @@ function setting(p5, fn){
    *   endShape();
    * }
    */
-  fn.beginClip = function(options = {}) {
+  fn.beginClip = function (options = {}) {
     this._renderer.beginClip(options);
   };
 
@@ -191,7 +201,7 @@ function setting(p5, fn){
    *   describe('A white triangle and circle on a gray background.');
    * }
    */
-  fn.endClip = function() {
+  fn.endClip = function () {
     this._renderer.endClip();
   };
 
@@ -363,7 +373,7 @@ function setting(p5, fn){
    *   pop();
    * }
    */
-  fn.clip = function(callback, options) {
+  fn.clip = function (callback, options) {
     this._renderer.beginClip(options);
     callback();
     this._renderer.endClip(options);
@@ -577,7 +587,7 @@ function setting(p5, fn){
    * @param  {Number}  [a]
    * @chainable
    */
-  fn.background = function(...args) {
+  fn.background = function (...args) {
     return this._renderer.background(...args);
   };
 
@@ -642,7 +652,7 @@ function setting(p5, fn){
    * @param {Number} [b] normalized blue value.
    * @param {Number} [a] normalized alpha value.
    */
-  fn.clear = function(...args) {
+  fn.clear = function (...args) {
     const _r = args[0] || 0;
     const _g = args[1] || 0;
     const _b = args[2] || 0;
@@ -1031,26 +1041,17 @@ function setting(p5, fn){
    * @method colorMode
    * @return {RGB|HSB|HSL|RGBP3|HWB|LAB|LCH|OKLAB|OKLCH} The current color mode.
    */
-  fn.colorMode = function(mode, max1, max2, max3, maxA) {
+  fn.colorMode = function (mode, max1, max2, max3, maxA) {
     // p5._validateParameters('colorMode', arguments);
-    if (
-      [
-        RGB,
-        RGBP3,
-        HSB,
-        HSL,
-        HWB,
-        LAB,
-        LCH,
-        OKLAB,
-        OKLCH
-      ].includes(mode)
-    ) {
+    if ([RGB, RGBP3, HSB, HSL, HWB, LAB, LCH, OKLAB, OKLCH].includes(mode)) {
       // Set color mode.
       this._renderer.states.setValue('colorMode', mode);
 
       // Set color maxes.
-      this._renderer.states.setValue('colorMaxes', this._renderer.states.colorMaxes.clone());
+      this._renderer.states.setValue(
+        'colorMaxes',
+        this._renderer.states.colorMaxes.clone()
+      );
       const maxes = this._renderer.states.colorMaxes[mode];
       if (arguments.length === 2) {
         maxes[0] = max1; // Red
@@ -1287,7 +1288,7 @@ function setting(p5, fn){
    * @method fill
    * @return {p5.Color}      the current fill color.
    */
-  fn.fill = function(...args) {
+  fn.fill = function (...args) {
     return this._renderer.fill(...args);
   };
 
@@ -1339,7 +1340,7 @@ function setting(p5, fn){
    *   box(45);
    * }
    */
-  fn.noFill = function() {
+  fn.noFill = function () {
     this._renderer.noFill();
     return this;
   };
@@ -1388,7 +1389,7 @@ function setting(p5, fn){
    *   box(45);
    * }
    */
-  fn.noStroke = function() {
+  fn.noStroke = function () {
     this._renderer.states.setValue('strokeColor', null);
     return this;
   };
@@ -1609,7 +1610,7 @@ function setting(p5, fn){
    * @method stroke
    * @return {p5.Color}      the current stroke color.
    */
-  fn.stroke = function(...args) {
+  fn.stroke = function (...args) {
     return this._renderer.stroke(...args);
   };
 
@@ -1686,7 +1687,7 @@ function setting(p5, fn){
    *   describe('A purple canvas with a pink square in the middle. A circle at the top-left partially erases its interior and a fully erases its outline.');
    * }
    */
-  fn.erase = function(opacityFill = 255, opacityStroke = 255) {
+  fn.erase = function (opacityFill = 255, opacityStroke = 255) {
     this._renderer.erase(opacityFill, opacityStroke);
 
     return this;
@@ -1723,7 +1724,7 @@ function setting(p5, fn){
    *   describe('An orange canvas with two tall blue rectangles. A circular hole in the center erases the rectangle on the left but not the one on the right.');
    * }
    */
-  fn.noErase = function() {
+  fn.noErase = function () {
     this._renderer.noErase();
     return this;
   };
@@ -2164,6 +2165,6 @@ function setting(p5, fn){
 
 export default setting;
 
-if(typeof p5 !== 'undefined'){
+if (typeof p5 !== 'undefined') {
   setting(p5, p5.prototype);
 }

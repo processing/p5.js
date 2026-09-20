@@ -71,7 +71,7 @@ export const OKLCH = 'oklch';
  */
 export const RGBA = 'rgba';
 
-function creatingReading(p5, fn){
+function creatingReading(p5, fn) {
   fn.RGB = RGB;
   fn.RGBP3 = RGBP3;
   fn.HSB = HSB;
@@ -100,7 +100,7 @@ function creatingReading(p5, fn){
 
     [OKLAB]: [100, [-125, 125], [-125, 125], 1],
     [OKLCH]: [100, 150, 360, 1],
-    clone: function(){
+    clone: function () {
       const cloned = { ...this };
       for (const key in cloned) {
         if (cloned[key] instanceof Array) {
@@ -403,7 +403,7 @@ function creatingReading(p5, fn){
    * @param  {p5.Color}     color
    * @return {p5.Color}
    */
-  fn.color = function(...args) {
+  fn.color = function (...args) {
     // p5._validateParameters('color', args);
     if (args[0] instanceof Color) {
       // TODO: perhaps change color mode to match instance mode?
@@ -566,7 +566,7 @@ function creatingReading(p5, fn){
    *                                         color components, or CSS color string.
    * @return {Number} the red value.
    */
-  fn.red = function(c) {
+  fn.red = function (c) {
     // p5._validateParameters('red', arguments);
     // Get current red max
     return this.color(c)._getRed();
@@ -719,7 +719,7 @@ function creatingReading(p5, fn){
    *                                         color components, or CSS color string.
    * @return {Number} the green value.
    */
-  fn.green = function(c) {
+  fn.green = function (c) {
     // p5._validateParameters('green', arguments);
     // Get current green max
     return this.color(c)._getGreen();
@@ -872,7 +872,7 @@ function creatingReading(p5, fn){
    *                                         color components, or CSS color string.
    * @return {Number} the blue value.
    */
-  fn.blue = function(c) {
+  fn.blue = function (c) {
     // p5._validateParameters('blue', arguments);
     // Get current blue max
     return this.color(c)._getBlue();
@@ -993,7 +993,7 @@ function creatingReading(p5, fn){
    *                                         color components, or CSS color string.
    * @return {Number} the alpha value.
    */
-  fn.alpha = function(c) {
+  fn.alpha = function (c) {
     // p5._validateParameters('alpha', arguments);
     // Get current alpha max
     return this.color(c)._getAlpha();
@@ -1134,19 +1134,19 @@ function creatingReading(p5, fn){
    *                                         color components, or CSS color string.
    * @return {Number} the hue value.
    */
-  fn.hue = function(c) {
+  fn.hue = function (c) {
     let colorMode = HSL;
     let i = 0;
 
-    if(
+    if (
       this._renderer.states.colorMode === HSB ||
       this._renderer.states.colorMode === HSL
-    ){
+    ) {
       colorMode = this._renderer.states.colorMode;
-    }else if(
+    } else if (
       this._renderer.states.colorMode === LCH ||
       this._renderer.states.colorMode === OKLCH
-    ){
+    ) {
       colorMode = this._renderer.states.colorMode;
       i = 2;
     }
@@ -1341,8 +1341,8 @@ function creatingReading(p5, fn){
    *                                         color components, or CSS color string.
    * @return {Number} the saturation value
    */
-  fn.saturation = function(c) {
-    const colorMode = (this._renderer.states.colorMode === HSB) ? HSB : HSL;
+  fn.saturation = function (c) {
+    const colorMode = this._renderer.states.colorMode === HSB ? HSB : HSL;
     return this.color(c)._getSaturation(
       this._renderer.states.colorMaxes[colorMode][1]
     );
@@ -1504,7 +1504,7 @@ function creatingReading(p5, fn){
    *                                         color components, or CSS color string.
    * @return {Number} the brightness value.
    */
-  fn.brightness = function(c) {
+  fn.brightness = function (c) {
     return this.color(c)._getBrightness(
       this._renderer.states.colorMaxes.hsb[2]
     );
@@ -1666,10 +1666,8 @@ function creatingReading(p5, fn){
    *                                         color components, or CSS color string.
    * @return {Number} the lightness value.
    */
-  fn.lightness = function(c) {
-    return this.color(c)._getLightness(
-      this._renderer.states.colorMaxes.hsl[2]
-    );
+  fn.lightness = function (c) {
+    return this.color(c)._getLightness(this._renderer.states.colorMaxes.hsl[2]);
   };
 
   /**
@@ -1683,7 +1681,7 @@ function creatingReading(p5, fn){
    * interval [0, 1] will produce strange and unexpected colors.
    *
    * The way that colors are interpolated depends on the current
-   * <a href="#/p5/colorMode">colorMode()</a>.
+   * <a href="#/p5/colorMode">colorMode()</a> or on the passed `options` object.
    *
    * ```js example
    * function setup() {
@@ -1718,6 +1716,63 @@ function creatingReading(p5, fn){
    *
    *   describe(
    *     'Four rectangles. From left to right, the rectangles are tan, brown, brownish purple, and purple.'
+   *   );
+   * }
+   * ```
+   *
+   * Normally, colors are interpolated according to the current `colorMode()`. But you can override this by
+   * specifying a different color space to perform the interpolation in. Different color spaces will blend
+   * colors differently.
+   *
+   * ```js example
+   * function setup() {
+   *   createCanvas(100, 100);
+   *
+   *   background(200);
+   *
+   *   // Create p5.Color objects to interpolate between.
+   *   colorMode(HSL);
+   *   let from = color(240, 100, 25);
+   *   let to = color('white');
+   *
+   *   // Create intermediate colors
+   *   let interA = lerpColor(from, to, 0.33);
+   *   let interB = lerpColor(from, to, 0.66);
+   *
+   *   let inter1 = lerpColor(from, to, {
+   *     amount: 0.33,
+   *     lerpMode: HSB // interpolate in the HSB color space
+   *   });
+   *   let inter2 = lerpColor(from, to, {
+   *     amount: 0.66,
+   *     lerpMode: HSB
+   *   });
+   *
+   *   // Draw the left rectangle.
+   *   noStroke();
+   *   fill(from);
+   *   rect(10, 20, 20, 60);
+   *
+   *   // Draw the left-center rectangles.
+   *   fill(interA);
+   *   rect(30, 20, 20, 30);
+   *
+   *   fill(inter1);
+   *   rect(30, 50, 20, 30);
+   *
+   *   // Draw the right-center rectangles.
+   *   fill(interB);
+   *   rect(50, 20, 20, 30);
+   *
+   *   fill(inter2);
+   *   rect(50, 50, 20, 30);
+   *
+   *   // Draw the right rectangle.
+   *   fill(to);
+   *   rect(70, 20, 20, 60);
+   *
+   *   describe(
+   *     'Two strips of four colors each. From left to right, the top strip begins with dark blue, followed by a lighter blue, a light blue and finally white. Meanwhile, the bottom strip begins with a dark blue, followed by purple, then pink and finally white.'
    *   );
    * }
    * ```
@@ -1757,9 +1812,35 @@ function creatingReading(p5, fn){
    * @param  {Number}   amt number between 0 and 1.
    * @return {p5.Color}     interpolated color.
    */
-  fn.lerpColor = function(c1, c2, amt) {
+  /**
+   * @method lerpColor
+   * @param  {p5.Color} c1  interpolate from this color.
+   * @param  {p5.Color} c2  interpolate to this color.
+   * @param  {Object} options interpolation options.
+   * @param  {number} [options.amount] a number between 0 and 1.
+   * @param  {RGB|HSB|HSL|RGBP3|HWB|LAB|LCH|OKLAB|OKLCH} [options.outputMode] the desired output color mode.
+   * @param  {RGB|HSB|HSL|RGBP3|HWB|LAB|LCH|OKLAB|OKLCH} [options.lerpMode] the color mode (space) to perform the interpolation in.
+   * @return  {p5.Color}     interpolated color.
+   */
+  fn.lerpColor = function (c1, c2, amt) {
+    const defaultMode = this._renderer.states.colorMode;
+
+    let outputMode = defaultMode;
+    let lerpMode = defaultMode;
+
+    if (typeof amt === 'object') {
+      // Passing in options object
+      outputMode = amt.outputMode ?? outputMode;
+      lerpMode = amt.lerpMode ?? lerpMode;
+      amt = amt.amount;
+    }
+
     // p5._validateParameters('lerpColor', arguments);
-    return c1.lerp(c2, amt, this._renderer.states.colorMode);
+    return c1.lerp(c2, {
+      amount: amt,
+      lerpMode,
+      outputMode
+    });
   };
 
   /**
@@ -1793,10 +1874,9 @@ function creatingReading(p5, fn){
    *   ], millis() / 10000 % 1));
    * }
    */
-  fn.paletteLerp = function(color_stops, amt) {
+  fn.paletteLerp = function (color_stops, amt) {
     const first_color_stop = color_stops[0];
-    if (amt < first_color_stop[1])
-      return this.color(first_color_stop[0]);
+    if (amt < first_color_stop[1]) return this.color(first_color_stop[0]);
 
     for (let i = 1; i < color_stops.length; i++) {
       const color_stop = color_stops[i];
@@ -1816,6 +1896,6 @@ function creatingReading(p5, fn){
 
 export default creatingReading;
 
-if(typeof p5 !== 'undefined'){
+if (typeof p5 !== 'undefined') {
   creatingReading(p5, p5.prototype);
 }

@@ -2,7 +2,7 @@ import { mockP5, mockP5Prototype, httpMock } from '../../js/mocks';
 import files from '../../../src/io/files';
 import xml from '../../../src/io/p5.XML';
 
-suite('loadXML', function() {
+suite('loadXML', function () {
   const invalidFile = '404file';
   const validFile = '/test/unit/assets/books.xml';
 
@@ -13,31 +13,39 @@ suite('loadXML', function() {
   });
 
   test('throws error when encountering HTTP errors', async () => {
-    await expect(mockP5Prototype.loadXML(invalidFile))
-      .rejects
-      .toThrow('Not Found');
+    await expect(mockP5Prototype.loadXML(invalidFile)).rejects.toThrow(
+      'Not Found'
+    );
   });
 
   test('error callback is called', async () => {
     await new Promise((resolve, reject) => {
-      mockP5Prototype.loadXML(invalidFile, () => {
-        console.log('here');
-        reject('Success callback executed');
-      }, () => {
-        // Wait a bit so that if both callbacks are executed we will get an error.
-        setTimeout(resolve, 50);
-      });
+      mockP5Prototype.loadXML(
+        invalidFile,
+        () => {
+          console.log('here');
+          reject('Success callback executed');
+        },
+        () => {
+          // Wait a bit so that if both callbacks are executed we will get an error.
+          setTimeout(resolve, 50);
+        }
+      );
     });
   });
 
   test('success callback is called', async () => {
     await new Promise((resolve, reject) => {
-      mockP5Prototype.loadXML(validFile, () => {
-        // Wait a bit so that if both callbacks are executed we will get an error.
-        setTimeout(resolve, 50);
-      }, err => {
-        reject(`Error callback called: ${err.toString()}`);
-      });
+      mockP5Prototype.loadXML(
+        validFile,
+        () => {
+          // Wait a bit so that if both callbacks are executed we will get an error.
+          setTimeout(resolve, 50);
+        },
+        err => {
+          reject(`Error callback called: ${err.toString()}`);
+        }
+      );
     });
   });
 

@@ -13,7 +13,9 @@ const prioritizeSmallerDimension = function (currentVectorDimension, args) {
   const resultDimension = Math.min(currentVectorDimension, args.length);
   if (Array.isArray(args) && currentVectorDimension !== args.length) {
     console.warn(
-      'When working with two vectors of different sizes, the smaller dimension is used. In this operation, both vectors will be treated as ' + resultDimension + 'D vectors, and any additional values of the longer vector will be ignored.'
+      'When working with two vectors of different sizes, the smaller dimension is used. In this operation, both vectors will be treated as ' +
+        resultDimension +
+        'D vectors, and any additional values of the longer vector will be ignored.'
     );
   }
   return resultDimension;
@@ -23,12 +25,11 @@ const prioritizeSmallerDimension = function (currentVectorDimension, args) {
  * @private
  * In-place, shrinks an array to a dimension.
  */
-const shrinkToDimension = function(arr, dim) {
+const shrinkToDimension = function (arr, dim) {
   while (arr.length > dim) {
     arr.pop();
   }
-}
-
+};
 
 class Vector {
   /**
@@ -70,11 +71,8 @@ class Vector {
   // This is how it comes in with createVector()
   // This check if the first argument is a function
   constructor(...args) {
-
     if (args.length === 0) {
-      this._friendlyError(
-        'Requires valid arguments.', 'p5.Vector'
-      );
+      this._friendlyError('Requires valid arguments.', 'p5.Vector');
     }
 
     if (typeof args[0] === 'function') {
@@ -113,13 +111,12 @@ class Vector {
   // This will get overwritten when exported as part of p5.
   _friendlyError(_e) {}
 
-
   /**
    * Gets how many dimensions the vector has.
    *
    * @returns {Number} The number of dimensions. Can be 1, 2, or 3.
    */
-  get dimensions(){
+  get dimensions() {
     return this.values.length;
   }
 
@@ -653,13 +650,13 @@ class Vector {
 
     shrinkToDimension(this.values, minDimension);
 
-    if(Array.isArray(args)){
+    if (Array.isArray(args)) {
       for (let i = 0; i < this.values.length; i++) {
-        if (args[i] > 0) {
+        if (Math.abs(args[i]) > 0) {
           this.values[i] = this.values[i] % args[i];
         }
       }
-    } else if(args > 0) {
+    } else if (Math.abs(args) > 0) {
       for (let i = 0; i < this.values.length; i++) {
         this.values[i] = this.values[i] % args;
       }
@@ -982,7 +979,7 @@ class Vector {
     const minDimension = prioritizeSmallerDimension(this.dimensions, args);
     shrinkToDimension(this.values, minDimension);
 
-    if(Array.isArray(args)){
+    if (Array.isArray(args)) {
       for (let i = 0; i < this.values.length; i++) {
         this.values[i] *= args[i];
       }
@@ -1178,7 +1175,7 @@ class Vector {
 
     if (Array.isArray(args)) {
       for (let i = 0; i < minDimension; i++) {
-        if ((typeof args[i] !== 'number' || args[i] === 0)) {
+        if (typeof args[i] !== 'number' || args[i] === 0) {
           if (!this.friendlyErrorsDisabled()) {
             console.warn(
               'p5.Vector.prototype.div',
@@ -1188,7 +1185,7 @@ class Vector {
           return this;
         }
       }
-    } else if(typeof args !== 'number' || args === 0) {
+    } else if (typeof args !== 'number' || args === 0) {
       if (!this.friendlyErrorsDisabled()) {
         console.warn(
           'p5.Vector.prototype.div',
@@ -1200,7 +1197,7 @@ class Vector {
 
     shrinkToDimension(this.values, minDimension);
 
-    if(Array.isArray(args)){
+    if (Array.isArray(args)) {
       for (let i = 0; i < this.values.length; i++) {
         this.values[i] /= args[i];
       }
@@ -2022,13 +2019,15 @@ class Vector {
    * }
    */
   setHeading(a) {
-    if (this.dimensions < 2 || (
-      this._values instanceof Array && this._values.slice(2).some(v => v !== 0))
+    if (
+      this.dimensions < 2 ||
+      (this._values instanceof Array &&
+        this._values.slice(2).some(v => v !== 0))
     ) {
       p5._friendlyError(
         'p5.Vector.setHeading() only supports 2D vectors (z === 0). ' +
-        'For 3D or higher-dimensional vectors, use rotate() or another ' +
-        'appropriate method instead.',
+          'For 3D or higher-dimensional vectors, use rotate() or another ' +
+          'appropriate method instead.',
         'p5.Vector.setHeading'
       );
       return this;
@@ -2314,27 +2313,41 @@ class Vector {
   }
 
   /**
-   * Calculates new `x`, `y`, and `z` components that are proportionally the
+   * Calculates new vector components that are proportionally the
    * same distance between two vectors.
+   *
+   * `lerp()` can use separate numbers, as in `v.lerp(3, 3, 0.5)`, another
+   * <a href="#/p5.Vector">p5.Vector</a> object, as in `v.lerp(v2, 0.5)`, or an
+   * array of numbers, as in `v.lerp([3, 3], 0.5)`. When using numbers, the last
+   * argument is always the interpolation amount.
    *
    * The `amt` parameter is the amount to interpolate between the old vector and
    * the new vector. 0.0 keeps all components equal to the old vector's, 0.5 is
    * halfway between, and 1.0 sets all components equal to the new vector's.
+   * Values of `amt` outside the range 0 to 1 are allowed and extrapolate beyond
+   * the target.
+   *
+   * This method supports N-dimensional vectors. You should interpolate vectors
+   * only when they are the same size. When two vectors of different sizes are
+   * used, the smaller dimension will be used, and any additional values of the
+   * longer vector will be ignored.
    *
    * The static version of `lerp()`, as in `p5.Vector.lerp(v0, v1, 0.5)`,
    * returns a new <a href="#/p5.Vector">p5.Vector</a> object and doesn't change
-   * the original.
+   * the originals.
    *
-   * @param  {Number}    x   x component.
-   * @param  {Number}    y   y component.
-   * @param  {Number}    z   z component.
-   * @param  {Number}    amt amount of interpolation between 0.0 (old vector)
-   *                         and 1.0 (new vector). 0.5 is halfway between.
+   * @param {...Number} args target vector components followed by the
+   *                         interpolation amount. The last argument is always
+   *                         `amt` (0.0 keeps the old vector, 1.0 the new
+   *                         vector, 0.5 is halfway between).
    * @chainable
    *
    * @example
-   * // META:norender
    * function setup() {
+   *   createCanvas(100, 100);
+   *
+   *   background(200);
+   *
    *   // Create a p5.Vector object.
    *   let v0 = createVector(1, 1, 1);
    *   let v1 = createVector(3, 3, 3);
@@ -2342,26 +2355,76 @@ class Vector {
    *   // Interpolate.
    *   v0.lerp(v1, 0.5);
    *
-   *   // Prints "p5.Vector Object : [2, 2, 2]" to the console.
-   *   print(v0.toString());
+   *   // Display the result.
+   *   textAlign(CENTER, CENTER);
+   *   text(v0.toString(), 0, 0, width, height);
+   *
+   *   describe('The text "p5.Vector Object : [2, 2, 2]" written on a gray square.');
    * }
    *
    * @example
-   * // META:norender
    * function setup() {
+   *   createCanvas(100, 100);
+   *
+   *   background(200);
+   *
+   *   // Create a p5.Vector object.
+   *   let v = createVector(1, 1);
+   *
+   *   // Interpolate with numbers. The last argument is the amount.
+   *   v.lerp(3, 3, 0.5);
+   *
+   *   // Display the result.
+   *   textAlign(CENTER, CENTER);
+   *   text(v.toString(), 0, 0, width, height);
+   *
+   *   describe('The text "p5.Vector Object : [2, 2]" written on a gray square.');
+   * }
+   *
+   * @example
+   * function setup() {
+   *   createCanvas(100, 100);
+   *
+   *   background(200);
+   *
+   *   // Create a p5.Vector object.
+   *   let v = createVector(1, 1, 1);
+   *
+   *   // Interpolate with an array.
+   *   v.lerp([3, 3, 3], 0.5);
+   *
+   *   // Display the result.
+   *   textAlign(CENTER, CENTER);
+   *   text(v.toString(), 0, 0, width, height);
+   *
+   *   describe('The text "p5.Vector Object : [2, 2, 2]" written on a gray square.');
+   * }
+   *
+   * @example
+   * function setup() {
+   *   createCanvas(100, 100);
+   *
+   *   background(200);
+   *
    *   // Create a p5.Vector object.
    *   let v = createVector(1, 1, 1);
    *
    *   // Interpolate.
    *   v.lerp(3, 3, 3, 0.5);
    *
-   *   // Prints "p5.Vector Object : [2, 2, 2]" to the console.
-   *   print(v.toString());
+   *   // Display the result.
+   *   textAlign(CENTER, CENTER);
+   *   text(v.toString(), 0, 0, width, height);
+   *
+   *   describe('The text "p5.Vector Object : [2, 2, 2]" written on a gray square.');
    * }
    *
    * @example
-   * // META:norender
    * function setup() {
+   *   createCanvas(100, 100);
+   *
+   *   background(200);
+   *
    *   // Create p5.Vector objects.
    *   let v0 = createVector(1, 1, 1);
    *   let v1 = createVector(3, 3, 3);
@@ -2369,8 +2432,31 @@ class Vector {
    *   // Interpolate.
    *   let v2 = p5.Vector.lerp(v0, v1, 0.5);
    *
-   *   // Prints "p5.Vector Object : [2, 2, 2]" to the console.
-   *   print(v2.toString());
+   *   // Display the result.
+   *   textAlign(CENTER, CENTER);
+   *   text(v2.toString(), 0, 0, width, height);
+   *
+   *   describe('The text "p5.Vector Object : [2, 2, 2]" written on a gray square.');
+   * }
+   *
+   * @example
+   * function setup() {
+   *   createCanvas(100, 100);
+   *
+   *   background(200);
+   *
+   *   // Create p5.Vector objects.
+   *   let v0 = createVector(0, 1, 0, 1);
+   *   let v1 = createVector(1, 0, 1, 0);
+   *
+   *   // Interpolate.
+   *   v0.lerp(v1, 0.5);
+   *
+   *   // Display the result.
+   *   textAlign(CENTER, CENTER);
+   *   text(v0.toString(), 0, 0, width, height);
+   *
+   *   describe('The text "p5.Vector Object : [0.5, 0.5, 0.5, 0.5]" written on a gray square.');
    * }
    *
    * @example
@@ -2416,17 +2502,22 @@ class Vector {
    * }
    */
   /**
+   * @param  {Number[]} arr array to lerp towards.
+   * @param  {Number}    amt
+   * @chainable
+   */
+  /**
    * @param  {p5.Vector} v  <a href="#/p5.Vector">p5.Vector</a> to lerp toward.
    * @param  {Number}    amt
    * @chainable
    */
-  lerp(x, y, z, amt) {
-    if (x instanceof Vector) {
-      return this.lerp(x.x, x.y, x.z, y);
+  lerp(values, amt) {
+    const minDimension = prioritizeSmallerDimension(this.dimensions, values);
+    shrinkToDimension(this.values, minDimension);
+
+    for (let i = 0; i < this.values.length; i++) {
+      this.values[i] += (values[i] - this.values[i]) * amt;
     }
-    this.x += (x - this.x) * amt || 0;
-    this.y += (y - this.y) * amt || 0;
-    this.z += (z - this.z) * amt || 0;
     return this;
   }
 
@@ -3660,7 +3751,7 @@ function vector(p5, fn) {
   p5.Vector = Vector;
 
   Vector.prototype._friendlyError = p5._friendlyError;
-  Vector.prototype.friendlyErrorsDisabled = function() {
+  Vector.prototype.friendlyErrorsDisabled = function () {
     return p5.disableFriendlyErrors;
   };
 

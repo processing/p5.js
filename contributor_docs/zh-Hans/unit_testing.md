@@ -92,16 +92,16 @@ Node.js 测试的设置都在 `test/mocha.opts` 文件中完成。
 我们可以为 `p5.prototype.keyIsPressed` 创建一个测试套件，并开始编写相应的测试。我们将使用 mocha 来组织我们的单元测试。
 
 ```js
-suite('p5.prototype.keyIsPressed', function() {
-  test('keyIsPressed is a boolean', function() {
+suite('p5.prototype.keyIsPressed', function () {
+  test('keyIsPressed is a boolean', function () {
     // 在这里编写测试
   });
 
-  test('keyIsPressed is true on key press', function() {
+  test('keyIsPressed is true on key press', function () {
     // 在这里编写测试
   });
 
-  test('keyIsPressed is false when no keys are pressed', function() {
+  test('keyIsPressed is false when no keys are pressed', function () {
     // 在这里编写测试
   });
 });
@@ -111,7 +111,7 @@ suite('p5.prototype.keyIsPressed', function() {
 例如：
 
 ```js
-test('keyIsPressed is a boolean', function() {
+test('keyIsPressed is a boolean', function () {
   assert.isBoolean(myp5.keyIsPressed); // 断言值为布尔值。
 });
 ```

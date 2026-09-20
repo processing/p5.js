@@ -1,31 +1,31 @@
 import p5 from '../../../src/app.js';
-import rendererWebGPU from "../../../src/webgpu/p5.RendererWebGPU";
+import rendererWebGPU from '../../../src/webgpu/p5.RendererWebGPU';
 
 p5.registerAddon(rendererWebGPU);
 
-suite('WebGPU p5.Framebuffer', function() {
+suite('WebGPU p5.Framebuffer', function () {
   let myp5;
   let prevPixelRatio;
 
-  beforeAll(async function() {
+  beforeAll(async function () {
     prevPixelRatio = window.devicePixelRatio;
     window.devicePixelRatio = 1;
-    myp5 = new p5(function(p) {
-      p.setup = function() {};
+    myp5 = new p5(function (p) {
+      p.setup = function () {};
     });
   });
 
-  beforeEach(async function() {
+  beforeEach(async function () {
     await myp5.createCanvas(10, 10, 'webgpu');
-  })
+  });
 
-  afterAll(function() {
+  afterAll(function () {
     myp5.remove();
     window.devicePixelRatio = prevPixelRatio;
   });
 
-  suite('Creation and basic properties', function() {
-    test('framebuffers can be created with WebGPU renderer', async function() {
+  suite('Creation and basic properties', function () {
+    test('framebuffers can be created with WebGPU renderer', async function () {
       const fbo = myp5.createFramebuffer();
 
       expect(fbo).to.be.an('object');
@@ -34,7 +34,7 @@ suite('WebGPU p5.Framebuffer', function() {
       expect(fbo.autoSized()).to.equal(true);
     });
 
-    test('framebuffers can be created with custom dimensions', async function() {
+    test('framebuffers can be created with custom dimensions', async function () {
       const fbo = myp5.createFramebuffer({ width: 20, height: 30 });
 
       expect(fbo.width).to.equal(20);
@@ -42,14 +42,14 @@ suite('WebGPU p5.Framebuffer', function() {
       expect(fbo.autoSized()).to.equal(false);
     });
 
-    test('framebuffers have color texture', async function() {
+    test('framebuffers have color texture', async function () {
       const fbo = myp5.createFramebuffer();
 
       expect(fbo.color).to.be.an('object');
       expect(fbo.color.rawTexture).to.be.a('function');
     });
 
-    test('framebuffers can specify different formats', async function() {
+    test('framebuffers can specify different formats', async function () {
       const fbo = myp5.createFramebuffer({
         format: 'float',
         channels: 'rgb'
@@ -61,8 +61,8 @@ suite('WebGPU p5.Framebuffer', function() {
     });
   });
 
-  suite('Auto-sizing behavior', function() {
-    test('auto-sized framebuffers change size with canvas', async function() {
+  suite('Auto-sizing behavior', function () {
+    test('auto-sized framebuffers change size with canvas', async function () {
       myp5.pixelDensity(1);
       const fbo = myp5.createFramebuffer();
 
@@ -78,7 +78,7 @@ suite('WebGPU p5.Framebuffer', function() {
       expect(fbo.density).to.equal(2);
     });
 
-    test('manually-sized framebuffers do not change size with canvas', async function() {
+    test('manually-sized framebuffers do not change size with canvas', async function () {
       myp5.pixelDensity(3);
       const fbo = myp5.createFramebuffer({ width: 25, height: 30, density: 1 });
 
@@ -94,7 +94,7 @@ suite('WebGPU p5.Framebuffer', function() {
       expect(fbo.density).to.equal(1);
     });
 
-    test('manually-sized framebuffers can be made auto-sized', async function() {
+    test('manually-sized framebuffers can be made auto-sized', async function () {
       myp5.pixelDensity(1);
       const fbo = myp5.createFramebuffer({ width: 25, height: 30, density: 2 });
 
@@ -115,8 +115,8 @@ suite('WebGPU p5.Framebuffer', function() {
     });
   });
 
-  suite('Manual resizing', function() {
-    test('framebuffers can be manually resized', async function() {
+  suite('Manual resizing', function () {
+    test('framebuffers can be manually resized', async function () {
       myp5.pixelDensity(1);
       const fbo = myp5.createFramebuffer();
 
@@ -130,7 +130,7 @@ suite('WebGPU p5.Framebuffer', function() {
       expect(fbo.autoSized()).to.equal(false);
     });
 
-    test('resizing affects pixel density', async function() {
+    test('resizing affects pixel density', async function () {
       myp5.pixelDensity(1);
       const fbo = myp5.createFramebuffer();
 
@@ -145,8 +145,8 @@ suite('WebGPU p5.Framebuffer', function() {
     });
   });
 
-  suite('Drawing functionality', function() {
-    test('can draw to framebuffer with draw() method', async function() {
+  suite('Drawing functionality', function () {
+    test('can draw to framebuffer with draw() method', async function () {
       const fbo = myp5.createFramebuffer();
 
       myp5.background(0, 255, 0);
@@ -171,7 +171,7 @@ suite('WebGPU p5.Framebuffer', function() {
       expect([...myp5.pixels.slice(0, 3)]).toEqual([0, 0, 255]);
     });
 
-    test('can use framebuffer as texture', async function() {
+    test('can use framebuffer as texture', async function () {
       const fbo = myp5.createFramebuffer();
 
       fbo.draw(() => {
@@ -186,8 +186,8 @@ suite('WebGPU p5.Framebuffer', function() {
     });
   });
 
-  suite('Pixel access', function() {
-    test('loadPixels returns a promise in WebGPU', async function() {
+  suite('Pixel access', function () {
+    test('loadPixels returns a promise in WebGPU', async function () {
       const fbo = myp5.createFramebuffer();
 
       fbo.draw(() => {
@@ -203,7 +203,7 @@ suite('WebGPU p5.Framebuffer', function() {
       expect([...pixels.slice(0, 4)]).toEqual([255, 0, 0, 255]);
     });
 
-    test('pixels property is set after loadPixels resolves', async function() {
+    test('pixels property is set after loadPixels resolves', async function () {
       const fbo = myp5.createFramebuffer();
 
       fbo.draw(() => {
@@ -215,7 +215,7 @@ suite('WebGPU p5.Framebuffer', function() {
       expect(fbo.pixels.length).to.equal(10 * 10 * 4);
     });
 
-    test('get() returns a promise for single pixel in WebGPU', async function() {
+    test('get() returns a promise for single pixel in WebGPU', async function () {
       const fbo = myp5.createFramebuffer();
 
       fbo.draw(() => {
@@ -231,7 +231,7 @@ suite('WebGPU p5.Framebuffer', function() {
       expect([...color]).toEqual([100, 150, 200, 255]);
     });
 
-    test('get() returns a promise for region in WebGPU', async function() {
+    test('get() returns a promise for region in WebGPU', async function () {
       const fbo = myp5.createFramebuffer();
 
       fbo.draw(() => {

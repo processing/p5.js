@@ -1,5 +1,9 @@
 import p5 from '../../../src/app.js';
-import { createP5Iframe, P5_SCRIPT_TAG, P5_SCRIPT_URL } from '../../js/p5_helpers';
+import {
+  createP5Iframe,
+  P5_SCRIPT_TAG,
+  P5_SCRIPT_URL
+} from '../../js/p5_helpers';
 import { vi } from 'vitest';
 
 suite('Core', function () {
@@ -105,9 +109,7 @@ suite('Core', function () {
         try {
           globalObject.text = 'hi';
           bind('text', noop);
-          expect(
-            _friendlyErrorStub
-          ).toHaveBeenCalledTimes(1);
+          expect(_friendlyErrorStub).toHaveBeenCalledTimes(1);
         } finally {
           vi.restoreAllMocks();
         }

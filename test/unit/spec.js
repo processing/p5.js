@@ -55,7 +55,7 @@ var spec = {
     // to omit some for speed if they should only be run manually.
     'webgl',
     'typography',
-    'shape_modes',
+    'shape_modes'
   ]
 };
 document.write(
