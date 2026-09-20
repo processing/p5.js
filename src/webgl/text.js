@@ -87,7 +87,7 @@ function text(p5, fn) {
         try {
           // create a new image
           imageData = new ImageData(this.width, this.height);
-        } catch (err) {
+        } catch {
           // for browsers that don't support ImageData constructors (ie IE11)
           // create an ImageData using the old method
           let canvas = document.getElementsByTagName('canvas')[0];

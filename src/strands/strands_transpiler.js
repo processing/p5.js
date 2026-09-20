@@ -1912,6 +1912,7 @@ function transformHelperFunctionEarlyReturns(ast, names) {
 
 // Wraps each callback with a uniform context guard, eliminating the need
 // to repeat the early-return check at the top of every handler.
+/* oxlint-disable-next-line no-unused-vars */
 function makeGuardedCallbacks(callbacks) {
   const guarded = {};
   for (const [name, fn] of Object.entries(callbacks)) {
@@ -2012,17 +2013,19 @@ function runControlFlowPass(ast, uniformCallbackNames) {
 }
 
 function buildStrandsCallback(p5, ast, scope) {
-  const transpiledSource = escodegen.generate(ast);
   const scopeKeys = Object.keys(scope);
-  const match =
-    /\(?\s*(?:function)?\s*\w*\s*\(([^)]*)\)\s*(?:=>)?\s*{((?:.|\n)*)}\s*;?\s*\)?/.exec(
-      transpiledSource
-    );
-  if (!match) {
-    console.log(transpiledSource);
+  // Source is wrapped in parens before parsing, so the callback is the
+  // program's single expression. Read params/body from that node so
+  // `param => { ... }` works after escodegen drops the parentheses.
+  const fn = ast.body.length === 1 && ast.body[0].expression;
+  if (
+    !fn ||
+    (fn.type !== 'FunctionExpression' && fn.type !== 'ArrowFunctionExpression')
+  ) {
+    console.log(escodegen.generate(ast));
     throw new Error('Could not parse p5.strands function!');
   }
-  const params = match[1].split(/,\s*/).filter(param => !!param.trim());
+  const params = fn.params.map(param => escodegen.generate(param));
   let paramVals, paramNames;
   if (params.length > 0) {
     paramNames = params;
@@ -2031,7 +2034,10 @@ function buildStrandsCallback(p5, ast, scope) {
     paramNames = scopeKeys;
     paramVals = scopeKeys.map(key => scope[key]);
   }
-  const body = match[2];
+  const body =
+    fn.body.type === 'BlockStatement'
+      ? fn.body.body.map(statement => escodegen.generate(statement)).join('\n')
+      : `return ${escodegen.generate(fn.body)};`;
   try {
     const internalStrandsCallback = new Function('__p5', ...paramNames, body);
     // Create a parameter called __p5, not just p5, because users of instance mode

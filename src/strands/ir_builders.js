@@ -265,7 +265,7 @@ export function binaryOpNode(
       );
     }
   }
-
+  
   if (booleanOpCode[opCode]) {
     cast.toType.baseType = BaseType.BOOL;
     cast.toType.dimension = 1;
@@ -954,10 +954,13 @@ export function arrayAssignmentNode(
     index = createStrandsNode(id, dimension, strandsContext);
   }
 
-  // Ensure value is a StrandsNode
+  // Ensure value is a StrandsNode, casting to float if needed (e.g. index.x is i32)
   let value;
   if (valueNode instanceof StrandsNode) {
-    value = valueNode;
+    value =
+      valueNode.typeInfo().baseType !== BaseType.FLOAT
+        ? castToFloat(strandsContext, valueNode)
+        : valueNode;
   } else {
     const { id, dimension } = primitiveConstructorNode(
       strandsContext,
