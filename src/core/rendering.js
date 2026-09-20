@@ -150,7 +150,13 @@ function rendering(p5, fn) {
     }
 
     // Init our graphics renderer
-    if (this._renderer) this._renderer.remove();
+    if (this._renderer) {
+      this._renderer.remove();
+      const index = this._elements.indexOf(this._renderer);
+      if (index !== -1) {
+        this._elements.splice(index, 1);
+      }
+    }
     this._renderer = new renderers[selectedRenderer](this, w, h, true, ...args);
     this._defaultGraphicsCreated = true;
     this._elements.push(this._renderer);
@@ -171,20 +177,7 @@ function rendering(p5, fn) {
           throw new Error('Failed to create canvas.');
         }
         p5.FES.log`${e.message} Falling back to WebGL renderer.`();
-        const failed = this._renderer;
-        try {
-          failed.remove();
-        } catch {
-          // Ignore cleanup errors for the failed renderer.
-        }
-        const index = this._elements.indexOf(failed);
-        if (index !== -1) {
-          this._elements.splice(index, 1);
-        }
-        this._renderer = new renderers[constants.WEBGL](this, w, h, true, ...args);
-        this._elements.push(this._renderer);
-        this._renderer._applyDefaults();
-        return this._renderer;
+        return this.createCanvas(w, h, constants.WEBGL, ...args);
       });
     } else {
       return this._renderer;
