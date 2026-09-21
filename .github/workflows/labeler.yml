@@ -5,6 +5,11 @@ on:
 permissions:
   contents: read
   issues: write
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.issue.number || github.ref }}
+  cancel-in-progress: false
+
 jobs:
   triage:
     runs-on: ubuntu-latest

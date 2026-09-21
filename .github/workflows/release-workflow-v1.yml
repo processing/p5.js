@@ -4,6 +4,10 @@ name: New p5.js v1 release
 permissions:
   contents: write
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
 on:
   push:
     tags:
