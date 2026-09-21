@@ -409,7 +409,7 @@ suite('p5.Matrix', function () {
     it('should transpose a 3x3 matrix correctly', () => {
       const mat = new p5.Matrix([1, 2, 3, 4, 5, 6, 7, 8, 9]);
       mat.transpose(mat);
-      expect(mat.mat3).toEqual([1, 4, 7, 2, 5, 8, 3, 6, 9]);
+      expect(toArray(mat.mat3)).toEqual([1, 4, 7, 2, 5, 8, 3, 6, 9]);
     });
 
     it('should transpose a 3x3 matrix from an array correctly', () => {
@@ -417,7 +417,7 @@ suite('p5.Matrix', function () {
 
       mat.transpose([1, 2, 3, 4, 5, 6, 7, 8, 9]);
 
-      expect(mat.mat3).toEqual([1, 4, 7, 2, 5, 8, 3, 6, 9]);
+      expect(toArray(mat.mat3)).toEqual([1, 4, 7, 2, 5, 8, 3, 6, 9]);
     });
   });
   describe.skip('Determinant', () => {
