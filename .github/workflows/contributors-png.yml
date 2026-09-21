@@ -14,6 +14,7 @@ concurrency:
 
 jobs:
   build:
+    name: Update contributors.png
     if: github.ref == 'refs/heads/main' && github.repository == 'processing/p5.js'
     runs-on: ubuntu-latest
     steps:

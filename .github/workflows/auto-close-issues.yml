@@ -17,6 +17,7 @@ concurrency:
 
 jobs:
   close_issues:
+    name: Close linked issues
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:

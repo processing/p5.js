@@ -18,6 +18,7 @@ concurrency:
 
 jobs:
   test:
+    name: Test
     strategy:
       matrix:
         include:

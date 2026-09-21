@@ -19,6 +19,7 @@ concurrency:
 
 jobs:
   publish:
+    name: Publish
     if: github.repository == 'processing/p5.js'
     runs-on: ubuntu-latest
     steps:

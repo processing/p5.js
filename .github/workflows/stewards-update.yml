@@ -17,6 +17,7 @@ concurrency:
 
 jobs:
   build:
+    name: Update steward table
     if: github.ref == 'refs/heads/main' && github.repository == 'processing/p5.js'
     runs-on: ubuntu-latest
     steps:
