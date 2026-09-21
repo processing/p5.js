@@ -1927,8 +1927,11 @@
     "endShape": {
       "overloads": [
         [
-          "CLOSE?",
+          "CLOSE|OPEN?",
           "Integer?"
+        ],
+        [
+          "Integer"
         ]
       ]
     },
