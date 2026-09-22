@@ -1510,7 +1510,7 @@ export function SVGImportAddon(p5, fn, lifecycles) {
    * let importedShape;
    *
    * function setup() {
-   *   createCanvas(400, 400);
+   *   createCanvas(300, 300);
    *
    *   // Parse the SVG string directly, no async needed
    *   importedShape = createSVG(inlineSvg);
@@ -1518,7 +1518,7 @@ export function SVGImportAddon(p5, fn, lifecycles) {
    *
    * function draw() {
    *   background(240);
-   *   shape(importedShape);
+   *   shape(importedShape, 50, 50);
    * }
    * ```
    *
@@ -1547,7 +1547,7 @@ export function SVGImportAddon(p5, fn, lifecycles) {
    * let botLogo;
    *
    * async function setup() {
-   *   createCanvas(500, 500);
+   *   createCanvas(300, 300);
    *
    *   try {
    *     // loadSVG returns a promise; await the resolved RecordedShape
@@ -1563,7 +1563,7 @@ export function SVGImportAddon(p5, fn, lifecycles) {
    *
    *   // Render the SVG once it is fully loaded
    *   if (botLogo) {
-   *     shape(botLogo);
+   *     shape(botLogo, 25, 93);
    *   } else {
    *     fill(100);
    *     text('Loading SVG...', 20, 30);

@@ -1004,7 +1004,7 @@ export function SVGExportAddon(p5, fn, lifecycles) {
    * let customShape;
    *
    * function setup() {
-   *   createCanvas(400, 400);
+   *   createCanvas(300, 300);
    *
    *   // Create the shape instance
    *   customShape = createShape();
@@ -1058,13 +1058,14 @@ export function SVGExportAddon(p5, fn, lifecycles) {
    * let drawing;
    *
    * function setup() {
-   *   createCanvas(400, 400);
+   *   createCanvas(300, 300);
    *
    *   // Record drawing commands silently
    *   drawing = buildShape(() => {
-   *     fill(255, 0, 0);
-   *     rect(50, 50, 100, 100);
-   *     circle(300, 300, 80);
+   *     fill('#ed225d');
+   *     rect(40, 40, 80, 80);
+   *     fill('#302dd9');
+   *     circle(200, 200, 70);
    *   });
    * }
    *
@@ -1085,7 +1086,7 @@ export function SVGExportAddon(p5, fn, lifecycles) {
    * let drawing;
    *
    * function setup() {
-   *   createCanvas(400, 400);
+   *   createCanvas(300, 300);
    *
    *   // Record drawing commands and render them on the screen canvas simultaneously
    *   drawing = buildShape(() => {
@@ -1138,11 +1139,11 @@ export function SVGExportAddon(p5, fn, lifecycles) {
    *
    * ```js example
    * function setup() {
-   *   createCanvas(200, 200);
+   *   createCanvas(300, 300);
    *
    *   const star = buildShape(() => {
-   *     circle(100, 100, 50);
-   *   });
+   *     circle(150, 150, 80);
+   *   }, { draw: true });
    *
    *   const xmlString = getSVG(star);
    *   console.log(xmlString); // Outputs: <svg ...><circle ...></svg>
@@ -1409,7 +1410,7 @@ export function SVGExportAddon(p5, fn, lifecycles) {
    * let starShape;
    *
    * function setup() {
-   *   createCanvas(400, 400);
+   *   createCanvas(300, 300);
    *
    *   // Record the star shape once
    *   starShape = buildShape(() => {
@@ -1429,19 +1430,17 @@ export function SVGExportAddon(p5, fn, lifecycles) {
    * }
    *
    * function draw() {
-   *   background(255);
+   *   background(250);
    *
-   *   // Replay/render the shape at different positions with scaling/rotation
+   *   // Replay the shape at different positions with scaling
    *   push();
-   *   translate(100, 100);
-   *   fill(255, 204, 0);
+   *   translate(80, 80);
    *   shape(starShape);
    *   pop();
    *
    *   push();
-   *   translate(250, 250);
-   *   scale(1.5);
-   *   fill(0, 204, 255);
+   *   translate(200, 200);
+   *   scale(1.2);
    *   shape(starShape);
    *   pop();
    * }
@@ -1451,7 +1450,7 @@ export function SVGExportAddon(p5, fn, lifecycles) {
    * let icon;
    *
    * async function setup() {
-   *   createCanvas(400, 400);
+   *   createCanvas(300, 300);
    *   icon = await loadSVG('/assets/img/p5js.svg');
    * }
    *
@@ -1459,53 +1458,68 @@ export function SVGExportAddon(p5, fn, lifecycles) {
    *   background(240);
    *
    *   if (icon) {
-   *     // Aligns the center of the SVG icon to canvas center (200, 200)
+   *     // Aligns the center of the SVG icon to (width / 2, height / 2)
    *     shape(icon, width / 2, height / 2, {
    *       align: CENTER,
-   *       scale: 0.75
+   *       scale: 0.5
    *     });
+   *
+   *     // Blue dot marks the anchor position at the shape center
+   *     fill('blue');
+   *     noStroke();
+   *     circle(width / 2, height / 2, 8);
    *   }
    * }
    * ```
    *
    * ```js example
-   * let logo;
+   * let icon;
    *
    * async function setup() {
-   *   createCanvas(400, 400);
-   *   logo = await loadSVG('/assets/img/p5js.svg');
+   *   createCanvas(300, 300);
+   *   icon = await loadSVG('/assets/img/p5js.svg');
    * }
    *
    * function draw() {
-   *   background(245);
+   *   background(240);
    *
-   *   if (logo) {
-   *     // CORNER alignment: aligns top-left corner of shape bounds to (100, 100)
-   *     shape(logo, 100, 100, {
+   *   if (icon) {
+   *     // Aligns the top-left corner of the shape to (width / 2, height / 2)
+   *     shape(icon, width / 2, height / 2, {
    *       align: CORNER,
-   *       scale: 0.8
+   *       scale: 0.5
    *     });
+   *
+   *     // Blue dot marks the anchor position at the top-left corner
+   *     fill('blue');
+   *     noStroke();
+   *     circle(width / 2, height / 2, 8);
    *   }
    * }
    * ```
    *
    * ```js example
-   * let logo;
+   * let icon;
    *
    * async function setup() {
-   *   createCanvas(400, 400);
-   *   logo = await loadSVG('/assets/img/p5js.svg');
+   *   createCanvas(300, 300);
+   *   icon = await loadSVG('/assets/img/p5js.svg');
    * }
    *
    * function draw() {
-   *   background(245);
+   *   background(240);
    *
-   *   if (logo) {
-   *     // VIEWBOX alignment: translates the origin (0, 0) directly to (100, 100)
-   *     shape(logo, 100, 100, {
+   *   if (icon) {
+   *     // VIEWBOX alignment: places the SVG origin (0, 0) at (width / 2, height / 2)
+   *     shape(icon, width / 2, height / 2, {
    *       align: VIEWBOX,
-   *       scale: 0.8
+   *       scale: 0.5
    *     });
+   *
+   *     // Blue dot marks the anchor position at the SVG origin (0, 0)
+   *     fill('blue');
+   *     noStroke();
+   *     circle(width / 2, height / 2, 8);
    *   }
    * }
    * ```
@@ -1514,7 +1528,7 @@ export function SVGExportAddon(p5, fn, lifecycles) {
    * let flower;
    *
    * async function setup() {
-   *   createCanvas(400, 400);
+   *   createCanvas(300, 300);
    *   flower = await loadSVG('/assets/img/p5js.svg');
    * }
    *
@@ -1575,7 +1589,7 @@ export function SVGExportAddon(p5, fn, lifecycles) {
    *
    * ```js example
    * function setup() {
-   *   createCanvas(400, 400);
+   *   createCanvas(300, 300);
    * }
    *
    * function draw() {
