@@ -17,7 +17,7 @@ jobs:
     strategy:
       matrix:
         include:
-          - os: ubuntu-latest
+          - os: ubuntu-24.04
             browser: chrome
           # - os: windows-latest
           #   browser: chrome
@@ -35,7 +35,7 @@ jobs:
           node-version: 22.x
       
       - name: Verify Chrome (Ubuntu)
-        if: matrix.os == 'ubuntu-latest' && matrix.browser == 'chrome'
+        if: matrix.os == 'ubuntu-24.04' && matrix.browser == 'chrome'
         run: |
           google-chrome --version
 
@@ -51,7 +51,7 @@ jobs:
 
       - name: Build and test (Ubuntu)
         id: test
-        if: matrix.os == 'ubuntu-latest'
+        if: matrix.os == 'ubuntu-24.04'
         run: npm test -- --project=unit-tests
         continue-on-error: true
         env:
