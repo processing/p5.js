@@ -442,7 +442,7 @@ function addCopyingAndReturn(functionBody, varsToReturn, sourcePrefix = null) {
   });
 }
 
-/**
+/*
  * Rewrites `node` in place into the call expression
  * `object.methodName(...args)`.
  *
@@ -1591,7 +1591,7 @@ function functionHasSetInControlFlow(functionNode) {
 
   return hasSetInControlFlow;
 }
-/**
+/*
  * Does this statement contain a `<hook>.<methodName>()` call?
  *
  * Also looks inside comma (sequence) expressions, so that minified-style code
