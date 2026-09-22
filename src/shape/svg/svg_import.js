@@ -1482,7 +1482,14 @@ export function SVGImportAddon(p5, fn, lifecycles) {
       svg = input;
     }
     const importer = new SVGImporter(pInst);
-    return importer.import(svg);
+    const scopeNode = importer.import(svg);
+    if (pInst?.createShape) {
+      const shape = pInst.createShape();
+      shape.data = scopeNode;
+      shape.sourceSVG = scopeNode.sourceSVG;
+      return shape;
+    }
+    return scopeNode;
   }
 
   /**
@@ -1580,16 +1587,12 @@ export function SVGImportAddon(p5, fn, lifecycles) {
     failureCallback
   ) {
     try {
-      const req = new Request(path, {
-        method: 'GET',
-        mode: 'cors'
-      });
       let svgText;
       if (typeof request === 'function') {
-        const { data } = await request(req, 'text');
+        const { data } = await request(path, 'text');
         svgText = data;
       } else {
-        const response = await fetch(req);
+        const response = await fetch(path);
         if (!response.ok) {
           throw new Error(`Failed to load SVG: ${path}`);
         }
