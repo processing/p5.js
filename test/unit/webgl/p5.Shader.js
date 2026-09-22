@@ -3357,7 +3357,7 @@ suite('p5.Shader', function () {
       assert.approximately(pixelColor[2], 0, 5);
     });
 
-        suite('comma operator (#9178)', () => {
+    suite('comma operator (#9178)', () => {
       test('handles comma-joined hook calls with a shared variable', () => {
         myp5.createCanvas(50, 50, myp5.WEBGL);
         myp5.pixelDensity(1);
@@ -3447,6 +3447,30 @@ suite('p5.Shader', function () {
               myp5.filterColor.set([1, 0, 0, 1]);
             }
             myp5.filterColor.end(), (step = 2);
+          },
+          { myp5 }
+        );
+
+        myp5.background(255, 255, 255);
+        myp5.filter(testShader);
+
+        const pixelColor = myp5.get(25, 25);
+        assert.approximately(pixelColor[0], 255, 5);
+        assert.approximately(pixelColor[1], 0, 5);
+        assert.approximately(pixelColor[2], 0, 5);
+      });
+
+      test('handles .set() right after .begin() in the same comma expression', () => {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+
+        const testShader = myp5.baseFilterShader().modify(
+          () => {
+            myp5.filterColor.begin(), myp5.filterColor.set([0, 1, 0, 1]);
+            let value = 1;
+            if (value > 0.5) {
+              myp5.filterColor.set([1, 0, 0, 1]);
+            }
+            myp5.filterColor.end();
           },
           { myp5 }
         );

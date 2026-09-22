@@ -1675,9 +1675,14 @@ function transformFunctionSetCalls(functionNode) {
       }
     }
 
-    // Insert intermediate variable after .begin() if found, otherwise at the start
+    // Declare the intermediate variable *before* the statement containing
+    // .begin(), not after it. Minified code can put .begin() and a .set() in
+    // the same comma expression (`hook.begin(), hook.set(x)`). Every .set() on
+    // this hook is rewritten below to assign to this variable, so declaring it
+    // after that statement would use it before its `let` runs. (This pass only
+    // runs for functions with a .set() inside if/for; see #8576.)
     if (beginCallIndex !== -1) {
-      functionNode.body.body.splice(beginCallIndex + 1, 0, intermediateVarDecl);
+      functionNode.body.body.splice(beginCallIndex, 0, intermediateVarDecl);
     } else {
       functionNode.body.body.unshift(intermediateVarDecl);
     }
@@ -1693,7 +1698,7 @@ function transformFunctionSetCalls(functionNode) {
         ) {
           const currentExprString = escodegen.generate(node.callee.object);
           if (currentExprString === exprString && node.arguments.length > 0) {
-             // Replace the .set() call itself with an assignment, in place.
+            // Replace the .set() call itself with an assignment, in place.
             // Replacing the enclosing statement instead would discard any
             // sibling expressions when the call is part of a comma expression.
             const value = node.arguments[0];
