@@ -162,6 +162,32 @@ suite('Validate Params', function () {
     });
   });
 
+  suite('validateParams: optional mode + count for endShape()', function () {
+    const validInputs = [
+      { name: 'no args', input: [] },
+      { name: 'CLOSE', input: [constants.CLOSE] },
+      { name: 'OPEN', input: [constants.OPEN] },
+      { name: 'count only', input: [60] },
+      { name: 'OPEN + count', input: [constants.OPEN, 60] },
+      { name: 'CLOSE + count', input: [constants.CLOSE, 60] },
+      { name: 'undefined mode + count', input: [undefined, 60] }
+    ];
+    validInputs.forEach(({ name, input }) => {
+      test(`endShape(): ${name}, no friendly-err-msg`, () => {
+        const result = mockP5Prototype._validate('p5.endShape', input);
+        assert.isTrue(result.success);
+      });
+    });
+
+    test('endShape(): invalid constant', () => {
+      const result = mockP5Prototype._validate('p5.endShape', [
+        'fake-constant',
+        60
+      ]);
+      assert.isFalse(result.success);
+    });
+  });
+
   suite('validateParams: promise where no promise is expected', function () {
     test('image(): promise for first argument', function () {
       const result = mockP5Prototype._validate('p5.image', [
