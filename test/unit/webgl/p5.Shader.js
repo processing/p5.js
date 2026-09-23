@@ -3815,6 +3815,33 @@ suite('p5.Shader', function () {
         );
       }).not.toThrow();
     });
+
+
+    suite('matrix uniforms (#8992)', () => {
+      test('short aliases declare the same uniforms as the NxN names', () => {
+        myp5.createCanvas(5, 5, myp5.WEBGL);
+        const testShader = myp5.baseMaterialShader().modify(
+          () => {
+            myp5.uniformMat2('uShort2');
+            myp5.uniformMat3('uShort3');
+            myp5.uniformMat4('uShort4');
+            myp5.uniformMat3x3('uLong3');
+          },
+          { myp5 }
+        );
+
+        expect(() => {
+          myp5.shader(testShader);
+          myp5.plane(myp5.width, myp5.height);
+        }).not.toThrowError();
+
+        const src = testShader.fragSrc();
+        assert.include(src, 'uniform mat2x2 uShort2;');
+        assert.include(src, 'uniform mat3x3 uShort3;');
+        assert.include(src, 'uniform mat4x4 uShort4;');
+        assert.include(src, 'uniform mat3x3 uLong3;');
+      });
+    });
   });
 
   suite('p5.strands error messages', () => {
