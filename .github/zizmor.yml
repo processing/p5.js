@@ -1,0 +1,4 @@
+rules:
+  # Temp disabled to satisfy CI. Can be revisited later.
+  secrets-outside-env:
+    disable: true

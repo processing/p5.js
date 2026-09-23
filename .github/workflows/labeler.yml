@@ -5,8 +5,14 @@ on:
 permissions:
   contents: read
   issues: write
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.issue.number || github.ref }}
+  cancel-in-progress: false
+
 jobs:
   triage:
+    name: Triage issues
     runs-on: ubuntu-latest
     steps:
       - uses: github/issue-labeler@98b5412841f6c4b0b3d9c29d53c13fad16bd7de2 # v3.2

@@ -1,0 +1,29 @@
+name: "Git Hooks"
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+  pull_request: ~
+
+permissions: {}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  run-prek:
+    name: prek run --all-files
+    runs-on: ubuntu-24.04
+    timeout-minutes: 1
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Run prek
+        uses: j178/prek-action@4e14d07f9231acabce116ccfca13b13dd9755ece  # v3.0.0

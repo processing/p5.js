@@ -11,8 +11,13 @@ permissions:
   contents: write
   pull-requests: write
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
+    name: Update steward table
     if: github.ref == 'refs/heads/main' && github.repository == 'processing/p5.js'
     runs-on: ubuntu-latest
     steps:

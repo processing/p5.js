@@ -8,8 +8,13 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
+    name: Update contributors.png
     if: github.ref == 'refs/heads/main' && github.repository == 'processing/p5.js'
     runs-on: ubuntu-latest
     steps:
