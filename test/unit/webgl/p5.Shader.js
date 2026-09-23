@@ -3841,7 +3841,34 @@ suite('p5.Shader', function () {
         assert.include(src, 'uniform mat4x4 uShort4;');
         assert.include(src, 'uniform mat3x3 uLong3;');
       });
-    });
+
+      test('setUniform accepts a p5.Matrix', () => {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+        const testShader = myp5.createFilterShader(`
+          precision highp float;
+          uniform mat3 uM;
+          void main() {
+            gl_FragColor = vec4(uM[0][0], uM[1][0], uM[2][2], 1.0);
+          }
+        `);
+
+        // Column-major: index 3 is column 1, row 0 -> uM[1][0]
+        const m = myp5.createMatrix([
+          1.0, 0.0, 0.0,
+          0.5, 0.0, 0.0,
+          0.0, 0.0, 0.25
+        ]);
+
+        myp5.background(0);
+        testShader.setUniform('uM', m);
+        myp5.filter(testShader);
+
+        const pixelColor = myp5.get(25, 25);
+        assert.approximately(pixelColor[0], 255, 5); // uM[0][0] = 1.0
+        assert.approximately(pixelColor[1], 128, 5); // uM[1][0] = 0.5
+        assert.approximately(pixelColor[2], 64, 5); // uM[2][2] = 0.25
+      });
+  });
   });
 
   suite('p5.strands error messages', () => {

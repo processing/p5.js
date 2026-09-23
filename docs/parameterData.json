@@ -4482,7 +4482,7 @@
       "overloads": [
         [
           "String",
-          "Boolean|p5.Vector|p5.Color|Number|Number[]|p5.Image|p5.Graphics|p5.MediaElement|p5.Texture|p5.StorageBuffer"
+          "Boolean|p5.Vector|p5.Color|p5.Matrix|Number|Number[]|p5.Image|p5.Graphics|p5.MediaElement|p5.Texture|p5.StorageBuffer"
         ]
       ]
     }
