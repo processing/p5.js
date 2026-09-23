@@ -1470,7 +1470,7 @@ export function SVGImportAddon(p5, fn, lifecycles) {
   });
 
   // Helper function that parses SVG XML markup or accepts an SVG DOM element,
-  // importing it into a RecordedShape via SVGImporter.
+  // importing it into a ShapeCollection via SVGImporter.
   function createSVGText(pInst, input) {
     let svg;
 
@@ -1494,7 +1494,7 @@ export function SVGImportAddon(p5, fn, lifecycles) {
 
   /**
    * Parses an SVG string or DOM element synchronously and returns a
-   * <a href="#/p5/p5.RecordedShape/">p5.RecordedShape</a>.
+   * <a href="#/p5/p5.ShapeCollection/">p5.ShapeCollection</a>.
    *
    * Use this when SVG content is already available in memory. To load from
    * a file or URL, use <a href="#/p5/loadSVG">loadSVG()</a> instead.
@@ -1524,7 +1524,7 @@ export function SVGImportAddon(p5, fn, lifecycles) {
    *
    * @method createSVG
    * @param {String|SVGElement} svgSource a raw SVG string or an SVG DOM element.
-   * @return {p5.RecordedShape} the parsed shape.
+   * @return {p5.ShapeCollection} the parsed shape.
    * @beta
    */
   fn.createSVG = function (input) {
@@ -1533,7 +1533,7 @@ export function SVGImportAddon(p5, fn, lifecycles) {
 
   /**
    * Asynchronously loads an SVG file from `path` and returns a
-   * <a href="#/p5/p5.RecordedShape/">p5.RecordedShape</a>.
+   * <a href="#/p5/p5.ShapeCollection/">p5.ShapeCollection</a>.
    *
    * The recommended approach is `async/await` in `setup()`. For SVG content
    * already in memory, use <a href="#/p5/createSVG">createSVG()</a> instead.
@@ -1550,7 +1550,7 @@ export function SVGImportAddon(p5, fn, lifecycles) {
    *   createCanvas(300, 300);
    *
    *   try {
-   *     // loadSVG returns a promise; await the resolved RecordedShape
+   *     // loadSVG returns a promise; await the resolved ShapeCollection
    *     botLogo = await loadSVG('/assets/img/p5js.svg');
    *     console.log('SVG Loaded successfully!');
    *   } catch (err) {
@@ -1574,11 +1574,11 @@ export function SVGImportAddon(p5, fn, lifecycles) {
    * @method loadSVG
    * @param {String} path path or URL of the SVG file.
    * @param {Function} [successCallback] function called with the
-   *                                     <a href="#/p5/p5.RecordedShape/">p5.RecordedShape</a>
+   *                                     <a href="#/p5/p5.ShapeCollection/">p5.ShapeCollection</a>
    *                                     on success.
    * @param {Function} [failureCallback] function called with the error if
    *                                     loading fails.
-   * @return {Promise<p5.RecordedShape>} a Promise resolving to the parsed shape.
+   * @return {Promise<p5.ShapeCollection>} a Promise resolving to the parsed shape.
    * @beta
    */
   fn.loadSVG = async function (

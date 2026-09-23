@@ -19,12 +19,12 @@ import {
  * Use <a href="#/p5/createShape">createShape()</a> or
  * <a href="#/p5/buildShape">buildShape()</a> to record shapes, or
  * <a href="#/p5/loadSVG">loadSVG()</a> / <a href="#/p5/createSVG">createSVG()</a>
- * to import external SVGs into a RecordedShape.
+ * to import external SVGs into a ShapeCollection.
  *
- * @class p5.RecordedShape
+ * @class p5.ShapeCollection
  * @beta
  */
-class RecordedShape {
+class ShapeCollection {
   constructor(pInst) {
     this.p5 = pInst;
     this.recorder = undefined;
@@ -40,7 +40,7 @@ class RecordedShape {
    *   are recorded silently without rendering.
    *
    * @method begin
-   * @for p5.RecordedShape
+   * @for p5.ShapeCollection
    * @param {Object} [options] recording options.
    * @param {Boolean} [options.draw=false] whether to draw commands onto the
    *                                       canvas in addition to being recorded.
@@ -58,7 +58,7 @@ class RecordedShape {
    * Stops capturing drawing commands and finalizes the shape.
    *
    * @method end
-   * @for p5.RecordedShape
+   * @for p5.ShapeCollection
    * @beta
    */
   end() {
@@ -83,7 +83,7 @@ class RecordedShape {
 // on p5.prototype. It hooks into predraw and postdraw lifecycles to automatically capture drawing commands
 // when saveSVG() is called without explicit shape parameters.
 export function SVGExportAddon(p5, fn, lifecycles) {
-  p5.RecordedShape = RecordedShape;
+  p5.ShapeCollection = ShapeCollection;
   fn.pendingExport = null;
 
   if (lifecycles) {
@@ -105,7 +105,7 @@ export function SVGExportAddon(p5, fn, lifecycles) {
 
       this.pendingExport.shape.end();
 
-      exportRecordedShape(
+      exportShapeCollection(
         this,
         this.pendingExport.shape,
         this.pendingExport.filename
@@ -245,7 +245,7 @@ export function SVGExportAddon(p5, fn, lifecycles) {
 
 
   // SVGVisitor implements the Visitor pattern over p5 geometry primitives and ShapeRecorder AST nodes.
-  // It traverses RecordedShape data graphs to construct valid SVG 2.0 XML DOM elements.
+  // It traverses ShapeCollection data graphs to construct valid SVG 2.0 XML DOM elements.
   class SVGVisitor extends p5.PrimitiveVisitor {
 
     constructor(pInst) {
@@ -866,7 +866,7 @@ export function SVGExportAddon(p5, fn, lifecycles) {
 
     replay(record) {
       if (!record) return;
-      if (record instanceof RecordedShape) {
+      if (record instanceof ShapeCollection) {
         this.replayScope(record.data);
       } else {
         this.replayScope(record);
@@ -970,7 +970,7 @@ export function SVGExportAddon(p5, fn, lifecycles) {
   // API
   // ---------------------------------------------------
 
-  function exportRecordedShape(pInst, record, filename = 'drawing.svg') {
+  function exportShapeCollection(pInst, record, filename = 'drawing.svg') {
     const svg = pInst.getSVG(record);
 
     const blob = new Blob([svg], {
@@ -992,11 +992,11 @@ export function SVGExportAddon(p5, fn, lifecycles) {
   }
 
   /**
-   * Creates a new <a href="#/p5/p5.RecordedShape/">p5.RecordedShape</a> instance.
+   * Creates a new <a href="#/p5/p5.ShapeCollection/">p5.ShapeCollection</a> instance.
    *
    * Use this when you need fine-grained control over when recording starts
-   * and stops. Call <a href="#/p5.RecordedShape/begin">begin()</a> to start
-   * capturing drawing commands and <a href="#/p5.RecordedShape/end">end()</a>
+   * and stops. Call <a href="#/p5.ShapeCollection/begin">begin()</a> to start
+   * capturing drawing commands and <a href="#/p5.ShapeCollection/end">end()</a>
    * to stop. For a simpler callback-based API, use
    * <a href="#/p5/buildShape">buildShape()</a>.
    *
@@ -1034,16 +1034,16 @@ export function SVGExportAddon(p5, fn, lifecycles) {
    * ```
    *
    * @method createShape
-   * @return {p5.RecordedShape} a new, empty recorded shape container.
+   * @return {p5.ShapeCollection} a new, empty recorded shape container.
    * @beta
    */
   fn.createShape = function () {
-    return new RecordedShape(this);
+    return new ShapeCollection(this);
   };
 
   /**
    * Records drawing commands executed inside `callback` into a
-   * <a href="#/p5/p5.RecordedShape/">p5.RecordedShape</a> and returns it.
+   * <a href="#/p5/p5.ShapeCollection/">p5.ShapeCollection</a> and returns it.
    *
    * `buildShape` is the easiest way to record a self-contained drawing block.
    * It intercepts p5.js drawing commands within the callback and stores them.
@@ -1113,7 +1113,7 @@ export function SVGExportAddon(p5, fn, lifecycles) {
    *                                       to being recorded. If `false` (default),
    *                                       they are only recorded silently without
    *                                       rendering.
-   * @return {p5.RecordedShape} the recorded shape.
+   * @return {p5.ShapeCollection} the recorded shape.
    * @beta
    */
   fn.buildShape = function (callback, options = {}) {
@@ -1131,7 +1131,7 @@ export function SVGExportAddon(p5, fn, lifecycles) {
 
   /**
    * Returns a valid SVG 2.0 XML string from a
-   * <a href="#/p5/p5.RecordedShape/">p5.RecordedShape</a>.
+   * <a href="#/p5/p5.ShapeCollection/">p5.ShapeCollection</a>.
    *
    * Useful for injecting SVG markup into the DOM or sending it to a server.
    * To download a file directly, use
@@ -1154,7 +1154,7 @@ export function SVGExportAddon(p5, fn, lifecycles) {
    * ```
    *
    * @method getSVG
-   * @param {p5.RecordedShape} record the recorded shape to serialize.
+   * @param {p5.ShapeCollection} record the recorded shape to serialize.
    * @return {String} the SVG XML string.
    * @beta
    */
@@ -1179,7 +1179,7 @@ export function SVGExportAddon(p5, fn, lifecycles) {
 
   function getShapeData(record) {
     if (!record) return null;
-    if (typeof RecordedShape !== 'undefined' && record instanceof RecordedShape) {
+    if (typeof ShapeCollection !== 'undefined' && record instanceof ShapeCollection) {
       return record.data;
     }
     return record;
@@ -1379,7 +1379,7 @@ export function SVGExportAddon(p5, fn, lifecycles) {
   }
 
   /**
-   * Draws a <a href="#/p5/p5.RecordedShape/">p5.RecordedShape</a> onto the canvas.
+   * Draws a <a href="#/p5/p5.ShapeCollection/">p5.ShapeCollection</a> onto the canvas.
    *
    * You can draw/replay a previously recorded shape object onto the screen canvas
    * using the `shape()` function. This enables a retained graphics pipeline
@@ -1546,7 +1546,7 @@ export function SVGExportAddon(p5, fn, lifecycles) {
    * ```
    *
    * @method shape
-   * @param {p5.RecordedShape} record the imported or recorded shape object to render.
+   * @param {p5.ShapeCollection} record the imported or recorded shape object to render.
    * @param {Number} [x=0] x-coordinate to anchor the shape.
    * @param {Number} [y=0] y-coordinate to anchor the shape.
    * @param {Object} [options] placement options.
@@ -1584,7 +1584,7 @@ export function SVGExportAddon(p5, fn, lifecycles) {
    * schedules and captures on the next frame.
    *
    * **Direct shape export**: immediately exports an existing
-   * <a href="#/p5/p5.RecordedShape/">p5.RecordedShape</a>:
+   * <a href="#/p5/p5.ShapeCollection/">p5.ShapeCollection</a>:
    * `saveSVG(record, [filename])`
    *
    * ```js example
@@ -1607,17 +1607,17 @@ export function SVGExportAddon(p5, fn, lifecycles) {
    * ```
    *
    * @method saveSVG
-   * @param {p5.RecordedShape|String} [recordOrFilename] a
-   *   <a href="#/p5/p5.RecordedShape/">p5.RecordedShape</a> to export directly,
+   * @param {p5.ShapeCollection|String} [recordOrFilename] a
+   *   <a href="#/p5/p5.ShapeCollection/">p5.ShapeCollection</a> to export directly,
    *   or a filename string for deferred frame export.
    * @param {String} [filename='drawing.svg'] the downloaded file name.
-   *                 Only used when the first argument is a RecordedShape.
+   *                 Only used when the first argument is a ShapeCollection.
    * @beta
    */
   fn.saveSVG = function (arg1, arg2 = 'drawing.svg') {
     // Existing API: saveSVG(recordedShape, filename)
-    if (arg1 instanceof RecordedShape || (arg1 && typeof arg1.toSVGElement === 'function')) {
-      exportRecordedShape(this, arg1, arg2);
+    if (arg1 instanceof ShapeCollection || (arg1 && typeof arg1.toSVGElement === 'function')) {
+      exportShapeCollection(this, arg1, arg2);
       return;
     }
 

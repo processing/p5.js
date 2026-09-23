@@ -823,7 +823,7 @@ suite('Lifecycle & Automatic SVG Export (saveSVG overload)', function() {
     });
   });
 
-  test('should export RecordedShape instance directly when passed to saveSVG', function() {
+  test('should export ShapeCollection instance directly when passed to saveSVG', function() {
     const fn = {};
     const lifecycles = {};
     const mockP5 = {
@@ -873,7 +873,7 @@ suite('Lifecycle & Automatic SVG Export (saveSVG overload)', function() {
 
     try {
       pInst.saveSVG(recordedShape, 'direct-instance.svg');
-      assert.strictEqual(downloadedFilename, 'direct-instance.svg', 'Should immediately download RecordedShape');
+      assert.strictEqual(downloadedFilename, 'direct-instance.svg', 'Should immediately download ShapeCollection');
     } finally {
       document.createElement = originalCreateElement;
       URL.createObjectURL = originalCreateObjectURL;
