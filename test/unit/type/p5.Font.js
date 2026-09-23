@@ -71,6 +71,49 @@ suite('p5.Font', function () {
       expect(pts.length).toBeGreaterThan(simplifiedPts.length);
     });
   });
+
+  // https://github.com/processing/p5.js/issues/7486
+  //
+  // Originally reported as a WOFF2-only problem, but it isn't: it
+  // reproduces from a plain, uncompressed .ttf, so WOFF2 decompression
+  // was never the cause. The real fault was in Typr's `gvar`
+  // (variable-font glyph-variation) table header parser: the
+  // `glyphVariationDataOffsets` array is stored as 4-byte `Offset32`
+  // values when the table's `flags` bit 0 is set, or as 2-byte `uint16`
+  // values (real offset = value * 2) when it's clear -- Typr always
+  // read them as 4-byte offsets, silently misaligning every glyph's
+  // variation data for any font using the shorter (more common, more
+  // compact) form. Confirmed against real-world variable fonts served
+  // by Google Fonts (Bricolage Grotesque, Inter, Outfit); the smaller
+  // synthetic fixture used elsewhere in this file's sibling tests,
+  // `BricolageGrotesque-Variable.ttf`, happens to use the long-offset
+  // form, which is why it never surfaced this bug.
+  suite('variable font glyph data (issue #7486)', () => {
+    test('a static font parses full glyph data', async () => {
+      const pFont = await myp5.loadFont('test/unit/assets/Lato-Regular.woff');
+      expect(pFont.data).toBeTruthy();
+      expect(pFont.data.glyf).toBeTruthy();
+      expect(pFont.data.gvar).toBeFalsy();
+    });
+
+    test('a real-world variable font (short gvar offsets) parses glyph data', async () => {
+      const pFont = await myp5.loadFont(
+        'test/unit/assets/BricolageGrotesque-gvar-bug.ttf'
+      );
+      expect(pFont.data).toBeTruthy();
+      expect(pFont.data.glyf).toBeTruthy();
+      expect(pFont.data.gvar).toBeTruthy();
+    });
+
+    test('a variable font with long gvar offsets still parses glyph data', async () => {
+      const pFont = await myp5.loadFont(
+        'test/unit/assets/BricolageGrotesque-Variable.ttf'
+      );
+      expect(pFont.data).toBeTruthy();
+      expect(pFont.data.glyf).toBeTruthy();
+      expect(pFont.data.gvar).toBeTruthy();
+    });
+  });
 });
 
 suite('sanitizeFontName', function () {

@@ -2208,10 +2208,21 @@ Typr['T'].gvar = (function () {
     var goff = bin.readUint(data, off);
     off += 4;
 
-    // glyphVariationDataOffsets
+    // glyphVariationDataOffsets: stored as Offset32 (4 bytes each, used
+    // directly) when flgs bit 0 is set, or as uint16 (2 bytes each, real
+    // offset = value * 2) when it's clear. Reading these unconditionally
+    // as 4-byte offsets -- as this used to do -- misaligns every glyph's
+    // variation data whenever a font uses the (common, more compact)
+    // short-offset form, corrupting everything parsed after this point.
+    // See OpenType spec, "gvar - Glyph Variations Table".
+    var longOffsets = (flgs & 1) != 0;
     var offs = [];
     for (var i = 0; i < gcnt + 1; i++)
-      offs.push(bin.readUint(data, off + i * 4));
+      offs.push(
+        longOffsets
+          ? bin.readUint(data, off + i * 4)
+          : bin.readUshort(data, off + i * 2) * 2
+      );
 
     // sharedTuples
     var tups = [],

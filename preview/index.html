@@ -2,7 +2,7 @@
 <html>
 
 <head>
-  <title>P5 test</title>
+  <title>P5 test - WOFF2 glyph data repro (#7486)</title>
   <meta http-equiv="pragma" content="no-cache" />
   <meta http-equiv="cache-control" content="no-cache" />
   <meta charset="utf-8">
@@ -11,6 +11,7 @@
     body {
       margin: 0;
       overflow: hidden;
+      font-family: monospace;
     }
   </style>
 </head>
@@ -19,17 +20,78 @@
   <script type="module">
     import p5 from '../src/app.js';
 
+    const GOOGLE_FONT_CSS = 'https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap';
+
     const sketch = function (p) {
-      p.setup = function () {
-        p.createCanvas(400, 400);
+      let font;
+      let log = [];
+
+      const record = (label, ok, detail) => {
+        log.push({ label, ok, detail });
+        console.log(`[${ok ? 'OK' : 'FAIL'}] ${label}${detail ? ' — ' + detail : ''}`);
+      };
+
+      p.setup = async function () {
+        p.createCanvas(700, 480);
         p.noLoop();
+
+        try {
+          font = await p.loadFont(GOOGLE_FONT_CSS);
+          record('loadFont() resolved', true, `name=${font.name}`);
+        } catch (e) {
+          record('loadFont() resolved', false, e.message);
+        }
+
+        // Does Typr's parsed glyph data actually exist on the font object?
+        const hasGlyphData = !!(font && font.data && font.data.glyf);
+        record('font.data.glyf present (Typr parsed glyph outlines)', hasGlyphData);
+
+        // 2D text rendering: expected to work via native FontFace fallback
+        // even when Typr failed, per the code trace.
+        try {
+          p.push();
+          p.fill(0);
+          p.textFont(font);
+          p.textSize(28);
+          p.text('2D text (native FontFace fallback)', 20, 40);
+          record('2D text() rendering', true);
+          p.pop();
+        } catch (e) {
+          record('2D text() rendering', false, e.message);
+        }
+
+        // textToPoints / path extraction: needs Typr's own parsed glyph
+        // shapes directly, not just a browser-rendered FontFace.
+        try {
+          const pts = font.textToPoints('WOFF2', 20, 100, 40);
+          record('textToPoints() (needs Typr glyph data)', pts && pts.length > 0, `points=${pts?.length ?? 0}`);
+        } catch (e) {
+          record('textToPoints() (needs Typr glyph data)', false, e.message);
+        }
+
+        p.redraw();
       };
 
       p.draw = function () {
-        p.background(220);
-        p.fill(false);
-        p.line(0);
-        p.ellipse(200, 200, 100, 100);
+        p.background(255);
+        if (font) {
+          p.push();
+          p.fill(0);
+          p.textFont(font);
+          p.textSize(28);
+          p.text('2D text (native FontFace fallback)', 20, 40);
+          p.pop();
+        }
+
+        p.textFont('monospace');
+        p.textSize(14);
+        p.fill(0);
+        let y = 140;
+        for (const entry of log) {
+          p.fill(entry.ok ? 'green' : 'crimson');
+          p.text(`[${entry.ok ? 'OK  ' : 'FAIL'}] ${entry.label}${entry.detail ? ' - ' + entry.detail : ''}`, 20, y);
+          y += 22;
+        }
       };
     };
 
