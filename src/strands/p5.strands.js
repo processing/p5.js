@@ -130,7 +130,7 @@ function strands(p5, fn) {
     ctx.activeHook = undefined;
     ctx._instanceIDUsedInFragment = false;
     if (active) {
-      p5.disableFriendlyErrors = true;
+      p5._isStrandsContextActive = true;
     }
   }
 
@@ -174,7 +174,7 @@ function strands(p5, fn) {
    * @param {StrandsContext} ctx The strands context object.
    */
   function deinitStrandsContext(ctx) {
-    p5.disableFriendlyErrors = ctx.previousFES;
+    p5._isStrandsContextActive = false;
     for (const key in ctx.windowOverrides) {
       window[key] = ctx.windowOverrides[key];
     }
