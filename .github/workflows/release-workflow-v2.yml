@@ -53,6 +53,8 @@ jobs:
           CI: true
       - name: Run build
         run: npm run build
+      - name: Verify embedded version
+        run: npm run check:version
       - name: Generate types
         run: npm run generate-types
       - name: test TypeScript types

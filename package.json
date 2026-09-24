@@ -13,6 +13,7 @@
     "test:types": "tsc test/types/*.ts --noEmit --lib es2022,dom",
     "lint": "oxlint .",
     "lint:fix": "oxlint --fix .",
+    "check:version": "node utils/check-version.mjs",
     "generate-types": "npm run docs && node utils/typescript.mjs",
     "prepack": "npm run generate-types"
   },

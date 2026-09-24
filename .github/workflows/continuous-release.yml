@@ -30,6 +30,9 @@ jobs:
       - name: Build library
         run: npm run build
 
+      - name: Verify embedded version
+        run: npm run check:version
+
       - name: Generate types
         run: npm run generate-types
 
