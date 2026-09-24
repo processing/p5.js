@@ -850,5 +850,27 @@ suite('p5.Color', function () {
         assert.equal(result, '#9932cc');
       });
     });
+
+    suite('default format with fractional channel values', function () {
+      test('should round fractional channel values matching #rrggbb format', function () {
+        mockP5Prototype.colorMode(mockP5Prototype.RGB, 100);
+        const c = mockP5Prototype.color(50, 0, 0);
+        assert.equal(c.toString(), '#800000');
+        assert.equal(c.toString(), c.toString('#rrggbb'));
+      });
+
+      test('should round fractional channel in 255 range', function () {
+        mockP5Prototype.colorMode(mockP5Prototype.RGB, 255);
+        const c = mockP5Prototype.color(127.5, 0, 0);
+        assert.equal(c.toString(), '#800000');
+        assert.equal(c.toString(), c.toString('#rrggbb'));
+      });
+
+      test('should round fractional alpha byte', function () {
+        mockP5Prototype.colorMode(mockP5Prototype.RGB, 255);
+        const c = mockP5Prototype.color(255, 0, 102, 127.5);
+        assert.equal(c.toString(), '#ff006680');
+      });
+    });
   });
 });
