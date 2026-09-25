@@ -24,16 +24,83 @@ We believe the insights from our community members will be helpful for our contr
 [21-22 FES Survey Report Comic]: https://almchung.github.io/p5jsFESsurvey/
 [21-22 FES Survey Full Report]: https://observablehq.com/@almchung/p5-fes-21-survey
 
+## Understanding How FES Works
+
+In this section, we will give an overview of how FES generates and displays messages.
+
+#### Overview
+
+FES can be thought of as consisting of two main parts: a message printing utility with built in translations, and a group of subsystems catching and monitoring errors. p5.js calls the FES from multiple locations for different situations, when:
+
+- The browser throws an error.
+- The user code calls a function from the p5.js API.
+- Other custom cases where the user would benefit from a help message.
+
+#### FES Code Location
+
+You can find the core components of the FES inside:
+`src/friendly_errors`.
+You can find the translation files inside: `translations/`.
+
+#### FES Message Generators
+
+To understand how FES messages are created, we need to understand that there are two steps to printing an FES message, first the message needs to be composed and then the message is printed. This distinction is important because it is tied closely to how messages are written, translated, and finally printed in the console.
+
+To compose FES messages, we utilize [tagged template literals](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals#tagged_templates) with `p5.FES.log` as the tag:
+
+```js
+p5.FES.log`This is a message.`;
+```
+
+If you are familiar with JavaScript template literal, this is the same idea with only the tag `p5.FES.log` added in front of the template literal. This also means you can use interpolated values:
+
+```js
+p5.FES.log`The expected type is ${dataType}`;
+```
+
+This is where the idea of _composing_ comes in, once a message is defined in this way, it can be used as interpolated value in another message:
+
+```js
+const dataType = p5.FES.log`string`;
+const message = p5.FES.log`The expected type is ${dataType}.`;
+```
+
+This can be nested for any number of levels, although it is recommended to keep the nesting relatively shallow for navigability and later translation purposes.
+
+Finally now that we have composed our FES message, we need to print them. To print a composed message, we call them as a function:
+
+```js
+const message = p5.FES.log`The expected type is ${dataType}.`;
+message();
+
+// or also valid
+
+p5.FES.log`The expected type is ${dataType}.`();
+```
+
+When called in this way, a message will be printed in the console: `🌸 p5.js says: The expected type is string.`. Note that the prefix `🌸 p5.js says: ` is included in every message printed by default, if the prefix is not desired or if a different prefix is needed, an option object can be passed to the function call.
+
+```js
+// No prefix
+p5.FES.log`The expected type is ${dataType}.`({ prefix: false });
+
+// Custom prefix
+p5.FES.log`The expected type is ${dataType}.`({ prefix: "The sketch says: "});
+
+// Translated prefix
+p5.FES.log`The expected type is ${dataType}.`({ prefix: p5.FES.log`The sketch says:` });
+```
+
 ## Writing Friendly Error Messages
 
 How to contribute to the p5.js library by writing and translating error messages?
 
-The FES is a part of the p5.js' [internationalization] effort. We generate all FES messages' content through [i18next]-based `translator()` function. This dynamic error message generation happens for all languages, including English - the default language of the p5.js.
+The FES is a part of the p5.js' [internationalization] effort. We generate all FES messages' content through a custom written utility [tl-util]. Usage of this system is documented below, for developers writing FES messages, the steps documented below automatically utilizes the translation utility library.
 
 We welcome contributions from all around the world! 🌐
 
 [internationalization]: https://github.com/processing/p5.js/blob/main/contributor_docs/archive/internationalization.md
-[i18next]: https://www.i18next.com/
+[tl-util]: https://github.com/limzykenneth/tl-util
 
 #### Writing Best Practices
 
@@ -43,7 +110,7 @@ FES message writers should prioritize lowering the barrier of understanding erro
 
 - Understand your audience: do not make assumptions about the audience of our error messages. Try to learn who is using our library and how they use it.
 - Keep language inclusive. We strive to make error messages "friendly," what does it mean for you? Look for possible bias and harm in your language. Adhere to [p5.js Code of Conduct].
-- Use simple sentences whenever possible. Consider breaking your sentence into smaller blocks for best utilizing i18next's [interpolation] feature.
+- Use simple sentences whenever possible.
 - Prioritize cross-cultural communication and provide a great experience across languages. Avoid using figures of speech.
 - Introduce one technical concept or technical term at a time. Keep consistency in technical writing. Try to link one external resource written in a beginner-friendly language with plenty of short, practical examples.
 
@@ -56,118 +123,25 @@ FES message writers should prioritize lowering the barrier of understanding erro
 
 [repo]: https://github.com/almchung/p5-fes-i18n-book
 
-#### Location of Translation Files
+#### Translation of messages
 
-`translator()` is based on i18next and imported from `src/core/internationalization.js`. It generates messages by looking up text data from a JSON translation file:
+Each composed message within the codebase may correspond to an entry string for translation.
 
-```
-translations/{{detected locale code, default=en}}/translation.json
-```
-
-Example:
-If the detected browser locale is Korean (language designator: `ko`), the `translator()` will read in translated text blocks from `translations/ko/translation.json`. Then `translator()` will assemble the text blocks into the final message.
-
-The language designator can also include regional information, such as `es-PE` (Spanish from Peru).
-
-#### Structure of Translation Files
-
-`translation.json` has a [format used by i18next](https://www.i18next.com/misc/json-format).
-
-The basic format of a translation file's item has a key and a value (message) in double quotation marks `""`, closed by the curly brackets `{}`:
-
-```json
-{ "key": "value" }
+```js
+p5.FES.log`This is one translation entry`;
+p5.FES.log`This is yet another translation entry`;
+p5.FES.log`Interpolated ${entry} counts as one entry string`;
 ```
 
-For example, we have an ASCII logo saved in this format:
+The translation entry strings are stored in `./translations` under each language's language code. If an entry has translation string in a different language, it can be translated accordingly, however if the translation string does not exist, the orignal string will be used instead.
 
-```json
-"logo": "    _ \n /\\| |/\\ \n \\ ` ' /  \n / , . \\  \n \\/|_|\\/ \n\n"
-```
+Developers writing code and FES messages does not need to provide the mechanism for translation or the translation themselves. FES messages will be translated and printed automatically by detecting the user browser's language setting or by the language code set by the user with `p5.FES.languageCode = 'zh-CN'` for example.
 
-i18next supports interpolation, which allows us to pass a variable to generate a message dynamically. We use curly brackets twice `{{}}` to set a placeholder of the variable:
+#### Help translating FES strings
 
-```json
-"greeting": "Hello, {{who}}!"
-```
+The current translation strings are extracted from the codebase using a custom script in `./utils/extract.js` and the results saved in `./translations/en/extracted.json`. If a new language is added, this file can be duplicated and placed in the corresponding folder in `./translations/` under the target language code.
 
-Here, the key is `greeting`, and the variable name is `who`.
-
-To dynamically generate this message, we will need to pass a value:
-
-```javascript
-translator('greeting', { who: 'everyone' });
-```
-
-The result generated by `translator` will look like this:
-
-```
-Hello, everyone!
-```
-
-Here is an item from `fes`'s `fileLoadError` that demonstrates interpolation:
-
-```json
-"image": "It looks like there was a problem loading your image. {{suggestion}}"
-```
-
-To dynamically generate the final message, the FES will call `translator()` with the key and a pre-generated `suggestion` value.
-
-```javascript
-translator('fes.fileLoadError.image', { suggestion });
-```
-
-#### How to Add or Modify Translation
-
-The [internationalization doc] has a step-by-step guide on adding and modifying translation files.
-
-[internationalization doc]: https://github.com/processing/p5.js/blob/main/contributor_docs/archive/internationalization.md
-
-## Understanding How FES Works
-
-In this section, we will give an overview of how FES generates and displays messages. For more detailed information on the FES functions, please see our [FES Reference + Dev Notes].
-
-[FES Reference + Dev Notes]: https://github.com/processing/p5.js/tree/main/src/core/friendly_errors#fes-reference-and-notes-from-developers
-
-#### Overview
-
-p5.js calls the FES from multiple locations for different situations, when:
-
-- The browser throws an error.
-- The user code calls a function from the p5.js API.
-- Other custom cases where the user would benefit from a help message.
-
-#### FES Code Location
-
-You can find the core components of the FES inside:
-`src/core/friendly_errors`.
-You can find the translation files used by the `translator()` inside:
-`translations/`.
-
-#### FES Message Generators
-
-These functions are mainly responsible for catching errors and generating FES messages:
-
-- [`_friendlyFileLoadError()`] catches file loading errors.
-- [`_validateParameters()`] checks a p5.js function’s input parameters based on inline documents.
-- [`_fesErrorMonitor()`] handles global errors.
-
-For full reference, please see our [Dev Notes].
-
-[`_friendlyFileLoadError()`]: ./fes_contribution_guide.md#_friendlyerror
-[`_validateParameters()`]: ./fes_contribution_guide.md#_validateparameters
-[`_fesErrorMontitor()`]: ./fes_contribution_guide.md#feserrormonitor
-[Dev Notes]: ./fes_contribution_guide.md#-development-notes
-
-#### FES Message Displayer
-
-`fes_core.js/_friendlyError()` prints generated friendly error messages in the console. For example:
-
-```javascript
-p5._friendlyError(translator('fes.globalErrors.type.notfunc', translationObj));
-```
-
-This function can be called anywhere in p5.
+Note: this part of FES translation is still in development, while things are functional, their exact surface and API may change over time.
 
 ## Turning Off the FES
 
