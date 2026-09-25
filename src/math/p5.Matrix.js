@@ -104,6 +104,7 @@ function matrix(p5, fn) {
    *   console.log("Transformed Vector:", transformedVector.toString());
    * }
    */
+  Matrix.prototype._friendlyError = p5._friendlyError;
   p5.Matrix = Matrix;
 }
 
