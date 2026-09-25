@@ -332,7 +332,7 @@ function fesCore(p5, fn, lifecycles){
       const fnNames = entryPoints;
 
       if (context.preload && !p5.isPreloadSupported()) {
-        p5._error(context, translator('fes.preloadDisabled'));
+        p5._error(p5.instance, translator('fes.preloadDisabled'));
       }
 
       const fxns = {};
