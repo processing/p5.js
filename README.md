@@ -86,7 +86,7 @@ Lead/Mentor Alumni
 <!-- STEWARDS-LIST:START - Do not remove or modify this section -->
 | Area | Steward(s) |
 |------|-------------|
-| Maintainers | [@davepagurek](https://github.com/davepagurek), [@doradocodes](https://github.com/doradocodes), [@ksen0](https://github.com/ksen0), [@limzykenneth](https://github.com/limzykenneth), [@perminder-17](https://github.com/perminder-17) |
+| Maintainers | [@clairep94](https://github.com/clairep94), [@davepagurek](https://github.com/davepagurek), [@doradocodes](https://github.com/doradocodes), [@khanniie](https://github.com/khanniie), [@ksen0](https://github.com/ksen0), [@limzykenneth](https://github.com/limzykenneth), [@perminder-17](https://github.com/perminder-17) |
 | Accessibility | [@calebfoss](https://github.com/calebfoss) |
 | Accessibility (p5.js-website) | [@coseeian](https://github.com/coseeian) |
 | Color | [@limzykenneth](https://github.com/limzykenneth) |
@@ -97,9 +97,9 @@ Lead/Mentor Alumni
 | Graphics (WebGPU) | [@aashu2006](https://github.com/aashu2006), [@davepagurek](https://github.com/davepagurek), [@perminder-17](https://github.com/perminder-17) |
 | i18n (es) | [@marioguzzzman](https://github.com/marioguzzzman) |
 | i18n (hi) | [@Divyansh013](https://github.com/Divyansh013) |
-| i18n (ko) | [@eupthere](https://github.com/eupthere) |
+| i18n (ko) | [@JiwonHaam](https://github.com/JiwonHaam), [@eupthere](https://github.com/eupthere) |
 | i18n (zh) | [@limzykenneth](https://github.com/limzykenneth), [@lirenjie95](https://github.com/lirenjie95) |
-| p5.js-web-editor | [@kitlord](https://github.com/kitlord) |
+| p5.js-web-editor | [@clairep94](https://github.com/clairep94), [@doradocodes](https://github.com/doradocodes), [@khanniie](https://github.com/khanniie), [@kitlord](https://github.com/kitlord) |
 | p5.js-website | [@Nwakaego-Ego](https://github.com/Nwakaego-Ego), [@clairep94](https://github.com/clairep94), [@doradocodes](https://github.com/doradocodes), [@ksen0](https://github.com/ksen0) |
 | p5.sound.js | [@ogbabydiesal](https://github.com/ogbabydiesal) |
 | Typography | [@dhowe](https://github.com/dhowe) |
