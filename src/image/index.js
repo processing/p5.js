@@ -5,7 +5,7 @@ import pixels from './pixels.js';
 import shader from '../webgl/p5.Shader.js';
 import texture from '../webgl/p5.Texture.js';
 
-export default function(p5){
+export default function (p5) {
   p5.registerAddon(image);
   p5.registerAddon(loadingDisplaying);
   p5.registerAddon(p5image);

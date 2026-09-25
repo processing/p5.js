@@ -16,11 +16,11 @@ permissions:
 jobs:
   publish:
     if: github.repository == 'processing/p5.js'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: 22
 
@@ -30,11 +30,14 @@ jobs:
       - name: Build library
         run: npm run build
 
+      - name: Generate types
+        run: npm run generate-types
+
       - name: Publish library
         run: npx pkg-pr-new publish --no-template --json output.json --comment=off
 
       - name: Include PR info in output file
-        uses: actions/github-script@v8
+        uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8.0.0
         env:
           PR_NUMBER: ${{ github.event.pull_request.number }}
         with:
@@ -49,7 +52,7 @@ jobs:
             fs.writeFileSync('output.json', JSON.stringify(output));
 
       - name: Upload output data
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: output.zip
           path: output.json

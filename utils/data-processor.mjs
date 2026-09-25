@@ -8,7 +8,7 @@ import { getParams } from './shared-helpers.mjs';
 
 export function processData(rawData, strategy) {
   const allData = getAllEntries(rawData);
-  
+
   const processed = {
     modules: {},
     classes: {},
@@ -21,7 +21,7 @@ export function processData(rawData, strategy) {
   const fileModuleInfo = {};
   const modules = {};
   const submodules = {};
-  
+
   for (const entry of allData) {
     if (entry.tags?.some(tag => tag.title === 'module')) {
       const module = entry.tags.find(tag => tag.title === 'module').name;
@@ -37,7 +37,8 @@ export function processData(rawData, strategy) {
         for: undefined
       };
       fileModuleInfo[file].module = module;
-      fileModuleInfo[file].submodule = fileModuleInfo[file].submodule || submodule;
+      fileModuleInfo[file].submodule =
+        fileModuleInfo[file].submodule || submodule;
       fileModuleInfo[file].for = fileModuleInfo[file].for || forEntry;
 
       modules[module] = modules[module] || {
@@ -70,8 +71,11 @@ export function processData(rawData, strategy) {
     const entryForTagValue = entryForTag?.description;
     const file = entry.context?.file;
     let { module, submodule, for: forEntry } = fileModuleInfo[file] || {};
-    module = entry.tags?.find(tag => tag.title === 'module')?.description || module;
-    submodule = entry.tags?.find(tag => tag.title === 'submodule')?.description || submodule;
+    module =
+      entry.tags?.find(tag => tag.title === 'module')?.description || module;
+    submodule =
+      entry.tags?.find(tag => tag.title === 'submodule')?.description ||
+      submodule;
     let memberof = entry.memberof;
     if (memberof === 'fn') memberof = 'p5';
     if (memberof && memberof !== 'p5' && !memberof.startsWith('p5.')) {
@@ -83,7 +87,9 @@ export function processData(rawData, strategy) {
 
   function locationInfo(entry) {
     return {
-      file: entry.context?.file ? entry.context.file.slice(entry.context.file.indexOf('src/')) : '',
+      file: entry.context?.file
+        ? entry.context.file.slice(entry.context.file.indexOf('src/'))
+        : '',
       line: entry.context?.loc?.start?.line || 1
     };
   }
@@ -103,37 +109,47 @@ export function processData(rawData, strategy) {
   }
 
   function getAlt(entry) {
-    return entry
-      .tags
-      ?.filter(tag => tag.title === 'alt')
-      ?.map(tag => tag.description)
-      ?.join('\n') || undefined;
+    return (
+      entry.tags
+        ?.filter(tag => tag.title === 'alt')
+        ?.map(tag => tag.description)
+        ?.join('\n') || undefined
+    );
   }
 
   // Process constants, typedefs, and properties
   const processedNames = new Set();
   for (const entry of allData) {
-    if (entry.kind === 'constant' || entry.kind === 'typedef' || entry.kind === 'property' ||
-        (entry.properties && entry.properties.length > 0 && entry.properties[0].title === 'property') ||
-        entry.tags?.some(tag => tag.title === 'property')) {
+    if (
+      entry.kind === 'constant' ||
+      entry.kind === 'typedef' ||
+      entry.kind === 'property' ||
+      (entry.properties &&
+        entry.properties.length > 0 &&
+        entry.properties[0].title === 'property') ||
+      entry.tags?.some(tag => tag.title === 'property')
+    ) {
       const { module, submodule, forEntry } = getModuleInfo(entry);
-      
+
       // Apply strategy filter
-      if (strategy.shouldSkipEntry && strategy.shouldSkipEntry(entry, { module, submodule, forEntry })) {
+      if (
+        strategy.shouldSkipEntry &&
+        strategy.shouldSkipEntry(entry, { module, submodule, forEntry })
+      ) {
         continue;
       }
 
-      const name = entry.name ||
+      const name =
+        entry.name ||
         (entry.properties || [])[0]?.name ||
         entry.tags?.find(t => t.title === 'property')?.name;
-      
+
       // Skip duplicates based on name + class combination
       const key = `${name}:${forEntry || 'p5'}`;
       if (processedNames.has(key)) {
         continue;
       }
       processedNames.add(key);
-      
 
       // For properties, get type from the property definition
       const propertyType = entry.properties?.[0]?.type || entry.type;
@@ -153,7 +169,7 @@ export function processData(rawData, strategy) {
         class: forEntry || 'p5',
         beta: entry.tags?.some(t => t.title === 'beta') || undefined,
         webgpu: entry.tags?.some(t => t.title === 'webgpu') || undefined,
-        webgpuOnly: entry.tags?.some(t => t.title === 'webgpuOnly') || undefined,
+        webgpuOnly: entry.tags?.some(t => t.title === 'webgpuOnly') || undefined
       };
 
       processed.classitems.push(item);
@@ -165,9 +181,12 @@ export function processData(rawData, strategy) {
   for (const entry of allData) {
     if (entry.kind === 'class') {
       const { module, submodule } = getModuleInfo(entry);
-      
+
       // Apply strategy filter
-      if (strategy.shouldSkipEntry && strategy.shouldSkipEntry(entry, { module, submodule })) {
+      if (
+        strategy.shouldSkipEntry &&
+        strategy.shouldSkipEntry(entry, { module, submodule })
+      ) {
         continue;
       }
 
@@ -181,11 +200,14 @@ export function processData(rawData, strategy) {
         alt: getAlt(entry),
         params: getParams(entry).map(p => ({
           name: p.name,
-          description: p.description && strategy.processDescription(p.description),
+          description:
+            p.description && strategy.processDescription(p.description),
           ...strategy.processType(p.type, p)
         })),
         return: entry.returns?.[0] && {
-          description: strategy.processDescription(entry.returns[0].description),
+          description: strategy.processDescription(
+            entry.returns[0].description
+          ),
           ...strategy.processType(entry.returns[0].type)
         },
         is_constructor: 1,
@@ -193,7 +215,7 @@ export function processData(rawData, strategy) {
         submodule,
         beta: entry.tags?.some(t => t.title === 'beta') || undefined,
         webgpu: entry.tags?.some(t => t.title === 'webgpu') || undefined,
-        webgpuOnly: entry.tags?.some(t => t.title === 'webgpuOnly') || undefined,
+        webgpuOnly: entry.tags?.some(t => t.title === 'webgpuOnly') || undefined
       };
 
       // The @private tag doesn't seem to end up in the Documentation.js output.
@@ -211,9 +233,12 @@ export function processData(rawData, strategy) {
   for (const entry of allData) {
     if (entry.kind === 'function' && entry.properties?.length === 0) {
       const { module, submodule, forEntry } = getModuleInfo(entry);
-      
+
       // Apply strategy filter
-      if (strategy.shouldSkipEntry && strategy.shouldSkipEntry(entry, { module, submodule, forEntry })) {
+      if (
+        strategy.shouldSkipEntry &&
+        strategy.shouldSkipEntry(entry, { module, submodule, forEntry })
+      ) {
         continue;
       }
 
@@ -227,7 +252,7 @@ export function processData(rawData, strategy) {
       }
 
       const className = memberof || forEntry || 'p5';
-      
+
       // Skip private methods
       if (entry.name.startsWith('_')) continue;
 
@@ -244,10 +269,12 @@ export function processData(rawData, strategy) {
         ...locationInfo(entry),
         ...deprecationInfo(entry),
         itemtype: 'method',
-        description: prevItem?.description || strategy.processDescription(entry.description),
+        description:
+          prevItem?.description ||
+          strategy.processDescription(entry.description),
         example: [
           ...(prevItem?.example || []),
-          ...entry.examples?.map(getExample) || []
+          ...(entry.examples?.map(getExample) || [])
         ],
         alt: getAlt(entry),
         overloads: [
@@ -255,30 +282,49 @@ export function processData(rawData, strategy) {
           {
             params: getParams(entry).map(p => ({
               name: p.name,
-              description: p.description && strategy.processDescription(p.description),
+              description:
+                p.description && strategy.processDescription(p.description),
               ...strategy.processType(p.type, p)
             })),
             return: entry.returns?.[0] && {
-              description: strategy.processDescription(entry.returns[0].description),
+              description: strategy.processDescription(
+                entry.returns[0].description
+              ),
               ...strategy.processType(entry.returns[0].type)
             },
-            chainable: entry.tags?.some(tag => tag.title === 'chainable') ? 1 : undefined
+            chainable: entry.tags?.some(tag => tag.title === 'chainable')
+              ? 1
+              : undefined
           }
         ],
-        return: prevItem?.return || entry.returns?.[0] && {
-          description: strategy.processDescription(entry.returns[0].description),
-          ...strategy.processType(entry.returns[0].type)
-        },
+        return:
+          prevItem?.return ||
+          (entry.returns?.[0] && {
+            description: strategy.processDescription(
+              entry.returns[0].description
+            ),
+            ...strategy.processType(entry.returns[0].type)
+          }),
         class: className,
         static: entry.scope === 'static' && 1,
         module: prevItem?.module ?? module,
         submodule: prevItem?.submodule ?? submodule,
-        beta: prevItem?.beta || entry.tags?.some(t => t.title === 'beta') || undefined,
-        webgpu: prevItem?.webgpu || entry.tags?.some(t => t.title === 'webgpu') || undefined,
-        webgpuOnly: prevItem?.webgpuOnly || entry.tags?.some(t => t.title === 'webgpuOnly') || undefined,
+        beta:
+          prevItem?.beta ||
+          entry.tags?.some(t => t.title === 'beta') ||
+          undefined,
+        webgpu:
+          prevItem?.webgpu ||
+          entry.tags?.some(t => t.title === 'webgpu') ||
+          undefined,
+        webgpuOnly:
+          prevItem?.webgpuOnly ||
+          entry.tags?.some(t => t.title === 'webgpuOnly') ||
+          undefined
       };
 
-      processed.classMethods[className] = processed.classMethods[className] || {};
+      processed.classMethods[className] =
+        processed.classMethods[className] || {};
       processed.classMethods[className][methodKey] = item;
     }
   }

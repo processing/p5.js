@@ -40,7 +40,7 @@
  * @param {"dataType"} "paramName" "Description of the param"
  * @chainable
  */
-p5.prototype.methodName = function() {
+p5.prototype.methodName = function () {
   // Comment explaining the code.
   'Your code goes here';
 };
@@ -89,6 +89,6 @@ p5.prototype.methodName = function() {
  * @param {Number} [a]
  * @chainable
  */
-p5.prototype.background = function() {
+p5.prototype.background = function () {
   // Your code goes here.
 };

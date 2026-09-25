@@ -1,14 +1,14 @@
 import p5 from '../../../src/app.js';
 
-suite('Touch Events', function() {
+suite('Touch Events', function () {
   let myp5;
 
   let touchEvent1;
   let touchEvent2;
 
-  beforeAll(function() {
-    new p5(function(p) {
-      p.setup = function() {
+  beforeAll(function () {
+    new p5(function (p) {
+      p.setup = function () {
         myp5 = p;
         touchEvent1 = new PointerEvent('pointerdown', {
           pointerId: 1,
@@ -28,36 +28,36 @@ suite('Touch Events', function() {
     });
   });
 
-  afterAll(function() {
+  afterAll(function () {
     myp5.remove();
   });
 
-  beforeEach(function() {
+  beforeEach(function () {
     // Reset pointer state so tests don't leak active pointers into each other.
     myp5._activePointers.clear();
     myp5.touches = [];
     myp5.mouseIsPressed = false;
   });
 
-  suite('p5.prototype.touches', function() {
-    test('should be an empty array', function() {
+  suite('p5.prototype.touches', function () {
+    test('should be an empty array', function () {
       assert.deepEqual(myp5.touches, []);
     });
 
-    test('should be an array of multiple touches', function() {
+    test('should be an array of multiple touches', function () {
       window.dispatchEvent(touchEvent1);
       window.dispatchEvent(touchEvent2);
       assert.strictEqual(myp5.touches.length, 2);
     });
 
-    test('should contain the touch registered', function() {
+    test('should contain the touch registered', function () {
       window.dispatchEvent(touchEvent1);
       assert.strictEqual(myp5.touches[0].id, 1);
     });
   });
 
-  suite('p5.prototype._onpointercancel', function() {
-    test('should remove the cancelled touch from touches', function() {
+  suite('p5.prototype._onpointercancel', function () {
+    test('should remove the cancelled touch from touches', function () {
       window.dispatchEvent(touchEvent1);
       window.dispatchEvent(touchEvent2);
       assert.strictEqual(myp5.touches.length, 2);
@@ -76,7 +76,7 @@ suite('Touch Events', function() {
       assert.strictEqual(myp5.touches[0].id, 2);
     });
 
-    test('should reset mouseIsPressed once all pointers are cancelled', function() {
+    test('should reset mouseIsPressed once all pointers are cancelled', function () {
       window.dispatchEvent(touchEvent1);
       assert.strictEqual(myp5.mouseIsPressed, true);
 

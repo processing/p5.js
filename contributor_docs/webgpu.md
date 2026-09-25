@@ -1,8 +1,10 @@
 <!-- The goals and aspirations of our experimental WebGPU mode. -->
 
-p5.js has recently added an experimental WebGPU mode. It is a 3D-capable renderer like WebGL mode, and supports all the functions available in WebGL mode, but has been built using different underlying technology that will help p5.js stay up-to-date as browsers evolve.
+# p5.js WebGPU mode
 
-It's still in the early days, so we would love for people to test it out, give feedback, and get involved!
+The WebGPU mode of p5.js is an experimental 3D-capable renderer, like WebGL mode, that supports all the functions available in WebGL mode, but that has been built using different underlying technology, WebGPU. The older WebGL technology will not be going away, but it seems clear that browser makers and standards bodies are slowing development on WebGL as adoption and functionality of WebGPU increases. WebGPU adds new programming paradigms on top of what WebGL provided in the form of *compute shaders.* Getting p5's WebGPU system ready will help p5.js stay up-to-date as browsers and programming paradigms evolve.
+
+WebGPU mode in p5 is still in the early days, so we would love for people to test it out, give feedback, and get involved! This can come in the form of testing existing p5 functionality to help verify that it works correctly, helping figure out friendly p5 APIs for new WebGPU functionality, and helping create examples and learning resources to guide future users and contributors.
 
 ## Using WebGPU mode
 
@@ -18,8 +20,7 @@ WebGPU mode is currently experimental, so it is not in the standard build of p5.
     <!-- Your code -->
     <script type="text/javascript" src="sketch.js" />
   </head>
-  <body>
-  </body>
+  <body></body>
 </html>
 ```
 
@@ -39,7 +40,8 @@ We'd love to have more people involved with WebGPU mode! Here are some ways you 
 
 - Test it out! Let us know what bugs you encounter by filing issues on GitHub.
 - Help us optimize the new rendering system. The first step is also testing: what parts are faster or slower than the more stable WebGL mode? Based on that, we can decide on changes to the rendering system to address those issues and implement them in the codebase.
-- Brainstorm new ideas! There are new capabilities in the WebGPU spec that we can bring to p5, such as compute shaders. Talk to us on Discord about what you'd love your code to look like when creating, for example, a particle system on the GPU, and we can see how we can build an API around that.
+- Brainstorm new ideas! There are new capabilities in the WebGPU spec that we can bring to p5, such as compute shaders (see the compute shaders section below). Talk to us on Discord about what you'd love your code to look like when creating, for example, a particle system on the GPU, and we can see how we can build an API around that.
+- Help create resources for other users of WebGPU mode by writing tutorials and examples!
 
 ## Goals
 
@@ -93,3 +95,9 @@ Entities that are shared by all 3D renderers such as `p5.Geometry`, `p5.Framebuf
 While WebGL mode submits all draw commands immediately, WebGPU mode defers submitting until the last possible moment so that it can submit draw commands in batches. Rather than drawing, commands are built up in an array and `_hasPendingDraws` is set to `true`. In `finishDraw`, called at the end of each frame, these are all finally submitted to the GPU as one render pass. There are a few other times where they get submitted early in other render passes. When switching draw targets, such as when drawing to a framebuffer, pending draws are submitted in a render pass too. This makes sure that you can then read from the framebuffer safely in the next render pass. We also submit a render pass when you call `loadPixels` or another function that involves reading back data from the GPU.
 
 Since draws get batched up, this means that buffers used to send shader uniform values to the GPU cannot be shared. If they were shared, they would get rewritten by the next thing getting drawn before the previous one gets to the GPU! Instead, we build up a pool of buffers that we can pull from for shader uniforms and vertex information.
+
+### Compute shaders
+
+This is the main area where WebGPU as a technology diverges from WebGL. Compute shaders let you do arbitrary computation on the GPU (not just moving vertices or shading pixels), such as updating the state of a particle system, so that you can take advantage of the parallel computation of the GPU and also avoid slow data transfer from the CPU to the GPU when you do eventually need to draw to the screen.
+
+In p5.js, this is integrated into p5.strands via the `buildComputeShader` function to create a compute shader, and `compute(function, count)` to run it. We are still figuring out the specifics of how best to expose this functionality. Should we create higher level abstractions around compute shaders so they feel more familiar to previous p5 paradigms? Should we provide more small functions and data structures to use in compute shaders to make them easier to write? Should we make p5.strands wrappers for every new part of WGSL shader functionality? We're still figuring that out incrementally. We would love for you to be part of that conversation!

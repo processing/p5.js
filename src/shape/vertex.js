@@ -4,7 +4,7 @@
  * @for p5
  */
 
-function vertex(p5, fn){
+function vertex(p5, fn) {
   /**
    * Begins adding vertices to a custom shape.
    *
@@ -355,7 +355,7 @@ function vertex(p5, fn){
    *   endShape(CLOSE);
    * }
    */
-  fn.beginShape = function(kind) {
+  fn.beginShape = function (kind) {
     // p5._validateParameters('beginShape', arguments);
     this._renderer.beginShape(...arguments);
   };
@@ -625,7 +625,7 @@ function vertex(p5, fn){
    * @param  {Number} [u]
    * @param  {Number} [v]
    */
-  fn.bezierVertex = function(...args) {
+  fn.bezierVertex = function (...args) {
     this._renderer.bezierVertex(...args);
   };
 
@@ -648,7 +648,8 @@ function vertex(p5, fn){
    * <a href="https://webglfundamentals.org/webgl/lessons/webgl-instanced-drawing.html" target="_blank">instancing</a>.
    * The `count` parameter tells WebGL mode how many copies to draw. For
    * example, calling `endShape(CLOSE, 400)` after drawing a custom shape will
-   * make it efficient to draw 400 copies. This feature requires
+   * make it efficient to draw 400 copies. `count` can also be passed on its
+   * own, as in `endShape(400)`, to draw 400 copies of an open shape. This feature requires
    * <a href="https://p5js.org/tutorials/intro-to-shaders/" target="_blank">writing a custom shader</a>.
    *
    * After calling <a href="#/p5/beginShape">beginShape()</a>, shapes can be
@@ -668,7 +669,7 @@ function vertex(p5, fn){
    * <a href="#/p5/beginShape">beginShape()</a> and `endShape()`.
    *
    * @method endShape
-   * @param  {CLOSE} [mode] use CLOSE to close the shape
+   * @param  {CLOSE|OPEN} [mode] use CLOSE to close the shape, or OPEN (the default) to leave it open
    * @param  {Integer} [count] number of times you want to draw/instance the shape (for WebGL mode).
    * @chainable
    *
@@ -833,7 +834,12 @@ function vertex(p5, fn){
    *   describe('A row of four squares. Their colors transition from purple on the left to red on the right');
    * }
    */
-  fn.endShape = function(mode, count) {
+  /**
+   * @method endShape
+   * @param  {Integer} count number of times you want to draw/instance the shape (for WebGL mode).
+   * @chainable
+   */
+  fn.endShape = function (mode, count) {
     // p5._validateParameters('endShape', arguments);
     if (typeof mode === 'number') {
       count = mode;
@@ -1023,7 +1029,7 @@ function vertex(p5, fn){
    * @param  {Number} z z-component of the vertex normal.
    * @chainable
    */
-  fn.normal = function(x, y, z) {
+  fn.normal = function (x, y, z) {
     this._assert3d('normal');
     // p5._validateParameters('normal', arguments);
     this._renderer.normal(...arguments);
@@ -1192,7 +1198,7 @@ function vertex(p5, fn){
    *   endShape();
    * }
    */
-  fn.vertexProperty = function(attributeName, data){
+  fn.vertexProperty = function (attributeName, data) {
     // this._assert3d('vertexProperty');
     // p5._validateParameters('vertexProperty', arguments);
     this._renderer.vertexProperty(attributeName, data);
@@ -1201,6 +1207,6 @@ function vertex(p5, fn){
 
 export default vertex;
 
-if(typeof p5 !== 'undefined'){
+if (typeof p5 !== 'undefined') {
   vertex(p5, p5.prototype);
 }
