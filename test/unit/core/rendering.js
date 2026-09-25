@@ -77,6 +77,42 @@ suite('Rendering', function () {
     });
   });
 
+  suite('2D points', function () {
+    // In 2D mode a point is stroked as a very short line so that the line caps
+    // draw the dot. Canvas paths store coordinates as 32-bit floats, so if the
+    // line's end rounds to the same float as its start, the line has zero
+    // length and browsers that prune zero-length segments draw nothing.
+    // https://github.com/processing/p5.js/issues/9206
+    test('keeps the point line non-zero-length at large coordinates', function () {
+      myp5.createCanvas(50, 50);
+      const moveTo = vi.spyOn(Path2D.prototype, 'moveTo');
+      const lineTo = vi.spyOn(Path2D.prototype, 'lineTo');
+
+      try {
+        for (const x of [0, 10, 255, 256, 1000, -1000, 123456]) {
+          moveTo.mockClear();
+          lineTo.mockClear();
+          myp5.point(x, 10);
+
+          assert.lengthOf(moveTo.mock.calls, 1);
+          assert.lengthOf(lineTo.mock.calls, 1);
+          const [startX, startY] = moveTo.mock.calls[0];
+          const [endX, endY] = lineTo.mock.calls[0];
+          assert.equal(startX, x);
+          assert.equal(endY, startY);
+          assert.notEqual(
+            Math.fround(endX),
+            Math.fround(startX),
+            `point(${x}, 10) collapses to a zero-length line in float32`
+          );
+        }
+      } finally {
+        moveTo.mockRestore();
+        lineTo.mockRestore();
+      }
+    });
+  });
+
   suite('p5.prototype.resizeCanvas', function () {
     let glStub;
 
