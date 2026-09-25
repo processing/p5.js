@@ -972,7 +972,7 @@ function fesCore(p5, fn, lifecycles){
     p5._fesLogCache = {};
 
     lifecycles.presetup = function () {
-      window.addEventListener('load', checkForUserDefinedFunctions, false);
+      checkForUserDefinedFunctions(window);
       window.addEventListener('error', p5._fesErrorMonitor, false);
       window.addEventListener('unhandledrejection', p5._fesErrorMonitor, false);
     };
