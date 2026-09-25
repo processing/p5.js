@@ -21,7 +21,7 @@
     "test/**/*.js": "eslint",
     "utils/**/*.{js,mjs}": "eslint"
   },
-  "version": "2.3.3",
+  "version": "2.3.4",
   "dependencies": {
     "@davepagurek/bezier-path": "^0.0.7",
     "@japont/unicode-range": "^1.0.0",
