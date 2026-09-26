@@ -19,12 +19,12 @@ function describe(p5, fn) {
    *
    * The first parameter, `text`, is the description of the canvas.
    *
-   * The second parameter, `display`, is optional. It determines how the
-   * description is displayed. If `LABEL` is passed, as in
-   * `describe('A description.', LABEL)`, the description will be visible in
-   * a div element next to the canvas. If `FALLBACK` is passed, as in
-   * `describe('A description.', FALLBACK)`, the description will only be
-   * visible to screen readers. This is the default mode.
+   * The second parameter, `display`, is optional and can be `LABEL` or
+   * `FALLBACK`. The third parameter, `lang`, is optional and sets the language
+   * of the description for screen readers. However, if only the optional 'lang' 
+   * parameter is passed, it will be treated as the second optional parameter and
+   * the default option 'FALLBACK' will be used as the display.
+   * 
    *
    * Read
    * <a href="/learn/accessible-labels.html">Writing accessible canvas descriptions</a>
@@ -33,6 +33,7 @@ function describe(p5, fn) {
    * @method describe
    * @param  {String} text        description of the canvas.
    * @param  {(FALLBACK|LABEL)} [display] either LABEL or FALLBACK.
+   * @param  {String} [lang]      valid lang attribute.
    *
    * @example
    * function setup() {
@@ -110,7 +111,7 @@ function describe(p5, fn) {
    *   describe(`A green circle at (${x}, 50) moves from left to right on a gray square.`, LABEL);
    * }
    */
-  fn.describe = function (text, display) {
+  fn.describe = function (text, display, lang) {
     // p5._validateParameters('describe', arguments);
     if (typeof text !== 'string') {
       return;
@@ -122,6 +123,7 @@ function describe(p5, fn) {
     if (!this.dummyDOM) {
       this.dummyDOM = document.getElementById(cnvId).parentNode;
     }
+    //check if html structure for description is ready
     if (!this.descriptions) {
       this.descriptions = {};
     }
@@ -150,6 +152,7 @@ function describe(p5, fn) {
         this._describeHTML('label', text);
       }
     }
+    _setDescriptionLang(this, lang);
   };
 
   /**
@@ -161,15 +164,18 @@ function describe(p5, fn) {
    * The first parameter, `name`, is the name of the element.
    *
    * The second parameter, `text`, is the description of the element.
+   * 
+   * The third parameter, `display`, is optional and can be `LABEL` or
+   * `FALLBACK`. The fourth parameter, `lang`, is optional and sets the language
+   * of the description for screen readers. However, if only the optional 'lang' 
+   * parameter is passed, it will be treated as the third optional parameter and
+   * the default option 'FALLBACK' will be used as the display.
    *
-   * The third parameter, `display`, is optional. It determines how the
-   * description is displayed. If `LABEL` is passed, as in
-   * `describe('A description.', LABEL)`, the description will be visible in
-   * a div element next to the canvas. Using `LABEL` creates unhelpful
-   * duplicates for screen readers. Only use `LABEL` during development. If
-   * `FALLBACK` is passed, as in `describe('A description.', FALLBACK)`, the
-   * description will only be visible to screen readers. This is the default
-   * mode.
+   * If `LABEL` is passed, as in `describe('A description.', LABEL)`, 
+   * the description will be visible in a div element next to the canvas. Using 
+   * `LABEL` creates unhelpful duplicates for screen readers. Only use `LABEL` 
+   * during development. If `FALLBACK` is passed, as in `describe('A description.', FALLBACK)`, 
+   * the description will only be visible to screen readers. This is the default mode.
    *
    * Read
    * <a href="/learn/accessible-labels.html">Writing accessible canvas descriptions</a>
@@ -179,7 +185,7 @@ function describe(p5, fn) {
    * @param  {String} name        name of the element.
    * @param  {String} text        description of the element.
    * @param  {(FALLBACK|LABEL)} [display] either LABEL or FALLBACK.
-   *
+   * @param  {String} [lang] valid lang attribute.
    * @example
    * function setup() {
    *   background('pink');
@@ -229,7 +235,7 @@ function describe(p5, fn) {
    * }
    */
 
-  fn.describeElement = function (name, text, display) {
+  fn.describeElement = function (name, text, display, lang) {
     // p5._validateParameters('describeElement', arguments);
     if (typeof text !== 'string' || typeof name !== 'string') {
       return;
@@ -242,8 +248,11 @@ function describe(p5, fn) {
     //remove any special characters from name to use it as html id
     name = name.replace(/[^a-zA-Z0-9]/g, '');
 
+    // Inject lang attribute
+    let langAttr = typeof lang === 'string' ? ` lang="${lang}"` : '';
+
     //store element description
-    let inner = `<th scope="row">${elementName}</th><td>${text}</td>`;
+    let inner = `<th scope="row"${langAttr}>${elementName}</th><td${langAttr}>${text}</td>`;
     //if there is no dummyDOM
     if (!this.dummyDOM) {
       this.dummyDOM = document.getElementById(cnvId).parentNode;
@@ -281,13 +290,95 @@ function describe(p5, fn) {
         this._describeElementHTML('label', name, inner);
       }
     }
+    _setDescriptionLang(this, lang);
   };
+
+  p5.registerDecorator('p5.prototype.describe', function (target) {
+    return function (text, display, lang) {
+      // Checks for optional parameters and rearranges if needed
+      if (arguments.length === 2 && typeof display === 'string') {
+        // (text, display)
+        if (display === this.LABEL || display === this.FALLBACK) {
+          return target.call(this, text, display, undefined);
+        }
+        // (text, lang)
+        return target.call(this, text, undefined, display);
+      }
+      if (!_checkDescriptionOptions(this, 'describe', display, lang)) {
+        return;
+      }
+      // (text, display, lang) or just (text)
+      return target.call(this, text, display, lang);
+    };
+  });
+
+  p5.registerDecorator('p5.prototype.describeElement', function (target) {
+    return function (name, text, display, lang) {
+      // Checks for optional parameters and rearranges if needed
+      if (arguments.length === 3 && typeof display === 'string') {
+        // (name, text, display)
+        if (display === this.LABEL || display === this.FALLBACK) {
+          return target.call(this, name, text, display, undefined);
+        }
+        // (name, text, lang)
+        return target.call(this, name, text, undefined, display);
+      }
+      if (!_checkDescriptionOptions(this, 'describeElement', display, lang)) {
+        return;
+      }
+      // (name, text, display, lang) or just (name, text)
+      return target.call(this, name, text, display, lang);
+    };
+  });
 
   /*
    *
    * Helper functions for describe() and describeElement().
    *
    */
+
+  function _checkDescriptionOptions(pInst, methodName, display, lang) {
+    // Ensures display and lang are in the correct orders and are valid
+    const validDisplay = display === undefined || display === pInst.LABEL || display === pInst.FALLBACK;
+    const validLanguage = lang === undefined || typeof lang === 'string';
+
+    if (!validDisplay || !validLanguage) {
+      p5._friendlyError(
+        `${methodName}() expects display (LABEL or FALLBACK) before lang.`,
+        methodName
+      );
+      return false;
+    }
+    return true;
+  }
+
+  function _setDescriptionLang(pInst, lang) {
+    const canvas = pInst.canvas.elt || pInst.elt || pInst.canvas;
+    if (typeof lang === 'string') {
+      canvas.setAttribute('lang', lang);
+    }
+    else {
+      canvas.removeAttribute('lang');
+    }
+
+    if (pInst.descriptions.fallback) {
+      if (typeof lang === 'string') {
+        pInst.descriptions.fallback.setAttribute('lang', lang);
+      } 
+      else {
+        pInst.descriptions.fallback.removeAttribute('lang');
+      }
+    }
+
+    if (pInst.descriptions.label) {
+      if (typeof lang === 'string') {
+        pInst.descriptions.label.setAttribute('lang', lang);
+      } 
+      else {
+        pInst.descriptions.label.removeAttribute('lang');
+      }
+    }
+  }
 
   // check that text is not LABEL or FALLBACK and ensure text ends with punctuation mark
   function _descriptionText(text) {
