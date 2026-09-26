@@ -12,11 +12,11 @@ function setup() {
   // Text and lang
   //describe('Esto es una prueba', 'es');
 
-  // Text, lang, and display
-  // describe('Cái này là bài thi', 'vi', LABEL);
-
   // Text, display, and lang
-  // describe('यह टेस्ट है', LABEL, 'hi');
+  // describe('Cái này là bài thi', LABEL, 'vi');
+
+  // Text and lang
+  // describe('यह टेस्ट है', 'hi');
 
 
 
@@ -29,11 +29,11 @@ function setup() {
   // Name, text, and lang
   // describeElement('c', 'Esto es una prueba', 'es');
 
-  // Name, text, lang, and display
-  // describeElement('d', 'Cái này là bài thi', 'vi', LABEL);
-
   // Name, text, display, and lang
-  // describeElement('e', 'यह टेस्ट है', LABEL, 'hi');
+  // describeElement('d', 'Cái này là bài thi', LABEL, 'vi');
+
+  // Name, text, and lang
+  // describeElement('e', 'यह टेस्ट है', 'hi');
 
   fill('blue');
   circle(200, 150, 100);

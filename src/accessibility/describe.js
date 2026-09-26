@@ -155,40 +155,6 @@ function describe(p5, fn) {
     _setDescriptionLang(this, lang);
   };
 
-  p5.registerDecorator('p5.prototype.describe', function (target) {
-    return function (text, display, lang) {
-      // Checks for optional parameters and rearranges if needed
-      if (arguments.length === 2 && typeof display === 'string') {
-        // (text, display)
-        if (display === this.LABEL || display === this.FALLBACK) {
-          return target.call(this, text, display, undefined);
-        }
-        // (text, lang)
-        return target.call(this, text, undefined, display);
-      }
-      _checkDescriptionOptions(this, 'describe', display, lang);
-      // (text, display, lang) or just (text)
-      return target.call(this, text, display, lang);
-    };
-  });
-
-  p5.registerDecorator('p5.prototype.describeElement', function (target) {
-    return function (name, text, display, lang) {
-      // Checks for optional parameters and rearranges if needed
-      if (arguments.length === 3 && typeof display === 'string') {
-        // (name, text, display)
-        if (display === this.LABEL || display === this.FALLBACK) {
-          return target.call(this, name, text, display, undefined);
-        }
-        // (name, text, lang)
-        return target.call(this, name, text, undefined, display);
-      }
-      _checkDescriptionOptions(this, 'describeElement', display, lang);
-      // (name, text, display, lang) or just (name, text)
-      return target.call(this, name, text, display, lang);
-    };
-  });
-
   /**
    * Creates a screen reader-accessible description of elements in the canvas.
    *
@@ -327,6 +293,40 @@ function describe(p5, fn) {
     _setDescriptionLang(this, lang);
   };
 
+  p5.registerDecorator('p5.prototype.describe', function (target) {
+    return function (text, display, lang) {
+      // Checks for optional parameters and rearranges if needed
+      if (arguments.length === 2 && typeof display === 'string') {
+        // (text, display)
+        if (display === this.LABEL || display === this.FALLBACK) {
+          return target.call(this, text, display, undefined);
+        }
+        // (text, lang)
+        return target.call(this, text, undefined, display);
+      }
+      _checkDescriptionOptions(this, 'describe', display, lang);
+      // (text, display, lang) or just (text)
+      return target.call(this, text, display, lang);
+    };
+  });
+
+  p5.registerDecorator('p5.prototype.describeElement', function (target) {
+    return function (name, text, display, lang) {
+      // Checks for optional parameters and rearranges if needed
+      if (arguments.length === 3 && typeof display === 'string') {
+        // (name, text, display)
+        if (display === this.LABEL || display === this.FALLBACK) {
+          return target.call(this, name, text, display, undefined);
+        }
+        // (name, text, lang)
+        return target.call(this, name, text, undefined, display);
+      }
+      _checkDescriptionOptions(this, 'describeElement', display, lang);
+      // (name, text, display, lang) or just (name, text)
+      return target.call(this, name, text, display, lang);
+    };
+  });
+
   /*
    *
    * Helper functions for describe() and describeElement().
@@ -337,6 +337,12 @@ function describe(p5, fn) {
     // Ensures display and lang are in the correct orders and are valid
     const validDisplay = display === undefined || display === pInst.LABEL || display === pInst.FALLBACK;
     const validLanguage = lang === undefined || typeof lang === 'string';
+
+    if (!validDisplay || !validLanguage) {
+      throw new TypeError(
+        `${methodName}() expects display (LABEL or FALLBACK) before lang.`
+      );
+    }
 
     if (!validDisplay || !validLanguage) {
       throw new TypeError(

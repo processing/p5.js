@@ -5,6 +5,13 @@ suite('describe', function () {
   const myID = 'myCanvasID';
 
   beforeAll(function () {
+    mockP5.registerDecorator = (patterns, decorator) => {
+      const patternList = Array.isArray(patterns) ? patterns : [patterns];
+      patternList.forEach(pattern => {
+        const name = pattern.split('.').pop();
+        mockP5Prototype[name] = decorator(mockP5Prototype[name], { name });
+      });
+    };
     describe(mockP5, mockP5Prototype);
 
     mockP5Prototype.LABEL = 'label';
@@ -52,8 +59,17 @@ suite('describe', function () {
       assert.isNull(document.getElementById(myID + '_Label'));
     });
 
+    test('should support text and display', function () {
+      mockP5Prototype.describe('Texto visible', mockP5Prototype.LABEL);
+      assert.equal(
+        document.getElementById(myID + '_labelDesc').innerHTML,
+        'Texto visible.'
+      );
+      assert.isNull(mockP5Prototype.elt.getAttribute('lang'));
+    });
+
     test('should support text lang and display', function () {
-      mockP5Prototype.describe('Chào các bạn', 'vi', mockP5Prototype.FALLBACK);
+      mockP5Prototype.describe('Chào các bạn', mockP5Prototype.FALLBACK, 'vi');
       let actual = document.getElementById(myID + '_fallbackDesc');
       assert.deepEqual(actual.innerHTML, 'Chào các bạn.');
       assert.deepEqual(actual.getAttribute('lang'), 'vi');
@@ -65,6 +81,12 @@ suite('describe', function () {
       let actual = document.getElementById(myID + '_labelDesc');
       assert.deepEqual(actual.innerHTML, 'Chào các bạn.');
       assert.deepEqual(actual.getAttribute('lang'), 'vi');
+    });
+
+    test('should reject language before display', function () {
+      assert.throws(function () {
+        mockP5Prototype.describe('Chào các bạn', 'vi', mockP5Prototype.LABEL);
+      }, TypeError, 'expects display (LABEL or FALLBACK) before lang');
     });
 
     test('should not add extra period if string ends in "."', function () {
@@ -145,8 +167,16 @@ suite('describe', function () {
       );
     });
 
+    test('should support element text and display', function () {
+      mockP5Prototype.describeElement('ao', 'Texto visible', mockP5Prototype.LABEL);
+      assert.equal(
+        document.getElementById(myID + '_lte_ao').innerHTML,
+        '<th scope="row">ao:</th><td>Texto visible.</td>'
+      );
+    });
+
     test('should support element text lang and display', function () {
-      mockP5Prototype.describeElement('al', 'Chào các bạn', 'vi', mockP5Prototype.FALLBACK);
+      mockP5Prototype.describeElement('al', 'Chào các bạn', mockP5Prototype.FALLBACK, 'vi');
       let actual = document.getElementById(myID + '_fte_al').innerHTML;
       assert.deepEqual(actual, '<th scope="row" lang="vi">al:</th><td lang="vi">Chào các bạn.</td>'
       );
@@ -156,6 +186,17 @@ suite('describe', function () {
       mockP5Prototype.describeElement('am', 'Chào các bạn', mockP5Prototype.LABEL, 'vi');
       let actual = document.getElementById(myID + '_lte_am').innerHTML;
       assert.deepEqual(actual, '<th scope="row" lang="vi">am:</th><td lang="vi">Chào các bạn.</td>');
+    });
+
+    test('should reject element language before display', function () {
+      assert.throws(function () {
+        mockP5Prototype.describeElement(
+          'an',
+          'Chào các bạn',
+          'vi',
+          mockP5Prototype.LABEL
+        );
+      }, TypeError, 'expects display (LABEL or FALLBACK) before lang');
     });
 
     test('should not add extra ":" if element name ends in colon', function () {
