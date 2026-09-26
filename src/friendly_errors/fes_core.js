@@ -596,9 +596,11 @@ function fesCore(p5, fn, lifecycles) {
     p5._checkForUserDefinedFunctions = checkForUserDefinedFunctions;
     p5._fesLogCache = {};
 
-    window.addEventListener('load', checkForUserDefinedFunctions, false);
-    window.addEventListener('error', fesErrorMonitor, false);
-    window.addEventListener('unhandledrejection', fesErrorMonitor, false);
+    lifecycles.presetup = function () {
+      checkForUserDefinedFunctions();
+      window.addEventListener('error', fesErrorMonitor, false);
+      window.addEventListener('unhandledrejection', fesErrorMonitor, false);
+    };
   }
 }
 
