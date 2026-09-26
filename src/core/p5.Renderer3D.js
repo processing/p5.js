@@ -2347,11 +2347,9 @@ function renderer3D(p5, fn) {
    */
   fn.createStorage = function (dataOrCount) {
     if (!this._renderer.createStorage) {
-      p5._friendlyError(
-        `createStorage() is only available with the WebGPU renderer. ${webGPUAddonMessage}`,
-        'createStorage'
+      throw new Error(
+        `createStorage() is only available with the WebGPU renderer. ${webGPUAddonMessage}`
       );
-      return;
     }
     return this._renderer.createStorage(dataOrCount);
   };
@@ -2528,11 +2526,9 @@ function renderer3D(p5, fn) {
    */
   fn.createStorageList = function (maxCapacity, schemaOrData) {
     if (!this._renderer.createStorageList) {
-      p5._friendlyError(
-        `createStorageList() is only available with the WebGPU renderer. ${webGPUAddonMessage}`,
-        'createStorageList'
+      throw new Error(
+        `createStorageList() is only available with the WebGPU renderer. ${webGPUAddonMessage}`
       );
-      return;
     }
     return this._renderer.createStorageList(maxCapacity, schemaOrData);
   };
@@ -2556,11 +2552,9 @@ function renderer3D(p5, fn) {
    */
   fn.baseComputeShader = function () {
     if (!this._renderer.baseComputeShader) {
-      p5._friendlyError(
-        `baseComputeShader() is only available with the WebGPU renderer. ${webGPUAddonMessage}`,
-        'baseComputeShader'
+      throw new Error(
+        `baseComputeShader() is only available with the WebGPU renderer. ${webGPUAddonMessage}`
       );
-      return;
     }
     return this._renderer.baseComputeShader();
   };
@@ -2724,11 +2718,9 @@ function renderer3D(p5, fn) {
    */
   fn.buildComputeShader = function (cb, context) {
     if (!this._renderer.baseComputeShader) {
-      p5._friendlyError(
-        `buildComputeShader() is only available with the WebGPU renderer. ${webGPUAddonMessage}`,
-        'buildComputeShader'
+      throw new Error(
+        `buildComputeShader() is only available with the WebGPU renderer. ${webGPUAddonMessage}`
       );
-      return;
     }
     return this.baseComputeShader().modify(cb, context, { hook: 'iteration' });
   };
@@ -2903,11 +2895,9 @@ function renderer3D(p5, fn) {
    */
   fn.compute = function (shader, x, y, z) {
     if (!this._renderer.compute) {
-      p5._friendlyError(
-        `compute() is only available with the WebGPU renderer. ${webGPUAddonMessage}`,
-        'compute'
+      throw new Error(
+        `compute() is only available with the WebGPU renderer. ${webGPUAddonMessage}`
       );
-      return;
     }
     this._renderer.compute(shader, x, y, z);
   };
