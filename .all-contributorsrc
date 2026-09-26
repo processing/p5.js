@@ -5170,7 +5170,9 @@
         "eventOrganizing",
         "blog",
         "tutorial",
-        "video"
+        "video",
+        "bug",
+        "code"
       ]
     },
     {
