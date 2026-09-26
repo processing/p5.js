@@ -26,6 +26,7 @@ suite('describe', function () {
     mockP5Prototype.elt.removeAttribute('lang');
     mockP5Prototype.dummyDOM = undefined;
     mockP5Prototype.descriptions = undefined;
+    mockP5._friendlyError.mockReset();
   });
 
   suite('p5.prototype.describe', function () {
@@ -84,9 +85,10 @@ suite('describe', function () {
     });
 
     test('should reject language before display', function () {
-      assert.throws(function () {
-        mockP5Prototype.describe('Chào các bạn', 'vi', mockP5Prototype.LABEL);
-      }, TypeError, 'expects display (LABEL or FALLBACK) before lang');
+      mockP5Prototype.describe('Chào các bạn', 'vi', mockP5Prototype.LABEL);
+      assert.isNull(document.getElementById(myID + '_fallbackDesc'));
+      assert.lengthOf(mockP5._friendlyError.mock.calls, 1);
+      assert.equal(mockP5._friendlyError.mock.calls[0][1], 'describe');
     });
 
     test('should not add extra period if string ends in "."', function () {
@@ -189,14 +191,15 @@ suite('describe', function () {
     });
 
     test('should reject element language before display', function () {
-      assert.throws(function () {
-        mockP5Prototype.describeElement(
-          'an',
-          'Chào các bạn',
-          'vi',
-          mockP5Prototype.LABEL
-        );
-      }, TypeError, 'expects display (LABEL or FALLBACK) before lang');
+      mockP5Prototype.describeElement(
+        'an',
+        'Chào các bạn',
+        'vi',
+        mockP5Prototype.LABEL
+      );
+      assert.isNull(document.getElementById(myID + '_fte_an'));
+      assert.lengthOf(mockP5._friendlyError.mock.calls, 1);
+      assert.equal(mockP5._friendlyError.mock.calls[0][1], 'describeElement');
     });
 
     test('should not add extra ":" if element name ends in colon', function () {

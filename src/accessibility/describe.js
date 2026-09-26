@@ -304,7 +304,9 @@ function describe(p5, fn) {
         // (text, lang)
         return target.call(this, text, undefined, display);
       }
-      _checkDescriptionOptions(this, 'describe', display, lang);
+      if (!_checkDescriptionOptions(this, 'describe', display, lang)) {
+        return;
+      }
       // (text, display, lang) or just (text)
       return target.call(this, text, display, lang);
     };
@@ -321,7 +323,9 @@ function describe(p5, fn) {
         // (name, text, lang)
         return target.call(this, name, text, undefined, display);
       }
-      _checkDescriptionOptions(this, 'describeElement', display, lang);
+      if (!_checkDescriptionOptions(this, 'describeElement', display, lang)) {
+        return;
+      }
       // (name, text, display, lang) or just (name, text)
       return target.call(this, name, text, display, lang);
     };
@@ -339,16 +343,13 @@ function describe(p5, fn) {
     const validLanguage = lang === undefined || typeof lang === 'string';
 
     if (!validDisplay || !validLanguage) {
-      throw new TypeError(
-        `${methodName}() expects display (LABEL or FALLBACK) before lang.`
+      p5._friendlyError(
+        `${methodName}() expects display (LABEL or FALLBACK) before lang.`,
+        methodName
       );
+      return false;
     }
-
-    if (!validDisplay || !validLanguage) {
-      throw new TypeError(
-        `${methodName}() expects display (LABEL or FALLBACK) before lang.`
-      );
-    }
+    return true;
   }
 
   function _setDescriptionLang(pInst, lang) {
