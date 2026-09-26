@@ -12,7 +12,7 @@ on:
 
 jobs:
   release:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     name: Release
     env:
       INPUT_TOKEN: ${{ secrets.NPM_TOKEN }}

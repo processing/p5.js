@@ -77,6 +77,42 @@ suite('Rendering', function () {
     });
   });
 
+  suite('2D points', function () {
+    // In 2D mode a point is stroked as a very short line so that the line caps
+    // draw the dot. Canvas paths store coordinates as 32-bit floats, so if the
+    // line's end rounds to the same float as its start, the line has zero
+    // length and browsers that prune zero-length segments draw nothing.
+    // https://github.com/processing/p5.js/issues/9206
+    test('keeps the point line non-zero-length at large coordinates', function () {
+      myp5.createCanvas(50, 50);
+      const moveTo = vi.spyOn(Path2D.prototype, 'moveTo');
+      const lineTo = vi.spyOn(Path2D.prototype, 'lineTo');
+
+      try {
+        for (const x of [0, 10, 255, 256, 1000, -1000, 123456]) {
+          moveTo.mockClear();
+          lineTo.mockClear();
+          myp5.point(x, 10);
+
+          assert.lengthOf(moveTo.mock.calls, 1);
+          assert.lengthOf(lineTo.mock.calls, 1);
+          const [startX, startY] = moveTo.mock.calls[0];
+          const [endX, endY] = lineTo.mock.calls[0];
+          assert.equal(startX, x);
+          assert.equal(endY, startY);
+          assert.notEqual(
+            Math.fround(endX),
+            Math.fround(startX),
+            `point(${x}, 10) collapses to a zero-length line in float32`
+          );
+        }
+      } finally {
+        moveTo.mockRestore();
+        lineTo.mockRestore();
+      }
+    });
+  });
+
   suite('p5.prototype.resizeCanvas', function () {
     let glStub;
 
@@ -373,6 +409,103 @@ suite('Rendering', function () {
       const expectedDensity = myp5.pixelDensity();
       const g = myp5.createGraphics(100, 100);
       assert.equal(g.pixelDensity(), expectedDensity);
+    });
+  });
+
+  suite('WebGPU to WebGL fallback', function () {
+    function fesMessages(fesSpy) {
+      return fesSpy.mock.calls.map(args => {
+        const [strings, ...values] = args;
+        return strings.reduce((acc, s, i) => acc + s + (values[i] ?? ''), '');
+      });
+    }
+
+    test('rendererType defaults to P2D and tracks WEBGL', function () {
+      myp5.createCanvas(10, 10);
+      assert.equal(myp5.rendererType, myp5.P2D);
+      myp5.createCanvas(10, 10, myp5.WEBGL);
+      assert.equal(myp5.rendererType, myp5.WEBGL);
+      assert.equal(myp5._renderer.rendererType, myp5.WEBGL);
+    });
+
+    test('falls back to WEBGL when the WEBGPU addon is missing', function () {
+      const saved = p5.renderers[myp5.WEBGPU];
+      delete p5.renderers[myp5.WEBGPU];
+      const fesSpy = vi.spyOn(p5.FES, 'log');
+      try {
+        const renderer = myp5.createCanvas(10, 10, myp5.WEBGPU);
+        assert.equal(renderer.rendererType, myp5.WEBGL);
+        assert.equal(myp5.rendererType, myp5.WEBGL);
+        const messages = fesMessages(fesSpy).join('\n');
+        assert.isTrue(messages.includes('add-on'));
+        assert.isTrue(messages.includes('Falling back to WebGL'));
+      } finally {
+        if (saved) {
+          p5.renderers[myp5.WEBGPU] = saved;
+        }
+        fesSpy.mockRestore();
+      }
+    });
+
+    test('falls back to WEBGL when WEBGPU context creation fails', async function () {
+      const failureReason =
+        'No compatible GPU could be found for WebGPU on this device, so p5 cannot start it here.';
+      class FailingWebGPU {
+        constructor(pInst) {
+          this._pInst = pInst;
+          this.canvas = document.createElement('canvas');
+          this.elt = this.canvas;
+          this.contextReady = Promise.reject(new Error(failureReason));
+        }
+        remove() {}
+        _applyDefaults() {}
+      }
+      const saved = p5.renderers[myp5.WEBGPU];
+      p5.renderers[myp5.WEBGPU] = FailingWebGPU;
+      const fesSpy = vi.spyOn(p5.FES, 'log');
+      try {
+        const renderer = await myp5.createCanvas(10, 10, myp5.WEBGPU);
+        assert.instanceOf(renderer, p5.RendererGL);
+        assert.equal(myp5.rendererType, myp5.WEBGL);
+        assert.isFalse(
+          myp5._elements.some(element => element instanceof FailingWebGPU)
+        );
+        const messages = fesMessages(fesSpy).join('\n');
+        assert.isTrue(messages.includes('Falling back to WebGL'));
+        assert.isTrue(messages.includes('No compatible GPU'));
+      } finally {
+        if (saved) {
+          p5.renderers[myp5.WEBGPU] = saved;
+        } else {
+          delete p5.renderers[myp5.WEBGPU];
+        }
+        fesSpy.mockRestore();
+      }
+    });
+
+    test('non-WEBGPU context failure still throws', async function () {
+      class FailingFake {
+        constructor() {
+          this.canvas = document.createElement('canvas');
+          this.elt = this.canvas;
+          this.contextReady = Promise.reject(new Error('boom'));
+        }
+        remove() {}
+        _applyDefaults() {}
+      }
+      p5.renderers['fake-fail'] = FailingFake;
+      try {
+        let error = null;
+        try {
+          await myp5.createCanvas(10, 10, 'fake-fail');
+        } catch (e) {
+          error = e;
+        }
+        expect(error).to.exist;
+        expect(error.message).to.match(/Failed to create canvas/);
+      } finally {
+        delete p5.renderers['fake-fail'];
+      }
     });
   });
 });
