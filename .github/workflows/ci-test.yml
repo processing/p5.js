@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-      - dev-2.0
+      - stable
   pull_request:
     branches:
       - '*'
@@ -28,12 +28,12 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      
+
       - name: Use Node.js 22.x
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: 22.x
-      
+
       - name: Verify Chrome (Ubuntu)
         if: matrix.os == 'ubuntu-26.04' && matrix.browser == 'chrome'
         run: |
@@ -43,7 +43,7 @@ jobs:
         if: matrix.os == 'windows-latest' && matrix.browser == 'chrome'
         run: |
           & "C:\Program Files\Google\Chrome\Application\chrome.exe" --version
-      
+
       - name: Get node modules
         run: npm ci
         env:
