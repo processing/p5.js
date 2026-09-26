@@ -135,6 +135,9 @@ export function binaryOpNode(
     );
     rightType = DAG.extractNodeTypeInfo(dag, rightStrandsNode.id);
   }
+  // Snapshot the pre-cast types for error messages.
+  const preCastLeftType = { ...leftType };
+  const preCastRightType = { ...rightType };
   const cast = { node: null, toType: leftType };
   const bothDeferred =
     leftType.baseType === rightType.baseType &&
@@ -211,6 +214,65 @@ export function binaryOpNode(
         strandsContext
       );
       finalRightNodeID = rightStrandsNode.id;
+    }
+  }
+
+  const leftDim = dag.dimensions[finalLeftNodeID];
+  const rightDim = dag.dimensions[finalRightNodeID];
+  const leftBase = dag.baseTypes[finalLeftNodeID];
+  const rightBase = dag.baseTypes[finalRightNodeID];
+
+  // DEFER carries no user-meaningful type, so fall back to the
+  // resolved post-cast types there.
+  const displayLeftBase = preCastLeftType.baseType === BaseType.DEFER ? leftBase : preCastLeftType.baseType;
+  const displayLeftDim = preCastLeftType.baseType === BaseType.DEFER ? leftDim : preCastLeftType.dimension;
+  const displayRightBase = preCastRightType.baseType === BaseType.DEFER ? rightBase : preCastRightType.baseType;
+  const displayRightDim = preCastRightType.baseType === BaseType.DEFER ? rightDim : preCastRightType.dimension;
+
+  const isOrdering = [
+    OpCode.Binary.LESS_THAN,
+    OpCode.Binary.LESS_EQUAL,
+    OpCode.Binary.GREATER_THAN,
+    OpCode.Binary.GREATER_EQUAL,
+  ].includes(opCode);
+  const isEquality = opCode === OpCode.Binary.EQUAL || opCode === OpCode.Binary.NOT_EQUAL;
+  const isLogical  = opCode === OpCode.Binary.LOGICAL_AND || opCode === OpCode.Binary.LOGICAL_OR;
+
+  if (isOrdering) {
+    if (leftDim > 1 || rightDim > 1) {
+      FES.userError(
+        'type error',
+        `${OpCodeToSymbol[opCode]} is only defined for scalars. ` +
+        `Got ${displayLeftBase}${displayLeftDim} ${OpCodeToSymbol[opCode]} ${displayRightBase}${displayRightDim}.`
+      );
+    } else if (leftBase === BaseType.BOOL || rightBase === BaseType.BOOL) {
+      FES.userError(
+        'type error',
+        `${OpCodeToSymbol[opCode]} is not defined for boolean values. ` +
+        `Got ${displayLeftBase}${displayLeftDim} ${OpCodeToSymbol[opCode]} ${displayRightBase}${displayRightDim}.`
+      );
+    }
+  } else if (isEquality) {
+    if ((leftDim > 1 || rightDim > 1) && (leftDim !== rightDim || leftBase !== rightBase)) {
+      FES.userError(
+        'type error',
+        `Equality comparisons between vectors require matching dimensions and base types. ` +
+        `Got ${displayLeftBase}${displayLeftDim} ${OpCodeToSymbol[opCode]} ${displayRightBase}${displayRightDim}.`
+      );
+    } else if ((leftBase === BaseType.BOOL) !== (rightBase === BaseType.BOOL)) {
+      FES.userError(
+        'type error',
+        `Equality comparisons between boolean and numeric types are not allowed. ` +
+        `Got ${displayLeftBase}${displayLeftDim} ${OpCodeToSymbol[opCode]} ${displayRightBase}${displayRightDim}.`
+      );
+    }
+  } else if (isLogical) {
+    if (leftBase !== BaseType.BOOL || rightBase !== BaseType.BOOL || leftDim !== 1 || rightDim !== 1) {
+      FES.userError(
+        'type error',
+        `${OpCodeToSymbol[opCode]} requires two bool scalars. ` +
+        `Got ${displayLeftBase}${displayLeftDim} ${OpCodeToSymbol[opCode]} ${displayRightBase}${displayRightDim}.`
+      );
     }
   }
 
