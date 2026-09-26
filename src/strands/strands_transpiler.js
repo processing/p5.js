@@ -4,14 +4,18 @@ import escodegen from 'escodegen';
 import { UnarySymbolToName } from './ir_types';
 import * as FES from './strands_FES';
 
-// Registry of strands functions that take raw array literals as arguments.
-// Maps functionName → Set of argument indices that should NOT be
-// converted to vectors by the ArrayExpression visitor.
-// This generalizes the paletteLerp special-case so any future function
-// taking array parameters can register here without modifying ArrayExpression.
-const ARRAY_ARG_FUNCTIONS = {
-  paletteLerp: new Set([0]), // argument 0 is the [[color,pos],...] array
-};
+// Strands functions opt out of array-to-vector conversion by declaring
+// `argTypes` on themselves (see strands_api.js's `paletteLerp` for an
+// example), rather than being special-cased here. A descriptor of
+// `{ type: 'Array', subtype: { type: 'any' } }` marks an argument as an
+// opaque array: the ArrayExpression visitor leaves it (and anything
+// nested inside it, to any depth) untouched instead of converting it to
+// a vector/strandsNode call. This lets any current or future function —
+// including ones added by addons — take raw array arguments without
+// touching this file again.
+function getArgTypes(fnName, p5) {
+  return p5?.prototype?.[fnName]?.argTypes;
+}
 
 let blockVarCounter = 0;
 let loopVarCounter = 0;
@@ -574,60 +578,6 @@ const ASTCallbacks = {
     }
   },
   
-  // Rewrite paletteLerp([[color,pos],...], t) → __p5.paletteLerp([c,...], [p,...], t)
-  // Must run before ArrayExpression so the child arrays carry _isPaletteLerpArg
-  // and are not wrapped in strandsNode (which would mis-type them as vectors).
-
-  CallExpression(node, state, ancestors) {
-    if (ancestors.some(a => nodeIsUniform(a) || nodeIsUniformCallbackFn(a, state.uniformCallbackNames))) {
-      return;
-    }
-    if (node.callee?.type !== 'Identifier' || node.callee?.name !== 'paletteLerp') {
-      return;
-    }
-    const args = node.arguments;
-    if (args.length !== 2) {
-      throw new Error(
-        `paletteLerp() requires 2 arguments: (colorStops[], t) — got ${args.length}.\n` +
-        `Usage: paletteLerp([[color(r,g,b), pos], ...], t)`
-      );
-    }
-    const [stopsArg, tArg] = args;
-    if (stopsArg.type !== 'ArrayExpression') {
-      throw new Error(
-        `paletteLerp() first argument must be an array literal: [[color(...), pos], ...]`
-      );
-    }
-    const stops = stopsArg.elements;
-    if (stops.length < 2 || stops.length > 8) {
-      throw new Error(
-        `paletteLerp() requires 2–8 color stops, got ${stops.length}.`
-      );
-    }
-    for (let i = 0; i < stops.length; i++) {
-      if (stops[i].type !== 'ArrayExpression' || stops[i].elements.length !== 2) {
-        throw new Error(
-          `paletteLerp() stop ${i} must be a 2-element array: [color(...), position]`
-        );
-      }
-    }
-    // Split pairs into two parallel arrays
-    const colorsArr = {
-      type: 'ArrayExpression',
-      elements: stops.map(s => s.elements[0]),
-      _isPaletteLerpArg: true,
-    };
-    const positionsArr = {
-      type: 'ArrayExpression',
-      elements: stops.map(s => s.elements[1]),
-      _isPaletteLerpArg: true,
-    };
-    // Rewrite in-place to __p5.paletteLerp(colors, positions, t)
-    node.callee = { type: 'Identifier', name: '__p5.paletteLerp' };
-    node.arguments = [colorsArr, positionsArr, tArg];
-  },
-
-
   // The callbacks for AssignmentExpression and BinaryExpression handle
   // operator overloading including +=, *= assignment expressions
 
@@ -636,19 +586,32 @@ const ASTCallbacks = {
     if (ancestors.some(a => nodeIsUniform(a) || nodeIsUniformCallbackFn(a, state.uniformCallbackNames))) {
       return;
     }
-    // Don't wrap arrays that are arguments to functions expecting raw arrays.
-    // Walk ancestors to find the nearest CallExpression and check the registry.
+    // Don't wrap arrays that are (or are nested inside) an argument a
+    // function has declared as opaque via argTypes. We look this up
+    // structurally — via the nearest enclosing CallExpression and which
+    // of its arguments node descends from — rather than depending on
+    // that CallExpression's own visitor having already run, since
+    // acorn-walk's ancestor() calls child callbacks before parent ones.
     for (let i = ancestors.length - 1; i >= 0; i--) {
       const a = ancestors[i];
       if (a.type === 'CallExpression') {
-        const name = a.callee?.name;
-        if (name && ARRAY_ARG_FUNCTIONS[name]) {
-          const argIndex = a.arguments.indexOf(node);
-          if (argIndex !== -1 && ARRAY_ARG_FUNCTIONS[name].has(argIndex)) {
+        const fnName = a.callee?.type === 'Identifier'
+          ? a.callee.name
+          : a.callee?.type === 'MemberExpression' && a.callee.property?.type === 'Identifier'
+            ? a.callee.property.name
+            : undefined;
+        const argTypes = fnName && getArgTypes(fnName, state.p5);
+        if (argTypes) {
+          // The direct child of `a` on the path down to `node` — either
+          // `node` itself, or an ancestor array that contains it.
+          const childOnPath = i + 1 < ancestors.length ? ancestors[i + 1] : node;
+          const argIndex = a.arguments.indexOf(childOnPath);
+          const argType = argIndex !== -1 ? argTypes[argIndex] : undefined;
+          if (argType?.type === 'Array' && argType.subtype?.type === 'any') {
             return;
           }
         }
-        break; // only check nearest CallExpression
+        break; // only consider the nearest enclosing call
       }
     }
 
@@ -1783,35 +1746,11 @@ export function transpileStrandsToJS(p5, sourceString, srcLocations, scope) {
   // First pass: transform .set() calls in control flow to use intermediate variables
   transformSetCallsInControlFlow(ast, uniformCallbackNames);
 
-  // paletteLerp pre-pass: must run before the main pass so ArrayExpression
-  // doesn't wrap [[color,pos],...] as a vector before we can split the pairs.
-  ancestor(ast, {
-    CallExpression(node, state, ancestors) {
-      if (node.callee?.type !== 'Identifier' || node.callee?.name !== 'paletteLerp') return;
-      if (ancestors.some(a => nodeIsUniform(a) || nodeIsUniformCallbackFn(a, state.uniformCallbackNames))) return;
-      const [stopsArg, tArg] = node.arguments;
-      if (node.arguments.length !== 2) throw new Error(`paletteLerp() requires 2 arguments: ([[color,pos],...], t)`);
-      if (stopsArg.type !== 'ArrayExpression') throw new Error(`paletteLerp() first argument must be an array literal`);
-      const stops = stopsArg.elements;
-      if (stops.length < 2 || stops.length > 8) throw new Error(`paletteLerp() requires 2–8 color stops, got ${stops.length}`);
-      for (let i = 0; i < stops.length; i++) {
-        if (stops[i].type !== 'ArrayExpression' || stops[i].elements.length !== 2)
-          throw new Error(`paletteLerp() stop ${i} must be [color(...), position]`);
-      }
-      node.callee = { type: 'Identifier', name: '__p5.paletteLerp' };
-      node.arguments = [
-        { type: 'ArrayExpression', elements: stops.map(s => s.elements[0]) },
-        { type: 'ArrayExpression', elements: stops.map(s => s.elements[1]) },
-        tArg
-      ];
-    }
-  }, undefined, { uniformCallbackNames });
-  
   // Second pass: transform everything except if/for statements using normal ancestor traversal
   const nonControlFlowCallbacks = { ...ASTCallbacks };
   delete nonControlFlowCallbacks.IfStatement;
   delete nonControlFlowCallbacks.ForStatement;
-  ancestor(ast, nonControlFlowCallbacks, undefined, { varyings: {}, uniformCallbackNames });
+  ancestor(ast, nonControlFlowCallbacks, undefined, { varyings: {}, uniformCallbackNames, p5 });
 
   // Third pass: transform helper functions with early returns to use __returnValue pattern
   transformHelperFunctionEarlyReturns(ast, uniformCallbackNames);

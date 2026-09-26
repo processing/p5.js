@@ -400,14 +400,29 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
     });
     return createStrandsNode(id, dimension, strandsContext);
   });
-  augmentFn(fn, p5, 'paletteLerp', function(colorsNode, positionsNode, tNode) {
+  augmentFn(fn, p5, 'paletteLerp', function(stopsNode, tNode) {
     if (!strandsContext.active) return;
 
-    const n = colorsNode.length;
+    if (!Array.isArray(stopsNode)) {
+      throw new Error(
+        'paletteLerp() first argument must be an array literal: [[color(...), pos], ...]'
+      );
+    }
+    const n = stopsNode.length;
+    if (n < 2 || n > 8) {
+      throw new Error(`paletteLerp() requires 2–8 color stops, got ${n}.`);
+    }
+    for (let i = 0; i < n; i++) {
+      if (!Array.isArray(stopsNode[i]) || stopsNode[i].length !== 2) {
+        throw new Error(
+          `paletteLerp() stop ${i} must be a 2-element array: [color(...), position]`
+        );
+      }
+    }
 
     // Wrap raw values into StrandsNodes
-    const colors = colorsNode.map(c => p5.strandsNode(c));
-    const positions = positionsNode.map(p => p5.strandsNode(p));
+    const colors = stopsNode.map(([c]) => p5.strandsNode(c));
+    const positions = stopsNode.map(([, p]) => p5.strandsNode(p));
     const t = p5.strandsNode(tNode);
 
     // Helper: mix(a, b, clamp((t - pa) / (pb - pa), 0, 1))
@@ -438,6 +453,14 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
 
     return result;
   });
+  // Tell the transpiler that argument 0 (the color-stop pairs) is a raw
+  // array it should leave untouched rather than converting to a vector —
+  // including the nested [color, position] pairs inside it, to any depth.
+  // See strands_transpiler.js's ArrayExpression visitor.
+  fn.paletteLerp.argTypes = [
+    { type: 'Array', subtype: { type: 'any' } },
+    { type: 'Number' }
+  ];
 
   strandsContext._randomSeed = null;
 
