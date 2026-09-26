@@ -132,11 +132,23 @@ export class FES {
   static TL = TL;
 
   static premade = {
-    ordinals: [TL.tl`first`],
+    ordinals: [
+      TL.tl`first`,
+      TL.tl`second`,
+      TL.tl`third`,
+      TL.tl`fourth`,
+      TL.tl`fifth`,
+      TL.tl`sixth`,
+      TL.tl`seventh`,
+      TL.tl`eighth`,
+      TL.tl`ninth`,
+      TL.tl`tenth`,
+    ],
     types: {
       string: TL.tl`string`,
       boolean: TL.tl`boolean`,
-      number: TL.tl`number`
+      number: TL.tl`number`,
+      function: TL.tl`function`
     }
   };
 }

@@ -14,6 +14,15 @@
   "5cz1brq3ke": "There was some trouble loading your GIF. Make sure that your GIF is using 87a or 89a encoding.",
   "1kv37lrbjy": "🌸 p5.js says: ",
   "ordinal1": "first",
+  "ordinal2": "second",
+  "ordinal3": "third",
+  "ordinal4": "fourth",
+  "ordinal5": "fifth",
+  "ordinal6": "sixth",
+  "ordinal7": "seventh",
+  "ordinal8": "eighth",
+  "ordinal9": "ninth",
+  "ordinal10": "tenth",
   "typeString": "string",
   "typeBoolean": "boolean",
   "typeNumber": "number",
@@ -51,5 +60,9 @@
   "e1bltb2f3i": "The media that tried to play (with '${this.src}') wasn't allowed to by this browser, most likely due to the browser's autoplay policy.\\n\\n+ More info: https://developer.mozilla.org/docs/Web/Media/Autoplay_guide",
   "fxcmxx850s": "${experimentalMessages[subjectArea]} For more info, see https://p5js.org/contribute/${subjectArea}/",
   "ukmn4qp8ql": "To create a WEBGPU canvas, remember to add the WebGPU add-on to your project.",
-  "gp2s5qktp8": "We weren't able to find a renderer called ${selectedRenderer}."
+  "gp2s5qktp8": "We weren't able to find a renderer called ${selectedRenderer}.",
+  "rf4evsxua3": "The GIF is over the maximum allowed dimension. Try to shrink the image or set p5.MAX_GIF_PIXELS to a higher value.",
+  "5szmoepgx4": "To create a WEBGPU canvas, add the WebGPU add-on to your project.",
+  "xswmwyt2ek": "Falling back to WebGL renderer.",
+  "fxy3ssriqw": "${e.message} Falling back to WebGL renderer."
 }
