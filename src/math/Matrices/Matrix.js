@@ -1856,9 +1856,12 @@ export class Matrix extends MatrixInterface {
    * @chainable
    */
   #transpose3x3(mat3) {
-    if (mat3 === undefined) {
+    if (mat3 instanceof Matrix) {
+      mat3 = mat3.mat3;
+    } else if (mat3 === undefined) {
       mat3 = this.mat3;
     }
+
     const a01 = mat3[1];
     const a02 = mat3[2];
     const a12 = mat3[5];

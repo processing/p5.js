@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-      - dev-2.0
+      - stable
   pull_request:
     branches:
       - '*'
@@ -17,7 +17,7 @@ jobs:
     strategy:
       matrix:
         include:
-          - os: ubuntu-latest
+          - os: ubuntu-26.04
             browser: chrome
           # - os: windows-latest
           #   browser: chrome
@@ -28,14 +28,14 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      
+
       - name: Use Node.js 22.x
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: 22.x
-      
+
       - name: Verify Chrome (Ubuntu)
-        if: matrix.os == 'ubuntu-latest' && matrix.browser == 'chrome'
+        if: matrix.os == 'ubuntu-26.04' && matrix.browser == 'chrome'
         run: |
           google-chrome --version
 
@@ -43,7 +43,7 @@ jobs:
         if: matrix.os == 'windows-latest' && matrix.browser == 'chrome'
         run: |
           & "C:\Program Files\Google\Chrome\Application\chrome.exe" --version
-      
+
       - name: Get node modules
         run: npm ci
         env:
@@ -51,7 +51,7 @@ jobs:
 
       - name: Build and test (Ubuntu)
         id: test
-        if: matrix.os == 'ubuntu-latest'
+        if: matrix.os == 'ubuntu-26.04'
         run: npm test -- --project=unit-tests
         continue-on-error: true
         env:
