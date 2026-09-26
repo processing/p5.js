@@ -23,6 +23,9 @@ if (typeof Float32Array !== 'undefined') {
 export class Matrix extends MatrixInterface {
   matrix;
   #sqDimention;
+  // Duck-typing flag (like isVector / isColor) so code such as
+  // p5.Shader.setUniform can recognize a p5.Matrix without instanceof
+  isMatrix = true;
 
   constructor(...args) {
     super(...args);
