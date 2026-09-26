@@ -19,23 +19,11 @@ function describe(p5, fn) {
    *
    * The first parameter, `text`, is the description of the canvas.
    *
-   * The second parameter, `langOrDisplay`, is optional. It can either 
-   * determine the language of the description or how the description 
-   * is displayed. The description can be displayed with either `LABEL` or `FALLBACK`. 
-   * - If a lang is passed, as in `describe('A description.', 'en')`,
-   *   the description will be read by the screen reader using the 
-   *   specified language's voice. The screen reader must have the specified 
-   *   language's voice installed for this to work.
-   * - If `LABEL` is passed, as in `describe('A description.', LABEL)`, 
-   *   the description will be visible in a div element next to the canvas. 
-   * - If `FALLBACK` is passed, as in `describe('A description.', FALLBACK)`, 
-   *   the description will only be visible to screen readers. FALLBACK is 
-   *   the default mode.
-   * 
-   * The third parameter, `display`, is optional but is only used if the second 
-   * parameter is lang, as in the language of the description, and the user wants 
-   * to determine how the description is displayed as well. In this case, they can 
-   * pass either `LABEL` or `FALLBACK` as the third parameter.
+   * The second parameter, `display`, is optional and can be `LABEL` or
+   * `FALLBACK`. The third parameter, `lang`, is optional and sets the language
+   * of the description for screen readers. However, if only the optional 'lang' 
+   * parameter is passed, it will be treated as the second optional parameter and
+   * the default option 'FALLBACK' will be used as the display.
    * 
    *
    * Read
@@ -44,8 +32,8 @@ function describe(p5, fn) {
    *
    * @method describe
    * @param  {String} text        description of the canvas.
-   * @param  {(FALLBACK|LABEL|String)} [langOrDisplay] valid lang attribute or either LABEL or FALLBACK.
    * @param  {(FALLBACK|LABEL)} [display] either LABEL or FALLBACK.
+   * @param  {String} [lang]      valid lang attribute.
    *
    * @example
    * function setup() {
@@ -123,14 +111,11 @@ function describe(p5, fn) {
    *   describe(`A green circle at (${x}, 50) moves from left to right on a gray square.`, LABEL);
    * }
    */
-  fn.describe = function (text, langOrDisplay, display) {
+  fn.describe = function (text, display, lang) {
     // p5._validateParameters('describe', arguments);
     if (typeof text !== 'string') {
       return;
     }
-    const parsedOptions = _parseOptions(this, langOrDisplay, display);
-    display = parsedOptions.display;
-    const { lang } = parsedOptions;
     const cnvId = this.canvas.id;
     //calls function that adds punctuation for better screen reading
     text = _descriptionText(text);
@@ -170,6 +155,40 @@ function describe(p5, fn) {
     _setDescriptionLang(this, lang);
   };
 
+  p5.registerDecorator('p5.prototype.describe', function (target) {
+    return function (text, display, lang) {
+      // Checks for optional parameters and rearranges if needed
+      if (arguments.length === 2 && typeof display === 'string') {
+        // (text, display)
+        if (display === this.LABEL || display === this.FALLBACK) {
+          return target.call(this, text, display, undefined);
+        }
+        // (text, lang)
+        return target.call(this, text, undefined, display);
+      }
+      _checkDescriptionOptions(this, 'describe', display, lang);
+      // (text, display, lang) or just (text)
+      return target.call(this, text, display, lang);
+    };
+  });
+
+  p5.registerDecorator('p5.prototype.describeElement', function (target) {
+    return function (name, text, display, lang) {
+      // Checks for optional parameters and rearranges if needed
+      if (arguments.length === 3 && typeof display === 'string') {
+        // (name, text, display)
+        if (display === this.LABEL || display === this.FALLBACK) {
+          return target.call(this, name, text, display, undefined);
+        }
+        // (name, text, lang)
+        return target.call(this, name, text, undefined, display);
+      }
+      _checkDescriptionOptions(this, 'describeElement', display, lang);
+      // (name, text, display, lang) or just (name, text)
+      return target.call(this, name, text, display, lang);
+    };
+  });
+
   /**
    * Creates a screen reader-accessible description of elements in the canvas.
    *
@@ -180,15 +199,11 @@ function describe(p5, fn) {
    *
    * The second parameter, `text`, is the description of the element.
    * 
-   * The third parameter, `langOrDisplay`, is optional. It can either 
-   * determine the language of the description or how the description 
-   * is displayed. The description can be displayed with either `LABEL` 
-   * or `FALLBACK`
-   * 
-   * The fourth parameter, `display`, is optional but is only used if the third 
-   * parameter is lang, as in the language of the description, and the user wants 
-   * to determine how the description is displayed as well. In this case, they can 
-   * pass either `LABEL` or `FALLBACK` as the fourth parameter.
+   * The third parameter, `display`, is optional and can be `LABEL` or
+   * `FALLBACK`. The fourth parameter, `lang`, is optional and sets the language
+   * of the description for screen readers. However, if only the optional 'lang' 
+   * parameter is passed, it will be treated as the third optional parameter and
+   * the default option 'FALLBACK' will be used as the display.
    *
    * If `LABEL` is passed, as in `describe('A description.', LABEL)`, 
    * the description will be visible in a div element next to the canvas. Using 
@@ -203,8 +218,8 @@ function describe(p5, fn) {
    * @method describeElement
    * @param  {String} name        name of the element.
    * @param  {String} text        description of the element.
-   * @param  {(FALLBACK|LABEL|String)} [langOrDisplay]    valid lang attribute or either LABEL or FALLBACK.
-   * @param  {(FALLBACK|LABEL)} [display]          either LABEL or FALLBACK.
+   * @param  {(FALLBACK|LABEL)} [display] either LABEL or FALLBACK.
+   * @param  {String} [lang] valid lang attribute.
    * @example
    * function setup() {
    *   background('pink');
@@ -254,14 +269,11 @@ function describe(p5, fn) {
    * }
    */
 
-  fn.describeElement = function (name, text, langOrDisplay, display) {
+  fn.describeElement = function (name, text, display, lang) {
     // p5._validateParameters('describeElement', arguments);
     if (typeof text !== 'string' || typeof name !== 'string') {
       return;
     }
-    const parsedOptions = _parseOptions(this, langOrDisplay, display);
-    display = parsedOptions.display;
-    const { lang } = parsedOptions;
     const cnvId = this.canvas.id;
     //calls function that adds punctuation for better screen reading
     text = _descriptionText(text);
@@ -312,6 +324,7 @@ function describe(p5, fn) {
         this._describeElementHTML('label', name, inner);
       }
     }
+    _setDescriptionLang(this, lang);
   };
 
   /*
@@ -320,39 +333,16 @@ function describe(p5, fn) {
    *
    */
 
-  // Helps parse the optional parameters regardless of order
-  function _parseOptions(pInst, langOrDisplay, display) {
-    // Check if 2nd parameter is an object
-    if (typeof langOrDisplay === 'object' && langOrDisplay !== null) {
-      let finalDisplay = display;
-      if (finalDisplay === undefined) {
-        finalDisplay = langOrDisplay.display;
-      }
-      return {
-        display: finalDisplay,
-        lang: langOrDisplay.lang
-      };
-    }
+  function _checkDescriptionOptions(pInst, methodName, display, lang) {
+    // Ensures display and lang are in the correct orders and are valid
+    const validDisplay = display === undefined || display === pInst.LABEL || display === pInst.FALLBACK;
+    const validLanguage = lang === undefined || typeof lang === 'string';
 
-    // Check if langOrDisplay is display (LABEL or FALLBACK)
-    // Example: describe describe('text', LABEL)
-    // If 3 parameters: describe('text', LABEL, 'es')
-    if (langOrDisplay === pInst.LABEL || langOrDisplay === pInst.FALLBACK) {
-      let finalLang = undefined;
-      // Check if 3rd parameter exists and is a string (lang attribute)
-      if (typeof display === 'string') {
-        finalLang = display;
-      }
-      else if (typeof display === 'object' && display !== null) {
-        finalLang = display.lang;
-      }
-      return {display: langOrDisplay, lang: finalLang};
+    if (!validDisplay || !validLanguage) {
+      throw new TypeError(
+        `${methodName}() expects display (LABEL or FALLBACK) before lang.`
+      );
     }
-
-    // langOrDisplay is lang
-    // Example: describe('text', 'es') 
-    // If 3 parameters: describe('text', 'es', LABEL)
-    return {display: display, lang: langOrDisplay};
   }
 
   function _setDescriptionLang(pInst, lang) {
