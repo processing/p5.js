@@ -2056,6 +2056,15 @@ class Element {
       }
 
       // Deal with the files
+      const trackBlobFile = callback => file => {
+        if (file._isBlobUrl) {
+          if (!this._pInst._blobFiles) {
+            this._pInst._blobFiles = new Set();
+          }
+          this._pInst._blobFiles.add(file);
+        }
+        callback(file);
+      };
       Element._attachListener(
         'drop',
         function (evt) {
@@ -2069,7 +2078,7 @@ class Element {
 
           // Load each one and trigger the callback
           for (const f of files) {
-            File._load(f, callback, this._pInst);
+            File._load(f, trackBlobFile(callback));
           }
         },
         this

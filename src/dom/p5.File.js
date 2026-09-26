@@ -7,10 +7,8 @@
 import { XML } from '../io/p5.XML';
 
 class File {
-  constructor(file, pInst) {
+  constructor(file) {
     this.file = file;
-
-    this._pInst = pInst;
 
     // Splitting out the file type into two components
     // This makes determining if image or text etc simpler
@@ -29,8 +27,12 @@ class File {
    * When video or audio files are loaded via
    * <a href="#/p5/createFileInput">createFileInput()</a> or
    * <a href="#/p5.Element/drop">myElement.drop()</a>, p5 creates a Blob URL
-   * pointing to the media in browser memory. Calling `revoke()` releases that
-   * resource immediately instead of waiting for the sketch to be removed.
+   * pointing to the media in browser memory. p5 normally releases this
+   * resource when the sketch is removed. Call `revoke()` sooner when the media
+   * is no longer needed while the sketch continues running, such as when
+   * replacing a video with a new one. Do not revoke the URL while a media
+   * element still needs it: after revocation, the URL cannot be used to load,
+   * play, or seek the media.
    *
    * @method revoke
    * @for p5.File
@@ -48,6 +50,8 @@ class File {
    * function handleFile(file) {
    *   if (file.type === 'video') {
    *     if (video) {
+   *       // The old video no longer needs its URL, so release it before
+   *       // replacing the video while the sketch is still running.
    *       video.remove();
    *       previousFile.revoke();
    *     }
@@ -60,9 +64,6 @@ class File {
   revoke() {
     if (this._isBlobUrl && this.data) {
       URL.revokeObjectURL(this.data);
-      if (this._pInst && this._pInst._blobUrls) {
-        this._pInst._blobUrls.delete(this.data);
-      }
       this._isBlobUrl = false;
     }
   }
@@ -87,7 +88,7 @@ class File {
     return reader;
   }
 
-  static _load(f, callback, pInst) {
+  static _load(f, callback) {
     // Text or data?
     // This should likely be improved
     if (/^text\//.test(f.type) || f.type === 'application/json') {
@@ -95,18 +96,24 @@ class File {
     } else if (!/^(video|audio)\//.test(f.type)) {
       File._createLoader(f, callback).readAsDataURL(f);
     } else {
-      const file = new File(f, pInst);
+      const file = new File(f);
       file.data = URL.createObjectURL(f);
       file._isBlobUrl = true;
-      if (pInst && pInst._blobUrls) {
-        pInst._blobUrls.add(file.data);
-      }
       callback(file);
     }
   }
 }
 
-function file(p5, fn) {
+function file(p5, fn, lifecycles) {
+  lifecycles.remove = function () {
+    if (this._blobFiles) {
+      for (const file of this._blobFiles) {
+        file.revoke();
+      }
+      this._blobFiles.clear();
+    }
+  };
+
   /**
    * A class to describe a file.
    *
@@ -401,5 +408,5 @@ export default file;
 export { File };
 
 if (typeof p5 !== 'undefined') {
-  file(p5, p5.prototype);
+  p5.registerAddon(file);
 }

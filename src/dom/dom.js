@@ -1822,10 +1822,18 @@ function dom(p5, fn) {
   fn.createFileInput = function (callback, multiple = false) {
     // p5._validateParameters('createFileInput', arguments);
 
-    const pInst = this;
+    const trackBlobFile = callback => file => {
+      if (file._isBlobUrl) {
+        if (!this._blobFiles) {
+          this._blobFiles = new Set();
+        }
+        this._blobFiles.add(file);
+      }
+      callback(file);
+    };
     const handleFileSelect = function (event) {
       for (const file of event.target.files) {
-        File._load(file, callback, pInst);
+        File._load(file, trackBlobFile(callback));
       }
     };
 

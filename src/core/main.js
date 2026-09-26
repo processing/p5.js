@@ -63,7 +63,6 @@ class p5 {
     this._userNode = node;
     this._curElement = null;
     this._elements = [];
-    this._blobUrls = new Set();
     this._glAttributes = null;
     this._webgpuAttributes = null;
     this._requestAnimId = 0;
@@ -395,12 +394,6 @@ class p5 {
       // Run `remove` hooks
       await this._runLifecycleHook('remove');
     }
-
-    // Revoke any tracked Blob URLs created by p5.File._load
-    for (const url of this._blobUrls) {
-      URL.revokeObjectURL(url);
-    }
-    this._blobUrls.clear();
 
     // remove window bound properties and methods
     if (this._isGlobal) {
