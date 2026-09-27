@@ -13,11 +13,9 @@ import { Renderer3D } from '../core/p5.Renderer3D';
 import { getStrokeDefs } from './enums';
 import { Shader } from './p5.Shader';
 import { MipmapTexture } from './p5.Texture';
-import { Framebuffer } from './p5.Framebuffer';
 import { RGB, RGBA } from '../color/creating_reading';
 import { Image } from '../image/p5.Image';
 import { glslBackend } from './strands_glslBackend';
-import { TypeInfoFromGLSLName } from '../strands/ir_types.js';
 import { getShaderHookTypes } from './shaderHookUtils';
 
 import filterBaseVert from './shaders/filters/base.vert';
@@ -74,6 +72,9 @@ for (const key in defaultShaders) {
 class RendererGL extends Renderer3D {
   constructor(pInst, w, h, isMainCanvas, elt) {
     super(pInst, w, h, isMainCanvas, elt);
+
+    this.rendererType = constants.WEBGL;
+    this._pInst.rendererType = this.rendererType;
 
     if (this.webglVersion === constants.WEBGL2) {
       this.blendExt = this.GL;
@@ -280,7 +281,7 @@ class RendererGL extends Renderer3D {
             geometry.lineVertices.length / 3,
             count
           );
-        } catch (e) {
+        } catch {
           console.log(
             '🌸 p5.js says: Instancing is only supported in WebGL2 mode'
           );
@@ -322,7 +323,7 @@ class RendererGL extends Renderer3D {
             0,
             count
           );
-        } catch (e) {
+        } catch {
           console.log(
             '🌸 p5.js says: Instancing is only supported in WebGL2 mode'
           );
@@ -342,7 +343,7 @@ class RendererGL extends Renderer3D {
       } else {
         try {
           gl.drawArraysInstanced(glMode, 0, geometry.vertices.length, count);
-        } catch (e) {
+        } catch {
           console.log(
             '🌸 p5.js says: Instancing is only supported in WebGL2 mode'
           );

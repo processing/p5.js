@@ -1487,6 +1487,9 @@ function dom(p5, fn) {
     };
 
     self.remove = function (value) {
+      if (arguments.length === 0 || value === undefined) {
+        return Element.prototype.remove.call(this);
+      }
       for (const optionEl of self._getOptionsArray()) {
         if (optionEl.value === value) {
           if (isLabelElement(optionEl.parentElement)) {

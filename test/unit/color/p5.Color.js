@@ -464,7 +464,7 @@ suite('p5.Color', function () {
       c = mockP5Prototype.color('rgba(255, 0, 102, 0.8)');
     });
 
-    test.todo('should correctly get HSLA property', function () {
+    test('should correctly get HSLA property', function () {
       assert.approximately(c._getHue(), 336, 0.5);
       assert.approximately(c._getSaturation(), 100, 0.5);
       assert.approximately(c._getLightness(), 50, 0.5);
@@ -487,7 +487,7 @@ suite('p5.Color', function () {
       c = mockP5Prototype.color('hsla(336, 100%, 50%, 0.8)');
     });
 
-    test.todo('should correctly get HSLA property', function () {
+    test('should correctly get HSLA property', function () {
       assert.approximately(c._getHue(), 336, 0.5);
       assert.approximately(c._getSaturation(), 100, 0.5);
       assert.approximately(c._getLightness(), 50, 0.5);
@@ -514,7 +514,7 @@ suite('p5.Color', function () {
       c = mockP5Prototype.color('hsba(336, 100%, 100%, 0.8)');
     });
 
-    test.todo('should correctly get HSLA property', function () {
+    test('should correctly get HSLA property', function () {
       assert.approximately(c._getHue(), 336, 0.5);
       assert.approximately(c._getSaturation(), 100, 0.5);
       assert.approximately(c._getLightness(), 50, 0.5);
@@ -634,7 +634,7 @@ suite('p5.Color', function () {
       c = mockP5Prototype.color('rgba(255, 0, 102, 0.8)');
     });
 
-    test.todo('should correctly get HSBA property', function () {
+    test('should correctly get HSBA property', function () {
       assert.approximately(c._getHue(), 336, 0.5);
       assert.approximately(c._getSaturation(), 100, 0.5);
       assert.approximately(c._getBrightness(), 100, 0.5);
@@ -682,7 +682,7 @@ suite('p5.Color', function () {
       c = mockP5Prototype.color('hsla(336, 100%, 50%, 0.8)');
     });
 
-    test.todo('should correctly get HSBA property', function () {
+    test('should correctly get HSBA property', function () {
       assert.approximately(c._getHue(), 336, 0.5);
       assert.approximately(c._getSaturation(), 100, 0.5);
       assert.approximately(c._getBrightness(), 100, 0.5);
