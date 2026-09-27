@@ -45,7 +45,7 @@ const map = (n, start1, stop1, start2, stop2, clamp) => {
 };
 
 const toHexComponent = v => {
-  const vInt = ~~(v * 255);
+  const vInt = Math.round(v * 255);
   const hex = vInt.toString(16);
   if (hex.length < 2) {
     return '0' + hex;
