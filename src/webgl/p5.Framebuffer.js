@@ -68,11 +68,9 @@ class Framebuffer {
     this.pixels = [];
 
     this.format = settings.format || constants.UNSIGNED_BYTE;
-    this.channels = settings.channels || (
-      this.renderer.defaultFramebufferAlpha()
-        ? RGBA
-        : RGB
-    );
+    this.channels =
+      settings.channels ||
+      (this.renderer.defaultFramebufferAlpha() ? RGBA : RGB);
     this.useDepth = settings.depth === undefined ? true : settings.depth;
     this.depthFormat = settings.depthFormat || constants.FLOAT;
     this.textureFiltering = settings.textureFiltering || constants.LINEAR;
@@ -92,8 +90,11 @@ class Framebuffer {
     }
     this.density = settings.density || this.renderer._pixelDensity;
     if (settings.width && settings.height) {
-      const dimensions =
-        this.renderer._adjustDimensions(settings.width, settings.height);
+      const dimensions = this.renderer._adjustDimensions(
+        settings.width,
+        settings.height,
+        this.density
+      );
       this.width = dimensions.adjustedWidth;
       this.height = dimensions.adjustedHeight;
       this._autoSized = false;
@@ -113,9 +114,12 @@ class Framebuffer {
     this.renderer.validateFramebufferFormats(this);
 
     if (settings.stencil && !this.useDepth) {
-      console.warn('A stencil buffer can only be used if also using depth. Since the framebuffer has no depth buffer, the stencil buffer will be ignored.');
+      console.warn(
+        'A stencil buffer can only be used if also using depth. Since the framebuffer has no depth buffer, the stencil buffer will be ignored.'
+      );
     }
-    this.useStencil = this.useDepth &&
+    this.useStencil =
+      this.useDepth &&
       (settings.stencil === undefined ? true : settings.stencil);
 
     // Let renderer create framebuffer resources with antialiasing support
@@ -174,8 +178,11 @@ class Framebuffer {
    */
   resize(width, height) {
     this._autoSized = false;
-    const dimensions =
-      this.renderer._adjustDimensions(width, height);
+    const dimensions = this.renderer._adjustDimensions(
+      width,
+      height,
+      this.density
+    );
     width = dimensions.adjustedWidth;
     height = dimensions.adjustedHeight;
     this.width = width;
@@ -377,11 +384,13 @@ class Framebuffer {
       this.depthFormat = constants.UNSIGNED_INT;
     }
 
-    if (![
-      constants.UNSIGNED_BYTE,
-      constants.FLOAT,
-      constants.HALF_FLOAT
-    ].includes(this.format)) {
+    if (
+      ![
+        constants.UNSIGNED_BYTE,
+        constants.FLOAT,
+        constants.HALF_FLOAT
+      ].includes(this.format)
+    ) {
       console.warn(
         'Unknown Framebuffer format. ' +
           'Please use UNSIGNED_BYTE, FLOAT, or HALF_FLOAT. ' +
@@ -389,10 +398,10 @@ class Framebuffer {
       );
       this.format = constants.UNSIGNED_BYTE;
     }
-    if (this.useDepth && ![
-      constants.UNSIGNED_INT,
-      constants.FLOAT
-    ].includes(this.depthFormat)) {
+    if (
+      this.useDepth &&
+      ![constants.UNSIGNED_INT, constants.FLOAT].includes(this.depthFormat)
+    ) {
       console.warn(
         'Unknown Framebuffer depth format. ' +
           'Please use UNSIGNED_INT or FLOAT. Defaulting to FLOAT.'
@@ -458,29 +467,22 @@ class Framebuffer {
     if (this.useDepth) {
       this.depth = new FramebufferTexture(this, 'depthTexture');
       const depthFilter = constants.NEAREST;
-      this.depthP5Texture = new Texture(
-        this.renderer,
-        this.depth,
-        {
-          minFilter: depthFilter,
-          magFilter: depthFilter
-        }
-      );
+      this.depthP5Texture = new Texture(this.renderer, this.depth, {
+        minFilter: depthFilter,
+        magFilter: depthFilter
+      });
       this.renderer.textures.set(this.depth, this.depthP5Texture);
     }
 
     this.color = new FramebufferTexture(this, 'colorTexture');
-    const filter = this.textureFiltering === constants.LINEAR
-      ? constants.LINEAR
-      : constants.NEAREST;
-    this.colorP5Texture = new Texture(
-      this.renderer,
-      this.color,
-      {
-        minFilter: filter,
-        magFilter: filter
-      }
-    );
+    const filter =
+      this.textureFiltering === constants.LINEAR
+        ? constants.LINEAR
+        : constants.NEAREST;
+    this.colorP5Texture = new Texture(this.renderer, this.color, {
+      minFilter: filter,
+      magFilter: filter
+    });
     this.renderer.textures.set(this.color, this.colorP5Texture);
   }
 
@@ -774,14 +776,21 @@ class Framebuffer {
     // this.renderer.setCamera(this.defaultCamera);
     this.renderer.states.setValue('curCamera', this.defaultCamera);
     // set the projection matrix (which is not normally updated each frame)
-    this.renderer.states.setValue('uPMatrix', this.renderer.states.uPMatrix.clone());
+    this.renderer.states.setValue(
+      'uPMatrix',
+      this.renderer.states.uPMatrix.clone()
+    );
     this.renderer.states.uPMatrix.set(this.defaultCamera.projMatrix);
-    this.renderer.states.setValue('uViewMatrix', this.renderer.states.uViewMatrix.clone());
+    this.renderer.states.setValue(
+      'uViewMatrix',
+      this.renderer.states.uViewMatrix.clone()
+    );
     this.renderer.states.uViewMatrix.set(this.defaultCamera.cameraMatrix);
 
     this.renderer.resetMatrix();
-    this.renderer.states.uViewMatrix
-      .set(this.renderer.states.curCamera.cameraMatrix);
+    this.renderer.states.uViewMatrix.set(
+      this.renderer.states.curCamera.cameraMatrix
+    );
     this.renderer.states.uModelMatrix.reset();
     this.renderer._applyStencilTestIfClipping();
   }
@@ -892,7 +901,9 @@ class Framebuffer {
 
     const fbo = this.renderer.activeFramebuffers.pop();
     if (fbo !== this) {
-      throw new Error("It looks like you've called end() while another Framebuffer is active.");
+      throw new Error(
+        "It looks like you've called end() while another Framebuffer is active."
+      );
     }
     this._beforeEnd();
     if (this.prevFramebuffer) {
@@ -1076,7 +1087,11 @@ class Framebuffer {
         y = constrain(y, 0, this.height - 1);
       }
 
-      return this.renderer.readFramebufferPixel(this, x * this.density, y * this.density);
+      return this.renderer.readFramebufferPixel(
+        this,
+        x * this.density,
+        y * this.density
+      );
     }
 
     x = constrain(x, 0, this.width - 1);
@@ -1137,7 +1152,7 @@ class Framebuffer {
   }
 }
 
-function framebuffer(p5, fn){
+function framebuffer(p5, fn) {
   /**
    * A <a href="#/p5.Camera">p5.Camera</a> attached to a
    * <a href="#/p5.Framebuffer">p5.Framebuffer</a>.
@@ -1405,6 +1420,6 @@ function framebuffer(p5, fn){
 export default framebuffer;
 export { FramebufferTexture, FramebufferCamera, Framebuffer };
 
-if(typeof p5 !== 'undefined'){
+if (typeof p5 !== 'undefined') {
   framebuffer(p5, p5.prototype);
 }

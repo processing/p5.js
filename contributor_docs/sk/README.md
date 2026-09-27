@@ -5,7 +5,7 @@ Ahoj! Ďakujeme za tvoj záujem prispieť do projektu p5.js! Rôzne spôsoby ak�
 - `src/` obsahuje všetky zdrojové kódy knižnice, ktoré sú organizované do modulov na základe tém. Práve tu budeš pracovať ak budeš vyvýjať p5.js.
 - `lib/` obsahuje finálnu verziu p5.js určenú pre koncových používateľov. Táto verzia bude načítavaná do ich skečov a projektov (vrátane kompresnej formy). Toto je výstupom kompilácie zdrojových kódov do jedného súboru [Grunt](https://gruntjs.com/).
 - `contributor_docs/` obsahuje rôzne Markdown dokumenty ktoré sú určené pre vývojárov p5.js a to hlavne preto, lebo obsahujú popis praktík a princípov.
-- `docs/` neobsahuje samotnú dokumentáciu! Obsahuje však zdrojový kód, ktorý *generuje* [online verziu referenčnej príručky](https://p5js.org/reference/).
+- `docs/` neobsahuje samotnú dokumentáciu! Obsahuje však zdrojový kód, ktorý _generuje_ [online verziu referenčnej príručky](https://p5js.org/reference/).
 - `tests/` obsahuje unit testy, ktoré zaručujú, že knižnica bude fungovať správne aj po vykonaní zmien.
 - `tasks/` obsahuje skripty, ktoré vykonávajú automatizované úlohy spojené s budovaním, nasadením a vydaním novej verzie p5.js.
 - `patches/` môže z času na čas obsahovať [Git patches](https://git-scm.com/docs/git-format-patch). Vo väčšine prípadov však môžeš ignorovať tento priečinok.
@@ -32,6 +32,7 @@ Mimo samotného kódu je potrebné aby si dodal aj kombináciu z nasledovných.
 Stránka p5.js obsahujé [integrované príklady](https://p5js.org/examples/). Môžeš [pridať ďalšie](https://github.com/processing/p5.js-website/blob/main/contributor_docs/Adding_examples.md) a zároveň si pozrieť problém, ktorý obsahuje list [požadovaných príkladov](https://github.com/processing/p5.js/issues/1954).
 
 ## ES6
+
 p5.js nedávno migrovalo na [ES6](https://en.wikipedia.org/wiki/ECMAScript#6th_Edition_-_ECMAScript_2015). Ak chceš vidieť ako táto zmena ovplyňuje tvoj príspevok, navštív prosím stránku [adaptácia ES6](./es6-adoption.md).
 
 ## Iné Nápady
@@ -55,16 +56,18 @@ Niektoré syntaktické chyby je však možné opraviť automaticky pomocou prík
 ```shell
 $ npm run lint:fix
 ```
+
 Lepšie je držať sa zavedeného štýlu projektu, ale [príležitostne](https://github.com/processing/p5.js/search?utf8=%E2%9C%93&q=prettier-ignore&type=) by sa mohla použiť alternatívna syntax. Uľahčite tým pochopenie kódu. V týchto prípadoch Prettier [ponúka výnimky](https://prettier.io/docs/en/ignore.html), komentár `// prettier-ignore`, ktorý môžete použiť na získanie podrobných výnimiek. Pokúste sa vyhnúť použitiu tohto, ak je to možné, pretože existujú dobré dôvody pre väčšinu preferencií štýlov vynútených štylistickým procesorom.
 
 Toto je krátky sumár k pravidlám štýlu kódu. Prosím ber na vedomie, že tento zoznam môže byť nekompletný a preto je najlepšie sa okazovať na [.prettierrc](https://github.com/processing/p5.js/blob/main/.prettierrc) a [.eslintrc](https://github.com/processing/p5.js/blob/main/.eslintrc) súbory pre kompletný zoznam pravidiel.
-* Používa sa ES6 syntax kódu.
-* Používaj apostrof (radšej než úvodzovky).
-* Na odsadenie použi dve medzery.
-* Všetky premenné definované v kóde by mali byť použité aspoň raz alebo úplne odstránené.
-* Neporovnávaj x == true alebo x == false. Použi namiesto toho (x) alebo (!x). x == true, sa vyhodnotí inak ako (x)! Objekty porovnávaj s null, čísla porovnávaj s 0 alebo znaky s "", aby sa predošlo nedorozumeniam.
-* V prípade, že tvoj kód obstahuje nejasností alebo komplexitu, pridaj komentáre.
-* Pozri si [prakitká Mozilla JS](https://developer.mozilla.org/en-US/docs/Mozilla/Developer_guide/Coding_Style#JavaScript_practices) pre užitočné rady a návody ohľadom štylistických tipov.
+
+- Používa sa ES6 syntax kódu.
+- Používaj apostrof (radšej než úvodzovky).
+- Na odsadenie použi dve medzery.
+- Všetky premenné definované v kóde by mali byť použité aspoň raz alebo úplne odstránené.
+- Neporovnávaj x == true alebo x == false. Použi namiesto toho (x) alebo (!x). x == true, sa vyhodnotí inak ako (x)! Objekty porovnávaj s null, čísla porovnávaj s 0 alebo znaky s "", aby sa predošlo nedorozumeniam.
+- V prípade, že tvoj kód obstahuje nejasností alebo komplexitu, pridaj komentáre.
+- Pozri si [prakitká Mozilla JS](https://developer.mozilla.org/en-US/docs/Mozilla/Developer_guide/Coding_Style#JavaScript_practices) pre užitočné rady a návody ohľadom štylistických tipov.
 
 ## Unit Testy
 
@@ -76,7 +79,7 @@ Aby bolo možné spustiť unit testy, budeš musieť nainštalovať závislosti 
 $ npm ci
 ```
 
-Tento príkaz nainštaluje *všetky* závislosti p5.js; stručne, najdôležitejšie závislosti špecifické pre unit testy zahrňuje:
+Tento príkaz nainštaluje _všetky_ závislosti p5.js; stručne, najdôležitejšie závislosti špecifické pre unit testy zahrňuje:
 
 - [Mocha](https://mochajs.org/), mocný testovací rámec, ktorý vykonáva jednotlivé testy špecifické pre p5.js.
 - [mocha-chrome](https://github.com/shellscape/mocha-chrome), doplnok pre mocha, ktorý spúšťa testy v "bezhlavom" móde prehliadača Google Chrome.
@@ -163,4 +166,3 @@ Zastršujúci projekt p5.js zahŕňa aj iné repozitáre ako tento.
 - [Náhľad Dovnútra p5.js](https://www.luisapereira.net/teaching/materials/processing-foundation) je videoprehliadka nástrojov a súborov použitých pri vývoji p5.js.
 - p5.js [Docker image](https://github.com/toolness/p5.js-docker) môže byť namontovaný do [Docker](https://www.docker.com/) a použitý na vývoj p5.js bez potreby manuálnej inštalácie požiadaviek ako [Node](https://nodejs.org/) alebo iných, takých, ktoré ovlyvňujú hosťovský operačný systém (s výnimkou inštalácie Docker-a).
 - Budovací proces knižnice p5.js generuje [json dátové súbory](https://p5js.org/reference/data.json), ktoré obsahujú verejné API p5.js a môžu byť použité v automatizovanom náradí, ako napríklad automatické dopĺňanie p5.js metód v editor-e. Tento súbor je dostupný na stránke p5.js, no nie je súčasťou tohto repozitára.
-

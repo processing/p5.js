@@ -4,7 +4,7 @@
  */
 
 class TableRow {
-  constructor(row=[]){
+  constructor(row = []) {
     let arr = row;
 
     this.arr = arr;
@@ -57,7 +57,7 @@ class TableRow {
    * }
    */
   set(column, value) {
-  // if typeof column is string, use .obj
+    // if typeof column is string, use .obj
     if (typeof column === 'string') {
       const cPos = this.table.columns.indexOf(column); // index of columnID
       if (cPos >= 0) {
@@ -67,7 +67,7 @@ class TableRow {
         throw new Error(`This table has no column named "${column}"`);
       }
     } else {
-    // if typeof column is number, use .arr
+      // if typeof column is number, use .arr
       if (column < this.table.columns.length) {
         this.arr[column] = value;
         const cTitle = this.table.columns[column];
@@ -325,9 +325,9 @@ class TableRow {
       return this.arr[column].toString();
     }
   }
-};
+}
 
-function tableRow(p5, fn){
+function tableRow(p5, fn) {
   /**
    * A TableRow object represents a single row of data values,
    * stored in columns, from a table.
@@ -346,6 +346,6 @@ function tableRow(p5, fn){
 
 export default tableRow;
 
-if(typeof p5 !== 'undefined'){
+if (typeof p5 !== 'undefined') {
   tableRow(p5, p5.prototype);
 }

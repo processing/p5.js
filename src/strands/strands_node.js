@@ -1,7 +1,15 @@
-import { swizzleTrap, primitiveConstructorNode, variableNode, arrayAccessNode, arrayAssignmentNode, createStructArrayElementProxy } from './ir_builders';
+import {
+  swizzleTrap,
+  primitiveConstructorNode,
+  variableNode,
+  arrayAccessNode,
+  arrayAssignmentNode,
+  createStructArrayElementProxy
+} from './ir_builders';
 import { BaseType, NodeType, OpCode } from './ir_types';
 import { getNodeDataFromID, createNodeData, getOrCreateNode } from './ir_dag';
 import { recordInBasicBlock } from './ir_cfg';
+import { dimensionMismatchError } from './strands_FES';
 export class StrandsNode {
   constructor(id, dimension, strandsContext) {
     this.id = id;
@@ -56,10 +64,25 @@ export class StrandsNode {
 
     // For varying variables, we need both assignment generation AND a way to reference by identifier
     if (this._originalIdentifier) {
+      const valueDim = value?.isStrandsNode
+        ? value.dimension
+        : Array.isArray(value)
+          ? value.length
+          : 1;
+      if (valueDim !== this._originalDimension && valueDim !== 1) {
+        dimensionMismatchError(
+          this._originalDimension,
+          valueDim,
+          this._originalIdentifier
+        );
+      }
       // Create a variable node for the target (the varying variable)
       const { id: targetVarID } = variableNode(
         this.strandsContext,
-        { baseType: this._originalBaseType, dimension: this._originalDimension },
+        {
+          baseType: this._originalBaseType,
+          dimension: this._originalDimension
+        },
         this._originalIdentifier
       );
 
@@ -108,10 +131,25 @@ export class StrandsNode {
 
     // For varying variables, create swizzle assignment
     if (this._originalIdentifier) {
+      const valueDim = value?.isStrandsNode
+        ? value.dimension
+        : Array.isArray(value)
+          ? value.length
+          : 1;
+      if (valueDim !== swizzlePattern.length && valueDim !== 1) {
+        dimensionMismatchError(
+          swizzlePattern.length,
+          valueDim,
+          `${this._originalIdentifier}.${swizzlePattern}`
+        );
+      }
       // Create a variable node for the target with swizzle
       const { id: targetVarID } = variableNode(
         this.strandsContext,
-        { baseType: this._originalBaseType, dimension: this._originalDimension },
+        {
+          baseType: this._originalBaseType,
+          dimension: this._originalDimension
+        },
         this._originalIdentifier
       );
 
@@ -156,7 +194,10 @@ export class StrandsNode {
     if (this._originalIdentifier) {
       const { id, dimension } = variableNode(
         this.strandsContext,
-        { baseType: this._originalBaseType, dimension: this._originalDimension },
+        {
+          baseType: this._originalBaseType,
+          dimension: this._originalDimension
+        },
         this._originalIdentifier
       );
       return createStrandsNode(id, dimension, this.strandsContext);
@@ -166,18 +207,20 @@ export class StrandsNode {
   }
 
   get(index) {
-    // Validate baseType is 'storage'
     const nodeData = getNodeDataFromID(this.strandsContext.dag, this.id);
-    if (nodeData.baseType !== 'storage') {
-      throw new Error('get() can only be used on storage buffers');
+
+    // Validate baseType is 'storage'
+    // For struct storage buffers, return a proxy with per-field getters/setters
+    if (nodeData.baseType === 'storage' && this._schema) {
+      return createStructArrayElementProxy(
+        this.strandsContext,
+        this,
+        index,
+        this._schema
+      );
     }
 
-    // For struct storage, return a proxy with per-field getters/setters
-    if (this._schema) {
-      return createStructArrayElementProxy(this.strandsContext, this, index, this._schema);
-    }
-
-    // Create array access node: buffer.get(index) -> buffer[index]
+    // Create array access node for storage and non-storage (vector) access
     const { id, dimension } = arrayAccessNode(
       this.strandsContext,
       this,
@@ -194,14 +237,26 @@ export class StrandsNode {
       throw new Error('set() can only be used on storage buffers');
     }
     if (!this._originalIdentifier) {
-      throw new Error('set() can only be used on storage buffers with an identifier');
+      throw new Error(
+        'set() can only be used on storage buffers with an identifier'
+      );
     }
 
     // If value is a plain object (struct literal), expand to per-field assignments
     // e.g. buf[idx] = { position: pos, velocity: vel }
     // becomes buf[idx].position = pos; buf[idx].velocity = vel;
-    if (value !== null && typeof value === 'object' && !value.isStrandsNode && this._schema) {
-      const proxy = createStructArrayElementProxy(this.strandsContext, this, index, this._schema);
+    if (
+      value !== null &&
+      typeof value === 'object' &&
+      !value.isStrandsNode &&
+      this._schema
+    ) {
+      const proxy = createStructArrayElementProxy(
+        this.strandsContext,
+        this,
+        index,
+        this._schema
+      );
       for (const [fieldName, fieldValue] of Object.entries(value)) {
         proxy[fieldName] = fieldValue;
       }

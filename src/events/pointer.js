@@ -4,11 +4,12 @@
  * @for p5
  */
 
-function pointer(p5, fn, lifecycles){
-  lifecycles.presetup = function(){
+function pointer(p5, fn, lifecycles) {
+  lifecycles.presetup = function () {
     const events = [
       'pointerdown',
       'pointerup',
+      'pointercancel',
       'pointermove',
       'dragend',
       'dragover',
@@ -16,16 +17,20 @@ function pointer(p5, fn, lifecycles){
       'dblclick',
       'wheel'
     ];
-    for(const event of events){
+    for (const event of events) {
       window.addEventListener(event, this[`_on${event}`].bind(this), {
         passive: false,
         signal: this._removeSignal
       });
     }
 
-    window.addEventListener('blur', () => {
-      this.mouseIsPressed = false;
-    }, { signal: this._removeSignal });
+    window.addEventListener(
+      'blur',
+      () => {
+        this.mouseIsPressed = false;
+      },
+      { signal: this._removeSignal }
+    );
   };
 
   /**
@@ -852,7 +857,7 @@ function pointer(p5, fn, lifecycles){
     }
   };
 
-  fn._updateMouseCoords = function() {
+  fn._updateMouseCoords = function () {
     this.pmouseX = this.mouseX;
     this.pmouseY = this.mouseY;
     this.pwinMouseX = this.winMouseX;
@@ -881,20 +886,17 @@ function pointer(p5, fn, lifecycles){
     };
   }
 
-  fn._setMouseButton = function(e) {
+  fn._setMouseButton = function (e) {
     // Check all active touches to determine button states
-    this.mouseButton.left = Array.from(this._activePointers.values())
-      .some(touch =>
-        (touch.buttons & 1) !== 0
-      );
-    this.mouseButton.center = Array.from(this._activePointers.values())
-      .some(touch =>
-        (touch.buttons & 4) !== 0
-      );
-    this.mouseButton.right = Array.from(this._activePointers.values())
-      .some(touch =>
-        (touch.buttons & 2) !== 0
-      );
+    this.mouseButton.left = Array.from(this._activePointers.values()).some(
+      touch => (touch.buttons & 1) !== 0
+    );
+    this.mouseButton.center = Array.from(this._activePointers.values()).some(
+      touch => (touch.buttons & 4) !== 0
+    );
+    this.mouseButton.right = Array.from(this._activePointers.values()).some(
+      touch => (touch.buttons & 2) !== 0
+    );
   };
 
   /**
@@ -1062,11 +1064,15 @@ function pointer(p5, fn, lifecycles){
    *   // return false;
    * }
    */
-  fn._onpointermove = function(e) {
+  fn._onpointermove = function (e) {
     let executeDefault;
     this._updatePointerCoords(e);
     this._activePointers.set(e.pointerId, e);
     this._setMouseButton(e);
+
+    if (this.mouseIsPressed && e.buttons === 0) {
+      this._onpointerup(e);
+    }
 
     if (
       !this.mouseIsPressed &&
@@ -1222,7 +1228,7 @@ function pointer(p5, fn, lifecycles){
    *   strokeWeight(10);
    * }
    */
-  fn._onpointerdown = function(e) {
+  fn._onpointerdown = function (e) {
     let executeDefault;
     this.mouseIsPressed = true;
 
@@ -1374,7 +1380,7 @@ function pointer(p5, fn, lifecycles){
    *   strokeWeight(10);
    * }
    */
-  fn._onpointerup = function(e) {
+  fn._onpointerup = function (e) {
     let executeDefault;
     this.mouseIsPressed = false;
 
@@ -1393,6 +1399,16 @@ function pointer(p5, fn, lifecycles){
 
   fn._ondragend = fn._onpointerup;
   fn._ondragover = fn._onpointermove;
+
+  fn._onpointercancel = function (e) {
+    this._activePointers.delete(e.pointerId);
+    this._setMouseButton(e);
+    this._updatePointerCoords(e);
+
+    if (this._activePointers.size === 0) {
+      this.mouseIsPressed = false;
+    }
+  };
 
   /**
    * A function that's called once after a mouse button is pressed and released.
@@ -1530,7 +1546,7 @@ function pointer(p5, fn, lifecycles){
    *   strokeWeight(10);
    * }
    */
-  fn._onclick = function(e) {
+  fn._onclick = function (e) {
     if (typeof this._customActions.mouseClicked === 'function') {
       const executeDefault = this._customActions.mouseClicked(e);
       if (executeDefault === false) {
@@ -1653,7 +1669,7 @@ function pointer(p5, fn, lifecycles){
    * }
    */
 
-  fn._ondblclick = function(e) {
+  fn._ondblclick = function (e) {
     if (typeof this._customActions.doubleClicked === 'function') {
       const executeDefault = this._customActions.doubleClicked(e);
       if (executeDefault === false) {
@@ -1793,7 +1809,7 @@ function pointer(p5, fn, lifecycles){
    *   // return false;
    * }
    */
-  fn._onwheel = function(e) {
+  fn._onwheel = function (e) {
     this._mouseWheelDeltaY = e.deltaY;
     if (typeof this._customActions.mouseWheel === 'function') {
       e.delta = e.deltaY;
@@ -1853,13 +1869,16 @@ function pointer(p5, fn, lifecycles){
    *   requestPointerLock();
    * }
    */
-  fn.requestPointerLock = function() {
+  fn.requestPointerLock = function () {
     // pointer lock object forking for cross browser
     const canvas = this._curElement.elt;
     canvas.requestPointerLock =
       canvas.requestPointerLock || canvas.mozRequestPointerLock;
     if (!canvas.requestPointerLock) {
-      p5._friendlyError('requestPointerLock is not implemented in this browser', 'requestPointerLock');
+      p5._friendlyError(
+        'requestPointerLock is not implemented in this browser',
+        'requestPointerLock'
+      );
       return false;
     }
     canvas.requestPointerLock();
@@ -1918,13 +1937,13 @@ function pointer(p5, fn, lifecycles){
    *   }
    * }
    */
-  fn.exitPointerLock = function() {
+  fn.exitPointerLock = function () {
     document.exitPointerLock();
   };
 }
 
 export default pointer;
 
-if(typeof p5 !== 'undefined'){
+if (typeof p5 !== 'undefined') {
   pointer(p5, p5.prototype);
 }

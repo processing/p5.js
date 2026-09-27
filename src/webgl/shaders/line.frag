@@ -69,6 +69,7 @@ void main() {
       discard;
     }
   }
-  OUT_COLOR = HOOK_getFinalColor(vec4(inputs.color.rgb, 1.) * inputs.color.a, vec2(0.0, 0.0));
+  OUT_COLOR = HOOK_getFinalColor(inputs.color, vec2(0.0, 0.0));
+  OUT_COLOR.rgb *= OUT_COLOR.a;
   HOOK_afterFragment();
 }

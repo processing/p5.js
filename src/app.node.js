@@ -57,4 +57,3 @@ import strands from './strands/p5.strands';
 p5.registerAddon(strands);
 
 export default p5;
-

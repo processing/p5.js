@@ -48,7 +48,7 @@ class Element {
     // stop all audios/videos and detach all devices like microphone/camera etc
     // used as input/output for audios/videos.
     // if (this instanceof p5.MediaElement) {
-    if(this.stop){
+    if (this.stop) {
       this.stop();
       const sources = this.elt.srcObject;
       if (sources !== null) {
@@ -72,10 +72,11 @@ class Element {
     // Jump one level up to the real p5 sketch stored in sketch._pInst.
 
     if (sketch && !sketch._elements && sketch._pInst) {
-      sketch = sketch._pInst;          // climb one level up
+      sketch = sketch._pInst; // climb one level up
     }
 
-    if (sketch && sketch._elements) {  // only if the array exists
+    if (sketch && sketch._elements) {
+      // only if the array exists
       const i = sketch._elements.indexOf(this);
       if (i !== -1) sketch._elements.splice(i, 1);
     }
@@ -945,9 +946,9 @@ class Element {
       const AUTO = constants.AUTO;
       if (aW !== AUTO || aH !== AUTO) {
         if (aW === AUTO) {
-          aW = h * this.width / this.height;
+          aW = (h * this.width) / this.height;
         } else if (aH === AUTO) {
-          aH = w * this.height / this.width;
+          aH = (w * this.height) / this.width;
         }
         // set diff for cnv vs normal div
         if (this.elt instanceof HTMLCanvasElement) {
@@ -1135,13 +1136,7 @@ class Element {
         'translate(' + args[0] + 'px, ' + args[1] + 'px)';
     } else if (args.length > 2) {
       this.elt.style.transform =
-        'translate3d(' +
-        args[0] +
-        'px,' +
-        args[1] +
-        'px,' +
-        args[2] +
-        'px)';
+        'translate3d(' + args[0] + 'px,' + args[1] + 'px,' + args[2] + 'px)';
       if (args.length === 3) {
         this.elt.parentElement.style.perspective = '1000px';
       } else {
@@ -2274,9 +2269,9 @@ class Element {
     ctx.elt.removeEventListener(ev, f, false);
     ctx._events[ev] = null;
   }
-};
+}
 
-function element(p5, fn){
+function element(p5, fn) {
   /**
    * A class to describe an
    * <a href="https://developer.mozilla.org/en-US/docs/Learn/HTML/Introduction_to_HTML/Getting_started" target="_blank">HTML element</a>.
@@ -2368,6 +2363,6 @@ function element(p5, fn){
 export default element;
 export { Element };
 
-if(typeof p5 !== 'undefined'){
+if (typeof p5 !== 'undefined') {
   element(p5, p5.prototype);
 }

@@ -1,5 +1,5 @@
-name: 📃 p5.js 2.0+ Bug Report
-description: This template is for submitting a bug report for bugs found in p5v2!
+name: 🐛 p5.js 2.0+ Bug Report
+description: This template is for reporting bugs (broken or incorrect behaviour). If you have questions about your own code, please visit our forum discourse.processing.org instead.
 title: "[p5.js 2.0+ Bug Report]: "
 labels: [p5.js 2.0+]
 body:
@@ -7,10 +7,9 @@ body:
     attributes:
       value: |
         ### What falls under this category?
-        There has been many changes to p5.js in 2.0! You can try it in p5.js Editor by updating the version in "Settings," and reference is available [on the beta version of the site](https://beta.p5js.org/). If you suspect there may be a bug, please follow the below steps before opening a bug report using this template:
-        1. There are some differences in behavior between p5.js 1.x and 2.0 beta, please check the changelog and/or [2.0 status board](https://github.com/orgs/processing/projects/21) to see if the difference in behavior is intended. If in doubt, feel free to open the issue anyway and ask.
-        2. New proposals for future p5.js 2.x minor releases may be considered! Please use the "New feature request" issue template, or check the [2.0 status board](https://github.com/orgs/processing/projects/21) is there is already discussion abotu this proposal.
-        3. Reports of errors or potential improvements in documentation and examples is expecially helpful, since many things have been updated from 1.x to 2.0!
+        This template is for reporting bugs (broken or incorrect behaviour). If you have questions about your own code, please visit our forum discourse.processing.org instead.
+        1. Please check the version pf p5.js you are using; for versions before 2.0, please use the "p5.js 1.x Bug Report" form.
+        2. New proposals for future p5.js 2.x minor releases may be considered. Please use the "New feature request" issue template, or check the [2.0+ status board](https://github.com/orgs/processing/projects/21) is there is already discussion about your idea.
   - type: checkboxes
     id: sub-area
     attributes:

@@ -5,34 +5,38 @@ import image from '../../../src/image/p5.Image';
 import p5 from '../../../src/app.js';
 import { vi } from 'vitest';
 
-/**
- * Expects an image file and a p5 instance with an image file loaded and drawn
- * and checks that they are exactly the same. Sends result to the callback.
- */
-var testImageRender = function(file, sketch) {
-  sketch.loadPixels();
-  var p = sketch.pixels;
-  var ctx = sketch;
+// Commented out along with its only callers: the 'should draw image with
+// defaults' and 'should draw cropped image' tests further down in this suite,
+// both of which are parked behind TODOs. Restore this together with them.
+//
+// /**
+//  * Expects an image file and a p5 instance with an image file loaded and drawn
+//  * and checks that they are exactly the same. Sends result to the callback.
+//  */
+// var testImageRender = function (file, sketch) {
+//   sketch.loadPixels();
+//   var p = sketch.pixels;
+//   var ctx = sketch;
+//
+//   sketch.clear();
+//
+//   return new Promise(function (resolve, reject) {
+//     sketch.loadImage(file, resolve, reject);
+//   }).then(function (img) {
+//     ctx.image(img, 0, 0);
+//
+//     ctx.loadPixels();
+//     var n = 0;
+//     for (var i = 0; i < p.length; i++) {
+//       var diff = Math.abs(p[i] - ctx.pixels[i]);
+//       n += diff;
+//     }
+//     var same = n === 0 && ctx.pixels.length === p.length;
+//     return same;
+//   });
+// };
 
-  sketch.clear();
-
-  return new Promise(function(resolve, reject) {
-    sketch.loadImage(file, resolve, reject);
-  }).then(function(img) {
-    ctx.image(img, 0, 0);
-
-    ctx.loadPixels();
-    var n = 0;
-    for (var i = 0; i < p.length; i++) {
-      var diff = Math.abs(p[i] - ctx.pixels[i]);
-      n += diff;
-    }
-    var same = n === 0 && ctx.pixels.length === p.length;
-    return same;
-  });
-};
-
-suite('loading images', function() {
+suite('loading images', function () {
   const imagePath = '/test/unit/assets/cat.jpg';
   const singleFrameGif = '/test/unit/assets/target_small.gif';
   const animatedGif = '/test/unit/assets/white_black.gif';
@@ -40,39 +44,48 @@ suite('loading images', function() {
   const disposeNoneGif = '/test/unit/assets/dispose_none.gif';
   const disposeBackgroundGif = '/test/unit/assets/dispose_background.gif';
   const disposePreviousGif = '/test/unit/assets/dispose_previous.gif';
+  const svgImage = '/test/unit/assets/green.svg';
   const invalidFile = '404file';
 
-  beforeAll(async function() {
+  beforeAll(async function () {
     loadingDisplaying(mockP5, mockP5Prototype);
     image(mockP5, mockP5Prototype);
     await httpMock.start({ quiet: true });
   });
 
   test('throws error when encountering HTTP errors', async () => {
-    await expect(mockP5Prototype.loadImage(invalidFile))
-      .rejects
-      .toThrow('Not Found');
+    await expect(mockP5Prototype.loadImage(invalidFile)).rejects.toThrow(
+      'Not Found'
+    );
   });
 
   test('error callback is called', async () => {
     await new Promise((resolve, reject) => {
-      mockP5Prototype.loadImage(invalidFile, () => {
-        reject('Success callback executed');
-      }, () => {
-        // Wait a bit so that if both callbacks are executed we will get an error.
-        setTimeout(resolve, 50);
-      });
+      mockP5Prototype.loadImage(
+        invalidFile,
+        () => {
+          reject('Success callback executed');
+        },
+        () => {
+          // Wait a bit so that if both callbacks are executed we will get an error.
+          setTimeout(resolve, 50);
+        }
+      );
     });
   });
 
   test('success callback is called', async () => {
     await new Promise((resolve, reject) => {
-      mockP5Prototype.loadImage(imagePath, () => {
-        // Wait a bit so that if both callbacks are executed we will get an error.
-        setTimeout(resolve, 50);
-      }, err => {
-        reject(`Error callback called: ${err.toString()}`);
-      });
+      mockP5Prototype.loadImage(
+        imagePath,
+        () => {
+          // Wait a bit so that if both callbacks are executed we will get an error.
+          setTimeout(resolve, 50);
+        },
+        err => {
+          reject(`Error callback called: ${err.toString()}`);
+        }
+      );
     });
   });
 
@@ -238,28 +251,62 @@ suite('loading images', function() {
     assert.equal(gifImage.gifProperties.displayIndex, 0);
     assert.equal(gifImage.gifProperties.timeDisplayed, 0);
   });
+
+  test('loads vector (SVG) images', async () => {
+    await expect(mockP5Prototype.loadImage(svgImage)).resolves.not.toThrow();
+
+    const img = await mockP5Prototype.loadImage(svgImage);
+    assert.isTrue(img instanceof mockP5.Image);
+
+    // ensure the sample svg is fully parsed and drawn correctly
+    assert.equal(img.width, 48);
+    assert.equal(img.height, 48);
+
+    const GREEN = [0, 255, 0, 255];
+    assert.deepEqual(img.get(0, 0), GREEN);
+    assert.deepEqual(img.get(47, 47), GREEN);
+  });
+
+  test('revokes any object URLs created during loading', async () => {
+    const createSpy = vi.spyOn(URL, 'createObjectURL');
+    const revokeSpy = vi.spyOn(URL, 'revokeObjectURL');
+
+    // successful load
+    await mockP5Prototype.loadImage(svgImage);
+    expect(revokeSpy).toHaveBeenCalledTimes(createSpy.mock.calls.length);
+
+    // errored load
+    const INVALID_PATH = '';
+    try {
+      await mockP5Prototype.loadImage(INVALID_PATH);
+    } catch {}
+    expect(revokeSpy).toHaveBeenCalledTimes(createSpy.mock.calls.length);
+
+    createSpy.mockRestore();
+    revokeSpy.mockRestore();
+  });
 });
 
-suite.todo('displaying images', function() {
+suite.todo('displaying images', function () {
   var myp5;
   var pImg;
   var imagePath = 'unit/assets/cat-with-hole.png';
   var chanNames = ['red', 'green', 'blue', 'alpha'];
 
-  beforeAll(async function() {
+  beforeAll(async function () {
     new Promise(resolve => {
-      new p5(function(p) {
-        p.setup = function() {
+      new p5(function (p) {
+        p.setup = function () {
           myp5 = p;
           myp5.pixelDensity(1);
           myp5.loadImage(
             imagePath,
-            function(img) {
+            function (img) {
               pImg = img;
               myp5.resizeCanvas(pImg.width, pImg.height);
               resolve();
             },
-            function() {
+            function () {
               throw new Error('Error loading image');
             }
           );
@@ -268,7 +315,7 @@ suite.todo('displaying images', function() {
     });
   });
 
-  afterAll(function() {
+  afterAll(function () {
     myp5.remove();
   });
 
@@ -311,7 +358,7 @@ suite.todo('displaying images', function() {
     }
   }
 
-  test('tint() with color', function() {
+  test('tint() with color', function () {
     assert.ok(pImg, 'image loaded');
     var tintColor = [150, 100, 50, 255];
     myp5.clear();
@@ -322,7 +369,7 @@ suite.todo('displaying images', function() {
     checkTint(tintColor);
   });
 
-  test('tint() with alpha', function() {
+  test('tint() with alpha', function () {
     assert.ok(pImg, 'image loaded');
     var tintColor = [255, 255, 255, 100];
     myp5.clear();
@@ -333,7 +380,7 @@ suite.todo('displaying images', function() {
     checkTint(tintColor);
   });
 
-  test('tint() with color and alpha', function() {
+  test('tint() with color and alpha', function () {
     assert.ok(pImg, 'image loaded');
     var tintColor = [255, 100, 50, 100];
     myp5.clear();
@@ -345,18 +392,18 @@ suite.todo('displaying images', function() {
   });
 });
 
-suite('displaying images that use fit mode', function() {
+suite('displaying images that use fit mode', function () {
   var myp5, imageSpy;
 
-  beforeAll(function() {
-    new p5(function(p) {
-      p.setup = function() {
+  beforeAll(function () {
+    new p5(function (p) {
+      p.setup = function () {
         myp5 = p;
       };
     });
   });
 
-  afterAll(function() {
+  afterAll(function () {
     myp5.remove();
   });
 
@@ -368,7 +415,7 @@ suite('displaying images that use fit mode', function() {
     vi.restoreAllMocks();
   });
 
-  test('CONTAIN when source image is larger than destination', function() {
+  test('CONTAIN when source image is larger than destination', function () {
     let src = myp5.createImage(400, 1000);
     myp5.image(src, 0, 0, 300, 400, 0, 0, 400, 1000, myp5.CONTAIN);
     expect(imageSpy)
@@ -386,7 +433,7 @@ suite('displaying images that use fit mode', function() {
       );
   });
 
-  test('CONTAIN when source image is smaller than destination', function() {
+  test('CONTAIN when source image is smaller than destination', function () {
     let src = myp5.createImage(40, 90);
     myp5.image(src, 0, 0, 300, 500, 0, 0, 400, 1000, myp5.CONTAIN);
     expect(imageSpy)
@@ -404,7 +451,7 @@ suite('displaying images that use fit mode', function() {
       );
   });
 
-  test('COVER when source image is larger than destination', function() {
+  test('COVER when source image is larger than destination', function () {
     let src = myp5.createImage(400, 1000);
     myp5.image(src, 0, 0, 300, 400, 0, 0, 400, 1000, myp5.COVER);
     const r = Math.max(300 / 400, 400 / 1000);
@@ -423,7 +470,7 @@ suite('displaying images that use fit mode', function() {
       );
   });
 
-  test('COVER when source image is smaller than destination', function() {
+  test('COVER when source image is smaller than destination', function () {
     let src = myp5.createImage(20, 100);
     myp5.image(src, 0, 0, 300, 400, 0, 0, 20, 100, myp5.COVER);
     const r = Math.max(300 / 20, 400 / 100);

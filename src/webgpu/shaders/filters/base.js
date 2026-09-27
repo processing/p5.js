@@ -22,7 +22,9 @@ struct CameraUniforms {
 @group(2) @binding(0) var<uniform> camera: CameraUniforms;
 `;
 
-export const baseFilterVertexShader = filterUniforms + `
+export const baseFilterVertexShader =
+  filterUniforms +
+  `
 struct VertexInput {
   @location(0) aPosition: vec3<f32>,
   @location(1) aTexCoord: vec2<f32>,
@@ -50,7 +52,9 @@ fn main(input: VertexInput) -> VertexOutput {
 }
 `;
 
-export const baseFilterFragmentShader = filterUniforms + `
+export const baseFilterFragmentShader =
+  filterUniforms +
+  `
 struct FilterInputs {
   texCoord: vec2<f32>,
   canvasSize: vec2<f32>,

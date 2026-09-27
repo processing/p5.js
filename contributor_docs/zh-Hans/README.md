@@ -1,5 +1,3 @@
-
-
 # 🌸欢迎！🌺
 
 感谢你有兴趣为 p5.js 做出贡献！我们的团队重视每一种形式的帮助，并且正在尽可能的扩大你能帮助的范围，这包括了参考文献、教学、编写程序、创作艺术、写作、设计、活动、组织、展策或者任何你能想象到的东西。[我们的社群网页](https://p5js.org/community/#contribute)提供了一些贡献与参与项目的方法。如果你要提供技术性的帮助，请接着往下读。
@@ -11,7 +9,7 @@
 p5.js 项目除了这个代码库外还包括了以下几个其他的代码库：
 
 - [p5.js](https://github.com/processing/p5.js)：包括了 p5.js 源代码。[面向用户的 p5.js 参考文献](https://p5js.org/reference/)也是由包含在此源代码中的 [JSDoc](http://usejsdoc.org/) 注解生成的。[Lauren Lee McCarthy](https://github.com/lmccart) 为维持者。
-- [p5.js-website](https://github.com/processing/p5.js-website)：此源代码包含了 [p5.js website](https://p5js.org )的大多数代码（除参考文献外）。[Lauren Lee McCarthy](https://github.com/lmccart) 为维持者。
+- [p5.js-website](https://github.com/processing/p5.js-website)：此源代码包含了 [p5.js website](https://p5js.org)的大多数代码（除参考文献外）。[Lauren Lee McCarthy](https://github.com/lmccart) 为维持者。
 - [p5.js-sound](https://github.com/processing/p5.js-sound)：包括了 p5.sound.js 程式库。[Jason Sigal](https://github.com/therewasaguy) 为维持者。
 - [p5.js-web-editor](https://github.com/processing/p5.js-web-editor)：包含了 [p5.js web editor](https://editor.p5js.org) 的源代码。[Cassie Tarakajian](https://github.com/catarak) 为维持者。请注意，旧版 [p5.js editor](https://github.com/processing/p5.js-editor) 已不再受支持。
 - [p5.accessibility](https://github.com/processing/p5.accessibility)：使 p5.js 更适合盲人和视障人士使用的程式库。
@@ -28,7 +26,6 @@ p5.js 项目除了这个代码库外还包括了以下几个其他的代码库�
 - `tests/` 包含单元测试，这些单元测试可确保库随着更改仍继续正常运行。
 - `utils/` 可能包含对存储库有用的其他文件，但是通常您可以忽略此目录。
 
-
 # 参考文献
 
 我们意识到参考文献是这个项目中最重要的部分。不好的参考文献是新用户与新贡献者的最大屏障，让项目不具有包容性。[contributing_documentation.md](./contributing_documentation.md) 页面为开始修改参考文献给出了一个深入的导览。p5.js 的参考文献可以在以下几个地方找到：
@@ -40,18 +37,17 @@ p5.js 项目除了这个代码库外还包括了以下几个其他的代码库�
 
 # GitHub Issue 流程
 
-* 我们使用 [GitHub issue](https://github.com/processing/p5.js/issues) 跟踪已知的错误和预期的新功能。[Issue lables](./issue_labels.md) 用于将问题分类，例如[适合初学者](https://github.com/processing/p5.js/labels/level%3Abeginner)的问题。
+- 我们使用 [GitHub issue](https://github.com/processing/p5.js/issues) 跟踪已知的错误和预期的新功能。[Issue lables](./issue_labels.md) 用于将问题分类，例如[适合初学者](https://github.com/processing/p5.js/labels/level%3Abeginner)的问题。
 
-* 如果您想开始处理现有问题，请对你打算探查的问题发表评论，以便其他贡献者知道该问题正在处理中并可以提供帮助。
+- 如果您想开始处理现有问题，请对你打算探查的问题发表评论，以便其他贡献者知道该问题正在处理中并可以提供帮助。
 
-* 完成有关此问题的工作后，请针对 p5.js main 分支[提交 Pull request](./preparing_a_pull_request.md) 。在PR的描述字段中，包括 “resolves #XXXX” 标记，以解决您要解决的问题。如果 PR 并不能完全解决该问题（即，在PR合并后该问题应保持打开状态），请输入 “addresses #XXXX”。
+- 完成有关此问题的工作后，请针对 p5.js main 分支[提交 Pull request](./preparing_a_pull_request.md) 。在PR的描述字段中，包括 “resolves #XXXX” 标记，以解决您要解决的问题。如果 PR 并不能完全解决该问题（即，在PR合并后该问题应保持打开状态），请输入 “addresses #XXXX”。
 
-* 如果发现错误或有想要添加新功能的主意，请先提交问题。请不要直接地提交包含修复程序或新功能的 Pull Request，而不先发出问题，否则我们将无法接受该 Pull Request。在有关该问题获得反馈并得到同意解决该问题后，您可以按照上述过程以提供修复或功能。
+- 如果发现错误或有想要添加新功能的主意，请先提交问题。请不要直接地提交包含修复程序或新功能的 Pull Request，而不先发出问题，否则我们将无法接受该 Pull Request。在有关该问题获得反馈并得到同意解决该问题后，您可以按照上述过程以提供修复或功能。
 
-* 您可以对问题进行分类，其中可能包括复制错误报告或要求提供重要信息，例如版本号或复制说明。 如果您想开始分类问题，一种简单的入门方法是[在 CodeTriage 上订阅 p5.js](https://www.codetriage.com/processing/p5.js)。[![Open Source Helpers](https://www.codetriage.com/processing/p5.js/badges/users.svg)](https://www.codetriage.com/processing/p5.js)
+- 您可以对问题进行分类，其中可能包括复制错误报告或要求提供重要信息，例如版本号或复制说明。 如果您想开始分类问题，一种简单的入门方法是[在 CodeTriage 上订阅 p5.js](https://www.codetriage.com/processing/p5.js)。[![Open Source Helpers](https://www.codetriage.com/processing/p5.js/badges/users.svg)](https://www.codetriage.com/processing/p5.js)
 
-* [organization.md](https://github.com/processing/p5.js/blob/main/contributor_docs/organization.md) 文件提供了有关如何组织问题以及决策过程的高级概述。如果您有兴趣，欢迎您参与。
-
+- [organization.md](https://github.com/processing/p5.js/blob/main/contributor_docs/organization.md) 文件提供了有关如何组织问题以及决策过程的高级概述。如果您有兴趣，欢迎您参与。
 
 # 开发过程
 
@@ -121,20 +117,21 @@ $ npm run lint:fix
 
 坚持使用已建立的项目样式通常是更可取的，但是[偶尔](https://github.com/processing/p5.js/search?utf8=%E2%9C%93&q=prettier-ignore&type=)可能使用不同的语法会使您的代码更易于理解。 这些情况下，Prettier [提供了一个解决方式](https://prettier.io/docs/en/ignore.html)，`// prettier-ignore`注释，您可以使用它来指定个别例外代码。不过如果可以的话，尽量避免使用它，因为 linter 实施的大多数代码格式都有好的理由。
 
- 这是代码样式规则的快速摘要。请注意，此列表可能不完整，最好参考 [.prettierrc](https://github.com/processing/p5.js/blob/main/.prettierrc) 和 [.eslintrc](https://github.com/processing/p5.js/blob/main/.eslintrc) 文件以获取完整列表。
- * 使用 ES6 语法
+这是代码样式规则的快速摘要。请注意，此列表可能不完整，最好参考 [.prettierrc](https://github.com/processing/p5.js/blob/main/.prettierrc) 和 [.eslintrc](https://github.com/processing/p5.js/blob/main/.eslintrc) 文件以获取完整列表。
 
-* 优先使用单引号
+- 使用 ES6 语法
 
-* 缩排使用两个空格
+- 优先使用单引号
 
-* 所有变量至少要使用一次，否则彻底删除
+- 缩排使用两个空格
 
-* 不要使用 `x == true` 或 `x == false`，请使用 `(x)` 或 `(x)!`。如果可能导致误解，请将物件与 `null` 对比、字符串与 `""` 对比、数字与 `0` 对比。
+- 所有变量至少要使用一次，否则彻底删除
 
-* 在复杂或模棱两可的地方使用注释
+- 不要使用 `x == true` 或 `x == false`，请使用 `(x)` 或 `(x)!`。如果可能导致误解，请将物件与 `null` 对比、字符串与 `""` 对比、数字与 `0` 对比。
 
-* 参考 [Mozilla JS practices](https://developer.mozilla.org/en-US/docs/Mozilla/Developer_guide/Coding_Style#JavaScript_practices) 以了解一些有用的代码格式技巧。
+- 在复杂或模棱两可的地方使用注释
+
+- 参考 [Mozilla JS practices](https://developer.mozilla.org/en-US/docs/Mozilla/Developer_guide/Coding_Style#JavaScript_practices) 以了解一些有用的代码格式技巧。
 
 ## 单元测试
 
@@ -149,7 +146,7 @@ $ npm ci
 这将安装*所有* p5.js 的依赖项； 简要地说，特定于单元测试的最重要依赖项包括：
 
 -[Mocha](https://mochajs.org/)，一个功能强大的测试框架，可以执行特定于 p5.js 的各个测试文件
--[mocha-chrome](https://github.com/shellscape/mocha-chrome)，一个可使用无头 Google Chrome 浏览器运行 mocha 测试的 mocha 插件
+\-[mocha-chrome](https://github.com/shellscape/mocha-chrome)，一个可使用无头 Google Chrome 浏览器运行 mocha 测试的 mocha 插件
 
 一旦安装了依赖项，请使用Grunt运行单元测试。
 

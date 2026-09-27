@@ -1,0 +1,15 @@
+mtllib windows_path.mtl
+v -1 -1 0
+v 1 -1 0
+v 1 1 0
+v -1 -1 2
+v 1 -1 2
+v 1 1 2
+vt 0 0
+vt 1 0
+vt 1 1
+vn 0 0 1
+usemtl winA
+f 1/1/1 2/2/1 3/3/1
+usemtl winB
+f 4/1/1 5/2/1 6/3/1
