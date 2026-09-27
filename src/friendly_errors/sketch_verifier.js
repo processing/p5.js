@@ -92,7 +92,10 @@ export const verifierUtils = {
       if (
         callee.type === 'MemberExpression' &&
         callee.property?.type === 'Identifier' &&
-        callee.property.name === 'modify'
+        callee.property.name === 'modify' &&
+        callee.object?.type === 'CallExpression' &&
+        callee.object.callee?.type === 'Identifier' &&
+        /^base\w*Shader$/.test(callee.object.callee.name)
       ) {
         return true;
       }

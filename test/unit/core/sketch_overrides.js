@@ -262,6 +262,16 @@ suite('Sketch Verifier', function () {
         expect(lengthDef).toBeDefined();
         expect(lengthDef.insideStrands).toBe(true);
       });
+
+      test('does not crash or flag unrelated object modify calls', function () {
+        const code = `
+          const obj = { modify: fn => fn() };
+          obj.modify(() => { const length = 0; });
+        `;
+        const result = verifierUtils.extractUserDefinedVariablesAndFuncs(code);
+        const lengthDef = result.variables.find(d => d.name === 'length');
+        expect(lengthDef?.insideStrands).toBe(false);
+      });
     });
   });
 
