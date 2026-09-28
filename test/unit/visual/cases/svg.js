@@ -720,4 +720,76 @@ visualSuite('svg', function () {
       await screenshot();
     });
   });
+
+  visualSuite('SVG Import - Shapes', function () {
+    visualTest('circle', async (p, screenshot) => {
+      setupDefault(p);
+      const shape = await loadFixture(p, 'circle');
+      p.shape(shape);
+      await screenshot();
+    });
+
+    visualTest('rect', async (p, screenshot) => {
+      setupDefault(p);
+      const shape = await loadFixture(p, 'rect');
+      p.shape(shape);
+      await screenshot();
+    });
+
+    visualTest('ellipse', async (p, screenshot) => {
+      setupDefault(p);
+      const shape = await loadFixture(p, 'ellipse');
+      p.shape(shape);
+      await screenshot();
+    });
+
+    visualTest('polygon', async (p, screenshot) => {
+      setupDefault(p);
+      const shape = await loadFixture(p, 'polygon');
+      p.shape(shape);
+      await screenshot();
+    });
+
+    visualTest('polyline', async (p, screenshot) => {
+      setupDefault(p);
+      const shape = await loadFixture(p, 'polyline');
+      p.shape(shape);
+      await screenshot();
+    });
+
+    visualTest('path', async (p, screenshot) => {
+      setupDefault(p);
+      const shape = await loadFixture(p, 'path-bezier');
+      p.shape(shape);
+      await screenshot();
+    });
+
+    visualTest('arc', async (p, screenshot) => {
+      setupDefault(p);
+      const shape = await loadFixture(p, 'arc');
+      p.shape(shape);
+      await screenshot();
+    });
+
+    visualTest('rounded rect', async (p, screenshot) => {
+      setupDefault(p);
+      const shape = await loadFixture(p, 'rounded-rect');
+      p.shape(shape);
+      await screenshot();
+    });
+
+    visualTest('overlapping shapes', async (p, screenshot) => {
+      setupDefault(p);
+      const shape = await loadFixture(p, 'overlapping-shapes');
+      p.shape(shape);
+      await screenshot();
+    });
+
+    visualTest('line', async (p, screenshot) => {
+      setupDefault(p);
+      const shape = await loadFixture(p, 'line');
+      p.shape(shape);
+      await screenshot();
+    });
+  });
 });
