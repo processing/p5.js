@@ -436,4 +436,136 @@ visualSuite('svg', function () {
       await screenshotSVG(p, screenshot, p.getSVG(record));
     });
   });
+
+  visualSuite('Push Pop State', function () {
+    visualTest('nothing', async (p, screenshot) => {
+      p.createCanvas(200, 200);
+      const record = p.buildShape(() => {
+        p.push();
+        p.pop();
+      });
+      await screenshotSVG(p, screenshot, p.getSVG(record));
+    });
+
+    visualTest('transforms and combinations', async (p, screenshot) => {
+      p.createCanvas(200, 200);
+      const record = p.buildShape(() => {
+        p.translate(50, 50);
+
+        p.push();
+        p.rotate(p.QUARTER_PI);
+        p.fill(0);
+        p.rect(0, 0, 40, 40);
+        p.pop();
+
+        p.fill(128);
+        p.rect(0, 0, 40, 40);
+      });
+      await screenshotSVG(p, screenshot, p.getSVG(record));
+    });
+
+    visualTest('sequential transforms', async (p, screenshot) => {
+      p.createCanvas(200, 200);
+      const record = p.buildShape(() => {
+        p.noStroke();
+
+        p.push();
+        p.translate(50, 20);
+        p.fill(255, 0, 0);
+        p.rect(0, 0, 30, 30);
+        p.pop();
+
+        p.push();
+        p.translate(20, 100);
+        p.fill(0, 255, 0);
+        p.rect(0, 0, 30, 30);
+        p.pop();
+
+        p.push();
+        p.translate(120, 80);
+        p.fill(0, 0, 255);
+        p.rect(0, 0, 30, 30);
+        p.pop();
+      });
+      await screenshotSVG(p, screenshot, p.getSVG(record));
+    });
+
+    visualTest('nested transforms', async (p, screenshot) => {
+      p.createCanvas(200, 200);
+      const record = p.buildShape(() => {
+        p.noStroke();
+
+        p.push();
+        p.translate(40, 20);
+        p.fill(255, 0, 0);
+        p.rect(0, 0, 25, 25);
+
+        p.push();
+        p.translate(0, 50);
+        p.fill(0, 255, 0);
+        p.rect(0, 0, 25, 25);
+        p.pop();
+
+        p.fill(0, 0, 255);
+        p.rect(0, 100, 25, 25);
+        p.pop();
+
+        p.fill(255, 255, 0);
+        p.rect(0, 0, 25, 25);
+      });
+      await screenshotSVG(p, screenshot, p.getSVG(record));
+    });
+
+    visualTest('background', async (p, screenshot) => {
+      p.createCanvas(200, 200);
+      const record = p.buildShape(() => {
+        p.push();
+        p.background(255, 200, 100);
+        p.pop();
+      });
+      await screenshotSVG(p, screenshot, p.getSVG(record));
+    });
+
+    visualTest('transform background shape fill and combinations', async (p, screenshot) => {
+      p.createCanvas(200, 200);
+      const record = p.buildShape(() => {
+        p.fill(255, 0, 0);
+        p.stroke(0);
+        p.strokeWeight(2);
+
+        p.push();
+        p.translate(60, 60);
+        p.fill(0, 255, 0);
+        p.stroke(0, 0, 255);
+        p.strokeWeight(5);
+        p.rect(0, 0, 50, 50);
+
+        p.background(200, 100, 100);
+        p.pop();
+
+        p.rect(120, 120, 50, 50);
+      });
+      await screenshotSVG(p, screenshot, p.getSVG(record));
+    });
+
+    visualTest('clear', async (p, screenshot) => {
+      p.createCanvas(200, 200);
+      const record = p.buildShape(() => {
+        p.fill(255, 0, 0);
+        p.noStroke();
+        p.rect(20, 20, 50, 50);
+
+        p.push();
+        p.fill(0, 255, 0);
+        p.rect(80, 80, 50, 50);
+
+        p.clear();
+        p.pop();
+
+        p.fill(0, 0, 255);
+        p.rect(120, 120, 50, 50);
+      });
+      await screenshotSVG(p, screenshot, p.getSVG(record));
+    });
+  });
 });
