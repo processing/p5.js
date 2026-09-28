@@ -250,4 +250,62 @@ visualSuite('svg', function () {
       await screenshotSVG(p, screenshot, p.getSVG(flower));
     });
   });
+
+  visualSuite('Transformations', function () {
+    visualTest('translate ellipse', async (p, screenshot) => {
+      setupDefault(p);
+      const record = p.buildShape(() => {
+        p.translate(50, 50);
+        p.ellipse(50, 50, 80, 50);
+      });
+      await screenshotSVG(p, screenshot, p.getSVG(record));
+    });
+
+    visualTest('rotate rect', async (p, screenshot) => {
+      setupDefault(p);
+      const record = p.buildShape(() => {
+        p.translate(100, 100);
+        p.rotate(p.QUARTER_PI);
+        p.rect(-40, -25, 80, 50);
+      });
+      await screenshotSVG(p, screenshot, p.getSVG(record));
+    });
+
+    visualTest('scale circle', async (p, screenshot) => {
+      setupDefault(p);
+      const record = p.buildShape(() => {
+        p.translate(100, 100);
+        p.scale(1.5, 0.7);
+        p.circle(0, 0, 80);
+      });
+      await screenshotSVG(p, screenshot, p.getSVG(record));
+    });
+
+    visualTest('mixture of transforms', async (p, screenshot) => {
+      setupDefault(p);
+      const record = p.buildShape(() => {
+        p.translate(100, 100);
+        p.rotate(p.PI / 6);
+        p.scale(1.2, 0.8);
+        p.rect(-30, -30, 60, 60);
+      });
+      await screenshotSVG(p, screenshot, p.getSVG(record));
+    });
+
+    visualTest('transforms with multiple shapes', async (p, screenshot) => {
+      setupDefault(p);
+      const record = p.buildShape(() => {
+        p.translate(60, 60);
+        p.rect(0, 0, 50, 50);
+
+        p.rotate(p.QUARTER_PI);
+        p.scale(0.8, 1.4);
+        p.circle(50, 0, 40);
+
+        p.translate(0, -40);
+        p.line(-30, 0, 30, 0);
+      });
+      await screenshotSVG(p, screenshot, p.getSVG(record));
+    });
+  });
 });
