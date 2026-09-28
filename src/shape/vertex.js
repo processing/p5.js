@@ -648,7 +648,8 @@ function vertex(p5, fn) {
    * <a href="https://webglfundamentals.org/webgl/lessons/webgl-instanced-drawing.html" target="_blank">instancing</a>.
    * The `count` parameter tells WebGL mode how many copies to draw. For
    * example, calling `endShape(CLOSE, 400)` after drawing a custom shape will
-   * make it efficient to draw 400 copies. This feature requires
+   * make it efficient to draw 400 copies. `count` can also be passed on its
+   * own, as in `endShape(400)`, to draw 400 copies of an open shape. This feature requires
    * <a href="https://p5js.org/tutorials/intro-to-shaders/" target="_blank">writing a custom shader</a>.
    *
    * After calling <a href="#/p5/beginShape">beginShape()</a>, shapes can be
@@ -668,7 +669,7 @@ function vertex(p5, fn) {
    * <a href="#/p5/beginShape">beginShape()</a> and `endShape()`.
    *
    * @method endShape
-   * @param  {CLOSE} [mode] use CLOSE to close the shape
+   * @param  {CLOSE|OPEN} [mode] use CLOSE to close the shape, or OPEN (the default) to leave it open
    * @param  {Integer} [count] number of times you want to draw/instance the shape (for WebGL mode).
    * @chainable
    *
@@ -832,6 +833,11 @@ function vertex(p5, fn) {
    *
    *   describe('A row of four squares. Their colors transition from purple on the left to red on the right');
    * }
+   */
+  /**
+   * @method endShape
+   * @param  {Integer} count number of times you want to draw/instance the shape (for WebGL mode).
+   * @chainable
    */
   fn.endShape = function (mode, count) {
     // p5._validateParameters('endShape', arguments);
