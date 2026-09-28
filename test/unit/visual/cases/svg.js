@@ -792,4 +792,55 @@ visualSuite('svg', function () {
       await screenshot();
     });
   });
+
+  visualSuite('SVG Import - Styling', function () {
+    visualTest('fill', async (p, screenshot) => {
+      p.createCanvas(200, 200);
+      p.background(200);
+      const shape = await loadFixture(p, 'style-fill');
+      p.shape(shape);
+      await screenshot();
+    });
+
+    visualTest('stroke', async (p, screenshot) => {
+      p.createCanvas(200, 200);
+      p.background(200);
+      const shape = await loadFixture(p, 'style-stroke');
+      p.shape(shape);
+      await screenshot();
+    });
+
+    visualTest('opacity', async (p, screenshot) => {
+      p.createCanvas(200, 200);
+      p.background(200);
+      const shape = await loadFixture(p, 'style-opacity');
+      p.shape(shape);
+      await screenshot();
+    });
+
+    visualTest('CSS', async (p, screenshot) => {
+      p.createCanvas(200, 200);
+      p.background(200);
+      const shape = await loadFixture(p, 'style-css');
+      p.shape(shape);
+      await screenshot();
+    });
+
+    visualTest('inheritance', async (p, screenshot) => {
+      p.createCanvas(200, 200);
+      p.background(200);
+      const shape = await loadFixture(p, 'style-inheritance');
+      p.shape(shape);
+      await screenshot();
+    });
+
+    visualTest('currentColor', async (p, screenshot) => {
+      p.createCanvas(200, 200);
+      p.background(200);
+      const shape = await loadFixture(p, 'style-currentcolor');
+      p.shape(shape);
+      await screenshot();
+    });
+  });
 });
+
