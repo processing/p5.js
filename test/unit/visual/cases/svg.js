@@ -26,6 +26,10 @@ async function screenshotSVG(p, screenshot, svgString) {
   await screenshot();
 }
 
+async function loadFixture(p, name) {
+  return p.loadSVG(`test/unit/assets/svg/${name}.svg`);
+}
+
 visualSuite('svg', function () {
   visualSuite('SVG Shapes', function () {
     visualTest('circle', async (p, screenshot) => {
@@ -670,6 +674,50 @@ visualSuite('svg', function () {
         p.line(30, 170, 170, 30);
       });
       await screenshotSVG(p, screenshot, p.getSVG(record));
+    });
+  });
+
+  visualSuite('SVG Import - defs and use', function () {
+    visualTest('basic use', async (p, screenshot) => {
+      setupDefault(p);
+      const shape = await loadFixture(p, 'defs-use-circle');
+      p.shape(shape);
+      await screenshot();
+    });
+
+    visualTest('group use', async (p, screenshot) => {
+      setupDefault(p);
+      const shape = await loadFixture(p, 'defs-use-group');
+      p.shape(shape);
+      await screenshot();
+    });
+
+    visualTest('nested use', async (p, screenshot) => {
+      setupDefault(p);
+      const shape = await loadFixture(p, 'defs-use-nested');
+      p.shape(shape);
+      await screenshot();
+    });
+
+    visualTest('symbol', async (p, screenshot) => {
+      setupDefault(p);
+      const shape = await loadFixture(p, 'defs-symbol');
+      p.shape(shape);
+      await screenshot();
+    });
+
+    visualTest('viewBox', async (p, screenshot) => {
+      setupDefault(p);
+      const shape = await loadFixture(p, 'defs-symbol-viewbox');
+      p.shape(shape);
+      await screenshot();
+    });
+
+    visualTest('x and y', async (p, screenshot) => {
+      setupDefault(p);
+      const shape = await loadFixture(p, 'defs-use-xy');
+      p.shape(shape);
+      await screenshot();
     });
   });
 });
