@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="30 30 100 100" width="200" height="200">
+  <!-- viewBox starts at (30,30) — non-zero origin to test CORNER alignment offset -->
+  <rect x="30" y="30" width="100" height="100" fill="rgb(200,200,200)"/>
+  <rect x="45" y="45" width="60" height="50" fill="white" stroke="black" stroke-width="1.5"/>
+  <circle cx="75" cy="70" r="18" fill="rgba(255,100,100,0.85)" stroke="black" stroke-width="1"/>
+  <!-- L-shaped corner marker at viewBox origin (30,30) — arms point inward so they are never clipped -->
+  <line x1="30" y1="30" x2="30" y2="38" stroke="blue" stroke-width="1.5"/>
+  <line x1="30" y1="30" x2="38" y2="30" stroke="blue" stroke-width="1.5"/>
+</svg>

@@ -872,6 +872,229 @@ visualSuite('svg', function () {
       await screenshot();
     });
   });
+
+  visualSuite('Shape Placement', function () {
+    visualTest('imported SVG plain replay no options', async (p, screenshot) => {
+      p.createCanvas(200, 200);
+      p.background(200);
+      p.fill(255, 100, 100);
+      p.stroke(0);
+      p.strokeWeight(1);
+      const svgShape = await loadFixture(p, 'placement-shape');
+      p.background(200);
+      p.shape(svgShape);
+      await screenshot();
+    });
+
+    visualTest('imported SVG placement translate only', async (p, screenshot) => {
+      p.createCanvas(200, 200);
+      p.background(200);
+      p.fill(255, 100, 100);
+      p.stroke(0);
+      p.strokeWeight(1);
+      const svgShape = await loadFixture(p, 'placement-shape');
+      p.background(200);
+      p.shape(svgShape, 50, 50);
+      await screenshot();
+    });
+
+    visualTest('imported SVG placement uniform scale', async (p, screenshot) => {
+      p.createCanvas(200, 200);
+      p.background(200);
+      p.fill(255, 100, 100);
+      p.stroke(0);
+      p.strokeWeight(1);
+      const svgShape = await loadFixture(p, 'placement-shape');
+      p.background(200);
+      p.shape(svgShape, 50, 50, { scale: 0.5 });
+      await screenshot();
+    });
+
+    visualTest('imported SVG placement non-uniform scale', async (p, screenshot) => {
+      p.createCanvas(200, 200);
+      p.background(200);
+      p.fill(255, 100, 100);
+      p.stroke(0);
+      p.strokeWeight(1);
+      const svgShape = await loadFixture(p, 'placement-shape');
+      p.background(200);
+      p.shape(svgShape, 20, 40, { scale: { x: 0.8, y: 0.5 } });
+      await screenshot();
+    });
+
+    visualTest('imported SVG scale 1 no-op', async (p, screenshot) => {
+      p.createCanvas(200, 200);
+      p.background(200);
+      p.fill(255, 100, 100);
+      p.stroke(0);
+      p.strokeWeight(1);
+      const svgShape = await loadFixture(p, 'placement-shape');
+      p.background(200);
+      p.shape(svgShape, 0, 0, { scale: 1 });
+      await screenshot();
+    });
+
+    visualTest('imported SVG alignment CORNER zero origin', async (p, screenshot) => {
+      p.createCanvas(200, 200);
+      p.background(200);
+      p.fill(255, 100, 100);
+      p.stroke(0);
+      p.strokeWeight(1);
+      const svgShape = await loadFixture(p, 'placement-shape');
+      p.background(200);
+      p.shape(svgShape, 40, 40, { align: p.CORNER, scale: 0.5 });
+      await screenshot();
+    });
+
+    visualTest('imported SVG alignment CORNER non-zero viewBox origin', async (p, screenshot) => {
+      p.createCanvas(200, 200);
+      p.background(200);
+      p.fill(255, 100, 100);
+      p.stroke(0);
+      p.strokeWeight(1);
+      const svgShape = await loadFixture(p, 'viewbox-offset');
+      p.background(200);
+      p.stroke(255, 0, 0);
+      p.line(60, 50, 70, 60);
+      p.line(70, 50, 60, 60);
+      p.stroke(0);
+      p.shape(svgShape, 65, 55, { align: p.CORNER, scale: 0.8 });
+      await screenshot();
+    });
+
+    visualTest('imported SVG alignment CENTER', async (p, screenshot) => {
+      p.createCanvas(200, 200);
+      p.background(200);
+      p.fill(255, 100, 100);
+      p.stroke(0);
+      p.strokeWeight(1);
+      const svgShape = await loadFixture(p, 'placement-shape');
+      p.background(200);
+      p.stroke(0, 0, 255);
+      p.line(100, 0, 100, 200);
+      p.line(0, 100, 200, 100);
+      p.stroke(0);
+      p.shape(svgShape, 100, 100, { align: p.CENTER, scale: 0.6 });
+      await screenshot();
+    });
+
+    visualTest('imported SVG alignment VIEWBOX', async (p, screenshot) => {
+      p.createCanvas(200, 200);
+      p.background(200);
+      p.fill(255, 100, 100);
+      p.stroke(0);
+      p.strokeWeight(1);
+      const svgShape = await loadFixture(p, 'placement-shape');
+      p.background(200);
+      p.shape(svgShape, 20, 20, { align: p.VIEWBOX, scale: 0.5 });
+      await screenshot();
+    });
+
+    visualTest('imported SVG placement transform isolation', async (p, screenshot) => {
+      p.createCanvas(200, 200);
+      p.background(200);
+      p.fill(255, 100, 100);
+      p.stroke(0);
+      p.strokeWeight(1);
+      const svgShape = await loadFixture(p, 'placement-shape');
+      p.background(200);
+      p.shape(svgShape, 100, 100, { scale: 0.6, align: p.CENTER });
+      p.fill(0, 255, 0);
+      p.rect(10, 10, 30, 30);
+      await screenshot();
+    });
+  });
+
+  visualSuite('Shape Placement — viewBox edge cases', function () {
+    visualTest('viewBox negative origin — CORNER align', async (p, screenshot) => {
+      p.createCanvas(200, 200);
+      p.background(220);
+      p.stroke(0);
+      p.strokeWeight(1);
+      const svgShape = await loadFixture(p, 'viewbox-negative-origin');
+      p.background(220);
+      p.stroke(255, 0, 0);
+      p.strokeWeight(1.5);
+      p.line(40, 40, 40, 52);
+      p.line(40, 40, 52, 40);
+      p.stroke(0);
+      p.strokeWeight(1);
+      p.shape(svgShape, 40, 40, { align: p.CORNER, scale: 0.5 });
+      await screenshot();
+    });
+
+    visualTest('viewBox negative origin — CENTER align', async (p, screenshot) => {
+      p.createCanvas(200, 200);
+      p.background(220);
+      p.stroke(0);
+      p.strokeWeight(1);
+      const svgShape = await loadFixture(p, 'viewbox-negative-origin');
+      p.background(220);
+      p.stroke(0, 0, 255, 150);
+      p.strokeWeight(1);
+      p.line(100, 0, 100, 200);
+      p.line(0, 100, 200, 100);
+      p.stroke(0);
+      p.strokeWeight(1);
+      p.shape(svgShape, 100, 100, { align: p.CENTER, scale: 0.5 });
+      await screenshot();
+    });
+
+    visualTest('viewBox fractional values — CORNER align', async (p, screenshot) => {
+      p.createCanvas(200, 200);
+      p.background(220);
+      p.stroke(0);
+      p.strokeWeight(1);
+      const svgShape = await loadFixture(p, 'viewbox-fractional');
+      p.background(220);
+      p.stroke(255, 0, 0);
+      p.strokeWeight(1.5);
+      p.line(30, 30, 30, 42);
+      p.line(30, 30, 42, 30);
+      p.stroke(0);
+      p.strokeWeight(1);
+      p.shape(svgShape, 30, 30, { align: p.CORNER, scale: 0.8 });
+      await screenshot();
+    });
+
+    visualTest('no viewBox width and height only — CENTER align', async (p, screenshot) => {
+      p.createCanvas(200, 200);
+      p.background(220);
+      p.stroke(0);
+      p.strokeWeight(1);
+      const svgShape = await loadFixture(p, 'placement-shape');
+      p.background(220);
+      p.stroke(0, 0, 255, 150);
+      p.strokeWeight(1);
+      p.line(100, 0, 100, 200);
+      p.line(0, 100, 200, 100);
+      p.stroke(0);
+      p.strokeWeight(1);
+      p.shape(svgShape, 100, 100, { align: p.CENTER, scale: 0.5 });
+      await screenshot();
+    });
+
+    visualTest('no viewBox no dimensions — CENTER falls back gracefully', async (p, screenshot) => {
+      p.createCanvas(200, 200);
+      p.background(220);
+      p.stroke(0);
+      p.strokeWeight(1);
+      const record = p.createSVG(
+        '<svg xmlns="http://www.w3.org/2000/svg"><rect x="10" y="10" width="80" height="80" fill="steelblue"/></svg>'
+      );
+      p.background(220);
+      const warnings = [];
+      const orig = console.warn;
+      console.warn = (m) => {
+        warnings.push(m);
+      };
+      p.shape(record, 50, 50, { align: p.CENTER });
+      console.warn = orig;
+      assert.isTrue(warnings.some(w => w.includes('CENTER alignment')));
+      await screenshot();
+    });
+  });
 });
+
 
 
