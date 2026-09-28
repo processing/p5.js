@@ -842,5 +842,36 @@ visualSuite('svg', function () {
       await screenshot();
     });
   });
+
+  visualSuite('SVG Import - Transforms', function () {
+    visualTest('translate', async (p, screenshot) => {
+      setupDefault(p);
+      const shape = await loadFixture(p, 'transform-translate');
+      p.shape(shape);
+      await screenshot();
+    });
+
+    visualTest('rotate', async (p, screenshot) => {
+      setupDefault(p);
+      const shape = await loadFixture(p, 'transform-rotate');
+      p.shape(shape);
+      await screenshot();
+    });
+
+    visualTest('scale', async (p, screenshot) => {
+      setupDefault(p);
+      const shape = await loadFixture(p, 'transform-scale');
+      p.shape(shape);
+      await screenshot();
+    });
+
+    visualTest('nested groups', async (p, screenshot) => {
+      setupDefault(p);
+      const shape = await loadFixture(p, 'transform-nested-groups');
+      p.shape(shape);
+      await screenshot();
+    });
+  });
 });
+
 
