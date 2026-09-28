@@ -568,4 +568,108 @@ visualSuite('svg', function () {
       await screenshotSVG(p, screenshot, p.getSVG(record));
     });
   });
+
+  visualSuite('Colors and Strokes', function () {
+    visualTest('fill with and without alpha', async (p, screenshot) => {
+      p.createCanvas(200, 200);
+      p.background(255);
+      p.noStroke();
+
+      const record = p.buildShape(() => {
+        p.fill('#ff0000');
+        p.circle(60, 100, 70);
+
+        p.fill(0, 0, 255, 127);
+        p.circle(140, 100, 70);
+      });
+      await screenshotSVG(p, screenshot, p.getSVG(record));
+    });
+
+    visualTest('stroke variations', async (p, screenshot) => {
+      p.createCanvas(200, 200);
+      p.background(255);
+
+      const record = p.buildShape(() => {
+        p.fill(255, 255, 0);
+        p.stroke(0);
+        p.strokeWeight(4);
+        p.circle(60, 60, 70);
+
+        p.fill('#00ff00');
+        p.stroke('#0000ff');
+        p.strokeWeight(2);
+        p.rect(110, 30, 60, 60);
+
+        p.fill(255, 0, 255);
+        p.noStroke();
+        p.circle(100, 150, 70);
+      });
+      await screenshotSVG(p, screenshot, p.getSVG(record));
+    });
+
+    visualTest('strokeWeights', async (p, screenshot) => {
+      p.createCanvas(200, 200);
+      p.background(255);
+      p.noFill();
+
+      const record = p.buildShape(() => {
+        p.stroke(0);
+        p.strokeWeight(1);
+        p.line(20, 40, 180, 40);
+
+        p.stroke(0);
+        p.strokeWeight(5);
+        p.line(20, 100, 180, 100);
+
+        p.stroke(0);
+        p.strokeWeight(15);
+        p.line(20, 160, 180, 160);
+      });
+      await screenshotSVG(p, screenshot, p.getSVG(record));
+    });
+
+    visualTest('overlapping shapes alpha', async (p, screenshot) => {
+      p.createCanvas(200, 200);
+      p.background(255);
+      p.noStroke();
+
+      const record = p.buildShape(() => {
+        p.fill(255, 0, 0, 150);
+        p.circle(80, 80, 90);
+
+        p.fill(0, 255, 0, 150);
+        p.circle(120, 80, 90);
+
+        p.fill(0, 0, 255, 150);
+        p.circle(100, 120, 90);
+      });
+      await screenshotSVG(p, screenshot, p.getSVG(record));
+    });
+
+    visualTest('combination of everything', async (p, screenshot) => {
+      p.createCanvas(200, 200);
+      p.background(255);
+
+      const record = p.buildShape(() => {
+        p.fill('#eaeaea');
+        p.stroke('#333333');
+        p.strokeWeight(3);
+        p.rect(20, 20, 160, 160);
+
+        p.fill('rgba(255, 0, 0, 0.5)');
+        p.noStroke();
+        p.circle(70, 70, 60);
+
+        p.fill('rgba(0, 0, 255, 0.5)');
+        p.stroke(0, 255, 0);
+        p.strokeWeight(5);
+        p.rect(90, 90, 60, 60);
+
+        p.stroke('rgba(0, 0, 0, 0.7)');
+        p.strokeWeight(8);
+        p.line(30, 170, 170, 30);
+      });
+      await screenshotSVG(p, screenshot, p.getSVG(record));
+    });
+  });
 });
