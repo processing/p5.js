@@ -808,15 +808,15 @@ class MediaElement extends Element {
     if (args[0] instanceof MediaElement) {
       args[0]._ensureCanvas();
     }
-    return Image.prototype.copy.apply(this, args);
+    Image.prototype.copy.apply(this, args);
   }
   _copyHelper(...args) {
-    return Image.prototype._copyHelper.apply(this, args);
+    Image.prototype._copyHelper.apply(this, args);
   }
   mask(...args) {
     this.loadPixels();
     this.setModified(true);
-    return Image.prototype.mask.apply(this, args);
+    Image.prototype.mask.apply(this, args);
   }
   /**
    * helper method for web GL mode to figure out if the element
