@@ -72,6 +72,12 @@ $ npm install https://pkg.pr.new/processing/p5.js/p5@9167    # by PR number
 $ npm install https://pkg.pr.new/processing/p5.js/p5@5c627cd # by commit SHA
 ```
 
+Each build is also served through a CDN, so it can be tested in the browser without npm by loading it in a script tag (again with a PR number or commit SHA):
+
+```html
+<script src="https://raw.esm.sh/pr/p5@9167/lib/p5.min.js"></script>
+```
+
 ### Reporting issues
 
 If you find a bug while testing an RC or a continuous build, please [open an issue](https://github.com/processing/p5.js/issues/new/choose) and mention the exact version, PR number, or commit you were testing.
