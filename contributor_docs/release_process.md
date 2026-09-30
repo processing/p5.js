@@ -49,6 +49,8 @@ CDNs will take a bit more time (a day or two) to update but they will automatica
 
 Minor and major releases get one or more release candidates (RCs) before the final version. RC versions use the format `x.y.z-rc.N` and are released like a regular release, by pushing a tag such as `v2.4.0-rc.1`. The suffix is `-rc` rather than `-beta` to avoid confusion with [beta.p5js.org](https://beta.p5js.org), the p5.js 2.x site.
 
+An RC is open for testing for at least a week. If no major regressions come up during that time, the final version is released. If a major bug is found, a new RC goes out and the one-week window starts over; documentation changes and other small adjustments do not restart it. Invitations to test are shared through the newsletter, Instagram, and Discord, and each RC's release notes include testing instructions. Anyone can contribute by testing an RC.
+
 The [2.x release workflow](../.github/workflows/release-workflow-v2.yml) detects the `-rc` suffix in the tag and:
 
 - Publishes the version to NPM under the `beta` dist-tag, so testers can install it with `npm install p5@beta` while `latest` stays on the current stable version.
@@ -59,7 +61,7 @@ The [v1 release workflow](../.github/workflows/release-workflow-v1.yml) also mar
 
 ### Patch releases
 
-From 2.3.2 onwards, patch releases ship directly, without a release candidate. They are made from the [`stable`](https://github.com/processing/p5.js/tree/stable) branch: isolated or critical fixes are collected with the [`Patch` label](https://github.com/processing/p5.js/issues?q=label%3APatch) and either target `stable` directly or are cherry-picked into it by a maintainer.
+From 2.3.2 onwards, patch releases ship directly, without a release candidate. They are made from the [`stable`](https://github.com/processing/p5.js/tree/stable) branch: isolated or critical fixes are collected with the [`Patch` label](https://github.com/processing/p5.js/issues?q=label%3APatch) and either target `stable` directly or are cherry-picked into it by a maintainer. Keeping patch releases limited to small, well-isolated or critical fixes means an urgent fix can reach users quickly, even while bigger work for the next minor release is still in progress.
 
 ### Continuous builds
 
