@@ -1927,8 +1927,11 @@
     "endShape": {
       "overloads": [
         [
-          "CLOSE?",
+          "CLOSE|OPEN?",
           "Integer?"
+        ],
+        [
+          "Integer"
         ]
       ]
     },
@@ -2153,7 +2156,8 @@
       "overloads": [
         [
           "Number",
-          "Number"
+          "Number",
+          "...Number[]"
         ],
         [
           "Number[]"
@@ -2338,7 +2342,8 @@
       "overloads": [
         [
           "Number",
-          "Number"
+          "Number",
+          "...Number[]"
         ],
         [
           "Number[]"
