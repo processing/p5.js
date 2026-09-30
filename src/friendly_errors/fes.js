@@ -238,7 +238,6 @@ export { TL };
 
 export default function (p5, fn, lifecycles) {
   p5.FES = FES;
-  p5.disableFriendlyErrors = typeof IS_MINIFIED !== 'undefined' ? true : false;
   Object.defineProperty(p5.FES, 'disableFriendlyErrors', {
     get: () => p5.disableFriendlyErrors
   });
