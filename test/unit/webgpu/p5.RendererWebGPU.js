@@ -414,6 +414,9 @@ suite('WebGPU p5.RendererWebGPU', function () {
       expect(result[1]).to.be.closeTo(6, 0.001);
       expect(result[2]).to.be.closeTo(7, 0.001);
       expect(result[3]).to.be.closeTo(8, 0.001);
+    });
+  });
+
   suite('StorageList', function () {
     test('reads back float values pushed by a compute shader', async function () {
       const src = myp5.createStorage(new Float32Array([10, 20, 30]));
