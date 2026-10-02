@@ -1435,9 +1435,14 @@ export function createShaderHooksFunctions(strandsContext, fn, shader) {
       finishHook();
     };
 
-    // In the flat strands API, this is how result-returning hooks
-    // are used
+    // In the flat strands API, result-returning hooks use set().
     hook.set = function (result) {
+      if (!hook._active) {
+        FES.userError(
+          'scope error',
+          `It looks like you're trying to call set() outside of a hook's begin()/end() block.`
+        );
+      }
       hook._result = result;
     };
     hook._active = false;
@@ -1525,6 +1530,22 @@ export function createShaderHooksFunctions(strandsContext, fn, shader) {
       strandsContext.activeHook = undefined;
 
       const expectedReturnType = hookType.returnType;
+      const expectsReturnValue =
+        isStructType(expectedReturnType) ||
+        (expectedReturnType.dataType &&
+          expectedReturnType.typeName?.trim() !== 'void');
+
+      if (
+        expectsReturnValue &&
+        userReturned === undefined &&
+        hook.earlyReturns.length === 0
+      ) {
+        FES.userError(
+          'scope error',
+          `This hook requires a value. Make sure to call set() before end().`
+        );
+      }
+
       let rootNodeID = null;
       const handleRetVal = retNode => {
         if (isStructType(expectedReturnType)) {
