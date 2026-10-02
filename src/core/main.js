@@ -251,8 +251,14 @@ class p5 {
     this._millisStart = globalThis.performance.now();
 
     const context = this._isGlobal ? window : this;
-    if (typeof context.setup === 'function') {
-      await context.setup();
+    try {
+      if (typeof context.setup === 'function') {
+        await context.setup();
+      }
+    } 
+    catch (error) {
+      await this._runLifecycleHook('postsetup');
+      throw error;
     }
     if (this.hitCriticalError) return;
 
@@ -663,7 +669,9 @@ p5.registerAddon(rendering);
 p5.registerAddon(renderer);
 p5.registerAddon(renderer2D);
 p5.registerAddon(graphics);
-p5.registerAddon(loading);
+if (typeof window !== 'undefined') {
+  p5.registerAddon(loading);
+}
 
 export default p5;
 
