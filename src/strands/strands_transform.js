@@ -12,7 +12,7 @@ import { createStrandsNode } from './strands_node'
 /*
  * Installs the matrix constructors (mat2/mat3/mat4 plus the transform2D/
  * transform3D aliases) and the non-mutating transform helpers (translate,
- * rotate, scale, skewX/Y, rotateAxisAngle, rotateX/Y/Z, transformPoint,
+ * rotate, scale, shearX/Y, rotateAxisAngle, rotateX/Y/Z, transformPoint,
  * transformNormal) onto p5.prototype (fn) and p5.Graphics.prototype.
  *
  * augmentFn is passed in from strands_api.js so its single definition is
@@ -40,8 +40,8 @@ export function installTransformAPI(p5, fn, strandsContext, augmentFn) {
    * <a href="#/p5/translate">translate()</a>,
    * <a href="#/p5/rotate">rotate()</a>,
    * <a href="#/p5/scale">scale()</a>,
-   * <a href="#/p5/skewX">skewX()</a>, and
-   * <a href="#/p5/skewY">skewY()</a>. Each of those returns a new transform
+   * <a href="#/p5/shearX">shearX()</a>, and
+   * <a href="#/p5/shearY">shearY()</a>. Each of those returns a new transform
    * instead of changing the one passed in, so the result has to be assigned
    * back, as in `t = translate(t, 20, 0)`.
    *
@@ -144,14 +144,13 @@ export function installTransformAPI(p5, fn, strandsContext, augmentFn) {
    * }
    *
    * function wobble() {
-   *   getWorldInputs((inputs) => {
-   *     let t = transform3D();
-   *     t = rotate(t, millis() * 0.001);
-   *     t = scale(t, 1.2);
-   *     inputs.position = transformPoint(t, inputs.position);
-   *     inputs.normal = transformNormal(t, inputs.normal);
-   *     return inputs;
-   *   });
+   *   worldInputs.begin();
+   *   let t = transform3D();
+   *   t = rotate(t, millis() * 0.001);
+   *   t = scale(t, 1.2);
+   *   worldInputs.position = transformPoint(t, worldInputs.position);
+   *   worldInputs.normal = transformNormal(t, worldInputs.normal);
+   *   worldInputs.end();
    * }
    *
    * function draw() {
@@ -227,15 +226,14 @@ export function installTransformAPI(p5, fn, strandsContext, augmentFn) {
    * }
    *
    * function shrink() {
-   *   getWorldInputs((inputs) => {
-   *     let t = transform3D();
-   *     t = translate(t, 30, 0, 0);
-   *     t = rotateY(t, PI / 4);
-   *     // mat3() drops the move, so only the turn is left.
-   *     let turnOnly = mat3(t);
-   *     inputs.position = turnOnly * inputs.position;
-   *     return inputs;
-   *   });
+   *   worldInputs.begin();
+   *   let t = transform3D();
+   *   t = translate(t, 30, 0, 0);
+   *   t = rotateY(t, PI / 4);
+   *   // mat3() drops the move, so only the turn is left.
+   *   let turnOnly = mat3(t);
+   *   worldInputs.position = turnOnly * worldInputs.position;
+   *   worldInputs.end();
    * }
    *
    * function draw() {
@@ -313,7 +311,7 @@ export function installTransformAPI(p5, fn, strandsContext, augmentFn) {
     if (!isStrandsTransform(t)) {
       FES.userError('type error',
         'The first argument to a transform function (translate, rotate, scale, ' +
-        'skewX, skewY) must be a transform created with transform2D() or transform3D().');
+        'shearX, shearY) must be a transform created with transform2D() or transform3D().');
     }
     const values = t.dimension === 4 ? values3D : values2D;
     const m = build.matrixConstructorNode(strandsContext, t.dimension, values);
@@ -344,13 +342,12 @@ export function installTransformAPI(p5, fn, strandsContext, augmentFn) {
    * }
    *
    * function slide() {
-   *   getWorldInputs((inputs) => {
-   *     // translate() returns a new transform, so assign the result back.
-   *     let t = transform3D();
-   *     t = translate(t, 40 * sin(millis() * 0.001), 0, 0);
-   *     inputs.position = transformPoint(t, inputs.position);
-   *     return inputs;
-   *   });
+   *   worldInputs.begin();
+   *   // translate() returns a new transform, so assign the result back.
+   *   let t = transform3D();
+   *   t = translate(t, 40 * sin(millis() * 0.001), 0, 0);
+   *   worldInputs.position = transformPoint(t, worldInputs.position);
+   *   worldInputs.end();
    * }
    *
    * function draw() {
@@ -397,14 +394,13 @@ export function installTransformAPI(p5, fn, strandsContext, augmentFn) {
    * }
    *
    * function squash() {
-   *   getWorldInputs((inputs) => {
-   *     let t = transform3D();
-   *     // Stretch along x and squash along y.
-   *     t = scale(t, 1.5, 0.5, 1);
-   *     inputs.position = transformPoint(t, inputs.position);
-   *     inputs.normal = transformNormal(t, inputs.normal);
-   *     return inputs;
-   *   });
+   *   worldInputs.begin();
+   *   let t = transform3D();
+   *   // Stretch along x and squash along y.
+   *   t = scale(t, 1.5, 0.5, 1);
+   *   worldInputs.position = transformPoint(t, worldInputs.position);
+   *   worldInputs.normal = transformNormal(t, worldInputs.normal);
+   *   worldInputs.end();
    * }
    *
    * function draw() {
@@ -454,13 +450,12 @@ export function installTransformAPI(p5, fn, strandsContext, augmentFn) {
    * }
    *
    * function spin() {
-   *   getWorldInputs((inputs) => {
-   *     let t = transform3D();
-   *     t = rotate(t, millis() * 0.001);
-   *     inputs.position = transformPoint(t, inputs.position);
-   *     inputs.normal = transformNormal(t, inputs.normal);
-   *     return inputs;
-   *   });
+   *   worldInputs.begin();
+   *   let t = transform3D();
+   *   t = rotate(t, millis() * 0.001);
+   *   worldInputs.position = transformPoint(t, worldInputs.position);
+   *   worldInputs.normal = transformNormal(t, worldInputs.normal);
+   *   worldInputs.end();
    * }
    *
    * function draw() {
@@ -486,29 +481,22 @@ export function installTransformAPI(p5, fn, strandsContext, augmentFn) {
   });
 
   /**
-   * Slants a p5.strands transform along the x-axis.
-   *
-   * Every point is shifted sideways by an amount that grows with its y
-   * position, so upright shapes end up leaning. A new transform is returned and
-   * the one passed in is left untouched, so the result has to be assigned back,
-   * as in `t = skewX(t, PI / 8)`.
-   *
-   * This is the p5.strands counterpart of
-   * <a href="#/p5/shearX">shearX()</a>, which slants the canvas' coordinate
-   * system instead. Angles are always measured in radians here, since
-   * <a href="#/p5/angleMode">angleMode()</a> doesn't reach inside a shader.
-   *
-   * Note: `skewX()` can only be used inside a p5.strands shader callback.
-   *
-   * @method skewX
-   * @beta
+   * @method shearX
    * @param {*} transform a transform created with
    *                      <a href="#/p5/transform2D">transform2D()</a> or
-   *                      <a href="#/p5/transform3D">transform3D()</a>.
+   *                      <a href="#/p5/transform3D">transform3D()</a>. Inside a
+   *                      p5.strands shader callback, a new transform with the
+   *                      slant added on is returned and the one passed in is
+   *                      left untouched. Every point is shifted sideways by an
+   *                      amount that grows with its y position, so upright
+   *                      shapes end up leaning.
    * @param {Number} angle angle to slant by, in radians.
+   *                       <a href="#/p5/angleMode">angleMode()</a> doesn't
+   *                       reach inside a shader.
    * @returns {*} a new transform with the slant applied.
    *
    * @example
+   * // Slant a shape inside a p5.strands shader.
    * let myShader;
    *
    * function setup() {
@@ -520,7 +508,7 @@ export function installTransformAPI(p5, fn, strandsContext, augmentFn) {
    *   filterColor.begin();
    *   let t = transform2D();
    *   t = translate(t, 0.5, 0.5);
-   *   t = skewX(t, PI / 8);
+   *   t = shearX(t, PI / 8);
    *   t = translate(t, -0.5, -0.5);
    *   let uv = transformPoint(t, filterColor.texCoord);
    *   filterColor.set(getTexture(filterColor.canvasContent, uv));
@@ -535,12 +523,11 @@ export function installTransformAPI(p5, fn, strandsContext, augmentFn) {
    *   filter(myShader);
    * }
    */
-  augmentFn(fn, p5, 'skewX', function (...args) {
-    if (!strandsContext.active) {
-      p5._friendlyError(`It looks like you've called skewX outside of a shader's modify() function.`);
-      return;
-    }
-    const [t, angle] = args;
+  const originalShearX = fn.shearX;
+  augmentFn(fn, p5, 'shearX', function (...args) {
+    const t = args[0];
+    if (!isStrandsTransform(t)) return originalShearX.apply(this, args);
+    const angle = args[1];
     const k = this.tan(angle); // x' = x + tan(angle) * y
     return transformStep(t,
       [1, 0, 0,   k, 1, 0,   0, 0, 1],
@@ -548,34 +535,24 @@ export function installTransformAPI(p5, fn, strandsContext, augmentFn) {
   });
 
   /**
-   * Slants a p5.strands transform along the y-axis.
-   *
-   * Every point is shifted up or down by an amount that grows with its x
-   * position. A new transform is returned and the one passed in is left
-   * untouched, so the result has to be assigned back, as in
-   * `t = skewY(t, PI / 8)`.
-   *
-   * This is the p5.strands counterpart of
-   * <a href="#/p5/shearY">shearY()</a>, which slants the canvas' coordinate
-   * system instead. Angles are always measured in radians here, since
-   * <a href="#/p5/angleMode">angleMode()</a> doesn't reach inside a shader.
-   *
-   * Note: `skewY()` can only be used inside a p5.strands shader callback.
-   *
-   * @method skewY
-   * @beta
+   * @method shearY
    * @param {*} transform a transform created with
    *                      <a href="#/p5/transform2D">transform2D()</a> or
-   *                      <a href="#/p5/transform3D">transform3D()</a>.
+   *                      <a href="#/p5/transform3D">transform3D()</a>. Inside a
+   *                      p5.strands shader callback, a new transform with the
+   *                      slant added on is returned and the one passed in is
+   *                      left untouched. Every point is shifted up or down by
+   *                      an amount that grows with its x position.
    * @param {Number} angle angle to slant by, in radians.
+   *                       <a href="#/p5/angleMode">angleMode()</a> doesn't
+   *                       reach inside a shader.
    * @returns {*} a new transform with the slant applied.
    */
-  augmentFn(fn, p5, 'skewY', function (...args) {
-    if (!strandsContext.active) {
-      p5._friendlyError(`It looks like you've called skewY outside of a shader's modify() function.`);
-      return;
-    }
-    const [t, angle] = args;
+  const originalShearY = fn.shearY;
+  augmentFn(fn, p5, 'shearY', function (...args) {
+    const t = args[0];
+    if (!isStrandsTransform(t)) return originalShearY.apply(this, args);
+    const angle = args[1];
     const k = this.tan(angle); // y' = y + tan(angle) * x
     return transformStep(t,
       [1, k, 0,   0, 1, 0,   0, 0, 1],
@@ -621,14 +598,13 @@ export function installTransformAPI(p5, fn, strandsContext, augmentFn) {
    * }
    *
    * function tumble() {
-   *   getWorldInputs((inputs) => {
-   *     let t = transform3D();
-   *     // Turn about a diagonal axis instead of x, y, or z.
-   *     t = rotateAxisAngle(t, [1, 1, 0], millis() * 0.001);
-   *     inputs.position = transformPoint(t, inputs.position);
-   *     inputs.normal = transformNormal(t, inputs.normal);
-   *     return inputs;
-   *   });
+   *   worldInputs.begin();
+   *   let t = transform3D();
+   *   // Turn about a diagonal axis instead of x, y, or z.
+   *   t = rotateAxisAngle(t, [1, 1, 0], millis() * 0.001);
+   *   worldInputs.position = transformPoint(t, worldInputs.position);
+   *   worldInputs.normal = transformNormal(t, worldInputs.normal);
+   *   worldInputs.end();
    * }
    *
    * function draw() {
@@ -722,13 +698,12 @@ export function installTransformAPI(p5, fn, strandsContext, augmentFn) {
    * }
    *
    * function roll() {
-   *   getWorldInputs((inputs) => {
-   *     let t = transform3D();
-   *     t = rotateX(t, millis() * 0.001);
-   *     inputs.position = transformPoint(t, inputs.position);
-   *     inputs.normal = transformNormal(t, inputs.normal);
-   *     return inputs;
-   *   });
+   *   worldInputs.begin();
+   *   let t = transform3D();
+   *   t = rotateX(t, millis() * 0.001);
+   *   worldInputs.position = transformPoint(t, worldInputs.position);
+   *   worldInputs.normal = transformNormal(t, worldInputs.normal);
+   *   worldInputs.end();
    * }
    *
    * function draw() {
@@ -811,13 +786,12 @@ export function installTransformAPI(p5, fn, strandsContext, augmentFn) {
    * }
    *
    * function place() {
-   *   getWorldInputs((inputs) => {
-   *     let t = transform3D();
-   *     t = translate(t, 0, -30, 0);
-   *     t = rotateY(t, millis() * 0.001);
-   *     inputs.position = transformPoint(t, inputs.position);
-   *     return inputs;
-   *   });
+   *   worldInputs.begin();
+   *   let t = transform3D();
+   *   t = translate(t, 0, -30, 0);
+   *   t = rotateY(t, millis() * 0.001);
+   *   worldInputs.position = transformPoint(t, worldInputs.position);
+   *   worldInputs.end();
    * }
    *
    * function draw() {
@@ -880,14 +854,13 @@ export function installTransformAPI(p5, fn, strandsContext, augmentFn) {
    * }
    *
    * function stretch() {
-   *   getWorldInputs((inputs) => {
-   *     let t = transform3D();
-   *     // An uneven resize, so the normals need fixing up too.
-   *     t = scale(t, 2, 0.5, 1);
-   *     inputs.position = transformPoint(t, inputs.position);
-   *     inputs.normal = transformNormal(t, inputs.normal);
-   *     return inputs;
-   *   });
+   *   worldInputs.begin();
+   *   let t = transform3D();
+   *   // An uneven resize, so the normals need fixing up too.
+   *   t = scale(t, 2, 0.5, 1);
+   *   worldInputs.position = transformPoint(t, worldInputs.position);
+   *   worldInputs.normal = transformNormal(t, worldInputs.normal);
+   *   worldInputs.end();
    * }
    *
    * function draw() {

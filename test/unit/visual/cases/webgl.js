@@ -2318,14 +2318,14 @@ visualSuite('WebGL', function () {
       );
 
       visualTest(
-        'skewX() slants a shape along the x-axis',
+        'shearX() slants a shape along the x-axis',
         (p5, screenshot) => {
           p5.createCanvas(50, 50, p5.WEBGL);
           const shader = p5.baseMaterialShader().modify(
             () => {
               p5.getWorldInputs(inputs => {
                 let t = p5.transform2D();
-                t = p5.skewX(t, p5.PI / 6);
+                t = p5.shearX(t, p5.PI / 6);
                 inputs.position.xy = p5.transformPoint(t, inputs.position.xy);
                 return inputs;
               });
@@ -2343,14 +2343,14 @@ visualSuite('WebGL', function () {
       );
 
       visualTest(
-        'skewY() slants a shape along the y-axis',
+        'shearY() slants a shape along the y-axis',
         (p5, screenshot) => {
           p5.createCanvas(50, 50, p5.WEBGL);
           const shader = p5.baseMaterialShader().modify(
             () => {
               p5.getWorldInputs(inputs => {
                 let t = p5.transform3D();
-                t = p5.skewY(t, p5.PI / 6);
+                t = p5.shearY(t, p5.PI / 6);
                 inputs.position = p5.transformPoint(t, inputs.position);
                 return inputs;
               });
