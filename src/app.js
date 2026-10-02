@@ -16,7 +16,9 @@ color(p5);
 // core
 // currently, it only contains the test for parameter validation
 import friendlyErrors from './friendly_errors';
-friendlyErrors(p5);
+if (typeof IS_MINIFIED === 'undefined') {
+  friendlyErrors(p5);
+}
 
 // data
 import data from './data';
