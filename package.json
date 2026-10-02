@@ -13,14 +13,15 @@
     "test:types": "tsc test/types/*.ts --noEmit --lib es2022,dom",
     "lint": "oxlint .",
     "lint:fix": "oxlint --fix .",
-    "generate-types": "npm run docs && node utils/typescript.mjs"
+    "generate-types": "npm run docs && node utils/typescript.mjs",
+    "prepack": "npm run generate-types"
   },
   "lint-staged": {
     "src/**/*.js": "oxlint",
     "test/**/*.js": "oxlint",
     "utils/**/*.{js,mjs}": "oxlint"
   },
-  "version": "2.3.1",
+  "version": "2.3.2",
   "dependencies": {
     "@davepagurek/bezier-path": "^0.0.7",
     "@japont/unicode-range": "^1.0.0",

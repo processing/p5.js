@@ -22,7 +22,7 @@ async function loadAvatar(url) {
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const buffer = Buffer.from(await res.arrayBuffer());
     return await loadImage(buffer);
-  } catch (err) {
+  } catch {
     return null;
   }
 }

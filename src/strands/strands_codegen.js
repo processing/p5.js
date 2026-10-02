@@ -1,11 +1,5 @@
 import { sortCFG } from './ir_cfg';
-import * as DAG from './ir_dag';
-import {
-  NodeType,
-  StatementType,
-  structType,
-  TypeInfoFromGLSLName
-} from './ir_types';
+import { structType } from './ir_types';
 
 export function generateShaderCode(strandsContext) {
   const {

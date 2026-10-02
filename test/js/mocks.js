@@ -25,6 +25,7 @@ Object.assign(mockP5, {
   _validateParameters: vi.fn(),
   _friendlyFileLoadError: vi.fn(),
   _friendlyError: vi.fn(),
+  registerDecorator: vi.fn(),
   Renderer: {
     states: rendererStates
   }

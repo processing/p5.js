@@ -19,7 +19,6 @@ import {
 import {
   ColorSpace,
   to,
-  toGamut,
   serialize,
   parse,
   range,
@@ -128,7 +127,7 @@ class Color {
           });
           this._cachedMode = mode;
           this._cachedColor = to(this._cachedColor, this._cachedColor.spaceId);
-        } catch (err) {
+        } catch {
           // TODO: Invalid color string
           throw new Error('Invalid color string');
         }
@@ -306,6 +305,7 @@ class Color {
   }
 
   // Will do conversion in-Gamut as out of Gamut conversion is only really useful for futher conversions
+  /* oxlint-disable-next-line no-unused-private-class-members */
   #toColorMode(mode) {
     return new Color(this._color, mode);
   }

@@ -2,6 +2,7 @@ import { suite, vi } from 'vitest';
 import p5 from '../../../src/app.js';
 import '../../js/chai_helpers';
 const toArray = typedArray => Array.from(typedArray);
+import { FES } from '../../../src/friendly_errors/fes';
 
 suite('p5.RendererGL', function () {
   var myp5;
@@ -89,6 +90,56 @@ suite('p5.RendererGL', function () {
   });
 
   suite('p5.strands', function () {
+    suite('experimental usage warning', function () {
+      let logSpy;
+      beforeEach(function() {
+        logSpy = vi.spyOn(FES, 'log');
+        myp5.createCanvas(5, 5, myp5.WEBGL);
+      });
+
+      afterEach(function() {
+        logSpy.mockRestore();
+      });
+
+      test('shader creation logs a warning', function() {
+        const shader = myp5.buildMaterialShader(() => {});
+        expect(logSpy).toHaveBeenCalled();
+        expect(logSpy.mock.calls.length).toEqual(1);
+      });
+
+      test('warning logs only once with multiple shaders', function() {
+        const shader = myp5.buildMaterialShader(() => {});
+        const shader2 = myp5.buildMaterialShader(() => {});
+        expect(logSpy).toHaveBeenCalled();
+        expect(logSpy.mock.calls.length).toEqual(1);
+      });
+
+      test('warning logs only once with multiple strands calls', function() {
+        const shader = myp5.buildMaterialShader(() => {});
+        const shader2 = myp5.buildFilterShader(() => {});
+        expect(logSpy).toHaveBeenCalled();
+        expect(logSpy.mock.calls.length).toEqual(1);
+      });
+
+      suite('with FES disabled', function() {
+        let prevDisableFriendlyErrors;
+
+        beforeEach(function() {
+          prevDisableFriendlyErrors = p5.disableFriendlyErrors;
+          p5.disableFriendlyErrors = true;
+        });
+
+        afterEach(function() {
+          p5.disableFriendlyErrors = prevDisableFriendlyErrors;
+        });
+
+        test('no warnings are logged', function() {
+          const shader = myp5.buildMaterialShader(() => {});
+          expect(logSpy).not.toHaveBeenCalled();
+        });
+      });
+    });
+
     test('a uniform whose name matches a hook parameter name does not break', function () {
       myp5.createCanvas(10, 10, myp5.WEBGL);
       myp5.pixelDensity(1);
@@ -2156,7 +2207,7 @@ void main() {
       });
 
       test('works normally for <50k vertices', function () {
-        const renderer = myp5.createCanvas(10, 10, myp5.WEBGL);
+        myp5.createCanvas(10, 10, myp5.WEBGL);
         const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(false);
 
         myp5.beginShape();
@@ -2175,7 +2226,7 @@ void main() {
 
   suite('color interpolation', function () {
     test('strokes should interpolate colors between vertices', function () {
-      const renderer = myp5.createCanvas(512, 4, myp5.WEBGL);
+      myp5.createCanvas(512, 4, myp5.WEBGL);
 
       // far left color: (242, 236, 40)
       // far right color: (42, 36, 240)
@@ -3043,13 +3094,13 @@ void main() {
     });
 
     test('Maintains stencil test state across draw cycles when user enabled', function () {
-      let drawCalled = false;
-
       myp5.createCanvas(50, 50, myp5.WEBGL);
+      // NOTE: redraw() is async and isn't awaited here, so this override runs
+      // after the assertions below rather than before them. The stencil state
+      // assertions are what this test actually verifies.
       const originalDraw = myp5.draw;
 
       myp5.draw = function () {
-        drawCalled = true;
         if (originalDraw) originalDraw.call(myp5);
       };
 
