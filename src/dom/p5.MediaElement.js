@@ -4,6 +4,7 @@
  */
 
 import { Element } from './p5.Element';
+import { Image } from '../image/p5.Image';
 // import { friendlyAutoplayError } from '../friendly_errors/fes_core';
 import { FES } from '../friendly_errors/fes';
 
@@ -774,42 +775,48 @@ class MediaElement extends Element {
   }
   loadPixels(...args) {
     this._ensureCanvas();
-    return p5.Renderer2D.prototype.loadPixels.apply(this, args);
+    return Image.prototype.loadPixels.apply(this, args);
   }
   updatePixels(x, y, w, h) {
     if (this.loadedmetadata) {
       // wait for metadata
       this._ensureCanvas();
-      p5.Renderer2D.prototype.updatePixels.call(this, x, y, w, h);
+      Image.prototype.updatePixels.call(this, x, y, w, h);
     }
     this.setModified(true);
     return this;
   }
   get(...args) {
     this._ensureCanvas();
-    return p5.Renderer2D.prototype.get.apply(this, args);
+    return Image.prototype.get.apply(this, args);
   }
   _getPixel(...args) {
     this.loadPixels();
-    return p5.Renderer2D.prototype._getPixel.apply(this, args);
+    return Image.prototype._getPixel.apply(this, args);
   }
 
   set(x, y, imgOrCol) {
     if (this.loadedmetadata) {
       // wait for metadata
       this._ensureCanvas();
-      p5.Renderer2D.prototype.set.call(this, x, y, imgOrCol);
+      Image.prototype.set.call(this, x, y, imgOrCol);
       this.setModified(true);
     }
   }
   copy(...args) {
     this._ensureCanvas();
-    p5.prototype.copy.apply(this, args);
+    if (args[0] instanceof MediaElement) {
+      args[0]._ensureCanvas();
+    }
+    Image.prototype.copy.apply(this, args);
+  }
+  _copyHelper(...args) {
+    Image.prototype._copyHelper.apply(this, args);
   }
   mask(...args) {
     this.loadPixels();
     this.setModified(true);
-    p5.Image.prototype.mask.apply(this, args);
+    Image.prototype.mask.apply(this, args);
   }
   /**
    * helper method for web GL mode to figure out if the element
