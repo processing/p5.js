@@ -13,11 +13,11 @@ import { Color } from './p5.Color';
  */
 export const RGB = 'rgb';
 /**
- * @typedef {'rgbhdr'} RGBHDR
- * @property {RGBHDR} RGBHDR
+ * @typedef {'rgbp3'} RGBP3
+ * @property {RGBP3} RGBP3
  * @final
  */
-export const RGBHDR = 'rgbhdr';
+export const RGBP3 = 'rgbp3';
 /**
  * HSB (hue, saturation, brightness) is a type of color model.
  * You can learn more about it at
@@ -71,9 +71,9 @@ export const OKLCH = 'oklch';
  */
 export const RGBA = 'rgba';
 
-function creatingReading(p5, fn){
+function creatingReading(p5, fn) {
   fn.RGB = RGB;
-  fn.RGBHDR = RGBHDR;
+  fn.RGBP3 = RGBP3;
   fn.HSB = HSB;
   fn.HSL = HSL;
   fn.HWB = HWB;
@@ -90,7 +90,7 @@ function creatingReading(p5, fn){
   p5.Renderer.states.colorMode = RGB;
   p5.Renderer.states.colorMaxes = {
     [RGB]: [255, 255, 255, 255],
-    [RGBHDR]: [255, 255, 255, 255],
+    [RGBP3]: [255, 255, 255, 255],
     [HSB]: [360, 100, 100, 1],
     [HSL]: [360, 100, 100, 1],
     [HWB]: [360, 100, 100, 1],
@@ -100,7 +100,7 @@ function creatingReading(p5, fn){
 
     [OKLAB]: [100, [-125, 125], [-125, 125], 1],
     [OKLCH]: [100, 150, 360, 1],
-    clone: function(){
+    clone: function () {
       const cloned = { ...this };
       for (const key in cloned) {
         if (cloned[key] instanceof Array) {
@@ -132,22 +132,8 @@ function creatingReading(p5, fn){
    * The version of `color()` with four parameters interprets them as RGBA, HSBA,
    * or HSLA colors, depending on the current `colorMode()`. The last parameter
    * sets the alpha (transparency) value.
-   * In p5.strands shader callbacks, `color()` accepts the same input
-   * formats but returns a `vec4` instead of a `p5.Color` object, with
-   * RGBA components normalized to the 0–1 range. All colors in strands
-   * are RGB-based; `colorMode()` has no effect inside shader callbacks.
-   * Color utility functions such as `red()`, `green()`, `blue()`,
-   * `alpha()`, `hue()`, `saturation()`, `brightness()`, and
-   * `lightness()` also return values in the 0–1 range when used in
-   * strands.
    *
-   * @method color
-   * @param  {Number} gray number specifying value between white and black.
-   * @param  {Number} [alpha] alpha value relative to current color range
-   *                                 (default is 0-255).
-   * @return {p5.Color} resulting color.
-   *
-   * @example
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -163,8 +149,9 @@ function creatingReading(p5, fn){
    *
    *   describe('A yellow square on a gray canvas.');
    * }
+   * ```
    *
-   * @example
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -189,8 +176,9 @@ function creatingReading(p5, fn){
    *     'Two circles on a gray canvas. The circle in the top-left corner is yellow and the one at the bottom-right is gray.'
    *   );
    * }
+   * ```
    *
-   * @example
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -206,8 +194,9 @@ function creatingReading(p5, fn){
    *
    *   describe('A magenta square on a gray canvas.');
    * }
+   * ```
    *
-   * @example
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -230,8 +219,9 @@ function creatingReading(p5, fn){
    *
    *   describe('Two bright green rectangles on a gray canvas.');
    * }
+   * ```
    *
-   * @example
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -267,8 +257,9 @@ function creatingReading(p5, fn){
    *
    *   describe('Four blue squares in the corners of a gray canvas.');
    * }
+   * ```
    *
-   * @example
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -291,8 +282,9 @@ function creatingReading(p5, fn){
    *
    *   describe('Two sea green rectangles. A darker rectangle on the left and a brighter one on the right.');
    * }
+   * ```
    *
-   * @example
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -315,8 +307,9 @@ function creatingReading(p5, fn){
    *
    *   describe('Two green rectangles. A darker rectangle on the left and a brighter one on the right.');
    * }
+   * ```
    *
-   * @example
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -341,6 +334,47 @@ function creatingReading(p5, fn){
    *
    *   describe('Two blue rectangles. A darker rectangle on the left and a brighter one on the right.');
    * }
+   * ```
+   *
+   * p5.strands is an experimental mode for writing shader code with p5.js-like
+   * syntax instead of GLSL. In p5.strands shader callbacks, `color()` accepts
+   * the same input formats but returns a `vec4` instead of a `p5.Color`
+   * object, with RGBA components normalized to the 0–1 range. All colors in
+   * strands are RGB-based; `colorMode()` has no effect inside shader
+   * callbacks. Color utility functions such as `red()`, `green()`, `blue()`,
+   * `alpha()`, `hue()`, `saturation()`, `brightness()`, and `lightness()`
+   * also return values in the 0–1 range when used in strands.
+   *
+   * ```js example
+   * let myShader;
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *   myShader = buildMaterialShader(myShaderBuilder);
+   * }
+   *
+   * function myShaderBuilder() {
+   *   finalColor.begin();
+   *   // Same syntax as regular sketch code...
+   *   let c = color(255, 0, 0);
+   *   // ...but c is a vec4 with normalized RGBA (0-1), not a p5.Color.
+   *   finalColor.set(c);
+   *   finalColor.end();
+   * }
+   *
+   * function draw() {
+   *   shader(myShader);
+   *   noStroke();
+   *   sphere(40);
+   *
+   *   describe('A red sphere on a gray background.');
+   * }
+   * ```
+   *
+   * @method color
+   * @param  {Number} gray number specifying value between white and black.
+   * @param  {Number} [alpha] alpha value relative to current color range
+   *                                 (default is 0-255).
+   * @return {p5.Color} resulting color.
    */
   /**
    * @method color
@@ -369,7 +403,7 @@ function creatingReading(p5, fn){
    * @param  {p5.Color}     color
    * @return {p5.Color}
    */
-  fn.color = function(...args) {
+  fn.color = function (...args) {
     // p5._validateParameters('color', args);
     if (args[0] instanceof Color) {
       // TODO: perhaps change color mode to match instance mode?
@@ -396,12 +430,7 @@ function creatingReading(p5, fn){
    * to 255. If the <a href="/reference/p5/colorMode/">colorMode()</a> is set to RGB, it
    * returns the red value in the given range.
    *
-   * @method red
-   * @param {p5.Color|Number[]|String} color <a href="/reference/p5/p5.Color/">p5.Color</a> object, array of
-   *                                         color components, or CSS color string.
-   * @return {Number} the red value.
-   *
-   * @example
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -424,8 +453,9 @@ function creatingReading(p5, fn){
    *
    *   describe('Two rectangles. The left one is light purple and the right one is red.');
    * }
+   * ```
    *
-   * @example
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -448,8 +478,9 @@ function creatingReading(p5, fn){
    *
    *   describe('Two rectangles. The left one is light purple and the right one is red.');
    * }
+   * ```
    *
-   * @example
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -472,8 +503,9 @@ function creatingReading(p5, fn){
    *
    *   describe('Two rectangles. The left one is light purple and the right one is red.');
    * }
+   * ```
    *
-   * @example
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -499,8 +531,42 @@ function creatingReading(p5, fn){
    *
    *   describe('Two rectangles. The left one is light purple and the right one is red.');
    * }
+   * ```
+   *
+   * In p5.strands shader callbacks, `red()` operates on `vec4` values and
+   * returns the red channel as a normalized value in the 0–1 range.
+   * `colorMode()` has no effect inside shader callbacks.
+   *
+   * ```js example
+   * let myShader;
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *   myShader = buildMaterialShader(myShaderBuilder);
+   * }
+   *
+   * function myShaderBuilder() {
+   *   finalColor.begin();
+   *   let c = color(200, 100, 50);
+   *   let r = red(c);
+   *   finalColor.set(vec4(r, 0, 0, 1.0));
+   *   finalColor.end();
+   * }
+   *
+   * function draw() {
+   *   shader(myShader);
+   *   noStroke();
+   *   sphere(40);
+   *
+   *   describe('A sphere colored using only its red channel.');
+   * }
+   * ```
+   *
+   * @method red
+   * @param {p5.Color|Number[]|String} color <a href="/reference/p5/p5.Color/">p5.Color</a> object, array of
+   *                                         color components, or CSS color string.
+   * @return {Number} the red value.
    */
-  fn.red = function(c) {
+  fn.red = function (c) {
     // p5._validateParameters('red', arguments);
     // Get current red max
     return this.color(c)._getRed();
@@ -517,12 +583,7 @@ function creatingReading(p5, fn){
    * to 255. If the <a href="/reference/p5/colorMode/">colorMode()</a> is set to RGB, it
    * returns the green value in the given range.
    *
-   * @method green
-   * @param {p5.Color|Number[]|String} color <a href="/reference/p5/p5.Color/">p5.Color</a> object, array of
-   *                                         color components, or CSS color string.
-   * @return {Number} the green value.
-   *
-   * @example
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -545,8 +606,9 @@ function creatingReading(p5, fn){
    *
    *   describe('Two rectangles. The left one is light purple and the right one is dark green.');
    * }
+   * ```
    *
-   * @example
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -569,8 +631,9 @@ function creatingReading(p5, fn){
    *
    *   describe('Two rectangles. The left one is light purple and the right one is dark green.');
    * }
+   * ```
    *
-   * @example
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -593,8 +656,9 @@ function creatingReading(p5, fn){
    *
    *   describe('Two rectangles. The left one is light purple and the right one is dark green.');
    * }
+   * ```
    *
-   * @example
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -620,8 +684,42 @@ function creatingReading(p5, fn){
    *
    *   describe('Two rectangles. The left one is light purple and the right one is dark green.');
    * }
+   * ```
+   *
+   * In p5.strands shader callbacks, `green()` operates on `vec4` values and
+   * returns the green channel as a normalized value in the 0–1 range.
+   * `colorMode()` has no effect inside shader callbacks.
+   *
+   * ```js example
+   * let myShader;
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *   myShader = buildMaterialShader(myShaderBuilder);
+   * }
+   *
+   * function myShaderBuilder() {
+   *   finalColor.begin();
+   *   let c = color(50, 200, 100);
+   *   let g = green(c);
+   *   finalColor.set(vec4(0, g, 0, 1.0));
+   *   finalColor.end();
+   * }
+   *
+   * function draw() {
+   *   shader(myShader);
+   *   noStroke();
+   *   sphere(40);
+   *
+   *   describe('A sphere colored using only its green channel.');
+   * }
+   * ```
+   *
+   * @method green
+   * @param {p5.Color|Number[]|String} color <a href="/reference/p5/p5.Color/">p5.Color</a> object, array of
+   *                                         color components, or CSS color string.
+   * @return {Number} the green value.
    */
-  fn.green = function(c) {
+  fn.green = function (c) {
     // p5._validateParameters('green', arguments);
     // Get current green max
     return this.color(c)._getGreen();
@@ -638,12 +736,7 @@ function creatingReading(p5, fn){
    * to 255. If the <a href="/reference/p5/colorMode/">colorMode()</a> is set to RGB, it
    * returns the blue value in the given range.
    *
-   * @method blue
-   * @param {p5.Color|Number[]|String} color <a href="/reference/p5/p5.Color/">p5.Color</a> object, array of
-   *                                         color components, or CSS color string.
-   * @return {Number} the blue value.
-   *
-   * @example
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -666,8 +759,9 @@ function creatingReading(p5, fn){
    *
    *   describe('Two rectangles. The left one is light purple and the right one is royal blue.');
    * }
+   * ```
    *
-   * @example
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -690,8 +784,9 @@ function creatingReading(p5, fn){
    *
    *   describe('Two rectangles. The left one is light purple and the right one is royal blue.');
    * }
+   * ```
    *
-   * @example
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -714,8 +809,9 @@ function creatingReading(p5, fn){
    *
    *   describe('Two rectangles. The left one is light purple and the right one is royal blue.');
    * }
+   * ```
    *
-   * @example
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -741,8 +837,42 @@ function creatingReading(p5, fn){
    *
    *   describe('Two rectangles. The left one is light purple and the right one is royal blue.');
    * }
+   * ```
+   *
+   * In p5.strands shader callbacks, `blue()` operates on `vec4` values and
+   * returns the blue channel as a normalized value in the 0–1 range.
+   * `colorMode()` has no effect inside shader callbacks.
+   *
+   * ```js example
+   * let myShader;
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *   myShader = buildMaterialShader(myShaderBuilder);
+   * }
+   *
+   * function myShaderBuilder() {
+   *   finalColor.begin();
+   *   let c = color(50, 100, 200);
+   *   let b = blue(c);
+   *   finalColor.set(vec4(0, 0, b, 1.0));
+   *   finalColor.end();
+   * }
+   *
+   * function draw() {
+   *   shader(myShader);
+   *   noStroke();
+   *   sphere(40);
+   *
+   *   describe('A sphere colored using only its blue channel.');
+   * }
+   * ```
+   *
+   * @method blue
+   * @param {p5.Color|Number[]|String} color <a href="/reference/p5/p5.Color/">p5.Color</a> object, array of
+   *                                         color components, or CSS color string.
+   * @return {Number} the blue value.
    */
-  fn.blue = function(c) {
+  fn.blue = function (c) {
     // p5._validateParameters('blue', arguments);
     // Get current blue max
     return this.color(c)._getBlue();
@@ -755,12 +885,7 @@ function creatingReading(p5, fn){
    * <a href="#/p5.Color">p5.Color</a> object, an array of color components, or
    * a CSS color string.
    *
-   * @method alpha
-   * @param {p5.Color|Number[]|String} color <a href="#/p5.Color">p5.Color</a> object, array of
-   *                                         color components, or CSS color string.
-   * @return {Number} the alpha value.
-   *
-   * @example
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -783,8 +908,9 @@ function creatingReading(p5, fn){
    *
    *   describe('Two rectangles. The left one is light blue and the right one is charcoal gray.');
    * }
+   * ```
    *
-   * @example
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -807,8 +933,9 @@ function creatingReading(p5, fn){
    *
    *   describe('Two rectangles. The left one is light blue and the right one is charcoal gray.');
    * }
+   * ```
    *
-   * @example
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -831,8 +958,42 @@ function creatingReading(p5, fn){
    *
    *   describe('Two rectangles. The left one is light blue and the right one is charcoal gray.');
    * }
+   * ```
+   *
+   * In p5.strands shader callbacks, `alpha()` operates on `vec4` values and
+   * returns the alpha channel as a normalized value in the 0–1 range.
+   * `colorMode()` has no effect inside shader callbacks.
+   *
+   * ```js example
+   * let myShader;
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *   myShader = buildMaterialShader(myShaderBuilder);
+   * }
+   *
+   * function myShaderBuilder() {
+   *   finalColor.begin();
+   *   let c = color(255, 0, 0, 128);
+   *   let a = alpha(c);
+   *   finalColor.set(vec4(1.0, 0, 0, a * 0.5));
+   *   finalColor.end();
+   * }
+   *
+   * function draw() {
+   *   shader(myShader);
+   *   noStroke();
+   *   sphere(40);
+   *
+   *   describe('A semi-transparent sphere.');
+   * }
+   * ```
+   *
+   * @method alpha
+   * @param {p5.Color|Number[]|String} color <a href="#/p5.Color">p5.Color</a> object, array of
+   *                                         color components, or CSS color string.
+   * @return {Number} the alpha value.
    */
-  fn.alpha = function(c) {
+  fn.alpha = function (c) {
     // p5._validateParameters('alpha', arguments);
     // Get current alpha max
     return this.color(c)._getAlpha();
@@ -850,12 +1011,7 @@ function creatingReading(p5, fn){
    * <a href="/reference/p5/colorMode/">colorMode()</a> is set to HSB or HSL, it returns the hue
    * value in the given mode.
    *
-   * @method hue
-   * @param {p5.Color|Number[]|String} color <a href="/reference/p5/p5.Color/">p5.Color</a> object, array of
-   *                                         color components, or CSS color string.
-   * @return {Number} the hue value.
-   *
-   * @example
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -883,8 +1039,9 @@ function creatingReading(p5, fn){
    *     'Two rectangles. The rectangle on the left is salmon pink and the one on the right is black.'
    *   );
    * }
+   * ```
    *
-   * @example
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -912,8 +1069,9 @@ function creatingReading(p5, fn){
    *     'Two rectangles. The rectangle on the left is salmon pink and the one on the right is black.'
    *   );
    * }
+   * ```
    *
-   * @example
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -941,20 +1099,54 @@ function creatingReading(p5, fn){
    *     'Two rectangles. The rectangle on the left is salmon pink and the one on the right is black.'
    *   );
    * }
+   * ```
+   *
+   * In p5.strands shader callbacks, `hue()` operates on `vec4` values and
+   * returns the hue as a normalized value in the 0–1 range.
+   * `colorMode()` has no effect inside shader callbacks.
+   *
+   * ```js example
+   * let myShader;
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *   myShader = buildMaterialShader(myShaderBuilder);
+   * }
+   *
+   * function myShaderBuilder() {
+   *   finalColor.begin();
+   *   let c = color(0, 255, 128);
+   *   let h = hue(c);
+   *   finalColor.set(vec4(h, h, h, 1.0));
+   *   finalColor.end();
+   * }
+   *
+   * function draw() {
+   *   shader(myShader);
+   *   noStroke();
+   *   sphere(40);
+   *
+   *   describe('A sphere shaded in grayscale based on hue.');
+   * }
+   * ```
+   *
+   * @method hue
+   * @param {p5.Color|Number[]|String} color <a href="/reference/p5/p5.Color/">p5.Color</a> object, array of
+   *                                         color components, or CSS color string.
+   * @return {Number} the hue value.
    */
-  fn.hue = function(c) {
+  fn.hue = function (c) {
     let colorMode = HSL;
     let i = 0;
 
-    if(
+    if (
       this._renderer.states.colorMode === HSB ||
       this._renderer.states.colorMode === HSL
-    ){
+    ) {
       colorMode = this._renderer.states.colorMode;
-    }else if(
+    } else if (
       this._renderer.states.colorMode === LCH ||
       this._renderer.states.colorMode === OKLCH
-    ){
+    ) {
       colorMode = this._renderer.states.colorMode;
       i = 2;
     }
@@ -976,12 +1168,7 @@ function creatingReading(p5, fn){
    * <a href="/reference/p5/colorMode/">colorMode()</a> is set to HSB or HSL, it returns the
    * saturation value in the given mode.
    *
-   * @method saturation
-   * @param {p5.Color|Number[]|String} color <a href="/reference/p5/p5.Color/">p5.Color</a> object, array of
-   *                                         color components, or CSS color string.
-   * @return {Number} the saturation value
-   *
-   * @example
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1007,8 +1194,9 @@ function creatingReading(p5, fn){
    *
    *   describe('Two rectangles. The left one is salmon pink and the right one is dark gray.');
    * }
+   * ```
    *
-   * @example
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1034,8 +1222,9 @@ function creatingReading(p5, fn){
    *
    *   describe('Two rectangles. The left one is salmon pink and the right one is gray.');
    * }
+   * ```
    *
-   * @example
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1061,8 +1250,9 @@ function creatingReading(p5, fn){
    *
    *   describe('Two rectangles. The left one is salmon pink and the right one is gray.');
    * }
+   * ```
    *
-   * @example
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1088,8 +1278,9 @@ function creatingReading(p5, fn){
    *
    *   describe('Two rectangles. The left one is salmon pink and the right one is white.');
    * }
+   * ```
    *
-   * @example
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1115,9 +1306,43 @@ function creatingReading(p5, fn){
    *
    *   describe('Two rectangles. The left one is salmon pink and the right one is white.');
    * }
+   * ```
+   *
+   * In p5.strands shader callbacks, `saturation()` operates on `vec4` values
+   * and returns the saturation as a normalized value in the 0–1 range.
+   * `colorMode()` has no effect inside shader callbacks.
+   *
+   * ```js example
+   * let myShader;
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *   myShader = buildMaterialShader(myShaderBuilder);
+   * }
+   *
+   * function myShaderBuilder() {
+   *   finalColor.begin();
+   *   let c = color(255, 128, 128);
+   *   let s = saturation(c);
+   *   finalColor.set(vec4(s, s, s, 1.0));
+   *   finalColor.end();
+   * }
+   *
+   * function draw() {
+   *   shader(myShader);
+   *   noStroke();
+   *   sphere(40);
+   *
+   *   describe('A sphere shaded in grayscale based on saturation.');
+   * }
+   * ```
+   *
+   * @method saturation
+   * @param {p5.Color|Number[]|String} color <a href="/reference/p5/p5.Color/">p5.Color</a> object, array of
+   *                                         color components, or CSS color string.
+   * @return {Number} the saturation value
    */
-  fn.saturation = function(c) {
-    const colorMode = (this._renderer.states.colorMode === HSB) ? HSB : HSL;
+  fn.saturation = function (c) {
+    const colorMode = this._renderer.states.colorMode === HSB ? HSB : HSL;
     return this.color(c)._getSaturation(
       this._renderer.states.colorMaxes[colorMode][1]
     );
@@ -1134,12 +1359,7 @@ function creatingReading(p5, fn){
    * to 100. If the <a href="/reference/p5/colorMode/">colorMode()</a> is set to HSB, it
    * returns the brightness value in the given range.
    *
-   * @method brightness
-   * @param {p5.Color|Number[]|String} color <a href="/reference/p5/p5.Color/">p5.Color</a> object, array of
-   *                                         color components, or CSS color string.
-   * @return {Number} the brightness value.
-   *
-   * @example
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1165,8 +1385,9 @@ function creatingReading(p5, fn){
    *
    *   describe('Two rectangles. The left one is salmon pink and the right one is white.');
    * }
+   * ```
    *
-   * @example
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1192,8 +1413,9 @@ function creatingReading(p5, fn){
    *
    *   describe('Two rectangles. The left one is salmon pink and the right one is white.');
    * }
+   * ```
    *
-   * @example
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1219,8 +1441,9 @@ function creatingReading(p5, fn){
    *
    *   describe('Two rectangles. The left one is salmon pink and the right one is white.');
    * }
+   * ```
    *
-   * @example
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1246,8 +1469,42 @@ function creatingReading(p5, fn){
    *
    *   describe('Two rectangles. The left one is salmon pink and the right one is white.');
    * }
+   * ```
+   *
+   * In p5.strands shader callbacks, `brightness()` operates on `vec4` values
+   * and returns the brightness as a normalized value in the 0–1 range.
+   * `colorMode()` has no effect inside shader callbacks.
+   *
+   * ```js example
+   * let myShader;
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *   myShader = buildMaterialShader(myShaderBuilder);
+   * }
+   *
+   * function myShaderBuilder() {
+   *   finalColor.begin();
+   *   let c = color(0, 50, 100);
+   *   let b = brightness(c);
+   *   finalColor.set(vec4(b, b, b, 1.0));
+   *   finalColor.end();
+   * }
+   *
+   * function draw() {
+   *   shader(myShader);
+   *   noStroke();
+   *   sphere(40);
+   *
+   *   describe('A sphere shaded in grayscale based on brightness.');
+   * }
+   * ```
+   *
+   * @method brightness
+   * @param {p5.Color|Number[]|String} color <a href="/reference/p5/p5.Color/">p5.Color</a> object, array of
+   *                                         color components, or CSS color string.
+   * @return {Number} the brightness value.
    */
-  fn.brightness = function(c) {
+  fn.brightness = function (c) {
     return this.color(c)._getBrightness(
       this._renderer.states.colorMaxes.hsb[2]
     );
@@ -1264,12 +1521,7 @@ function creatingReading(p5, fn){
    * to 100. If the <a href="/reference/p5/colorMode/">colorMode()</a> is set to HSL, it
    * returns the lightness value in the given range.
    *
-   * @method lightness
-   * @param {p5.Color|Number[]|String} color <a href="/reference/p5/p5.Color/">p5.Color</a> object, array of
-   *                                         color components, or CSS color string.
-   * @return {Number} the lightness value.
-   *
-   * @example
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1295,8 +1547,9 @@ function creatingReading(p5, fn){
    *
    *   describe('Two rectangles. The left one is salmon pink and the right one is gray.');
    * }
+   * ```
    *
-   * @example
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1322,8 +1575,9 @@ function creatingReading(p5, fn){
    *
    *   describe('Two rectangles. The left one is salmon pink and the right one is gray.');
    * }
+   * ```
    *
-   * @example
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1349,8 +1603,9 @@ function creatingReading(p5, fn){
    *
    *   describe('Two rectangles. The left one is salmon pink and the right one is gray.');
    * }
+   * ```
    *
-   * @example
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1376,11 +1631,43 @@ function creatingReading(p5, fn){
    *
    *   describe('Two rectangles. The left one is salmon pink and the right one is gray.');
    * }
+   * ```
+   *
+   * In p5.strands shader callbacks, `lightness()` operates on `vec4` values
+   * and returns the lightness as a normalized value in the 0–1 range.
+   * `colorMode()` has no effect inside shader callbacks.
+   *
+   * ```js example
+   * let myShader;
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *   myShader = buildMaterialShader(myShaderBuilder);
+   * }
+   *
+   * function myShaderBuilder() {
+   *   finalColor.begin();
+   *   let c = color(0, 100, 75);
+   *   let l = lightness(c);
+   *   finalColor.set(vec4(l, l, l, 1.0));
+   *   finalColor.end();
+   * }
+   *
+   * function draw() {
+   *   shader(myShader);
+   *   noStroke();
+   *   sphere(40);
+   *
+   *   describe('A sphere shaded in grayscale based on lightness.');
+   * }
+   * ```
+   *
+   * @method lightness
+   * @param {p5.Color|Number[]|String} color <a href="/reference/p5/p5.Color/">p5.Color</a> object, array of
+   *                                         color components, or CSS color string.
+   * @return {Number} the lightness value.
    */
-  fn.lightness = function(c) {
-    return this.color(c)._getLightness(
-      this._renderer.states.colorMaxes.hsl[2]
-    );
+  fn.lightness = function (c) {
+    return this.color(c)._getLightness(this._renderer.states.colorMaxes.hsl[2]);
   };
 
   /**
@@ -1394,15 +1681,9 @@ function creatingReading(p5, fn){
    * interval [0, 1] will produce strange and unexpected colors.
    *
    * The way that colors are interpolated depends on the current
-   * <a href="#/p5/colorMode">colorMode()</a>.
+   * <a href="#/p5/colorMode">colorMode()</a> or on the passed `options` object.
    *
-   * @method lerpColor
-   * @param  {p5.Color} c1  interpolate from this color.
-   * @param  {p5.Color} c2  interpolate to this color.
-   * @param  {Number}   amt number between 0 and 1.
-   * @return {p5.Color}     interpolated color.
-   *
-   * @example
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1437,10 +1718,129 @@ function creatingReading(p5, fn){
    *     'Four rectangles. From left to right, the rectangles are tan, brown, brownish purple, and purple.'
    *   );
    * }
+   * ```
+   *
+   * Normally, colors are interpolated according to the current `colorMode()`. But you can override this by
+   * specifying a different color space to perform the interpolation in. Different color spaces will blend
+   * colors differently.
+   *
+   * ```js example
+   * function setup() {
+   *   createCanvas(100, 100);
+   *
+   *   background(200);
+   *
+   *   // Create p5.Color objects to interpolate between.
+   *   colorMode(HSL);
+   *   let from = color(240, 100, 25);
+   *   let to = color('white');
+   *
+   *   // Create intermediate colors
+   *   let interA = lerpColor(from, to, 0.33);
+   *   let interB = lerpColor(from, to, 0.66);
+   *
+   *   let inter1 = lerpColor(from, to, {
+   *     amount: 0.33,
+   *     lerpMode: HSB // interpolate in the HSB color space
+   *   });
+   *   let inter2 = lerpColor(from, to, {
+   *     amount: 0.66,
+   *     lerpMode: HSB
+   *   });
+   *
+   *   // Draw the left rectangle.
+   *   noStroke();
+   *   fill(from);
+   *   rect(10, 20, 20, 60);
+   *
+   *   // Draw the left-center rectangles.
+   *   fill(interA);
+   *   rect(30, 20, 20, 30);
+   *
+   *   fill(inter1);
+   *   rect(30, 50, 20, 30);
+   *
+   *   // Draw the right-center rectangles.
+   *   fill(interB);
+   *   rect(50, 20, 20, 30);
+   *
+   *   fill(inter2);
+   *   rect(50, 50, 20, 30);
+   *
+   *   // Draw the right rectangle.
+   *   fill(to);
+   *   rect(70, 20, 20, 60);
+   *
+   *   describe(
+   *     'Two strips of four colors each. From left to right, the top strip begins with dark blue, followed by a lighter blue, a light blue and finally white. Meanwhile, the bottom strip begins with a dark blue, followed by purple, then pink and finally white.'
+   *   );
+   * }
+   * ```
+   *
+   * In p5.strands shader callbacks, `lerpColor()` interpolates between
+   * `vec4` colors and returns a normalized `vec4` with RGBA components in
+   * the 0–1 range. `colorMode()` has no effect inside shader callbacks.
+   *
+   * ```js example
+   * let myShader;
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *   myShader = buildMaterialShader(myShaderBuilder);
+   * }
+   *
+   * function myShaderBuilder() {
+   *   finalColor.begin();
+   *   let c1 = color('red');
+   *   let c2 = color('blue');
+   *   let mixed = lerpColor(c1, c2, 0.5);
+   *   finalColor.set(mixed);
+   *   finalColor.end();
+   * }
+   *
+   * function draw() {
+   *   shader(myShader);
+   *   noStroke();
+   *   sphere(40);
+   *
+   *   describe('A purple sphere, a blend of red and blue.');
+   * }
+   * ```
+   *
+   * @method lerpColor
+   * @param  {p5.Color} c1  interpolate from this color.
+   * @param  {p5.Color} c2  interpolate to this color.
+   * @param  {Number}   amt number between 0 and 1.
+   * @return {p5.Color}     interpolated color.
    */
-  fn.lerpColor = function(c1, c2, amt) {
+  /**
+   * @method lerpColor
+   * @param  {p5.Color} c1  interpolate from this color.
+   * @param  {p5.Color} c2  interpolate to this color.
+   * @param  {Object} options interpolation options.
+   * @param  {number} [options.amount] a number between 0 and 1.
+   * @param  {RGB|HSB|HSL|RGBP3|HWB|LAB|LCH|OKLAB|OKLCH} [options.outputMode] the desired output color mode.
+   * @param  {RGB|HSB|HSL|RGBP3|HWB|LAB|LCH|OKLAB|OKLCH} [options.lerpMode] the color mode (space) to perform the interpolation in.
+   * @return  {p5.Color}     interpolated color.
+   */
+  fn.lerpColor = function (c1, c2, amt) {
+    const defaultMode = this._renderer.states.colorMode;
+
+    let outputMode = defaultMode;
+    let lerpMode = defaultMode;
+
+    if (typeof amt === 'object') {
+      // Passing in options object
+      outputMode = amt.outputMode ?? outputMode;
+      lerpMode = amt.lerpMode ?? lerpMode;
+      amt = amt.amount;
+    }
+
     // p5._validateParameters('lerpColor', arguments);
-    return c1.lerp(c2, amt, this._renderer.states.colorMode);
+    return c1.lerp(c2, {
+      amount: amt,
+      lerpMode,
+      outputMode
+    });
   };
 
   /**
@@ -1474,10 +1874,9 @@ function creatingReading(p5, fn){
    *   ], millis() / 10000 % 1));
    * }
    */
-  fn.paletteLerp = function(color_stops, amt) {
+  fn.paletteLerp = function (color_stops, amt) {
     const first_color_stop = color_stops[0];
-    if (amt < first_color_stop[1])
-      return this.color(first_color_stop[0]);
+    if (amt < first_color_stop[1]) return this.color(first_color_stop[0]);
 
     for (let i = 1; i < color_stops.length; i++) {
       const color_stop = color_stops[i];
@@ -1497,6 +1896,6 @@ function creatingReading(p5, fn){
 
 export default creatingReading;
 
-if(typeof p5 !== 'undefined'){
+if (typeof p5 !== 'undefined') {
   creatingReading(p5, p5.prototype);
 }

@@ -9,14 +9,14 @@ assert.arrayApproximately = function (arr1, arr2, delta, desc) {
   for (var i = 0; i < arr1.length; i++) {
     assert.approximately(arr1[i], arr2[i], delta, desc);
   }
-}
+};
 
 assert.deepCloseTo = function (actual, expected, digits = 4) {
   expect(actual.length).toBe(expected.length);
   for (let i = 0; i < actual.length; i++) {
     expect(actual[i]).withContext(`[${i}]`).toBeCloseTo(expected[i], digits);
   }
-}
+};
 
 // a custom assertion for validation errors that correctly handles
 // minified p5 libraries.

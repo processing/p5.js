@@ -6,7 +6,7 @@
 
 import * as constants from '../core/constants';
 
-function attributes(p5, fn){
+function attributes(p5, fn) {
   /**
    * Changes where ellipses, circles, and arcs are drawn.
    *
@@ -34,7 +34,7 @@ function attributes(p5, fn){
    * way. JavaScript is a case-sensitive language.
    *
    * Calling `ellipseMode()` without an argument returns the current ellipseMode, either `CENTER`, `RADIUS`, `CORNER`, or `CORNERS`.
-   * 
+   *
    * @method ellipseMode
    * @param  {(CENTER|RADIUS|CORNER|CORNERS)} mode either CENTER, RADIUS, CORNER, or CORNERS
    * @chainable
@@ -81,9 +81,10 @@ function attributes(p5, fn){
    * @method ellipseMode
    * @return {(CENTER|RADIUS|CORNER|CORNERS)}      the current ellipseMode.
    */
-  fn.ellipseMode = function(m) {
+  fn.ellipseMode = function (m) {
     // p5._validateParameters('ellipseMode', arguments);
-    if (typeof m === 'undefined') { // getter
+    if (typeof m === 'undefined') {
+      // getter
       return this._renderer?.states.ellipseMode;
     }
     if (
@@ -159,7 +160,7 @@ function attributes(p5, fn){
    *   describe('A pixelated white circle on a gray background.');
    * }
    */
-  fn.noSmooth = function() {
+  fn.noSmooth = function () {
     if (!this._renderer.isP3D) {
       if ('imageSmoothingEnabled' in this.drawingContext) {
         this.drawingContext.imageSmoothingEnabled = false;
@@ -269,9 +270,10 @@ function attributes(p5, fn){
    * @method rectMode
    * @return {(CENTER|RADIUS|CORNER|CORNERS)}      the current rectMode.
    */
-  fn.rectMode = function(m) {
+  fn.rectMode = function (m) {
     // p5._validateParameters('rectMode', arguments);
-    if (typeof m === 'undefined') { // getter
+    if (typeof m === 'undefined') {
+      // getter
       return this._renderer?.states.rectMode;
     }
     if (
@@ -347,7 +349,7 @@ function attributes(p5, fn){
    *   describe('A pixelated white circle on a gray background.');
    * }
    */
-  fn.smooth = function() {
+  fn.smooth = function () {
     if (!this._renderer.isP3D) {
       if ('imageSmoothingEnabled' in this.drawingContext) {
         this.drawingContext.imageSmoothingEnabled = true;
@@ -396,9 +398,10 @@ function attributes(p5, fn){
    *   );
    * }
    */
-  fn.strokeCap = function(cap) {
+  fn.strokeCap = function (cap) {
     // p5._validateParameters('strokeCap', arguments);
-    if (typeof cap === 'undefined') { // getter
+    if (typeof cap === 'undefined') {
+      // getter
       return this._renderer.strokeCap();
     }
     if (
@@ -494,9 +497,10 @@ function attributes(p5, fn){
    * @method strokeJoin
    * @return {(MITER|BEVEL|ROUND)}      the current stroke join style.
    */
-  fn.strokeJoin = function(join) {
+  fn.strokeJoin = function (join) {
     // p5._validateParameters('strokeJoin', arguments);
-    if (typeof join === 'undefined') { // getter
+    if (typeof join === 'undefined') {
+      // getter
       return this._renderer.strokeJoin();
     }
     if (
@@ -516,7 +520,7 @@ function attributes(p5, fn){
    * Note: In 2D mode, `strokeWeight()` is affected by transformations,
    * especially calls to <a href="#/p5/scale">scale()</a>. It isn't affected by
    * transformations in WebGL and WebGPU modes.
-   * 
+   *
    * Calling `strokeWeight()` without an argument returns the current stroke weight as a number.
    *
    * @method strokeWeight
@@ -564,7 +568,7 @@ function attributes(p5, fn){
    * @method strokeWeight
    * @return {Number} the current stroke weight.
    */
-  fn.strokeWeight = function(w) {
+  fn.strokeWeight = function (w) {
     // p5._validateParameters('strokeWeight', arguments);
     return this._renderer.strokeWeight(w);
   };
@@ -572,6 +576,6 @@ function attributes(p5, fn){
 
 export default attributes;
 
-if(typeof p5 !== 'undefined'){
+if (typeof p5 !== 'undefined') {
   attributes(p5, p5.prototype);
 }

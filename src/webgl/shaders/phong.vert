@@ -6,6 +6,9 @@ IN vec3 aPosition;
 IN vec3 aNormal;
 IN vec2 aTexCoord;
 IN vec4 aVertexColor;
+#ifdef USE_TEXTURE_MAPS
+IN vec4 aTangent;
+#endif
 
 #ifdef AUGMENTED_HOOK_getWorldInputs
 uniform mat4 uModelMatrix;
@@ -26,6 +29,9 @@ OUT vec2 vTexCoord;
 OUT vec3 vViewPosition;
 OUT vec3 vAmbientColor;
 OUT vec4 vColor;
+#ifdef USE_TEXTURE_MAPS
+OUT vec4 vTangent;
+#endif
 
 struct Vertex {
   vec3 position;
@@ -42,6 +48,11 @@ void main(void) {
   inputs.normal = aNormal;
   inputs.texCoord = aTexCoord;
   inputs.color = (uUseVertexColor && aVertexColor.x >= 0.0) ? aVertexColor : uMaterialColor;
+#ifdef USE_TEXTURE_MAPS
+  // transform the surface tangent alongside the normal so it ends up in the
+  // same space; handedness (w) is passed through for rebuilding the bitangent.
+  vec3 tangent = aTangent.xyz;
+#endif
 #ifdef AUGMENTED_HOOK_getObjectInputs
   inputs = HOOK_getObjectInputs(inputs);
 #endif
@@ -49,6 +60,9 @@ void main(void) {
 #ifdef AUGMENTED_HOOK_getWorldInputs
   inputs.position = (uModelMatrix * vec4(inputs.position, 1.)).xyz;
   inputs.normal = uModelNormalMatrix * inputs.normal;
+#ifdef USE_TEXTURE_MAPS
+  tangent = uModelNormalMatrix * tangent;
+#endif
   inputs = HOOK_getWorldInputs(inputs);
 #endif
 
@@ -56,10 +70,16 @@ void main(void) {
   // Already multiplied by the model matrix, just apply view
   inputs.position = (uViewMatrix * vec4(inputs.position, 1.)).xyz;
   inputs.normal = uCameraNormalMatrix * inputs.normal;
+#ifdef USE_TEXTURE_MAPS
+  tangent = uCameraNormalMatrix * tangent;
+#endif
 #else
   // Apply both at once
   inputs.position = (uModelViewMatrix * vec4(inputs.position, 1.)).xyz;
   inputs.normal = uNormalMatrix * inputs.normal;
+#ifdef USE_TEXTURE_MAPS
+  tangent = uNormalMatrix * tangent;
+#endif
 #endif
 #ifdef AUGMENTED_HOOK_getCameraInputs
   inputs = HOOK_getCameraInputs(inputs);
@@ -70,6 +90,9 @@ void main(void) {
   vTexCoord = inputs.texCoord;
   vNormal = inputs.normal;
   vColor = inputs.color;
+#ifdef USE_TEXTURE_MAPS
+  vTangent = vec4(tangent, aTangent.w);
+#endif
 
   gl_Position = uProjectionMatrix * vec4(inputs.position, 1.);
   HOOK_afterVertex();

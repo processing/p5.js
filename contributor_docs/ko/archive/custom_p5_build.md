@@ -40,5 +40,5 @@ npm run grunt combineModules:min:module_x:module_y uglify
 - `npm run grunt combineModules:core/shape:color:math:image`
   `lib/modules` 디렉토리에 압축되지 않은 `p5Custom.js` 번들을 생성합니다.
 
-- `npm run grunt combineModules:min:core/shape:color:math:image` 
+- `npm run grunt combineModules:min:core/shape:color:math:image`
   `combineModules:min` 태스크를 사용하여 `lib/modules` 디렉토리에 `p5Custom.pre-min.js`를 생성합니다. 이 예제에서 `npm run grunt uglify`는 `combineModules:min` 작업을 실행 한 후에 별도로 실행 할 수 있습니다.

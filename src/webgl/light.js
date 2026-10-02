@@ -8,7 +8,7 @@ import { Renderer3D } from '../core/p5.Renderer3D';
 import { Vector } from '../math/p5.Vector';
 import { Color } from '../color/p5.Color';
 
-function light(p5, fn){
+function light(p5, fn) {
   /**
    * Creates a light that shines from all directions.
    *
@@ -1356,11 +1356,12 @@ function light(p5, fn){
     return this;
   };
 
-
-  Renderer3D.prototype.ambientLight = function(v1, v2, v3, a) {
+  Renderer3D.prototype.ambientLight = function (v1, v2, v3, a) {
     const color = this._pInst.color(...arguments);
 
-    this.states.setValue('ambientLightColors', [...this.states.ambientLightColors]);
+    this.states.setValue('ambientLightColors', [
+      ...this.states.ambientLightColors
+    ]);
     this.states.ambientLightColors.push(
       color._array[0],
       color._array[1],
@@ -1370,7 +1371,7 @@ function light(p5, fn){
     this.states.setValue('enableLighting', true);
   };
 
-  Renderer3D.prototype.specularColor = function(v1, v2, v3) {
+  Renderer3D.prototype.specularColor = function (v1, v2, v3) {
     const color = this._pInst.color(...arguments);
 
     this.states.setValue('specularColors', [
@@ -1380,7 +1381,7 @@ function light(p5, fn){
     ]);
   };
 
-  Renderer3D.prototype.directionalLight = function(v1, v2, v3, x, y, z) {
+  Renderer3D.prototype.directionalLight = function (v1, v2, v3, x, y, z) {
     let color;
     if (v1 instanceof Color) {
       color = v1;
@@ -1402,17 +1403,23 @@ function light(p5, fn){
 
     // normalize direction
     const l = Math.sqrt(_x * _x + _y * _y + _z * _z);
-    this.states.setValue('directionalLightDirections', [...this.states.directionalLightDirections]);
+    this.states.setValue('directionalLightDirections', [
+      ...this.states.directionalLightDirections
+    ]);
     this.states.directionalLightDirections.push(_x / l, _y / l, _z / l);
 
-    this.states.setValue('directionalLightDiffuseColors', [...this.states.directionalLightDiffuseColors]);
+    this.states.setValue('directionalLightDiffuseColors', [
+      ...this.states.directionalLightDiffuseColors
+    ]);
     this.states.directionalLightDiffuseColors.push(
       color._array[0],
       color._array[1],
       color._array[2]
     );
 
-    this.states.setValue('directionalLightSpecularColors', [...this.states.directionalLightSpecularColors]);
+    this.states.setValue('directionalLightSpecularColors', [
+      ...this.states.directionalLightSpecularColors
+    ]);
     Array.prototype.push.apply(
       this.states.directionalLightSpecularColors,
       this.states.specularColors
@@ -1421,7 +1428,7 @@ function light(p5, fn){
     this.states.setValue('enableLighting', true);
   };
 
-  Renderer3D.prototype.pointLight = function(v1, v2, v3, x, y, z) {
+  Renderer3D.prototype.pointLight = function (v1, v2, v3, x, y, z) {
     let color;
     if (v1 instanceof Color) {
       color = v1;
@@ -1441,17 +1448,23 @@ function light(p5, fn){
       _z = v.z;
     }
 
-    this.states.setValue('pointLightPositions', [...this.states.pointLightPositions]);
+    this.states.setValue('pointLightPositions', [
+      ...this.states.pointLightPositions
+    ]);
     this.states.pointLightPositions.push(_x, _y, _z);
 
-    this.states.setValue('pointLightDiffuseColors', [...this.states.pointLightDiffuseColors]);
+    this.states.setValue('pointLightDiffuseColors', [
+      ...this.states.pointLightDiffuseColors
+    ]);
     this.states.pointLightDiffuseColors.push(
       color._array[0],
       color._array[1],
       color._array[2]
     );
 
-    this.states.setValue('pointLightSpecularColors', [...this.states.pointLightSpecularColors]);
+    this.states.setValue('pointLightSpecularColors', [
+      ...this.states.pointLightSpecularColors
+    ]);
     Array.prototype.push.apply(
       this.states.pointLightSpecularColors,
       this.states.specularColors
@@ -1460,7 +1473,7 @@ function light(p5, fn){
     this.states.setValue('enableLighting', true);
   };
 
-  Renderer3D.prototype.imageLight = function(img) {
+  Renderer3D.prototype.imageLight = function (img) {
     // activeImageLight property is checked by _setFillUniforms
     // for sending uniforms to the fillshader
     this.states.setValue('activeImageLight', img);
@@ -1470,13 +1483,13 @@ function light(p5, fn){
     this.makeSpecularTexture(img);
   };
 
-  Renderer3D.prototype.lights = function() {
+  Renderer3D.prototype.lights = function () {
     const grayColor = this._pInst.color('rgb(128,128,128)');
     this.ambientLight(grayColor);
     this.directionalLight(grayColor, 0, 0, -1);
   };
 
-  Renderer3D.prototype.lightFalloff = function(
+  Renderer3D.prototype.lightFalloff = function (
     constantAttenuation,
     linearAttenuation,
     quadraticAttenuation
@@ -1504,7 +1517,8 @@ function light(p5, fn){
 
     if (
       constantAttenuation === 0 &&
-      (linearAttenuation === 0 && quadraticAttenuation === 0)
+      linearAttenuation === 0 &&
+      quadraticAttenuation === 0
     ) {
       constantAttenuation = 1;
       console.warn(
@@ -1517,7 +1531,7 @@ function light(p5, fn){
     this.states.setValue('quadraticAttenuation', quadraticAttenuation);
   };
 
-  Renderer3D.prototype.spotLight = function(
+  Renderer3D.prototype.spotLight = function (
     v1,
     v2,
     v3,
@@ -1728,13 +1742,19 @@ function light(p5, fn){
     }
 
     angle = this._pInst._toRadians(angle);
-    this.states.setValue('spotLightAngle', [...this.states.spotLightAngle, Math.cos(angle)]);
-    this.states.setValue('spotLightConc', [...this.states.spotLightConc, concentration]);
+    this.states.setValue('spotLightAngle', [
+      ...this.states.spotLightAngle,
+      Math.cos(angle)
+    ]);
+    this.states.setValue('spotLightConc', [
+      ...this.states.spotLightConc,
+      concentration
+    ]);
 
     this.states.setValue('enableLighting', true);
   };
 
-  Renderer3D.prototype.noLights = function() {
+  Renderer3D.prototype.noLights = function () {
     this.states.setValue('activeImageLight', null);
     this.states.setValue('enableLighting', false);
 
@@ -1766,6 +1786,6 @@ function light(p5, fn){
 
 export default light;
 
-if(typeof p5 !== 'undefined'){
+if (typeof p5 !== 'undefined') {
   light(p5, p5.prototype);
 }

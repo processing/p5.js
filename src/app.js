@@ -15,8 +15,10 @@ color(p5);
 
 // core
 // currently, it only contains the test for parameter validation
-import friendlyErrors from './core/friendly_errors';
-friendlyErrors(p5);
+import friendlyErrors from './friendly_errors';
+if (typeof IS_MINIFIED === 'undefined') {
+  friendlyErrors(p5);
+}
 
 // data
 import data from './data';
@@ -60,8 +62,7 @@ p5.registerAddon(shader);
 import strands from './strands/p5.strands';
 p5.registerAddon(strands);
 
-import { waitForDocumentReady, waitingForTranslator, _globalInit } from './core/init';
-Promise.all([waitForDocumentReady(), waitingForTranslator]).then(_globalInit);
+import { waitForDocumentReady, _globalInit } from './core/init';
+waitForDocumentReady().then(_globalInit);
 
 export default p5;
-

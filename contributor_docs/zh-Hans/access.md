@@ -26,8 +26,8 @@
 
 我们意识到用来描述我们各自身份的术语的复杂性。语言是微妙的、不断发展的，且常常存在争议。这并不是一个详尽的列表。我们努力给予命名，并对我们的承诺及 p5.js 社区的多样需求承担责任。
 
-
 ### 示例
+
 我们认为以下举措有助于增加可及性：
 
 - 将文档和其他资料翻译成更多的语言，从而解构语言帝国主义[^4]（例如，Rolando Vargas 的[用库纳语编程](https://medium.com/@ProcessingOrg/culture-as-translation-processing-in-kuna-language-with-rolando-vargas-and-edinson-izquierdo-8079f14851f7)，Felipe Santos Gomes, Julia Brasil, Katherine Finn Zander, 和 Marcela Mancino 的[为葡萄牙语用户的 Pê Cinco：国际化与普及](https://medium.com/processing-foundation/translating-p5-js-into-portuguese-for-the-brazilian-community-14b969e77ab1)）
@@ -39,20 +39,22 @@
 - 支持创建教育资源（例如，Adekemi Sijuwade-Ukadike 的[可及性教学大纲](http://a11ysyllabus.site/)）
 - 发布我们的工作文档和报告，遵循 WCAG 指南，使用简明语言，专注于来自多样经历的初学者（例如，[ OSACC p5.js 访问报告](https://github.com/processing/OSACC-p5.js-Access-Report)）
 
-
-
 ## 维护
+
 我们不接受那些不支持我们增加可及性努力的功能请求。你将在我们的 issue 和 PR 模板中看到这一标准的体现。我们还确认了保持 p5.js 现有功能集的意图。我们愿意修复代码库中任何区域的错误。我们相信工具的一致性将使其对初学者更加易用。提升易用性的功能请求示例包括：
 为使用性能较低硬件的人提升性能（例如，支持向帧缓冲区绘制/从帧缓冲区读取）
 API 的一致性（例如，添加 arcVertex() 函数以通过 beginShape()/endShape() 创建弧线）
 
-___
+---
 
 请将此视为一份“不断发展中的文档”。我们将持续讨论并优先考虑可及性的含义。我们邀请我们的社区参与讨论这份文档及其所描述的价值观。如果你有任何想法或建议，欢迎通过在 Github 上提交 issue 或通过发送电子邮件至 hello@p5js.org 与我们分享。
 
 这个版本的 p5.js 可及性声明是在2023年开源艺术贡献者大会上，与 Evelyn Masso、Nat Decker、Bobby Joe Smith III、Sammie Veeler、Sonia (Suhyun) Choi、Xin Xin、Kate Hollenbach、Lauren Lee McCarthy、Caroline Sinders、Qianqian Ye、Tristan Jovani Magno Espinoza、Tanvi Sharma、Tsige Tafesse 和 Sarah Ciston 的合作下修订的。它在 Bobby Joe Smith III 和 Nat Decker 的 Processing Foundation 研究奖金支持下完成并发布。
 
 [^1]: Crenshaw, Kimberlé (1989)。"Demarginalizing the intersection of race and sex: a black feminist critique of antidiscrimination doctrine, feminist theory and antiracist politics"。芝加哥大学法律论坛。1989 (1): 139–167。ISSN 0892-5593。全文在 Archive.org。
+
 [^2]: 大写的 ‘D’Deaf 指的是文化上属于 Deaf 社区的人，而小写的 ‘d’deaf 是一个听力学术语，可以描述不与 Deaf 身份相关联的人。
+
 [^3]: 在残疾社区内，对于‘以人为本’与‘以身份为先’语言的偏好存在分歧。阅读[在自闭症社区中关于以人为本与以身份为先语言的辩论解包](https://news.northeastern.edu/2018/07/12/unpacking-the-debate-over-person-first-vs-identity-first-language-in-the-autism-community/) 和[我是残疾人：关于身份先行与人先行语言的讨论](https://thebodyisnotanapology.com/magazine/i-am-disabled-on-identity-first-versus-people-first-language/)。
+
 [^4]: 语言帝国主义或语言霸权，指的是某些语言（如英语）由于帝国扩张和全球化而持续的统治/优先/强加，以牺牲本土语言为代价的现象。

@@ -12,7 +12,7 @@ function getEntries(entry) {
 }
 
 export function getAllEntries(arr = []) {
-  return arr.flatMap(entry => entry ? getEntries(entry) : []);
+  return arr.flatMap(entry => (entry ? getEntries(entry) : []));
 }
 
 export function descriptionString(node, parent) {
@@ -34,16 +34,24 @@ export function descriptionString(node, parent) {
       classes.push(node.meta);
     }
     if (classes.length > 0) {
-      attrs=` class="${classes.join(' ')}"`;
+      attrs = ` class="${classes.join(' ')}"`;
     }
     return `<pre><code${attrs}>${node.value.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</code></pre>`;
   } else if (node.type === 'inlineCode') {
     return '<code>' + node.value + '</code>';
   } else if (node.type === 'list') {
     const tag = node.type === 'ordered' ? 'ol' : 'ul';
-    return `<${tag}>` + node.children.map(n => descriptionString(n, node)).join('') + `</${tag}>`;
+    return (
+      `<${tag}>` +
+      node.children.map(n => descriptionString(n, node)).join('') +
+      `</${tag}>`
+    );
   } else if (node.type === 'listItem') {
-    return '<li>' + node.children.map(n => descriptionString(n, node)).join('') + '</li>';
+    return (
+      '<li>' +
+      node.children.map(n => descriptionString(n, node)).join('') +
+      '</li>'
+    );
   } else if (node.value) {
     return node.value;
   } else if (node.children) {
@@ -60,20 +68,31 @@ export function descriptionStringForTypeScript(node, parent) {
   } else if (node.type === 'text') {
     return node.value;
   } else if (node.type === 'paragraph') {
-    const content = node.children.map(n => descriptionStringForTypeScript(n, node)).join('');
+    const content = node.children
+      .map(n => descriptionStringForTypeScript(n, node))
+      .join('');
     return content + '\n\n'; // Skip HTML tags for TypeScript
   } else if (node.type === 'code') {
     return `\`${node.value}\``;
   } else if (node.type === 'inlineCode') {
     return `\`${node.value}\``;
   } else if (node.type === 'list') {
-    return node.children.map(n => descriptionStringForTypeScript(n, node)).join('') + '\n';
+    return (
+      node.children.map(n => descriptionStringForTypeScript(n, node)).join('') +
+      '\n'
+    );
   } else if (node.type === 'listItem') {
-    return '- ' + node.children.map(n => descriptionStringForTypeScript(n, node)).join('') + '\n';
+    return (
+      '- ' +
+      node.children.map(n => descriptionStringForTypeScript(n, node)).join('') +
+      '\n'
+    );
   } else if (node.value) {
     return node.value;
   } else if (node.children) {
-    return node.children.map(n => descriptionStringForTypeScript(n, node)).join('');
+    return node.children
+      .map(n => descriptionStringForTypeScript(n, node))
+      .join('');
   } else {
     return '';
   }
@@ -91,10 +110,7 @@ export function typeObject(node) {
     };
   } else if (node.type === 'TypeApplication') {
     const { type: typeName } = typeObject(node.expression);
-    if (
-      typeName === 'Array' &&
-      node.applications.length === 1
-    ) {
+    if (typeName === 'Array' && node.applications.length === 1) {
       return {
         type: `${typeObject(node.applications[0]).type}[]`
       };
@@ -112,7 +128,9 @@ export function typeObject(node) {
     }
     return { type: signature };
   } else if (node.type === 'ArrayType') {
-    return { type: `[${node.elements.map(e => typeObject(e).type).join(', ')}]` };
+    return {
+      type: `[${node.elements.map(e => typeObject(e).type).join(', ')}]`
+    };
   } else if (node.type === 'RestType') {
     return { type: typeObject(node.expression).type, rest: true };
   } else {
@@ -132,22 +150,25 @@ export function getParams(entry) {
   // instead convert it to a string. We want a slightly different conversion to
   // string, so we match these params to the Documentation.js-provided `params`
   // array and grab the description from those.
-  return (entry.tags || [])
+  return (
+    (entry.tags || [])
 
-    // Filter out the nested parameters (eg. options.extrude),
-    // to be treated as part of parent parameters (eg. options)
-    // and not separate entries
-    .filter(t => t.title === 'param' && !t.name.includes('.'))
-    .map(node => {
-      const param = (entry.params || [])
-        .find(param => param.name === node.name);
-      return {
-        ...node,
-        description: param?.description || {
-          type: 'html',
-          value: node.description
-        },
-        properties: param?.properties // Preserve properties array for nested object parameters
-      };
-    });
+      // Filter out the nested parameters (eg. options.extrude),
+      // to be treated as part of parent parameters (eg. options)
+      // and not separate entries
+      .filter(t => t.title === 'param' && !t.name.includes('.'))
+      .map(node => {
+        const param = (entry.params || []).find(
+          param => param.name === node.name
+        );
+        return {
+          ...node,
+          description: param?.description || {
+            type: 'html',
+            value: node.description
+          },
+          properties: param?.properties // Preserve properties array for nested object parameters
+        };
+      })
+  );
 }

@@ -1,13 +1,12 @@
 # p5.js Core
 
-This folder contains the core functionality of p5.js, including the init and main files, environment, constants, the friendly error system, and the graphics pipeline (with the exception of 3D/WebGL). [Here is a diagram](
-https://sketchboard.me/zBOkvPuQisyA#/) that outlines how the main graphics-related classes inherit from and extend one another. There is still more to be done to document this pipeline more clearly.
+This folder contains the core functionality of p5.js, including the init and main files, environment, constants, the friendly error system, and the graphics pipeline (with the exception of 3D/WebGL). [Here is a diagram](https://sketchboard.me/zBOkvPuQisyA#/) that outlines how the main graphics-related classes inherit from and extend one another. There is still more to be done to document this pipeline more clearly.
 
 ![class diagram, interactive version viewable in above link](../../contributor_docs/images/p5-graphics-diagram.png)
 
 ## [init.js](./init.js)
 
-The `init.js` module initializes a new `p5` object in either global mode, instance mode, or unit testing mode. Broadly speaking, this module should only contain logic that needs to execute *before startup*, such as testing the environment in which the code is running in order to make decisions about how it should load.
+The `init.js` module initializes a new `p5` object in either global mode, instance mode, or unit testing mode. Broadly speaking, this module should only contain logic that needs to execute _before startup_, such as testing the environment in which the code is running in order to make decisions about how it should load.
 
 ## [main.js](./main.js)
 
@@ -17,25 +16,27 @@ Aside from the exported constructor function, the most important thing in this m
 
 ## [structure.js](./structure.js)
 
-The `structure.js` module is best thought of as a collection of ways to make *modifications* to the typical *loop structure* exposed by the `draw()` function. The functions in this module allow you to add and extract individual renders from the loop, draw the loop one frame at a time, pause and resume the loop, and so on.
+The `structure.js` module is best thought of as a collection of ways to make _modifications_ to the typical _loop structure_ exposed by the `draw()` function. The functions in this module allow you to add and extract individual renders from the loop, draw the loop one frame at a time, pause and resume the loop, and so on.
 
 ## [constants.js](./constants.js)
 
 The `constants.js` module provides various default values mostly related to math and web standards using clear semantic names to increase syntax clarity when they are used in other algorithms. These values are attached to the `p5` object prototype as properties by the constructor function so they can be more easily accessed by other parts of the p5.js library or by user code.
 
 ## [friendly_errors/fes_core.js](./friendly_errors/fes_core.js)
-This is the main file for the Friendly Error System (FES). The Friendly Error System (FES) is a system designed to help new programmers with common user errors as they get started learning. It catches common beginning errors and provides clear language and links to help a user resolve the error. FES is only applied to functions that are ones a user might encounter when they are just starting.  You can learn more about the FES in the comment section at the top of this file, or in the [contributors_docs/friendly_error_system.md](https://github.com/processing/p5.js/blob/main/contributor_docs/friendly_error_system.md) file.
+
+This is the main file for the Friendly Error System (FES). The Friendly Error System (FES) is a system designed to help new programmers with common user errors as they get started learning. It catches common beginning errors and provides clear language and links to help a user resolve the error. FES is only applied to functions that are ones a user might encounter when they are just starting. You can learn more about the FES in the comment section at the top of this file, or in the [contributors_docs/friendly_error_system.md](https://github.com/processing/p5.js/blob/main/contributor_docs/friendly_error_system.md) file.
 
 ## [legacy.js](./legacy.js)
+
 These are functions that are part of the Processing API but are not part of the p5.js API. In some cases they have a new name, in others, they are removed completely. Not all unsupported Processing functions are listed here but we try to include ones that a user coming from Processing might likely call.
 
 # Browser
 
-*utilizing and abstracting web technologies*
+_utilizing and abstracting web technologies_
 
 ## [environment.js](./environment.js)
 
-The `environment.js` module detects and semantically reassigns various features of the code execution environment that are arguably beyond the control of the p5.js library, such as device properties, window dimensions, and the URL bar. In general, this module should only contain code that exposes mechanics of the web that usually would not be considered part of the p5.js "sketch." This module is conceptually similar to `init.js` in that it tests the environment in which the p5.js code is executing, but one major difference is that broadly speaking the code in `environment.js` does *not* need to run solely at initialization as with `init.js`, and can be invoked whenever necessary.
+The `environment.js` module detects and semantically reassigns various features of the code execution environment that are arguably beyond the control of the p5.js library, such as device properties, window dimensions, and the URL bar. In general, this module should only contain code that exposes mechanics of the web that usually would not be considered part of the p5.js "sketch." This module is conceptually similar to `init.js` in that it tests the environment in which the p5.js code is executing, but one major difference is that broadly speaking the code in `environment.js` does _not_ need to run solely at initialization as with `init.js`, and can be invoked whenever necessary.
 
 ## [shim.js](./shim.js)
 
@@ -43,11 +44,11 @@ Sometimes p5.js needs to use new browser APIs or other features which haven't ye
 
 ## [p5.Element.js](./p5.Element.js)
 
-Although p5.js is a general toolkit for all sorts of interactive art projects, in practice many p5.js sketches focus on rendering two dimensional graphics into a `<canvas>` element. The `p5.Element.js` module is a wrapper around the browser's DOM API which is focused on the `<canvas>` element and also handles user input events like clicks and mouse movements. Conceptually, p5.js considers the sketch to be *the entire web page*. It's useful to separate `<canvas>` from the more general DOM because so many p5.js projects focus on `<canvas>` and this enables smaller [custom builds](https://github.com/processing/p5.js/blob/main/contributor_docs/custom_p5_build.md). 
+Although p5.js is a general toolkit for all sorts of interactive art projects, in practice many p5.js sketches focus on rendering two dimensional graphics into a `<canvas>` element. The `p5.Element.js` module is a wrapper around the browser's DOM API which is focused on the `<canvas>` element and also handles user input events like clicks and mouse movements. Conceptually, p5.js considers the sketch to be _the entire web page_. It's useful to separate `<canvas>` from the more general DOM because so many p5.js projects focus on `<canvas>` and this enables smaller [custom builds](https://github.com/processing/p5.js/blob/main/contributor_docs/custom_p5_build.md).
 
 # Rendering
 
-*project output options*
+_project output options_
 
 ## [rendering.js](./rendering.js)
 
@@ -67,16 +68,15 @@ The `p5.Graphics` module is a lightweight wrapper around renderers which is used
 
 # Drawing
 
-*lines, shapes, and visual styles*
+_lines, shapes, and visual styles_
 
 ## [transform.js](./transform.js)
 
 The `transform.js` module implements logic for scaling, rotation, and matrix transformations.
 
-
 ## [shape/attributes.js](./shape/attributes.js)
 
-Attributes are an important part of the general API for the web, but the `attributes.js` module defines and handles miscellaneous *graphical* attributes that can be consider a set of active parameters for the current drawing style. Think of this as a grab bag of all the remaining drawing parameters that were not moved out into separate dedicated modules as with [color](../color/) and [typography](../typography/).
+Attributes are an important part of the general API for the web, but the `attributes.js` module defines and handles miscellaneous _graphical_ attributes that can be consider a set of active parameters for the current drawing style. Think of this as a grab bag of all the remaining drawing parameters that were not moved out into separate dedicated modules as with [color](../color/) and [typography](../typography/).
 
 ## [shape/2d_primitives.js](./shape/2d_primitives.js)
 

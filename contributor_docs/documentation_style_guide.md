@@ -9,12 +9,14 @@ Hello! Welcome to the guidelines for writing p5.js documentation. This document 
 - Airbnb [JavaScript Style Guide](https://airbnb.io/javascript/) (MIT)
 
 Our community is large and diverse. Many people learn to code using p5.js, and a large subset of those people are students in K–12 classes. After reading this guide, you will know:
+
 - How to write effective, inclusive, and accessible prose for documentation purposes.
 - How to write simple code samples for documentation purposes.
 
 ## Table of Contents
 
 ### Writing
+
 - [documentation.js and JSDoc](#documentationjs-and-jsdoc)
 - [English](#english)
 - [Oxford Comma](#oxford-comma)
@@ -23,6 +25,7 @@ Our community is large and diverse. Many people learn to code using p5.js, and a
 - [Accessibility and Disability](#accessibility-and-disability)
 
 ### Code
+
 - [Code Samples](#code-samples)
 - [Comments](#comments)
 - [Accessible Canvas Labels](#accessible-canvas-labels)
@@ -116,13 +119,13 @@ Always use `let` to declare variables.
 
 **Pronouns**
 
-| Recommended | Not Recommended |
-| -- | -- |
-| they | he or she |
-| them | him or her |
-| their | his or her |
-| theirs | his or hers |
-| themselves | himself or herself |
+| Recommended | Not Recommended    |
+| ----------- | ------------------ |
+| they        | he or she          |
+| them        | him or her         |
+| their       | his or her         |
+| theirs      | his or hers        |
+| themselves  | himself or herself |
 
 **[⬆ back to top](#table-of-contents)**
 
@@ -142,16 +145,16 @@ Always use `let` to declare variables.
 
 The following terminology is adapted from the WordPress documentation guidelines for [Writing inclusive documentation](https://make.wordpress.org/docs/style-guide/general-guidelines/inclusivity/#accessibility-terminology). For more background on people-first language, see the CDC's guide on [Communicating With and About People with Disabilities](https://www.cdc.gov/disability-and-health/articles-documents/communicating-with-and-about-people-with-disabilities.html).
 
-| Recommended | Not Recommended |
-| -- | -- |
-| person with disability | the disabled, handicapped, differently abled, challenged, abnormal |
-| person without disability | normal person, healthy person, able-bodied |
-| has [disability] | victim of, suffering from, affected by, stricken with |
-| unable to speak, uses synthetic speech | dumb, mute |
-| deaf, low-hearing | hearing-impaired |
-| blind, low-vision | vision-impaired, visually-challenged |
-| cognitive or developmental disabilities | mentally-challenged, slow-learner |
-| person with limited mobility, person with a physical disability | crippled, handicapped |
+| Recommended                                                     | Not Recommended                                                    |
+| --------------------------------------------------------------- | ------------------------------------------------------------------ |
+| person with disability                                          | the disabled, handicapped, differently abled, challenged, abnormal |
+| person without disability                                       | normal person, healthy person, able-bodied                         |
+| has [disability]                                                | victim of, suffering from, affected by, stricken with              |
+| unable to speak, uses synthetic speech                          | dumb, mute                                                         |
+| deaf, low-hearing                                               | hearing-impaired                                                   |
+| blind, low-vision                                               | vision-impaired, visually-challenged                               |
+| cognitive or developmental disabilities                         | mentally-challenged, slow-learner                                  |
+| person with limited mobility, person with a physical disability | crippled, handicapped                                              |
 
 ## Code Samples
 
@@ -165,7 +168,7 @@ Choose meaningful code samples that cover the basics as well as gotchas. Only us
 
 ```javascript
 // Bad.
-let magicWord = 'Please';  // Remember this.
+let magicWord = 'Please'; // Remember this.
 
 // Good.
 // Remember this.
@@ -202,7 +205,6 @@ let magicWord = 'Please';
 - Use `//` for multiline comments.
 
 ```javascript
-
 // Bad.
 /**
  * I will use // for multiline comments.
@@ -227,9 +229,7 @@ let magicWord = 'Please';
 // I will use // for multiline comments.
 // I will use // for multiline comments.
 // I will use // for multiline comments.
-
 ```
-
 
 **[⬆ back to top](#table-of-contents)**
 
@@ -237,8 +237,7 @@ let magicWord = 'Please';
 
 - Use `describe()` in p5.js example code to add labels to your canvas so that it’s readable for screen readers.
 
-> Why? It makes examples accessible to screen readers, and models how to write good canvas labels. 
-
+> Why? It makes examples accessible to screen readers, and models how to write good canvas labels.
 
 ```javascript
 // Good.
@@ -259,20 +258,22 @@ function draw() {
   fill(0, 255, 0);
   ellipse(mouseX, 50, 40, 40);
   // Label updates with shape's translation.
-  describe(`A green circle at x pos ${round(mouseX)} moving with the mouse pointer.`, LABEL);
+  describe(
+    `A green circle at x pos ${round(mouseX)} moving with the mouse pointer.`,
+    LABEL
+  );
 }
 ```
 
-- Don’t use screen reader labels as a way of commenting your code. Labels should only summarize the resulting visual elements within a canvas. 
+- Don’t use screen reader labels as a way of commenting your code. Labels should only summarize the resulting visual elements within a canvas.
 
 - Don’t overuse screen reader labels, as you may end up complicating the screen reader’s interpretation of the canvas rather than helping it.
 
 - Do make your label descriptions short and accurate. The recommended length for label descriptions is one to two sentences. Use full sentences for your labels, and write in the present tense when describing elements.
 
-The above examples and suggestions are based on the [Writing Accessible Canvas Descriptions tutorial](https://p5js.org/tutorials/writing-accessible-canvas-descriptions/). This tutorial gives more detailed guidance, and includes other ways to label your canvas, in addition to  `describe()`: `describeElement()`, `textOutput()`, and `gridOutput()`.
+The above examples and suggestions are based on the [Writing Accessible Canvas Descriptions tutorial](https://p5js.org/tutorials/writing-accessible-canvas-descriptions/). This tutorial gives more detailed guidance, and includes other ways to label your canvas, in addition to `describe()`: `describeElement()`, `textOutput()`, and `gridOutput()`.
 
 To understand the structure of p5.js’ web accessibility features for contributors, see the [Web Accessibility Contributor Doc](./web_accessibility.md#user-generated-accessible-canvas-descriptions).
-
 
 **[⬆ back to top](#table-of-contents)**
 
@@ -287,13 +288,15 @@ To understand the structure of p5.js’ web accessibility features for contribut
 <iframe src="https://www.youtube.com/embed/example"></iframe>
 
 <!-- Good. -->
-<iframe src="https://www.youtube.com/embed/example" title="Video: Getting Started with p5.js"></iframe>
+<iframe
+  src="https://www.youtube.com/embed/example"
+  title="Video: Getting Started with p5.js"
+></iframe>
 ```
 
 - Use a `title` that describes what the iframe contains, not just "iframe" or "embedded content."
 
 - If the iframe is purely decorative and carries no meaningful content, use `aria-hidden="true"` instead.
-
 
 **[⬆ back to top](#table-of-contents)**
 
@@ -322,7 +325,7 @@ function setup() {
 
 ```javascript
 // Bad.
-function setup(){
+function setup() {
   createCanvas(400, 400);
 }
 
@@ -336,8 +339,8 @@ function setup() {
 
 ```javascript
 // Bad.
-if(keyIsPressed === true) {
-  doStuff ();
+if (keyIsPressed === true) {
+  doStuff();
 }
 
 // Good.
@@ -346,8 +349,8 @@ if (keyIsPressed === true) {
 }
 
 // Bad.
-function setup () {
-  createCanvas (400, 400);
+function setup() {
+  createCanvas(400, 400);
 }
 
 // Good.
@@ -360,7 +363,7 @@ function setup() {
 
 ```javascript
 // Bad.
-let y=x+5;
+let y = x + 5;
 
 // Good.
 let y = x + 5;
@@ -374,7 +377,7 @@ let y = x + 5;
 
 ```javascript
 // Bad.
-let x = 0
+let x = 0;
 
 // Good.
 let x = 0;
@@ -504,7 +507,7 @@ let dragonball = 'z';
 ```javascript
 // Bad - unnecessary search.
 function getCharacter(name = 'default') {
-  let character = characters.find((c) => c.name === name);
+  let character = characters.find(c => c.name === name);
 
   if (name === 'default') {
     return false;
@@ -513,7 +516,7 @@ function getCharacter(name = 'default') {
   if (character) {
     return character;
   }
-  
+
   return false;
 }
 
@@ -523,12 +526,12 @@ function getCharacter(name = 'default') {
     return false;
   }
 
-  let character = characters.find((c) => c.name === name);
+  let character = characters.find(c => c.name === name);
 
   if (character) {
     return character;
   }
-  
+
   return false;
 }
 ```
@@ -557,7 +560,7 @@ num -= 1;
 
 ```javascript
 // Bad.
-let name = "Hilma af Klint";
+let name = 'Hilma af Klint';
 
 // Bad - template literals should contain interpolation or newlines.
 let name = `Hilma af Klint`;
@@ -572,15 +575,18 @@ let name = 'Hilma af Klint';
 
 ```javascript
 // Bad.
-let essay = 'You see us as you want to see us: \
+let essay =
+  'You see us as you want to see us: \
 in the simplest terms, in the most convenient definitions.';
 
 // Bad.
-let essay = 'You see us as you want to see us: ' +
+let essay =
+  'You see us as you want to see us: ' +
   'in the simplest terms, in the most convenient definitions.';
 
 // Good.
-let essay = 'You see us as you want to see us: in the simplest terms, in the most convenient definitions.';
+let essay =
+  'You see us as you want to see us: in the simplest terms, in the most convenient definitions.';
 ```
 
 - Use template strings instead of concatenation when needed.
@@ -591,7 +597,11 @@ let essay = 'You see us as you want to see us: in the simplest terms, in the mos
 let name = 'Dave';
 
 // Bad.
-text(name + ', this conversation can serve no purpose anymore. Goodbye.' + name, 0, 0);
+text(
+  name + ', this conversation can serve no purpose anymore. Goodbye.' + name,
+  0,
+  0
+);
 
 // Good.
 text(`${name}, this conversation can serve no purpose anymore. Goodbye.`, 0, 0);
@@ -659,13 +669,13 @@ if (collection.length > 0) {
 
 ```javascript
 // Bad.
-let huh = a && b < 0 || c > 0 || d + 1 === 0;
+let huh = (a && b < 0) || c > 0 || d + 1 === 0;
 
 // Good.
-let huh = (a && b < 0) || c > 0 || (d + 1 === 0);
+let huh = (a && b < 0) || c > 0 || d + 1 === 0;
 
 // Bad.
-if (a || b && c) {
+if (a || (b && c)) {
   return d;
 }
 
@@ -675,7 +685,7 @@ if (a || (b && c)) {
 }
 
 // Bad.
-let what = a + b / c * d;
+let what = a + (b / c) * d;
 
 // Good.
 let what = a + (b / c) * d;
@@ -687,8 +697,7 @@ let what = a + (b / c) * d;
 
 ```javascript
 // Bad.
-if (mouseIsPressed === true)
-  circle(mouseX, mouseY, 50);
+if (mouseIsPressed === true) circle(mouseX, mouseY, 50);
 
 // Better.
 if (mouseIsPressed === true) circle(mouseX, mouseY, 50);
@@ -706,8 +715,7 @@ if (mouseIsPressed === true) {
 if (mouseIsPressed === true) {
   thing1();
   thing2();
-}
-else {
+} else {
   thing3();
 }
 
@@ -748,15 +756,19 @@ function mouseIsOnLeft() {
 
 ```javascript
 // Bad.
-if ((number === 123 || letters === 'abc') && mouseIsPressed === true && keyIsPressed === true) {
+if (
+  (number === 123 || letters === 'abc') &&
+  mouseIsPressed === true &&
+  keyIsPressed === true
+) {
   doStuff();
 }
 
 // Good.
 if (
-  (number === 123 || letters === 'abc')
-  && mouseIsPressed === true
-  && keyIsPressed === true
+  (number === 123 || letters === 'abc') &&
+  mouseIsPressed === true &&
+  keyIsPressed === true
 ) {
   doStuff();
 }
@@ -818,7 +830,7 @@ for (let d of diameters) {
 }
 
 // Good.
-diameters.forEach((d) => circle(0, 0, d));
+diameters.forEach(d => circle(0, 0, d));
 ```
 
 **[⬆ back to top](#table-of-contents)**
@@ -842,16 +854,16 @@ let ball = {};
 ```javascript
 // Bad.
 let secretObject = {
-  'x': 100,
-  'y': 200,
-  'top-secret': 'classified',
+  x: 100,
+  y: 200,
+  'top-secret': 'classified'
 };
 
 // Good.
 let secretObject = {
   x: 3,
   y: 4,
-  'top-secret': 'classified',
+  'top-secret': 'classified'
 };
 ```
 
@@ -862,7 +874,7 @@ let turtle = {
   name: 'Leonardo',
   color: 'dodgerblue',
   weapon: '🗡️',
-  food: '🍕',
+  food: '🍕'
 };
 
 // Bad.
@@ -879,7 +891,7 @@ let turtle = {
   name: 'Leonardo',
   color: 'dodgerblue',
   weapon: '🗡️',
-  food: '🍕',
+  food: '🍕'
 };
 
 function getProp(prop) {
@@ -894,14 +906,14 @@ let turtleName = getProp('name');
 ```javascript
 // Bad.
 let mathematician = {
-    firstName: 'Ada'
-  , lastName: 'Lovelace'
+  firstName: 'Ada',
+  lastName: 'Lovelace'
 };
 
 // Good.
 let mathematician = {
   firstName: 'Ada',
-  lastName: 'Lovelace',
+  lastName: 'Lovelace'
 };
 ```
 
@@ -917,7 +929,7 @@ let artist = {
 // Good.
 let artist = {
   firstName: 'Lauren',
-  lastName: 'McCarthy',
+  lastName: 'McCarthy'
 };
 ```
 
@@ -965,19 +977,25 @@ let numbersCopy = numbers.slice();
 
 ```javascript
 // Bad.
-let matrix = [[1, 0, 0],
-                [0, 1, 0],
-                [0, 0, 1]];
+let matrix = [
+  [1, 0, 0],
+  [0, 1, 0],
+  [0, 0, 1]
+];
 
 // Good.
 let matrix = [
   [1, 0, 0],
   [0, 1, 0],
-  [0, 0, 1],
+  [0, 0, 1]
 ];
 
 // Also good.
-let matrix = [[1, 0, 0], [0, 1, 0], [0, 0, 1]];
+let matrix = [
+  [1, 0, 0],
+  [0, 1, 0],
+  [0, 0, 1]
+];
 ```
 
 **[⬆ back to top](#table-of-contents)**
@@ -1052,17 +1070,16 @@ function setup() {
   });
 }
 
-
 // Good.
 function setup() {
-  loadImage('assets/moonwalk.jpg', (img) => {
+  loadImage('assets/moonwalk.jpg', img => {
     image(img, 0, 0);
   });
 }
 
 // Bad.
 function preload() {
-  loadImage('assets/moonwalk.jpg', (img) => {
+  loadImage('assets/moonwalk.jpg', img => {
     // Complex preprocessing...
   });
 }
@@ -1083,19 +1100,19 @@ function processImage(img) {
 
 ```javascript
 // Bad.
-[1, 2, 3].map((number) => {
+[1, 2, 3].map(number => {
   let squared = number ** 2;
   `${number} squared is ${squared}.`;
 });
 
 // Bad.
-[1, 2, 3].map((number) => {
+[1, 2, 3].map(number => {
   let squared = number ** 2;
   return `${number} squared is ${squared}.`;
 });
 
 // Good.
-[1, 2, 3].map((number) => `${number} squared is ${number ** 2}.`);
+[1, 2, 3].map(number => `${number} squared is ${number ** 2}.`);
 ```
 
 - Always include parentheses around arguments.
@@ -1107,21 +1124,20 @@ function processImage(img) {
 [1, 2, 3].map(number => number * number);
 
 // Good.
-[1, 2, 3].map((number) => number * number);
+[1, 2, 3].map(number => number * number);
 ```
+
 **[⬆ back to top](#table-of-contents)**
 
 ## Chaining
 
-* Use individual function calls instead of function chaining.
+- Use individual function calls instead of function chaining.
 
 > Why? To accommodate users who may not be familiar with the concept of function chaining.
 
 ```javascript
 // Bad.
-fill(0)
-  .strokeWeight(6)
-  .textSize(20);
+fill(0).strokeWeight(6).textSize(20);
 
 // Bad.
 fill(0).strokeWeight(6).textSize(20);
@@ -1270,7 +1286,7 @@ class Mover {
 // Good.
 class Mover {
   // ...
-  
+
   update() {
     this.x += this.xspeed;
     this.y += this.yspeed;
@@ -1292,7 +1308,7 @@ Whether assets (such as images, fonts, sound files, etc) are being used in the d
 - Always load assets from a folder called `assets`.
 - Store the assets in the `public/assets` folder of the p5.js-website repository.
 
-> Why? It models good project organization. It's also required for assets to load on the p5.js website. 
+> Why? It models good project organization. It's also required for assets to load on the p5.js website.
 
 ```javascript
 let img;
@@ -1311,6 +1327,5 @@ async function setup() {
 ```
 
 There is more on working with assets in the guide: [Contributing to the p5.js reference](./contributing_to_the_p5js_reference/#using-assets).
-
 
 **[⬆ back to top](#table-of-contents)**

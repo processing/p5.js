@@ -1,7 +1,7 @@
 // Based on p5.strands: Introduction to Shaders By Luke Plowden
 // https://beta.p5js.org/tutorials/intro-to-p5-strands/
 
-import '../../types/global'
+import '../../types/global';
 
 let starShader: p5.Shader;
 let starStrokeShader: p5.Shader;
@@ -16,12 +16,12 @@ function fresnelShaderCallback() {
   const fresnelBias = uniformFloat(-0.1);
   const fresnelScale = uniformFloat(2);
 
-  getCameraInputs((inputs) => {
+  getCameraInputs(inputs => {
     let n = normalize(inputs.normal);
     let v = normalize(-inputs.position);
     let base = 1.0 - dot(n, v);
     let fresnel = fresnelScale * pow(base, fresnelPower) + fresnelBias;
-    let col = mix([0, 0, 0], [1, .5, .7], fresnel);
+    let col = mix([0, 0, 0], [1, 0.5, 0.7], fresnel);
     inputs.color = [col, 1];
     return inputs;
   });
@@ -35,7 +35,7 @@ function starShaderCallback() {
   const testSharedVector = sharedVector2();
   const testVaryingVec = varyingVec2();
   const testVaryingVector = varyingVector2();
-  
+
   function rand2(st) {
     return fract(sin(dot(st, [12.9898, 78.233])) * 43758.5453123);
   }
@@ -43,9 +43,9 @@ function starShaderCallback() {
   function semiSphere() {
     let id = instanceID();
     let idx = instanceIndex;
-    let theta = rand2([id, 0.1234])  * TWO_PI + time / 100000;
+    let theta = rand2([id, 0.1234]) * TWO_PI + time / 100000;
     let phi = rand2([id, 3.321]) * PI + time / 50000;
-  
+
     let r = skyRadius;
     r *= sin(phi);
     let x = r * sin(phi) * cos(theta);
@@ -54,12 +54,12 @@ function starShaderCallback() {
     return [x, y, z];
   }
 
-  getWorldInputs((inputs) => {
+  getWorldInputs(inputs => {
     inputs.position += semiSphere();
     return inputs;
   });
 
-  getObjectInputs((inputs) => {
+  getObjectInputs(inputs => {
     let size = 1 + 0.5 * sin(time * 0.002 + instanceID());
     inputs.position *= size;
     return inputs;
@@ -67,7 +67,7 @@ function starShaderCallback() {
 }
 
 function pixelateShaderCallback() {
-  const pixelCountX = uniformFloat(()=> 280);
+  const pixelCountX = uniformFloat(() => 280);
 
   getColor((inputs, canvasContent) => {
     const aspectRatio = inputs.canvasSize.x / inputs.canvasSize.y;
@@ -78,7 +78,7 @@ function pixelateShaderCallback() {
     coord = floor(coord * pixelSize) / pixelSize;
 
     let col = getTexture(canvasContent, coord);
-    return col//[coord, 0, 1];
+    return col; //[coord, 0, 1];
   });
 }
 
@@ -90,52 +90,52 @@ function bloomShaderCallback() {
     const originalCol = getTexture(preBlur, input.texCoord);
 
     const intensity = max(originalCol, 0.1) * 12.2;
-    
+
     const bloom = originalCol + blurredCol * intensity;
     return [bloom.rgb, 1];
   });
 }
 
-async function setup(){
+async function setup() {
   createCanvas(800, 600, WEBGL);
   pixelDensity(1);
-  stars = buildGeometry(() => sphere(8, 4, 2))
+  stars = buildGeometry(() => sphere(8, 4, 2));
   originalImage = createFramebuffer();
 
-  starShader = baseMaterialShader().modify(starShaderCallback); 
-  starStrokeShader = baseStrokeShader().modify(starShaderCallback)
+  starShader = baseMaterialShader().modify(starShaderCallback);
+  starStrokeShader = baseStrokeShader().modify(starShaderCallback);
   fresnelShader = baseColorShader().modify(fresnelShaderCallback);
   bloomShader = baseFilterShader().modify(bloomShaderCallback);
   pixelateShader = baseFilterShader().modify(pixelateShaderCallback);
 }
 
-function draw(){
+function draw() {
   originalImage.begin();
   background(0);
   orbitControl();
 
-  push()
-  strokeWeight(2)
-  stroke(255,0,0)
-  rotateX(PI/2 + millis() * 0.0005);
-  fill(255,100, 150)
-  strokeShader(starStrokeShader)
+  push();
+  strokeWeight(2);
+  stroke(255, 0, 0);
+  rotateX(PI / 2 + millis() * 0.0005);
+  fill(255, 100, 150);
+  strokeShader(starStrokeShader);
   shader(starShader);
   model(stars, 1000);
-  pop()
+  pop();
 
-  push()
-  shader(fresnelShader)
-  noStroke()
+  push();
+  shader(fresnelShader);
+  noStroke();
   sphere(90);
   filter(pixelateShader);
-  pop()
+  pop();
 
   originalImage.end();
-  
-  imageMode(CENTER)
-  image(originalImage, 0, 0)
-  
-  filter(BLUR, 15)
+
+  imageMode(CENTER);
+  image(originalImage, 0, 0);
+
+  filter(BLUR, 15);
   filter(bloomShader);
 }

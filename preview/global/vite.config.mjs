@@ -1,14 +1,14 @@
 import { defineConfig } from 'vitest/config';
-import vitePluginString from 'vite-plugin-string';
+import { string } from 'rollup-plugin-string';
 import path from 'node:path';
 
-const libPath = path.resolve(__dirname, '../../lib');
+const libPath = path.resolve(import.meta.dirname, '../../lib');
 
 export default defineConfig({
   root: '.',
   publicDir: libPath,
   plugins: [
-    vitePluginString({
+    string({
       include: [
         'src/webgl/shaders/**/*'
       ]

@@ -1,68 +1,68 @@
 import { mockP5, mockP5Prototype } from '../../js/mocks';
 import primitives from '../../../src/shape/2d_primitives';
 
-suite('2D Primitives', function() {
-  beforeAll(function() {
+suite('2D Primitives', function () {
+  beforeAll(function () {
     primitives(mockP5, mockP5Prototype);
   });
 
-  suite('p5.prototype.arc', function() {
-    test('should be a function', function() {
+  suite('p5.prototype.arc', function () {
+    test('should be a function', function () {
       assert.ok(mockP5Prototype.arc);
       assert.typeOf(mockP5Prototype.arc, 'function');
     });
   });
 
-  suite('p5.prototype.ellipse', function() {
-    test('should be a function', function() {
+  suite('p5.prototype.ellipse', function () {
+    test('should be a function', function () {
       assert.ok(mockP5Prototype.ellipse);
       assert.typeOf(mockP5Prototype.ellipse, 'function');
     });
   });
 
-  suite('p5.prototype.line', function() {
-    test('should be a function', function() {
+  suite('p5.prototype.line', function () {
+    test('should be a function', function () {
       assert.ok(mockP5Prototype.line);
       assert.typeOf(mockP5Prototype.line, 'function');
     });
   });
 
-  suite('p5.prototype.point', function() {
-    test('should be a function', function() {
+  suite('p5.prototype.point', function () {
+    test('should be a function', function () {
       assert.ok(mockP5Prototype.point);
       assert.typeOf(mockP5Prototype.point, 'function');
     });
   });
 
-  suite('p5.prototype.quad', function() {
-    test('should be a function', function() {
+  suite('p5.prototype.quad', function () {
+    test('should be a function', function () {
       assert.ok(mockP5Prototype.quad);
       assert.typeOf(mockP5Prototype.quad, 'function');
     });
   });
 
-  suite('p5.prototype.rect', function() {
-    test('should be a function', function() {
+  suite('p5.prototype.rect', function () {
+    test('should be a function', function () {
       assert.ok(mockP5Prototype.rect);
       assert.typeOf(mockP5Prototype.rect, 'function');
     });
   });
 
-  suite('p5.prototype.triangle', function() {
-    test('should be a function', function() {
+  suite('p5.prototype.triangle', function () {
+    test('should be a function', function () {
       assert.ok(mockP5Prototype.triangle);
       assert.typeOf(mockP5Prototype.triangle, 'function');
     });
   });
-  suite('p5.prototype.square', function() {
-    test('should be a function', function() {
+  suite('p5.prototype.square', function () {
+    test('should be a function', function () {
       assert.ok(mockP5Prototype.square);
       assert.typeOf(mockP5Prototype.square, 'function');
     });
   });
 
-  suite('p5.prototype._normalizeArcAngles', function() {
-    test('start/stop both at zero', function() {
+  suite('p5.prototype._normalizeArcAngles', function () {
+    test('start/stop both at zero', function () {
       var i, j, angles;
       for (i = -2; i <= 2; i++) {
         for (j = -2; j <= 2; j++) {
@@ -79,7 +79,7 @@ suite('2D Primitives', function() {
         }
       }
     });
-    test('start/stop same but non-zero', function() {
+    test('start/stop same but non-zero', function () {
       var i, j, angles;
       for (i = -2; i <= 2; i++) {
         for (j = -2; j <= 2; j++) {
@@ -96,7 +96,7 @@ suite('2D Primitives', function() {
         }
       }
     });
-    test('start/stop both close to zero, start < stop', function() {
+    test('start/stop both close to zero, start < stop', function () {
       var i, j, angles;
       for (i = -2; i <= 2; i++) {
         for (j = -2; j <= 2; j++) {
@@ -113,7 +113,7 @@ suite('2D Primitives', function() {
         }
       }
     });
-    test('start/stop both close to zero, start > stop', function() {
+    test('start/stop both close to zero, start > stop', function () {
       var i, j, angles;
       for (i = -2; i <= 2; i++) {
         for (j = -2; j <= 2; j++) {
@@ -130,7 +130,7 @@ suite('2D Primitives', function() {
         }
       }
     });
-    test('start/stop both close to same non-zero, start < stop', function() {
+    test('start/stop both close to same non-zero, start < stop', function () {
       var i, j, angles;
       for (i = -2; i <= 2; i++) {
         for (j = -2; j <= 2; j++) {
@@ -147,7 +147,7 @@ suite('2D Primitives', function() {
         }
       }
     });
-    test('start/stop both close to same non-zero, start > stop', function() {
+    test('start/stop both close to same non-zero, start > stop', function () {
       var i, j, angles;
       for (i = -2; i <= 2; i++) {
         for (j = -2; j <= 2; j++) {
@@ -164,7 +164,7 @@ suite('2D Primitives', function() {
         }
       }
     });
-    test('start/stop around zero but not close, start < stop', function() {
+    test('start/stop around zero but not close, start < stop', function () {
       var i, j, angles;
       for (i = -2; i <= 2; i++) {
         for (j = -2; j <= 2; j++) {
@@ -181,7 +181,7 @@ suite('2D Primitives', function() {
         }
       }
     });
-    test('start/stop around zero but not close, start > stop', function() {
+    test('start/stop around zero but not close, start > stop', function () {
       var i, j, angles;
       for (i = -2; i <= 2; i++) {
         for (j = -2; j <= 2; j++) {
@@ -198,7 +198,7 @@ suite('2D Primitives', function() {
         }
       }
     });
-    test('start/stop away from zero and not close, start < stop', function() {
+    test('start/stop away from zero and not close, start < stop', function () {
       var i, j, angles;
       for (i = -2; i <= 2; i++) {
         for (j = -2; j <= 2; j++) {
@@ -215,7 +215,7 @@ suite('2D Primitives', function() {
         }
       }
     });
-    test('start/stop away from zero and not close, start > stop', function() {
+    test('start/stop away from zero and not close, start > stop', function () {
       var i, j, angles;
       for (i = -2; i <= 2; i++) {
         for (j = -2; j <= 2; j++) {
@@ -232,7 +232,7 @@ suite('2D Primitives', function() {
         }
       }
     });
-    test('scaling correction, quadrants 1 and 3', function() {
+    test('scaling correction, quadrants 1 and 3', function () {
       var i, j, angles;
       for (i = -2; i <= 2; i++) {
         for (j = -2; j <= 2; j++) {
@@ -249,7 +249,7 @@ suite('2D Primitives', function() {
         }
       }
     });
-    test('scaling correction, quadrants 2 and 4', function() {
+    test('scaling correction, quadrants 2 and 4', function () {
       var i, j, angles;
       for (i = -2; i <= 2; i++) {
         for (j = -2; j <= 2; j++) {

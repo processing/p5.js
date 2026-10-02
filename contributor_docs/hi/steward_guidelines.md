@@ -199,13 +199,24 @@ grunt.registerTask('lint', ['lint:source', 'lint:samples']);
 #### `test` कार्य
 
 ```js
-grunt.registerTask("test", ["build", "connect:server", "mochaChrome", "mochaTest", "nyc:report"]);
+grunt.registerTask('test', [
+  'build',
+  'connect:server',
+  'mochaChrome',
+  'mochaTest',
+  'nyc:report'
+]);
 ```
 
 सबसे पहले `test` तहत `build` कार्य को देखते हैं।
 
 ```js
-grunt.registerTask("build", ["browserify", "browserify:min", "uglify", "browserify:test"]);
+grunt.registerTask('build', [
+  'browserify',
+  'browserify:min',
+  'uglify',
+  'browserify:test'
+]);
 ```
 
 `browserify` से शुरू होने वाले कार्य [tasks/build/browserify.js](../tasks/build/browserify.js) में परिभाषित होते हैं। इनमें सभी मुख्य कदम होते हैं जो बहुत से उपयोगकर्ता कोड फ़ाइलों को संग्रहीत और एक में बनाने के लिए हैं:

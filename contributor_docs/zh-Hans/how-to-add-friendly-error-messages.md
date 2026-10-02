@@ -4,12 +4,10 @@
 
 本指南将引导您完成使用友好错误系统（FES，🌸）编写友好错误（FE）信息的步骤。如果您的新方法支持自定义错误处理或为用户输出自定义日志，您可能需要为其编写友好错误信息。所有这些信息都是通过基于[i18next](https://www.i18next.com/)的`translator()`方法动态生成的，这使得p5.js能够提供与用户环境匹配的错误信息翻译。
 
-
 ## ❗️`p5.min.js`中没有翻译
 
 - 我们已将 \[i18next] 集成到我们的代码库中。但是，它的使用仅限于p5.js的未压缩版本。压缩版本`p5.min.js`仅包含我们国际化代码的基本框架，不包含实际实现。
 - 在Browserify构建任务和`src/core/init.js`中，有特定的逻辑来避免在压缩版本中加载或设置翻译。因此，添加翻译不会影响`p5.min.js`的大小。
-
 
 ## 前提条件
 
@@ -21,8 +19,6 @@
   - 请前往[📥使用FES添加文件加载错误](#-使用fes处理文件加载错误消息)。
 - 您已编写代码检测错误何时发生，并希望显示友好错误。
   - 请前往[🐈使用FES添加库错误信息](#-使用fes添加库错误信息)。
-
-
 
 ## ✅ 使用FES添加参数验证
 
@@ -65,7 +61,6 @@
  * @param  {Number} d  圆的直径。
 ```
 
-
 ### 第2步 – 调用`p5._validateParameters()`
 
 现在回到您方法的实现，按照以下格式调用`validate_params()`：`p5._validateParameters('[您方法的名称]', arguments);`。
@@ -79,7 +74,7 @@ p5._validateParameters('circle', arguments);
 通常在方法中首先调用此函数，以避免在提供的参数不符合预期时继续执行。例如，它在`circle()`方法的第一行被调用：
 
 ```js
-p5.prototype.circle = function() {
+p5.prototype.circle = function () {
   p5._validateParameters('circle', arguments);
   const args = Array.prototype.slice.call(arguments, 0, 2);
   args.push(arguments[2]);
@@ -87,7 +82,6 @@ p5.prototype.circle = function() {
   return this._renderEllipse(...args);
 };
 ```
-
 
 ### 第3步 – 构建并测试您的代码以应对典型情况
 
@@ -129,7 +123,6 @@ circle(100, 100, 'hello');
 
 恭喜🎈！您现在已经完成了为新方法添加参数验证。
 
-
 ## 📥 使用FES处理文件加载错误消息
 
 ### 第1步 – 检查文件加载错误情况列表<a id="step-1"></a>
@@ -139,8 +132,6 @@ circle(100, 100, 'hello');
 这些情况都有自己的编号，可以在`core/friendly_errors/file_errors.js`文件的顶部找到。
 
 当您希望添加文件加载错误时，首先查看`core/friendly_errors/file_errors.js`中的`fileLoadErrorCases`，看看是否有适用于您情况的现有案例。
-
-
 
 例如，您可能正在加载基于字符串的文件。这对应于`fileLoadErrorCases`中的`case 3`：
 
@@ -156,7 +147,6 @@ case 3:
 
 如果您正在处理的场景已经有相关的编号，请记住案例编号，并跳至[**第4步**](#step-4)。如果您在`fileLoadErrorCases`中找不到匹配的情况，请转到[**第2步**](#step-2)创建新的情况。
 
-
 ### 第2步 – 在问题面板上讨论添加新的错误情况<a id="step-2"></a>
 
 接下来，您将提交一个问题工单，讨论创建新的情况或确认您的情况不是现有情况的重复。编写一个简短的段落描述您的新方法以及用户可能遇到这种特定文件加载错误的场景。然后再写一个简短的段落描述您方法中的错误处理以及它加载的文件类型。
@@ -166,7 +156,6 @@ case 3:
 添加一个标题，如"向`fileLoadErrorCases`添加新情况：\[您的文件加载错误情况的高级描述]"。对于"Increasing access"部分，输入您在此步骤开始时准备的简短段落，描述典型情况。
 
 然后，在"Most appropriate sub-area of p5.js?"问题中勾选"Friendly Errors"框。最后，在"Feature enhancement details"部分，输入详细说明错误处理和加载文件类型的段落。
-
 
 ### 第3步 – 向`fileLoadErrorCases`添加新情况<a id="step-3"></a>
 
@@ -184,7 +173,6 @@ case {{next available case number}}:
 
 在上面的例子中，双尖括号（`{{}}`）中的任何内容都是您应该替换的内容。例如，如果前一个情况编号是11，您的代码应该以`case 12:`开始，最终代码中没有双括号。
 
-
 ### 第4步 – 调用`p5._friendlyFileLoadError()`<a id="step-4"></a>
 
 添加您的情况后，您现在可以在错误处理语句中调用`p5._friendlyFileLoadError([情况编号], [文件路径])`。
@@ -200,12 +188,12 @@ p5.prototype.httpDo.call(
   data => {
     // [... 省略的代码 ...]
   },
-  function(err) {
+  function (err) {
     // 错误处理
     p5._friendlyFileLoadError(3, args[0]);
     // [... 省略的代码 ...]
   }
- );
+);
 ```
 
 我们可以看到错误回调函数如何调用`p5._friendlyFileLoadError(3, [the first argument, which is a file path])`来生成以下FE信息：
@@ -217,8 +205,6 @@ p5.prototype.httpDo.call(
 
 恭喜🎈！您现在已经完成为带有文件加载的方法实现FE。
 
-
-
 ## 🐈 使用FES添加库错误信息
 
 ### 第1步 – 编写代码检测错误何时发生
@@ -229,8 +215,6 @@ p5.prototype.httpDo.call(
 
 \
 
-
-
 ### 第2步 – 调用`p5._friendlyError()`
 
 要生成FE信息，您只需要在错误处理语句中按照以下格式调用`p5._friendlyError('[custom message]', '[method name]');`。将方括号内（包括方括号）的所有内容替换为您自己的值。
@@ -238,20 +222,16 @@ p5.prototype.httpDo.call(
 例如，以下代码将为`bezierVertex()`生成FE信息：
 
 ```js
-p5._friendlyError(
-  '在调用bezierVertex()之前必须先使用vertex()',
-  'bezierVertex'
-);
+p5._friendlyError('在调用bezierVertex()之前必须先使用vertex()', 'bezierVertex');
 ```
 
 这应该生成以下FE信息：
 
 ```
-🌸 p5.js says: [sketch.js, line 19] 当调用bezierVertex时，p5js库内部发生了一个错误，错误信息为"在调用bezierVertex()之前必须先使用vertex()"。如果没有特别说明，可能是传递给bezierVertex的参数有问题。 (https://p5js.org/reference/p5/bezierVertex) 
+🌸 p5.js says: [sketch.js, line 19] 当调用bezierVertex时，p5js库内部发生了一个错误，错误信息为"在调用bezierVertex()之前必须先使用vertex()"。如果没有特别说明，可能是传递给bezierVertex的参数有问题。 (https://p5js.org/reference/p5/bezierVertex)
 ```
 
 恭喜🎈！您现在已经完成了为您的方法添加库错误信息。
-
 
 ## ✏️ 为国际受众编写友好错误信息
 
@@ -264,7 +244,7 @@ FES信息编写者应优先降低理解错误信息的障碍，提高调试过�
 如果浏览器设置为`ko-KR`（韩语）区域设置，上述参数验证信息将以韩语显示：
 
 ```
-🌸 p5.js says: [sketch.js, 줄7] 최소 3개의 인수(argument)를 받는 함수 circle()에 인수가 1개만 입력되었습니다. (https://p5js.org/reference/p5/circle) 
+🌸 p5.js says: [sketch.js, 줄7] 최소 3개의 인수(argument)를 받는 함수 circle()에 인수가 1개만 입력되었습니다. (https://p5js.org/reference/p5/circle)
 ```
 
 [友好错误i18n指南](https://almchung.github.io/p5-fes-i18n-book/)讨论了在跨文化i18n上下文中编写友好错误信息的挑战和最佳实践。以下是该指南的主要观点：
@@ -277,15 +257,12 @@ FES信息编写者应优先降低理解错误信息的障碍，提高调试过�
 
 [友好错误i18n指南](https://almchung.github.io/p5-fes-i18n-book/)是一个公共项目，您可以通过[这个单独的仓库](https://github.com/almchung/p5-fes-i18n-book)为该指南做出贡献。
 
-
 ## 🔍 可选：单元测试
 
 请考虑为您的新FE信息添加单元测试，以便尽早发现错误并确保您的代码向用户传递预期的信息。此外，单元测试是确保其他贡献者的新代码不会意外破坏或干扰您的代码功能的好方法。以下是几个关于单元测试的好指南：
 
 - [单元测试和测试驱动开发](https://archive.p5js.org/learn/tdd.html)，作者Andy Timmons
 - [贡献者文档：单元测试](./unit_testing.md)
-
-
 
 示例：
 
@@ -298,7 +275,6 @@ suite('validateParameters: multi-format', function() {
   });
 }
 ```
-
 
 ## 结论
 
@@ -313,4 +289,4 @@ suite('validateParameters: multi-format', function() {
 - [21-22 FES调查报告漫画](https://almchung.github.io/p5jsFESsurvey/)
 - [21-22 FES调查完整报告](https://observablehq.com/@almchung/p5-fes-21-survey)
 
-有关FES设计和技术方面的更深入信息，请参阅[FES自述文档](./friendly_error_system.md)。该文档提供了详细的解释和开发说明，对那些寻求更深入了解FES的人有所帮助。 
+有关FES设计和技术方面的更深入信息，请参阅[FES自述文档](./friendly_error_system.md)。该文档提供了详细的解释和开发说明，对那些寻求更深入了解FES的人有所帮助。
