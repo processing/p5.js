@@ -395,9 +395,24 @@ function mapPrimitiveDepsToIDs(strandsContext, typeInfo, dependsOn) {
       }
       continue;
     } else {
+      let describedValue;
+      let hint = '';
+      if (typeof dep === 'function') {
+        describedValue = 'a function';
+        hint =
+          '\nThis looks like a shader hook or strands variable used directly, ' +
+          'rather than a property on it (e.g. you wrote `filterColor` instead of `filterColor.texCoord`).';
+      } else if (dep && typeof dep === 'object') {
+        describedValue = `an object (${dep.constructor?.name || 'Object'})`;
+        hint =
+          '\nThis looks like a strands hook or object rather than a number. ' +
+          'Did you forget to access a property on it, like `.texCoord` or `.position`?';
+      } else {
+        describedValue = `${dep}`;
+      }
       FES.userError(
         'type error',
-        `You've tried to construct a scalar or vector type with a non-numeric value: ${dep}`
+        `You've tried to construct a scalar or vector type with a non-numeric value: ${describedValue}${hint}`
       );
     }
   }
