@@ -32,7 +32,7 @@ function describe(p5, fn) {
    *
    * @method describe
    * @param  {String} text        description of the canvas.
-   * @param  {(FALLBACK|LABEL)} [display] either LABEL or FALLBACK.
+   * @param  {(FALLBACK|LABEL)}   [display] either LABEL or FALLBACK.
    * @param  {String} [lang]      valid lang attribute.
    *
    * @example
@@ -111,6 +111,11 @@ function describe(p5, fn) {
    *   describe(`A green circle at (${x}, 50) moves from left to right on a gray square.`, LABEL);
    * }
    */
+  /**
+   * @method describe
+   * @param  {String} text        description of the canvas.
+   * @param  {String} [lang]      valid lang attribute.
+   */
   fn.describe = function (text, display, lang) {
     // p5._validateParameters('describe', arguments);
     if (typeof text !== 'string') {
@@ -184,8 +189,8 @@ function describe(p5, fn) {
    * @method describeElement
    * @param  {String} name        name of the element.
    * @param  {String} text        description of the element.
-   * @param  {(FALLBACK|LABEL)} [display] either LABEL or FALLBACK.
-   * @param  {String} [lang] valid lang attribute.
+   * @param  {(FALLBACK|LABEL)}   [display] either LABEL or FALLBACK.
+   * @param  {String} [lang]      valid lang attribute.
    * @example
    * function setup() {
    *   background('pink');
@@ -235,6 +240,12 @@ function describe(p5, fn) {
    * }
    */
 
+  /**
+   * @method describeElement
+   * @param  {String} name        name of the element.
+   * @param  {String} text        description of the element.
+   * @param  {String} [lang]      valid lang attribute.
+   */
   fn.describeElement = function (name, text, display, lang) {
     // p5._validateParameters('describeElement', arguments);
     if (typeof text !== 'string' || typeof name !== 'string') {
