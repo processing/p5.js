@@ -87,32 +87,30 @@ Lead/Mentor Alumni
 - [@mcturner1995](https://github.com/mcturner1995) - p5.js Lead 2020
 
 <!-- STEWARDS-LIST:START - Do not remove or modify this section -->
-
-| Area                          | Steward(s)                                                                                                                                                                                                                             |
-| ----------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Maintainers                   | [@davepagurek](https://github.com/davepagurek), [@doradocodes](https://github.com/doradocodes), [@ksen0](https://github.com/ksen0), [@limzykenneth](https://github.com/limzykenneth), [@perminder-17](https://github.com/perminder-17) |
-| Accessibility                 | [@calebfoss](https://github.com/calebfoss)                                                                                                                                                                                             |
-| Accessibility (p5.js-website) | [@coseeian](https://github.com/coseeian)                                                                                                                                                                                               |
-| Color                         | [@limzykenneth](https://github.com/limzykenneth)                                                                                                                                                                                       |
-| Core                          | [@davepagurek](https://github.com/davepagurek)                                                                                                                                                                                         |
-| DevOps                        | [@Vaivaswat2244](https://github.com/Vaivaswat2244), [@limzykenneth](https://github.com/limzykenneth), [@lirenjie95](https://github.com/lirenjie95)                                                                                     |
-| Documentation                 | [@limzykenneth](https://github.com/limzykenneth), [@perminder-17](https://github.com/perminder-17)                                                                                                                                     |
-| Graphics (WebGL)              | [@RandomGamingDev](https://github.com/RandomGamingDev), [@davepagurek](https://github.com/davepagurek), [@perminder-17](https://github.com/perminder-17)                                                                               |
-| Graphics (WebGPU)             | [@aashu2006](https://github.com/aashu2006), [@davepagurek](https://github.com/davepagurek), [@perminder-17](https://github.com/perminder-17)                                                                                           |
-| i18n (es)                     | [@marioguzzzman](https://github.com/marioguzzzman)                                                                                                                                                                                     |
-| i18n (hi)                     | [@Divyansh013](https://github.com/Divyansh013)                                                                                                                                                                                         |
-| i18n (ko)                     | [@eupthere](https://github.com/eupthere), [@JiwonHaam](https://github.com/JiwonHaam)                                                                                                                                                   |
-| i18n (zh)                     | [@limzykenneth](https://github.com/limzykenneth), [@lirenjie95](https://github.com/lirenjie95)                                                                                                                                         |
-| p5.js-web-editor              | [@kitlord](https://github.com/kitlord)                                                                                                                                                                                                 |
-| p5.js-website                 | [@Nwakaego-Ego](https://github.com/Nwakaego-Ego), [@clairep94](https://github.com/clairep94), [@doradocodes](https://github.com/doradocodes), [@ksen0](https://github.com/ksen0)                                                       |
-| p5.sound.js                   | [@ogbabydiesal](https://github.com/ogbabydiesal)                                                                                                                                                                                       |
-| Typography                    | [@dhowe](https://github.com/dhowe)                                                                                                                                                                                                     |
-
+| Area | Steward(s) |
+|------|-------------|
+| Maintainers | [@clairep94](https://github.com/clairep94), [@davepagurek](https://github.com/davepagurek), [@doradocodes](https://github.com/doradocodes), [@khanniie](https://github.com/khanniie), [@ksen0](https://github.com/ksen0), [@limzykenneth](https://github.com/limzykenneth), [@perminder-17](https://github.com/perminder-17) |
+| Accessibility | [@calebfoss](https://github.com/calebfoss) |
+| Accessibility (p5.js-website) | [@coseeian](https://github.com/coseeian) |
+| Color | [@limzykenneth](https://github.com/limzykenneth) |
+| Core | [@davepagurek](https://github.com/davepagurek) |
+| DevOps | [@Vaivaswat2244](https://github.com/Vaivaswat2244), [@limzykenneth](https://github.com/limzykenneth), [@lirenjie95](https://github.com/lirenjie95) |
+| Documentation | [@limzykenneth](https://github.com/limzykenneth), [@perminder-17](https://github.com/perminder-17) |
+| Graphics (WebGL) | [@RandomGamingDev](https://github.com/RandomGamingDev), [@davepagurek](https://github.com/davepagurek), [@perminder-17](https://github.com/perminder-17) |
+| Graphics (WebGPU) | [@aashu2006](https://github.com/aashu2006), [@davepagurek](https://github.com/davepagurek), [@perminder-17](https://github.com/perminder-17) |
+| i18n (es) | [@marioguzzzman](https://github.com/marioguzzzman) |
+| i18n (hi) | [@Divyansh013](https://github.com/Divyansh013) |
+| i18n (ko) | [@JiwonHaam](https://github.com/JiwonHaam), [@eupthere](https://github.com/eupthere) |
+| i18n (zh) | [@limzykenneth](https://github.com/limzykenneth), [@lirenjie95](https://github.com/lirenjie95) |
+| p5.js-web-editor | [@clairep94](https://github.com/clairep94), [@doradocodes](https://github.com/doradocodes), [@khanniie](https://github.com/khanniie), [@kitlord](https://github.com/kitlord) |
+| p5.js-website | [@Nwakaego-Ego](https://github.com/Nwakaego-Ego), [@clairep94](https://github.com/clairep94), [@doradocodes](https://github.com/doradocodes), [@ksen0](https://github.com/ksen0) |
+| p5.sound.js | [@ogbabydiesal](https://github.com/ogbabydiesal) |
+| Typography | [@dhowe](https://github.com/dhowe) |
 <!-- STEWARDS-LIST:END -->
 
 ## Contributors
 
-We recognize all types of contributions. This project follows the [all-contributors specification](https://github.com/all-contributors/all-contributors) and the [Emoji Key](https://github.com/all-contributors/all-contributors/blob/master/docs/emoji-key.md) ✨ for contribution types. Instructions to add yourself or add contribution emojis to your name are [here](https://github.com/processing/p5.js/issues/2309). You can also post an issue or comment on a pull request with the text: `@all-contributors please add @YOUR-USERNAME for THINGS` (where `THINGS` is a comma-separated list of entries from the [list of possible contribution types](https://github.com/all-contributors/all-contributors/blob/master/docs/emoji-key.md)) and our nice bot will add you to [CONTRIBUTORS.md](./CONTRIBUTORS.md) automatically!
+We recognize all types of contributions. This project follows the [all-contributors specification](https://github.com/all-contributors/all-contributors) and the [Emoji Key](https://allcontributors.org/en/reference/emoji-key/) ✨ for contribution types. Instructions to add yourself or add contribution emojis to your name are [here](https://github.com/processing/p5.js/issues/2309). You can also post an issue or comment on a pull request with the text: `@all-contributors please add @YOUR-USERNAME for THINGS` (where `THINGS` is a comma-separated list of entries from the [list of possible contribution types](https://allcontributors.org/en/reference/emoji-key/)) and our nice bot will add you to [CONTRIBUTORS.md](./CONTRIBUTORS.md) automatically!
 
 ![Grid of avatars representing contributors to the p5.js project](contributors.png)
 

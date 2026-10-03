@@ -843,7 +843,7 @@ export class Font {
   }
 
   _position(renderer, lines, bounds, width, height) {
-    let { textAlign, textLeading, textSize } = renderer.states;
+    let { textAlign, textLeading } = renderer.states;
     let metrics = this._measureTextDefault(renderer, 'X');
     let ascent = metrics.fontBoundingBoxAscent;
 
@@ -1078,8 +1078,7 @@ function createFontFace(name, path, descriptors, rawFont) {
 
   if ((rawFont?.fvar?.length ?? 0) > 0) {
     descriptors = descriptors || {};
-    for (const [tag, minVal, defaultVal, maxVal, flags, name] of rawFont
-      .fvar[0]) {
+    for (const [tag, minVal, , maxVal] of rawFont.fvar[0]) {
       if (tag === 'wght') {
         descriptors.weight = `${minVal} ${maxVal}`;
       } else if (tag === 'wdth') {
@@ -1446,7 +1445,7 @@ function font(p5, fn) {
       let info;
       try {
         info = await fetch(path, { method: 'HEAD' });
-      } catch (e) {
+      } catch {
         // Sometimes files fail when requested with HEAD. Fallback to a
         // regular GET. It loads more data, but at least then it's cached
         // for the likely case when we have to fetch the whole thing.
@@ -1497,7 +1496,7 @@ function font(p5, fn) {
                   }
                   fontData = await fn.parseFontData(url);
                 }
-              } catch (_e) {}
+              } catch {}
               return create(this, name, src, fontDescriptors, fontData);
             },
             loadWithoutData: () => create(this, name, src, fontDescriptors)
@@ -1577,7 +1576,7 @@ function font(p5, fn) {
 
       // create a FontFace object and pass it to the p5.Font constructor
       pfont = await create(this, name, path, descriptors, fontData);
-    } catch (err) {
+    } catch {
       // failed to parse the font, load it as a simple FontFace
       let ident =
         name ||
