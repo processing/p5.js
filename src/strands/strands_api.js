@@ -27,6 +27,9 @@ import {
   STRANDS_INTERNAL_NAME_PREFIX
 } from './strands_names';
 
+// Names that strands adds to p5.prototype but were not original p5 globals.
+export const strandsAddedP5Globals = new Set();
+
 const BUILTIN_GLOBAL_SPECS = {
   width: { typeInfo: DataType.float1, get: p => p.width },
   height: { typeInfo: DataType.float1, get: p => p.height },
@@ -472,6 +475,9 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
   for (const [functionName, overrides] of Object.entries(
     strandsBuiltinFunctions
   )) {
+    if (!Object.hasOwn(fn, functionName)) {
+      strandsAddedP5Globals.add(functionName);
+    }
     const isp5Function = overrides[0].isp5Function;
     if (isp5Function) {
       const originalFn = fn[functionName];
