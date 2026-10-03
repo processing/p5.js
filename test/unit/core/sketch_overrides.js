@@ -283,6 +283,7 @@ suite('Sketch Verifier', function () {
       setup() {}
       draw() {}
       rect() {}
+      max() {}
     }
 
     beforeEach(function () {
@@ -383,6 +384,38 @@ suite('Sketch Verifier', function () {
           expect.stringContaining('length')
         );
       }
+    });
+
+    test('warns on overlapping builtins in both scopes', function () {
+      const outside = {
+        variables: [{ name: 'max', line: 0, insideStrands: false }],
+        functions: []
+      };
+      const outsideResult = verifierUtils.checkForConstsAndFuncs(
+        outside,
+        MockP5
+      );
+      expect(outsideResult).toBe(true);
+      expect(consoleSpy).toHaveBeenCalledWith(
+        expect.stringContaining(
+          'function "max" on line 1 is being redeclared and conflicts with a p5.js function'
+        )
+      );
+
+      consoleSpy.mockClear();
+
+      const inside = {
+        variables: [{ name: 'max', line: 1, insideStrands: true }],
+        functions: []
+      };
+      const insideResult = verifierUtils.checkForConstsAndFuncs(
+        inside,
+        MockP5
+      );
+      expect(insideResult).toBe(true);
+      expect(consoleSpy).toHaveBeenCalledWith(
+        expect.stringContaining('max')
+      );
     });
   });
 });

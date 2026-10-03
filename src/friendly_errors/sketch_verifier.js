@@ -3,6 +3,7 @@ import { simple as walk } from 'acorn-walk';
 import * as constants from '../core/constants';
 import { FES } from './fes';
 import { strandsBuiltinFunctions as builtInGLSLFunctions } from '../strands/strands_builtins';
+import { strandsAddedP5Globals } from '../strands/strands_api';
 
 // List of functions to ignore as they either are meant to be re-defined or
 // generate false positive outputs.
@@ -278,8 +279,13 @@ export const verifierUtils = {
       )
     );
 
-    for (let { name, line } of allDefinitions) {
-      if (!ignoreFunction.includes(name) && globalFunctions.has(name) && !Object.hasOwn(builtInGLSLFunctions, name)) {
+    for (let { name, line, insideStrands } of allDefinitions) {
+      if (
+        !ignoreFunction.includes(name) &&
+        !insideStrands &&
+        globalFunctions.has(name) &&
+        !strandsAddedP5Globals.has(name)
+      ) {
         const message = generateFriendlyError(
           FES.log`function`,
           name,
