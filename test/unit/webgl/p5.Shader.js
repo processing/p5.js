@@ -506,6 +506,26 @@ suite('p5.Shader', function () {
       }).not.toThrowError();
     });
 
+    test('accepts an arrow function with an unparenthesized parameter', () => {
+      myp5.createCanvas(5, 5, myp5.WEBGL);
+      expect(() => {
+        // Source text, so this does not depend on how the test file is transformed.
+        const myShader = myp5.buildMaterialShader(
+          `param => {
+            const { myp5 } = param;
+            myp5.getPixelInputs(inputs => {
+              inputs.color = [1, 0, 0, 1];
+              return inputs;
+            });
+          }`,
+          { myp5 }
+        );
+        myp5.noStroke();
+        myp5.shader(myShader);
+        myp5.plane(myp5.width, myp5.height);
+      }).not.toThrowError();
+    });
+
     test('buildMaterialShader forwards scope to modify', () => {
       myp5.createCanvas(5, 5, myp5.WEBGL);
       expect(() => {
@@ -3357,6 +3377,134 @@ suite('p5.Shader', function () {
       assert.approximately(pixelColor[2], 0, 5);
     });
 
+    suite('comma operator (#9178)', () => {
+      test('handles comma-joined hook calls with a shared variable', () => {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+        myp5.pixelDensity(1);
+
+        const testShader = myp5.baseMaterialShader().modify(
+          () => {
+            let processedNormal = myp5.sharedVec3();
+            myp5.objectInputs.begin();
+            myp5.objectInputs.position += [0, 0, 0];
+            myp5.objectInputs.end();
+
+            // Comma-joined, as a JavaScript minifier would emit it
+            myp5.pixelInputs.begin(),
+              (processedNormal = myp5.normalize(myp5.pixelInputs.normal)),
+              myp5.pixelInputs.end();
+
+            myp5.finalColor.begin();
+            myp5.finalColor.set([myp5.abs(processedNormal), 1]);
+            myp5.finalColor.end();
+          },
+          { myp5 }
+        );
+
+        myp5.background(255, 0, 0);
+        myp5.noStroke();
+        myp5.shader(testShader);
+        myp5.plane(myp5.width, myp5.height);
+
+        const centerColor = myp5.get(25, 25);
+        assert.approximately(centerColor[0], 0, 5);
+        assert.approximately(centerColor[1], 0, 5);
+        assert.approximately(centerColor[2], 255, 5);
+      });
+
+      test('handles a comma-joined swizzle assignment', () => {
+        myp5.createCanvas(5, 5, myp5.WEBGL);
+
+        expect(() => {
+          myp5.baseMaterialShader().modify(
+            () => {
+              // The shared variable is consumed by the p5.strands transpiler, not by JS.
+              /* oxlint-disable-next-line no-unused-vars */
+              let processedNormal = myp5.sharedVec3();
+              myp5.pixelInputs.begin(),
+                (processedNormal.xy = myp5.pixelInputs.normal.xy),
+                myp5.pixelInputs.end();
+            },
+            { myp5 }
+          );
+        }).not.toThrow();
+      });
+
+      test('keeps sibling expressions around a .set() call in control flow', () => {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+
+        const testShader = myp5.baseFilterShader().modify(
+          () => {
+            myp5.filterColor.begin();
+            let value = 1;
+            let c = [0, 1, 0, 1];
+            if (value > 0.5) {
+              (c = [1, 0, 0, 1]), myp5.filterColor.set(c);
+            }
+            myp5.filterColor.end();
+          },
+          { myp5 }
+        );
+
+        myp5.background(255, 255, 255);
+        myp5.filter(testShader);
+
+        // Red only if the `c = [1, 0, 0, 1]` sibling survived transpilation
+        const pixelColor = myp5.get(25, 25);
+        assert.approximately(pixelColor[0], 255, 5);
+        assert.approximately(pixelColor[1], 0, 5);
+        assert.approximately(pixelColor[2], 0, 5);
+      });
+
+      test('finds .begin() and .end() inside comma expressions', () => {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+
+        const testShader = myp5.baseFilterShader().modify(
+          () => {
+            let step = 0;
+            myp5.filterColor.begin(), (step = 1);
+            if (step > 0.5) {
+              myp5.filterColor.set([1, 0, 0, 1]);
+            }
+            myp5.filterColor.end(), (step = 2);
+          },
+          { myp5 }
+        );
+
+        myp5.background(255, 255, 255);
+        myp5.filter(testShader);
+
+        const pixelColor = myp5.get(25, 25);
+        assert.approximately(pixelColor[0], 255, 5);
+        assert.approximately(pixelColor[1], 0, 5);
+        assert.approximately(pixelColor[2], 0, 5);
+      });
+
+      test('handles .set() right after .begin() in the same comma expression', () => {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+
+        const testShader = myp5.baseFilterShader().modify(
+          () => {
+            myp5.filterColor.begin(), myp5.filterColor.set([0, 1, 0, 1]);
+            let value = 1;
+            if (value > 0.5) {
+              myp5.filterColor.set([1, 0, 0, 1]);
+            }
+            myp5.filterColor.end();
+          },
+          { myp5 }
+        );
+
+        myp5.background(255, 255, 255);
+        myp5.filter(testShader);
+
+        const pixelColor = myp5.get(25, 25);
+        assert.approximately(pixelColor[0], 255, 5);
+        assert.approximately(pixelColor[1], 0, 5);
+        assert.approximately(pixelColor[2], 0, 5);
+      });
+    });
+
     test('handle .set() in for loop with flat API', () => {
       myp5.createCanvas(50, 50, myp5.WEBGL);
 
@@ -3794,6 +3942,254 @@ suite('p5.Shader', function () {
       assert.include(errMsg, 'ternary');
       assert.include(errMsg, 'float1');
       assert.include(errMsg, 'float4');
+    });
+
+    test('ordering comparison with a vector operand throws a clear strands type error', () => {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+
+      try {
+        myp5.baseMaterialShader().modify(
+          () => {
+            myp5.getFinalColor(color => {
+              if (color < 2) {
+                color = [1, 1, 1, 1];
+              }
+              return color;
+            });
+          },
+          { myp5 }
+        );
+      } catch {
+        /* expected */
+      }
+
+      assert.isAbove(
+        mockUserError.mock.calls.length,
+        0,
+        'FES.userError should have been called'
+      );
+      const errMsg = mockUserError.mock.calls[0][1];
+      assert.include(errMsg, '<');
+      assert.include(errMsg, 'only defined for scalars');
+      assert.include(errMsg, 'float4');
+      assert.include(errMsg, 'float1');
+    });
+
+    test('ordering comparison between scalars is allowed', () => {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+
+      myp5.baseMaterialShader().modify(
+        () => {
+          myp5.getFinalColor(color => {
+            if (color.r < 0.5) {
+              color = [1, 1, 1, 1];
+            }
+            return color;
+          });
+        },
+        { myp5 }
+      );
+
+      assert.equal(mockUserError.mock.calls.length, 0);
+    });
+
+    test('equality comparison between matching vectors is allowed', () => {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+
+      myp5.baseMaterialShader().modify(
+        () => {
+          myp5.getFinalColor(color => {
+            if (color.equalTo([1, 1, 1, 1])) {
+              color = [1, 1, 1, 1];
+            }
+            return color;
+          });
+        },
+        { myp5 }
+      );
+
+      assert.equal(mockUserError.mock.calls.length, 0);
+    });
+
+    test('logical and with non-boolean operands throws a clear strands type error', () => {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+
+      try {
+        myp5.baseMaterialShader().modify(
+          () => {
+            myp5.getFinalColor(color => {
+              if (color.r && color.g) {
+                color = [1, 1, 1, 1];
+              }
+              return color;
+            });
+          },
+          { myp5 }
+        );
+      } catch {
+        /* expected */
+      }
+
+      assert.isAbove(
+        mockUserError.mock.calls.length,
+        0,
+        'FES.userError should have been called'
+      );
+      const errMsg = mockUserError.mock.calls[0][1];
+      assert.include(errMsg, '&&');
+      assert.include(errMsg, 'requires two bool scalars');
+    });
+
+    test('logical and between two boolean scalars is allowed', () => {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+
+      myp5.baseMaterialShader().modify(
+        () => {
+          myp5.getFinalColor(color => {
+            if (color.r < 0.5 && color.g > 0.5) {
+              color = [1, 1, 1, 1];
+            }
+            return color;
+          });
+        },
+        { myp5 }
+      );
+
+      assert.equal(mockUserError.mock.calls.length, 0);
+    });
+
+    test('ordering comparison with a boolean operand throws a clear strands type error', () => {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+
+      try {
+        myp5.baseMaterialShader().modify(
+          () => {
+            myp5.getFinalColor(color => {
+              if (myp5.bool(true) < 0.5) {
+                color = [1, 1, 1, 1];
+              }
+              return color;
+            });
+          },
+          { myp5 }
+        );
+      } catch {
+        /* expected */
+      }
+
+      assert.isAbove(
+        mockUserError.mock.calls.length,
+        0,
+        'FES.userError should have been called'
+      );
+      const errMsg = mockUserError.mock.calls[0][1];
+      assert.include(errMsg, '<');
+      assert.include(errMsg, 'not defined for boolean values');
+    });
+
+    test('ordering comparison between two booleans throws a clear strands type error', () => {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+
+      try {
+        myp5.baseMaterialShader().modify(
+          () => {
+            myp5.getFinalColor(color => {
+              if (myp5.bool(true) > myp5.bool(false)) {
+                color = [1, 1, 1, 1];
+              }
+              return color;
+            });
+          },
+          { myp5 }
+        );
+      } catch {
+        /* expected */
+      }
+
+      assert.isAbove(
+        mockUserError.mock.calls.length,
+        0,
+        'FES.userError should have been called'
+      );
+      const errMsg = mockUserError.mock.calls[0][1];
+      assert.include(errMsg, '>');
+      assert.include(errMsg, 'not defined for boolean values');
+    });
+
+    test('equality comparison between boolean and numeric types throws a clear strands type error', () => {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+
+      try {
+        myp5.baseMaterialShader().modify(
+          () => {
+            myp5.getFinalColor(color => {
+              if (myp5.bool(true).equalTo(1.0)) {
+                color = [1, 1, 1, 1];
+              }
+              return color;
+            });
+          },
+          { myp5 }
+        );
+      } catch {
+        /* expected */
+      }
+
+      assert.isAbove(
+        mockUserError.mock.calls.length,
+        0,
+        'FES.userError should have been called'
+      );
+      const errMsg = mockUserError.mock.calls[0][1];
+      assert.include(errMsg, '==');
+      assert.include(errMsg, 'between boolean and numeric');
+    });
+
+    test('inequality comparison between numeric and boolean types throws a clear strands type error', () => {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+
+      try {
+        myp5.baseMaterialShader().modify(
+          () => {
+            myp5.getFinalColor(color => {
+              if (myp5.float(1.0).notEqual(myp5.bool(false))) {
+                color = [1, 1, 1, 1];
+              }
+              return color;
+            });
+          },
+          { myp5 }
+        );
+      } catch {
+        /* expected */
+      }
+
+      assert.isAbove(
+        mockUserError.mock.calls.length,
+        0,
+        'FES.userError should have been called'
+      );
+      const errMsg = mockUserError.mock.calls[0][1];
+      assert.include(errMsg, '!=');
+      assert.include(errMsg, 'between boolean and numeric');
+    });
+
+    test('equality comparison between two booleans is allowed', () => {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+
+      myp5.baseMaterialShader().modify(
+        () => {
+          myp5.getFinalColor(color => {
+            if (myp5.bool(true).equalTo(myp5.bool(false))) {
+              color = [1, 1, 1, 1];
+            }
+            return color;
+          });
+        },
+        { myp5 }
+      );
+
+      assert.equal(mockUserError.mock.calls.length, 0);
     });
 
     test('shows a helpful error for web editor loop protection', () => {

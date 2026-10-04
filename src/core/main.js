@@ -46,6 +46,15 @@ class p5 {
   // FES stub
   static _checkForUserDefinedFunctions = () => {};
   static _friendlyFileLoadError = () => {};
+  static _friendlyError = () => {};
+  static _checkForUserDefinedFunctions = () => {};
+  static FES = {
+    log: () => () => {},
+    warn: () => () => {},
+    error: () => () => {},
+    debug: () => () => {},
+    info: () => () => {}
+  };
 
   constructor(sketch, node) {
     // Apply addon defined decorations
