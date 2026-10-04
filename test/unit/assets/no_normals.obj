@@ -1,0 +1,11 @@
+mtllib no_normals.mtl
+v -1 -1 0
+v 1 -1 0
+v 1 1 0
+v -1 -1 2
+v 1 -1 2
+v 1 1 2
+usemtl one
+f 1 2 3
+usemtl two
+f 4 5 6

@@ -58,7 +58,7 @@ suite.only('color/p5.ColorConversion', function() {
 
 이러한 테스트는 현재 브라우저 테스트에서만 사용할 수 있습니다(대부분의 테스트가 실행되는 위치):
 
-- `test/js/mocha_setup.js`  mocha의 몇가지 옵션을 설정
+- `test/js/mocha_setup.js` mocha의 몇가지 옵션을 설정
 - `test/js/chai_helpers.js` chai 설정 및 `chai.assert` 에 도움되는 몇가지 함수 추가
 - `test/js/p5_helpers.js` p5 스케치의 테스트를 도와주는 몇가지 헬퍼 함수 추가
 
@@ -94,16 +94,16 @@ p5.js 레파지토리에서 풀리퀘스트를 오픈하면, 자동으로 [테�
 `p5.prototype.isKeyPressed`를 위한 테스트 스위트를 생성하고, 테스트를 작성할 수 잇습니다. 단위테스트를 구성하기 위해 mocha를 사용할 것입니다.
 
 ```js
-suite('p5.prototype.keyIsPressed', function() {
-  test('keyIsPressed is a boolean', function() {
+suite('p5.prototype.keyIsPressed', function () {
+  test('keyIsPressed is a boolean', function () {
     //이곳에서 테스트 작성
   });
 
-  test('keyIsPressed is true on key press', function() {
+  test('keyIsPressed is true on key press', function () {
     //이곳에서 테스트 작성
   });
 
-  test('keyIsPressed is false when no keys are pressed', function() {
+  test('keyIsPressed is false when no keys are pressed', function () {
     //이곳에서 테스트 작성
   });
 });
@@ -114,7 +114,7 @@ suite('p5.prototype.keyIsPressed', function() {
 다음을 고려해 보세요:
 
 ```js
-test('keyIsPressed is a boolean', function() {
+test('keyIsPressed is a boolean', function () {
   assert.isBoolean(myp5.keyIsPressed); //해당 값이 boolean인지 확인
 });
 ```

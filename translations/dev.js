@@ -16,4 +16,4 @@ export { default as ja_translation } from './ja/translation.json';
  *
  * "es_MX" is the language key whereas "translation" is the filename
  * ( translation.json ) or the namespace
-*/
+ */

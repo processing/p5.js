@@ -8,7 +8,11 @@
 
 import * as constants from '../core/constants';
 import { DataArray } from './p5.DataArray';
-import { GeometryPart, createPartState } from './p5.GeometryPart';
+import {
+  GeometryPart,
+  createPartState,
+  createUserVertexProperty
+} from './p5.GeometryPart';
 import { Vector } from '../math/p5.Vector';
 import { downloadFile } from '../io/utilities';
 
@@ -18,7 +22,6 @@ class Geometry {
     this.vertices = [];
 
     this.boundingBoxCache = null;
-
 
     //an array containing every vertex for stroke drawing
     this.lineVertices = new DataArray();
@@ -38,6 +41,11 @@ class Geometry {
     this.lineSides = new DataArray();
 
     this.vertexNormals = [];
+
+    // per-vertex surface tangents for normal mapping, stored flat as
+    // [x, y, z, w] where w is the bitangent handedness. computeTangents() fills
+    // this; empty until a normal-mapped model needs it.
+    this.vertexTangents = [];
 
     this.faces = [];
 
@@ -190,9 +198,15 @@ class Geometry {
     }
 
     let minVertex = new Vector(
-      Number.MAX_VALUE, Number.MAX_VALUE, Number.MAX_VALUE);
+      Number.MAX_VALUE,
+      Number.MAX_VALUE,
+      Number.MAX_VALUE
+    );
     let maxVertex = new Vector(
-      Number.MIN_VALUE, Number.MIN_VALUE, Number.MIN_VALUE);
+      Number.MIN_VALUE,
+      Number.MIN_VALUE,
+      Number.MIN_VALUE
+    );
 
     for (let i = 0; i < this.vertices.length; i++) {
       let vertex = this.vertices[i];
@@ -205,10 +219,16 @@ class Geometry {
       maxVertex.z = Math.max(maxVertex.z, vertex.z);
     }
     // Calculate size and offset properties
-    let size = new Vector(maxVertex.x - minVertex.x,
-      maxVertex.y - minVertex.y, maxVertex.z - minVertex.z);
-    let offset = new Vector((minVertex.x + maxVertex.x) / 2,
-      (minVertex.y + maxVertex.y) / 2, (minVertex.z + maxVertex.z) / 2);
+    let size = new Vector(
+      maxVertex.x - minVertex.x,
+      maxVertex.y - minVertex.y,
+      maxVertex.z - minVertex.z
+    );
+    let offset = new Vector(
+      (minVertex.x + maxVertex.x) / 2,
+      (minVertex.y + maxVertex.y) / 2,
+      (minVertex.z + maxVertex.z) / 2
+    );
 
     // Cache the result for future access
     this.boundingBoxCache = {
@@ -239,9 +259,10 @@ class Geometry {
     this.vertexStrokeColors.length = 0;
     this.lineVertexColors.clear();
     this.vertexNormals.length = 0;
+    this.vertexTangents.length = 0;
     this.uvs.length = 0;
 
-    for (const propName in this.userVertexProperties){
+    for (const propName in this.userVertexProperties) {
       this.userVertexProperties[propName].delete();
     }
     this.userVertexProperties = {};
@@ -379,8 +400,7 @@ class Geometry {
    * }
    */
   saveObj(fileName = 'model.obj') {
-    let objStr= '';
-
+    let objStr = '';
 
     // Vertices
     this.vertices.forEach(v => {
@@ -399,7 +419,6 @@ class Geometry {
       this.vertexNormals.forEach(n => {
         objStr += `vn ${n.x} ${n.y} ${n.z}\n`;
       });
-
     }
     // Faces, obj vertex indices begin with 1 and not 0
     // texture coordinate (uvs) and vertexNormal indices
@@ -407,7 +426,7 @@ class Geometry {
     // ex 1/1/1 or 2//2 for vertices without uvs
     this.faces.forEach(face => {
       let faceStr = 'f';
-      face.forEach(index =>{
+      face.forEach(index => {
         faceStr += ' ';
         faceStr += index + 1;
         if (this.vertexNormals.length > 0 || this.uvs.length > 0) {
@@ -425,8 +444,7 @@ class Geometry {
     });
 
     const blob = new Blob([objStr], { type: 'text/plain' });
-    downloadFile(blob, fileName , 'obj');
-
+    downloadFile(blob, fileName, 'obj');
   }
 
   /**
@@ -485,7 +503,7 @@ class Geometry {
    *   model(myModel);
    * }
    */
-  saveStl(fileName = 'model.stl', { binary = false } = {}){
+  saveStl(fileName = 'model.stl', { binary = false } = {}) {
     let modelOutput;
     let name = fileName.substring(0, fileName.lastIndexOf('.'));
     let faceNormals = [];
@@ -1249,6 +1267,79 @@ class Geometry {
   }
 
   /**
+   * computes a per-vertex surface tangent from the uvs, needed for normal
+   * (bump) mapping. the tangent points along the +u texture direction; its w
+   * component stores the bitangent handedness so the shader can rebuild the
+   * bitangent as cross(normal, tangent) * w. results are stored flat as
+   * [x, y, z, w] per vertex on this.vertexTangents. needs uvs and vertex
+   * normals, so run computeNormals() first if the model has none.
+   * @private
+   * @chainable
+   */
+  computeTangents() {
+    const vertices = this.vertices;
+    const faces = this.faces;
+    const uvs = this.uvs.flat();
+    const normals = this.vertexNormals;
+
+    // nothing to build a tangent basis from without uvs and normals
+    if (uvs.length === 0 || normals.length === 0) {
+      this.vertexTangents = [];
+      return this;
+    }
+
+    // accumulate the +u direction (tan) and +v direction (bitan) per vertex
+    const tan = [];
+    const bitan = [];
+    for (let i = 0; i < vertices.length; i++) {
+      tan.push(new Vector(0, 0, 0));
+      bitan.push(new Vector(0, 0, 0));
+    }
+    const uvAt = i => ({ x: uvs[i * 2] || 0, y: uvs[i * 2 + 1] || 0 });
+
+    for (const face of faces) {
+      const [i0, i1, i2] = face;
+      const e1 = Vector.sub(vertices[i1], vertices[i0]);
+      const e2 = Vector.sub(vertices[i2], vertices[i0]);
+      const w0 = uvAt(i0);
+      const w1 = uvAt(i1);
+      const w2 = uvAt(i2);
+      const du1 = w1.x - w0.x;
+      const dv1 = w1.y - w0.y;
+      const du2 = w2.x - w0.x;
+      const dv2 = w2.y - w0.y;
+
+      const denom = du1 * dv2 - du2 * dv1;
+      const r = denom === 0 ? 0 : 1 / denom;
+      const sdir = Vector.sub(Vector.mult(e1, dv2), Vector.mult(e2, dv1)).mult(r);
+      const tdir = Vector.sub(Vector.mult(e2, du1), Vector.mult(e1, du2)).mult(r);
+
+      for (const idx of face) {
+        tan[idx].add(sdir);
+        bitan[idx].add(tdir);
+      }
+    }
+
+    // orthonormalise each tangent against its normal and record handedness
+    const tangents = [];
+    for (let i = 0; i < vertices.length; i++) {
+      const n = normals[i] || new Vector(0, 0, 1);
+      let t = Vector.sub(tan[i], Vector.mult(n, n.dot(tan[i])));
+      if (t.magSq() === 0) {
+        // degenerate uvs: pick any direction perpendicular to the normal
+        const seed = Math.abs(n.x) < 0.9 ? new Vector(1, 0, 0) : new Vector(0, 1, 0);
+        t = Vector.sub(seed, Vector.mult(n, n.dot(seed)));
+      }
+      t.normalize();
+      const handedness = Vector.cross(n, t).dot(bitan[i]) < 0 ? -1 : 1;
+      tangents.push(t.x, t.y, t.z, handedness);
+    }
+
+    this.vertexTangents = tangents;
+    return this;
+  }
+
+  /**
    * Averages the vertex normals. Used in curved
    * surfaces
    * @private
@@ -1396,30 +1487,30 @@ class Geometry {
       const isPoint = currEdge[0] === currEdge[1];
       const begin = this.vertices[currEdge[0]];
       const end = this.vertices[currEdge[1]];
-      const prevColor = (this.vertexStrokeColors.length > 0 && prevEdge)
-        ? this.vertexStrokeColors.slice(
-          prevEdge[1] * 4,
-          (prevEdge[1] + 1) * 4
-        )
-        : [0, 0, 0, 0];
-      const fromColor = this.vertexStrokeColors.length > 0
-        ? this.vertexStrokeColors.slice(
-          currEdge[0] * 4,
-          (currEdge[0] + 1) * 4
-        )
-        : [0, 0, 0, 0];
-      const toColor = this.vertexStrokeColors.length > 0
-        ? this.vertexStrokeColors.slice(
-          currEdge[1] * 4,
-          (currEdge[1] + 1) * 4
-        )
-        : [0, 0, 0, 0];
+      const prevColor =
+        this.vertexStrokeColors.length > 0 && prevEdge
+          ? this.vertexStrokeColors.slice(
+              prevEdge[1] * 4,
+              (prevEdge[1] + 1) * 4
+            )
+          : [0, 0, 0, 0];
+      const fromColor =
+        this.vertexStrokeColors.length > 0
+          ? this.vertexStrokeColors.slice(
+              currEdge[0] * 4,
+              (currEdge[0] + 1) * 4
+            )
+          : [0, 0, 0, 0];
+      const toColor =
+        this.vertexStrokeColors.length > 0
+          ? this.vertexStrokeColors.slice(
+              currEdge[1] * 4,
+              (currEdge[1] + 1) * 4
+            )
+          : [0, 0, 0, 0];
       const dir = isPoint
         ? new Vector(0, 1, 0)
-        : end
-          .copy()
-          .sub(begin)
-          .normalize();
+        : end.copy().sub(begin).normalize();
       const dirOK = dir.magSq() > 0;
       if (dirOK) {
         this._addSegment(begin, end, fromColor, toColor, dir);
@@ -1447,12 +1538,7 @@ class Geometry {
           if (dirOK && !connected.has(currEdge[0])) {
             const existingCap = potentialCaps.get(currEdge[0]);
             if (existingCap) {
-              this._addJoin(
-                begin,
-                existingCap.dir,
-                dir,
-                fromColor
-              );
+              this._addJoin(begin, existingCap.dir, dir, fromColor);
               potentialCaps.delete(currEdge[0]);
               connected.add(currEdge[0]);
             } else {
@@ -1489,12 +1575,7 @@ class Geometry {
         if (i === this.edges.length - 1 && !connected.has(currEdge[1])) {
           const existingCap = potentialCaps.get(currEdge[1]);
           if (existingCap) {
-            this._addJoin(
-              end,
-              dir,
-              existingCap.dir.copy().mult(-1),
-              toColor
-            );
+            this._addJoin(end, dir, existingCap.dir.copy().mult(-1), toColor);
             potentialCaps.delete(currEdge[1]);
             connected.add(currEdge[1]);
           } else {
@@ -1533,13 +1614,7 @@ class Geometry {
    * @private
    * @chainable
    */
-  _addSegment(
-    begin,
-    end,
-    fromColor,
-    toColor,
-    dir
-  ) {
+  _addSegment(begin, end, fromColor, toColor, dir) {
     const a = begin.array();
     const b = end.array();
     const dirArr = dir.array();
@@ -1616,12 +1691,7 @@ class Geometry {
    * @private
    * @chainable
    */
-  _addJoin(
-    point,
-    fromTangent,
-    toTangent,
-    color
-  ) {
+  _addJoin(point, fromTangent, toTangent, color) {
     const ptArray = point.array();
     const tanInArray = fromTangent.array();
     const tanOutArray = toTangent.array();
@@ -1811,85 +1881,26 @@ class Geometry {
    * @param {Number|Number[]} data the data tied to the vertex property.
    * @param {Number} [size] optional size of each unit of data.
    */
-  vertexProperty(propertyName, data, size){
+  vertexProperty(propertyName, data, size) {
     let prop;
-    if (!this.userVertexProperties[propertyName]){
+    if (!this.userVertexProperties[propertyName]) {
       prop = this.userVertexProperties[propertyName] =
         this._userVertexPropertyHelper(propertyName, data, size);
     }
     prop = this.userVertexProperties[propertyName];
-    if (size){
+    if (size) {
       prop.pushDirect(data);
-    } else{
+    } else {
       prop.setCurrentData(data);
       prop.pushCurrentData();
     }
   }
 
-  _userVertexPropertyHelper(propertyName, data, size){
-    const geometryInstance = this;
-    const prop = this.userVertexProperties[propertyName] = {
-      name: propertyName,
-      dataSize: size ? size : data.length ? data.length : 1,
-      geometry: geometryInstance,
-      // Getters
-      getName(){
-        return this.name;
-      },
-      getCurrentData(){
-        if (this.currentData === undefined) {
-          this.currentData = new Array(this.getDataSize()).fill(0);
-        }
-        return this.currentData;
-      },
-      getDataSize() {
-        return this.dataSize;
-      },
-      getSrcName() {
-        const src = this.name.concat('Src');
-        return src;
-      },
-      getDstName() {
-        const dst = this.name.concat('Buffer');
-        return dst;
-      },
-      getSrcArray() {
-        const srcName = this.getSrcName();
-        return this.geometry[srcName];
-      },
-      //Setters
-      setCurrentData(data) {
-        const size = data.length ? data.length : 1;
-        // if (size != this.getDataSize()){
-        //   p5._friendlyError(`Custom vertex property '${this.name}' has been set with various data sizes. You can change it's name, or if it was an accident, set '${this.name}' to have the same number of inputs each time!`, 'vertexProperty()');
-        // }
-        this.currentData = data;
-      },
-      // Utilities
-      pushCurrentData(){
-        const data = this.getCurrentData();
-        this.pushDirect(data);
-      },
-      pushDirect(data) {
-        if (data.length){
-          this.getSrcArray().push(...data);
-        } else{
-          this.getSrcArray().push(data);
-        }
-      },
-      resetSrcArray(){
-        this.geometry[this.getSrcName()] = [];
-      },
-      delete() {
-        const srcName = this.getSrcName();
-        delete this.geometry[srcName];
-        delete this;
-      }
-    };
-    this[prop.getSrcName()] = [];
-    return this.userVertexProperties[propertyName];
+  _userVertexPropertyHelper(propertyName, data, size) {
+    // shared with GeometryPart so parts carry custom attributes identically
+    return createUserVertexProperty(this, propertyName, data, size);
   }
-};
+}
 
 /**
  * Keeps track of how many custom geometry objects have been made so that each
@@ -1897,7 +1908,7 @@ class Geometry {
  */
 Geometry.nextId = 0;
 
-function geometry(p5, fn){
+function geometry(p5, fn) {
   /**
    * A class to describe a 3D shape.
    *
@@ -2503,6 +2514,6 @@ function geometry(p5, fn){
 export default geometry;
 export { Geometry };
 
-if(typeof p5 !== 'undefined'){
+if (typeof p5 !== 'undefined') {
   geometry(p5, p5.prototype);
 }

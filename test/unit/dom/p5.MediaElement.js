@@ -1,6 +1,9 @@
 import { vi } from 'vitest';
 import { mockP5, mockP5Prototype } from '../../js/mocks';
-import { default as media, MediaElement } from '../../../src/dom/p5.MediaElement';
+import {
+  default as media,
+  MediaElement
+} from '../../../src/dom/p5.MediaElement';
 import { Element } from '../../../src/dom/p5.Element';
 import { default as pixels } from '../../../src/image/pixels';
 
@@ -8,7 +11,8 @@ suite('p5.MediaElement', () => {
   beforeAll(() => {
     media(mockP5, mockP5Prototype);
     pixels(mockP5, mockP5Prototype);
-    navigator.mediaDevices.getUserMedia = vi.fn()
+    navigator.mediaDevices.getUserMedia = vi
+      .fn()
       .mockResolvedValue('stream-value');
   });
 
@@ -16,8 +20,8 @@ suite('p5.MediaElement', () => {
     vi.restoreAllMocks();
   });
 
-  suite('p5.prototype.createVideo', function() {
-    afterEach(function() {
+  suite('p5.prototype.createVideo', function () {
+    afterEach(function () {
       document.body.innerHTML = '';
     });
 
@@ -26,17 +30,17 @@ suite('p5.MediaElement', () => {
       '/test/unit/assets/target.gif'
     ];
 
-    test('should be a function', function() {
+    test('should be a function', function () {
       assert.isFunction(mockP5Prototype.createVideo);
     });
 
-    test('should return p5.Element of HTMLVideoElement', function() {
+    test('should return p5.Element of HTMLVideoElement', function () {
       const testElement = mockP5Prototype.createVideo('');
       assert.instanceOf(testElement, MediaElement);
       assert.instanceOf(testElement.elt, HTMLVideoElement);
     });
 
-    test('should accept a singular media source', function() {
+    test('should accept a singular media source', function () {
       const mediaSource = mediaSources[0];
       const testElement = mockP5Prototype.createVideo(mediaSource);
       const sourceEl = testElement.elt.children[0];
@@ -46,7 +50,7 @@ suite('p5.MediaElement', () => {
       assert.isTrue(sourceEl.src.endsWith(mediaSource));
     });
 
-    test('should accept multiple media sources', function() {
+    test('should accept multiple media sources', function () {
       const testElement = mockP5Prototype.createVideo(mediaSources);
 
       assert.deepEqual(testElement.elt.childElementCount, mediaSources.length);
@@ -68,7 +72,7 @@ suite('p5.MediaElement', () => {
     // );
 
     // TODO: integration test
-    test.todo('should work with tint()', function(done) {
+    test.todo('should work with tint()', function (done) {
       const imgElt = myp5.createImg('/test/unit/assets/cat.jpg', '');
       const testElement = myp5.createVideo('/test/unit/assets/cat.webm', () => {
         // Workaround for headless tests, where the video data isn't loading
@@ -92,7 +96,7 @@ suite('p5.MediaElement', () => {
       });
     });
 
-    test.todo('should work with updatePixels()', function(done) {
+    test.todo('should work with updatePixels()', function (done) {
       let loaded = false;
       let prevElt;
       const imgElt = myp5.createImg('/test/unit/assets/cat.jpg', '');
@@ -105,7 +109,7 @@ suite('p5.MediaElement', () => {
       });
 
       let drewUpdatedPixels = false;
-      myp5.draw = function() {
+      myp5.draw = function () {
         if (!loaded) return;
         myp5.background(255);
 
@@ -137,8 +141,9 @@ suite('p5.MediaElement', () => {
 
           myp5.loadPixels();
           testElement.loadPixels();
-          expect([...testElement.pixels.slice(0, 4)])
-            .to.not.deep.equal([255, 0, 0, 255]);
+          expect([...testElement.pixels.slice(0, 4)]).to.not.deep.equal([
+            255, 0, 0, 255
+          ]);
           assert.deepEqual(
             [...myp5.pixels.slice(0, 4)],
             [...testElement.pixels.slice(0, 4)]
@@ -151,8 +156,8 @@ suite('p5.MediaElement', () => {
     });
   });
 
-  suite('p5.prototype.createAudio', function() {
-    afterEach(function() {
+  suite('p5.prototype.createAudio', function () {
+    afterEach(function () {
       document.body.innerHTML = '';
     });
 
@@ -161,17 +166,17 @@ suite('p5.MediaElement', () => {
       '/test/unit/assets/beat.mp3'
     ];
 
-    test('should be a function', function() {
+    test('should be a function', function () {
       assert.isFunction(mockP5Prototype.createAudio);
     });
 
-    test('should return p5.Element of HTMLAudioElement', function() {
+    test('should return p5.Element of HTMLAudioElement', function () {
       const testElement = mockP5Prototype.createAudio('');
       assert.instanceOf(testElement, MediaElement);
       assert.instanceOf(testElement.elt, HTMLAudioElement);
     });
 
-    test('should accept a singular media source', function() {
+    test('should accept a singular media source', function () {
       const mediaSource = mediaSources[0];
       const testElement = mockP5Prototype.createAudio(mediaSource);
       const sourceEl = testElement.elt.children[0];
@@ -181,7 +186,7 @@ suite('p5.MediaElement', () => {
       assert.isTrue(sourceEl.src.endsWith(mediaSource));
     });
 
-    test('should accept multiple media sources', function() {
+    test('should accept multiple media sources', function () {
       const testElement = mockP5Prototype.createAudio(mediaSources);
 
       assert.deepEqual(testElement.elt.childElementCount, mediaSources.length);
@@ -203,16 +208,16 @@ suite('p5.MediaElement', () => {
     // );
   });
 
-  suite('p5.prototype.createCapture', function() {
-    afterEach(function() {
+  suite('p5.prototype.createCapture', function () {
+    afterEach(function () {
       document.body.innerHTML = '';
     });
 
-    test('should be a function', function() {
+    test('should be a function', function () {
       assert.isFunction(mockP5Prototype.createCapture);
     });
 
-    test('should return p5.Element of video type', function() {
+    test('should return p5.Element of video type', function () {
       const testElement = mockP5Prototype.createCapture(mockP5Prototype.VIDEO);
       assert.instanceOf(testElement, Element);
       assert.instanceOf(testElement.elt, HTMLVideoElement);
@@ -231,7 +236,7 @@ suite('p5.MediaElement', () => {
     // );
 
     // Required for ios 11 devices
-    test('should have playsinline attribute to empty string on DOM element', function() {
+    test('should have playsinline attribute to empty string on DOM element', function () {
       const testElement = mockP5Prototype.createCapture(mockP5Prototype.VIDEO);
       // Weird check, setter accepts : playinline, getter accepts playInline
       assert.isTrue(testElement.elt.playsInline);
@@ -248,8 +253,10 @@ suite('p5.MediaElement', () => {
       document.body.innerHTML = '';
     });
 
-    test('should not throw an error', function() {
-      const testElement = mockP5Prototype.createVideo('/test/unit/assets/nyan_cat.gif');
+    test('should not throw an error', function () {
+      const testElement = mockP5Prototype.createVideo(
+        '/test/unit/assets/nyan_cat.gif'
+      );
       assert.doesNotThrow(() => {
         testElement.copy(0, 0, 10, 10, 0, 0, 10, 10);
       });

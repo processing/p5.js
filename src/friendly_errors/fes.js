@@ -1,42 +1,49 @@
 import { TL } from 'tl-util';
-
-TL.addTranslations(['en', 'en-US', 'en-GB'], {
-  paramTooFew: {
-    '${minArgs}_[one]': 'Expected at least ${minArgs} argument, but received fewer in ${functionName}(). ${referenceLink}',
-    '${minArgs}_[*]': 'Expected at least ${minArgs} arguments, but received fewer in ${functionName}(). ${referenceLink}'
-  },
-  paramTooMany: {
-    '${minArgs}_[one]': 'Expected at most ${minArgs} argument, but received fewer in ${functionName}(). ${referenceLink}',
-    '${minArgs}_[*]': 'Expected at most ${minArgs} arguments, but received fewer in ${functionName}(). ${referenceLink}'
-  },
-  paramType: 'Expected ${expectedType} at the ${position} parameter in ${functionName}.',
-  redeclare: '${errorType} "${name}" on line ${line} is being redeclared and conflicts with a p5.js ${errorType}. p5.js reference: ${url}',
-  referenceLink: 'For more information, see ${referenceURL}.',
-  ordinalFirst: 'first',
-  typeString: 'string',
-  typeBoolean: 'boolean',
-  typeFunction: 'function',
-  typeNumber: 'number'
-});
+import enTranslations from '../../translations/en/extracted.json' with { type: 'json' };
+import { VERSION } from '../core/constants';
+TL.addTranslations(['en', 'en-US', 'en-GB'], enTranslations);
 
 const defaultLanguage = navigator.language;
 const localTranslation = window.localStorage.getItem(defaultLanguage);
-let translationPromise;
-if (localTranslation) {
-  TL.addTranslations(defaultLanguage, JSON.parse(localTranslation));
-  translationPromise = Promise.resolve();
-}else{
-  translationPromise = fetch('./fes-zh.json')
-    .then(res => {
-      if (res.ok) return res.json();
-      throw null;
-    })
-    .then(data => {
-      TL.addTranslations(defaultLanguage, data);
-      window.localStorage.setItem(defaultLanguage, JSON.stringify(data));
-    })
-    .catch(() => Promise.resolve());
-}
+let translationPromise = new Promise(async resolve => {
+  if (localTranslation) {
+    TL.addTranslations(defaultLanguage, JSON.parse(localTranslation));
+    resolve();
+  } else {
+    try {
+      // Locally provided translation file has first priority
+      let translationResponse = await fetch(`./${defaultLanguage}.json`);
+      if (!translationResponse.ok) {
+        throw new Error('Cannot reach local file');
+      }
+
+      const translation = await translationResponse.json();
+      TL.addTranslations(defaultLanguage, translation);
+      window.localStorage.setItem(defaultLanguage, JSON.stringify(translation));
+    } catch {
+      try {
+        // CDN hosted file will be loaded if local is not present
+        let translationResponse = await fetch(
+          `https://cdn.jsdelivr.net/npm/p5@${VERSION}/translations/${defaultLanguage}/extracted.json`
+        );
+        if (!translationResponse.ok) {
+          throw new Error('Cannot reach CDN file');
+        }
+
+        const translation = await translationResponse.json();
+        TL.addTranslations(defaultLanguage, translation);
+        window.localStorage.setItem(
+          defaultLanguage,
+          JSON.stringify(translation)
+        );
+      } catch {
+        // If CDN also cannot be reached, do nothing
+      }
+    } finally {
+      resolve();
+    }
+  }
+});
 
 export class FES {
   static languageCode = navigator.languages;
@@ -49,9 +56,10 @@ export class FES {
   static #printMessage(method, strings, ...values) {
     if (FES.disableFriendlyErrors) return;
     const styleStrings = [];
-    const translation = TL.tl(strings, ...values.map(
-      value => {
-        if(value instanceof StyledMessage){
+    const translation = TL.tl(
+      strings,
+      ...values.map(value => {
+        if (value instanceof StyledMessage) {
           const ret = `%c${value.message.toString(FES.languageCode)}%c`;
           styleStrings.push(value.styleString, '');
           return ret;
@@ -61,14 +69,17 @@ export class FES {
         } else {
           return value;
         }
-      }
-    ));
+      })
+    );
     const results = translation.toString(FES.languageCode);
 
     const executor = options => {
-      const { prefix } = Object.assign({
-        prefix: TL.tl`🌸 p5.js says: `
-      }, options);
+      const { prefix } = Object.assign(
+        {
+          prefix: TL.tl`🌸 p5.js says: `
+        },
+        options
+      );
 
       let footer = '';
       if (options?.reference) {
@@ -122,14 +133,24 @@ export class FES {
 
   static premade = {
     ordinals: [
-      TL.tl`first`
+      TL.tl`first`,
+      TL.tl`second`,
+      TL.tl`third`,
+      TL.tl`fourth`,
+      TL.tl`fifth`,
+      TL.tl`sixth`,
+      TL.tl`seventh`,
+      TL.tl`eighth`,
+      TL.tl`ninth`,
+      TL.tl`tenth`,
     ],
     types: {
       string: TL.tl`string`,
       boolean: TL.tl`boolean`,
-      number: TL.tl`number`
+      number: TL.tl`number`,
+      function: TL.tl`function`
     }
-  }
+  };
 }
 
 export class StyledMessage {
@@ -147,11 +168,10 @@ export class StyledMessage {
 }
 
 export function style(message, mod) {
-  const styleString = Object.entries(mod)
-    .reduce((acc, [key, val]) => {
-      acc += `${key}: ${val};`;
-      return acc;
-    }, '');
+  const styleString = Object.entries(mod).reduce((acc, [key, val]) => {
+    acc += `${key}: ${val};`;
+    return acc;
+  }, '');
   if (message instanceof StyledMessage) {
     message.styleString += styleString;
     return message;
@@ -181,16 +201,16 @@ export function underline(message) {
 }
 
 /**
-  * Takes a message and a p5 function func, and adds a link pointing to
-  * the reference documentation of func at the end of the message
-  *
-  * @method mapToReference
-  * @private
-  * @param {String}  message   the words to be said
-  * @param {String}  [func]    the name of function
-  *
-  * @returns {String}
-  */
+ * Takes a message and a p5 function func, and adds a link pointing to
+ * the reference documentation of func at the end of the message
+ *
+ * @method mapToReference
+ * @private
+ * @param {String}  message   the words to be said
+ * @param {String}  [func]    the name of function
+ *
+ * @returns {String}
+ */
 function mapToReference(message, func) {
   let msgWithReference = '';
   if (func == null || func.substring(0, 4) === 'load') {
@@ -204,14 +224,14 @@ function mapToReference(message, func) {
       methodParts.length === 1 ? func : methodParts.slice(2).join('/');
 
     //Whenever func having p5.[Class] is encountered, we need to have the error link as mentioned below else different link
-    if(funcName.startsWith('p5.')){
+    if (funcName.startsWith('p5.')) {
       msgWithReference = ` (https://p5js.org/reference/${referenceSection}.${funcName})`;
-    }else{
+    } else {
       msgWithReference = ` (https://p5js.org/reference/${referenceSection}/${funcName})`;
     }
   }
   return msgWithReference;
-};
+}
 
 // Re-export TL
 export { TL };

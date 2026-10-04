@@ -13,7 +13,6 @@ function modeAdjust(a, b, c, d, mode) {
   let bbox;
 
   if (mode === constants.CORNER) {
-
     // CORNER mode already corresponds to a bounding box (top-left corner, width, height).
     // For negative widths or heights, the absolute value is used.
     bbox = {
@@ -22,9 +21,7 @@ function modeAdjust(a, b, c, d, mode) {
       w: Math.abs(c),
       h: Math.abs(d)
     };
-
   } else if (mode === constants.CORNERS) {
-
     // CORNERS mode uses two opposite corners, in any configuration.
     // Make sure to get the top left corner by using the minimum of the x and y coordinates.
     bbox = {
@@ -33,9 +30,7 @@ function modeAdjust(a, b, c, d, mode) {
       w: Math.abs(c - a),
       h: Math.abs(d - b)
     };
-
   } else if (mode === constants.RADIUS) {
-
     // RADIUS mode uses the center point and half the width and height.
     // c (half width) and d (half height) could be negative, so use the absolute value
     // in calculating the top left corner (x, y).
@@ -47,21 +42,18 @@ function modeAdjust(a, b, c, d, mode) {
       w: 2 * c,
       h: 2 * d
     };
-
   } else if (mode === constants.CENTER) {
-
     // CENTER mode uses the center point, width and height.
     // c (width) and d (height) could be negative, so use the absolute value
     // in calculating the top-left corner (x, y).
     c = Math.abs(c);
     d = Math.abs(d);
     bbox = {
-      x: a - (c * 0.5),
-      y: b - (d * 0.5),
+      x: a - c * 0.5,
+      y: b - d * 0.5,
       w: c,
       h: d
     };
-
   }
 
   return bbox;

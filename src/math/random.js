@@ -4,7 +4,7 @@
  * @for p5
  */
 
-function random(p5, fn){
+function random(p5, fn) {
   // variables used for random number generators
   const randomStateProp = '_lcg_random_state';
   // Set to values from http://en.wikipedia.org/wiki/Numerical_Recipes
@@ -18,7 +18,7 @@ function random(p5, fn){
   let y2 = 0;
 
   // Linear Congruential Generator that stores its state at instance[stateProperty]
-  fn._lcg = function(stateProperty) {
+  fn._lcg = function (stateProperty) {
     // define the recurrence relationship
     this[stateProperty] = (a * this[stateProperty] + c) % m;
     // return a float in [0, 1)
@@ -26,7 +26,7 @@ function random(p5, fn){
     return this[stateProperty] / m;
   };
 
-  fn._lcgSetSeed = function(stateProperty, val) {
+  fn._lcgSetSeed = function (stateProperty, val) {
     // pick a random seed if val is undefined or null
     // the >>> 0 casts the seed to an unsigned 32-bit integer
     this[stateProperty] = (val == null ? Math.random() * m : val) >>> 0;
@@ -72,7 +72,7 @@ function random(p5, fn){
    *   describe('A white circle appears at a random position. A black circle appears at (27.4, 25.8).');
    * }
    */
-  fn.randomSeed = function(seed) {
+  fn.randomSeed = function (seed) {
     this._lcgSetSeed(randomStateProp, seed);
     this._gaussian_previous = false;
   };
@@ -271,7 +271,7 @@ function random(p5, fn){
    * @param  {Array} choices   array to choose from.
    * @return {*} random element from the array.
    */
-  fn.random = function(min, max) {
+  fn.random = function (min, max) {
     // p5._validateParameters('random', arguments);
     let rand;
 
@@ -357,7 +357,7 @@ function random(p5, fn){
    *   circle(x, y, 5);
    * }
    */
-  fn.randomGaussian = function(mean, sd = 1) {
+  fn.randomGaussian = function (mean, sd = 1) {
     let y1, x1, x2, w;
     if (this._gaussian_previous) {
       y1 = y2;
@@ -368,7 +368,7 @@ function random(p5, fn){
         x2 = this.random(2) - 1;
         w = x1 * x1 + x2 * x2;
       } while (w >= 1);
-      w = Math.sqrt(-2 * Math.log(w) / w);
+      w = Math.sqrt((-2 * Math.log(w)) / w);
       y1 = x1 * w;
       y2 = x2 * w;
       this._gaussian_previous = true;
@@ -381,6 +381,6 @@ function random(p5, fn){
 
 export default random;
 
-if(typeof p5 !== 'undefined'){
+if (typeof p5 !== 'undefined') {
   random(p5, p5.prototype);
 }

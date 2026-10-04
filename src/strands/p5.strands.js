@@ -4,25 +4,26 @@
  * @for p5
  */
 
-import { transpileStrandsToJS } from "./strands_transpiler";
-import { BlockType } from "./ir_types";
+import { transpileStrandsToJS } from './strands_transpiler';
+import { BlockType } from './ir_types';
 
-import { createDirectedAcyclicGraph } from "./ir_dag";
+import { createDirectedAcyclicGraph } from './ir_dag';
 import {
   createControlFlowGraph,
   createBasicBlock,
   pushBlock,
-  popBlock,
-} from "./ir_cfg";
-import { generateShaderCode } from "./strands_codegen";
+  popBlock
+} from './ir_cfg';
+import { generateShaderCode } from './strands_codegen';
 import {
   initGlobalStrandsAPI,
-  createShaderHooksFunctions,
-} from "./strands_api";
+  createShaderHooksFunctions
+} from './strands_api';
 import {
   createStrandsShaderNameMap,
   createStrandsShaderNameState
 } from './strands_names';
+import { warnExperimental } from '../core/experimental';
 
 function strands(p5, fn) {
   // Whether or not strands callbacks should be forced to be executed in global mode.
@@ -63,6 +64,7 @@ function strands(p5, fn) {
    * @property {Map} sharedVariables Shared variable metadata that tracks vertex/fragment usage to decide whether each variable becomes a local declaration or a varying.
    * @property {Object} activeHook Hook currently being recorded, if any.
    * @property {Boolean} _instanceIDUsedInFragment Whether fragment-stage code referenced `instanceID`, requiring it to be passed from the vertex shader to the fragment shader.
+   * @property {Set} experimentalFeaturesUsed Experimental subject areas used inside the callback, warned about once FES is restored after the pass.
    */
 
   /**
@@ -129,6 +131,9 @@ function strands(p5, fn) {
     ctx.sharedVariables = new Map();
     ctx.activeHook = undefined;
     ctx._instanceIDUsedInFragment = false;
+    // Experimental subject areas used inside the callback, warned about once
+    // the pass is done since FES is switched off while it runs (see below).
+    ctx.experimentalFeaturesUsed = new Set();
     if (active) {
       p5.disableFriendlyErrors = true;
     }
@@ -165,6 +170,7 @@ function strands(p5, fn) {
     ctx.sharedVariables = new Map();
     ctx.activeHook = undefined;
     ctx._instanceIDUsedInFragment = false;
+    ctx.experimentalFeaturesUsed = new Set();
   }
 
   /**
@@ -205,7 +211,7 @@ function strands(p5, fn) {
     const prev = {};
     for (const key of Object.getOwnPropertyNames(fn)) {
       const descriptor = Object.getOwnPropertyDescriptor(fn, key);
-      if (descriptor && !descriptor.get && typeof fn[key] === "function") {
+      if (descriptor && !descriptor.get && typeof fn[key] === 'function') {
         prev[key] = window[key];
         window[key] = fn[key].bind(pInst);
       }
@@ -225,21 +231,25 @@ function strands(p5, fn) {
   //////////////////////////////////////////////
   const oldModify = p5.Shader.prototype.modify;
 
-  p5.Shader.prototype.modify = function (shaderModifier, scope = {}, options = {}) {
+  p5.Shader.prototype.modify = function (
+    shaderModifier,
+    scope = {},
+    options = {}
+  ) {
     const fnOverrides = {};
     const windowOverrides = {};
     const graphicsOverrides = {};
     try {
       if (
         shaderModifier instanceof Function ||
-        typeof shaderModifier === "string"
+        typeof shaderModifier === 'string'
       ) {
         // Reset the context object every time modify is called;
         // const backend = glslBackend;
         initStrandsContext(strandsContext, this._renderer.strandsBackend, {
           active: true,
           renderer: this._renderer,
-          baseShader: this,
+          baseShader: this
         });
         createShaderHooksFunctions(strandsContext, fn, this);
         // TODO: expose this, is internal for debugging for now.
@@ -252,7 +262,7 @@ function strands(p5, fn) {
           // #7955 Wrap function declaration code in brackets so anonymous functions are not top level statements, which causes an error in acorn when parsing
           // https://github.com/acornjs/acorn/issues/1385
           const sourceString =
-            typeof shaderModifier === "string"
+            typeof shaderModifier === 'string'
               ? `(${shaderModifier})`
               : `(${shaderModifier.toString()})`;
           const transpiledStrands = transpileStrandsToJS(
@@ -272,12 +282,13 @@ function strands(p5, fn) {
         // 2. Build the IR from JavaScript API
         const globalScope = createBasicBlock(
           strandsContext.cfg,
-          BlockType.GLOBAL,
+          BlockType.GLOBAL
         );
         pushBlock(strandsContext.cfg, globalScope);
         if (options.hook) {
           strandsContext.renderer._pInst[options.hook].begin();
-          for (const key of strandsContext.renderer._pInst[options.hook]._properties) {
+          for (const key of strandsContext.renderer._pInst[options.hook]
+            ._properties) {
             const hookProp = strandsContext.renderer._pInst[options.hook][key];
             fnOverrides[key] = fn[key];
             fn[key] = hookProp;
@@ -314,15 +325,22 @@ function strands(p5, fn) {
       for (const key in graphicsOverrides) {
         p5.Graphics[key] = graphicsOverrides[key];
       }
+      // FES is switched off while the callback runs, so experimental features
+      // used inside it can't warn on the spot. They record their subject area
+      // instead, and we warn once FES has been restored by deinit below.
+      const experimentalFeaturesUsed = [...strandsContext.experimentalFeaturesUsed];
       // Reset the strands runtime context
       deinitStrandsContext(strandsContext);
+      for (const subjectArea of experimentalFeaturesUsed) {
+        warnExperimental(p5, this._renderer?._pInst, subjectArea);
+      }
     }
   };
 }
 
 export default strands;
 
-if (typeof p5 !== "undefined") {
+if (typeof p5 !== 'undefined') {
   p5.registerAddon(strands);
 }
 

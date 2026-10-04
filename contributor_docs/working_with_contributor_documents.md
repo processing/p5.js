@@ -1,42 +1,47 @@
 <!-- How to write, edit, and preview contributor documents. -->
+
 # Working with contributor documents
 
 ## Table of Contents
-* [Where are they?](#where-are-they)
-* [Build process overview](#build-process-overview)
-* [Generating and previewing contributor documents](#generating-and-previewing-contributor-documents)
-* [Adding a new contributor document](#adding-a-new-contributor-document)
+
+- [Where are they?](#where-are-they)
+- [Build process overview](#build-process-overview)
+- [Generating and previewing contributor documents](#generating-and-previewing-contributor-documents)
+- [Adding a new contributor document](#adding-a-new-contributor-document)
 
 ## Where are they?
+
 Contributor documents are displayed on the p5.js website at either:
 
-* https://v1.p5js.org/contribute/ (for p5.js v1)
-* https://p5js.org/contribute/ (for p5.js v2)
+- https://v1.p5js.org/contribute/ (for p5.js v1)
+- https://p5js.org/contribute/ (for p5.js v2)
 
-Their source materials are kept in: 
-* repo: `p5.js`
-* path: `contributor_docs/`
+Their source materials are kept in:
+
+- repo: `p5.js`
+- path: `contributor_docs/`
 
 (Note: The v1.x and v2.x branches have different documents.)
 
 ## Build process overview
 
-During the _website_ build process `build:contributor-docs` the documents are cloned from the requested branch of the p5.js repo into the relevant website file-system locations.  From here, the astro dev server can show previews of how they will look. (Exact instructions and paths follow.)
+During the _website_ build process `build:contributor-docs` the documents are cloned from the requested branch of the p5.js repo into the relevant website file-system locations. From here, the astro dev server can show previews of how they will look. (Exact instructions and paths follow.)
 
 ## Generating and previewing contributor documents
 
-### Quick preview 
-For a quick preview, various editors have a feature to render markdown files.  For example, if you're using vs code here's how to do that:
+### Quick preview
 
-* open the .md file you wish to preview
-* open the command-palette (`F1` or `cmd-shift-p` or `ctrl-shift-p`)
-* type `Markdown: open preview`
+For a quick preview, various editors have a feature to render markdown files. For example, if you're using vs code here's how to do that:
 
-There are various limitations to this quick-preview.  For example, the p5.js website page layout and styling (colors, fonts, line-width, etc) will not be applied.
+- open the .md file you wish to preview
+- open the command-palette (`F1` or `cmd-shift-p` or `ctrl-shift-p`)
+- type `Markdown: open preview`
+
+There are various limitations to this quick-preview. For example, the p5.js website page layout and styling (colors, fonts, line-width, etc) will not be applied.
 
 ### Preview on local p5.js-website clone
 
-At some point you will want to preview how your changes will look on the website.  This involves run the website locally and having it import the contributor docs from a branch of your p5.js repo.
+At some point you will want to preview how your changes will look on the website. This involves run the website locally and having it import the contributor docs from a branch of your p5.js repo.
 
 In the following steps we'll assume your p5.js repository is in a folder called `p5.js` and your p5.js-website repo is in a folder next to it called `p5.js-website`.
 
@@ -51,12 +56,12 @@ flowchart TD
 
 #### Steps:
 
-1. Commit your changes to a local branch of your fork of the p5.js repo.  The changes don't need to be pushed to github for this purpose, but they do need to be committed on a branch.
+1. Commit your changes to a local branch of your fork of the p5.js repo. The changes don't need to be pushed to github for this purpose, but they do need to be committed on a branch.
 1. Clone [the p5.js-website repo](https://github.com/processing/p5.js-website/tree/2.0) locally.
 1. Open a terminal in your new p5.js-website repo
 1. Check out the branch "2.0"
 1. Run `npm install`
-1. Modify and run the following command, using the path to **your** local p5.js repo, and the name of **your** branch: 
+1. Modify and run the following command, using the path to **your** local p5.js repo, and the name of **your** branch:
 
 (Note the following is a single line, not two lines!)
 
@@ -71,6 +76,7 @@ P5_REPO_URL=../p5.js P5_BRANCH=my-amazing-branch npm run build:contributor-docs 
 ```
 
 This will do three things:
+
 1. import and build local website `.mdx` pages from the `.md` files in `contributor_docs/` in your branch
 2. start a development preview of the website
 3. display a URL in the console where you can visit the local website
@@ -79,7 +85,7 @@ Use your browser to visit the URL mentioned in the last step, in order to test o
 
 #### Alternative: Building from a branch on github
 
-If you prefer to preview work that's already on github, you can do so.  In the final command, use the repo URL instead of its local path, as follows:
+If you prefer to preview work that's already on github, you can do so. In the final command, use the repo URL instead of its local path, as follows:
 
 (Again, note the following is a single line, not two lines!)
 
@@ -91,25 +97,24 @@ P5_REPO_URL=https://github.com/yourUsername/p5.js.git P5_BRANCH=your-branch-goes
 
 If your file isn't appearing in the list the website shows at the path `contribute/`:
 
-* Note that it will appear with a title taken from the first level 1 markdown heading, NOT the name of the file.
+- Note that it will appear with a title taken from the first level 1 markdown heading, NOT the name of the file.
 
-* Check that a corresponding `.mdx` file is being generated in `src/content/contributor-docs/en` in the website file-structure.  If not, check if your .md file is git in the branch you've specified, in the correct location, and check the logs, during the website build:contributor-docs
+- Check that a corresponding `.mdx` file is being generated in `src/content/contributor-docs/en` in the website file-structure. If not, check if your .md file is git in the branch you've specified, in the correct location, and check the logs, during the website build:contributor-docs
 
-* Review the log from the above run of the npm `build:contributor-docs` process, for mentions of your file(s).
+- Review the log from the above run of the npm `build:contributor-docs` process, for mentions of your file(s).
 
-* If you see that an .mdx file _is_ being generated, check that you can access it directly on the website by typing its URL.  e.g. if your file is called myFile.md, the path in the URL would be: `contribute/myFile/`
+- If you see that an .mdx file _is_ being generated, check that you can access it directly on the website by typing its URL. e.g. if your file is called myFile.md, the path in the URL would be: `contribute/myFile/`
 
-* Ensure you see in the log that your repo _has_ actually been cloned.  There is a caching mechanism in the website build process which prevents a recently cloned repo from being cloned again.  Removing the website folder `in/p5.js/` will force the build process to make a new clone.
+- Ensure you see in the log that your repo _has_ actually been cloned. There is a caching mechanism in the website build process which prevents a recently cloned repo from being cloned again. Removing the website folder `in/p5.js/` will force the build process to make a new clone.
 
 #### Limitations
 
-The website won't be _fully_ functional when partially prepared in this way.  Notably:
+The website won't be _fully_ functional when partially prepared in this way. Notably:
 
-* Links between pages may be broken:
-  * You'll need to ensure local links end with a trailing slash '/', to be matched by Astro when it is in development mode.
-* The search facility will not work by default
-  * Look into `npm run build:search` to build the necessary index files.
-  
+- Links between pages may be broken:
+  - You'll need to ensure local links end with a trailing slash '/', to be matched by Astro when it is in development mode.
+- The search facility will not work by default
+  - Look into `npm run build:search` to build the necessary index files.
 
 ## Adding a new contributor document
 
@@ -123,19 +128,21 @@ It should be stored as a direct child of that folder, _not_ in a subfolder.
 
 #### The filename and extension
 
-The filename won't be used as the document title but _will_ be used in URLs.  The filename should be all in lowercase, and use underscore characters `_` instead of spaces or dashes.
+The filename won't be used as the document title but _will_ be used in URLs. The filename should be all in lowercase, and use underscore characters `_` instead of spaces or dashes.
 
 It should have a `.md` file extension.
 
-Keep the filename concise but do not use contractions.  e.g. "documentation_style_guide" not "doc_style_guide".  If in doubt check the names of the other documents in the folder and try to stay aligned with those.
+Keep the filename concise but do not use contractions. e.g. "documentation_style_guide" not "doc_style_guide". If in doubt check the names of the other documents in the folder and try to stay aligned with those.
 
 #### The _name_ of your document
+
 For presentation purposes in the list of contributor docs and for search results, your document title will be taken from the first level 1 markdown heading, NOT the name of the file.
 
 #### The subtitle for your document
+
 In the list of contributor docs, each page is listed not only with its title but also a subtitle or short description.
 
-This description is extracted from the first HTML-style comment in your file.  This should be on the first line, before the level 1 heading.
+This description is extracted from the first HTML-style comment in your file. This should be on the first line, before the level 1 heading.
 
 Example:
 
@@ -160,4 +167,3 @@ Note that the trailing slash is necessary in development mode.
 Example:
 
 The source document `contributor_docs/unit_testing.md` will be served as `https://p5js.org/contribute/unit_testing/`
-

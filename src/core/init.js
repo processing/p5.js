@@ -12,7 +12,7 @@ import p5 from '../core/main';
  * @return {Undefined}
  */
 export const _globalInit = () => {
-  if(typeof window === 'undefined') return;
+  if (typeof window === 'undefined') return;
   // Could have been any property defined within the p5 constructor.
   // If that property is already a part of the global object,
   // this code has already run before, likely due to a duplicate import
@@ -40,8 +40,8 @@ export const _globalInit = () => {
 };
 
 // make a promise that resolves when the document is ready
-export const waitForDocumentReady = () =>{
-  if(typeof document !== 'undefined'){
+export const waitForDocumentReady = () => {
+  if (typeof document !== 'undefined') {
     return new Promise((resolve, reject) => {
       // if the page is ready, initialize p5 immediately
       if (document.readyState === 'complete') {
