@@ -290,6 +290,15 @@ function transform(p5, fn) {
    * `rotate(1)` inside the <a href="#/p5/draw">draw()</a> function won't cause
    * shapes to spin.
    *
+   * Inside a p5.strands shader callback, `rotate()` can also be given a
+   * transform created with <a href="#/p5/transform2D">transform2D()</a> or
+   * <a href="#/p5/transform3D">transform3D()</a> as its first parameter, as in
+   * `rotate(myTransform, PI / 4)`. Instead of turning the coordinate system, it
+   * then returns a new transform with the turn added on and leaves the one
+   * passed in untouched, so the result has to be assigned back. A 2D transform
+   * turns within the plane and a 3D transform turns about the z-axis. Angles
+   * are always in radians inside a shader. See the last example.
+   *
    * @method rotate
    * @param  {Number} angle angle of rotation in the current <a href="#/p5/angleMode">angleMode()</a>.
    * @param  {p5.Vector|Number[]} [axis] axis to rotate about in 3D.
@@ -415,6 +424,43 @@ function transform(p5, fn) {
    *   // Draw a box.
    *   box();
    * }
+   *
+   * @example
+   * // Turn a shape inside a p5.strands shader.
+   * let myShader;
+   *
+   * function setup() {
+   *   createCanvas(200, 200, WEBGL);
+   *   myShader = buildMaterialShader(spin);
+   * }
+   *
+   * function spin() {
+   *   worldInputs.begin();
+   *   let t = transform3D();
+   *   t = rotate(t, millis() * 0.001);
+   *   worldInputs.position = transformPoint(t, worldInputs.position);
+   *   worldInputs.normal = transformNormal(t, worldInputs.normal);
+   *   worldInputs.end();
+   * }
+   *
+   * function draw() {
+   *   background(180);
+   *   lights();
+   *   noStroke();
+   *   fill('orange');
+   *   shader(myShader);
+   *   box(60, 20, 20);
+   * }
+   */
+  // The p5.strands version, implemented in src/strands/strands_transform.js
+  /**
+   * @method rotate
+   * @param  {*} transform a transform created with
+   *                       <a href="#/p5/transform2D">transform2D()</a> or
+   *                       <a href="#/p5/transform3D">transform3D()</a>, inside
+   *                       a p5.strands shader callback.
+   * @param  {Number} angle angle to turn by, in radians.
+   * @returns {*} a new transform with the turn applied.
    */
   fn.rotate = function (angle, axis) {
     // p5._validateParameters('rotate', arguments);
@@ -437,6 +483,13 @@ function transform(p5, fn) {
    * Note: Transformations are reset at the beginning of the draw loop. Calling
    * `rotateX(1)` inside the <a href="#/p5/draw">draw()</a> function won't cause
    * shapes to spin.
+   *
+   * Inside a p5.strands shader callback, `rotateX()` can also be given a
+   * transform created with <a href="#/p5/transform3D">transform3D()</a> as its
+   * first parameter, as in `rotateX(myTransform, PI / 4)`. Instead of turning
+   * the coordinate system, it then returns a new transform with the turn added
+   * on and leaves the one passed in untouched, so the result has to be assigned
+   * back. Angles are always in radians inside a shader. See the last example.
    *
    * @method  rotateX
    * @param  {Number} angle angle of rotation in the current <a href="#/p5/angleMode">angleMode()</a>.
@@ -536,6 +589,42 @@ function transform(p5, fn) {
    *   // Draw a box.
    *   box();
    * }
+   *
+   * @example
+   * // Turn a shape about the x-axis inside a p5.strands shader.
+   * let myShader;
+   *
+   * function setup() {
+   *   createCanvas(200, 200, WEBGL);
+   *   myShader = buildMaterialShader(roll);
+   * }
+   *
+   * function roll() {
+   *   worldInputs.begin();
+   *   let t = transform3D();
+   *   t = rotateX(t, millis() * 0.001);
+   *   worldInputs.position = transformPoint(t, worldInputs.position);
+   *   worldInputs.normal = transformNormal(t, worldInputs.normal);
+   *   worldInputs.end();
+   * }
+   *
+   * function draw() {
+   *   background(180);
+   *   lights();
+   *   noStroke();
+   *   fill('red');
+   *   shader(myShader);
+   *   box(60, 20, 20);
+   * }
+   */
+  // The p5.strands version, implemented in src/strands/strands_transform.js
+  /**
+   * @method rotateX
+   * @param  {*} transform a transform created with
+   *                       <a href="#/p5/transform3D">transform3D()</a>, inside
+   *                       a p5.strands shader callback.
+   * @param  {Number} angle angle to turn by, in radians.
+   * @returns {*} a new transform with the turn applied.
    */
   fn.rotateX = function (angle) {
     this._assert3d('rotateX');
@@ -559,6 +648,13 @@ function transform(p5, fn) {
    * Note: Transformations are reset at the beginning of the draw loop. Calling
    * `rotateY(1)` inside the <a href="#/p5/draw">draw()</a> function won't cause
    * shapes to spin.
+   *
+   * Inside a p5.strands shader callback, `rotateY()` can also be given a
+   * transform created with <a href="#/p5/transform3D">transform3D()</a> as its
+   * first parameter, as in `rotateY(myTransform, PI / 4)`. Instead of turning
+   * the coordinate system, it then returns a new transform with the turn added
+   * on and leaves the one passed in untouched, so the result has to be assigned
+   * back. Angles are always in radians inside a shader. See the last example.
    *
    * @method rotateY
    * @param  {Number} angle angle of rotation in the current <a href="#/p5/angleMode">angleMode()</a>.
@@ -658,6 +754,48 @@ function transform(p5, fn) {
    *   // Draw a box.
    *   box();
    * }
+   *
+   * @example
+   * // Arrange many instances in a ring inside a p5.strands shader.
+   * let myShader;
+   * let count = 10;
+   *
+   * function setup() {
+   *   createCanvas(200, 200, WEBGL);
+   *   myShader = buildMaterialShader(placeOnRing);
+   *   describe('Ten red cubes in a tilted ring, turning like a carousel.');
+   * }
+   *
+   * function placeOnRing() {
+   *   worldInputs.begin();
+   *   // Each cube gets its own spot on the ring, which turns over time.
+   *   let angle = instanceIndex * TWO_PI / count + millis() * 0.001;
+   *   let t = transform3D();
+   *   t = rotateX(t, 0.7);         // tilt the whole ring toward the viewer
+   *   t = rotateY(t, angle);       // turn to this cube's spot on the ring...
+   *   t = translate(t, 65, 0, 0);  // ...and step out to the ring's edge
+   *   worldInputs.position = transformPoint(t, worldInputs.position);
+   *   worldInputs.normal = transformNormal(t, worldInputs.normal);
+   *   worldInputs.end();
+   * }
+   *
+   * function draw() {
+   *   background(220);
+   *   lights();
+   *   noStroke();
+   *   fill('red');
+   *   shader(myShader);
+   *   instances(count).box(18);
+   * }
+   */
+  // The p5.strands version, implemented in src/strands/strands_transform.js
+  /**
+   * @method rotateY
+   * @param  {*} transform a transform created with
+   *                       <a href="#/p5/transform3D">transform3D()</a>, inside
+   *                       a p5.strands shader callback.
+   * @param  {Number} angle angle to turn by, in radians.
+   * @returns {*} a new transform with the turn applied.
    */
   fn.rotateY = function (angle) {
     this._assert3d('rotateY');
@@ -681,6 +819,15 @@ function transform(p5, fn) {
    * Note: Transformations are reset at the beginning of the draw loop. Calling
    * `rotateZ(1)` inside the <a href="#/p5/draw">draw()</a> function won't cause
    * shapes to spin.
+   *
+   * Inside a p5.strands shader callback, `rotateZ()` can also be given a
+   * transform created with <a href="#/p5/transform3D">transform3D()</a> as its
+   * first parameter, as in `rotateZ(myTransform, PI / 4)`. Instead of turning
+   * the coordinate system, it then returns a new transform with the turn added
+   * on and leaves the one passed in untouched, so the result has to be assigned
+   * back. This does the same thing as calling <a href="#/p5/rotate">rotate()</a>
+   * on a 3D transform. Angles are always in radians inside a shader. See the
+   * last example.
    *
    * @method rotateZ
    * @param  {Number} angle angle of rotation in the current <a href="#/p5/angleMode">angleMode()</a>.
@@ -780,6 +927,47 @@ function transform(p5, fn) {
    *   // Draw a box.
    *   box();
    * }
+   *
+   * @example
+   * // Turn each instance a little more than the one before it.
+   * let myShader;
+   * let count = 5;
+   *
+   * function setup() {
+   *   createCanvas(200, 200, WEBGL);
+   *   myShader = buildMaterialShader(fanOut);
+   *   describe('Five red bars in a row, each turned more than the last.');
+   * }
+   *
+   * function fanOut() {
+   *   worldInputs.begin();
+   *   // Spread the bars across the canvas, turning each one a bit more.
+   *   let spacing = width / count;
+   *   let t = transform3D();
+   *   t = translate(t, (instanceIndex - (count - 1) / 2) * spacing, 0, 0);
+   *   t = rotateZ(t, instanceIndex * PI / 12);
+   *   worldInputs.position = transformPoint(t, worldInputs.position);
+   *   worldInputs.normal = transformNormal(t, worldInputs.normal);
+   *   worldInputs.end();
+   * }
+   *
+   * function draw() {
+   *   background(220);
+   *   lights();
+   *   noStroke();
+   *   fill('red');
+   *   shader(myShader);
+   *   instances(count).box(6, 40, 6);
+   * }
+   */
+  // The p5.strands version, implemented in src/strands/strands_transform.js
+  /**
+   * @method rotateZ
+   * @param  {*} transform a transform created with
+   *                       <a href="#/p5/transform3D">transform3D()</a>, inside
+   *                       a p5.strands shader callback.
+   * @param  {Number} angle angle to turn by, in radians.
+   * @returns {*} a new transform with the turn applied.
    */
   fn.rotateZ = function (angle) {
     this._assert3d('rotateZ');
@@ -818,6 +1006,13 @@ function transform(p5, fn) {
    * Note: Transformations are reset at the beginning of the draw loop. Calling
    * `scale(2)` inside the <a href="#/p5/draw">draw()</a> function won't cause
    * shapes to grow continuously.
+   *
+   * Inside a p5.strands shader callback, `scale()` can also be given a
+   * transform created with <a href="#/p5/transform2D">transform2D()</a> or
+   * <a href="#/p5/transform3D">transform3D()</a> as its first parameter, as in
+   * `scale(myTransform, 2)`. Instead of resizing the coordinate system, it then
+   * returns a new transform with the resize added on and leaves the one passed
+   * in untouched, so the result has to be assigned back. See the last example.
    *
    * @method scale
    * @param  {Number|p5.Vector|Number[]} s amount to scale along the positive x-axis.
@@ -934,11 +1129,53 @@ function transform(p5, fn) {
    *   fill('blue');
    *   box();
    * }
+   *
+   * @example
+   * // Resize a shape inside a p5.strands shader.
+   * let myShader;
+   *
+   * function setup() {
+   *   createCanvas(200, 200, WEBGL);
+   *   myShader = buildMaterialShader(squash);
+   * }
+   *
+   * function squash() {
+   *   worldInputs.begin();
+   *   let t = transform3D();
+   *   // Stretch along x and squash along y.
+   *   t = scale(t, 1.5, 0.5, 1);
+   *   worldInputs.position = transformPoint(t, worldInputs.position);
+   *   worldInputs.normal = transformNormal(t, worldInputs.normal);
+   *   worldInputs.end();
+   * }
+   *
+   * function draw() {
+   *   background(180);
+   *   lights();
+   *   noStroke();
+   *   fill('green');
+   *   shader(myShader);
+   *   sphere(40);
+   * }
    */
   /**
    * @method scale
    * @param  {p5.Vector|Number[]} scales vector whose components should be used to scale.
    * @chainable
+   */
+  // The p5.strands version, implemented in src/strands/strands_transform.js
+  /**
+   * @method scale
+   * @param  {*} transform a transform created with
+   *                       <a href="#/p5/transform2D">transform2D()</a> or
+   *                       <a href="#/p5/transform3D">transform3D()</a>, inside
+   *                       a p5.strands shader callback.
+   * @param  {Number} x amount to resize by along the x-axis, or along every
+   *                    axis if it's the only amount given.
+   * @param  {Number} [y] amount to resize by along the y-axis.
+   * @param  {Number} [z] amount to resize by along the z-axis. Ignored by a 2D
+   *                      transform.
+   * @returns {*} a new transform with the resize applied.
    */
   fn.scale = function (x, y, z) {
     // p5._validateParameters('scale', arguments);
@@ -985,6 +1222,14 @@ function transform(p5, fn) {
    * `shearX(1)` inside the <a href="#/p5/draw">draw()</a> function won't
    * cause shapes to shear continuously.
    *
+   * Inside a p5.strands shader callback, `shearX()` can also be given a
+   * transform created with <a href="#/p5/transform2D">transform2D()</a> or
+   * <a href="#/p5/transform3D">transform3D()</a> as its first parameter, as in
+   * `shearX(myTransform, PI / 8)`. Instead of shearing the coordinate system,
+   * it then returns a new transform with the shear added on and leaves the one
+   * passed in untouched, so the result has to be assigned back. Angles are
+   * always in radians inside a shader. See the last example.
+   *
    * @method shearX
    * @param  {Number} angle angle to shear by in the current <a href="#/p5/angleMode">angleMode()</a>.
    * @chainable
@@ -1025,6 +1270,44 @@ function transform(p5, fn) {
    *   // Draw the square.
    *   square(0, 0, 50);
    * }
+   *
+   * @example
+   * // Shear a shape inside a p5.strands shader.
+   * let myShader;
+   *
+   * function setup() {
+   *   createCanvas(200, 200, WEBGL);
+   *   myShader = buildFilterShader(lean);
+   * }
+   *
+   * function lean() {
+   *   filterColor.begin();
+   *   let t = transform2D();
+   *   t = translate(t, 0.5, 0.5);
+   *   t = shearX(t, PI / 8);
+   *   t = translate(t, -0.5, -0.5);
+   *   let uv = transformPoint(t, filterColor.texCoord);
+   *   filterColor.set(getTexture(filterColor.canvasContent, uv));
+   *   filterColor.end();
+   * }
+   *
+   * function draw() {
+   *   background(180);
+   *   noStroke();
+   *   fill('yellow');
+   *   rect(-30, -30, 60, 60);
+   *   filter(myShader);
+   * }
+   */
+  // The p5.strands version, implemented in src/strands/strands_transform.js
+  /**
+   * @method shearX
+   * @param  {*} transform a transform created with
+   *                       <a href="#/p5/transform2D">transform2D()</a> or
+   *                       <a href="#/p5/transform3D">transform3D()</a>, inside
+   *                       a p5.strands shader callback.
+   * @param  {Number} angle angle to shear by, in radians.
+   * @returns {*} a new transform with the shear applied.
    */
   fn.shearX = function (angle) {
     // p5._validateParameters('shearX', arguments);
@@ -1054,6 +1337,14 @@ function transform(p5, fn) {
    * Note: Transformations are reset at the beginning of the draw loop. Calling
    * `shearY(1)` inside the <a href="#/p5/draw">draw()</a> function won't
    * cause shapes to shear continuously.
+   *
+   * Inside a p5.strands shader callback, `shearY()` can also be given a
+   * transform created with <a href="#/p5/transform2D">transform2D()</a> or
+   * <a href="#/p5/transform3D">transform3D()</a> as its first parameter, as in
+   * `shearY(myTransform, PI / 8)`. Instead of shearing the coordinate system,
+   * it then returns a new transform with the shear added on and leaves the one
+   * passed in untouched, so the result has to be assigned back. Angles are
+   * always in radians inside a shader.
    *
    * @method shearY
    * @param  {Number} angle angle to shear by in the current <a href="#/p5/angleMode">angleMode()</a>.
@@ -1096,6 +1387,16 @@ function transform(p5, fn) {
    *   square(0, 0, 50);
    * }
    */
+  // The p5.strands version, implemented in src/strands/strands_transform.js
+  /**
+   * @method shearY
+   * @param  {*} transform a transform created with
+   *                       <a href="#/p5/transform2D">transform2D()</a> or
+   *                       <a href="#/p5/transform3D">transform3D()</a>, inside
+   *                       a p5.strands shader callback.
+   * @param  {Number} angle angle to shear by, in radians.
+   * @returns {*} a new transform with the shear applied.
+   */
   fn.shearY = function (angle) {
     // p5._validateParameters('shearY', arguments);
     const rad = this._toRadians(angle);
@@ -1137,6 +1438,14 @@ function transform(p5, fn) {
    * Note: Transformations are reset at the beginning of the draw loop. Calling
    * `translate(10, 0)` inside the <a href="#/p5/draw">draw()</a> function won't
    * cause shapes to move continuously.
+   *
+   * Inside a p5.strands shader callback, `translate()` can also be given a
+   * transform created with <a href="#/p5/transform2D">transform2D()</a> or
+   * <a href="#/p5/transform3D">transform3D()</a> as its first parameter, as in
+   * `translate(myTransform, 20, 0, 0)`. Instead of moving the coordinate
+   * system, it then returns a new transform with the move added on and leaves
+   * the one passed in untouched, so the result has to be assigned back. See
+   * the last example.
    *
    * @method translate
    * @param  {Number} x amount to translate along the positive x-axis.
@@ -1257,11 +1566,51 @@ function transform(p5, fn) {
    *   fill('blue');
    *   sphere(10);
    * }
+   *
+   * @example
+   * // Move a shape inside a p5.strands shader.
+   * let myShader;
+   *
+   * function setup() {
+   *   createCanvas(200, 200, WEBGL);
+   *   myShader = buildMaterialShader(slide);
+   * }
+   *
+   * function slide() {
+   *   worldInputs.begin();
+   *   // translate() returns a new transform, so assign the result back.
+   *   let t = transform3D();
+   *   t = translate(t, 40 * sin(millis() * 0.001), 0, 0);
+   *   worldInputs.position = transformPoint(t, worldInputs.position);
+   *   worldInputs.end();
+   * }
+   *
+   * function draw() {
+   *   background(180);
+   *   lights();
+   *   noStroke();
+   *   fill('red');
+   *   shader(myShader);
+   *   sphere(30);
+   * }
    */
   /**
    * @method translate
    * @param  {p5.Vector} vector vector by which to translate.
    * @chainable
+   */
+  // The p5.strands version, implemented in src/strands/strands_transform.js
+  /**
+   * @method translate
+   * @param  {*} transform a transform created with
+   *                       <a href="#/p5/transform2D">transform2D()</a> or
+   *                       <a href="#/p5/transform3D">transform3D()</a>, inside
+   *                       a p5.strands shader callback.
+   * @param  {Number} x amount to move along the x-axis.
+   * @param  {Number} [y] amount to move along the y-axis.
+   * @param  {Number} [z] amount to move along the z-axis. Ignored by a 2D
+   *                      transform.
+   * @returns {*} a new transform with the move applied.
    */
   fn.translate = function (x, y, z) {
     // p5._validateParameters('translate', arguments);

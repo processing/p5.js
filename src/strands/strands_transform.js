@@ -362,47 +362,10 @@ export function installTransformAPI(p5, fn, strandsContext, augmentFn) {
     return t.mult(createStrandsNode(m.id, m.dimension, strandsContext));
   };
 
-  /**
-   * @method translate
-   * @param {*} transform a transform created with
-   *                      <a href="#/p5/transform2D">transform2D()</a> or
-   *                      <a href="#/p5/transform3D">transform3D()</a>. Inside a
-   *                      p5.strands shader callback, a new transform with the
-   *                      move added on is returned and the one passed in is
-   *                      left untouched.
-   * @param {Number} x amount to move along the x-axis.
-   * @param {Number} [y] amount to move along the y-axis.
-   * @param {Number} [z] amount to move along the z-axis. Ignored by a 2D
-   *                     transform.
-   * @returns {*} a new transform with the move applied.
-   *
-   * @example
-   * // Move a shape inside a p5.strands shader.
-   * let myShader;
-   *
-   * function setup() {
-   *   createCanvas(200, 200, WEBGL);
-   *   myShader = buildMaterialShader(slide);
-   * }
-   *
-   * function slide() {
-   *   worldInputs.begin();
-   *   // translate() returns a new transform, so assign the result back.
-   *   let t = transform3D();
-   *   t = translate(t, 40 * sin(millis() * 0.001), 0, 0);
-   *   worldInputs.position = transformPoint(t, worldInputs.position);
-   *   worldInputs.end();
-   * }
-   *
-   * function draw() {
-   *   background(180);
-   *   lights();
-   *   noStroke();
-   *   fill('red');
-   *   shader(myShader);
-   *   sphere(30);
-   * }
-   */
+  // The reference docs for the strands versions of translate(), scale(),
+  // rotate(), shearX(), shearY() and rotateX/Y/Z() live next to the canvas
+  // versions in src/core/transform.js, so that those functions stay in the
+  // Transform reference with the canvas version first.
   const originalTranslate = fn.translate;
   augmentFn(fn, p5, 'translate', function (...args) {
     const t = args[0];
@@ -414,49 +377,6 @@ export function installTransformAPI(p5, fn, strandsContext, augmentFn) {
       [1, 0, 0, 0,   0, 1, 0, 0,   0, 0, 1, 0,   x, y, z, 1]);
   });
 
-  /**
-   * @method scale
-   * @param {*} transform a transform created with
-   *                      <a href="#/p5/transform2D">transform2D()</a> or
-   *                      <a href="#/p5/transform3D">transform3D()</a>. Inside a
-   *                      p5.strands shader callback, a new transform with the
-   *                      resize added on is returned and the one passed in is
-   *                      left untouched.
-   * @param {Number} x amount to resize by along the x-axis, or along every axis
-   *                   if it's the only amount given.
-   * @param {Number} [y] amount to resize by along the y-axis.
-   * @param {Number} [z] amount to resize by along the z-axis. Ignored by a 2D
-   *                     transform.
-   * @returns {*} a new transform with the resize applied.
-   *
-   * @example
-   * // Resize a shape inside a p5.strands shader.
-   * let myShader;
-   *
-   * function setup() {
-   *   createCanvas(200, 200, WEBGL);
-   *   myShader = buildMaterialShader(squash);
-   * }
-   *
-   * function squash() {
-   *   worldInputs.begin();
-   *   let t = transform3D();
-   *   // Stretch along x and squash along y.
-   *   t = scale(t, 1.5, 0.5, 1);
-   *   worldInputs.position = transformPoint(t, worldInputs.position);
-   *   worldInputs.normal = transformNormal(t, worldInputs.normal);
-   *   worldInputs.end();
-   * }
-   *
-   * function draw() {
-   *   background(180);
-   *   lights();
-   *   noStroke();
-   *   fill('green');
-   *   shader(myShader);
-   *   sphere(40);
-   * }
-   */
   const originalScale = fn.scale;
   augmentFn(fn, p5, 'scale', function (...args) {
     const t = args[0];
@@ -472,47 +392,6 @@ export function installTransformAPI(p5, fn, strandsContext, augmentFn) {
       [x, 0, 0, 0,   0, y, 0, 0,   0, 0, z, 0,   0, 0, 0, 1]);
   });
 
-  /**
-   * @method rotate
-   * @param {*} transform a transform created with
-   *                      <a href="#/p5/transform2D">transform2D()</a> or
-   *                      <a href="#/p5/transform3D">transform3D()</a>. Inside a
-   *                      p5.strands shader callback, a new transform with the
-   *                      turn added on is returned and the one passed in is
-   *                      left untouched. A 2D transform turns within the plane;
-   *                      a 3D transform turns about the z-axis.
-   * @param {Number} angle angle to turn by, in radians.
-   *                       <a href="#/p5/angleMode">angleMode()</a> doesn't
-   *                       reach inside a shader.
-   * @returns {*} a new transform with the turn applied.
-   *
-   * @example
-   * // Turn a shape inside a p5.strands shader.
-   * let myShader;
-   *
-   * function setup() {
-   *   createCanvas(200, 200, WEBGL);
-   *   myShader = buildMaterialShader(spin);
-   * }
-   *
-   * function spin() {
-   *   worldInputs.begin();
-   *   let t = transform3D();
-   *   t = rotate(t, millis() * 0.001);
-   *   worldInputs.position = transformPoint(t, worldInputs.position);
-   *   worldInputs.normal = transformNormal(t, worldInputs.normal);
-   *   worldInputs.end();
-   * }
-   *
-   * function draw() {
-   *   background(180);
-   *   lights();
-   *   noStroke();
-   *   fill('orange');
-   *   shader(myShader);
-   *   box(60, 20, 20);
-   * }
-   */
   const originalRotate = fn.rotate;
   augmentFn(fn, p5, 'rotate', function (...args) {
     const t = args[0];
@@ -527,49 +406,6 @@ export function installTransformAPI(p5, fn, strandsContext, augmentFn) {
       [c, s, 0, 0,   ns, c, 0, 0,   0, 0, 1, 0,   0, 0, 0, 1]);
   });
 
-  /**
-   * @method shearX
-   * @param {*} transform a transform created with
-   *                      <a href="#/p5/transform2D">transform2D()</a> or
-   *                      <a href="#/p5/transform3D">transform3D()</a>. Inside a
-   *                      p5.strands shader callback, a new transform with the
-   *                      slant added on is returned and the one passed in is
-   *                      left untouched. Every point is shifted sideways by an
-   *                      amount that grows with its y position, so upright
-   *                      shapes end up leaning.
-   * @param {Number} angle angle to slant by, in radians.
-   *                       <a href="#/p5/angleMode">angleMode()</a> doesn't
-   *                       reach inside a shader.
-   * @returns {*} a new transform with the slant applied.
-   *
-   * @example
-   * // Slant a shape inside a p5.strands shader.
-   * let myShader;
-   *
-   * function setup() {
-   *   createCanvas(200, 200, WEBGL);
-   *   myShader = buildFilterShader(lean);
-   * }
-   *
-   * function lean() {
-   *   filterColor.begin();
-   *   let t = transform2D();
-   *   t = translate(t, 0.5, 0.5);
-   *   t = shearX(t, PI / 8);
-   *   t = translate(t, -0.5, -0.5);
-   *   let uv = transformPoint(t, filterColor.texCoord);
-   *   filterColor.set(getTexture(filterColor.canvasContent, uv));
-   *   filterColor.end();
-   * }
-   *
-   * function draw() {
-   *   background(180);
-   *   noStroke();
-   *   fill('yellow');
-   *   rect(-30, -30, 60, 60);
-   *   filter(myShader);
-   * }
-   */
   const originalShearX = fn.shearX;
   augmentFn(fn, p5, 'shearX', function (...args) {
     const t = args[0];
@@ -582,20 +418,6 @@ export function installTransformAPI(p5, fn, strandsContext, augmentFn) {
       [1, 0, 0, 0,   k, 1, 0, 0,   0, 0, 1, 0,   0, 0, 0, 1]);
   });
 
-  /**
-   * @method shearY
-   * @param {*} transform a transform created with
-   *                      <a href="#/p5/transform2D">transform2D()</a> or
-   *                      <a href="#/p5/transform3D">transform3D()</a>. Inside a
-   *                      p5.strands shader callback, a new transform with the
-   *                      slant added on is returned and the one passed in is
-   *                      left untouched. Every point is shifted up or down by
-   *                      an amount that grows with its x position.
-   * @param {Number} angle angle to slant by, in radians.
-   *                       <a href="#/p5/angleMode">angleMode()</a> doesn't
-   *                       reach inside a shader.
-   * @returns {*} a new transform with the slant applied.
-   */
   const originalShearY = fn.shearY;
   augmentFn(fn, p5, 'shearY', function (...args) {
     const t = args[0];
@@ -727,141 +549,12 @@ export function installTransformAPI(p5, fn, strandsContext, augmentFn) {
     });
   };
 
-  /**
-   * @method rotateX
-   * @param {*} transform a transform created with
-   *                      <a href="#/p5/transform3D">transform3D()</a>. Inside a
-   *                      p5.strands shader callback, a new transform with the
-   *                      turn added on is returned and the one passed in is
-   *                      left untouched.
-   * @param {Number} angle angle to turn by, in radians.
-   *                       <a href="#/p5/angleMode">angleMode()</a> doesn't
-   *                       reach inside a shader.
-   * @returns {*} a new transform with the turn applied.
-   *
-   * @example
-   * // Turn a shape about the x-axis inside a p5.strands shader.
-   * let myShader;
-   *
-   * function setup() {
-   *   createCanvas(200, 200, WEBGL);
-   *   myShader = buildMaterialShader(roll);
-   * }
-   *
-   * function roll() {
-   *   worldInputs.begin();
-   *   let t = transform3D();
-   *   t = rotateX(t, millis() * 0.001);
-   *   worldInputs.position = transformPoint(t, worldInputs.position);
-   *   worldInputs.normal = transformNormal(t, worldInputs.normal);
-   *   worldInputs.end();
-   * }
-   *
-   * function draw() {
-   *   background(180);
-   *   lights();
-   *   noStroke();
-   *   fill('red');
-   *   shader(myShader);
-   *   box(60, 20, 20);
-   * }
-   */
   registerAxisRotation('rotateX', (c, s, ns) =>
     [1, 0, 0, 0,   0, c, s, 0,   0, ns, c, 0,   0, 0, 0, 1]);
 
-  /**
-   * @method rotateY
-   * @param {*} transform a transform created with
-   *                      <a href="#/p5/transform3D">transform3D()</a>. Inside a
-   *                      p5.strands shader callback, a new transform with the
-   *                      turn added on is returned and the one passed in is
-   *                      left untouched.
-   * @param {Number} angle angle to turn by, in radians.
-   *                       <a href="#/p5/angleMode">angleMode()</a> doesn't
-   *                       reach inside a shader.
-   * @returns {*} a new transform with the turn applied.
-   *
-   * @example
-   * // Arrange many instances in a ring inside a p5.strands shader.
-   * let myShader;
-   * let count = 10;
-   *
-   * function setup() {
-   *   createCanvas(200, 200, WEBGL);
-   *   myShader = buildMaterialShader(placeOnRing);
-   *   describe('Ten red cubes in a tilted ring, turning like a carousel.');
-   * }
-   *
-   * function placeOnRing() {
-   *   worldInputs.begin();
-   *   // Each cube gets its own spot on the ring, which turns over time.
-   *   let angle = instanceIndex * TWO_PI / count + millis() * 0.001;
-   *   let t = transform3D();
-   *   t = rotateX(t, 0.7);         // tilt the whole ring toward the viewer
-   *   t = rotateY(t, angle);       // turn to this cube's spot on the ring...
-   *   t = translate(t, 65, 0, 0);  // ...and step out to the ring's edge
-   *   worldInputs.position = transformPoint(t, worldInputs.position);
-   *   worldInputs.normal = transformNormal(t, worldInputs.normal);
-   *   worldInputs.end();
-   * }
-   *
-   * function draw() {
-   *   background(220);
-   *   lights();
-   *   noStroke();
-   *   fill('red');
-   *   shader(myShader);
-   *   instances(count).box(18);
-   * }
-   */
   registerAxisRotation('rotateY', (c, s, ns) =>
     [c, 0, ns, 0,   0, 1, 0, 0,   s, 0, c, 0,   0, 0, 0, 1]);
 
-  /**
-   * @method rotateZ
-   * @param {*} transform a transform created with
-   *                      <a href="#/p5/transform3D">transform3D()</a>. Inside a
-   *                      p5.strands shader callback, a new transform with the
-   *                      turn added on is returned and the one passed in is
-   *                      left untouched. This does the same thing as calling
-   *                      <a href="#/p5/rotate">rotate()</a> on a 3D transform.
-   * @param {Number} angle angle to turn by, in radians.
-   *                       <a href="#/p5/angleMode">angleMode()</a> doesn't
-   *                       reach inside a shader.
-   * @returns {*} a new transform with the turn applied.
-   *
-   * @example
-   * // Turn each instance a little more than the one before it.
-   * let myShader;
-   * let count = 5;
-   *
-   * function setup() {
-   *   createCanvas(200, 200, WEBGL);
-   *   myShader = buildMaterialShader(fanOut);
-   *   describe('Five red bars in a row, each turned more than the last.');
-   * }
-   *
-   * function fanOut() {
-   *   worldInputs.begin();
-   *   // Spread the bars across the canvas, turning each one a bit more.
-   *   let spacing = width / count;
-   *   let t = transform3D();
-   *   t = translate(t, (instanceIndex - (count - 1) / 2) * spacing, 0, 0);
-   *   t = rotateZ(t, instanceIndex * PI / 12);
-   *   worldInputs.position = transformPoint(t, worldInputs.position);
-   *   worldInputs.normal = transformNormal(t, worldInputs.normal);
-   *   worldInputs.end();
-   * }
-   *
-   * function draw() {
-   *   background(220);
-   *   lights();
-   *   noStroke();
-   *   fill('red');
-   *   shader(myShader);
-   *   instances(count).box(6, 40, 6);
-   * }
-   */
   registerAxisRotation('rotateZ', (c, s, ns) =>
     [c, s, 0, 0,   ns, c, 0, 0,   0, 0, 1, 0,   0, 0, 0, 1]);
 
