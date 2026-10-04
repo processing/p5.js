@@ -1352,8 +1352,10 @@ class PrimitiveToPath2DConverter extends PrimitiveVisitor {
   visitPoint(point) {
     const { x, y } = point.vertices[0].position;
     this.path.moveTo(x, y);
-    // Hack: to draw just strokes and not fills, draw a very very tiny line
-    this.path.lineTo(x + 0.00001, y);
+    // Hack: to draw just strokes and not fills, draw a very very tiny line.
+    // Canvas paths store coordinates as 32-bit floats, so the offset has to
+    // grow with |x|, or it rounds away and the zero-length line isn't drawn.
+    this.path.lineTo(x + Math.max(0.00001, Math.abs(x) * 1e-6), y);
   }
   visitLine(line) {
     const { x: x0, y: y0 } = line.vertices[0].position;

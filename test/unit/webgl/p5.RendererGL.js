@@ -140,6 +140,80 @@ suite('p5.RendererGL', function () {
       });
     });
 
+    suite('experimental transforms warning', function () {
+      let logSpy;
+      const transformsDocURL =
+        'https://p5js.org/contribute/p5.strands/#transforms-and-matrices';
+
+      beforeEach(function() {
+        logSpy = vi.spyOn(FES, 'log');
+        myp5.createCanvas(5, 5, myp5.WEBGL);
+      });
+
+      afterEach(function() {
+        logSpy.mockRestore();
+      });
+
+      // FES.log is a tagged template, so each call is (strings, ...values), and
+      // the link to the doc section is one of the values.
+      const transformWarnings = () =>
+        logSpy.mock.calls.filter(call => call.includes(transformsDocURL));
+
+      function buildShaderWithTransforms() {
+        return myp5.buildMaterialShader(() => {
+          myp5.getWorldInputs(inputs => {
+            let t = myp5.transform3D();
+            t = myp5.translate(t, 10, 0, 0);
+            t = myp5.rotateX(t, 0.5);
+            inputs.position = myp5.transformPoint(t, inputs.position);
+            return inputs;
+          });
+        }, { myp5 });
+      }
+
+      test('using transforms in a shader logs a warning linking to the doc section', function() {
+        buildShaderWithTransforms();
+        const warnings = transformWarnings();
+        expect(warnings.length).toEqual(1);
+        const [, message] = warnings[0];
+        expect(message).toContain('p5.strands transforms are experimental');
+        // The general p5.strands warning is still logged alongside it
+        expect(logSpy.mock.calls.length).toEqual(2);
+      });
+
+      test('warning logs only once with multiple shaders', function() {
+        buildShaderWithTransforms();
+        buildShaderWithTransforms();
+        expect(transformWarnings().length).toEqual(1);
+      });
+
+      test('regular transforms outside of a shader do not log a warning', function() {
+        myp5.translate(10, 0, 0);
+        myp5.rotate(0.5);
+        myp5.rotateX(0.5);
+        myp5.scale(2);
+        expect(transformWarnings().length).toEqual(0);
+      });
+
+      suite('with FES disabled', function() {
+        let prevDisableFriendlyErrors;
+
+        beforeEach(function() {
+          prevDisableFriendlyErrors = p5.disableFriendlyErrors;
+          p5.disableFriendlyErrors = true;
+        });
+
+        afterEach(function() {
+          p5.disableFriendlyErrors = prevDisableFriendlyErrors;
+        });
+
+        test('no warnings are logged', function() {
+          buildShaderWithTransforms();
+          expect(logSpy).not.toHaveBeenCalled();
+        });
+      });
+    });
+
     test('a uniform whose name matches a hook parameter name does not break', function () {
       myp5.createCanvas(10, 10, myp5.WEBGL);
       myp5.pixelDensity(1);

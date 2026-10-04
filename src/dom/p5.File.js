@@ -7,10 +7,8 @@
 import { XML } from '../io/p5.XML';
 
 class File {
-  constructor(file, pInst) {
+  constructor(file) {
     this.file = file;
-
-    this._pInst = pInst;
 
     // Splitting out the file type into two components
     // This makes determining if image or text etc simpler
@@ -20,6 +18,54 @@ class File {
     this.name = file.name;
     this.size = file.size;
     this.data = undefined;
+    this._isBlobUrl = false;
+  }
+
+  /**
+   * Revokes the Blob URL associated with this file, if one was created.
+   *
+   * When video or audio files are loaded via
+   * <a href="#/p5/createFileInput">createFileInput()</a> or
+   * <a href="#/p5.Element/drop">myElement.drop()</a>, p5 creates a Blob URL
+   * pointing to the media in browser memory. p5 normally releases this
+   * resource when the sketch is removed. Call `revoke()` sooner when the media
+   * is no longer needed while the sketch continues running, such as when
+   * replacing a video with a new one. Do not revoke the URL while a media
+   * element still needs it: after revocation, the URL cannot be used to load,
+   * play, or seek the media.
+   *
+   * @method revoke
+   * @for p5.File
+   *
+   * @example
+   * // Load a video file and release its URL when replacing it.
+   * let video;
+   * let previousFile;
+   *
+   * function setup() {
+   *   createCanvas(100, 100);
+   *   createFileInput(handleFile);
+   * }
+   *
+   * function handleFile(file) {
+   *   if (file.type === 'video') {
+   *     if (video) {
+   *       // The old video no longer needs its URL, so release it before
+   *       // replacing the video while the sketch is still running.
+   *       video.remove();
+   *       previousFile.revoke();
+   *     }
+   *
+   *     video = createVideo(file.data);
+   *     previousFile = file;
+   *   }
+   * }
+   */
+  revoke() {
+    if (this._isBlobUrl && this.data) {
+      URL.revokeObjectURL(this.data);
+      this._isBlobUrl = false;
+    }
   }
 
   static _createLoader(theFile, callback) {
@@ -52,12 +98,22 @@ class File {
     } else {
       const file = new File(f);
       file.data = URL.createObjectURL(f);
+      file._isBlobUrl = true;
       callback(file);
     }
   }
 }
 
-function file(p5, fn) {
+function file(p5, fn, lifecycles) {
+  lifecycles.remove = function () {
+    if (this._blobFiles) {
+      for (const file of this._blobFiles) {
+        file.revoke();
+      }
+      this._blobFiles.clear();
+    }
+  };
+
   /**
    * A class to describe a file.
    *
@@ -352,5 +408,5 @@ export default file;
 export { File };
 
 if (typeof p5 !== 'undefined') {
-  file(p5, p5.prototype);
+  p5.registerAddon(file);
 }
