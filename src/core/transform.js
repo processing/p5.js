@@ -425,8 +425,10 @@ function transform(p5, fn) {
    * returns a new transform with the turn added on and leaves the one passed in
    * untouched, so the result has to be assigned back. A 2D transform turns
    * within the plane and a 3D transform turns about the z-axis. Angles are
-   * always in radians inside a shader. The following example uses it to spin a
-   * box.
+   * always in radians inside a shader. The finished transform is applied to a
+   * position with <a href="#/p5/transformPoint">transformPoint()</a>. See its
+   * reference for a more in-depth explanation of how that works. The following
+   * example uses `rotate()` to spin a box.
    *
    * ```js example
    * let myShader;
@@ -599,8 +601,10 @@ function transform(p5, fn) {
    * `rotateX(myTransform, PI / 4)`. Instead of turning the coordinate system,
    * it returns a new transform with the turn added on and leaves the one passed
    * in untouched, so the result has to be assigned back. Angles are always in
-   * radians inside a shader. The following example uses it to roll a box about
-   * the x-axis.
+   * radians inside a shader. The finished transform is applied to a position
+   * with <a href="#/p5/transformPoint">transformPoint()</a>. See its reference
+   * for a more in-depth explanation of how that works. The following example
+   * uses `rotateX()` to roll a box about the x-axis.
    *
    * ```js example
    * let myShader;
@@ -772,8 +776,10 @@ function transform(p5, fn) {
    * `rotateY(myTransform, PI / 4)`. Instead of turning the coordinate system,
    * it returns a new transform with the turn added on and leaves the one passed
    * in untouched, so the result has to be assigned back. Angles are always in
-   * radians inside a shader. The following example gives each instance of a
-   * box its own turn to arrange them in a ring.
+   * radians inside a shader. The finished transform is applied to a position
+   * with <a href="#/p5/transformPoint">transformPoint()</a>. See its reference
+   * for a more in-depth explanation of how that works. The following example
+   * gives each instance of a box its own turn to arrange them in a ring.
    *
    * ```js example
    * let myShader;
@@ -951,7 +957,10 @@ function transform(p5, fn) {
    * it returns a new transform with the turn added on and leaves the one passed
    * in untouched, so the result has to be assigned back. This does the same
    * thing as calling <a href="#/p5/rotate">rotate()</a> on a 3D transform.
-   * Angles are always in radians inside a shader. The following example turns
+   * Angles are always in radians inside a shader. The finished transform is
+   * applied to a position with
+   * <a href="#/p5/transformPoint">transformPoint()</a>. See its reference for
+   * a more in-depth explanation of how that works. The following example turns
    * each instance of a bar a little more than the one before it.
    *
    * ```js example
@@ -1158,8 +1167,11 @@ function transform(p5, fn) {
    * <a href="#/p5/transform3D">transform3D()</a> as its first parameter, as in
    * `scale(myTransform, 2)`. Instead of resizing the coordinate system, it
    * returns a new transform with the resize added on and leaves the one passed
-   * in untouched, so the result has to be assigned back. The following example
-   * uses it to stretch a sphere.
+   * in untouched, so the result has to be assigned back. The finished
+   * transform is applied to a position with
+   * <a href="#/p5/transformPoint">transformPoint()</a>. See its reference for
+   * a more in-depth explanation of how that works. The following example uses
+   * `scale()` to stretch a sphere.
    *
    * ```js example
    * let myShader;
@@ -1307,8 +1319,10 @@ function transform(p5, fn) {
    * `shearX(myTransform, PI / 8)`. Instead of shearing the coordinate system,
    * it returns a new transform with the shear added on and leaves the one
    * passed in untouched, so the result has to be assigned back. Angles are
-   * always in radians inside a shader. The following example uses it in a
-   * filter shader to shear the canvas.
+   * always in radians inside a shader. The finished transform is applied to a
+   * position with <a href="#/p5/transformPoint">transformPoint()</a>. See its
+   * reference for a more in-depth explanation of how that works. The following
+   * example uses `shearX()` in a filter shader to shear the canvas.
    *
    * ```js example
    * let myShader;
@@ -1429,8 +1443,10 @@ function transform(p5, fn) {
    * `shearY(myTransform, PI / 8)`. Instead of shearing the coordinate system,
    * it returns a new transform with the shear added on and leaves the one
    * passed in untouched, so the result has to be assigned back. Angles are
-   * always in radians inside a shader. The following example uses it in a
-   * filter shader to shear the canvas.
+   * always in radians inside a shader. The finished transform is applied to a
+   * position with <a href="#/p5/transformPoint">transformPoint()</a>. See its
+   * reference for a more in-depth explanation of how that works. The following
+   * example uses `shearY()` in a filter shader to shear the canvas.
    *
    * ```js example
    * let myShader;
@@ -1644,7 +1660,10 @@ function transform(p5, fn) {
    * `translate(myTransform, 20, 0, 0)`. Instead of moving the coordinate
    * system, it returns a new transform with the move added on and leaves the
    * one passed in untouched, so the result has to be assigned back. The
-   * following example uses it to slide a sphere back and forth.
+   * finished transform is applied to a position with
+   * <a href="#/p5/transformPoint">transformPoint()</a>. See its reference for
+   * a more in-depth explanation of how that works. The following example uses
+   * `translate()` to slide a sphere back and forth.
    *
    * ```js example
    * let myShader;
