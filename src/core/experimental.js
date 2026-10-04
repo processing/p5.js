@@ -44,6 +44,7 @@ const experimentalMessages = {
   webgpu: 'WEBGPU mode is experimental, so its functions and constants may change in future versions. You can get involved by giving feedback to help direct its development!',
   'p5.strands': 'p5.strands shaders are experimental, so functions for building shaders and the hooks available within them may change in future versions. You can get involved by giving feedback to help direct its development!',
   'p5.strands.transforms': 'p5.strands transforms are experimental, so transform2D(), transform3D(), the matrix constructors, and the functions that build on them may change in future versions. You can get involved by giving feedback to help direct their development!',
+  'p5.svg': 'SVG features are experimental, so SVG export, import, and shape recording functions may change in future versions. You can get involved by giving feedback to help direct its development!'
 };
 
 // By default, a subject area links to the contributor doc with the same name. A
