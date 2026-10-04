@@ -29,6 +29,16 @@ export function installTransformAPI(p5, fn, strandsContext, augmentFn) {
     ['transform3D', 4], ['mat4', 4], ['mat4x4', 4],
   ];
 
+  // The transform functions are newer than the rest of p5.strands, so they get
+  // an experimental warning of their own. It's checked by hand inside each
+  // function rather than with the markExperimental decorator because translate(),
+  // rotate(), etc. are also regular p5 functions, and those shouldn't warn when
+  // they're used outside of a shader. FES is switched off while a strands
+  // callback runs, so this only records the use; modify() logs the warning once
+  // the callback is done.
+  const markTransformsExperimental = () =>
+    strandsContext.experimentalFeaturesUsed.add('p5.strands.transforms');
+
   /**
    * Creates a 2D transform inside a p5.strands shader callback.
    *
@@ -116,7 +126,8 @@ export function installTransformAPI(p5, fn, strandsContext, augmentFn) {
    * <a href="#/p5/transformPoint">transformPoint()</a>, and to a surface
    * direction with <a href="#/p5/transformNormal">transformNormal()</a>. This
    * is the usual way to place each copy of a shape when drawing many instances
-   * at once with <a href="#/p5/model">model()</a>.
+   * at once with <a href="#/p5/instances">instances()</a> or
+   * <a href="#/p5/model">model()</a>.
    *
    * `transform3D()` is the same function as <a href="#/p5/mat4">mat4()</a>.
    * Use `transform3D()` when describing a transformation, and `mat4()` when
@@ -160,6 +171,38 @@ export function installTransformAPI(p5, fn, strandsContext, augmentFn) {
    *   fill('red');
    *   shader(myShader);
    *   box(60);
+   * }
+   *
+   * @example
+   * // Place each instance of a shape with its own transform.
+   * let myShader;
+   * let count = 5;
+   *
+   * function setup() {
+   *   createCanvas(200, 200, WEBGL);
+   *   myShader = buildMaterialShader(placeEach);
+   *   describe('Five red spheres in a row, growing from small to large.');
+   * }
+   *
+   * function placeEach() {
+   *   worldInputs.begin();
+   *   // Give every instance its own spot and size.
+   *   let spacing = width / count;
+   *   let t = transform3D();
+   *   t = translate(t, (instanceIndex - (count - 1) / 2) * spacing, 0, 0);
+   *   t = scale(t, 0.4 + instanceIndex * 0.15);
+   *   worldInputs.position = transformPoint(t, worldInputs.position);
+   *   worldInputs.normal = transformNormal(t, worldInputs.normal);
+   *   worldInputs.end();
+   * }
+   *
+   * function draw() {
+   *   background(220);
+   *   lights();
+   *   noStroke();
+   *   fill('red');
+   *   shader(myShader);
+   *   instances(count).sphere(20);
    * }
    */
 
@@ -296,6 +339,7 @@ export function installTransformAPI(p5, fn, strandsContext, augmentFn) {
         );
         return;
       }
+      markTransformsExperimental();
       const { id, dimension: dim } = build.matrixNode(strandsContext, dimension, args);
       return createStrandsNode(id, dim, strandsContext);
     });
@@ -363,7 +407,8 @@ export function installTransformAPI(p5, fn, strandsContext, augmentFn) {
   augmentFn(fn, p5, 'translate', function (...args) {
     const t = args[0];
     if (!isStrandsTransform(t)) return originalTranslate.apply(this, args);
-    const [x = 0, y = 0, z = 0] = args.slice(1); 
+    markTransformsExperimental();
+    const [x = 0, y = 0, z = 0] = args.slice(1);
     return transformStep(t,
       [1, 0, 0,   0, 1, 0,   x, y, 1],
       [1, 0, 0, 0,   0, 1, 0, 0,   0, 0, 1, 0,   x, y, z, 1]);
@@ -416,6 +461,7 @@ export function installTransformAPI(p5, fn, strandsContext, augmentFn) {
   augmentFn(fn, p5, 'scale', function (...args) {
     const t = args[0];
     if (!isStrandsTransform(t)) return originalScale.apply(this, args);
+    markTransformsExperimental();
     const scales = args.slice(1);
     const uniform = scales.length === 1; // scale(t, s) scales every axis by s
     const x = scales[0] ?? 1;
@@ -471,6 +517,7 @@ export function installTransformAPI(p5, fn, strandsContext, augmentFn) {
   augmentFn(fn, p5, 'rotate', function (...args) {
     const t = args[0];
     if (!isStrandsTransform(t)) return originalRotate.apply(this, args);
+    markTransformsExperimental();
     const angle = args[1]; // 2D: rotate in-plane; 3D: rotate about the Z axis
     const c = this.cos(angle);
     const s = this.sin(angle);
@@ -527,6 +574,7 @@ export function installTransformAPI(p5, fn, strandsContext, augmentFn) {
   augmentFn(fn, p5, 'shearX', function (...args) {
     const t = args[0];
     if (!isStrandsTransform(t)) return originalShearX.apply(this, args);
+    markTransformsExperimental();
     const angle = args[1];
     const k = this.tan(angle); // x' = x + tan(angle) * y
     return transformStep(t,
@@ -552,6 +600,7 @@ export function installTransformAPI(p5, fn, strandsContext, augmentFn) {
   augmentFn(fn, p5, 'shearY', function (...args) {
     const t = args[0];
     if (!isStrandsTransform(t)) return originalShearY.apply(this, args);
+    markTransformsExperimental();
     const angle = args[1];
     const k = this.tan(angle); // y' = y + tan(angle) * x
     return transformStep(t,
@@ -621,6 +670,7 @@ export function installTransformAPI(p5, fn, strandsContext, augmentFn) {
       p5._friendlyError(`It looks like you've called rotateAxisAngle outside of a shader's modify() function.`);
       return;
     }
+    markTransformsExperimental();
     const [t, axis, angle] = args;
     if (!t?.isStrandsNode || t.typeInfo().baseType !== BaseType.MAT || t.dimension !== 4) {
       FES.userError('type error',
@@ -664,6 +714,7 @@ export function installTransformAPI(p5, fn, strandsContext, augmentFn) {
       if (!isStrandsTransform(t)) {
         return original ? original.apply(this, args) : undefined;
       }
+      markTransformsExperimental();
       if (t.dimension !== 4) {
         FES.userError('type error', `${name}() needs a 3D transform created with transform3D().`);
       }
@@ -729,6 +780,39 @@ export function installTransformAPI(p5, fn, strandsContext, augmentFn) {
    *                       <a href="#/p5/angleMode">angleMode()</a> doesn't
    *                       reach inside a shader.
    * @returns {*} a new transform with the turn applied.
+   *
+   * @example
+   * // Arrange many instances in a ring inside a p5.strands shader.
+   * let myShader;
+   * let count = 10;
+   *
+   * function setup() {
+   *   createCanvas(200, 200, WEBGL);
+   *   myShader = buildMaterialShader(placeOnRing);
+   *   describe('Ten red cubes in a tilted ring, turning like a carousel.');
+   * }
+   *
+   * function placeOnRing() {
+   *   worldInputs.begin();
+   *   // Each cube gets its own spot on the ring, which turns over time.
+   *   let angle = instanceIndex * TWO_PI / count + millis() * 0.001;
+   *   let t = transform3D();
+   *   t = rotateX(t, 0.7);         // tilt the whole ring toward the viewer
+   *   t = rotateY(t, angle);       // turn to this cube's spot on the ring...
+   *   t = translate(t, 65, 0, 0);  // ...and step out to the ring's edge
+   *   worldInputs.position = transformPoint(t, worldInputs.position);
+   *   worldInputs.normal = transformNormal(t, worldInputs.normal);
+   *   worldInputs.end();
+   * }
+   *
+   * function draw() {
+   *   background(220);
+   *   lights();
+   *   noStroke();
+   *   fill('red');
+   *   shader(myShader);
+   *   instances(count).box(18);
+   * }
    */
   registerAxisRotation('rotateY', (c, s, ns) =>
     [c, 0, ns, 0,   0, 1, 0, 0,   s, 0, c, 0,   0, 0, 0, 1]);
@@ -745,6 +829,38 @@ export function installTransformAPI(p5, fn, strandsContext, augmentFn) {
    *                       <a href="#/p5/angleMode">angleMode()</a> doesn't
    *                       reach inside a shader.
    * @returns {*} a new transform with the turn applied.
+   *
+   * @example
+   * // Turn each instance a little more than the one before it.
+   * let myShader;
+   * let count = 5;
+   *
+   * function setup() {
+   *   createCanvas(200, 200, WEBGL);
+   *   myShader = buildMaterialShader(fanOut);
+   *   describe('Five red bars in a row, each turned more than the last.');
+   * }
+   *
+   * function fanOut() {
+   *   worldInputs.begin();
+   *   // Spread the bars across the canvas, turning each one a bit more.
+   *   let spacing = width / count;
+   *   let t = transform3D();
+   *   t = translate(t, (instanceIndex - (count - 1) / 2) * spacing, 0, 0);
+   *   t = rotateZ(t, instanceIndex * PI / 12);
+   *   worldInputs.position = transformPoint(t, worldInputs.position);
+   *   worldInputs.normal = transformNormal(t, worldInputs.normal);
+   *   worldInputs.end();
+   * }
+   *
+   * function draw() {
+   *   background(220);
+   *   lights();
+   *   noStroke();
+   *   fill('red');
+   *   shader(myShader);
+   *   instances(count).box(6, 40, 6);
+   * }
    */
   registerAxisRotation('rotateZ', (c, s, ns) =>
     [c, s, 0, 0,   ns, c, 0, 0,   0, 0, 1, 0,   0, 0, 0, 1]);
@@ -808,6 +924,7 @@ export function installTransformAPI(p5, fn, strandsContext, augmentFn) {
       p5._friendlyError(`It looks like you've called transformPoint outside of a shader's modify() function.`);
       return;
     }
+    markTransformsExperimental();
     const [t, point] = args;
     if (!(t?.isStrandsNode && t.typeInfo().baseType === BaseType.MAT)) {
       FES.userError('type error',
@@ -877,6 +994,7 @@ export function installTransformAPI(p5, fn, strandsContext, augmentFn) {
       p5._friendlyError(`It looks like you've called transformNormal outside of a shader's modify() function.`);
       return;
     }
+    markTransformsExperimental();
     const [t, normal] = args;
     if (!(t?.isStrandsNode && t.typeInfo().baseType === BaseType.MAT)) {
       FES.userError('type error',
