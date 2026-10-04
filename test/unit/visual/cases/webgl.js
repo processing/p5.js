@@ -1986,6 +1986,540 @@ visualSuite('WebGL', function () {
         screenshot();
       }
     );
+
+    visualSuite('transforms', () => {
+      visualTest('transform2D() starts as the identity', (p5, screenshot) => {
+        p5.createCanvas(50, 50, p5.WEBGL);
+        const shader = p5.baseMaterialShader().modify(
+          () => {
+            p5.getWorldInputs(inputs => {
+              const t = p5.transform2D();
+              inputs.position.xy = p5.transformPoint(t, inputs.position.xy);
+              return inputs;
+            });
+          },
+          { p5 }
+        );
+        p5.background(200);
+        p5.lights();
+        p5.noStroke();
+        p5.fill('red');
+        p5.shader(shader);
+        p5.plane(20, 20);
+        screenshot();
+      });
+
+      visualTest('transform3D() starts as the identity', (p5, screenshot) => {
+        p5.createCanvas(50, 50, p5.WEBGL);
+        const shader = p5.baseMaterialShader().modify(
+          () => {
+            p5.getWorldInputs(inputs => {
+              const t = p5.transform3D();
+              inputs.position = p5.transformPoint(t, inputs.position);
+              return inputs;
+            });
+          },
+          { p5 }
+        );
+        p5.background(200);
+        p5.lights();
+        p5.noStroke();
+        p5.fill('red');
+        p5.shader(shader);
+        p5.box(20);
+        screenshot();
+      });
+
+      visualTest('mat2() takes 4 column-major values', (p5, screenshot) => {
+        p5.createCanvas(50, 50, p5.WEBGL);
+        const shader = p5.baseMaterialShader().modify(
+          () => {
+            p5.getWorldInputs(inputs => {
+              const m = p5.mat2(1, 0, 0.5, 1);
+              inputs.position.xy = m * inputs.position.xy;
+              return inputs;
+            });
+          },
+          { p5 }
+        );
+        p5.background(200);
+        p5.lights();
+        p5.noStroke();
+        p5.fill('red');
+        p5.shader(shader);
+        p5.plane(20, 20);
+        screenshot();
+      });
+
+      visualTest(
+        'mat2x2() with one number fills the diagonal',
+        (p5, screenshot) => {
+          p5.createCanvas(50, 50, p5.WEBGL);
+          const shader = p5.baseMaterialShader().modify(
+            () => {
+              p5.getWorldInputs(inputs => {
+                const m = p5.mat2x2(0.5);
+                inputs.position.xy = m * inputs.position.xy;
+                return inputs;
+              });
+            },
+            { p5 }
+          );
+          p5.background(200);
+          p5.lights();
+          p5.noStroke();
+          p5.fill('red');
+          p5.shader(shader);
+          p5.plane(20, 20);
+          screenshot();
+        }
+      );
+
+      visualTest(
+        'mat3() of a transform3D() drops the translation',
+        (p5, screenshot) => {
+          p5.createCanvas(50, 50, p5.WEBGL);
+          const shader = p5.baseMaterialShader().modify(
+            () => {
+              p5.getWorldInputs(inputs => {
+                let t = p5.transform3D();
+                t = p5.translate(t, 10, 0, 0);
+                t = p5.rotateY(t, p5.PI / 4);
+                inputs.position = p5.mat3(t) * inputs.position;
+                return inputs;
+              });
+            },
+            { p5 }
+          );
+          p5.background(200);
+          p5.lights();
+          p5.noStroke();
+          p5.fill('red');
+          p5.shader(shader);
+          p5.box(20);
+          screenshot();
+        }
+      );
+
+      visualTest('mat3x3() takes 3 column vectors', (p5, screenshot) => {
+        p5.createCanvas(50, 50, p5.WEBGL);
+        const shader = p5.baseMaterialShader().modify(
+          () => {
+            p5.getWorldInputs(inputs => {
+              const m = p5.mat3x3(
+                p5.vec3(1, 0, 0),
+                p5.vec3(0, 1, 0),
+                p5.vec3(10, 0, 1)
+              );
+              inputs.position.xy = p5.transformPoint(m, inputs.position.xy);
+              return inputs;
+            });
+          },
+          { p5 }
+        );
+        p5.background(200);
+        p5.lights();
+        p5.noStroke();
+        p5.fill('red');
+        p5.shader(shader);
+        p5.plane(20, 20);
+        screenshot();
+      });
+
+      visualTest('mat4() extends a 2D transform to 3D', (p5, screenshot) => {
+        p5.createCanvas(50, 50, p5.WEBGL);
+        const shader = p5.baseMaterialShader().modify(
+          () => {
+            p5.getWorldInputs(inputs => {
+              let t = p5.transform2D();
+              t = p5.scale(t, 1.5, 0.5);
+              const m = p5.mat4(t);
+              inputs.position = p5.transformPoint(m, inputs.position);
+              return inputs;
+            });
+          },
+          { p5 }
+        );
+        p5.background(200);
+        p5.lights();
+        p5.noStroke();
+        p5.fill('red');
+        p5.shader(shader);
+        p5.box(20);
+        screenshot();
+      });
+
+      visualTest('mat4x4() takes 16 column-major values', (p5, screenshot) => {
+        p5.createCanvas(50, 50, p5.WEBGL);
+        const shader = p5.baseMaterialShader().modify(
+          () => {
+            p5.getWorldInputs(inputs => {
+              const m = p5.mat4x4(
+                1, 0, 0, 0,
+                0, 1, 0, 0,
+                0, 0, 1, 0,
+                0, 10, 0, 1
+              );
+              inputs.position = p5.transformPoint(m, inputs.position);
+              return inputs;
+            });
+          },
+          { p5 }
+        );
+        p5.background(200);
+        p5.lights();
+        p5.noStroke();
+        p5.fill('red');
+        p5.shader(shader);
+        p5.box(20);
+        screenshot();
+      });
+
+      visualTest('translate() moves a shape', (p5, screenshot) => {
+        p5.createCanvas(50, 50, p5.WEBGL);
+        const shader = p5.baseMaterialShader().modify(
+          () => {
+            p5.getWorldInputs(inputs => {
+              let t = p5.transform3D();
+              t = p5.translate(t, 10, 0, 0);
+              inputs.position = p5.transformPoint(t, inputs.position);
+              return inputs;
+            });
+          },
+          { p5 }
+        );
+        p5.background(200);
+        p5.lights();
+        p5.noStroke();
+        p5.fill('red');
+        p5.shader(shader);
+        p5.box(20);
+        screenshot();
+      });
+
+      visualTest('scale() with one value resizes evenly', (p5, screenshot) => {
+        p5.createCanvas(50, 50, p5.WEBGL);
+        const shader = p5.baseMaterialShader().modify(
+          () => {
+            p5.getWorldInputs(inputs => {
+              let t = p5.transform3D();
+              t = p5.scale(t, 1.5);
+              inputs.position = p5.transformPoint(t, inputs.position);
+              return inputs;
+            });
+          },
+          { p5 }
+        );
+        p5.background(200);
+        p5.lights();
+        p5.noStroke();
+        p5.fill('red');
+        p5.shader(shader);
+        p5.box(20);
+        screenshot();
+      });
+
+      visualTest('scale() with x, y, z resizes each axis', (p5, screenshot) => {
+        p5.createCanvas(50, 50, p5.WEBGL);
+        const shader = p5.baseMaterialShader().modify(
+          () => {
+            p5.getWorldInputs(inputs => {
+              let t = p5.transform3D();
+              t = p5.scale(t, 1.5, 0.5, 1);
+              inputs.position = p5.transformPoint(t, inputs.position);
+              return inputs;
+            });
+          },
+          { p5 }
+        );
+        p5.background(200);
+        p5.lights();
+        p5.noStroke();
+        p5.fill('red');
+        p5.shader(shader);
+        p5.box(20);
+        screenshot();
+      });
+
+      visualTest(
+        'rotate() turns a 2D transform in the plane',
+        (p5, screenshot) => {
+          p5.createCanvas(50, 50, p5.WEBGL);
+          const shader = p5.baseMaterialShader().modify(
+            () => {
+              p5.getWorldInputs(inputs => {
+                let t = p5.transform2D();
+                t = p5.rotate(t, p5.PI / 6);
+                inputs.position.xy = p5.transformPoint(t, inputs.position.xy);
+                return inputs;
+              });
+            },
+            { p5 }
+          );
+          p5.background(200);
+          p5.lights();
+          p5.noStroke();
+          p5.fill('red');
+          p5.shader(shader);
+          p5.plane(20, 20);
+          screenshot();
+        }
+      );
+
+      visualTest(
+        'rotate() turns a 3D transform about the z-axis',
+        (p5, screenshot) => {
+          p5.createCanvas(50, 50, p5.WEBGL);
+          const shader = p5.baseMaterialShader().modify(
+            () => {
+              p5.getWorldInputs(inputs => {
+                let t = p5.transform3D();
+                t = p5.rotate(t, p5.PI / 4);
+                inputs.position = p5.transformPoint(t, inputs.position);
+                return inputs;
+              });
+            },
+            { p5 }
+          );
+          p5.background(200);
+          p5.lights();
+          p5.noStroke();
+          p5.fill('red');
+          p5.shader(shader);
+          p5.box(20, 10, 10);
+          screenshot();
+        }
+      );
+
+      visualTest(
+        'translate() then rotate() turns the shape before moving it',
+        (p5, screenshot) => {
+          p5.createCanvas(50, 50, p5.WEBGL);
+          const shader = p5.baseMaterialShader().modify(
+            () => {
+              p5.getWorldInputs(inputs => {
+                let t = p5.transform3D();
+                t = p5.translate(t, 10, 0, 0);
+                t = p5.rotate(t, p5.PI / 2);
+                inputs.position = p5.transformPoint(t, inputs.position);
+                return inputs;
+              });
+            },
+            { p5 }
+          );
+          p5.background(200);
+          p5.lights();
+          p5.noStroke();
+          p5.fill('red');
+          p5.shader(shader);
+          p5.box(20, 10, 10);
+          screenshot();
+        }
+      );
+
+      visualTest(
+        'shearX() slants a shape along the x-axis',
+        (p5, screenshot) => {
+          p5.createCanvas(50, 50, p5.WEBGL);
+          const shader = p5.baseMaterialShader().modify(
+            () => {
+              p5.getWorldInputs(inputs => {
+                let t = p5.transform2D();
+                t = p5.shearX(t, p5.PI / 6);
+                inputs.position.xy = p5.transformPoint(t, inputs.position.xy);
+                return inputs;
+              });
+            },
+            { p5 }
+          );
+          p5.background(200);
+          p5.lights();
+          p5.noStroke();
+          p5.fill('red');
+          p5.shader(shader);
+          p5.plane(20, 20);
+          screenshot();
+        }
+      );
+
+      visualTest(
+        'shearY() slants a shape along the y-axis',
+        (p5, screenshot) => {
+          p5.createCanvas(50, 50, p5.WEBGL);
+          const shader = p5.baseMaterialShader().modify(
+            () => {
+              p5.getWorldInputs(inputs => {
+                let t = p5.transform3D();
+                t = p5.shearY(t, p5.PI / 6);
+                inputs.position = p5.transformPoint(t, inputs.position);
+                return inputs;
+              });
+            },
+            { p5 }
+          );
+          p5.background(200);
+          p5.lights();
+          p5.noStroke();
+          p5.fill('red');
+          p5.shader(shader);
+          p5.box(20);
+          screenshot();
+        }
+      );
+
+      visualTest(
+        'rotateAxisAngle() turns a shape about a custom axis',
+        (p5, screenshot) => {
+          p5.createCanvas(50, 50, p5.WEBGL);
+          const shader = p5.baseMaterialShader().modify(
+            () => {
+              p5.getWorldInputs(inputs => {
+                let t = p5.transform3D();
+                t = p5.rotateAxisAngle(t, [1, 1, 0], p5.PI / 4);
+                inputs.position = p5.transformPoint(t, inputs.position);
+                return inputs;
+              });
+            },
+            { p5 }
+          );
+          p5.background(200);
+          p5.lights();
+          p5.noStroke();
+          p5.fill('red');
+          p5.shader(shader);
+          p5.box(20);
+          screenshot();
+        }
+      );
+
+      visualTest(
+        'rotateX() turns a shape about the x-axis',
+        (p5, screenshot) => {
+          p5.createCanvas(50, 50, p5.WEBGL);
+          const shader = p5.baseMaterialShader().modify(
+            () => {
+              p5.getWorldInputs(inputs => {
+                let t = p5.transform3D();
+                t = p5.rotateX(t, p5.PI / 4);
+                inputs.position = p5.transformPoint(t, inputs.position);
+                return inputs;
+              });
+            },
+            { p5 }
+          );
+          p5.background(200);
+          p5.lights();
+          p5.noStroke();
+          p5.fill('red');
+          p5.shader(shader);
+          p5.box(20);
+          screenshot();
+        }
+      );
+
+      visualTest(
+        'rotateY() turns a shape about the y-axis',
+        (p5, screenshot) => {
+          p5.createCanvas(50, 50, p5.WEBGL);
+          const shader = p5.baseMaterialShader().modify(
+            () => {
+              p5.getWorldInputs(inputs => {
+                let t = p5.transform3D();
+                t = p5.rotateY(t, p5.PI / 4);
+                inputs.position = p5.transformPoint(t, inputs.position);
+                return inputs;
+              });
+            },
+            { p5 }
+          );
+          p5.background(200);
+          p5.lights();
+          p5.noStroke();
+          p5.fill('red');
+          p5.shader(shader);
+          p5.box(20);
+          screenshot();
+        }
+      );
+
+      visualTest(
+        'rotateZ() turns a shape about the z-axis',
+        (p5, screenshot) => {
+          p5.createCanvas(50, 50, p5.WEBGL);
+          const shader = p5.baseMaterialShader().modify(
+            () => {
+              p5.getWorldInputs(inputs => {
+                let t = p5.transform3D();
+                t = p5.rotateZ(t, p5.PI / 6);
+                inputs.position = p5.transformPoint(t, inputs.position);
+                return inputs;
+              });
+            },
+            { p5 }
+          );
+          p5.background(200);
+          p5.lights();
+          p5.noStroke();
+          p5.fill('red');
+          p5.shader(shader);
+          p5.box(20, 10, 10);
+          screenshot();
+        }
+      );
+
+      visualTest(
+        'transformPoint() applies a 2D transform to a vec2',
+        (p5, screenshot) => {
+          p5.createCanvas(50, 50, p5.WEBGL);
+          const shader = p5.baseMaterialShader().modify(
+            () => {
+              p5.getWorldInputs(inputs => {
+                let t = p5.transform2D();
+                t = p5.translate(t, 0, 10);
+                inputs.position.xy = p5.transformPoint(t, inputs.position.xy);
+                return inputs;
+              });
+            },
+            { p5 }
+          );
+          p5.background(200);
+          p5.lights();
+          p5.noStroke();
+          p5.fill('red');
+          p5.shader(shader);
+          p5.plane(20, 20);
+          screenshot();
+        }
+      );
+
+      visualTest(
+        'transformNormal() keeps a turned face lit',
+        (p5, screenshot) => {
+          p5.createCanvas(50, 50, p5.WEBGL);
+          const shader = p5.baseMaterialShader().modify(
+            () => {
+              p5.getWorldInputs(inputs => {
+                let t = p5.transform3D();
+                t = p5.rotateY(t, p5.PI / 2);
+                inputs.position = p5.transformPoint(t, inputs.position);
+                inputs.normal = p5.transformNormal(t, inputs.normal);
+                return inputs;
+              });
+            },
+            { p5 }
+          );
+          p5.background(0);
+          // Only a head-on light, so the face turned to the front is lit only
+          // if its normal turned along with it.
+          p5.directionalLight(255, 255, 255, 0, 0, -1);
+          p5.noStroke();
+          p5.fill('white');
+          p5.shader(shader);
+          p5.box(20);
+          screenshot();
+        }
+      );
+    });
   });
 
   visualSuite('setUniform', () => {

@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200">
+  <!--
+    custom path - bezier curve
+    bezierOrder(3) → beginShape()
+    vertex(30,20)
+    bezierVertex(80,0) bezierVertex(80,75) bezierVertex(30,75)   ← segment 1
+    bezierVertex(50,80) bezierVertex(60,25) bezierVertex(30,20)  ← segment 2
+    endShape()
+  -->
+  <path d="M 30 20 C 80 0 80 75 30 75 C 50 80 60 25 30 20"
+        fill="white" stroke="black" stroke-width="1"/>
+</svg>
