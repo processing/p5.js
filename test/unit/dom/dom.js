@@ -1,4 +1,5 @@
 import { testSketchWithPromise } from '../../js/p5_helpers';
+import { vi } from 'vitest';
 
 import { mockP5, mockP5Prototype } from '../../js/mocks';
 import p5 from '../../../src/app.js';
@@ -1638,6 +1639,68 @@ suite('DOM', function () {
       await otherP5.remove();
       expect(revokeSpy).toHaveBeenCalledWith(secondFile.data);
       revokeSpy.mockRestore();
+    });
+
+    test('p5.remove() stops tracks from createCapture()', async function () {
+      const tracks = [
+        {
+          readyState: 'live',
+          stop() {
+            this.readyState = 'ended';
+          }
+        },
+        {
+          readyState: 'live',
+          stop() {
+            this.readyState = 'ended';
+          }
+        }
+      ];
+      const stream = { getTracks: () => tracks };
+      const originalGetUserMedia = navigator.mediaDevices.getUserMedia;
+      const createElement = document.createElement.bind(document);
+      let myp5;
+
+      navigator.mediaDevices.getUserMedia = () => Promise.resolve(stream);
+      const createElementSpy = vi
+        .spyOn(document, 'createElement')
+        .mockImplementation(tagName => {
+          const element = createElement(tagName);
+          if (tagName.toLowerCase() === 'video') {
+            let srcObject = null;
+            Object.defineProperty(element, 'srcObject', {
+              configurable: true,
+              get() {
+                return srcObject;
+              },
+              set(value) {
+                srcObject = value;
+              }
+            });
+          }
+          return element;
+        });
+
+      try {
+        myp5 = new p5(function () {});
+        myp5.createCanvas(100, 100);
+        const capture = myp5.createCapture(myp5.VIDEO);
+        await Promise.resolve();
+        const capturedTracks = capture.elt.srcObject.getTracks();
+
+        assert.isTrue(
+          capturedTracks.every(track => track.readyState === 'live')
+        );
+        await myp5.remove();
+        myp5 = null;
+        assert.isTrue(
+          capturedTracks.every(track => track.readyState === 'ended')
+        );
+      } finally {
+        if (myp5) await myp5.remove();
+        navigator.mediaDevices.getUserMedia = originalGetUserMedia;
+        createElementSpy.mockRestore();
+      }
     });
   });
 });
