@@ -23,6 +23,14 @@ const TO_POINTS_CASES = [
   {label: "textToPoints() paragraph", str: strs.paragraph, textSize: 20, sampleFactor: 0.5, points: 21275, variance: 50, render: false},
 ];
 
+const TO_MODEL_CASES = [
+  {label: "textToModel() single word", str: strs.single, textSize: 20, sampleFactor: 0.5, render: false},
+  {label: "textToModel() single word, 150pt", str: strs.single, textSize: 150, sampleFactor: 0.5, render: false},
+  {label: "textToModel() single word, with render", str: strs.single, textSize: 20, sampleFactor: 0.5, render: true},
+  {label: "textToModel() 10 words", str: strs.ten, textSize: 20, sampleFactor: 0.5, render: false},
+  {label: "textToModel() paragraph", str: strs.paragraph, textSize: 20, sampleFactor: 0.5, render: false},
+];
+
 async function bootstrap(w = 400, h = 400, renderer = undefined) {
   var myp5;
   var font;
@@ -102,6 +110,27 @@ describe("Typography: bench WebGL", function() {
     );
   }
 
+  for (let testCase of TO_MODEL_CASES) {
+    bench(
+      testCase.label,
+      async () => {
+        const model = font.textToModel(testCase.str, 10, 20, { sampleFactor: testCase.sampleFactor });
+        assert.isAbove(model.vertices.length, 0);
+        if (testCase.render) {
+          myp5.model(model);
+        }
+      },
+      {
+        ...options,
+        setup: async () => {
+          ({myp5, font} = await bootstrap(400, 400, WEBGL));
+          myp5.textSize(testCase.textSize);
+        },
+        teardown: () => myp5.remove()
+      }
+    );
+  }
+
 });
 
 describe("Typography: bench WebGPU", function() {
@@ -116,6 +145,27 @@ describe("Typography: bench WebGPU", function() {
         assert.closeTo(points.length, testCase.points, testCase.variance);
         if (testCase.render) {
           drawPoints(myp5, points);
+        }
+      },
+      {
+        ...options,
+        setup: async () => {
+          ({myp5, font} = await bootstrap(400, 400, WEBGPU));
+          myp5.textSize(testCase.textSize);
+        },
+        teardown: () => myp5.remove()
+      }
+    );
+  }
+
+  for (let testCase of TO_MODEL_CASES) {
+    bench(
+      testCase.label,
+      async () => {
+        const model = font.textToModel(testCase.str, 10, 20, { sampleFactor: testCase.sampleFactor });
+        assert.isAbove(model.vertices.length, 0);
+        if (testCase.render) {
+          myp5.model(model);
         }
       },
       {
