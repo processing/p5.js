@@ -822,12 +822,20 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
 
     return result;
   });
-  // Tell the transpiler that argument 0 (the color-stop pairs) is a raw
-  // array it should leave untouched rather than converting to a vector —
-  // including the nested [color, position] pairs inside it, to any depth.
-  // See strands_transpiler.js's ArrayExpression visitor.
+  // Tell the transpiler that argument 0 is a raw array (the stops) whose
+  // elements are themselves raw arrays (the [color, position] pairs) —
+  // both levels left untouched rather than converted to vectors. The
+  // bare 'any' terminal means pair contents aren't constrained any
+  // further; see strands_transpiler.js's ArrayExpression visitor for how
+  // this nesting is walked.
   fn.paletteLerp.argTypes = [
-    { type: 'Array', subtype: { type: 'any' } },
+    {
+      type: 'Array', // stops
+      subtype: {
+        type: 'Array', // color + position tuples
+        subtype: 'any'
+      }
+    },
     { type: 'Number' }
   ];
 

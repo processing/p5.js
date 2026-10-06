@@ -695,6 +695,16 @@ const ASTCallbacks = {
     // of its arguments node descends from — rather than depending on
     // that CallExpression's own visitor having already run, since
     // acorn-walk's ancestor() calls child callbacks before parent ones.
+    //
+    // Opacity is depth-scoped, not blanket: argType descriptors nest via
+    // `.subtype`, one level per ArrayExpression descended through from
+    // the top-level argument down to this node. We walk that chain in
+    // lockstep with the descriptor so a function can mark the outer
+    // array and some number of inner levels as opaque (`type: 'Array'`)
+    // while still letting arrays beyond that depth resume normal
+    // vectorization — signaled by the descriptor bottoming out at the
+    // bare string `'any'` (or running out) before reaching this node's
+    // depth.
     for (let i = ancestors.length - 1; i >= 0; i--) {
       const a = ancestors[i];
       if (a.type === 'CallExpression') {
@@ -705,12 +715,20 @@ const ASTCallbacks = {
             : undefined;
         const argTypes = fnName && getArgTypes(fnName, state.p5);
         if (argTypes) {
-          // The direct child of `a` on the path down to `node` — either
-          // `node` itself, or an ancestor array that contains it.
-          const childOnPath = i + 1 < ancestors.length ? ancestors[i + 1] : node;
-          const argIndex = a.arguments.indexOf(childOnPath);
-          const argType = argIndex !== -1 ? argTypes[argIndex] : undefined;
-          if (argType?.type === 'Array' && argType.subtype?.type === 'any') {
+          // The chain of nodes from the top-level argument down to (and
+          // including) this array.
+          // ancestors already ends with `node` itself (acorn-walk, in
+          // this codebase, includes the current node as its own last
+          // ancestor entry) — so slicing from i + 1 already gives the
+          // full chain from the top-level argument down to and
+          // including `node`, with no need to append it again.
+          const path = ancestors.slice(i + 1);
+          const argIndex = a.arguments.indexOf(path[0]);
+          let argType = argIndex !== -1 ? argTypes[argIndex] : undefined;
+          for (let depth = 1; depth < path.length && argType; depth++) {
+            argType = argType.subtype;
+          }
+          if (argType?.type === 'Array') {
             return;
           }
         }
