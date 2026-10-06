@@ -3007,6 +3007,54 @@ suite('p5.Shader', function () {
         );
       });
 
+      test('exponentiation operator ** in filter shader', () => {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+
+        const testShader = myp5.baseFilterShader().modify(
+          () => {
+            myp5.getColor(() => {
+              const base = 0.5;
+              const result = base ** 2;
+              return [result, 0, 0, 1];
+            });
+          },
+          { myp5 }
+        );
+
+        myp5.filter(testShader);
+        const pixelColor = myp5.get(25, 25);
+        assert.approximately(pixelColor[0], 64, 5); // 0.25 * 255 ≈ 64
+        assert.approximately(pixelColor[1], 0, 5);
+        assert.approximately(pixelColor[2], 0, 5);
+      });
+
+      test('exponentiation operator ** inline and with vectors and **=', () => {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+
+        const testShader = myp5.baseMaterialShader().modify(
+          () => {
+            myp5.getPixelInputs(inputs => {
+              let v = 0.5;
+              v **= 2;
+              const vec = [0.5, 0.5];
+              const vecPow = vec ** 2;
+              inputs.color = [v, vecPow.x, 0.5 ** 2, 1.0];
+              return inputs;
+            });
+          },
+          { myp5 }
+        );
+
+        myp5.noStroke();
+        myp5.shader(testShader);
+        myp5.plane(myp5.width, myp5.height);
+
+        const pixelColor = myp5.get(25, 25);
+        assert.approximately(pixelColor[0], 64, 5);
+        assert.approximately(pixelColor[1], 64, 5);
+        assert.approximately(pixelColor[2], 64, 5);
+      });
+
       test('handle complex filter shader with for loop and vector operations', () => {
         myp5.createCanvas(50, 50, myp5.WEBGL);
 
@@ -4265,6 +4313,44 @@ suite('p5.Shader', function () {
       assert.notInclude(errMsg, 'getWorldInputs');
       assert.include(errMsg, 'begin()');
       assert.include(errMsg, 'end()');
+    });
+
+    test('unsupported binary operator throws a clear strands operator error', () => {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+
+      mockUserError.mockClear();
+      try {
+        myp5.baseMaterialShader().modify(
+          () => {
+            myp5.getPixelInputs(inputs => {
+              const a = 1;
+              const b = 2;
+              /* oxlint-disable-next-line no-bitwise */
+              const c = a & b;
+              inputs.color = [c, 0, 0, 1];
+              return inputs;
+            });
+          },
+          { myp5 }
+        );
+      } catch {
+        /* expected */
+      }
+
+      assert.isAbove(
+        mockUserError.mock.calls.length,
+        0,
+        'FES.userError should have been called'
+      );
+      const opCall = mockUserError.mock.calls.find(
+        call => call[0] === 'operator error'
+      );
+      assert.isDefined(opCall, 'operator error should have been called');
+      const errMsg = opCall[1];
+      assert.include(
+        errMsg,
+        "The operator '&' is not supported in shader functions"
+      );
     });
   });
 });
