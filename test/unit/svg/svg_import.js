@@ -1134,6 +1134,43 @@ suite('<defs> and <use> elements', function () {
     });
   });
 
+  test('use respects preserveAspectRatio=none', function () {
+    const record = createSVG(`
+      <svg xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <symbol id="stretch" viewBox="0 0 100 100" preserveAspectRatio="none">
+            <rect x="0" y="0" width="100" height="100" />
+          </symbol>
+        </defs>
+        <use href="#stretch" width="200" height="100" />
+      </svg>
+    `);
+    const scope = firstChild(record);
+    const node = scope.children[0];
+    assert.closeTo(node.state.transform.a, 2, 0.001);
+    assert.closeTo(node.state.transform.d, 1, 0.001);
+  });
+
+  test('use with preserveAspectRatio=none accounts for viewBox origin', function () {
+    const record = createSVG(`
+      <svg xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <symbol id="stretch-offset" viewBox="10 20 100 100" preserveAspectRatio="none">
+            <rect x="10" y="20" width="100" height="100" />
+          </symbol>
+        </defs>
+        <use href="#stretch-offset" width="200" height="100" />
+      </svg>
+    `);
+    const scope = firstChild(record);
+    const node = scope.children[0];
+
+    assert.closeTo(node.state.transform.a, 2, 0.001);
+    assert.closeTo(node.state.transform.d, 1, 0.001);
+    assert.closeTo(node.state.transform.e, -20, 0.001);
+    assert.closeTo(node.state.transform.f, -20, 0.001);
+  });
+
   test('handles missing references gracefully', function () {
     const record = createSVG(`
       <svg xmlns="http://www.w3.org/2000/svg">
