@@ -444,7 +444,7 @@ function outputs(p5, fn) {
     }
     let include = {};
     let add = true;
-    let middle = _getMiddle(f, args);
+    let middle = this._getMiddle(f, args);
     if (f === 'line') {
       //make color stroke
       include.color = this.ingredients.colors.stroke;
@@ -461,6 +461,20 @@ function outputs(p5, fn) {
       } else {
         include.pos = `from ${p1} to ${p2}`;
       }
+    } else if (f === 'bezier' || f === 'spline') {
+      // Curves use stroke color if no fill, otherwise fill color
+      if (this._renderer.states.fillColor) {
+        include.color = this.ingredients.colors.fill;
+        include.area = this._getArea(f, args);
+      } else {
+        include.color = this.ingredients.colors.stroke;
+        include.area = 0;
+      }
+      //get middle of shapes
+      //calculate position using middle of shape
+      include.pos = this._getPos(...middle);
+      //calculate location using middle of shape
+      include.loc = _canvasLocator(middle, this.width, this.height);
     } else {
       if (f === 'point') {
         //make color stroke
@@ -499,8 +513,7 @@ function outputs(p5, fn) {
     }
   };
 
-  //gets middle point / centroid of shape
-  function _getMiddle(f, args) {
+  fn._getMiddle = function (f, args) {
     let x, y;
     if (
       f === 'rectangle' ||
@@ -520,11 +533,160 @@ function outputs(p5, fn) {
     } else if (f === 'line') {
       x = (args[0] + args[2]) / 2;
       y = (args[1] + args[3]) / 2;
+    } else if (f === 'bezier') {
+      const { points, isFilled } = _sampleBezier(args);
+      if (isFilled) {
+        [x, y] = _polygonCentroid(points);
+      } else {
+        let sumX = 0, sumY = 0;
+        for (const p of points) { sumX += p.x; sumY += p.y; }
+        x = sumX / points.length;
+        y = sumY / points.length;
+      }
+    } else if (f === 'spline') {
+      const { points, isFilled } = _sampleSpline(args, this);
+      if (isFilled) {
+        [x, y] = _polygonCentroid(points);
+      } else {
+        let sumX = 0, sumY = 0;
+        for (const p of points) { sumX += p.x; sumY += p.y; }
+        x = sumX / points.length;
+        y = sumY / points.length;
+      }
     } else {
       x = args[0];
       y = args[1];
     }
     return [x, y];
+  };
+
+  function _sampleBezier(args) {
+    const samples = 20;
+    const points = [];
+    for (let i = 0; i <= samples; i++) {
+      const t = i / samples;
+      const invT = 1 - t;
+      const invT2 = invT * invT;
+      const invT3 = invT2 * invT;
+      const t2 = t * t;
+      const t3 = t2 * t;
+      const px =
+        invT3 * args[0] +
+        3 * invT2 * t * args[2] +
+        3 * invT * t2 * args[4] +
+        t3 * args[6];
+      const py =
+        invT3 * args[1] +
+        3 * invT2 * t * args[3] +
+        3 * invT * t2 * args[5] +
+        t3 * args[7];
+      points.push({ x: px, y: py });
+    }
+    return { points, isFilled: false };
+  }
+
+  function _getSplineControlPoints(args, ends) {
+    const [x1, y1, x2, y2, x3, y3, x4, y4] = args;
+    const p0 = { x: x1, y: y1 };
+    const p1 = { x: x2, y: y2 };
+    const p2 = { x: x3, y: y3 };
+    const p3 = { x: x4, y: y4 };
+    const vertices = [p0, p1, p2, p3];
+
+    const points = [];
+    points.push(p0);
+    for (const v of vertices) points.push(v);
+
+    if (ends === 'INCLUDE') {
+      points.unshift(p0);
+      points.push(p3);
+    }
+    return points;
+  }
+
+  function _catmullRomToBezier(controlPoints, tightness) {
+    const s = 1 - tightness;
+    const bezArrays = [];
+    for (let i = 0; i + 3 < controlPoints.length; i++) {
+      const a = controlPoints[i];
+      const b = controlPoints[i + 1];
+      const c = controlPoints[i + 2];
+      const d = controlPoints[i + 3];
+      const bezB = {
+        x: b.x + (c.x - a.x) * s / 6,
+        y: b.y + (c.y - a.y) * s / 6
+      };
+      const bezC = {
+        x: c.x + (b.x - d.x) * s / 6,
+        y: c.y + (b.y - d.y) * s / 6
+      };
+      const bezD = c;
+      bezArrays.push([bezB, bezC, bezD]);
+    }
+    return bezArrays;
+  }
+
+  function _evaluateCubicBezier(controls, t) {
+    const [a, b, c, d] = controls;
+    const invT = 1 - t;
+    const invT2 = invT * invT;
+    const invT3 = invT2 * invT;
+    const t2 = t * t;
+    const t3 = t2 * t;
+    return {
+      x: invT3 * a.x + 3 * invT2 * t * b.x + 3 * invT * t2 * c.x + t3 * d.x,
+      y: invT3 * a.y + 3 * invT2 * t * b.y + 3 * invT * t2 * c.y + t3 * d.y
+    };
+  }
+
+  function _sampleSpline(args, p5Instance) {
+    const ends = p5Instance._renderer.states.splineProperties.ends;
+    const tightness = p5Instance._renderer.states.splineProperties.tightness;
+    const controlPoints = _getSplineControlPoints(args, ends);
+    const bezierArrays = _catmullRomToBezier(controlPoints, tightness);
+
+    const samplesPerSegment = 20;
+    const points = [];
+    let startVertex = controlPoints[ends === 'INCLUDE' ? 1 : 0];
+
+    for (const bezArr of bezierArrays) {
+      const bezierControls = [startVertex, ...bezArr];
+      for (let i = 0; i <= samplesPerSegment; i++) {
+        const t = i / samplesPerSegment;
+        if (i === 0 && points.length > 0) continue;
+        points.push(_evaluateCubicBezier(bezierControls, t));
+      }
+      startVertex = bezArr[2];
+    }
+
+    const isFilled = !!p5Instance._renderer.states.fillColor;
+    return { points, isFilled };
+  }
+
+  function _polygonCentroid(points) {
+    if (points.length < 3) {
+      let sumX = 0, sumY = 0;
+      for (const p of points) { sumX += p.x; sumY += p.y; }
+      return [sumX / points.length, sumY / points.length];
+    }
+    let area = 0;
+    let cx = 0, cy = 0;
+    for (let i = 0; i < points.length; i++) {
+      const j = (i + 1) % points.length;
+      const cross = points[i].x * points[j].y - points[j].x * points[i].y;
+      area += cross;
+      cx += (points[i].x + points[j].x) * cross;
+      cy += (points[i].y + points[j].y) * cross;
+    }
+    area *= 0.5;
+    if (Math.abs(area) < 1e-10) {
+      let sumX = 0, sumY = 0;
+      for (const p of points) { sumX += p.x; sumY += p.y; }
+      return [sumX / points.length, sumY / points.length];
+    }
+    cx /= (6 * area);
+    cy /= (6 * area);
+    return [cx, cy];
   }
 
   //gets position of shape in the canvas
@@ -636,6 +798,26 @@ function outputs(p5, fn) {
             shapeArgs[4] * (shapeArgs[1] - shapeArgs[3])
         ) / 2;
       // (Ax( By −  Cy) + Bx(Cy − Ay) + Cx(Ay − By ))/2
+    } else if (objectType === 'bezier') {
+      const { points, isFilled } = _sampleBezier(shapeArgs);
+      if (isFilled) {
+        points.push({ x: points[0].x, y: points[0].y });
+      }
+      let area = 0;
+      for (let i = 0; i < points.length - 1; i++) {
+        area += points[i].x * points[i + 1].y - points[i + 1].x * points[i].y;
+      }
+      objectArea = Math.abs(area) / 2;
+    } else if (objectType === 'spline') {
+      const { points, isFilled } = _sampleSpline(shapeArgs, this);
+      if (isFilled) {
+        points.push({ x: points[0].x, y: points[0].y });
+      }
+      let area = 0;
+      for (let i = 0; i < points.length - 1; i++) {
+        area += points[i].x * points[i + 1].y - points[i + 1].x * points[i].y;
+      }
+      objectArea = Math.abs(area) / 2;
     }
     //  Store the positions of the canvas corners
     const canvasWidth = this.width * this._renderer._pixelDensity;
