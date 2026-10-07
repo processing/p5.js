@@ -1104,7 +1104,7 @@ visualSuite('WebGL', function () {
       'computeNormals(SMOOTH) preserves smooth normals',
       function (p5, screenshot) {
         p5.createCanvas(100, 100, p5.WEBGL);
-
+        p5.noiseSeed(0);
         const geom = p5.buildGeometry(() => {
           const verticesPerRing = 20;
           const rings = 20;
