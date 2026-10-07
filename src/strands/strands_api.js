@@ -1440,7 +1440,7 @@ export function createShaderHooksFunctions(strandsContext, fn, shader) {
       if (!hook._active) {
         FES.userError(
           'scope error',
-          `It looks like you're trying to call set() outside of a hook's begin()/end() block.`
+          `It looks like you're trying to call ${hook._publicName}.set() outside of its begin()/end() block.`
         );
       }
       hook._result = result;
@@ -1542,7 +1542,8 @@ export function createShaderHooksFunctions(strandsContext, fn, shader) {
       ) {
         FES.userError(
           'scope error',
-          `This hook requires a value. Make sure to call set() before end().`
+          `${hook._publicName} requires a value. Make sure to call ` +
+            `${hook._publicName}.set(value) before ${hook._publicName}.end().`
         );
       }
 
@@ -1690,6 +1691,9 @@ export function createShaderHooksFunctions(strandsContext, fn, shader) {
     for (const name of aliases) {
       augmentFnTemporary(fn, strandsContext, name, hook);
     }
+    // Name used in error messages: an explicit alias like filterColor if
+    // there is one, otherwise the unprefixed alias like finalColor
+    hook._publicName = aliases[1] ?? hookType.name;
     hook.earlyReturns = [];
   }
 }

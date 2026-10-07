@@ -302,7 +302,7 @@ function strands(p5, fn) {
         if (strandsContext.activeHook) {
           FES.userError(
             'scope error',
-            `It looks like a hook's begin() was called without a matching end().`
+            `It looks like ${strandsContext.activeHook._publicName}.begin() was called without a matching ${strandsContext.activeHook._publicName}.end().`
           );
         }
         popBlock(strandsContext.cfg);
