@@ -1702,5 +1702,67 @@ suite('DOM', function () {
         createElementSpy.mockRestore();
       }
     });
+
+    test('p5.remove() stops tracks when createCapture() is pending', async function () {
+      const tracks = [
+        {
+          readyState: 'live',
+          stop() {
+            this.readyState = 'ended';
+          }
+        },
+        {
+          readyState: 'live',
+          stop() {
+            this.readyState = 'ended';
+          }
+        }
+      ];
+      const stream = { getTracks: () => tracks };
+      const originalGetUserMedia = navigator.mediaDevices.getUserMedia;
+      const createElement = document.createElement.bind(document);
+      let resolveGetUserMedia;
+      let myp5;
+
+      navigator.mediaDevices.getUserMedia = () =>
+        new Promise(resolve => {
+          resolveGetUserMedia = resolve;
+        });
+      const createElementSpy = vi
+        .spyOn(document, 'createElement')
+        .mockImplementation(tagName => {
+          const element = createElement(tagName);
+          if (tagName.toLowerCase() === 'video') {
+            let srcObject = null;
+            Object.defineProperty(element, 'srcObject', {
+              configurable: true,
+              get() {
+                return srcObject;
+              },
+              set(value) {
+                srcObject = value;
+              }
+            });
+          }
+          return element;
+        });
+
+      try {
+        myp5 = new p5(function () {});
+        myp5.createCanvas(100, 100);
+        const capture = myp5.createCapture(myp5.VIDEO);
+        await myp5.remove();
+        myp5 = null;
+        resolveGetUserMedia(stream);
+        await Promise.resolve();
+
+        assert.isTrue(tracks.every(track => track.readyState === 'ended'));
+        assert.isNull(capture.elt.srcObject);
+      } finally {
+        if (myp5) await myp5.remove();
+        navigator.mediaDevices.getUserMedia = originalGetUserMedia;
+        createElementSpy.mockRestore();
+      }
+    });
   });
 });
