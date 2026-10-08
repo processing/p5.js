@@ -102,21 +102,21 @@ suite('p5.RendererGL', function () {
       });
 
       test('shader creation logs a warning', function() {
-        const shader = myp5.buildMaterialShader(() => {});
+        myp5.buildMaterialShader(() => {});
         expect(logSpy).toHaveBeenCalled();
         expect(logSpy.mock.calls.length).toEqual(1);
       });
 
       test('warning logs only once with multiple shaders', function() {
-        const shader = myp5.buildMaterialShader(() => {});
-        const shader2 = myp5.buildMaterialShader(() => {});
+        myp5.buildMaterialShader(() => {});
+        myp5.buildMaterialShader(() => {});
         expect(logSpy).toHaveBeenCalled();
         expect(logSpy.mock.calls.length).toEqual(1);
       });
 
       test('warning logs only once with multiple strands calls', function() {
-        const shader = myp5.buildMaterialShader(() => {});
-        const shader2 = myp5.buildFilterShader(() => {});
+        myp5.buildMaterialShader(() => {});
+        myp5.buildFilterShader(() => {});
         expect(logSpy).toHaveBeenCalled();
         expect(logSpy.mock.calls.length).toEqual(1);
       });
@@ -134,7 +134,7 @@ suite('p5.RendererGL', function () {
         });
 
         test('no warnings are logged', function() {
-          const shader = myp5.buildMaterialShader(() => {});
+          myp5.buildMaterialShader(() => {});
           expect(logSpy).not.toHaveBeenCalled();
         });
       });
