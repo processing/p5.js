@@ -1450,9 +1450,14 @@ export function createShaderHooksFunctions(strandsContext, fn, shader) {
       finishHook();
     };
 
-    // In the flat strands API, this is how result-returning hooks
-    // are used
+    // In the flat strands API, result-returning hooks use set().
     hook.set = function (result) {
+      if (!hook._active) {
+        FES.userError(
+          'scope error',
+          `It looks like you're trying to call ${hook._publicName}.set() outside of its begin()/end() block.`
+        );
+      }
       hook._result = result;
     };
     hook._active = false;
@@ -1540,6 +1545,23 @@ export function createShaderHooksFunctions(strandsContext, fn, shader) {
       strandsContext.activeHook = undefined;
 
       const expectedReturnType = hookType.returnType;
+      const expectsReturnValue =
+        isStructType(expectedReturnType) ||
+        (expectedReturnType.dataType &&
+          expectedReturnType.typeName?.trim() !== 'void');
+
+      if (
+        expectsReturnValue &&
+        userReturned === undefined &&
+        hook.earlyReturns.length === 0
+      ) {
+        FES.userError(
+          'scope error',
+          `${hook._publicName} requires a value. Make sure to call ` +
+            `${hook._publicName}.set(value) before ${hook._publicName}.end().`
+        );
+      }
+
       let rootNodeID = null;
       const handleRetVal = retNode => {
         if (isStructType(expectedReturnType)) {
@@ -1684,6 +1706,9 @@ export function createShaderHooksFunctions(strandsContext, fn, shader) {
     for (const name of aliases) {
       augmentFnTemporary(fn, strandsContext, name, hook);
     }
+    // Name used in error messages: an explicit alias like filterColor if
+    // there is one, otherwise the unprefixed alias like finalColor
+    hook._publicName = aliases[1] ?? hookType.name;
     hook.earlyReturns = [];
   }
 }

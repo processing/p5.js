@@ -4281,6 +4281,116 @@ suite('p5.Shader', function () {
       });
     });
 
+    test('set() outside a hook block reports a scope error', () => {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+
+      try {
+        myp5.baseFilterShader().modify(
+          () => {
+            myp5.filterColor.begin();
+            myp5.filterColor.set([1, 0, 0, 1]);
+            myp5.filterColor.end();
+            myp5.filterColor.set([0, 1, 0, 1]);
+          },
+          { myp5 }
+        );
+      } catch {
+        /* expected */
+      }
+
+      const scopeCall = mockUserError.mock.calls.find(
+        call => call[0] === 'scope error' && call[1].includes('set()')
+      );
+      assert.isDefined(scopeCall, 'scope error should have been called');
+      assert.include(scopeCall[1], 'filterColor.set()');
+      assert.notInclude(scopeCall[1], 'getColor');
+    });
+
+    test('ending a value-returning hook without a value reports a scope error', () => {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+
+      try {
+        myp5.baseFilterShader().modify(
+          () => {
+            myp5.filterColor.begin();
+            myp5.filterColor.end();
+          },
+          { myp5 }
+        );
+      } catch {
+        /* expected */
+      }
+
+      const scopeCall = mockUserError.mock.calls.find(
+        call =>
+          call[0] === 'scope error' &&
+          call[1].includes('requires a value')
+      );
+      assert.isDefined(scopeCall, 'scope error should have been called');
+      assert.include(scopeCall[1], 'filterColor requires a value');
+      assert.include(
+        scopeCall[1],
+        'filterColor.set(value) before filterColor.end()'
+      );
+      assert.notInclude(scopeCall[1], 'getColor');
+    });
+
+    test('value-required error uses the hook\'s own public name', () => {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+
+      try {
+        myp5.baseMaterialShader().modify(
+          () => {
+            myp5.finalColor.begin();
+            myp5.finalColor.end();
+          },
+          { myp5 }
+        );
+      } catch {
+        /* expected */
+      }
+
+      const scopeCall = mockUserError.mock.calls.find(
+        call =>
+          call[0] === 'scope error' &&
+          call[1].includes('requires a value')
+      );
+      assert.isDefined(scopeCall, 'scope error should have been called');
+      assert.include(scopeCall[1], 'finalColor requires a value');
+      assert.include(
+        scopeCall[1],
+        'finalColor.set(value) before finalColor.end()'
+      );
+      assert.notInclude(scopeCall[1], 'getFinalColor');
+      assert.notInclude(scopeCall[1], 'filterColor');
+    });
+
+    test('missing end() reports a scope error', () => {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+
+      try {
+        myp5.baseFilterShader().modify(
+          () => {
+            myp5.filterColor.begin();
+            myp5.filterColor.set([1, 0, 0, 1]);
+          },
+          { myp5 }
+        );
+      } catch {
+        /* expected */
+      }
+      const scopeCall = mockUserError.mock.calls.find(
+        call =>
+          call[0] === 'scope error' &&
+          call[1].includes('without a matching')
+      );
+      assert.isDefined(scopeCall, 'scope error should have been called');
+      assert.include(
+        scopeCall[1],
+        'filterColor.begin() was called without a matching filterColor.end()'
+      );
+    });
+
     test('scope error uses unprefixed hook name', () => {
       myp5.createCanvas(50, 50, myp5.WEBGL);
 
