@@ -462,4 +462,12 @@ suite('Validate Params', function () {
       assert.isFalse(result.success);
     });
   });
+
+  suite('validateParams: math functions without strands context', function () {
+    test('map(): fails with string parameters outside strands', function () {
+      const result = mockP5Prototype._validate('p5.map', ['a', 'b']);
+      assert.isFalse(result.success);
+      assert.isTrue(result.error.toString().includes('Expected at least 5 arguments'));
+    });
+  });
 });

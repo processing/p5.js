@@ -635,27 +635,14 @@ function validateParams(p5, fn, lifecycles) {
       // (buildMaterialShader, buildComputeShader, etc.). They are called
       // BEFORE the strands context activates and handle their own validation
       // and error reporting internally (e.g. "only available with WebGPU").
-      if (/^build\w+Shader$/.test(func)) {
+      if (/^build\w+Shader$/.test(func) && p5._isStrandsContextActive) {
         funcSchemas = z.any();
       }
       // Check _strandsSignatures for explicit bypass entries (value === true)
       // regardless of strands context, or array-based overload schemas that
       // only apply inside an active strands context.
-      else if (p5._strandsSignatures?.has(func)) {
-        const sig = p5._strandsSignatures.get(func);
-        if (sig === true) {
-          funcSchemas = z.any();
-        } else if (p5._isStrandsContextActive && Array.isArray(sig)) {
-          // Array-based overload schemas only apply inside an active strands
-          // context; outside of it the normal JSDoc schema is correct.
-          const nodeSchema = z.union([
-            z.number(),
-            z.boolean(),
-            z.custom(val => val && val.isStrandsNode, { message: 'Expected StrandsNode or primitive' })
-          ]);
-          const overloads = sig.map(overload => z.tuple(overload.params.map(() => nodeSchema)));
-          funcSchemas = z.union(overloads);
-        }
+      else if (p5._isStrandsContextActive && p5._strandsSignatures?.has(func)) {
+        funcSchemas = z.any();
       }
       
       if (!funcSchemas) {

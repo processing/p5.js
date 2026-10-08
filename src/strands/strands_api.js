@@ -477,13 +477,10 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
   };
   //////////////////////////////////////////////
   // Builtins, uniforms, variable constructors
-  //////////////////////////////////////////////
-  p5._strandsSignatures = p5._strandsSignatures || new Map();
-
   for (const [functionName, overrides] of Object.entries(
     strandsBuiltinFunctions
   )) {
-    p5._strandsSignatures.set(functionName, overrides);
+    p5._strandsSignatures.set(functionName, true);
     const isp5Function = overrides[0].isp5Function;
     if (isp5Function) {
       const originalFn = fn[functionName];
