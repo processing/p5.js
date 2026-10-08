@@ -1100,6 +1100,71 @@ visualSuite('WebGL', function () {
         screenshot();
       }
     );
+    visualTest(
+      'computeNormals(SMOOTH) preserves smooth normals',
+      function (p5, screenshot) {
+        p5.createCanvas(100, 100, p5.WEBGL);
+        p5.noiseSeed(0);
+        const geom = p5.buildGeometry(() => {
+          const verticesPerRing = 20;
+          const rings = 20;
+
+          for (let ring = 0; ring < rings - 1; ring++) {
+            p5.beginShape(p5.QUAD_STRIP);
+
+            for (let i = 0; i <= verticesPerRing; i++) {
+              for (const ringOffset of [0, 1]) {
+                const y = p5.map(
+                  ring + ringOffset,
+                  0,
+                  rings,
+                  40,
+                  -40
+                );
+                const angle = p5.map(
+                  i,
+                  0,
+                  verticesPerRing,
+                  0,
+                  p5.TWO_PI
+                );
+
+                const position = p5.createVector(40, 0).rotate(angle);
+
+                const radius = p5.noise(
+                  200 + position.x * 0.01,
+                  200 + y * 0.01,
+                  200 + position.y * 0.01
+                );
+
+                const squishedPosition = p5.createVector(
+                  position.x * radius,
+                  y,
+                  position.y * radius
+                );
+
+                p5.vertex(
+                  squishedPosition.x,
+                  squishedPosition.y,
+                  squishedPosition.z
+                );
+              }
+            }
+
+            p5.endShape();
+          }
+        });
+
+        geom.computeNormals(p5.SMOOTH);
+
+        p5.background(255);
+        p5.normalMaterial();
+        p5.rotateY(0.5);
+        p5.model(geom);
+
+        screenshot();
+      }
+    );
   });
 
   visualSuite('font data', () => {
