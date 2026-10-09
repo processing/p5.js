@@ -400,11 +400,7 @@ class p5 {
       this._removeAbortController.abort();
 
       // remove DOM elements created by p5
-      for (const e of this._elements) {
-        if (e.elt && e.elt.parentNode) {
-          e.elt.parentNode.removeChild(e.elt);
-        }
-      }
+      this._elements.slice().forEach(e => e.remove());
 
       // Run `remove` hooks
       await this._runLifecycleHook('remove');

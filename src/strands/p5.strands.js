@@ -6,6 +6,7 @@
 
 import { transpileStrandsToJS } from './strands_transpiler';
 import { BlockType } from './ir_types';
+import * as FES from './strands_FES';
 
 import { createDirectedAcyclicGraph } from './ir_dag';
 import {
@@ -23,6 +24,7 @@ import {
   createStrandsShaderNameMap,
   createStrandsShaderNameState
 } from './strands_names';
+import { warnExperimental } from '../core/experimental';
 
 function strands(p5, fn) {
   // Whether or not strands callbacks should be forced to be executed in global mode.
@@ -63,6 +65,7 @@ function strands(p5, fn) {
    * @property {Map} sharedVariables Shared variable metadata that tracks vertex/fragment usage to decide whether each variable becomes a local declaration or a varying.
    * @property {Object} activeHook Hook currently being recorded, if any.
    * @property {Boolean} _instanceIDUsedInFragment Whether fragment-stage code referenced `instanceID`, requiring it to be passed from the vertex shader to the fragment shader.
+   * @property {Set} experimentalFeaturesUsed Experimental subject areas used inside the callback, warned about once FES is restored after the pass.
    */
 
   /**
@@ -129,6 +132,9 @@ function strands(p5, fn) {
     ctx.sharedVariables = new Map();
     ctx.activeHook = undefined;
     ctx._instanceIDUsedInFragment = false;
+    // Experimental subject areas used inside the callback, warned about once
+    // the pass is done since FES is switched off while it runs (see below).
+    ctx.experimentalFeaturesUsed = new Set();
     if (active) {
       p5.disableFriendlyErrors = true;
     }
@@ -165,6 +171,7 @@ function strands(p5, fn) {
     ctx.sharedVariables = new Map();
     ctx.activeHook = undefined;
     ctx._instanceIDUsedInFragment = false;
+    ctx.experimentalFeaturesUsed = new Set();
   }
 
   /**
@@ -298,6 +305,12 @@ function strands(p5, fn) {
           strandsCallback();
         }
         if (options.hook) strandsContext.renderer._pInst[options.hook].end();
+        if (strandsContext.activeHook) {
+          FES.userError(
+            'scope error',
+            `It looks like ${strandsContext.activeHook._publicName}.begin() was called without a matching ${strandsContext.activeHook._publicName}.end().`
+          );
+        }
         popBlock(strandsContext.cfg);
 
         // 3. Generate shader code hooks object from the IR
@@ -319,8 +332,15 @@ function strands(p5, fn) {
       for (const key in graphicsOverrides) {
         p5.Graphics[key] = graphicsOverrides[key];
       }
+      // FES is switched off while the callback runs, so experimental features
+      // used inside it can't warn on the spot. They record their subject area
+      // instead, and we warn once FES has been restored by deinit below.
+      const experimentalFeaturesUsed = [...strandsContext.experimentalFeaturesUsed];
       // Reset the strands runtime context
       deinitStrandsContext(strandsContext);
+      for (const subjectArea of experimentalFeaturesUsed) {
+        warnExperimental(p5, this._renderer?._pInst, subjectArea);
+      }
     }
   };
 }
