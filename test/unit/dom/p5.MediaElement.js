@@ -245,22 +245,64 @@ suite('p5.MediaElement', () => {
     });
   });
 
-  suite('p5.MediaElement.copy', function () {
-    beforeAll(() => {
-      globalThis.p5 = { prototype: mockP5Prototype };
-    });
-
-    afterAll(() => {
-      delete globalThis.p5;
+  suite('p5.MediaElement pixel and canvas operations (ESM / without global p5)', function () {
+    afterEach(function () {
       document.body.innerHTML = '';
     });
 
-    test('should not throw an error', function () {
+    test('should not require globalThis.p5 to be defined', function () {
+      assert.isUndefined(globalThis.p5);
+    });
+
+    test('loadPixels() should not throw ReferenceError when p5 is not in global scope', function () {
+      const testElement = mockP5Prototype.createVideo(
+        '/test/unit/assets/nyan_cat.gif'
+      );
+      assert.doesNotThrow(() => {
+        testElement.loadPixels();
+      });
+      assert.isDefined(testElement.pixels);
+    });
+
+    test('get() and _getPixel() should not throw ReferenceError when p5 is not in global scope', function () {
+      const testElement = mockP5Prototype.createVideo(
+        '/test/unit/assets/nyan_cat.gif'
+      );
+      assert.doesNotThrow(() => {
+        testElement.get();
+        testElement.get(0, 0);
+        testElement._getPixel(0, 0);
+      });
+    });
+
+    test('set() and updatePixels() should not throw ReferenceError when p5 is not in global scope', function () {
+      const testElement = mockP5Prototype.createVideo(
+        '/test/unit/assets/nyan_cat.gif'
+      );
+      testElement.elt.width = 10;
+      testElement.elt.height = 10;
+      testElement.loadedmetadata = true;
+      assert.doesNotThrow(() => {
+        testElement.set(0, 0, [255, 0, 0, 255]);
+        testElement.updatePixels();
+      });
+    });
+
+    test('copy() should not throw ReferenceError when p5 is not in global scope', function () {
       const testElement = mockP5Prototype.createVideo(
         '/test/unit/assets/nyan_cat.gif'
       );
       assert.doesNotThrow(() => {
         testElement.copy(0, 0, 10, 10, 0, 0, 10, 10);
+      });
+    });
+
+    test('mask() should not throw ReferenceError when p5 is not in global scope', function () {
+      const testElement = mockP5Prototype.createVideo(
+        '/test/unit/assets/nyan_cat.gif'
+      );
+      assert.doesNotThrow(() => {
+        testElement.mask(testElement);
       });
     });
   });
