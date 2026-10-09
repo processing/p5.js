@@ -121,7 +121,6 @@ function strands(p5, fn) {
     ctx.active = active;
     ctx.renderer = renderer;
     ctx.baseShader = baseShader;
-    ctx.previousFES = p5.disableFriendlyErrors;
     ctx.windowOverrides = {};
     ctx.fnOverrides = {};
     ctx.graphicsOverrides = {};
@@ -136,7 +135,7 @@ function strands(p5, fn) {
     // the pass is done since FES is switched off while it runs (see below).
     ctx.experimentalFeaturesUsed = new Set();
     if (active) {
-      p5.disableFriendlyErrors = true;
+      p5._isStrandsContextActive = true;
     }
   }
 
@@ -160,7 +159,6 @@ function strands(p5, fn) {
     ctx.active = false;
     ctx.renderer = null;
     ctx.baseShader = null;
-    ctx.previousFES = p5.disableFriendlyErrors;
     ctx.windowOverrides = {};
     ctx.fnOverrides = {};
     ctx.graphicsOverrides = {};
@@ -181,7 +179,7 @@ function strands(p5, fn) {
    * @param {StrandsContext} ctx The strands context object.
    */
   function deinitStrandsContext(ctx) {
-    p5.disableFriendlyErrors = ctx.previousFES;
+    p5._isStrandsContextActive = false;
     for (const key in ctx.windowOverrides) {
       window[key] = ctx.windowOverrides[key];
     }

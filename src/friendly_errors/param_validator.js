@@ -17,6 +17,7 @@ let documentationData = dataDoc;
 function validateParams(p5, fn, lifecycles) {
   // Cache for Zod schemas
   let schemaRegistry = new Map();
+  let strandsSchemaRegistry = new Map();
 
   // Mapping names of p5 types to their constructor functions.
   // p5Constructors:
@@ -199,6 +200,17 @@ function validateParams(p5, fn, lifecycles) {
       // For primitive types and web API objects.
       else if (schemaMap[baseType]) {
         typeSchema = schemaMap[baseType];
+        if (
+          p5._isStrandsContextActive &&
+          ['Number', 'Integer', 'Boolean', 'String'].includes(baseType)
+        ) {
+          typeSchema = z.union([
+            typeSchema,
+            z.custom(val => val && val.isStrandsNode, {
+              message: 'Expected StrandsNode'
+            })
+          ]);
+        }
       }
       // Tuple types
       else if (
@@ -614,11 +626,30 @@ function validateParams(p5, fn, lifecycles) {
       };
     }
 
-    let funcSchemas = schemaRegistry.get(func);
+    let activeRegistry = p5._isStrandsContextActive ? strandsSchemaRegistry : schemaRegistry;
+    let funcSchemas = activeRegistry.get(func);
+    
     if (!funcSchemas) {
-      funcSchemas = generateZodSchemasForFunc(func);
+      // Convention-based bypass for shader builder entry-point functions.
+      // All p5 shader builders follow the build*Shader naming convention
+      // (buildMaterialShader, buildComputeShader, etc.). They are called
+      // BEFORE the strands context activates and handle their own validation
+      // and error reporting internally (e.g. "only available with WebGPU").
+      if (/^build\w+Shader$/.test(func) && p5._isStrandsContextActive) {
+        funcSchemas = z.any();
+      }
+      // Check _strandsSignatures for explicit bypass entries (value === true)
+      // regardless of strands context, or array-based overload schemas that
+      // only apply inside an active strands context.
+      else if (p5._isStrandsContextActive && p5._strandsSignatures?.has(func)) {
+        funcSchemas = z.any();
+      }
+      
+      if (!funcSchemas) {
+        funcSchemas = generateZodSchemasForFunc(func);
+      }
       if (!funcSchemas) return;
-      schemaRegistry.set(func, funcSchemas);
+      activeRegistry.set(func, funcSchemas);
     }
 
     try {
