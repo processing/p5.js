@@ -16,7 +16,7 @@ export const _globalInit = () => {
   // Could have been any property defined within the p5 constructor.
   // If that property is already a part of the global object,
   // this code has already run before, likely due to a duplicate import
-  if (typeof window._setupDone !== 'undefined') {
+  if (typeof window.p5 !== 'undefined') {
     console.warn(
       'p5.js seems to have been imported multiple times. Please remove the duplicate import'
     );
