@@ -1512,6 +1512,93 @@ visualSuite('WebGL', function () {
       screenshot();
     });
 
+    visualTest(
+      'paletteLerp() maps texCoord through a multi-stop gradient in a filter',
+      (p5, screenshot) => {
+        p5.createCanvas(50, 50, p5.WEBGL);
+        const shader = p5.baseFilterShader().modify(
+          () => {
+            p5.filterColor.begin();
+            p5.filterColor.set(
+              p5.paletteLerp(
+                [
+                  [[1, 0, 0, 1], 0.0],
+                  [[1, 1, 0, 1], 0.33],
+                  [[0, 1, 0, 1], 0.66],
+                  [[0, 0, 1, 1], 1.0]
+                ],
+                p5.filterColor.texCoord.x
+              )
+            );
+            p5.filterColor.end();
+          },
+          { p5 }
+        );
+        p5.background(220);
+        p5.filter(shader);
+        screenshot();
+      }
+    );
+
+    visualTest(
+      'paletteLerp() handles uneven stop positions and more than 4 stops',
+      (p5, screenshot) => {
+        p5.createCanvas(50, 50, p5.WEBGL);
+        const shader = p5.baseFilterShader().modify(
+          () => {
+            p5.filterColor.begin();
+            // Stops bunched toward the right, with flat regions on either end
+            p5.filterColor.set(
+              p5.paletteLerp(
+                [
+                  [[0, 0, 0, 1], 0.2],
+                  [[1, 0, 0, 1], 0.4],
+                  [[1, 0.5, 0, 1], 0.55],
+                  [[1, 1, 0, 1], 0.65],
+                  [[1, 1, 1, 1], 0.8]
+                ],
+                p5.filterColor.texCoord.x
+              )
+            );
+            p5.filterColor.end();
+          },
+          { p5 }
+        );
+        p5.background(220);
+        p5.filter(shader);
+        screenshot();
+      }
+    );
+
+    visualTest(
+      'paletteLerp() can be driven by a different input than texCoord.x',
+      (p5, screenshot) => {
+        p5.createCanvas(50, 50, p5.WEBGL);
+        const shader = p5.baseFilterShader().modify(
+          () => {
+            p5.filterColor.begin();
+            // Diagonal gradient between two stops
+            const uv = p5.filterColor.texCoord;
+            const t = (uv.x + uv.y) / 2;
+            p5.filterColor.set(
+              p5.paletteLerp(
+                [
+                  [[0.1, 0.1, 0.5, 1], 0.0],
+                  [[1, 0.8, 0.2, 1], 1.0]
+                ],
+                t
+              )
+            );
+            p5.filterColor.end();
+          },
+          { p5 }
+        );
+        p5.background(220);
+        p5.filter(shader);
+        screenshot();
+      }
+    );
+
     visualTest('random() colors a basic shader', (p5, screenshot) => {
       p5.createCanvas(50, 50, p5.WEBGL);
       const shader = p5.baseColorShader().modify(

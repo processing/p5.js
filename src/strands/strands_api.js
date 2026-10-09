@@ -800,12 +800,13 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
       const one  = p5.strandsNode(1.0);
       const num  = t.sub(pa);
       const den  = pb.sub(pa);
-      const localT = num.div(den).clamp(zero, one);
+      // mix and clamp are builtin functions, not methods on strands nodes
+      const localT = fn.clamp(num.div(den), zero, one);
       return buildTernary(
         strandsContext,
         pa.equalTo(pb),   // guard: pa == pb → return midpoint
-        ca.mix(cb, p5.strandsNode(0.5)),
-        ca.mix(cb, localT)
+        fn.mix(ca, cb, p5.strandsNode(0.5)),
+        fn.mix(ca, cb, localT)
       );
     }
 

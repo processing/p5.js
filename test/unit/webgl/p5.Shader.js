@@ -769,6 +769,188 @@ suite('p5.Shader', function () {
       assert.approximately(middle[0], 128, 10);
       assert.approximately(right[0], 204, 10);
     });
+    test('paletteLerp() blends between multiple stops', () => {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+      const testShader = myp5.baseMaterialShader().modify(
+        () => {
+          myp5.getPixelInputs(inputs => {
+            inputs.color = myp5.paletteLerp(
+              [
+                [[1, 0, 0, 1], 0.0],
+                [[0, 1, 0, 1], 0.5],
+                [[0, 0, 1, 1], 1.0]
+              ],
+              inputs.texCoord.x
+            );
+            return inputs;
+          });
+        },
+        { myp5 }
+      );
+
+      myp5.noStroke();
+      myp5.shader(testShader);
+      myp5.plane(myp5.width, myp5.height);
+
+      const left = myp5.get(1, 25);
+      const middle = myp5.get(25, 25);
+      const right = myp5.get(48, 25);
+      // Near the first stop: mostly red
+      assert.isAbove(left[0], 200);
+      assert.isBelow(left[2], 40);
+      // At the middle stop: mostly green
+      assert.isAbove(middle[1], 220);
+      assert.isBelow(middle[0], 40);
+      assert.isBelow(middle[2], 40);
+      // Near the last stop: mostly blue
+      assert.isAbove(right[2], 200);
+      assert.isBelow(right[0], 40);
+    });
+
+    test('paletteLerp() supports more than 4 stops', () => {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+      // Array literals normally have to be 2-4 elements long since they
+      // become vectors, but the stops list must not be treated that way.
+      const testShader = myp5.baseMaterialShader().modify(
+        () => {
+          myp5.getPixelInputs(inputs => {
+            inputs.color = myp5.paletteLerp(
+              [
+                [[1, 0, 0, 1], 0.0],
+                [[1, 1, 0, 1], 0.25],
+                [[0, 1, 0, 1], 0.5],
+                [[0, 1, 1, 1], 0.75],
+                [[0, 0, 1, 1], 1.0]
+              ],
+              inputs.texCoord.x
+            );
+            return inputs;
+          });
+        },
+        { myp5 }
+      );
+      expect(() => {
+        myp5.noStroke();
+        myp5.shader(testShader);
+        myp5.plane(myp5.width, myp5.height);
+      }).not.toThrowError();
+    });
+
+    test('paletteLerp() clamps t outside of the first and last stops', () => {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+      const testShader = myp5.baseMaterialShader().modify(
+        () => {
+          myp5.getPixelInputs(inputs => {
+            // Stops only cover the middle of the 0-1 range
+            inputs.color = myp5.paletteLerp(
+              [
+                [[1, 0, 0, 1], 0.3],
+                [[0, 0, 1, 1], 0.7]
+              ],
+              inputs.texCoord.x
+            );
+            return inputs;
+          });
+        },
+        { myp5 }
+      );
+
+      myp5.noStroke();
+      myp5.shader(testShader);
+      myp5.plane(myp5.width, myp5.height);
+
+      const left = myp5.get(1, 25);
+      const right = myp5.get(48, 25);
+      assert.approximately(left[0], 255, 10);
+      assert.approximately(left[2], 0, 10);
+      assert.approximately(right[0], 0, 10);
+      assert.approximately(right[2], 255, 10);
+    });
+
+    test('paletteLerp() shows an error for malformed stops', () => {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+      const makeShader = stops =>
+        myp5.baseMaterialShader().modify(
+          () => {
+            myp5.getPixelInputs(inputs => {
+              inputs.color = myp5.paletteLerp(stops, inputs.texCoord.x);
+              return inputs;
+            });
+          },
+          { myp5, stops }
+        );
+      // Not enough stops
+      expect(() => makeShader([[[1, 0, 0, 1], 0]])).toThrowError(/2.8/);
+      // A stop that isn't a [color, position] pair
+      expect(() =>
+        makeShader([[[1, 0, 0, 1], 0], [[0, 0, 1, 1]]])
+      ).toThrowError(/2-element array/);
+    });
+
+    test('argTypes keeps declared array levels as arrays', () => {
+      myp5.createCanvas(5, 5, myp5.WEBGL);
+      let received;
+      // A stand-in for a function that wants a list of [value, number]
+      // pairs. The outer list and the pairs are plain arrays, but
+      // anything nested any deeper should still become a vector.
+      p5.prototype.testArgTypesFn = function (stops) {
+        received = stops;
+      };
+      p5.prototype.testArgTypesFn.argTypes = [
+        {
+          type: 'Array',
+          subtype: {
+            type: 'Array',
+            subtype: 'any'
+          }
+        }
+      ];
+      try {
+        myp5.baseMaterialShader().modify(
+          () => {
+            myp5.getPixelInputs(inputs => {
+              myp5.testArgTypesFn([
+                [[1, 0, 0], 0],
+                [[0, 0, 1], 1]
+              ]);
+              return inputs;
+            });
+          },
+          { myp5 }
+        );
+      } finally {
+        delete p5.prototype.testArgTypesFn;
+      }
+
+      assert.isArray(received);
+      assert.lengthOf(received, 2);
+      for (const pair of received) {
+        // The pair is still a plain array...
+        assert.isArray(pair);
+        assert.lengthOf(pair, 2);
+        // ...but the color inside it has been turned into a vector
+        assert.isFalse(Array.isArray(pair[0]));
+        assert.isTrue(pair[0].isStrandsNode);
+        assert.strictEqual(pair[0].dimension, 3);
+      }
+    });
+
+    test('arrays outside of argTypes arguments still become vectors', () => {
+      myp5.createCanvas(5, 5, myp5.WEBGL);
+      // More than 4 elements would be an error if this were a vector
+      expect(() => {
+        myp5.baseMaterialShader().modify(
+          () => {
+            myp5.getPixelInputs(inputs => {
+              const tooLong = [1, 2, 3, 4, 5];
+              inputs.color = [tooLong, 0, 0, 1];
+              return inputs;
+            });
+          },
+          { myp5 }
+        );
+      }).toThrowError(/2-4 elements/);
+    });
     test('color() with hex string returns correct vec4 in strands', () => {
       myp5.createCanvas(50, 50, myp5.WEBGL);
       const testShader = myp5.baseMaterialShader().modify(
