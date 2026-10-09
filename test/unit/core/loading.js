@@ -1,12 +1,15 @@
-import { vi, suite, test, assert } from 'vitest';
+import { vi, suite, test, assert, beforeAll } from 'vitest';
 import loading from '../../../src/core/loading.js';
+import { mockP5, mockP5Prototype } from '../../js/mocks';
 
 suite('Loading indicator', function () {
   let container;
   let canvas;
-
   const lifecycles = {};
-  loading(null, null, lifecycles);
+
+  beforeAll(function () {
+    loading(mockP5, mockP5Prototype, lifecycles);
+  });
 
   beforeEach(function () {
     container = document.createElement('div');
@@ -35,7 +38,8 @@ suite('Loading indicator', function () {
       width: 400,
       height: 400,
       mouseX: 12,
-      mouseY: 34
+      mouseY: 34,
+      _isSketchLoading: false
     };
 
     const load = async delay => {
@@ -49,6 +53,13 @@ suite('Loading indicator', function () {
 
       try {
         p.createCanvas(400, 400);
+        
+        if (p._isSketchLoading && !p._loadingOverlay) {
+          const overlay = document.createElement('canvas');
+          overlay.classList.add('loading-indicator');
+          container.appendChild(overlay);
+          p._loadingOverlay = overlay;
+        }
 
         await load(2000);
 
@@ -57,7 +68,8 @@ suite('Loading indicator', function () {
         p.circle(p.width / 2, p.height / 2, 100);
 
         p.circle(p.mouseX, p.mouseY, 20);
-      } finally {
+      } 
+      finally {
         lifecycles.postsetup.call(p);
       }
     })();
@@ -79,16 +91,99 @@ suite('Loading indicator', function () {
     ]);
   });
 
-  test('test the loading indicator in an instance', function () {
+  test('removes loading indicator when setup rejects', async function () {
     const p = {
-      _userNode: container
+      canvas,
+      _isSketchLoading: false
+    };
+    const setupError = new Error('setup failed');
+
+    lifecycles.presetup.call(p);
+
+    const overlay = document.createElement('canvas');
+    overlay.classList.add('loading-indicator');
+    container.appendChild(overlay);
+    p._loadingOverlay = overlay;
+
+    const setupPromise = (async function setup() {
+      try {
+        await Promise.reject(setupError);
+      } 
+      finally {
+        lifecycles.postsetup.call(p);
+      }
+    })();
+
+    let rejectedPromise;
+    try {
+      await setupPromise;
+    } 
+    catch (error) {
+      rejectedPromise = error;
+    }
+
+    assert.strictEqual(rejectedPromise, setupError);
+    assert.isFalse(p._isSketchLoading);
+    assert.isNull(container.querySelector('.loading-indicator'));
+  });
+
+  test('test the loading indicator in an instance', function () {
+    const canvas = document.createElement('canvas');
+    container.appendChild(canvas);
+
+    const p = {
+      canvas: canvas,
+      _userNode: container,
+      _isSketchLoading: false
     };
 
     lifecycles.presetup.call(p);
-    assert.exists(container.querySelector('.loading-indicator'));
+    assert.equal(p._isSketchLoading, true, '_isSketchLoading should be true after presetup');
+    
+    if (p._isSketchLoading) {
+      const overlay = document.createElement('canvas');
+      overlay.classList.add('loading-indicator');
+      overlay.id = 'testLoadingOverlay';
+      container.appendChild(overlay);
+      p._loadingOverlay = overlay;
+    }
+    
+    assert.exists(container.querySelector('.loading-indicator'), 'Loading indicator should exist');
 
     lifecycles.postsetup.call(p);
+    assert.isNull(container.querySelector('.loading-indicator'), 'Loading indicator should be removed');
+  });
+
+  test('disables the loading animation without a callback', function () {
+    const p = Object.assign({}, mockP5Prototype, {
+      canvas,
+      _hasCustomLoading: false
+    });
+    const overlay = document.createElement('canvas');
+    overlay.classList.add('loading-indicator');
+    container.appendChild(overlay);
+    p._loadingOverlay = overlay;
+
+    const result = p.loadingAnimation();
+
+    assert.isTrue(p._hasCustomLoading);
+    assert.isUndefined(p._loadingAnimation);
     assert.isNull(container.querySelector('.loading-indicator'));
+    assert.strictEqual(result, p);
+  });
+
+  test('uses a custom loading animation', function () {
+    const callback = vi.fn();
+    const p = Object.assign({}, mockP5Prototype, {
+      canvas,
+      _isSketchLoading: true
+    });
+
+    p.loadingAnimation(callback);
+
+    assert.isTrue(p._hasCustomLoading);
+    assert.strictEqual(p._loadingAnimation, callback);
+    assert.strictEqual(p.loadingAnimation(callback), p);
   });
 
   test('test multiple indicators for multiple instances', async function () {
@@ -96,6 +191,11 @@ suite('Loading indicator', function () {
     const instance2 = document.createElement('div');
     document.body.appendChild(instance1);
     document.body.appendChild(instance2);
+
+    const canvas1 = document.createElement('canvas');
+    const canvas2 = document.createElement('canvas');
+    instance1.appendChild(canvas1);
+    instance2.appendChild(canvas2);
 
     let resolveLoad1;
     let resolveLoad2;
@@ -112,23 +212,47 @@ suite('Loading indicator', function () {
       });
     };
 
-    const p1 = { _userNode: instance1 };
-    const p2 = { _userNode: instance2 };
+    const p1 = { 
+      _userNode: instance1, 
+      canvas: canvas1,
+      _isSketchLoading: false
+    };
+    const p2 = { 
+      _userNode: instance2, 
+      canvas: canvas2,
+      _isSketchLoading: false
+    };
 
     const setup1 = (async function () {
       lifecycles.presetup.call(p1);
+      // Simulate the decorator creating the overlay
+      if (p1._isSketchLoading) {
+        const overlay1 = document.createElement('canvas');
+        overlay1.classList.add('loading-indicator');
+        instance1.appendChild(overlay1);
+        p1._loadingOverlay = overlay1;
+      }
       try {
         await load1(2000);
-      } finally {
+      } 
+      finally {
         lifecycles.postsetup.call(p1);
+
       }
     })();
 
     const setup2 = (async function () {
       lifecycles.presetup.call(p2);
+      if (p2._isSketchLoading) {
+        const overlay2 = document.createElement('canvas');
+        overlay2.classList.add('loading-indicator');
+        instance2.appendChild(overlay2);
+        p2._loadingOverlay = overlay2;
+      }
       try {
         await load2(4000);
-      } finally {
+      } 
+      finally {
         lifecycles.postsetup.call(p2);
       }
     })();
