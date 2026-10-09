@@ -353,6 +353,16 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
       };
     }
   }
+
+  StrandsNode.prototype.pow = function (...right) {
+    const ctx = this.strandsContext || strandsContext;
+    const { id, dimension } = build.functionCallNode(
+      ctx,
+      'pow',
+      [this, ...right]
+    );
+    return createStrandsNode(id, dimension, ctx);
+  };
   //////////////////////////////////////////////
   // Unique Functions
   //////////////////////////////////////////////

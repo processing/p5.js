@@ -22,6 +22,8 @@ function replaceBinaryOperator(codeSource) {
       return 'div';
     case '%':
       return 'mod';
+    case '**':
+      return 'pow';
     case '==':
     case '===':
       return 'equalTo';
@@ -40,8 +42,11 @@ function replaceBinaryOperator(codeSource) {
       return 'and';
     case '||':
       return 'or';
-    // TODO: handle ** --> pow, but make it stay pow in
-    // GLSL instead of turning it back into **
+    default:
+      FES.userError(
+        'operator error',
+        `The operator '${codeSource}' is not supported in shader functions.`
+      );
   }
 }
 function nodeIsUniform(ancestor) {
@@ -49,10 +54,10 @@ function nodeIsUniform(ancestor) {
     ancestor &&
     ancestor.type === 'CallExpression' && // Global mode
     ((ancestor.callee?.type === 'Identifier' &&
-      ancestor.callee?.name.startsWith('uniform')) ||
+      ancestor.callee?.name?.startsWith('uniform')) ||
       // Instance mode
       (ancestor.callee?.type === 'MemberExpression' &&
-        ancestor.callee?.property.name.startsWith('uniform')))
+        ancestor.callee?.property?.name?.startsWith('uniform')))
   );
 }
 
@@ -109,12 +114,12 @@ function nodeIsVarying(node) {
     node &&
     node.type === 'CallExpression' && // Global mode
     ((node.callee?.type === 'Identifier' &&
-      (node.callee?.name.startsWith('varying') ||
-        node.callee?.name.startsWith('shared'))) ||
+      (node.callee?.name?.startsWith('varying') ||
+        node.callee?.name?.startsWith('shared'))) ||
       // Instance mode
       (node.callee?.type === 'MemberExpression' &&
-        (node.callee?.property.name.startsWith('varying') ||
-          node.callee?.property.name.startsWith('shared'))))
+        (node.callee?.property?.name?.startsWith('varying') ||
+          node.callee?.property?.name?.startsWith('shared'))))
   );
 }
 // Convert static member expressions into dotted paths such as
