@@ -126,4 +126,29 @@ suite('local storage', function () {
       assert.deepEqual(mockP5Prototype.getItem('extra'), 'stuff');
     });
   });
+
+  suite('storeItem and removeItem input validation', function () {
+    test('storeItem should return early without uncaught TypeError when key is not a string', function () {
+      mockP5Prototype.storeItem(42, 'test');
+      assert.strictEqual(mockP5Prototype.getItem('42'), null);
+      assert.strictEqual(localStorage.getItem('42'), null);
+    });
+
+    test('storeItem should return early and not store when key ends with p5TypeID', function () {
+      mockP5Prototype.storeItem('sampleKeyp5TypeID', 'val');
+      assert.strictEqual(mockP5Prototype.getItem('sampleKeyp5TypeID'), null);
+      assert.strictEqual(localStorage.getItem('sampleKeyp5TypeID'), null);
+    });
+
+    test('storeItem should return early and not store undefined values', function () {
+      mockP5Prototype.storeItem('undefinedValKey', undefined);
+      assert.strictEqual(mockP5Prototype.getItem('undefinedValKey'), null);
+      assert.strictEqual(localStorage.getItem('undefinedValKey'), null);
+    });
+
+    test('removeItem should return early without error when key is not a string', function () {
+      mockP5Prototype.removeItem(42);
+      mockP5Prototype.removeItem(null);
+    });
+  });
 });
