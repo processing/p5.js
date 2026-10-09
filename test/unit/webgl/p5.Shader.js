@@ -4126,6 +4126,254 @@ suite('p5.Shader', function () {
       assert.include(errMsg, 'float4');
     });
 
+    test('ordering comparison with a vector operand throws a clear strands type error', () => {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+
+      try {
+        myp5.baseMaterialShader().modify(
+          () => {
+            myp5.getFinalColor(color => {
+              if (color < 2) {
+                color = [1, 1, 1, 1];
+              }
+              return color;
+            });
+          },
+          { myp5 }
+        );
+      } catch {
+        /* expected */
+      }
+
+      assert.isAbove(
+        mockUserError.mock.calls.length,
+        0,
+        'FES.userError should have been called'
+      );
+      const errMsg = mockUserError.mock.calls[0][1];
+      assert.include(errMsg, '<');
+      assert.include(errMsg, 'only defined for scalars');
+      assert.include(errMsg, 'float4');
+      assert.include(errMsg, 'float1');
+    });
+
+    test('ordering comparison between scalars is allowed', () => {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+
+      myp5.baseMaterialShader().modify(
+        () => {
+          myp5.getFinalColor(color => {
+            if (color.r < 0.5) {
+              color = [1, 1, 1, 1];
+            }
+            return color;
+          });
+        },
+        { myp5 }
+      );
+
+      assert.equal(mockUserError.mock.calls.length, 0);
+    });
+
+    test('equality comparison between matching vectors is allowed', () => {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+
+      myp5.baseMaterialShader().modify(
+        () => {
+          myp5.getFinalColor(color => {
+            if (color.equalTo([1, 1, 1, 1])) {
+              color = [1, 1, 1, 1];
+            }
+            return color;
+          });
+        },
+        { myp5 }
+      );
+
+      assert.equal(mockUserError.mock.calls.length, 0);
+    });
+
+    test('logical and with non-boolean operands throws a clear strands type error', () => {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+
+      try {
+        myp5.baseMaterialShader().modify(
+          () => {
+            myp5.getFinalColor(color => {
+              if (color.r && color.g) {
+                color = [1, 1, 1, 1];
+              }
+              return color;
+            });
+          },
+          { myp5 }
+        );
+      } catch {
+        /* expected */
+      }
+
+      assert.isAbove(
+        mockUserError.mock.calls.length,
+        0,
+        'FES.userError should have been called'
+      );
+      const errMsg = mockUserError.mock.calls[0][1];
+      assert.include(errMsg, '&&');
+      assert.include(errMsg, 'requires two bool scalars');
+    });
+
+    test('logical and between two boolean scalars is allowed', () => {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+
+      myp5.baseMaterialShader().modify(
+        () => {
+          myp5.getFinalColor(color => {
+            if (color.r < 0.5 && color.g > 0.5) {
+              color = [1, 1, 1, 1];
+            }
+            return color;
+          });
+        },
+        { myp5 }
+      );
+
+      assert.equal(mockUserError.mock.calls.length, 0);
+    });
+
+    test('ordering comparison with a boolean operand throws a clear strands type error', () => {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+
+      try {
+        myp5.baseMaterialShader().modify(
+          () => {
+            myp5.getFinalColor(color => {
+              if (myp5.bool(true) < 0.5) {
+                color = [1, 1, 1, 1];
+              }
+              return color;
+            });
+          },
+          { myp5 }
+        );
+      } catch {
+        /* expected */
+      }
+
+      assert.isAbove(
+        mockUserError.mock.calls.length,
+        0,
+        'FES.userError should have been called'
+      );
+      const errMsg = mockUserError.mock.calls[0][1];
+      assert.include(errMsg, '<');
+      assert.include(errMsg, 'not defined for boolean values');
+    });
+
+    test('ordering comparison between two booleans throws a clear strands type error', () => {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+
+      try {
+        myp5.baseMaterialShader().modify(
+          () => {
+            myp5.getFinalColor(color => {
+              if (myp5.bool(true) > myp5.bool(false)) {
+                color = [1, 1, 1, 1];
+              }
+              return color;
+            });
+          },
+          { myp5 }
+        );
+      } catch {
+        /* expected */
+      }
+
+      assert.isAbove(
+        mockUserError.mock.calls.length,
+        0,
+        'FES.userError should have been called'
+      );
+      const errMsg = mockUserError.mock.calls[0][1];
+      assert.include(errMsg, '>');
+      assert.include(errMsg, 'not defined for boolean values');
+    });
+
+    test('equality comparison between boolean and numeric types throws a clear strands type error', () => {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+
+      try {
+        myp5.baseMaterialShader().modify(
+          () => {
+            myp5.getFinalColor(color => {
+              if (myp5.bool(true).equalTo(1.0)) {
+                color = [1, 1, 1, 1];
+              }
+              return color;
+            });
+          },
+          { myp5 }
+        );
+      } catch {
+        /* expected */
+      }
+
+      assert.isAbove(
+        mockUserError.mock.calls.length,
+        0,
+        'FES.userError should have been called'
+      );
+      const errMsg = mockUserError.mock.calls[0][1];
+      assert.include(errMsg, '==');
+      assert.include(errMsg, 'between boolean and numeric');
+    });
+
+    test('inequality comparison between numeric and boolean types throws a clear strands type error', () => {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+
+      try {
+        myp5.baseMaterialShader().modify(
+          () => {
+            myp5.getFinalColor(color => {
+              if (myp5.float(1.0).notEqual(myp5.bool(false))) {
+                color = [1, 1, 1, 1];
+              }
+              return color;
+            });
+          },
+          { myp5 }
+        );
+      } catch {
+        /* expected */
+      }
+
+      assert.isAbove(
+        mockUserError.mock.calls.length,
+        0,
+        'FES.userError should have been called'
+      );
+      const errMsg = mockUserError.mock.calls[0][1];
+      assert.include(errMsg, '!=');
+      assert.include(errMsg, 'between boolean and numeric');
+    });
+
+    test('equality comparison between two booleans is allowed', () => {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+
+      myp5.baseMaterialShader().modify(
+        () => {
+          myp5.getFinalColor(color => {
+            if (myp5.bool(true).equalTo(myp5.bool(false))) {
+              color = [1, 1, 1, 1];
+            }
+            return color;
+          });
+        },
+        { myp5 }
+      );
+
+      assert.equal(mockUserError.mock.calls.length, 0);
+    });
+
     test('shows a helpful error for web editor loop protection', () => {
       myp5.createCanvas(50, 50, myp5.WEBGL);
 
@@ -4165,6 +4413,116 @@ suite('p5.Shader', function () {
           { myp5 }
         );
       });
+    });
+
+    test('set() outside a hook block reports a scope error', () => {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+
+      try {
+        myp5.baseFilterShader().modify(
+          () => {
+            myp5.filterColor.begin();
+            myp5.filterColor.set([1, 0, 0, 1]);
+            myp5.filterColor.end();
+            myp5.filterColor.set([0, 1, 0, 1]);
+          },
+          { myp5 }
+        );
+      } catch {
+        /* expected */
+      }
+
+      const scopeCall = mockUserError.mock.calls.find(
+        call => call[0] === 'scope error' && call[1].includes('set()')
+      );
+      assert.isDefined(scopeCall, 'scope error should have been called');
+      assert.include(scopeCall[1], 'filterColor.set()');
+      assert.notInclude(scopeCall[1], 'getColor');
+    });
+
+    test('ending a value-returning hook without a value reports a scope error', () => {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+
+      try {
+        myp5.baseFilterShader().modify(
+          () => {
+            myp5.filterColor.begin();
+            myp5.filterColor.end();
+          },
+          { myp5 }
+        );
+      } catch {
+        /* expected */
+      }
+
+      const scopeCall = mockUserError.mock.calls.find(
+        call =>
+          call[0] === 'scope error' &&
+          call[1].includes('requires a value')
+      );
+      assert.isDefined(scopeCall, 'scope error should have been called');
+      assert.include(scopeCall[1], 'filterColor requires a value');
+      assert.include(
+        scopeCall[1],
+        'filterColor.set(value) before filterColor.end()'
+      );
+      assert.notInclude(scopeCall[1], 'getColor');
+    });
+
+    test('value-required error uses the hook\'s own public name', () => {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+
+      try {
+        myp5.baseMaterialShader().modify(
+          () => {
+            myp5.finalColor.begin();
+            myp5.finalColor.end();
+          },
+          { myp5 }
+        );
+      } catch {
+        /* expected */
+      }
+
+      const scopeCall = mockUserError.mock.calls.find(
+        call =>
+          call[0] === 'scope error' &&
+          call[1].includes('requires a value')
+      );
+      assert.isDefined(scopeCall, 'scope error should have been called');
+      assert.include(scopeCall[1], 'finalColor requires a value');
+      assert.include(
+        scopeCall[1],
+        'finalColor.set(value) before finalColor.end()'
+      );
+      assert.notInclude(scopeCall[1], 'getFinalColor');
+      assert.notInclude(scopeCall[1], 'filterColor');
+    });
+
+    test('missing end() reports a scope error', () => {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+
+      try {
+        myp5.baseFilterShader().modify(
+          () => {
+            myp5.filterColor.begin();
+            myp5.filterColor.set([1, 0, 0, 1]);
+          },
+          { myp5 }
+        );
+      } catch {
+        /* expected */
+      }
+      const scopeCall = mockUserError.mock.calls.find(
+        call =>
+          call[0] === 'scope error' &&
+          call[1].includes('without a matching')
+      );
+      assert.isDefined(scopeCall, 'scope error should have been called');
+      assert.include(
+        scopeCall[1],
+        'filterColor.begin() was called without a matching filterColor.end()'
+      );
     });
 
     test('scope error uses unprefixed hook name', () => {
