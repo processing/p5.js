@@ -14,7 +14,7 @@ const strs = {
 };
 
 // Parameterizing test cases by function ensures consistency in test parameters across all renderers.
-// Future tests should follow a similar format (e.g. TO_CONTOURS_CASES, etc)
+// Future tests should follow a similar format
 const TO_POINTS_CASES = [
   {label: "textToPoints() single word", str: strs.single, textSize: 20, sampleFactor: 0.5, points: 317, variance: 5, render: false},
   {label: "textToPoints() single word, 150pt", str: strs.single, textSize: 150, sampleFactor: 0.5, points: 2336, variance: 50, render: false},
@@ -30,6 +30,11 @@ const TO_MODEL_CASES = [
   {label: "textToModel() 10 words", str: strs.ten, textSize: 20, sampleFactor: 0.5, render: false},
   {label: "textToModel() paragraph", str: strs.paragraph, textSize: 20, sampleFactor: 0.5, render: false},
 ];
+
+const TO_CONTOURS_CASES = TO_POINTS_CASES.map((c) => ({
+  ...c,
+  label: c.label.replace("textToPoints()", "textToContours()"),
+}));
 
 async function bootstrap(w = 400, h = 400, renderer = undefined) {
   var myp5;
@@ -58,6 +63,16 @@ function drawPoints(myp5, points) {
     }
 }
 
+function drawContours(myp5, contours) {
+  for (let contour of contours) {
+    myp5.beginShape();
+    for (let pt of contour) {
+      myp5.vertex(pt.x, pt.y);
+    }
+    myp5.endShape(myp5.CLOSE);
+  }
+}
+
 const options = { iterations: 20, time: 500 };
 
 describe("Typography: bench 2D", function() {
@@ -71,6 +86,28 @@ describe("Typography: bench 2D", function() {
         assert.closeTo(points.length, testCase.points, testCase.variance);
         if (testCase.render) {
           drawPoints(myp5, points);
+        }
+      },
+      {
+        ...options,
+        setup: async () => {
+          ({myp5, font} = await bootstrap());
+          myp5.textSize(testCase.textSize);
+        },
+        teardown: () => myp5.remove()
+      }
+    );
+  }
+
+  for (let testCase of TO_CONTOURS_CASES) {
+    bench(
+      testCase.label,
+      async () => {
+        const contours = font.textToContours(testCase.str, 10, 20, { sampleFactor: testCase.sampleFactor });
+        const total = contours.reduce((n, c) => n + c.length, 0);
+        assert.closeTo(total, testCase.points, testCase.variance);
+        if (testCase.render) {
+          drawContours(myp5, contours);
         }
       },
       {
@@ -131,6 +168,28 @@ describe("Typography: bench WebGL", function() {
     );
   }
 
+  for (let testCase of TO_CONTOURS_CASES) {
+    bench(
+      testCase.label,
+      async () => {
+        const contours = font.textToContours(testCase.str, 10, 20, { sampleFactor: testCase.sampleFactor });
+        const total = contours.reduce((n, c) => n + c.length, 0);
+        assert.closeTo(total, testCase.points, testCase.variance);
+        if (testCase.render) {
+          drawContours(myp5, contours);
+        }
+      },
+      {
+        ...options,
+        setup: async () => {
+          ({myp5, font} = await bootstrap(400, 400, WEBGL));
+          myp5.textSize(testCase.textSize);
+        },
+        teardown: () => myp5.remove()
+      }
+    );
+  }
+
 });
 
 describe("Typography: bench WebGPU", function() {
@@ -166,6 +225,28 @@ describe("Typography: bench WebGPU", function() {
         assert.isAbove(model.vertices.length, 0);
         if (testCase.render) {
           myp5.model(model);
+        }
+      },
+      {
+        ...options,
+        setup: async () => {
+          ({myp5, font} = await bootstrap(400, 400, WEBGPU));
+          myp5.textSize(testCase.textSize);
+        },
+        teardown: () => myp5.remove()
+      }
+    );
+  }
+
+  for (let testCase of TO_CONTOURS_CASES) {
+    bench(
+      testCase.label,
+      async () => {
+        const contours = font.textToContours(testCase.str, 10, 20, { sampleFactor: testCase.sampleFactor });
+        const total = contours.reduce((n, c) => n + c.length, 0);
+        assert.closeTo(total, testCase.points, testCase.variance);
+        if (testCase.render) {
+          drawContours(myp5, contours);
         }
       },
       {
