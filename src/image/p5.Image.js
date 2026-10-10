@@ -925,6 +925,11 @@ class Image {
 
   _copyHelper(dstImage, srcImage, sx, sy, sw, sh, dx, dy, dw, dh) {
     const s = srcImage.canvas.width / srcImage.width;
+    // Scale the destination coordinates by the destination image's pixel
+    // density. The 2D context of a p5.Image has no density transform, so
+    // drawing with logical coordinates would only cover part of the canvas
+    // when the density is above 1.
+    const d = dstImage.canvas.width / dstImage.width;
     // adjust coord system for 3D when renderer
     // ie top-left = -width/2, -height/2
     let sxMod = 0;
@@ -958,10 +963,10 @@ class Image {
         s * (sy + syMod),
         s * sw,
         s * sh,
-        dx,
-        dy,
-        dw,
-        dh
+        d * dx,
+        d * dy,
+        d * dw,
+        d * dh
       );
     }
   }
