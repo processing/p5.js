@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200">
+  <rect x="0" y="0" width="200" height="200" fill="#c8c8c8"/>
+  <!-- small reference rect (no transform) -->
+  <rect x="10" y="10" width="30" height="30" fill="white" stroke="black" stroke-width="1"/>
+  <!-- same rect scaled up 2× from origin of the group -->
+  <g transform="translate(80,80) scale(2)">
+    <rect x="-15" y="-15" width="30" height="30" fill="white" stroke="black" stroke-width="0.5"/>
+  </g>
+</svg>

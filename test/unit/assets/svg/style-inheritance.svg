@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200">
+  <rect x="0" y="0" width="200" height="200" fill="#c8c8c8"/>
+  <!-- fill set on parent <g>; children inherit it unless they override -->
+  <g fill="#e74c3c" stroke="black" stroke-width="1">
+    <circle cx="60"  cy="70"  r="40"/>
+    <rect   x="110" y="30"   width="60" height="80"/>
+    <!-- this child overrides the inherited fill -->
+    <circle cx="100" cy="155" r="35" fill="#3498db"/>
+  </g>
+</svg>
