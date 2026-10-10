@@ -4376,5 +4376,35 @@ suite('p5.Shader', function () {
       assert.include(errMsg, 'begin()');
       assert.include(errMsg, 'end()');
     });
+    test('non-numeric value used directly (missing property access) shows a helpful hint', () => {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+
+      try {
+        myp5.baseFilterShader().modify(
+          () => {
+            myp5.filterColor.begin();
+            // Bug: should be myp5.filterColor.texCoord — using the hook
+            // object directly instead of a property on it.
+            const bad = myp5.filterColor * 30;
+            myp5.filterColor.set([bad, 0, 0, 1]);
+            myp5.filterColor.end();
+          },
+          { myp5 }
+        );
+      } catch {
+        /* expected */
+      }
+
+      assert.isAbove(
+        mockUserError.mock.calls.length,
+        0,
+        'FES.userError should have been called'
+      );
+      const errMsg = mockUserError.mock.calls[0][1];
+      assert.include(errMsg, 'non-numeric value');
+      assert.include(errMsg, 'rather than a property on it');
+      assert.include(errMsg, 'filterColor.texCoord');
+      assert.notInclude(errMsg, 'function(hookUserCallback)');
+    });
   });
 });
