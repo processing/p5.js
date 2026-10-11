@@ -77,6 +77,16 @@ suite('Validate Params', function () {
     }
   );
 
+  suite('validateParams: loadModel normalize overload', function () {
+    test('loadModel(): accepts a boolean normalize parameter', function () {
+      const result = mockP5Prototype._validate('p5.loadModel', [
+        'assets/model.obj',
+        true
+      ]);
+      assert.isTrue(result.success);
+    });
+  });
+
   suite('validateParams: constant as parameter', function () {
     const validInputs = [
       { name: 'BLEND, no friendly-err-msg', input: constants.BLEND },
