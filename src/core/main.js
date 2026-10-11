@@ -30,7 +30,7 @@ import * as constants from './constants';
  * @return {p5}                 a p5 instance
  */
 class p5 {
-  static disableLoadingIndicator = false;
+  static loadingAnimation = true;
   static VERSION = constants.VERSION;
   // This is a pointer to our global mode p5 instance, if we're in
   // global mode.
@@ -228,7 +228,16 @@ class p5 {
       }
     }
 
-    await this.#_setup();
+    try {
+      await this.#_setup();
+    } catch (error) {
+      // Ensure loading indicators are cleaned up if setup rejects before
+      // the normal postsetup lifecycle hook completes.
+      if (this._isSketchLoading) {
+        await this._runLifecycleHook('postsetup');
+      }
+      throw error;
+    }
     if (this.hitCriticalError) return;
     if (!this._recording) {
       this._draw();
