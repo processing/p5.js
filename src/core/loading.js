@@ -59,6 +59,10 @@ export default function loading(p5, fn, lifecycles) {
  * @param {p5} pInst The p5 instance.
  */
 function _createLoadingOverlay(pInst) {
+  if (pInst.constructor.disableLoadingIndicator) {
+    return;
+  }
+
   if (pInst._hasCustomLoading && typeof pInst._loadingAnimation !== 'function') {
     return;
   }

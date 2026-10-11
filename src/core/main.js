@@ -30,6 +30,7 @@ import * as constants from './constants';
  * @return {p5}                 a p5 instance
  */
 class p5 {
+  static disableLoadingIndicator = false;
   static VERSION = constants.VERSION;
   // This is a pointer to our global mode p5 instance, if we're in
   // global mode.
@@ -400,7 +401,10 @@ class p5 {
       this._removeAbortController.abort();
 
       // remove DOM elements created by p5
-      this._elements.slice().forEach(e => e.remove());
+      const elementsToRemove = this._elements.slice();
+      for (const e of elementsToRemove) {
+        e.remove();
+      }
 
       // Run `remove` hooks
       await this._runLifecycleHook('remove');
