@@ -5,13 +5,20 @@ import { mockP5, mockP5Prototype } from '../../js/mocks';
 suite('Loading indicator', function () {
   let container;
   let canvas;
+  let createCanvasDecorator;
   const lifecycles = {};
 
   beforeAll(function () {
+    mockP5.registerDecorator.mockImplementation((path, decorator) => {
+      if (path === 'p5.prototype.createCanvas') {
+        createCanvasDecorator = decorator;
+      }
+    });
     loading(mockP5, mockP5Prototype, lifecycles);
   });
 
   beforeEach(function () {
+    mockP5.loadingAnimation = true;
     container = document.createElement('div');
     canvas = document.createElement('canvas');
     container.appendChild(canvas);
@@ -19,12 +26,18 @@ suite('Loading indicator', function () {
   });
 
   afterEach(function () {
+    mockP5.loadingAnimation = true;
     if (container) {
       container.remove();
       container = null;
       canvas = null;
     }
   });
+
+  function callCreateCanvas(p) {
+    const createCanvas = createCanvasDecorator(function () {});
+    createCanvas.call(p);
+  }
 
   test('shows a loading indicator while async setup waits for load()', async function () {
     let loadTest;
@@ -53,13 +66,7 @@ suite('Loading indicator', function () {
 
       try {
         p.createCanvas(400, 400);
-        
-        if (p._isSketchLoading && !p._loadingOverlay) {
-          const overlay = document.createElement('canvas');
-          overlay.classList.add('loading-indicator');
-          container.appendChild(overlay);
-          p._loadingOverlay = overlay;
-        }
+        callCreateCanvas(p);
 
         await load(2000);
 
@@ -172,6 +179,19 @@ suite('Loading indicator', function () {
     assert.strictEqual(result, p);
   });
 
+  test('no loading overlay when loading animation is globally disabled', function () {
+    mockP5.loadingAnimation = false;
+    const p = {
+      canvas,
+      constructor: mockP5,
+      _isSketchLoading: true
+    };
+
+    callCreateCanvas(p);
+
+    assert.isNull(container.querySelector('.loading-indicator'));
+  });
+
   test('uses a custom loading animation', function () {
     const callback = vi.fn();
     const p = Object.assign({}, mockP5Prototype, {
@@ -180,10 +200,32 @@ suite('Loading indicator', function () {
     });
 
     p.loadingAnimation(callback);
+    callCreateCanvas(p);
 
     assert.isTrue(p._hasCustomLoading);
     assert.strictEqual(p._loadingAnimation, callback);
+    assert.isAbove(callback.mock.calls.length, 0);
+    assert.strictEqual(callback.mock.calls[0][0].canvas, p._loadingOverlay);
+    assert.strictEqual(callback.mock.calls[0][1], canvas.width);
+    assert.strictEqual(callback.mock.calls[0][2], canvas.height);
+    assert.strictEqual(callback.mock.calls[0][3], 0);
     assert.strictEqual(p.loadingAnimation(callback), p);
+  });
+
+  test('tests interactivity when loading indicator is active', function () {
+    const p = {
+      canvas,
+      _isSketchLoading: true
+    };
+
+    callCreateCanvas(p);
+
+    const overlay = p._loadingOverlay;
+    assert.exists(overlay);
+    assert.strictEqual(overlay.getContext('2d').canvas, overlay);
+    assert.strictEqual(overlay.style.pointerEvents, 'none');
+    assert.strictEqual(overlay.previousSibling, canvas);
+    assert.strictEqual(overlay.parentNode, canvas.parentNode);
   });
 
   test('test multiple indicators for multiple instances', async function () {

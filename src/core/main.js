@@ -230,9 +230,8 @@ class p5 {
 
     try {
       await this.#_setup();
-    } catch (error) {
-      // Ensure loading indicators are cleaned up if setup rejects before
-      // the normal postsetup lifecycle hook completes.
+    } 
+    catch (error) {
       if (this._isSketchLoading) {
         await this._runLifecycleHook('postsetup');
       }
