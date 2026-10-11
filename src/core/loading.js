@@ -37,7 +37,13 @@ export default function loading(p5, fn, lifecycles) {
   fn.loadingAnimation = function (callback) {
     this._hasCustomLoading = true;
     this._loadingAnimation = callback;
-    _removeLoadingOverlay(this);
+
+    // Calling without a callback disables the loading animation.
+    // A callback replaces the animation on the next frame.
+    if (typeof callback !== 'function') {
+      _removeLoadingOverlay(this);
+    }
+
     return this;
   };
 
