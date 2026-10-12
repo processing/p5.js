@@ -15,6 +15,40 @@ suite('p5.Geometry', function () {
     myp5.remove();
   });
 
+  suite('computeNormals', function () {
+    test('SMOOTH preserves vertices with different UVs', function () {
+      const geom = new p5.Geometry();
+
+      geom.vertices.push(
+        myp5.createVector(0, 0, 0),
+        myp5.createVector(1, 0, 0),
+        myp5.createVector(0, 1, 0),
+        myp5.createVector(0, 0, 0)
+      );
+
+      geom.uvs.push(
+        0, 0,
+        1, 0,
+        0, 1,
+        1, 1
+      );
+
+      geom.faces.push(
+        [0, 1, 2],
+        [3, 2, 1]
+      );
+
+      const originalVertexCount = geom.vertices.length;
+      const originalUvs = [...geom.uvs];
+
+      geom.computeNormals(myp5.SMOOTH);
+
+      expect(geom.vertices.length).toEqual(originalVertexCount);
+      expect(geom.uvs).toEqual(originalUvs);
+      expect(geom.vertexNormals[0]).toEqual(geom.vertexNormals[3]);
+    });
+  });
+
   suite('computeTangents', function () {
     test('a uv-mapped triangle gets a +u tangent with correct handedness',
       function () {

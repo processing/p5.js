@@ -675,6 +675,166 @@ visualSuite('WebGPU', function () {
         await screenshot();
       }
     );
+
+    visualSuite('p5.strands transforms', function () {
+      visualTest(
+        'mat2() takes 4 column-major values',
+        async function (p5, screenshot) {
+          await p5.createCanvas(50, 50, p5.WEBGPU);
+          const shader = p5.baseMaterialShader().modify(
+            () => {
+              p5.getWorldInputs(inputs => {
+                const m = p5.mat2(1, 0, 0.5, 1);
+                inputs.position.xy = m * inputs.position.xy;
+                return inputs;
+              });
+            },
+            { p5 }
+          );
+          p5.background(200);
+          p5.lights();
+          p5.noStroke();
+          p5.fill('red');
+          p5.shader(shader);
+          p5.plane(20, 20);
+          await screenshot();
+        }
+      );
+
+      visualTest(
+        'mat3() of a transform3D() drops the translation',
+        async function (p5, screenshot) {
+          await p5.createCanvas(50, 50, p5.WEBGPU);
+          const shader = p5.baseMaterialShader().modify(
+            () => {
+              p5.getWorldInputs(inputs => {
+                let t = p5.transform3D();
+                t = p5.translate(t, 10, 0, 0);
+                t = p5.rotateY(t, p5.PI / 4);
+                inputs.position = p5.mat3(t) * inputs.position;
+                return inputs;
+              });
+            },
+            { p5 }
+          );
+          p5.background(200);
+          p5.lights();
+          p5.noStroke();
+          p5.fill('red');
+          p5.shader(shader);
+          p5.box(20);
+          await screenshot();
+        }
+      );
+
+      visualTest(
+        'mat3x3() takes 3 column vectors',
+        async function (p5, screenshot) {
+          await p5.createCanvas(50, 50, p5.WEBGPU);
+          const shader = p5.baseMaterialShader().modify(
+            () => {
+              p5.getWorldInputs(inputs => {
+                const m = p5.mat3x3(
+                  p5.vec3(1, 0, 0),
+                  p5.vec3(0, 1, 0),
+                  p5.vec3(10, 0, 1)
+                );
+                inputs.position.xy = p5.transformPoint(m, inputs.position.xy);
+                return inputs;
+              });
+            },
+            { p5 }
+          );
+          p5.background(200);
+          p5.lights();
+          p5.noStroke();
+          p5.fill('red');
+          p5.shader(shader);
+          p5.plane(20, 20);
+          await screenshot();
+        }
+      );
+
+      visualTest(
+        'mat4() extends a 2D transform to 3D',
+        async function (p5, screenshot) {
+          await p5.createCanvas(50, 50, p5.WEBGPU);
+          const shader = p5.baseMaterialShader().modify(
+            () => {
+              p5.getWorldInputs(inputs => {
+                let t = p5.transform2D();
+                t = p5.scale(t, 1.5, 0.5);
+                const m = p5.mat4(t);
+                inputs.position = p5.transformPoint(m, inputs.position);
+                return inputs;
+              });
+            },
+            { p5 }
+          );
+          p5.background(200);
+          p5.lights();
+          p5.noStroke();
+          p5.fill('red');
+          p5.shader(shader);
+          p5.box(20);
+          await screenshot();
+        }
+      );
+
+      visualTest(
+        'translate() then rotate() turns the shape before moving it',
+        async function (p5, screenshot) {
+          await p5.createCanvas(50, 50, p5.WEBGPU);
+          const shader = p5.baseMaterialShader().modify(
+            () => {
+              p5.getWorldInputs(inputs => {
+                let t = p5.transform3D();
+                t = p5.translate(t, 10, 0, 0);
+                t = p5.rotate(t, p5.PI / 2);
+                inputs.position = p5.transformPoint(t, inputs.position);
+                return inputs;
+              });
+            },
+            { p5 }
+          );
+          p5.background(200);
+          p5.lights();
+          p5.noStroke();
+          p5.fill('red');
+          p5.shader(shader);
+          p5.box(20, 10, 10);
+          await screenshot();
+        }
+      );
+
+      visualTest(
+        'transformNormal() keeps a turned face lit',
+        async function (p5, screenshot) {
+          await p5.createCanvas(50, 50, p5.WEBGPU);
+          const shader = p5.baseMaterialShader().modify(
+            () => {
+              p5.getWorldInputs(inputs => {
+                let t = p5.transform3D();
+                t = p5.rotateY(t, p5.PI / 2);
+                inputs.position = p5.transformPoint(t, inputs.position);
+                inputs.normal = p5.transformNormal(t, inputs.normal);
+                return inputs;
+              });
+            },
+            { p5 }
+          );
+          p5.background(0);
+          // Only a head-on light, so the face turned to the front is lit only
+          // if its normal turned along with it.
+          p5.directionalLight(255, 255, 255, 0, 0, -1);
+          p5.noStroke();
+          p5.fill('white');
+          p5.shader(shader);
+          p5.box(20);
+          await screenshot();
+        }
+      );
+    });
   });
 
   visualTest(

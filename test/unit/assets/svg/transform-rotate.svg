@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200">
+  <!--
+    SVG element-level transform: rotate
+    Rect drawn at (-40,-25,80,50) inside translate(100,100) + rotate(45deg)
+  -->
+  <rect x="0" y="0" width="200" height="200" fill="rgb(200,200,200)"/>
+  <g transform="translate(100,100) rotate(45)">
+    <rect x="-40" y="-25" width="80" height="50" fill="white" stroke="black" stroke-width="1"/>
+  </g>
+</svg>
