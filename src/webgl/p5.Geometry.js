@@ -940,7 +940,7 @@ class Geometry {
    * number of decimal places to use for calculations. By default,
    * `roundToPrecision` uses 3 decimal places.
    *
-   * @param {(KEEP_CONNECTIONS|FLAT|SMOOTH)} [shadingType=KEEP_CONNECTIONS] shading type. Defaults to `KEEP_CONNECTIONS`. `FLAT` is deprecated.
+   * @param {(KEEP_CONNECTIONS|SMOOTH)} [shadingType=KEEP_CONNECTIONS] shading type. Defaults to `KEEP_CONNECTIONS`.
    * @param {Object} [options] shading options.
    * @chainable
    *

@@ -1140,13 +1140,13 @@ export const MIRROR = 'mirror';
 export const KEEP_CONNECTIONS = 'keep_connections';
 
 /**
- * @typedef {'flat'} FLAT
+ * @typedef {'keep_connections'} FLAT
  * @property {FLAT} FLAT
  * @final
  * @deprecated Use `KEEP_CONNECTIONS` instead. May be removed in p5.js 3.0.
  */
+export const FLAT = KEEP_CONNECTIONS;
 
-export const FLAT = 'flat';
 /**
  * @typedef {'smooth'} SMOOTH
  * @property {SMOOTH} SMOOTH
