@@ -6,9 +6,11 @@ import {
 } from '../../../src/dom/p5.MediaElement';
 import { Element } from '../../../src/dom/p5.Element';
 import { default as pixels } from '../../../src/image/pixels';
+import { default as p5Image } from '../../../src/image/p5.Image';
 
 suite('p5.MediaElement', () => {
   beforeAll(() => {
+    p5Image(mockP5, mockP5Prototype);
     media(mockP5, mockP5Prototype);
     pixels(mockP5, mockP5Prototype);
     navigator.mediaDevices.getUserMedia = vi
