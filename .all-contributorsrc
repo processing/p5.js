@@ -7630,6 +7630,15 @@
       "contributions": [
         "test"
       ]
+    },
+    {
+      "login": "michtesar",
+      "name": "Michael Tesař",
+      "avatar_url": "https://avatars.githubusercontent.com/u/16868864?v=4",
+      "profile": "https://github.com/michtesar",
+      "contributions": [
+        "test"
+      ]
     }
   ],
   "repoType": "github",
