@@ -1752,6 +1752,43 @@ suite('p5.Shader', function () {
         assert.approximately(rightPixel[2], 0, 5);
       });
 
+      test('retains earlier saved value when else branch updates original variable (issue #9265)', () => {
+        myp5.createCanvas(100, 50, myp5.WEBGL);
+        const testShader = myp5.baseMaterialShader().modify(
+          () => {
+            myp5.getPixelInputs(inputs => {
+              let color = myp5.float(0.2) + inputs.texCoord.x * 0.2;
+              const saved = color;
+
+              if (inputs.texCoord.x > 0.5) {
+                // Leave color unchanged.
+              } else {
+                color = color + 0.3;
+              }
+
+              inputs.color = [saved, color, 0, 1];
+              return inputs;
+            });
+          },
+          { myp5 }
+        );
+        myp5.noStroke();
+        myp5.shader(testShader);
+        myp5.plane(myp5.width, myp5.height);
+
+        const leftPixel = myp5.get(25, 25);
+        // texCoord.x ~ 0.25: saved ~ 0.25 (approx 64), color ~ 0.55 (approx 140)
+        assert.approximately(leftPixel[0], 64, 10);
+        assert.approximately(leftPixel[1], 140, 10);
+        assert.approximately(leftPixel[2], 0, 5);
+
+        const rightPixel = myp5.get(75, 25);
+        // texCoord.x ~ 0.75: saved ~ 0.35 (approx 89), color ~ 0.35 (approx 89)
+        assert.approximately(rightPixel[0], 89, 10);
+        assert.approximately(rightPixel[1], 89, 10);
+        assert.approximately(rightPixel[2], 0, 5);
+      });
+
       // Keep one direct API test for completeness
       test('handle direct StrandsIf API usage', () => {
         myp5.createCanvas(50, 50, myp5.WEBGL);
