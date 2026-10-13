@@ -774,42 +774,45 @@ class MediaElement extends Element {
   }
   loadPixels(...args) {
     this._ensureCanvas();
-    return p5.Renderer2D.prototype.loadPixels.apply(this, args);
+    return this._loadPixels(...args);
   }
   updatePixels(x, y, w, h) {
     if (this.loadedmetadata) {
       // wait for metadata
       this._ensureCanvas();
-      p5.Renderer2D.prototype.updatePixels.call(this, x, y, w, h);
+      this._updatePixels(x, y, w, h);
     }
     this.setModified(true);
     return this;
   }
   get(...args) {
     this._ensureCanvas();
-    return p5.Renderer2D.prototype.get.apply(this, args);
+    return this._get(...args);
   }
   _getPixel(...args) {
     this.loadPixels();
-    return p5.Renderer2D.prototype._getPixel.apply(this, args);
+    return this._imageGetPixel(...args);
   }
 
   set(x, y, imgOrCol) {
     if (this.loadedmetadata) {
       // wait for metadata
       this._ensureCanvas();
-      p5.Renderer2D.prototype.set.call(this, x, y, imgOrCol);
+      this._set(x, y, imgOrCol);
       this.setModified(true);
     }
   }
   copy(...args) {
     this._ensureCanvas();
-    p5.prototype.copy.apply(this, args);
+    if (args[0] && typeof args[0]._ensureCanvas === 'function') {
+      args[0]._ensureCanvas();
+    }
+    this._copy(...args);
   }
   mask(...args) {
     this.loadPixels();
     this.setModified(true);
-    p5.Image.prototype.mask.apply(this, args);
+    this._mask(...args);
   }
   /**
    * helper method for web GL mode to figure out if the element
@@ -1717,6 +1720,23 @@ function media(p5, fn) {
    * }
    */
   p5.MediaElement = MediaElement;
+
+  if (p5.Image) {
+    MediaElement.prototype._loadPixels = p5.Image.prototype.loadPixels;
+    MediaElement.prototype._updatePixels = p5.Image.prototype.updatePixels;
+    MediaElement.prototype._get = p5.Image.prototype.get;
+    MediaElement.prototype._imageGetPixel = p5.Image.prototype._getPixel;
+    MediaElement.prototype._set = p5.Image.prototype.set;
+    MediaElement.prototype._copy = p5.Image.prototype.copy;
+    MediaElement.prototype._copyHelper = p5.Image.prototype._copyHelper;
+    MediaElement.prototype._mask = p5.Image.prototype.mask;
+  } else if (p5.Renderer2D) {
+    MediaElement.prototype._loadPixels = p5.Renderer2D.prototype.loadPixels;
+    MediaElement.prototype._updatePixels = p5.Renderer2D.prototype.updatePixels;
+    MediaElement.prototype._get = p5.Renderer2D.prototype.get;
+    MediaElement.prototype._imageGetPixel = p5.Renderer2D.prototype._getPixel;
+    MediaElement.prototype._set = p5.Renderer2D.prototype.set;
+  }
 
   // Patch MediaElement to give it access to fn, which p5.sound may attach things to
   // if present in a sketch
