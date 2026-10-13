@@ -73,6 +73,9 @@ class RendererGL extends Renderer3D {
   constructor(pInst, w, h, isMainCanvas, elt) {
     super(pInst, w, h, isMainCanvas, elt);
 
+    this.rendererType = constants.WEBGL;
+    this._pInst.rendererType = this.rendererType;
+
     if (this.webglVersion === constants.WEBGL2) {
       this.blendExt = this.GL;
     } else {

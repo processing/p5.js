@@ -197,7 +197,7 @@ suite('Validate Params', function () {
       ]);
       assert.equal(
         result.error.toString(),
-        'Did you mean to put `await` before a loading function? An unexpected Promise was found. Expected Image or Element or Texture or Framebuffer or FramebufferTexture or Renderer or Graphics at the first parameter in p5.image().'
+        'Did you mean to put `await` before a loading function? An unexpected Promise was found. Expected Image or Element or Texture or Framebuffer or FramebufferTexture or Renderer or Graphics at the first parameter, but received Promise in p5.image().'
       );
     });
   });

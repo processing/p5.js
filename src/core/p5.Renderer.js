@@ -109,6 +109,9 @@ class Renderer {
     // constructor state when getSupportedIndividualVertexProperties()
     // is first consulted.
     this._supportsIndividualTextureCoordinates = undefined;
+
+    this.rendererType = constants.P2D;
+    this._pInst.rendererType = this.rendererType;
   }
 
   get currentShape() {

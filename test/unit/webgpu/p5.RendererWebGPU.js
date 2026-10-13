@@ -1,5 +1,6 @@
 import p5 from '../../../src/app.js';
 import rendererWebGPU from '../../../src/webgpu/p5.RendererWebGPU';
+import { vi } from 'vitest';
 
 p5.registerAddon(rendererWebGPU);
 
@@ -736,6 +737,119 @@ suite('WebGPU p5.RendererWebGPU', function () {
       expect(pixel[0]).to.equal(pixel[1]);
       expect(pixel[1]).to.equal(pixel[2]);
       expect(pixel[3]).to.equal(255);
+    });
+  });
+
+  suite('rendererType', function () {
+    test('reports WEBGPU after a WebGPU canvas is created', function () {
+      expect(myp5.rendererType).to.equal(myp5.WEBGPU);
+      expect(myp5._renderer.rendererType).to.equal(myp5.WEBGPU);
+    });
+
+    test('reports WEBGPU synchronously before context init resolves', function () {
+      const initStub = vi
+        .spyOn(p5.RendererWebGPU.prototype, '_initContext')
+        .mockImplementation(() => new Promise(() => {}));
+      myp5.rendererType = myp5.P2D;
+      let renderer = null;
+      try {
+        renderer = new p5.RendererWebGPU(myp5, 50, 50, false);
+        expect(renderer.rendererType).to.equal(myp5.WEBGPU);
+        expect(myp5.rendererType).to.equal(myp5.WEBGPU);
+      } finally {
+        initStub.mockRestore();
+        if (renderer) {
+          renderer.canvas.remove();
+        }
+        myp5.rendererType = myp5.WEBGPU;
+      }
+    });
+  });
+
+  suite('_initContext error detection', function () {
+    function bareRenderer() {
+      const renderer = Object.create(p5.RendererWebGPU.prototype);
+      renderer._pInst = myp5;
+      renderer._webgpuAttributes = {
+        forceFallbackAdapter: false,
+        powerPreference: 'high-performance'
+      };
+      renderer.canvas = document.createElement('canvas');
+      return renderer;
+    }
+
+    function stubGpu(impl) {
+      const descriptor = Object.getOwnPropertyDescriptor(navigator, 'gpu');
+      Object.defineProperty(navigator, 'gpu', {
+        value: impl,
+        configurable: true
+      });
+      return () => {
+        if (descriptor) {
+          Object.defineProperty(navigator, 'gpu', descriptor);
+        } else {
+          delete navigator.gpu;
+        }
+      };
+    }
+
+    test('throws a friendly error when WebGPU is not supported', async function () {
+      const restore = stubGpu(undefined);
+      try {
+        await expect(bareRenderer()._initContext()).rejects.toThrow(
+          /not supported by this browser/
+        );
+      } finally {
+        restore();
+      }
+    });
+
+    test('throws when no adapter is found', async function () {
+      const restore = stubGpu({
+        requestAdapter: vi.fn().mockResolvedValue(null)
+      });
+      try {
+        await expect(bareRenderer()._initContext()).rejects.toThrow(
+          /No compatible GPU/
+        );
+      } finally {
+        restore();
+      }
+    });
+
+    test('throws when no device can be created', async function () {
+      const restore = stubGpu({
+        requestAdapter: vi.fn().mockResolvedValue({
+          requestDevice: vi.fn().mockResolvedValue(null)
+        })
+      });
+      try {
+        await expect(bareRenderer()._initContext()).rejects.toThrow(
+          /device could not be created/
+        );
+      } finally {
+        restore();
+      }
+    });
+
+    test('throws when the canvas context cannot be created', async function () {
+      const restore = stubGpu({
+        requestAdapter: vi.fn().mockResolvedValue({
+          requestDevice: vi.fn().mockResolvedValue({})
+        })
+      });
+      const renderer = bareRenderer();
+      const getContextSpy = vi
+        .spyOn(renderer.canvas, 'getContext')
+        .mockReturnValue(null);
+      try {
+        await expect(renderer._initContext()).rejects.toThrow(
+          /drawing context could not be created/
+        );
+      } finally {
+        getContextSpy.mockRestore();
+        restore();
+      }
     });
   });
 });

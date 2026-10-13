@@ -556,6 +556,29 @@ function environment(p5, fn, lifecycles) {
   fn.webglVersion = C.P2D;
 
   /**
+   * A `String` variable with the renderer in use.
+   *
+   * `rendererType`'s value equals one of the following string constants:
+   *
+   * - `P2D` whose value is `'p2d'`. This is the default for 2D sketches.
+   * - `WEBGL` whose value is `'webgl'`.
+   * - `WEBGPU` whose value is `'webgpu'`.
+   *
+   * @property {(P2D|WEBGL|WEBGPU)} rendererType
+   * @readOnly
+   * @example
+   * function setup() {
+   *   background(200);
+   *
+   *   // Display the current renderer type.
+   *   text(rendererType, 42, 54);
+   *
+   *   describe('The text "p2d" written in black on a gray background.');
+   * }
+   */
+  fn.rendererType = C.P2D;
+
+  /**
    * A `Number` variable that stores the width of the screen display.
    *
    * `displayWidth` is useful for running full-screen programs. Its value
