@@ -11,8 +11,6 @@ import { Matrix } from '../math/p5.Matrix';
 import { PrimitiveToPath2DConverter } from '../shape/custom_shapes';
 import { DefaultFill, textCoreConstants } from '../type/textCore';
 
-const styleEmpty = 'rgba(0,0,0,0)';
-
 class Renderer2D extends Renderer {
   constructor(pInst, w, h, isMainCanvas, elt, attributes = {}) {
     super(pInst, w, h, isMainCanvas);
@@ -151,7 +149,7 @@ class Renderer2D extends Renderer {
     for (const savedKey in props) {
       try {
         this.drawingContext[savedKey] = props[savedKey];
-      } catch (err) {
+      } catch {
         // ignore read-only property errors
       }
     }
@@ -557,6 +555,7 @@ class Renderer2D extends Renderer {
       const height = imgOrCol.height;
       this.drawingContext.clearRect(x, y, width, height);
       this.drawingContext.drawImage(imgOrCol.canvas, x, y, width, height);
+      this.drawingContext.restore();
     } else {
       let r = 0,
         g = 0,

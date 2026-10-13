@@ -720,8 +720,7 @@ function utilityFunctions(p5, fn) {
    * }
    */
   fn.shuffle = function (arr, modify) {
-    const isView = ArrayBuffer && ArrayBuffer.isView && ArrayBuffer.isView(arr);
-    arr = modify || isView ? arr : arr.slice();
+    arr = modify ? arr : arr.slice();
 
     let rnd,
       tmp,

@@ -6,6 +6,7 @@ if (typeof Float32Array !== 'undefined') {
 }
 export class MatrixInterface {
   // Private field to store the matrix
+  /* oxlint-disable-next-line no-unused-private-class-members */
   #matrix = null;
   constructor(...args) {
     if (this.constructor === MatrixInterface) {

@@ -46,6 +46,15 @@ class p5 {
   // FES stub
   static _checkForUserDefinedFunctions = () => {};
   static _friendlyFileLoadError = () => {};
+  static _friendlyError = () => {};
+  static _checkForUserDefinedFunctions = () => {};
+  static FES = {
+    log: () => () => {},
+    warn: () => () => {},
+    error: () => () => {},
+    debug: () => () => {},
+    info: () => () => {}
+  };
 
   constructor(sketch, node) {
     // Apply addon defined decorations
@@ -385,11 +394,7 @@ class p5 {
       this._removeAbortController.abort();
 
       // remove DOM elements created by p5
-      for (const e of this._elements) {
-        if (e.elt && e.elt.parentNode) {
-          e.elt.parentNode.removeChild(e.elt);
-        }
-      }
+      this._elements.slice().forEach(e => e.remove());
 
       // Run `remove` hooks
       await this._runLifecycleHook('remove');
@@ -400,7 +405,7 @@ class p5 {
       for (const p in p5.prototype) {
         try {
           delete window[p];
-        } catch (x) {
+        } catch {
           window[p] = undefined;
         }
       }
@@ -408,7 +413,7 @@ class p5 {
         if (this.hasOwnProperty(p2)) {
           try {
             delete window[p2];
-          } catch (x) {
+          } catch {
             window[p2] = undefined;
           }
         }

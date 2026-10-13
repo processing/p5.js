@@ -1,13 +1,7 @@
 import p5 from '../../../src/app.js';
 import { server } from 'vitest/browser';
-import { THRESHOLD, DIFFERENCE, ERODE } from '../../../src/core/constants.js';
 const { readFile, writeFile } = server.commands;
 import pixelmatch from 'pixelmatch';
-
-// By how much can each color channel value (0-255) differ before
-// we call it a mismatch? This should be large enough to not trigger
-// based on antialiasing.
-const COLOR_THRESHOLD = 25;
 
 // The max side length to shrink test images down to before
 // comparing, for performance.

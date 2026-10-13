@@ -1,7 +1,7 @@
 import * as CFG from './ir_cfg';
 import * as DAG from './ir_dag';
 import { BlockType, NodeType } from './ir_types';
-import { StrandsNode, createStrandsNode } from './strands_node';
+import { createStrandsNode } from './strands_node';
 import { createPhiNode } from './strands_phi_utils';
 export class StrandsConditional {
   constructor(strandsContext, condition, branchCallback) {

@@ -1856,9 +1856,12 @@ export class Matrix extends MatrixInterface {
    * @chainable
    */
   #transpose3x3(mat3) {
-    if (mat3 === undefined) {
+    if (mat3 instanceof Matrix) {
+      mat3 = mat3.mat3;
+    } else if (mat3 === undefined) {
       mat3 = this.mat3;
     }
+
     const a01 = mat3[1];
     const a02 = mat3[2];
     const a12 = mat3[5];
@@ -2005,6 +2008,9 @@ export class Matrix extends MatrixInterface {
    * @return {Number} Determinant of our 4×4 matrix
    * @private
    */
+  // Kept private until the determinant API is made public; see the skipped
+  // 'Determinant' tests in test/unit/math/p5.Matrix.js.
+  // oxlint-disable-next-line no-unused-private-class-members
   #determinant4x4() {
     if (this.#sqDimention !== 4) {
       throw new Error(

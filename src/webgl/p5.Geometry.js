@@ -919,12 +919,20 @@ class Geometry {
    * <a href="#/p5.Geometry/vertexNormals">myGeometry.vertexNormals</a> array.
    *
    * The first parameter, `shadingType`, is optional. Passing the constant
-   * `FLAT`, as in `myGeometry.computeNormals(FLAT)`, provides neighboring
-   * faces with their own copies of the vertices they share. Surfaces appear
-   * tiled with flat shading. Passing the constant `SMOOTH`, as in
-   * `myGeometry.computeNormals(SMOOTH)`, makes neighboring faces reuse their
-   * shared vertices. Surfaces appear smoother with smooth shading. By
-   * default, `shadingType` is `FLAT`.
+   * `KEEP_CONNECTIONS`, as in `myGeometry.computeNormals(KEEP_CONNECTIONS)`,
+   * preserves the geometry's existing vertex connections. Each vertex normal
+   * is calculated by averaging the face normals of its connected faces.
+   * This may produce smooth transitions between connected faces rather
+   * than true flat shading.
+   *
+   * Passing the constant `SMOOTH`, as in
+   * `myGeometry.computeNormals(SMOOTH)`, calculates smooth normals by
+   * grouping vertices with approximately matching positions, without
+   * modifying the original vertices or their attributes.
+   *
+   * The constant `FLAT` is deprecated and behaves identically to
+   * `KEEP_CONNECTIONS`. It is retained for backward compatibility.
+   * By default, `shadingType` is `KEEP_CONNECTIONS`.
    *
    * The second parameter, `options`, is also optional. If an object with a
    * `roundToPrecision` property is passed, as in
@@ -932,7 +940,7 @@ class Geometry {
    * number of decimal places to use for calculations. By default,
    * `roundToPrecision` uses 3 decimal places.
    *
-   * @param {(FLAT|SMOOTH)} [shadingType=FLAT] shading type. either FLAT or SMOOTH. Defaults to `FLAT`.
+   * @param {(KEEP_CONNECTIONS|SMOOTH)} [shadingType=KEEP_CONNECTIONS] shading type. Defaults to `KEEP_CONNECTIONS`.
    * @param {Object} [options] shading options.
    * @chainable
    *
@@ -1055,8 +1063,8 @@ class Geometry {
    *   // Create a p5.Geometry object.
    *   myGeometry = buildGeometry(createShape);
    *
-   *   // Compute normals using default (FLAT) shading.
-   *   myGeometry.computeNormals(FLAT);
+   *   // Compute normals while preserving existing vertex connections.
+   *   myGeometry.computeNormals(KEEP_CONNECTIONS);
    *
    *   describe('A white, helical structure drawn on a dark gray background. Its faces appear faceted.');
    * }
@@ -1191,76 +1199,77 @@ class Geometry {
    *   endShape();
    * }
    */
-  computeNormals(shadingType = constants.FLAT, { roundToPrecision = 3 } = {}) {
+  computeNormals(shadingType = constants.KEEP_CONNECTIONS, { roundToPrecision = 3 } = {}) {
     const vertexNormals = this.vertexNormals;
-    let vertices = this.vertices;
+    const vertices = this.vertices;
     const faces = this.faces;
     let iv;
 
     if (shadingType === constants.SMOOTH) {
       const vertexIndices = {};
       const uniqueVertices = [];
+      const originalToUnique = [];
 
       const power = Math.pow(10, roundToPrecision);
       const rounded = val => Math.round(val * power) / power;
       const getKey = vert =>
         `${rounded(vert.x)},${rounded(vert.y)},${rounded(vert.z)}`;
 
-      // loop through each vertex and add uniqueVertices
       for (let i = 0; i < vertices.length; i++) {
         const vertex = vertices[i];
         const key = getKey(vertex);
+
         if (vertexIndices[key] === undefined) {
           vertexIndices[key] = uniqueVertices.length;
           uniqueVertices.push(vertex);
         }
+
+        originalToUnique[i] = vertexIndices[key];
       }
 
-      // update face indices to use the deduplicated vertex indices
-      faces.forEach(face => {
+      const smoothNormals = [];
+
+      for (iv = 0; iv < uniqueVertices.length; ++iv) {
+        smoothNormals.push(new Vector(0, 0, 0));
+      }
+
+      faces.forEach((face, f) => {
+        const faceNormal = this._getFaceNormal(f);
+
         for (let fv = 0; fv < 3; ++fv) {
-          const originalVertexIndex = face[fv];
-          const originalVertex = vertices[originalVertexIndex];
-          const key = getKey(originalVertex);
-          face[fv] = vertexIndices[key];
+          const vertexIndex = originalToUnique[face[fv]];
+          smoothNormals[vertexIndex].add(faceNormal);
         }
       });
 
-      // update edge indices to use the deduplicated vertex indices
-      this.edges.forEach(edge => {
-        for (let ev = 0; ev < 2; ++ev) {
-          const originalVertexIndex = edge[ev];
-          const originalVertex = vertices[originalVertexIndex];
-          const key = getKey(originalVertex);
-          edge[ev] = vertexIndices[key];
-        }
-      });
-
-      // update the deduplicated vertices
-      this.vertices = vertices = uniqueVertices;
-    }
-
-    // initialize the vertexNormals array with empty vectors
-    vertexNormals.length = 0;
-    for (iv = 0; iv < vertices.length; ++iv) {
-      vertexNormals.push(new Vector(0, 0, 0));
-    }
-
-    // loop through all the faces adding its normal to the normal
-    // of each of its vertices
-    faces.forEach((face, f) => {
-      const faceNormal = this._getFaceNormal(f);
-
-      // all three vertices get the normal added
-      for (let fv = 0; fv < 3; ++fv) {
-        const vertexIndex = face[fv];
-        vertexNormals[vertexIndex].add(faceNormal);
+      for (iv = 0; iv < smoothNormals.length; ++iv) {
+        smoothNormals[iv].normalize();
       }
-    });
 
-    // normalize the normals
-    for (iv = 0; iv < vertices.length; ++iv) {
-      vertexNormals[iv].normalize();
+      vertexNormals.length = 0;
+
+      for (iv = 0; iv < vertices.length; ++iv) {
+        vertexNormals.push(smoothNormals[originalToUnique[iv]].copy());
+      }
+    } else {
+      vertexNormals.length = 0;
+
+      for (iv = 0; iv < vertices.length; ++iv) {
+        vertexNormals.push(new Vector(0, 0, 0));
+      }
+
+      faces.forEach((face, f) => {
+        const faceNormal = this._getFaceNormal(f);
+
+        for (let fv = 0; fv < 3; ++fv) {
+          const vertexIndex = face[fv];
+          vertexNormals[vertexIndex].add(faceNormal);
+        }
+      });
+
+      for (iv = 0; iv < vertices.length; ++iv) {
+        vertexNormals[iv].normalize();
+      }
     }
 
     return this;
