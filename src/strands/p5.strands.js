@@ -6,6 +6,7 @@
 
 import { transpileStrandsToJS } from './strands_transpiler';
 import { BlockType } from './ir_types';
+import * as FES from './strands_FES';
 
 import { createDirectedAcyclicGraph } from './ir_dag';
 import {
@@ -304,6 +305,12 @@ function strands(p5, fn) {
           strandsCallback();
         }
         if (options.hook) strandsContext.renderer._pInst[options.hook].end();
+        if (strandsContext.activeHook) {
+          FES.userError(
+            'scope error',
+            `It looks like ${strandsContext.activeHook._publicName}.begin() was called without a matching ${strandsContext.activeHook._publicName}.end().`
+          );
+        }
         popBlock(strandsContext.cfg);
 
         // 3. Generate shader code hooks object from the IR
