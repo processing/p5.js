@@ -89,6 +89,13 @@ suite('loadTable', function () {
     assert.equal(table.getRowCount(), 0);
   });
 
+  test('loads an empty file with the header option as an empty table', async () => {
+    // With no rows to take the header from, the columns fall back to [].
+    const table = await mockP5Prototype.loadTable('/test/unit/assets/csv_empty.csv', ',', true);
+    assert.equal(table.getRowCount(), 0);
+    assert.deepEqual(table.columns, []);
+  });
+
   test('using the header option works', async () => {
     const table = await mockP5Prototype.loadTable(validFile, ',', true);
     assert.equal(table.getRowCount(), 3);
