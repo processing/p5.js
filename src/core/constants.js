@@ -371,7 +371,7 @@ export const PI = _PI;
 export const QUARTER_PI = _PI / 4;
 
 /**
- * A `Number` constant that's approximately 6.2382.
+ * A `Number` constant that's approximately 6.2832.
  *
  * `TAU` is twice the value of the mathematical constant π. It's useful for
  * many tasks that involve rotation and oscillation. For example, calling
@@ -456,7 +456,7 @@ export const QUARTER_PI = _PI / 4;
 export const TAU = _PI * 2;
 
 /**
- * A `Number` constant that's approximately 6.2382.
+ * A `Number` constant that's approximately 6.2832.
  *
  * `TWO_PI` is twice the value of the mathematical constant π. It's useful for
  * many tasks that involve rotation and oscillation. For example, calling
@@ -1131,12 +1131,22 @@ export const CLAMP = 'clamp';
 export const MIRROR = 'mirror';
 
 // WEBGL GEOMETRY SHADING
+
 /**
- * @typedef {'flat'} FLAT
- * @property {FLAT} FLAT
+ * @typedef {'keep_connections'} KEEP_CONNECTIONS
+ * @property {KEEP_CONNECTIONS} KEEP_CONNECTIONS
  * @final
  */
-export const FLAT = 'flat';
+export const KEEP_CONNECTIONS = 'keep_connections';
+
+/**
+ * @typedef {'keep_connections'} FLAT
+ * @property {FLAT} FLAT
+ * @final
+ * @deprecated Use `KEEP_CONNECTIONS` instead. May be removed in p5.js 3.0.
+ */
+export const FLAT = KEEP_CONNECTIONS;
+
 /**
  * @typedef {'smooth'} SMOOTH
  * @property {SMOOTH} SMOOTH
