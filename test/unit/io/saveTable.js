@@ -11,18 +11,18 @@ const mockAnchorElement = vi.mockObject({
 });
 const originalCreateElement = document.createElement;
 vi.spyOn(document, 'createElement').mockImplementation((...args) => {
-  if(args[0] !== 'a'){
+  if (args[0] !== 'a') {
     return originalCreateElement.apply(document, args);
-  }else{
+  } else {
     return mockAnchorElement;
   }
 });
 
-suite('saveTable', function() {
+suite('saveTable', function () {
   const validFile = '/test/unit/assets/csv.csv';
   let myTable;
 
-  beforeAll(async function() {
+  beforeAll(async function () {
     files(mockP5, mockP5Prototype);
     table(mockP5, mockP5Prototype);
     tableRow(mockP5, mockP5Prototype);
@@ -33,7 +33,7 @@ suite('saveTable', function() {
     vi.clearAllMocks();
   });
 
-  test('should be a function', function() {
+  test('should be a function', function () {
     assert.ok(mockP5Prototype.saveTable);
     assert.typeOf(mockP5Prototype.saveTable, 'function');
   });

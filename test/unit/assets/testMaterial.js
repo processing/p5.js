@@ -1,5 +1,5 @@
 // Test material shader that creates a gradient based on position
-getPixelInputs((inputs) => {
+getPixelInputs(inputs => {
   // Create a color gradient based on texture coordinates
   const red = inputs.texCoord.x;
   const green = inputs.texCoord.y;

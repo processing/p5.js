@@ -7311,7 +7311,10 @@
       "avatar_url": "https://avatars.githubusercontent.com/u/81041326?v=4",
       "profile": "https://github.com/Nwakaego-Ego",
       "contributions": [
-        "review"
+        "review",
+        "bug",
+        "code",
+        "doc"
       ]
     },
     {
@@ -7504,6 +7507,144 @@
       "name": "chandra",
       "avatar_url": "https://avatars.githubusercontent.com/u/214236921?v=4",
       "profile": "https://github.com/BHARATH0153",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "gfrancine",
+      "name": "gfrancine",
+      "avatar_url": "https://avatars.githubusercontent.com/u/74049877?v=4",
+      "profile": "https://github.com/gfrancine",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "slash-init",
+      "name": "Gaurav",
+      "avatar_url": "https://avatars.githubusercontent.com/u/186584533?v=4",
+      "profile": "https://github.com/slash-init",
+      "contributions": [
+        "bug"
+      ]
+    },
+    {
+      "login": "luciawang0901",
+      "name": "lucia",
+      "avatar_url": "https://avatars.githubusercontent.com/u/283304259?v=4",
+      "profile": "https://github.com/luciawang0901",
+      "contributions": [
+        "translation",
+        "bug"
+      ]
+    },
+    {
+      "login": "XiaoPingArchive",
+      "name": "xiaoping",
+      "avatar_url": "https://avatars.githubusercontent.com/u/36060644?v=4",
+      "profile": "https://github.com/XiaoPingArchive",
+      "contributions": [
+        "translation"
+      ]
+    },
+    {
+      "login": "Chiuye",
+      "name": "秋秋",
+      "avatar_url": "https://avatars.githubusercontent.com/u/59855282?v=4",
+      "profile": "https://chiuye.github.io/",
+      "contributions": [
+        "translation"
+      ]
+    },
+    {
+      "login": "zmuen",
+      "name": "Muen Zhang",
+      "avatar_url": "https://avatars.githubusercontent.com/u/75929368?v=4",
+      "profile": "https://github.com/zmuen",
+      "contributions": [
+        "translation"
+      ]
+    },
+    {
+      "login": "SihongShen",
+      "name": "0xS1TXY",
+      "avatar_url": "https://avatars.githubusercontent.com/u/143476316?v=4",
+      "profile": "https://shensihong.com/",
+      "contributions": [
+        "translation"
+      ]
+    },
+    {
+      "login": "Theresa-Em",
+      "name": "Theresa-Em",
+      "avatar_url": "https://avatars.githubusercontent.com/u/39764655?v=4",
+      "profile": "https://github.com/Theresa-Em",
+      "contributions": [
+        "translation"
+      ]
+    },
+    {
+      "login": "colemanliyah",
+      "name": "colemanliyah",
+      "avatar_url": "https://avatars.githubusercontent.com/u/47500854?v=4",
+      "profile": "https://github.com/colemanliyah",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "okra-sf",
+      "name": "okra-sf",
+      "avatar_url": "https://avatars.githubusercontent.com/u/110788460?v=4",
+      "profile": "https://github.com/okra-sf",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "Danyccsf",
+      "name": "Dany Valverde Caldas",
+      "avatar_url": "https://avatars.githubusercontent.com/u/186502464?v=4",
+      "profile": "https://github.com/Danyccsf",
+      "contributions": [
+        "test"
+      ]
+    },
+    {
+      "login": "Pcmhacker-piro",
+      "name": "Prakash Meena",
+      "avatar_url": "https://avatars.githubusercontent.com/u/181658297?v=4",
+      "profile": "https://github.com/Pcmhacker-piro",
+      "contributions": [
+        "code",
+        "test",
+        "bug"
+      ]
+    },
+    {
+      "login": "shakeelmohamed",
+      "name": "Shakeel Mohamed",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1480063?v=4",
+      "profile": "https://github.com/shakeelmohamed",
+      "contributions": [
+        "test"
+      ]
+    },
+    {
+      "login": "Srinidhi444",
+      "name": "Srinidhi Kulkarni",
+      "avatar_url": "https://avatars.githubusercontent.com/u/174924896?v=4",
+      "profile": "https://github.com/Srinidhi444",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "BhumitSahani",
+      "name": "Bhumit",
+      "avatar_url": "https://avatars.githubusercontent.com/u/238242032?v=4",
+      "profile": "https://github.com/BhumitSahani",
       "contributions": [
         "code"
       ]

@@ -1,4 +1,4 @@
-import p5 from '../../types/global'
+import p5 from '../../types/global';
 
 async function setup() {
   const renderer: p5.Renderer = await createCanvas(100, 100, WEBGPU);

@@ -1,12 +1,8 @@
-
-
 # 🌸 환영합니다! 🌺
 
 p5.js에 기여하는데에 관심을 가져주셔서 감사합니다! 우리 커뮤니티는 모든 형태의 기여를 소중하게 생각하며 “컨트리뷰터”의 의미를 최대한 넓은 범위로 확장하고자 합니다. 이는 문서화, 강의, 코드 작성, 창작 활동, 글쓰기, 디자인, 운동, 조직화, 큐레이팅 및 그 외에도 여러분이 상상할 수 있는 모든 걸 포괄합니다. [우리의 커뮤니티 페이지](https://p5js.org/community/#contribute)에는 커뮤니티에 참여하고 기여할 수 있는 여러가지 방법들에 대한 개요가 제시되어 있습니다. 기술적인 기여를 하고자 하신다면, 시작하기에 앞서 이 글을 조금 더 읽어주시기 바랍니다.
 
 이 프로젝트는 [올-컨트리뷰터스(all-contributors)](https://github.com/kentcdodds/all-contributors) 사양을 따릅니다. [안내 사항](https://github.com/processing/p5.js/issues/2309)을 따라 [리드미(readme)](https://github.com/processing/p5.js/blob/main/README.md#contributors)에 본인을 추가하세요! 혹은 [깃허브 이슈](https://github.com/processing/p5.js/issues)에 여러분의 컨트리뷰션을 댓글로 달아주시면 저희가 추가해드리겠습니다.
-
-
 
 # 코드 보관 위치
 
@@ -17,8 +13,6 @@ p5.js 프로젝트의 핵심적인 저장소들은 아래와 같습니다:
 - [p5.js-sound](https://github.com/processing/p5.js-sound): 본 저장소에는 p5.sound.js 라이브러리가 보관되어 있습니다. 본 저장소는 [제이슨 시갈(Jason Sigal)](https://github.com/therewasaguy)이 관리합니다.
 - [p5.js-web-editor](https://github.com/processing/p5.js-web-editor): 본 저장소에는 [p5.js 웹 에디터](https://editor.p5js.org)의 소스 코드가 보관되어 있습니다. 본 저장소는 [캐시 타라케지언(Cassie Tarakajian)](https://github.com/catarak)이 관리합니다. 예전의 [p5.js 에디터](https://github.com/processing/p5.js-editor)는 이제 더 이상 사용되지 않다는 점을 참고하십시오.
 - [p5.accessibility](https://github.com/processing/p5.accessibility): 맹인 및 시각 장애인들이 조금 더 쉽게 p5 캔버스를 사용할 수 있도록 하는 라이브러리입니다.
-
-
 
 # 저장소 파일 구조
 
@@ -32,8 +26,6 @@ p5.js 프로젝트의 핵심적인 저장소들은 아래와 같습니다:
 - `tests/`는 내용 수정이 있어도 라이브러리가 제대로 작동하도록 보장해주는 유닛 테스트들을 담고 있습니다.
 - `utils/`는 저장소에 유용할 수도 있는 추가적인 파일들을 담고 있는데, 일반적으로 본 디렉토리는 무시해도 괜찮습니다.
 
-
-
 # 문서화
 
 문서화는 본 프로젝트의 가장 중요한 부분입니다. 낮은 품질의 문서화는 새로운 이용자와 컨트리뷰터들의 진입 장벽을 높여 프로젝트 참여도를 저하시킵니다. [contributing_documentation.md](./contributing_documentation.md) 페이지는 문서화를 시작하는 데에 깊이 있는 개요를 제시합니다. p5.js를 위한 문서화는 아래와 같은 곳들에서 주로 찾아볼 수 있습니다:
@@ -43,31 +35,25 @@ p5.js 프로젝트의 핵심적인 저장소들은 아래와 같습니다:
 - [p5js.org/tutorials](https://p5js.org/tutorials)페이지는 p5.js와 프로그래밍의 개념을 배울 수 있도록 도와주는 튜토리얼들을 담고 있습니다. 기여하기 위해서는 [p5.js 웹사이트의 튜토리얼에 대한 튜토리얼](https://p5js.org/learn/tutorial-guide.html)을 살펴보시기 바랍니다!
 - p5.js 웹사이트는 현재 몇 가지 다른 언어들을 지원하고 있음을 확인하실 수 있습니다. 이는 국제화(혹은 줄여서 i18n)라고 불립니다. 이에 대한 문서는 [i18n_contribution](https://github.com/processing/p5.js-website/blob/main/contributor_docs/i18n_contribution.md) 페이지에서 더 자세히 보실 수 있습니다.
 
-
-
 # 깃허브 이슈 흐름
 
-* 알려진 버그와 추가되었으면 하는 새로운 기능들은 [깃허브 이슈](https://github.com/processing/p5.js/issues)들을 통해 추적됩니다. 이슈 [레이블](./issue_labels.md)들은 이슈들을 카테고리별로 분류하는 데에 사용되는데, 예를 들면 [초보자에게 적합한 이슈들](https://github.com/processing/p5.js/labels/level%3Abeginner)을 레이블링 하는 식입니다.
+- 알려진 버그와 추가되었으면 하는 새로운 기능들은 [깃허브 이슈](https://github.com/processing/p5.js/issues)들을 통해 추적됩니다. 이슈 [레이블](./issue_labels.md)들은 이슈들을 카테고리별로 분류하는 데에 사용되는데, 예를 들면 [초보자에게 적합한 이슈들](https://github.com/processing/p5.js/labels/level%3Abeginner)을 레이블링 하는 식입니다.
 
-* 이미 제기된 이슈 중에 작업을 시작하고 싶은 게 있다면, 다른 컨트리뷰터들이 진행 사항을 파악하고 도움을 줄 수 있도록 해당 이슈에 댓글을 달아주시기 바랍니다.
+- 이미 제기된 이슈 중에 작업을 시작하고 싶은 게 있다면, 다른 컨트리뷰터들이 진행 사항을 파악하고 도움을 줄 수 있도록 해당 이슈에 댓글을 달아주시기 바랍니다.
 
-* 이슈를 해결했다면, p5.js 마스터 브랜치에 [풀 리퀘스트(PR)를 제출](./preparing_a_pull_request.md)하십시오. PR의 설명 칸에 “resolves #XXXX”(#XXXX를 해결함)라고 써서 해결한 이슈를 태그해주시기 바랍니다. 만약 이 PR이 해당 이슈를 다루기는 하지만 완전히 해결하지는 못하는 거라면(즉, 여러분의 PR이 merge 되고 나서도 이슈가 열려 있어야 한다면), “addresses #XXXX”(#XXXX를 다룸)이라고 써주시기 바랍니다.
+- 이슈를 해결했다면, p5.js 마스터 브랜치에 [풀 리퀘스트(PR)를 제출](./preparing_a_pull_request.md)하십시오. PR의 설명 칸에 “resolves #XXXX”(#XXXX를 해결함)라고 써서 해결한 이슈를 태그해주시기 바랍니다. 만약 이 PR이 해당 이슈를 다루기는 하지만 완전히 해결하지는 못하는 거라면(즉, 여러분의 PR이 merge 되고 나서도 이슈가 열려 있어야 한다면), “addresses #XXXX”(#XXXX를 다룸)이라고 써주시기 바랍니다.
 
-* 만약 버그를 발견했거나 새롭게 더하고 싶은 기능에 대한 아이디어가 있다면, 이슈를 먼저 제출해주시기 바랍니다. 이슈를 제출하지 않고 수정 사항이나 새로운 기능을 풀 리퀘스트를 제출해버리는 경우, 이를 수락하기 어려울 가능성이 높습니다. 이슈에 대한 피드백을 받고 해당 이슈를 다뤄도 괜찮다는 걸 확인했다면, 위의 절차를 따라서 버그를 고치거나 새로운 기능을 추가하는 컨트리뷰션을 시작할 수 있습니다.
+- 만약 버그를 발견했거나 새롭게 더하고 싶은 기능에 대한 아이디어가 있다면, 이슈를 먼저 제출해주시기 바랍니다. 이슈를 제출하지 않고 수정 사항이나 새로운 기능을 풀 리퀘스트를 제출해버리는 경우, 이를 수락하기 어려울 가능성이 높습니다. 이슈에 대한 피드백을 받고 해당 이슈를 다뤄도 괜찮다는 걸 확인했다면, 위의 절차를 따라서 버그를 고치거나 새로운 기능을 추가하는 컨트리뷰션을 시작할 수 있습니다.
 
-* 버그 리포트를 재현하거나 버전 번호 혹은 재현 안내서와 같은 주요 정보들을 요청하는 등 이슈들을 선별하는 작업할 수도 있습니다. 이를 시작하기에 가장 용이한 방법 중 하나는 [코드 트리아지(CodeTriage)에서 p5.js를 구독](https://www.codetriage.com/processing/p5.js)하는 겁니다. [![Open Source Helpers](https://www.codetriage.com/processing/p5.js/badges/users.svg)](https://www.codetriage.com/processing/p5.js)
+- 버그 리포트를 재현하거나 버전 번호 혹은 재현 안내서와 같은 주요 정보들을 요청하는 등 이슈들을 선별하는 작업할 수도 있습니다. 이를 시작하기에 가장 용이한 방법 중 하나는 [코드 트리아지(CodeTriage)에서 p5.js를 구독](https://www.codetriage.com/processing/p5.js)하는 겁니다. [![Open Source Helpers](https://www.codetriage.com/processing/p5.js/badges/users.svg)](https://www.codetriage.com/processing/p5.js)
 
-* [organization.md](https://github.com/processing/p5.js/blob/main/contributor_docs/organization.md) 파일은 이슈들이 어떻게 체계화 될 수 있는지, 그리고 그에 대한 의사결정 과정은 어떻게 이루어지는지에 대한 대략적인 개요를 담고 있습니다. 이에 관심이 있다면 얼마든지 기여해주시기 바랍니다.
-
-
+- [organization.md](https://github.com/processing/p5.js/blob/main/contributor_docs/organization.md) 파일은 이슈들이 어떻게 체계화 될 수 있는지, 그리고 그에 대한 의사결정 과정은 어떻게 이루어지는지에 대한 대략적인 개요를 담고 있습니다. 이에 관심이 있다면 얼마든지 기여해주시기 바랍니다.
 
 # 개발 과정
 
 개발 프로세스라는 게 처음에는 약간 까다로울 수 있습니다. 그렇게 느끼는 건 여러분 뿐만이 아니라, 처음엔 모두가 혼란을 겪곤 합니다. 밑을 보시면 셋업 과정을 차례 차례 확인하실 수 있습니다. 만약 질문이 있다면 [포럼](https://discourse.processing.org/c/p5js)에 물어보거나 막힌 부분을 설명하는 [이슈](https://github.com/processing/p5.js/issues)를 제출하면 저희가 할 수 있는 최대한의 도움을 드리도록 하겠습니다.
 
 아래 절차는 [코딩 트레인(The Coding Train)의 비디오 강의](https://youtu.be/Rr3vLyP1Ods)에서도 다루고 있습니다.🚋🌈
-
-
 
 1. [node.js](http://nodejs.org/)를 설치하세요. node.js를 설치하면 자동적으로 [npm](https://www.npmjs.org) 패키지 매니저도 설치됩니다.
 
@@ -108,10 +94,8 @@ p5.js 프로젝트의 핵심적인 저장소들은 아래와 같습니다:
    ```shell
    $ git push
    ```
-   
+
 9. 모든 게 준비되었다면, 변경 사항을 [풀 리퀘스트](https://help.github.com/articles/creating-a-pull-request)로 제출하십시오.
-
-
 
 # 커밋이 거절 당하는 경우
 
@@ -136,21 +120,20 @@ $ npm run lint:fix
 프로젝트의 기존 스타일을 고수하는 게 선호되는게 보통이지만, [가끔은](https://github.com/processing/p5.js/search?utf8=%E2%9C%93&q=prettier-ignore&type=) 다른 문법을 사용하는 게 코드를 이해하기 더 쉽게 만들기도 합니다. 이런 경우에는, Prettier의 `// prettier-ignore` 주석을 이용해 [예외적인 경우를 처리](https://prettier.io/docs/en/ignore.html)할 수 있습니다. 하지만 대부분의 경우 요구되는 스타일 선호 사항들은 그럴만한 이유가 있기 때문에 가능하다면 예외적인 경우를 만들지 말아주시길 바랍니다.
 
 여기 코드 스타일 규칙에 대한 간략한 요약본이 있습니다. 다만 이 목록이 전부가 아니기 때문에 [.prettierrc](https://github.com/processing/p5.js/blob/main/.prettierrc)와 [.eslintrc](https://github.com/processing/p5.js/blob/main/.eslintrc) 파일의 전체 목록을 참고 하시기 바랍니다.
-* ES6 코드 문법을 사용합니다.
 
-* (큰 따옴표 보다는) 작은 따옴표를 사용합니다.
+- ES6 코드 문법을 사용합니다.
 
-* 들여쓰기는 스페이스 두 개로 처리합니다.
+- (큰 따옴표 보다는) 작은 따옴표를 사용합니다.
 
-* 코드에 정의되어 있는 모든 변수들은 적어도 한 번은 사용되던가, 아니면 완전히 없애야 합니다.
+- 들여쓰기는 스페이스 두 개로 처리합니다.
 
-* x == true 혹은 x == false로 비교문을 작성하지 마십시오. 이것 대신 (x) 나 (!x)를 사용하십시오. x == true는 분명히 if (x) 와는 다릅니다! 헷갈릴 여지가 있다면 객체를 널(null)과 비교하고, 숫자를 0에, 문자열(string)을 “”과 비교하십시오.
+- 코드에 정의되어 있는 모든 변수들은 적어도 한 번은 사용되던가, 아니면 완전히 없애야 합니다.
 
-* 작성하는 함수가 모호하거나 복잡한 경우 주석을 답니다.
+- x == true 혹은 x == false로 비교문을 작성하지 마십시오. 이것 대신 (x) 나 (!x)를 사용하십시오. x == true는 분명히 if (x) 와는 다릅니다! 헷갈릴 여지가 있다면 객체를 널(null)과 비교하고, 숫자를 0에, 문자열(string)을 “”과 비교하십시오.
 
-* 더 많은 스타일링 팁을 참고하기 위해선 [모질라 자바스크립트 연습(Mozilla JS practice)](https://developer.mozilla.org/en-US/docs/Mozilla/Developer_guide/Coding_Style#JavaScript_practices)을 보십시오.
+- 작성하는 함수가 모호하거나 복잡한 경우 주석을 답니다.
 
-
+- 더 많은 스타일링 팁을 참고하기 위해선 [모질라 자바스크립트 연습(Mozilla JS practice)](https://developer.mozilla.org/en-US/docs/Mozilla/Developer_guide/Coding_Style#JavaScript_practices)을 보십시오.
 
 ## 유닛 테스트
 
@@ -162,7 +145,7 @@ $ npm run lint:fix
 $ npm ci
 ```
 
-이것이 p5.js를 위한 *모든* 디펜던시들을 설치할 것입니다; 간단하게는, 유닛 테스팅에 가장 중요한 디펜던시들은 다음을 포함합니다:
+이것이 p5.js를 위한 _모든_ 디펜던시들을 설치할 것입니다; 간단하게는, 유닛 테스팅에 가장 중요한 디펜던시들은 다음을 포함합니다:
 
 - [Mocha](https://mochajs.org/): p5.js를 위한, 개별적인 테스트 파일들을 실행하는 강력한 테스팅 프레임워크
 - [mocha-chrome](https://github.com/shellscape/mocha-chrome): 구글 크롬을 이용해 Mocha 테스트를 돌리는 모차 플러그인
@@ -182,8 +165,6 @@ $ npm run dev
 서버가 돌아가면, 브라우저에서 `test/test.html`을 열 수 있을 겁니다.
 
 유닛 테스팅에 대한 완전한 설명은 p5.js 문서의 범위를 벗어나는 것이지만, 간략하게만 말하자면 src/ 디렉토리에 있는 소스 코드에 가해진 중대한 수정 사항이나, 새로 구현된 기능은 Mocha가 실행할 수 있는 테스트 파일이 test/ 디렉토리에 동반되어야 하는데, 이는 향후 나올 모든 버전의 라이브러리에서도 일관성 있게 작동할 것임을 검증하기 위함입니다. 유닛 테스트를 작성할 때, [Chai.js 레퍼런스](http://www.chaijs.com/api/assert/)를 참고해 어서션(assertion) 메세지를 구성함으로써 미래에 테스트로 잡아낼 수 있는 오류들이 일관성 있고, 결과적으로 다른 개발자들이 이해하기 쉽게 만들어주시기를 바랍니다.
-
-
 
 # 기타
 

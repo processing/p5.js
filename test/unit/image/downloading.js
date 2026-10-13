@@ -10,11 +10,23 @@ const mockAnchorElement = vi.mockObject({
   download: null,
   click: () => {}
 });
+
+let onDownload = null;
+
+mockAnchorElement.click.mockImplementation(()=>{
+  if(onDownload) onDownload();
+});
+
+const downloadHappened = () =>
+  new Promise(resolve =>{
+    onDownload = resolve;
+  });
+
 const originalCreateElement = document.createElement;
 vi.spyOn(document, 'createElement').mockImplementation((...args) => {
-  if(args[0] !== 'a'){
+  if (args[0] !== 'a') {
     return originalCreateElement.apply(document, args);
-  }else{
+  } else {
     return mockAnchorElement;
   }
 });
@@ -61,12 +73,8 @@ expect.extend({
   }
 });
 
-const wait = async time => {
-  return new Promise(resolve => setTimeout(resolve, time));
-};
-
 suite('Downloading', () => {
-  beforeAll(async function() {
+  beforeAll(async function () {
     image(mockP5, mockP5Prototype);
     files(mockP5, mockP5Prototype);
     loading(mockP5, mockP5Prototype);
@@ -77,21 +85,25 @@ suite('Downloading', () => {
     vi.clearAllMocks();
   });
 
-  suite('downloading animated gifs', function() {
+  beforeEach(() => {
+    onDownload = null;
+  });
+
+  suite('downloading animated gifs', function () {
     let myGif;
     const imagePath = '/test/unit/assets/nyan_cat.gif';
 
-    beforeAll(async function() {
+    beforeAll(async function () {
       myGif = await mockP5Prototype.loadImage(imagePath);
     });
 
-    suite('p5.prototype.encodeAndDownloadGif', function() {
-      test('should be a function', function() {
+    suite('p5.prototype.encodeAndDownloadGif', function () {
+      test('should be a function', function () {
         assert.ok(mockP5Prototype.encodeAndDownloadGif);
         assert.typeOf(mockP5Prototype.encodeAndDownloadGif, 'function');
       });
 
-      test('should not throw an error', function() {
+      test('should not throw an error', function () {
         mockP5Prototype.encodeAndDownloadGif(myGif);
       });
 
@@ -105,41 +117,60 @@ suite('Downloading', () => {
     });
   });
 
-  suite('p5.prototype.saveCanvas', function() {
-    test('should be a function', function() {
+  suite('p5.prototype.saveCanvas', function () {
+    test('should be a function', function () {
       assert.ok(mockP5Prototype.saveCanvas);
       assert.typeOf(mockP5Prototype.saveCanvas, 'function');
     });
 
     test('should download a png file', async () => {
+      const downloaded = downloadHappened();
       mockP5Prototype.saveCanvas();
-      await wait(100);
+      await downloaded;
+
       expect(document.createElement).toHaveBeenCalledTimes(1);
       expect(mockAnchorElement.click).toHaveBeenCalledTimes(1);
       assert.equal(mockAnchorElement.download, 'untitled.png');
     });
 
     test('should download a jpg file I', async () => {
+      const downloaded = downloadHappened();
       mockP5Prototype.saveCanvas('filename.jpg');
-      await wait(100);
+      await downloaded;
+
       expect(document.createElement).toHaveBeenCalledTimes(1);
       expect(mockAnchorElement.click).toHaveBeenCalledTimes(1);
       assert.equal(mockAnchorElement.download, 'filename.jpg');
     });
 
     test('should download a jpg file II', async () => {
+      const downloaded = downloadHappened();
       mockP5Prototype.saveCanvas('filename', 'jpg');
-      await wait(100);
+      await downloaded;
+
       expect(document.createElement).toHaveBeenCalledTimes(1);
       expect(mockAnchorElement.click).toHaveBeenCalledTimes(1);
       assert.equal(mockAnchorElement.download, 'filename.jpg');
     });
   });
 
-  suite('p5.prototype.saveFrames', function() {
-    test('should be a function', function() {
+  suite('p5.prototype.saveFrames', function () {
+    test('should be a function', function () {
       assert.ok(mockP5Prototype.saveFrames);
       assert.typeOf(mockP5Prototype.saveFrames, 'function');
+    });
+
+    test('should capture duration x frames', async () => {
+      return new Promise(resolve => {
+        // 0.4s x 7.93fps -> totalFrames = 3.172, so 4 frames are captured.
+        // Ticks land every 1000/7.93 = 126ms, so the old wall-clock cutoff at
+        // 400ms stopped after only 3.
+        mockP5Prototype.saveFrames('aaa', 'png', 0.4, 7.93, function cb1(arr) {
+          assert.typeOf(arr, 'array');
+          assert.equal(arr.length, 4);
+          resolve();
+        });
+      });
     });
 
     test('should get frames in callback (png)', async () => {
@@ -171,8 +202,8 @@ suite('Downloading', () => {
     });
   });
 
-  suite('p5.prototype.saveGif', function() {
-    test('should be a function', function() {
+  suite('p5.prototype.saveGif', function () {
+    test('should be a function', function () {
       assert.ok(mockP5Prototype.saveGif);
       assert.typeOf(mockP5Prototype.saveGif, 'function');
     });
@@ -183,7 +214,10 @@ suite('Downloading', () => {
     });
 
     test.todo('should not throw an error', async () => {
-      await mockP5Prototype.saveGif('myGif', 3, { delay: 2, frames: 'seconds' });
+      await mockP5Prototype.saveGif('myGif', 3, {
+        delay: 2,
+        frames: 'seconds'
+      });
     });
 
     test.todo('should download a GIF', async () => {

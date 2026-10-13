@@ -1,10 +1,9 @@
 import p5 from '../../../src/app.js';
 
-suite('Set/get properties', function() {
-
+suite('Set/get properties', function () {
   let p = new p5(function (sketch) {
-    sketch.setup = function () { };
-    sketch.draw = function () { };
+    sketch.setup = function () {};
+    sketch.draw = function () {};
   });
 
   let getters = {
@@ -49,20 +48,21 @@ suite('Set/get properties', function() {
 
   Object.keys(getters).forEach(prop => {
     let arg = getters[prop];
-    test(`${prop}()`, function() {
-
+    test(`${prop}()`, function () {
       // setter
       if (typeof arg === 'object' && !(arg instanceof p5.Color)) {
         p[prop](...Object.values(arg)); // set with object
-      }
-      else if (Array.isArray(arg)) {
+      } else if (Array.isArray(arg)) {
         p[prop](...arg); // set with array
-      }
-      else {
+      } else {
         p[prop](arg); // set with primitive or p5.Color
       }
       // getter
-      assert.strictEqual(p[prop]().toString(), arg.toString(), `${arg.toString()}`);
+      assert.strictEqual(
+        p[prop]().toString(),
+        arg.toString(),
+        `${arg.toString()}`
+      );
     });
   });
 });

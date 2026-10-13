@@ -27,18 +27,18 @@ export const VERSION = 'VERSION_WILL_BE_REPLACED_BY_BUILD';
 export const P2D = 'p2d';
 
 /**
- * A high-dynamic-range (HDR) variant of the default, two-dimensional renderer.
+ * An expanded color space (P3) variant of the default, two-dimensional renderer.
  *
  * When available, this mode can allow for extended color ranges and more
  * dynamic color representation. Use it similarly to `P2D`:
- * `createCanvas(400, 400, P2DHDR)`.
+ * `createCanvas(400, 400, P2DP3)`.
  *
- * @typedef {'p2d-hdr'} P2DHDR
- * @property {P2DHDR} P2DHDR
+ * @typedef {'p2d-p3'} P2DP3
+ * @property {P2DP3} P2DP3
  * @final
  */
 
-export const P2DHDR = 'p2d-hdr';
+export const P2DP3 = 'p2d-p3';
 
 /**
  * One of the two render modes in p5.js, used for computationally intensive tasks like 3D rendering and shaders.
@@ -371,7 +371,7 @@ export const PI = _PI;
 export const QUARTER_PI = _PI / 4;
 
 /**
- * A `Number` constant that's approximately 6.2382.
+ * A `Number` constant that's approximately 6.2832.
  *
  * `TAU` is twice the value of the mathematical constant π. It's useful for
  * many tasks that involve rotation and oscillation. For example, calling
@@ -456,7 +456,7 @@ export const QUARTER_PI = _PI / 4;
 export const TAU = _PI * 2;
 
 /**
- * A `Number` constant that's approximately 6.2382.
+ * A `Number` constant that's approximately 6.2832.
  *
  * `TWO_PI` is twice the value of the mathematical constant π. It's useful for
  * many tasks that involve rotation and oscillation. For example, calling
@@ -1131,12 +1131,22 @@ export const CLAMP = 'clamp';
 export const MIRROR = 'mirror';
 
 // WEBGL GEOMETRY SHADING
+
 /**
- * @typedef {'flat'} FLAT
- * @property {FLAT} FLAT
+ * @typedef {'keep_connections'} KEEP_CONNECTIONS
+ * @property {KEEP_CONNECTIONS} KEEP_CONNECTIONS
  * @final
  */
-export const FLAT = 'flat';
+export const KEEP_CONNECTIONS = 'keep_connections';
+
+/**
+ * @typedef {'keep_connections'} FLAT
+ * @property {FLAT} FLAT
+ * @final
+ * @deprecated Use `KEEP_CONNECTIONS` instead. May be removed in p5.js 3.0.
+ */
+export const FLAT = KEEP_CONNECTIONS;
+
 /**
  * @typedef {'smooth'} SMOOTH
  * @property {SMOOTH} SMOOTH

@@ -3,7 +3,7 @@ import files from '../../../src/io/files';
 import table from '../../../src/io/p5.Table';
 import tableRow from '../../../src/io/p5.TableRow';
 
-suite('loadTable', function() {
+suite('loadTable', function () {
   const invalidFile = '404file';
   const validFile = '/test/unit/assets/csv.csv';
 
@@ -15,30 +15,38 @@ suite('loadTable', function() {
   });
 
   test('throws error when encountering HTTP errors', async () => {
-    await expect(mockP5Prototype.loadTable(invalidFile))
-      .rejects
-      .toThrow('Not Found');
+    await expect(mockP5Prototype.loadTable(invalidFile)).rejects.toThrow(
+      'Not Found'
+    );
   });
 
   test('error callback is called', async () => {
     await new Promise((resolve, reject) => {
-      mockP5Prototype.loadTable(invalidFile, () => {
-        reject('Success callback executed');
-      }, () => {
-        // Wait a bit so that if both callbacks are executed we will get an error.
-        setTimeout(resolve, 50);
-      });
+      mockP5Prototype.loadTable(
+        invalidFile,
+        () => {
+          reject('Success callback executed');
+        },
+        () => {
+          // Wait a bit so that if both callbacks are executed we will get an error.
+          setTimeout(resolve, 50);
+        }
+      );
     });
   });
 
   test('success callback is called', async () => {
     await new Promise((resolve, reject) => {
-      mockP5Prototype.loadTable(validFile, () => {
-        // Wait a bit so that if both callbacks are executed we will get an error.
-        setTimeout(resolve, 50);
-      }, err => {
-        reject(`Error callback called: ${err.toString()}`);
-      });
+      mockP5Prototype.loadTable(
+        validFile,
+        () => {
+          // Wait a bit so that if both callbacks are executed we will get an error.
+          setTimeout(resolve, 50);
+        },
+        err => {
+          reject(`Error callback called: ${err.toString()}`);
+        }
+      );
     });
   });
 

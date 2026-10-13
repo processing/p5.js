@@ -7,7 +7,7 @@
 import * as constants from '../core/constants';
 import canvas from '../core/helpers';
 
-function primitives(p5, fn){
+function primitives(p5, fn) {
   /**
    * This function does 3 things:
    *
@@ -30,13 +30,7 @@ function primitives(p5, fn){
    *      underlying ellipse.  This is useful if you want to do something special
    *      there (like rendering a whole ellipse instead).
    */
-  fn._normalizeArcAngles = (
-    start,
-    stop,
-    width,
-    height,
-    correctForScaling
-  ) => {
+  fn._normalizeArcAngles = (start, stop, width, height, correctForScaling) => {
     const epsilon = 0.00001; // Smallest visible angle on displays up to 4K.
     let separation;
 
@@ -67,18 +61,19 @@ function primitives(p5, fn){
     // Optionally adjust the angles to counter linear scaling.
     if (correctForScaling) {
       if (start <= constants.HALF_PI) {
-        start = Math.atan(width / height * Math.tan(start));
+        start = Math.atan((width / height) * Math.tan(start));
       } else if (start > constants.HALF_PI && start <= 3 * constants.HALF_PI) {
-        start = Math.atan(width / height * Math.tan(start)) + constants.PI;
+        start = Math.atan((width / height) * Math.tan(start)) + constants.PI;
       } else {
-        start = Math.atan(width / height * Math.tan(start)) + constants.TWO_PI;
+        start =
+          Math.atan((width / height) * Math.tan(start)) + constants.TWO_PI;
       }
       if (stop <= constants.HALF_PI) {
-        stop = Math.atan(width / height * Math.tan(stop));
+        stop = Math.atan((width / height) * Math.tan(stop));
       } else if (stop > constants.HALF_PI && stop <= 3 * constants.HALF_PI) {
-        stop = Math.atan(width / height * Math.tan(stop)) + constants.PI;
+        stop = Math.atan((width / height) * Math.tan(stop)) + constants.PI;
       } else {
-        stop = Math.atan(width / height * Math.tan(stop)) + constants.TWO_PI;
+        stop = Math.atan((width / height) * Math.tan(stop)) + constants.TWO_PI;
       }
     }
 
@@ -273,7 +268,7 @@ function primitives(p5, fn){
    *   arc(50, 50, 80, 80, startAngle, endAngle, PIE);
    * }
    */
-  fn.arc = function(x, y, w, h, start, stop, mode, detail) {
+  fn.arc = function (x, y, w, h, start, stop, mode, detail) {
     // this.validate("p5.arc", arguments);
     // p5._validateParameters('arc', arguments);
 
@@ -294,8 +289,10 @@ function primitives(p5, fn){
     stop = this._toRadians(stop);
 
     const vals = canvas.modeAdjust(
-      x, y,
-      w, h,
+      x,
+      y,
+      w,
+      h,
       this._renderer.states.ellipseMode
     );
     const angles = this._normalizeArcAngles(start, stop, vals.w, vals.h, true);
@@ -427,7 +424,7 @@ function primitives(p5, fn){
    *                         perimeter of the ellipse. Default value is 25. Won't
    *                         draw a stroke for a detail of more than 50.
    */
-  fn.ellipse = function(x, y, w, h, detailX) {
+  fn.ellipse = function (x, y, w, h, detailX) {
     // p5._validateParameters('ellipse', arguments);
     return this._renderEllipse(...arguments);
   };
@@ -469,15 +466,15 @@ function primitives(p5, fn){
    *   describe('A white circle with black outline in the middle of a gray canvas.');
    * }
    */
-  fn.circle = function(...args) {
+  fn.circle = function (...args) {
     // p5._validateParameters('circle', args);
-    const argss = args.slice( 0, 2);
+    const argss = args.slice(0, 2);
     argss.push(args[2], args[2]);
     return this._renderEllipse(...argss);
   };
 
   // internal method for drawing ellipses (without parameter validation)
-  fn._renderEllipse = function(x, y, w, h, detailX) {
+  fn._renderEllipse = function (x, y, w, h, detailX) {
     // if the current stroke and fill settings wouldn't result in something
     // visible, exit immediately
     if (
@@ -493,8 +490,10 @@ function primitives(p5, fn){
     }
 
     const vals = canvas.modeAdjust(
-      x, y,
-      w, h,
+      x,
+      y,
+      w,
+      h,
       this._renderer.states.ellipseMode
     );
     this._renderer.ellipse([vals.x, vals.y, vals.w, vals.h, detailX]);
@@ -630,7 +629,7 @@ function primitives(p5, fn){
    * @param  {Number} z2 the z-coordinate of the second point.
    * @chainable
    */
-  fn.line = function(...args) {
+  fn.line = function (...args) {
     // p5._validateParameters('line', args);
 
     if (this._renderer.states.strokeColor) {
@@ -731,7 +730,7 @@ function primitives(p5, fn){
    *   createCanvas(100, 100);
    *
    *   background(200);
-   * 
+   *
    *   // Making point to 5 pixels.
    *   strokeWeight(5);
    *
@@ -807,7 +806,7 @@ function primitives(p5, fn){
    * @param {p5.Vector} coordinateVector the coordinate vector.
    * @chainable
    */
-  fn.point = function(...args) {
+  fn.point = function (...args) {
     // p5._validateParameters('point', args);
 
     if (this._renderer.states.strokeColor) {
@@ -949,7 +948,7 @@ function primitives(p5, fn){
    * @param {Integer} [detailY]
    * @chainable
    */
-  fn.quad = function(...args) {
+  fn.quad = function (...args) {
     // p5._validateParameters('quad', args);
 
     if (this._renderer.states.strokeColor || this._renderer.states.fillColor) {
@@ -957,11 +956,21 @@ function primitives(p5, fn){
         // if 3D and we weren't passed 12 args, assume Z is 0
         this._renderer.quad.call(
           this._renderer,
-          args[0], args[1], 0,
-          args[2], args[3], 0,
-          args[4], args[5], 0,
-          args[6], args[7], 0,
-          args[8], args[9]);
+          args[0],
+          args[1],
+          0,
+          args[2],
+          args[3],
+          0,
+          args[4],
+          args[5],
+          0,
+          args[6],
+          args[7],
+          0,
+          args[8],
+          args[9]
+        );
       } else {
         this._renderer.quad(...args);
         //accessibile outputs
@@ -1087,7 +1096,7 @@ function primitives(p5, fn){
    * @param  {Integer} [detailY] number of segments in the y-direction (for WebGL mode).
    * @chainable
    */
-  fn.rect = function(...args) {
+  fn.rect = function (...args) {
     // p5._validateParameters('rect', args);
     return this._renderRect(...args);
   };
@@ -1185,14 +1194,14 @@ function primitives(p5, fn){
    *   square(-20, -30, 55);
    * }
    */
-  fn.square = function(x, y, s, tl, tr, br, bl) {
+  fn.square = function (x, y, s, tl, tr, br, bl) {
     // p5._validateParameters('square', arguments);
     // duplicate width for height in case of square
     return this._renderRect.call(this, x, y, s, s, tl, tr, br, bl);
   };
 
   // internal method to have renderer draw a rectangle
-  fn._renderRect = function() {
+  fn._renderRect = function () {
     if (this._renderer.states.strokeColor || this._renderer.states.fillColor) {
       // duplicate width for height in case only 3 arguments is provided
       if (arguments.length === 3) {
@@ -1288,7 +1297,7 @@ function primitives(p5, fn){
    *   triangle(-20, 25, 8, -30, 36, 25);
    * }
    */
-  fn.triangle = function(...args) {
+  fn.triangle = function (...args) {
     // p5._validateParameters('triangle', args);
 
     if (this._renderer.states.strokeColor || this._renderer.states.fillColor) {
@@ -1306,6 +1315,6 @@ function primitives(p5, fn){
 
 export default primitives;
 
-if(typeof p5 !== 'undefined'){
+if (typeof p5 !== 'undefined') {
   primitives(p5, p5.prototype);
 }

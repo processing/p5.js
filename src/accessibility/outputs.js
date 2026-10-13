@@ -4,7 +4,7 @@
  * @for p5
  */
 
-function outputs(p5, fn){
+function outputs(p5, fn) {
   /**
    * Creates a screen reader-accessible description of shapes on the canvas.
    *
@@ -114,7 +114,7 @@ function outputs(p5, fn){
    *   describe('A red circle moves from left to right above a blue square.');
    * }
    */
-  fn.textOutput = function(display) {
+  fn.textOutput = function (display) {
     // p5._validateParameters('textOutput', arguments);
     //if textOutput is already true
     if (this._accessibleOutputs.text) {
@@ -243,7 +243,7 @@ function outputs(p5, fn){
    *   describe('A red circle moves from left to right above a blue square.');
    * }
    */
-  fn.gridOutput = function(display) {
+  fn.gridOutput = function (display) {
     // p5._validateParameters('gridOutput', arguments);
     //if gridOutput is already true
     if (this._accessibleOutputs.grid) {
@@ -263,7 +263,7 @@ function outputs(p5, fn){
   };
 
   //helper function returns true when accessible outputs are true
-  fn._addAccsOutput = function() {
+  fn._addAccsOutput = function () {
     //if there are no accessible outputs create object with all false
     if (!this._accessibleOutputs) {
       this._accessibleOutputs = {
@@ -277,7 +277,7 @@ function outputs(p5, fn){
   };
 
   //helper function that creates html structure for accessible outputs
-  fn._createOutput = function(type, display) {
+  fn._createOutput = function (type, display) {
     let cnvId = this.canvas.id;
     //if there are no ingredients create object. this object stores data for the outputs
     if (!this.ingredients) {
@@ -301,9 +301,8 @@ function outputs(p5, fn){
         //if there is no canvas description (see describe() and describeElement())
         if (!this.dummyDOM.querySelector(`#${cnvId}_Description`)) {
           //create html structure inside of canvas
-          this.dummyDOM.querySelector(
-            `#${cnvId}`
-          ).innerHTML = `<div id="${container}" role="region" aria-label="Canvas Outputs"></div>`;
+          this.dummyDOM.querySelector(`#${cnvId}`).innerHTML =
+            `<div id="${container}" role="region" aria-label="Canvas Outputs"></div>`;
         } else {
           //create html structure after canvas description container
           this.dummyDOM
@@ -358,7 +357,9 @@ function outputs(p5, fn){
       //if textOutput already exists
       if (this.dummyDOM.querySelector(query)) {
         //create gridOutput after textOutput
-        this.dummyDOM.querySelector(query).insertAdjacentHTML('afterend', inner);
+        this.dummyDOM
+          .querySelector(query)
+          .insertAdjacentHTML('afterend', inner);
       } else {
         //create output inside of container
         this.dummyDOM.querySelector(`#${container}`).innerHTML = inner;
@@ -378,7 +379,7 @@ function outputs(p5, fn){
 
   //this function is called at the end of setup and draw if using
   //accessibleOutputs and calls update functions of outputs
-  fn._updateAccsOutput = function() {
+  fn._updateAccsOutput = function () {
     let cnvId = this.canvas.id;
     //if the shapes are not the same as before
     if (
@@ -404,7 +405,7 @@ function outputs(p5, fn){
 
   //helper function that resets all ingredients when background is called
   //and saves background color name
-  fn._accsBackground = function(args) {
+  fn._accsBackground = function (args) {
     //save current shapes as string in pShapes
     this.ingredients.pShapes = JSON.stringify(this.ingredients.shapes);
     this.ingredients.pBackground = this.ingredients.colors.background;
@@ -418,7 +419,7 @@ function outputs(p5, fn){
   };
 
   //helper function that gets fill and stroke of shapes
-  fn._accsCanvasColors = function(f, args) {
+  fn._accsCanvasColors = function (f, args) {
     if (f === 'fill') {
       //update fill different
       if (this.ingredients.colors.fillRGBA !== args) {
@@ -435,7 +436,7 @@ function outputs(p5, fn){
   };
 
   //builds ingredients.shapes used for building outputs
-  fn._accsOutput = function(f, args) {
+  fn._accsOutput = function (f, args) {
     if (f === 'ellipse' && args[2] === args[3]) {
       f = 'circle';
     } else if (f === 'rectangle' && args[2] === args[3]) {
@@ -480,7 +481,7 @@ function outputs(p5, fn){
     if (!this.ingredients.shapes[f]) {
       this.ingredients.shapes[f] = [include];
       //if other shapes of this type have been created
-    } else{
+    } else {
       //for every shape of this type
       for (let y in this.ingredients.shapes[f]) {
         //compare it with current shape and if it already exists make add false
@@ -528,8 +529,9 @@ function outputs(p5, fn){
 
   //gets position of shape in the canvas
   fn._getPos = function (x, y) {
-    const { x: transformedX, y: transformedY } =
-      this.worldToScreen(new p5.Vector(x, y));
+    const { x: transformedX, y: transformedY } = this.worldToScreen(
+      new p5.Vector(x, y)
+    );
     const canvasWidth = this.width;
     const canvasHeight = this.height;
     if (transformedX < 0.4 * canvasWidth) {
@@ -563,8 +565,8 @@ function outputs(p5, fn){
   function _canvasLocator(args, canvasWidth, canvasHeight) {
     const noRows = 10;
     const noCols = 10;
-    let locX = Math.floor(args[0] / canvasWidth * noRows);
-    let locY = Math.floor(args[1] / canvasHeight * noCols);
+    let locX = Math.floor((args[0] / canvasWidth) * noRows);
+    let locY = Math.floor((args[1] / canvasHeight) * noCols);
     if (locX === noRows) {
       locX = locX - 1;
     }
@@ -585,22 +587,22 @@ function outputs(p5, fn){
       // therefore, area of arc = difference bet. arc's start and end radians * horizontal radius * vertical radius.
       // the below expression is adjusted for negative values and differences in arc's start and end radians over PI*2
       const arcSizeInRadians =
-        ((shapeArgs[5] - shapeArgs[4]) % (Math.PI * 2) + Math.PI * 2) %
+        (((shapeArgs[5] - shapeArgs[4]) % (Math.PI * 2)) + Math.PI * 2) %
         (Math.PI * 2);
-      objectArea = arcSizeInRadians * shapeArgs[2] * shapeArgs[3] / 8;
+      objectArea = (arcSizeInRadians * shapeArgs[2] * shapeArgs[3]) / 8;
       if (shapeArgs[6] === 'open' || shapeArgs[6] === 'chord') {
         // when the arc's mode is OPEN or CHORD, we need to account for the area of the triangle that is formed to close the arc
         // (Ax( By −  Cy) + Bx(Cy − Ay) + Cx(Ay − By ) )/2
         const Ax = shapeArgs[0];
         const Ay = shapeArgs[1];
         const Bx =
-          shapeArgs[0] + shapeArgs[2] / 2 * Math.cos(shapeArgs[4]).toFixed(2);
+          shapeArgs[0] + (shapeArgs[2] / 2) * Math.cos(shapeArgs[4]).toFixed(2);
         const By =
-          shapeArgs[1] + shapeArgs[3] / 2 * Math.sin(shapeArgs[4]).toFixed(2);
+          shapeArgs[1] + (shapeArgs[3] / 2) * Math.sin(shapeArgs[4]).toFixed(2);
         const Cx =
-          shapeArgs[0] + shapeArgs[2] / 2 * Math.cos(shapeArgs[5]).toFixed(2);
+          shapeArgs[0] + (shapeArgs[2] / 2) * Math.cos(shapeArgs[5]).toFixed(2);
         const Cy =
-          shapeArgs[1] + shapeArgs[3] / 2 * Math.sin(shapeArgs[5]).toFixed(2);
+          shapeArgs[1] + (shapeArgs[3] / 2) * Math.sin(shapeArgs[5]).toFixed(2);
         const areaOfExtraTriangle =
           Math.abs(Ax * (By - Cy) + Bx * (Cy - Ay) + Cx * (Ay - By)) / 2;
         if (arcSizeInRadians > Math.PI) {
@@ -610,7 +612,7 @@ function outputs(p5, fn){
         }
       }
     } else if (objectType === 'ellipse' || objectType === 'circle') {
-      objectArea = 3.14 * shapeArgs[2] / 2 * shapeArgs[3] / 2;
+      objectArea = (((3.14 * shapeArgs[2]) / 2) * shapeArgs[3]) / 2;
     } else if (objectType === 'line') {
       objectArea = 0;
     } else if (objectType === 'point') {
@@ -645,26 +647,27 @@ function outputs(p5, fn){
       new DOMPoint(0, canvasHeight)
     ];
     //  Apply the inverse of the current transformations to the canvas corners
-    const currentTransform = this._renderer.isP3D ?
-      new DOMMatrix(this._renderer.uMVMatrix.mat4) :
-      this.drawingContext.getTransform();
+    const currentTransform = this._renderer.isP3D
+      ? new DOMMatrix(this._renderer.uMVMatrix.mat4)
+      : this.drawingContext.getTransform();
     const invertedTransform = currentTransform.inverse();
-    const tc = canvasCorners.map(
-      corner => corner.matrixTransform(invertedTransform)
+    const tc = canvasCorners.map(corner =>
+      corner.matrixTransform(invertedTransform)
     );
     /*  Use same shoelace formula used for quad area (above) to calculate
     the area of the canvas with inverted transformation applied */
-    const transformedCanvasArea = Math.abs(
-      (tc[3].x + tc[0].x) * (tc[3].y - tc[0].y) +
-      (tc[0].x + tc[1].x) * (tc[0].y - tc[1].y) +
-      (tc[1].x + tc[2].x) * (tc[1].y - tc[2].y)+
-      (tc[2].x + tc[3].x) * (tc[2].y - tc[3].y)
-    ) / 2;
+    const transformedCanvasArea =
+      Math.abs(
+        (tc[3].x + tc[0].x) * (tc[3].y - tc[0].y) +
+          (tc[0].x + tc[1].x) * (tc[0].y - tc[1].y) +
+          (tc[1].x + tc[2].x) * (tc[1].y - tc[2].y) +
+          (tc[2].x + tc[3].x) * (tc[2].y - tc[3].y)
+      ) / 2;
     /*  Compare area of shape (minus transformations) to area of canvas
     with inverted transformation applied.
     Return percentage  */
     const untransformedArea = Math.round(
-      objectArea * 100 / (transformedCanvasArea)
+      (objectArea * 100) / transformedCanvasArea
     );
     return untransformedArea;
   };
@@ -672,6 +675,6 @@ function outputs(p5, fn){
 
 export default outputs;
 
-if(typeof p5 !== 'undefined'){
+if (typeof p5 !== 'undefined') {
   outputs(p5, p5.prototype);
 }

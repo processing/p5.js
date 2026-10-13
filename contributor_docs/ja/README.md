@@ -1,5 +1,3 @@
-
-
 # 🌸ようこそ！🌺
 
 p5.jsに貢献することに興味を持ってくれてありがとうございます！私たちのチームは、あらゆる形の支援を価値あるものと見なし、あなたが貢献できる範囲を可能な限り広げようとしています。これには、参照文献、教育、プログラミング、アートの作成、執筆、デザイン、イベント、組織、展示企画やあなたが思いつくあらゆることが含まれます。[私たちのコミュニティページ](https://p5js.org/community/#contribute)では、プロジェクトに貢献し参加する方法のいくつかを提供しています。技術的な支援を提供したい場合は、読み進めてください。
@@ -21,13 +19,12 @@ p5.jsプロジェクトには、このコードリポジトリ以外にもいく
 このコードリポジトリには多くのファイルがありますので、ここではファイルの概要を提供します。一部のファイルは理解するのが難しいかもしれませんが、始めるためにすべてを理解する必要はありません。特定の領域から始めて（例えば、いくつかのインライン参照文献を修正するなど）、徐々に他の領域を探索することをお勧めします。Luisa Pereiraの[Looking Inside p5.js](https://www.luisapereira.net/teaching/materials/processing-foundation)も、p5.jsのツールやファイルのビデオ概要を提供しています。
 
 - `contributor_docs/` は、貢献者が従うべきガイドラインを含みます；
-- `docs/` は参照文献を含みません！それは_[オンライン参照文献](https://p5js.org/reference/)を_*生成*_するためのコードを含んでいます；
+- `docs/` は参照文献を含みません！それは_[オンライン参照文献](https://p5js.org/reference/)を__生成__するためのコードを含んでいます；
 - `lib/` は、空の例とp5.sound拡張ライブラリを含み、[p5.js-soundコードリポジトリ](https://github.com/processing/p5.js-sound)を通じて定期的に更新されます。[Grunt](https://gruntjs.com/)を使用してp5.jsを単一のファイルにコンパイルした後のp5.jsライブラリの位置でもあります。Pull requestを発行する際には、これをGitHubコードリポジトリにチェックインする必要はありません。
 - `src/` は、すべてのソースコードを含み、通常は複数の個別のモジュールに編成されています。p5.jsに変更を加えたい場合は、ここを参照する必要があります。ほとんどのフォルダ内には、そのフォルダをナビゲートするのに役立つ独自のREADME.mdファイルがあります。
 - `tasks/` は、p5.jsおよび新しいバージョンのp5.jsのビルド、デプロイ、リリースに関連する自動化タスクのスクリプトを含みます。
 - `tests/` は、ライブラリが変更されても正常に機能し続けることを保証するための単体テストを含みます。
 - `utils/` は、リポジトリに役立つその他のファイルを含むことがありますが、通常はこのディレクトリを無視しても大丈夫です。
-
 
 # 参照文献
 
@@ -40,18 +37,17 @@ p5.jsプロジェクトには、このコードリポジトリ以外にもいく
 
 # GitHub Issue プロセス
 
-* 私たちは[GitHub issue](https://github.com/processing/p5.js/issues)を使用して、既知のバグと予想される新機能を追跡しています。[Issue labels](./issue_labels.md)は、問題を分類するために使用されます。例えば、[初心者向け](https://github.com/processing/p5.js/labels/level%3Abeginner)の問題です。
+- 私たちは[GitHub issue](https://github.com/processing/p5.js/issues)を使用して、既知のバグと予想される新機能を追跡しています。[Issue labels](./issue_labels.md)は、問題を分類するために使用されます。例えば、[初心者向け](https://github.com/processing/p5.js/labels/level%3Abeginner)の問題です。
 
-* 既存の問題に取り組みたい場合は、取り組もうとしている問題にコメントしてください。そうすることで、他の貢献者がその問題が処理中であることを知り、支援を提供することができます。
+- 既存の問題に取り組みたい場合は、取り組もうとしている問題にコメントしてください。そうすることで、他の貢献者がその問題が処理中であることを知り、支援を提供することができます。
 
-* この問題に関連する作業を完了したら、p5.js main ブランチに対して[Pull request](./preparing_a_pull_request.md)を提出してください。PRの説明フィールドには、「resolves #XXXX」というタグを含めて、解決しようとしている問題を指定してください。PRがその問題を完全に解決しない場合（つまり、PRがマージされた後にその問題を開いたままにする必要がある場合）は、「addresses #XXXX」と入力してください。
+- この問題に関連する作業を完了したら、p5.js main ブランチに対して[Pull request](./preparing_a_pull_request.md)を提出してください。PRの説明フィールドには、「resolves #XXXX」というタグを含めて、解決しようとしている問題を指定してください。PRがその問題を完全に解決しない場合（つまり、PRがマージされた後にその問題を開いたままにする必要がある場合）は、「addresses #XXXX」と入力してください。
 
-* バグを発見したり、新しい機能を追加するアイデアがある場合は、まず問題を提出してください。修正や新機能を含むPull Requestを直接提出するのではなく、まず問題を提起してください。問題に関するフィードバックを受け取り、問題を解決することに同意した後、上記のプロセスに従って修正や機能を提供することができます。
+- バグを発見したり、新しい機能を追加するアイデアがある場合は、まず問題を提出してください。修正や新機能を含むPull Requestを直接提出するのではなく、まず問題を提起してください。問題に関するフィードバックを受け取り、問題を解決することに同意した後、上記のプロセスに従って修正や機能を提供することができます。
 
-* 問題を分類することができます。これには、バグレポートの複製や、バージョン番号や複製手順などの重要情報の要求が含まれる場合があります。問題の分類を始めたい場合、簡単な入門方法として[p5.jsをCodeTriageで購読する](https://www.codetriage.com/processing/p5.js)ことができます。[![Open Source Helpers](https://www.codetriage.com/processing/p5.js/badges/users.svg)](https://www.codetriage.com/processing/p5.js)
+- 問題を分類することができます。これには、バグレポートの複製や、バージョン番号や複製手順などの重要情報の要求が含まれる場合があります。問題の分類を始めたい場合、簡単な入門方法として[p5.jsをCodeTriageで購読する](https://www.codetriage.com/processing/p5.js)ことができます。[![Open Source Helpers](https://www.codetriage.com/processing/p5.js/badges/users.svg)](https://www.codetriage.com/processing/p5.js)
 
-* [organization.md](https://github.com/processing/p5.js/blob/main/contributor_docs/organization.md)ファイルは、問題の整理方法と意思決定プロセスについての高レベルの概要を提供しています。興味があれば、ぜひ参加してください。
-
+- [organization.md](https://github.com/processing/p5.js/blob/main/contributor_docs/organization.md)ファイルは、問題の整理方法と意思決定プロセスについての高レベルの概要を提供しています。興味があれば、ぜひ参加してください。
 
 # 開発プロセス
 
@@ -122,19 +118,20 @@ $ npm run lint:fix
 プロジェクトで確立されたスタイルを維持することが通常望ましいですが、[たまに](https://github.com/processing/p5.js/search?utf8=%E2%9C%93&q=prettier-ignore&type=)異なる構文を使用することでコードをより理解しやすくすることが可能です。これらの場合、Prettierは`// prettier-ignore`コメントを[提供しています](https://prettier.io/docs/en/ignore.html)、これを使用して個々の例外を指定することができます。可能であれば、それを避けてください。なぜなら、linterが強制するほとんどのコードフォーマットには正当な理由があるからです。
 
 こちらはコードスタイルルールの迅速な要約です。このリストは完全ではない可能性がありますので、完全なリストを得るためには [.prettierrc](https://github.com/processing/p5.js/blob/main/.prettierrc) と [.eslintrc](https://github.com/processing/p5.js/blob/main/.eslintrc) ファイルを参照するのが最善です。
- * ES6構文を使用する
 
-* シングルクォートを優先する
+- ES6構文を使用する
 
-* インデントには2つのスペースを使用する
+- シングルクォートを優先する
 
-* すべての変数は少なくとも一度は使用する、さもなければ完全に削除する
+- インデントには2つのスペースを使用する
 
-* `x == true` や `x == false` を使用しない。代わりに `(x)` や `!(x)` を使用する。誤解を招く可能性がある場合は、オブジェクトを `null` と比較し、文字列を `""` と比較し、数値を `0` と比較する。
+- すべての変数は少なくとも一度は使用する、さもなければ完全に削除する
 
-* 複雑またはあいまいな場所ではコメントを使用する
+- `x == true` や `x == false` を使用しない。代わりに `(x)` や `!(x)` を使用する。誤解を招く可能性がある場合は、オブジェクトを `null` と比較し、文字列を `""` と比較し、数値を `0` と比較する。
 
-* [Mozilla JS practices](https://developer.mozilla.org/en-US/docs/Mozilla/Developer_guide/Coding_Style#JavaScript_practices) を参照して、いくつかの便利なコードフォーマットの技を学ぶ。
+- 複雑またはあいまいな場所ではコメントを使用する
+
+- [Mozilla JS practices](https://developer.mozilla.org/en-US/docs/Mozilla/Developer_guide/Coding_Style#JavaScript_practices) を参照して、いくつかの便利なコードフォーマットの技を学ぶ。
 
 ## 単体テスト
 
@@ -146,10 +143,10 @@ $ npm run lint:fix
 $ npm ci
 ```
 
-これにより、p5.js の依存関係の *すべて* がインストールされます。簡単に言うと、単体テストに特有の最も重要な依存関係は次のとおりです。
+これにより、p5.js の依存関係の _すべて_ がインストールされます。簡単に言うと、単体テストに特有の最も重要な依存関係は次のとおりです。
 
 -[Mocha](https://mochajs.org/)，p5.j​​s に固​​有の個別のテスト ファイルを実行できる強力なテスト フレームワーク
--[mocha-chrome](https://github.com/shellscape/mocha-chrome)，ヘッドレス Google Chrome ブラウザを使用して mocha テストを実行するための mocha プラグイン
+\-[mocha-chrome](https://github.com/shellscape/mocha-chrome)，ヘッドレス Google Chrome ブラウザを使用して mocha テストを実行するための mocha プラグイン
 
 依存関係がインストールされたら、Grunt を使用して単体テストを実行します。
 

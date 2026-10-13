@@ -23,7 +23,7 @@ p5.ColorConversion = {
     const val = hsba[2];
 
     // Calculate lightness.
-    const li = (2 - sat) * val / 2;
+    const li = ((2 - sat) * val) / 2;
 
     // Convert saturation.
     if (li !== 0) {
@@ -32,7 +32,7 @@ p5.ColorConversion = {
       } else if (li < 0.5) {
         sat = sat / (2 - sat);
       } else {
-        sat = sat * val / (2 - li * 2);
+        sat = (sat * val) / (2 - li * 2);
       }
     }
 
@@ -112,7 +112,7 @@ p5.ColorConversion = {
     }
 
     // Convert saturation.
-    sat = 2 * (val - li) / val;
+    sat = (2 * (val - li)) / val;
 
     // Hue and alpha stay the same.
     return [hue, sat, val, hsla[3]];

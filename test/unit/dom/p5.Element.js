@@ -2,7 +2,7 @@
 import { mockP5, mockP5Prototype } from '../../js/mocks';
 import dom from '../../../src/dom/dom';
 
-suite('p5.Element', function() {
+suite('p5.Element', function () {
   // const mockP5Prototype = new p5(function(sketch) {
   //   sketch.setup = function() {};
   //   sketch.draw = function() {};
@@ -22,7 +22,7 @@ suite('p5.Element', function() {
     dom(mockP5, mockP5Prototype);
   });
 
-  suite('p5.Element.prototype.parent', function() {
+  suite('p5.Element.prototype.parent', function () {
     let div0, div1;
 
     beforeEach(() => {
@@ -35,25 +35,25 @@ suite('p5.Element', function() {
       div1.remove();
     });
 
-    test('attaches child to parent', function() {
+    test('attaches child to parent', function () {
       div1.attribute('id', 'child');
       div1.parent(div0); //attaches div1 to div0
       assert.equal(document.getElementById('child').parentElement, div0.elt);
     });
 
-    test('attaches child to parent using classname', function() {
+    test('attaches child to parent using classname', function () {
       div0.attribute('id', 'parent');
       div1.parent('parent'); //attaches div1 to div0 using classname
       assert.equal(div1.parent(), div0.elt); //returns parent of div1
     });
 
-    test('attaches child to parent using id', function() {
+    test('attaches child to parent using id', function () {
       div0.attribute('id', 'parent');
       div1.parent('#parent'); //attaches div1 to div0
       assert.equal(div1.parent(), div0.elt); //returns parent of div1 using id
     });
 
-    test('returns the parent', function() {
+    test('returns the parent', function () {
       let div0 = document.createElement('div');
       let div1 = document.createElement('div');
       div1.setAttribute('id', 'child');
@@ -63,14 +63,14 @@ suite('p5.Element', function() {
     });
   });
 
-  suite('p5.Element.prototype.id', function() {
-    test('attaches child to parent', function() {
+  suite('p5.Element.prototype.id', function () {
+    test('attaches child to parent', function () {
       const elt = mockP5Prototype.createDiv();
       elt.id('test');
       assert.equal(document.getElementById('test'), elt.elt);
     });
 
-    test('returns the id', function() {
+    test('returns the id', function () {
       const elt = document.createElement('div');
       elt.setAttribute('id', 'test');
       document.body.appendChild(elt);
@@ -78,12 +78,12 @@ suite('p5.Element', function() {
     });
   });
 
-  suite.todo('p5.Element.prototype.mousePressed', function() {
-    test('attaches and gets events', function() {
+  suite.todo('p5.Element.prototype.mousePressed', function () {
+    test('attaches and gets events', function () {
       // setup
       const elt = mockP5Prototype.createDiv('hello');
       var myFnCounter = 0;
-      var myFn = function() {
+      var myFn = function () {
         myFnCounter++;
       };
 
@@ -93,15 +93,15 @@ suite('p5.Element', function() {
       assert.equal(myFnCounter, 1);
     });
 
-    test('attaches multiple handlers and only latest gets events', function() {
+    test('attaches multiple handlers and only latest gets events', function () {
       // setup
       const elt = mockP5Prototype.createDiv('hello');
       var myFnCounter = 0;
-      var myFn = function() {
+      var myFn = function () {
         myFnCounter++;
       };
       var myFnCounterOther = 0;
-      var myFnOther = function() {
+      var myFnOther = function () {
         myFnCounterOther++;
       };
 
@@ -114,12 +114,12 @@ suite('p5.Element', function() {
     });
   });
 
-  suite('p5.Element.prototype.mouseClicked', function() {
-    test('attaches and gets events', function() {
+  suite('p5.Element.prototype.mouseClicked', function () {
+    test('attaches and gets events', function () {
       // setup
       const elt = mockP5Prototype.createDiv('hello');
       var myFnCounter = 0;
-      var myFn = function() {
+      var myFn = function () {
         myFnCounter++;
       };
 
@@ -129,15 +129,15 @@ suite('p5.Element', function() {
       assert.equal(myFnCounter, 1);
     });
 
-    test('attaches multiple handlers and only latest gets events', function() {
+    test('attaches multiple handlers and only latest gets events', function () {
       // setup
       const elt = mockP5Prototype.createDiv('hello');
       var myFnCounter = 0;
-      var myFn = function() {
+      var myFn = function () {
         myFnCounter++;
       };
       var myFnCounterOther = 0;
-      var myFnOther = function() {
+      var myFnOther = function () {
         myFnCounterOther++;
       };
 
@@ -149,11 +149,11 @@ suite('p5.Element', function() {
       assert.equal(myFnCounterOther, 1);
     });
 
-    test('detaches and does not get events', function() {
+    test('detaches and does not get events', function () {
       // setup
       const elt = mockP5Prototype.createDiv('hello');
       var myFnCounter = 0;
-      var myFn = function() {
+      var myFn = function () {
         myFnCounter++;
       };
 
@@ -165,12 +165,12 @@ suite('p5.Element', function() {
     });
   });
 
-  suite('p5.Element.prototype.doubleClicked', function() {
-    test('attaches and gets events', function() {
+  suite('p5.Element.prototype.doubleClicked', function () {
+    test('attaches and gets events', function () {
       // setup
       const elt = mockP5Prototype.createDiv('hello');
       var myFnCounter = 0;
-      var myFn = function() {
+      var myFn = function () {
         myFnCounter++;
       };
 
@@ -180,15 +180,15 @@ suite('p5.Element', function() {
       assert.equal(myFnCounter, 1);
     });
 
-    test('attaches multiple handlers and only latest gets events', function() {
+    test('attaches multiple handlers and only latest gets events', function () {
       // setup
       const elt = mockP5Prototype.createDiv('hello');
       var myFnCounter = 0;
-      var myFn = function() {
+      var myFn = function () {
         myFnCounter++;
       };
       var myFnCounterOther = 0;
-      var myFnOther = function() {
+      var myFnOther = function () {
         myFnCounterOther++;
       };
 
@@ -200,11 +200,11 @@ suite('p5.Element', function() {
       assert.equal(myFnCounterOther, 1);
     });
 
-    test('detaches and does not get events', function() {
+    test('detaches and does not get events', function () {
       // setup
       const elt = mockP5Prototype.createDiv('hello');
       var myFnCounter = 0;
-      var myFn = function() {
+      var myFn = function () {
         myFnCounter++;
       };
 
@@ -216,12 +216,12 @@ suite('p5.Element', function() {
     });
   });
 
-  suite('p5.Element.prototype.mouseWheel', function() {
-    test('attaches and gets events', function() {
+  suite('p5.Element.prototype.mouseWheel', function () {
+    test('attaches and gets events', function () {
       // setup
       const elt = mockP5Prototype.createDiv('hello');
       var myFnCounter = 0;
-      var myFn = function(event) {
+      var myFn = function (event) {
         if (event.deltaX > 0) {
           myFnCounter++;
         }
@@ -233,15 +233,15 @@ suite('p5.Element', function() {
       assert.equal(myFnCounter, 1);
     });
 
-    test('attaches multiple handlers and only latest gets events', function() {
+    test('attaches multiple handlers and only latest gets events', function () {
       // setup
       const elt = mockP5Prototype.createDiv('hello');
       var myFnCounter = 0;
-      var myFn = function() {
+      var myFn = function () {
         myFnCounter++;
       };
       var myFnCounterOther = 0;
-      var myFnOther = function() {
+      var myFnOther = function () {
         myFnCounterOther++;
       };
 
@@ -254,12 +254,12 @@ suite('p5.Element', function() {
     });
   });
 
-  suite('p5.Element.prototype.mouseReleased', function() {
-    test('attaches and gets events', function() {
+  suite('p5.Element.prototype.mouseReleased', function () {
+    test('attaches and gets events', function () {
       // setup
       const elt = mockP5Prototype.createDiv('hello');
       var myFnCounter = 0;
-      var myFn = function() {
+      var myFn = function () {
         myFnCounter++;
       };
 
@@ -269,15 +269,15 @@ suite('p5.Element', function() {
       assert.equal(myFnCounter, 1);
     });
 
-    test('attaches multiple handlers and only latest gets events', function() {
+    test('attaches multiple handlers and only latest gets events', function () {
       // setup
       const elt = mockP5Prototype.createDiv('hello');
       var myFnCounter = 0;
-      var myFn = function() {
+      var myFn = function () {
         myFnCounter++;
       };
       var myFnCounterOther = 0;
-      var myFnOther = function() {
+      var myFnOther = function () {
         myFnCounterOther++;
       };
 
@@ -289,11 +289,11 @@ suite('p5.Element', function() {
       assert.equal(myFnCounterOther, 1);
     });
 
-    test('detaches and does not get events', function() {
+    test('detaches and does not get events', function () {
       // setup
       const elt = mockP5Prototype.createDiv('hello');
       var myFnCounter = 0;
-      var myFn = function() {
+      var myFn = function () {
         myFnCounter++;
       };
 
@@ -305,12 +305,12 @@ suite('p5.Element', function() {
     });
   });
 
-  suite('p5.Element.prototype.mouseMoved', function() {
-    test('attaches and gets events', function() {
+  suite('p5.Element.prototype.mouseMoved', function () {
+    test('attaches and gets events', function () {
       // setup
       const elt = mockP5Prototype.createDiv('hello');
       var myFnCounter = 0;
-      var myFn = function() {
+      var myFn = function () {
         myFnCounter++;
       };
 
@@ -320,15 +320,15 @@ suite('p5.Element', function() {
       assert.equal(myFnCounter, 1);
     });
 
-    test('attaches multiple handlers and only latest gets events', function() {
+    test('attaches multiple handlers and only latest gets events', function () {
       // setup
       const elt = mockP5Prototype.createDiv('hello');
       var myFnCounter = 0;
-      var myFn = function() {
+      var myFn = function () {
         myFnCounter++;
       };
       var myFnCounterOther = 0;
-      var myFnOther = function() {
+      var myFnOther = function () {
         myFnCounterOther++;
       };
 
@@ -340,11 +340,11 @@ suite('p5.Element', function() {
       assert.equal(myFnCounterOther, 1);
     });
 
-    test('detaches and does not get events', function() {
+    test('detaches and does not get events', function () {
       // setup
       const elt = mockP5Prototype.createDiv('hello');
       var myFnCounter = 0;
-      var myFn = function() {
+      var myFn = function () {
         myFnCounter++;
       };
 
@@ -356,12 +356,12 @@ suite('p5.Element', function() {
     });
   });
 
-  suite('p5.Element.prototype.mouseOver', function() {
-    test('attaches and gets events', function() {
+  suite('p5.Element.prototype.mouseOver', function () {
+    test('attaches and gets events', function () {
       // setup
       const elt = mockP5Prototype.createDiv('hello');
       var myFnCounter = 0;
-      var myFn = function() {
+      var myFn = function () {
         myFnCounter++;
       };
 
@@ -371,15 +371,15 @@ suite('p5.Element', function() {
       assert.equal(myFnCounter, 1);
     });
 
-    test('attaches multiple handlers and only latest gets events', function() {
+    test('attaches multiple handlers and only latest gets events', function () {
       // setup
       const elt = mockP5Prototype.createDiv('hello');
       var myFnCounter = 0;
-      var myFn = function() {
+      var myFn = function () {
         myFnCounter++;
       };
       var myFnCounterOther = 0;
-      var myFnOther = function() {
+      var myFnOther = function () {
         myFnCounterOther++;
       };
 
@@ -391,11 +391,11 @@ suite('p5.Element', function() {
       assert.equal(myFnCounterOther, 1);
     });
 
-    test('detaches and does not get events', function() {
+    test('detaches and does not get events', function () {
       // setup
       const elt = mockP5Prototype.createDiv('hello');
       var myFnCounter = 0;
-      var myFn = function() {
+      var myFn = function () {
         myFnCounter++;
       };
 
@@ -407,12 +407,12 @@ suite('p5.Element', function() {
     });
   });
 
-  suite('p5.Element.prototype.mouseOut', function() {
-    test('attaches and gets events', function() {
+  suite('p5.Element.prototype.mouseOut', function () {
+    test('attaches and gets events', function () {
       // setup
       const elt = mockP5Prototype.createDiv('hello');
       var myFnCounter = 0;
-      var myFn = function() {
+      var myFn = function () {
         myFnCounter++;
       };
 
@@ -422,15 +422,15 @@ suite('p5.Element', function() {
       assert.equal(myFnCounter, 1);
     });
 
-    test('attaches multiple handlers and only latest gets events', function() {
+    test('attaches multiple handlers and only latest gets events', function () {
       // setup
       const elt = mockP5Prototype.createDiv('hello');
       var myFnCounter = 0;
-      var myFn = function() {
+      var myFn = function () {
         myFnCounter++;
       };
       var myFnCounterOther = 0;
-      var myFnOther = function() {
+      var myFnOther = function () {
         myFnCounterOther++;
       };
 
@@ -442,11 +442,11 @@ suite('p5.Element', function() {
       assert.equal(myFnCounterOther, 1);
     });
 
-    test('detaches and does not get events', function() {
+    test('detaches and does not get events', function () {
       // setup
       const elt = mockP5Prototype.createDiv('hello');
       var myFnCounter = 0;
-      var myFn = function() {
+      var myFn = function () {
         myFnCounter++;
       };
 
@@ -458,11 +458,11 @@ suite('p5.Element', function() {
     });
   });
 
-  suite('p5.Element.prototype.dragOver', function() {
-    test('attaches and gets events', function() {
+  suite('p5.Element.prototype.dragOver', function () {
+    test('attaches and gets events', function () {
       const elt = mockP5Prototype.createDiv('hello');
       var myFnCounter = 0;
-      var myFn = function() {
+      var myFn = function () {
         myFnCounter++;
       };
 
@@ -472,15 +472,15 @@ suite('p5.Element', function() {
       assert.equal(myFnCounter, 1);
     });
 
-    test('attaches multiple handlers and only latest gets events', function() {
+    test('attaches multiple handlers and only latest gets events', function () {
       // setup
       const elt = mockP5Prototype.createDiv('hello');
       var myFnCounter = 0;
-      var myFn = function() {
+      var myFn = function () {
         myFnCounter++;
       };
       var myFnCounterOther = 0;
-      var myFnOther = function() {
+      var myFnOther = function () {
         myFnCounterOther++;
       };
 
@@ -492,11 +492,11 @@ suite('p5.Element', function() {
       assert.equal(myFnCounterOther, 1);
     });
 
-    test('detaches and does not get events', function() {
+    test('detaches and does not get events', function () {
       // setup
       const elt = mockP5Prototype.createDiv('hello');
       var myFnCounter = 0;
-      var myFn = function() {
+      var myFn = function () {
         myFnCounter++;
       };
 
@@ -508,11 +508,11 @@ suite('p5.Element', function() {
     });
   });
 
-  suite('p5.Element.prototype.dragLeave', function() {
-    test('attaches and gets events', function() {
+  suite('p5.Element.prototype.dragLeave', function () {
+    test('attaches and gets events', function () {
       const elt = mockP5Prototype.createDiv('hello');
       var myFnCounter = 0;
-      var myFn = function() {
+      var myFn = function () {
         myFnCounter++;
       };
 
@@ -522,15 +522,15 @@ suite('p5.Element', function() {
       assert.equal(myFnCounter, 1);
     });
 
-    test('attaches multiple handlers and only latest gets events', function() {
+    test('attaches multiple handlers and only latest gets events', function () {
       // setup
       const elt = mockP5Prototype.createDiv('hello');
       var myFnCounter = 0;
-      var myFn = function() {
+      var myFn = function () {
         myFnCounter++;
       };
       var myFnCounterOther = 0;
-      var myFnOther = function() {
+      var myFnOther = function () {
         myFnCounterOther++;
       };
 
@@ -542,11 +542,11 @@ suite('p5.Element', function() {
       assert.equal(myFnCounterOther, 1);
     });
 
-    test('detaches and does not get events', function() {
+    test('detaches and does not get events', function () {
       // setup
       const elt = mockP5Prototype.createDiv('hello');
       var myFnCounter = 0;
-      var myFn = function() {
+      var myFn = function () {
         myFnCounter++;
       };
 
@@ -558,7 +558,7 @@ suite('p5.Element', function() {
     });
   });
 
-  suite('operating with element classes', function() {
+  suite('operating with element classes', function () {
     let elt;
 
     beforeEach(() => {
@@ -569,7 +569,7 @@ suite('p5.Element', function() {
       elt.remove();
     });
 
-    test('should add class to element', function() {
+    test('should add class to element', function () {
       elt.setAttribute('id', 'testdiv');
       document.body.appendChild(elt);
 
@@ -577,7 +577,7 @@ suite('p5.Element', function() {
       assert.strictEqual(elt.getAttribute('class'), 'testclass');
     });
 
-    test('should remove class from element with only one class', function() {
+    test('should remove class from element with only one class', function () {
       elt.setAttribute('id', 'testdiv');
       elt.setAttribute('class', 'testclass');
       document.body.appendChild(elt);
@@ -586,7 +586,7 @@ suite('p5.Element', function() {
       assert.strictEqual(elt.getAttribute('class'), '');
     });
 
-    test('should remove class from element with several classes', function() {
+    test('should remove class from element with several classes', function () {
       elt.setAttribute('id', 'testdiv');
       elt.setAttribute('class', 'testclass1 testclass2 testclass3');
       document.body.appendChild(elt);
@@ -595,34 +595,52 @@ suite('p5.Element', function() {
       assert.strictEqual(elt.getAttribute('class'), 'testclass1 testclass3');
     });
 
-    test('should return true if element has specified class', function() {
+    test('should return true if element has specified class', function () {
       elt.setAttribute('id', 'testdiv');
       elt.setAttribute('class', 'testclass1 testclass2 testclass3');
       document.body.appendChild(elt);
 
-      assert.strictEqual(mockP5Prototype.select('#testdiv').hasClass('testclass2'), true);
+      assert.strictEqual(
+        mockP5Prototype.select('#testdiv').hasClass('testclass2'),
+        true
+      );
     });
 
-    test('should return false if element has not specified class', function() {
+    test('should return false if element has not specified class', function () {
       elt.setAttribute('id', 'testdiv');
       elt.setAttribute('class', 'testclass1 testclass3');
       document.body.appendChild(elt);
 
-      assert.strictEqual(mockP5Prototype.select('#testdiv').hasClass('testclass2'), false);
+      assert.strictEqual(
+        mockP5Prototype.select('#testdiv').hasClass('testclass2'),
+        false
+      );
     });
 
-    test('should return false if element has class that is partially similar as specified class', function() {
+    test('should return false if element has class that is partially similar as specified class', function () {
       elt.setAttribute('id', 'testdiv');
       elt.setAttribute('class', 'testclass slideshow newtestsclas');
       document.body.appendChild(elt);
 
-      assert.strictEqual(mockP5Prototype.select('#testdiv').hasClass('show'), false);
-      assert.strictEqual(mockP5Prototype.select('#testdiv').hasClass('slide'), false);
-      assert.strictEqual(mockP5Prototype.select('#testdiv').hasClass('test'), false);
-      assert.strictEqual(mockP5Prototype.select('#testdiv').hasClass('class'), false);
+      assert.strictEqual(
+        mockP5Prototype.select('#testdiv').hasClass('show'),
+        false
+      );
+      assert.strictEqual(
+        mockP5Prototype.select('#testdiv').hasClass('slide'),
+        false
+      );
+      assert.strictEqual(
+        mockP5Prototype.select('#testdiv').hasClass('test'),
+        false
+      );
+      assert.strictEqual(
+        mockP5Prototype.select('#testdiv').hasClass('class'),
+        false
+      );
     });
 
-    test('should toggle specified class on element', function() {
+    test('should toggle specified class on element', function () {
       elt.setAttribute('id', 'testdiv');
       elt.setAttribute('class', 'testclass1 testclass2');
       document.body.appendChild(elt);

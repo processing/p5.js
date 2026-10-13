@@ -1121,7 +1121,7 @@
  * @property async_await
  * @example
  * // Click and drag the mouse to view the scene from different angles.
- * 
+ *
  * let shape;
  *
  * // Load the file and create a p5.Geometry object.
