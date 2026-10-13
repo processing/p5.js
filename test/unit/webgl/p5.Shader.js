@@ -2169,6 +2169,34 @@ suite('p5.Shader', function () {
         assert.approximately(pixelColor[2], 77, 5);
       });
 
+      test('handle swizzle assignments on hook color in loops', () => {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+
+        const testShader = myp5.baseMaterialShader().modify(
+          () => {
+            myp5.getPixelInputs(inputs => {
+              inputs.color = [0, 0, 0, 1];
+
+              for (let i = 0; i < 3; i++) {
+                inputs.color.rgb += 0.1;
+              }
+
+              return inputs;
+            });
+          },
+          { myp5 }
+        );
+
+        myp5.noStroke();
+        myp5.shader(testShader);
+        myp5.plane(myp5.width, myp5.height);
+
+        const pixelColor = myp5.get(25, 25);
+        assert.approximately(pixelColor[0], 77, 5);
+        assert.approximately(pixelColor[1], 77, 5);
+        assert.approximately(pixelColor[2], 77, 5);
+      });
+
       test('handle for loop with variable as loop bound', () => {
         myp5.createCanvas(50, 50, myp5.WEBGL);
 
