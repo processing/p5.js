@@ -482,6 +482,7 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
     strandsBuiltinFunctions
   )) {
     p5._strandsSignatures.set(functionName, true);
+    p5._strandsSignatures.set(`p5.${functionName}`, true);
     const isp5Function = overrides[0].isp5Function;
     if (isp5Function) {
       const originalFn = fn[functionName];
