@@ -1199,6 +1199,7 @@ class Geometry {
    *   endShape();
    * }
    */
+
   computeNormals(shadingType = constants.KEEP_CONNECTIONS, { roundToPrecision = 3 } = {}) {
     const vertexNormals = this.vertexNormals;
     const vertices = this.vertices;
@@ -1253,53 +1254,94 @@ class Geometry {
       }
 
     } else if (shadingType === constants.SEGMENTED) {
-      const segmentedVertices = [];
-      const segmentedNormals = [];
+      const usedVertices = new Set();
       const segmentedFaces = [];
-      const segmentedUVs = [];
-      const segmentedColors = [];
 
+      // Preserve original vertex indices so existing edges remain valid.
+      const segmentedVertices = [...vertices];
+      const segmentedNormals = vertices.map(() => new Vector(0, 0, 0));
+
+      const segmentedUVs = [...this.uvs];
+      const segmentedColors = [...this.vertexColors];
+      const segmentedStrokeColors = [...this.vertexStrokeColors];
+      const segmentedTangents = [...this.vertexTangents];
+
+      // Preserve custom GLSL vertex attributes.
       const segmentedProperties = {};
 
       for (const propertyName in this.userVertexProperties) {
-        segmentedProperties[propertyName] = [];
+        const prop = this.userVertexProperties[propertyName];
+        segmentedProperties[propertyName] = [...prop.getSrcArray()];
       }
 
       faces.forEach((face, faceIndex) => {
         const faceNormal = this._getFaceNormal(faceIndex).normalize();
-        const startIndex = segmentedVertices.length;
+        const newFace = [];
 
         for (const vertexIndex of face) {
-          segmentedVertices.push(vertices[vertexIndex].copy());
-          segmentedNormals.push(faceNormal.copy());
+          let newIndex = vertexIndex;
 
-          if (this.uvs.length > 0) {
-            segmentedUVs.push(
-              this.uvs[vertexIndex * 2],
-              this.uvs[vertexIndex * 2 + 1]
-            );
-          }
-          if (this.vertexColors.length > 0) {
-            segmentedColors.push(
-              ...this.vertexColors.slice(vertexIndex * 4, vertexIndex * 4 + 4)
-            );
-          }
-          for (const propertyName in this.userVertexProperties) {
-            const prop = this.userVertexProperties[propertyName];
-            const size = prop.getDataSize();
-            const source = prop.getSrcArray();
+          if (usedVertices.has(vertexIndex)) {
+            // Append a duplicate only when the original vertex is reused.
+            newIndex = segmentedVertices.length;
 
-            segmentedProperties[propertyName].push(
-              ...source.slice(vertexIndex * size, (vertexIndex + 1) * size)
-            );
+            segmentedVertices.push(vertices[vertexIndex].copy());
+            segmentedNormals.push(faceNormal.copy());
+
+            if (this.uvs.length > 0) {
+              segmentedUVs.push(
+                ...this.uvs.slice(vertexIndex * 2, (vertexIndex + 1) * 2)
+              );
+            }
+
+            if (this.vertexColors.length > 0) {
+              segmentedColors.push(
+                ...this.vertexColors.slice(
+                  vertexIndex * 4,
+                  (vertexIndex + 1) * 4
+                )
+              );
+            }
+
+            if (this.vertexStrokeColors.length > 0) {
+              segmentedStrokeColors.push(
+                ...this.vertexStrokeColors.slice(
+                  vertexIndex * 4,
+                  (vertexIndex + 1) * 4
+                )
+              );
+            }
+
+            if (this.vertexTangents.length > 0) {
+              segmentedTangents.push(
+                ...this.vertexTangents.slice(
+                  vertexIndex * 4,
+                  (vertexIndex + 1) * 4
+                )
+              );
+            }
+
+            for (const propertyName in this.userVertexProperties) {
+              const prop = this.userVertexProperties[propertyName];
+              const size = prop.getDataSize();
+              const source = prop.getSrcArray();
+
+              segmentedProperties[propertyName].push(
+                ...source.slice(
+                  vertexIndex * size,
+                  (vertexIndex + 1) * size
+                )
+              );
+            }
+          } else {
+            usedVertices.add(vertexIndex);
+            segmentedNormals[vertexIndex] = faceNormal.copy();
           }
+
+          newFace.push(newIndex);
         }
 
-        segmentedFaces.push([
-          startIndex,
-          startIndex + 1,
-          startIndex + 2
-        ]);
+        segmentedFaces.push(newFace);
       });
 
       this.vertices = segmentedVertices;
@@ -1307,6 +1349,9 @@ class Geometry {
       this.faces = segmentedFaces;
       this.uvs = segmentedUVs;
       this.vertexColors = segmentedColors;
+      this.vertexStrokeColors = segmentedStrokeColors;
+      this.vertexTangents = segmentedTangents;
+
       for (const propertyName in this.userVertexProperties) {
         const prop = this.userVertexProperties[propertyName];
         this[prop.getSrcName()] = segmentedProperties[propertyName];
@@ -1335,6 +1380,7 @@ class Geometry {
 
     return this;
   }
+
 
   /**
    * computes a per-vertex surface tangent from the uvs, needed for normal

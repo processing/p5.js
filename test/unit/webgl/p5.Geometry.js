@@ -15,6 +15,7 @@ suite('p5.Geometry', function () {
     myp5.remove();
   });
 
+
   suite('computeNormals', function () {
     test('SMOOTH preserves vertices with different UVs', function () {
       const geom = new p5.Geometry();
@@ -47,6 +48,7 @@ suite('p5.Geometry', function () {
       expect(geom.uvs).toEqual(originalUvs);
       expect(geom.vertexNormals[0]).toEqual(geom.vertexNormals[3]);
     });
+
     test('KEEP_CONNECTIONS preserves the existing FLAT behavior', function () {
       const createGeometry = () => {
         const geom = new p5.Geometry();
@@ -74,17 +76,14 @@ suite('p5.Geometry', function () {
       keepConnectionsGeom.computeNormals(myp5.KEEP_CONNECTIONS);
       defaultGeom.computeNormals();
 
-      // FLAT and KEEP_CONNECTIONS should produce identical normals.
       expect(flatGeom.vertexNormals).toEqual(
         keepConnectionsGeom.vertexNormals
       );
 
-      // Default behavior should match KEEP_CONNECTIONS.
       expect(defaultGeom.vertexNormals).toEqual(
         keepConnectionsGeom.vertexNormals
       );
 
-      // Vertex connections should remain unchanged.
       for (const geom of [flatGeom, keepConnectionsGeom, defaultGeom]) {
         expect(geom.vertices.length).toBe(4);
         expect(geom.faces).toEqual([
@@ -94,7 +93,6 @@ suite('p5.Geometry', function () {
         expect(geom.vertexNormals.length).toBe(4);
       }
 
-      // Shared vertices should have averaged face normals.
       const expected = 1 / Math.sqrt(2);
 
       for (const index of [0, 1]) {
@@ -105,7 +103,8 @@ suite('p5.Geometry', function () {
         expect(normal.z).toBeCloseTo(expected, 5);
       }
     });
-    test('SEGMENTED creates independent vertices with face normals', function () {
+
+    test('SEGMENTED duplicates only shared vertices and assigns face normals', function () {
       const geom = new p5.Geometry();
 
       geom.vertices.push(
@@ -122,33 +121,31 @@ suite('p5.Geometry', function () {
 
       geom.computeNormals(myp5.SEGMENTED);
 
-      // Each triangle should have three independent vertices.
       expect(geom.vertices.length).toBe(6);
       expect(geom.faces).toEqual([
         [0, 1, 2],
-        [3, 4, 5]
+        [4, 3, 5]
       ]);
 
-      // Both triangles retain their original positions.
-      expect(geom.vertices[0]).toEqual(geom.vertices[3]);
+      expect(geom.vertices[0]).toEqual(geom.vertices[4]);
       expect(geom.vertices[1]).toEqual(geom.vertices[5]);
 
-      // Each triangle should have three identical face normals.
       expect(geom.vertexNormals.length).toBe(6);
 
-      for (let i = 0; i < 3; i++) {
-        expect(geom.vertexNormals[i].x).toBeCloseTo(0);
-        expect(geom.vertexNormals[i].y).toBeCloseTo(0);
-        expect(geom.vertexNormals[i].z).toBeCloseTo(1);
+      for (const index of geom.faces[0]) {
+        expect(geom.vertexNormals[index].x).toBeCloseTo(0);
+        expect(geom.vertexNormals[index].y).toBeCloseTo(0);
+        expect(geom.vertexNormals[index].z).toBeCloseTo(1);
       }
 
-      for (let i = 3; i < 6; i++) {
-        expect(geom.vertexNormals[i].x).toBeCloseTo(0);
-        expect(geom.vertexNormals[i].y).toBeCloseTo(1);
-        expect(geom.vertexNormals[i].z).toBeCloseTo(0);
+      for (const index of geom.faces[1]) {
+        expect(geom.vertexNormals[index].x).toBeCloseTo(0);
+        expect(geom.vertexNormals[index].y).toBeCloseTo(1);
+        expect(geom.vertexNormals[index].z).toBeCloseTo(0);
       }
     });
-    test('SEGMENTED preserves UVs when duplicating vertices', function () {
+
+    test('SEGMENTED preserves UVs when duplicating shared vertices', function () {
       const geom = new p5.Geometry();
 
       geom.vertices.push(
@@ -173,18 +170,18 @@ suite('p5.Geometry', function () {
       geom.computeNormals(myp5.SEGMENTED);
 
       expect(geom.vertices.length).toBe(6);
-
       expect(geom.uvs).toEqual([
         0, 0,
         1, 0,
         0, 1,
-        0, 0,
         1, 1,
+        0, 0,
         1, 0
       ]);
 
       expect(geom.uvs.length).toBe(geom.vertices.length * 2);
     });
+
     test('SEGMENTED preserves vertex colors', function () {
       const geom = new p5.Geometry();
 
@@ -213,13 +210,188 @@ suite('p5.Geometry', function () {
         1, 0, 0, 1,
         0, 1, 0, 1,
         0, 0, 1, 1,
-        1, 0, 0, 1,
         1, 1, 0, 1,
+        1, 0, 0, 1,
         0, 1, 0, 1
       ]);
 
       expect(geom.vertexColors.length).toBe(geom.vertices.length * 4);
     });
+
+    test('SEGMENTED preserves stroke edges and stroke colors', function () {
+      const geom = new p5.Geometry();
+
+      geom.vertices.push(
+        myp5.createVector(0, 0, 0),
+        myp5.createVector(1, 0, 0),
+        myp5.createVector(0, 1, 0),
+        myp5.createVector(0, 0, 1)
+      );
+
+      geom.faces.push(
+        [0, 1, 2],
+        [0, 3, 1]
+      );
+
+      geom.edges.push(
+        [0, 1],
+        [1, 2],
+        [0, 3],
+        [3, 1]
+      );
+
+      geom.vertexStrokeColors.push(
+        1, 0, 0, 1,
+        0, 1, 0, 1,
+        0, 0, 1, 1,
+        1, 1, 0, 1
+      );
+
+      const originalEdges = geom.edges.map(edge => [...edge]);
+      const originalVertices = geom.vertices.map(vertex => vertex.copy());
+
+      geom.computeNormals(myp5.SEGMENTED);
+
+      expect(geom.edges).toEqual(originalEdges);
+
+      for (const [start, end] of geom.edges) {
+        expect(geom.vertices[start]).toEqual(originalVertices[start]);
+        expect(geom.vertices[end]).toEqual(originalVertices[end]);
+      }
+
+      expect(geom.vertexStrokeColors).toEqual([
+        1, 0, 0, 1,
+        0, 1, 0, 1,
+        0, 0, 1, 1,
+        1, 1, 0, 1,
+        1, 0, 0, 1,
+        0, 1, 0, 1
+      ]);
+
+      expect(geom.vertexStrokeColors.length).toBe(
+        geom.vertices.length * 4
+      );
+    });
+
+    test('SEGMENTED preserves unused vertices', function () {
+      const geom = new p5.Geometry();
+
+      geom.vertices.push(
+        myp5.createVector(0, 0, 0),
+        myp5.createVector(1, 0, 0),
+        myp5.createVector(0, 1, 0),
+        myp5.createVector(0, 0, 1),
+        myp5.createVector(5, 5, 5)
+      );
+
+      geom.faces.push(
+        [0, 1, 2],
+        [0, 3, 1]
+      );
+
+      geom.computeNormals(myp5.SEGMENTED);
+
+      expect(geom.vertices.length).toBe(7);
+      expect(geom.vertices[4]).toEqual(myp5.createVector(5, 5, 5));
+      expect(geom.faces).toEqual([
+        [0, 1, 2],
+        [5, 3, 6]
+      ]);
+      expect(geom.vertexNormals.length).toBe(geom.vertices.length);
+    });
+
+    test('SEGMENTED does not duplicate vertices unnecessarily', function () {
+      const geom = new p5.Geometry();
+
+      geom.vertices.push(
+        myp5.createVector(0, 0, 0),
+        myp5.createVector(1, 0, 0),
+        myp5.createVector(0, 1, 0),
+        myp5.createVector(2, 0, 0),
+        myp5.createVector(3, 0, 0),
+        myp5.createVector(2, 1, 0)
+      );
+
+      geom.faces.push(
+        [0, 1, 2],
+        [3, 4, 5]
+      );
+
+      geom.computeNormals(myp5.SEGMENTED);
+
+      expect(geom.vertices.length).toBe(6);
+      expect(geom.faces).toEqual([
+        [0, 1, 2],
+        [3, 4, 5]
+      ]);
+    });
+
+    test('SEGMENTED is idempotent when called repeatedly', function () {
+      const geom = new p5.Geometry();
+
+      geom.vertices.push(
+        myp5.createVector(0, 0, 0),
+        myp5.createVector(1, 0, 0),
+        myp5.createVector(0, 1, 0),
+        myp5.createVector(0, 0, 1)
+      );
+
+      geom.faces.push(
+        [0, 1, 2],
+        [0, 3, 1]
+      );
+
+      geom.computeNormals(myp5.SEGMENTED);
+
+      const vertexCount = geom.vertices.length;
+      const faces = geom.faces.map(face => [...face]);
+      const normals = geom.vertexNormals.map(normal => normal.copy());
+
+      geom.computeNormals(myp5.SEGMENTED);
+
+      expect(geom.vertices.length).toBe(vertexCount);
+      expect(geom.faces).toEqual(faces);
+      expect(geom.vertexNormals).toEqual(normals);
+    });
+
+    test('SEGMENTED preserves vertex tangents', function () {
+      const geom = new p5.Geometry();
+
+      geom.vertices.push(
+        myp5.createVector(0, 0, 0),
+        myp5.createVector(1, 0, 0),
+        myp5.createVector(0, 1, 0),
+        myp5.createVector(0, 0, 1)
+      );
+
+      geom.faces.push(
+        [0, 1, 2],
+        [0, 3, 1]
+      );
+
+      geom.vertexTangents.push(
+        1, 0, 0, 1,
+        0, 1, 0, 1,
+        0, 0, 1, 1,
+        1, 1, 0, -1
+      );
+
+      geom.computeNormals(myp5.SEGMENTED);
+
+      expect(geom.vertexTangents).toEqual([
+        1, 0, 0, 1,
+        0, 1, 0, 1,
+        0, 0, 1, 1,
+        1, 1, 0, -1,
+        1, 0, 0, 1,
+        0, 1, 0, 1
+      ]);
+
+      expect(geom.vertexTangents.length).toBe(
+        geom.vertices.length * 4
+      );
+    });
+
     test('SEGMENTED preserves custom vertex attributes', function () {
       const geom = new p5.Geometry();
 
@@ -240,13 +412,14 @@ suite('p5.Geometry', function () {
       geom.computeNormals(myp5.SEGMENTED);
 
       expect(geom.aRoughnessSrc).toEqual([
-        0.1, 0.2, 0.3,
-        0.1, 0.4, 0.2
+        0.1, 0.2, 0.3, 0.4,
+        0.1, 0.2
       ]);
 
       expect(geom.userVertexProperties.aRoughness.getDataSize()).toBe(1);
       expect(geom.aRoughnessSrc.length).toBe(geom.vertices.length);
     });
+
     test('SEGMENTED preserves multi-component custom attributes', function () {
       const geom = new p5.Geometry();
 
@@ -275,11 +448,12 @@ suite('p5.Geometry', function () {
         1, 2, 3,
         4, 5, 6,
         7, 8, 9,
-        1, 2, 3,
         10, 11, 12,
+        1, 2, 3,
         4, 5, 6
       ]);
 
+      expect(geom.userVertexProperties.aOffset.getDataSize()).toBe(3);
       expect(geom.aOffsetSrc.length).toBe(geom.vertices.length * 3);
     });
   });
