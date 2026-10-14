@@ -279,11 +279,22 @@ export const processStack = (error, stacktrace) => {
   let isInternal = false;
   let p5FileName, friendlyStack;
 
+  // Helper to strip query strings and hashes from URLs for consistent matching
+  const cleanUrl = url => (typeof url === 'string' ? url.split('?')[0].split('#')[0] : '');
+
   // Intentionally throw an error that we catch so that we can check the name
   // of the current file. Any errors we see from this file, we treat as
   // internal errors.
   const testStacktrace = errorStackParser.parse(Error());
-  p5FileName = testStacktrace[0].fileName;
+  p5FileName = cleanUrl(testStacktrace[0]?.fileName);
+  const p5BaseName = p5FileName ? p5FileName.split('/').slice(-1)[0] : '';
+  const isP5File = url => {
+    const cleaned = cleanUrl(url);
+    if (!cleaned) return false;
+    if (cleaned === p5FileName) return true;
+    if (p5BaseName && cleaned.split('/').slice(-1)[0] === p5BaseName) return true;
+    return false;
+  };
 
   for (let i = stacktrace.length - 1; i >= 0; i--) {
     let splitted = stacktrace[i].functionName.split('.');
@@ -291,15 +302,6 @@ export const processStack = (error, stacktrace) => {
       // remove everything below an entry point function (setup, draw, etc).
       // (it's usually the internal initialization calls)
       friendlyStack = stacktrace.slice(0, i + 1);
-      // We call the error "internal" if the source of the error was a
-      // function from within the p5.js library file, but called from the
-      // user's code directly. We only need to check the topmost frame in
-      // the stack trace since any function internal to p5 should pass this
-      // check, not just public p5 functions.
-      if (stacktrace[0].fileName === p5FileName) {
-        isInternal = true;
-        break;
-      }
       break;
     }
   }
@@ -308,6 +310,14 @@ export const processStack = (error, stacktrace) => {
   // function may be found in the stacktrace. In that case just use the
   // entire stacktrace for friendlyStack
   if (!friendlyStack) friendlyStack = stacktrace;
+
+  // We call the error "internal" if the source of the error was a
+  // function from within the p5.js library file, but called from the
+  // user's code directly. When error is null (called from param_validator),
+  // it is always an internal validation call.
+  if (error === null || isP5File(stacktrace[0]?.fileName)) {
+    isInternal = true;
+  }
 
   if (isInternal) {
     // the frameIndex property is added before the filter, so frameIndex
@@ -319,7 +329,15 @@ export const processStack = (error, stacktrace) => {
         frame.frameIndex = index;
         return frame;
       })
-      .filter(frame => frame.fileName !== p5FileName);
+      .filter(frame => {
+        const cleaned = cleanUrl(frame.fileName);
+        return (
+          cleaned &&
+          !isP5File(frame.fileName) &&
+          cleaned !== '<anonymous>' &&
+          !cleaned.startsWith('eval')
+        );
+      });
 
     // a weird case, if for some reason we can't identify the function called
     // from user's code
@@ -332,16 +350,19 @@ export const processStack = (error, stacktrace) => {
       friendlyStack[0].lineNumber &&
       friendlyStack[0].columnNumber
     ) {
+      const cleanFile = cleanUrl(friendlyStack[0].fileName);
       locationObj = {
-        location: `${friendlyStack[0].fileName}:${
+        location: `${cleanFile}:${
           friendlyStack[0].lineNumber
         }:${friendlyStack[0].columnNumber}`,
-        file: friendlyStack[0].fileName.split('/').slice(-1),
+        file: cleanFile.split('/').slice(-1)[0],
         line: friendlyStack[0].lineNumber
       };
 
       // if already handled by another part of the FES, don't handle again
-      if (p5._fesLogCache[locationObj.location]) return [true, null];
+      if (typeof p5 !== 'undefined' && p5?._fesLogCache?.[locationObj.location]) {
+        return [true, null];
+      }
     }
 
     // Library error
@@ -394,8 +415,16 @@ export function printFriendlyStack(friendlyStack) {
 }
 
 export function getFriendlyStack(stacktrace, compact = false) {
+  if (!stacktrace || !stacktrace.length || !stacktrace[0]?.fileName) {
+    return null;
+  }
+  const rawFile = stacktrace[0].fileName;
+  const cleanFile = (typeof rawFile === 'string' ? rawFile.split('?')[0].split('#')[0] : '').split('/').slice(-1)[0];
+  if (!cleanFile || cleanFile === '<anonymous>' || cleanFile.startsWith('eval')) {
+    return null;
+  }
   if (compact) {
-    return `[${stacktrace[0].fileName.split('/').slice(-1)}, line ${stacktrace[0].lineNumber}]`;
+    return `[${cleanFile}, line ${stacktrace[0].lineNumber}]`;
   } else {
     if (stacktrace.length > 1) {
       let stacktraceMsg = '';

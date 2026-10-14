@@ -584,7 +584,7 @@ function validateParams(p5, fn, lifecycles) {
         errorStackParser.parse(Error()).slice(3)
       );
       const locationStr = getFriendlyStack(stacktrace, true);
-      FES.log`${locationStr} ${message}`();
+      FES.log`${locationStr ? locationStr + ' ' : ''}${message}`();
     }
     return message;
   };
@@ -631,18 +631,9 @@ function validateParams(p5, fn, lifecycles) {
     let funcSchemas = activeRegistry.get(func);
     
     if (!funcSchemas) {
-      // Convention-based bypass for shader builder entry-point functions.
-      // All p5 shader builders follow the build*Shader naming convention
-      // (buildMaterialShader, buildComputeShader, etc.). They are called
-      // BEFORE the strands context activates and handle their own validation
-      // and error reporting internally (e.g. "only available with WebGPU").
-      if (/^build\w+Shader$/.test(func) && p5._isStrandsContextActive) {
-        funcSchemas = z.any();
-      }
       // Check _strandsSignatures for explicit bypass entries (value === true)
-      // regardless of strands context, or array-based overload schemas that
-      // only apply inside an active strands context.
-      else if (p5._isStrandsContextActive && p5._strandsSignatures?.has(func)) {
+      // that only apply inside an active strands context.
+      if (p5._isStrandsContextActive && p5._strandsSignatures?.has(func)) {
         funcSchemas = z.any();
       }
       
