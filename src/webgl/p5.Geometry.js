@@ -1251,6 +1251,67 @@ class Geometry {
       for (iv = 0; iv < vertices.length; ++iv) {
         vertexNormals.push(smoothNormals[originalToUnique[iv]].copy());
       }
+
+    } else if (shadingType === constants.SEGMENTED) {
+      const segmentedVertices = [];
+      const segmentedNormals = [];
+      const segmentedFaces = [];
+      const segmentedUVs = [];
+      const segmentedColors = [];
+
+      const segmentedProperties = {};
+
+      for (const propertyName in this.userVertexProperties) {
+        segmentedProperties[propertyName] = [];
+      }
+
+      faces.forEach((face, faceIndex) => {
+        const faceNormal = this._getFaceNormal(faceIndex).normalize();
+        const startIndex = segmentedVertices.length;
+
+        for (const vertexIndex of face) {
+          segmentedVertices.push(vertices[vertexIndex].copy());
+          segmentedNormals.push(faceNormal.copy());
+
+          if (this.uvs.length > 0) {
+            segmentedUVs.push(
+              this.uvs[vertexIndex * 2],
+              this.uvs[vertexIndex * 2 + 1]
+            );
+          }
+          if (this.vertexColors.length > 0) {
+            segmentedColors.push(
+              ...this.vertexColors.slice(vertexIndex * 4, vertexIndex * 4 + 4)
+            );
+          }
+          for (const propertyName in this.userVertexProperties) {
+            const prop = this.userVertexProperties[propertyName];
+            const size = prop.getDataSize();
+            const source = prop.getSrcArray();
+
+            segmentedProperties[propertyName].push(
+              ...source.slice(vertexIndex * size, (vertexIndex + 1) * size)
+            );
+          }
+        }
+
+        segmentedFaces.push([
+          startIndex,
+          startIndex + 1,
+          startIndex + 2
+        ]);
+      });
+
+      this.vertices = segmentedVertices;
+      this.vertexNormals = segmentedNormals;
+      this.faces = segmentedFaces;
+      this.uvs = segmentedUVs;
+      this.vertexColors = segmentedColors;
+      for (const propertyName in this.userVertexProperties) {
+        const prop = this.userVertexProperties[propertyName];
+        this[prop.getSrcName()] = segmentedProperties[propertyName];
+      }
+
     } else {
       vertexNormals.length = 0;
 

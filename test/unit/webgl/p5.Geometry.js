@@ -105,6 +105,183 @@ suite('p5.Geometry', function () {
         expect(normal.z).toBeCloseTo(expected, 5);
       }
     });
+    test('SEGMENTED creates independent vertices with face normals', function () {
+      const geom = new p5.Geometry();
+
+      geom.vertices.push(
+        myp5.createVector(0, 0, 0),
+        myp5.createVector(1, 0, 0),
+        myp5.createVector(0, 1, 0),
+        myp5.createVector(0, 0, 1)
+      );
+
+      geom.faces.push(
+        [0, 1, 2],
+        [0, 3, 1]
+      );
+
+      geom.computeNormals(myp5.SEGMENTED);
+
+      // Each triangle should have three independent vertices.
+      expect(geom.vertices.length).toBe(6);
+      expect(geom.faces).toEqual([
+        [0, 1, 2],
+        [3, 4, 5]
+      ]);
+
+      // Both triangles retain their original positions.
+      expect(geom.vertices[0]).toEqual(geom.vertices[3]);
+      expect(geom.vertices[1]).toEqual(geom.vertices[5]);
+
+      // Each triangle should have three identical face normals.
+      expect(geom.vertexNormals.length).toBe(6);
+
+      for (let i = 0; i < 3; i++) {
+        expect(geom.vertexNormals[i].x).toBeCloseTo(0);
+        expect(geom.vertexNormals[i].y).toBeCloseTo(0);
+        expect(geom.vertexNormals[i].z).toBeCloseTo(1);
+      }
+
+      for (let i = 3; i < 6; i++) {
+        expect(geom.vertexNormals[i].x).toBeCloseTo(0);
+        expect(geom.vertexNormals[i].y).toBeCloseTo(1);
+        expect(geom.vertexNormals[i].z).toBeCloseTo(0);
+      }
+    });
+    test('SEGMENTED preserves UVs when duplicating vertices', function () {
+      const geom = new p5.Geometry();
+
+      geom.vertices.push(
+        myp5.createVector(0, 0, 0),
+        myp5.createVector(1, 0, 0),
+        myp5.createVector(0, 1, 0),
+        myp5.createVector(0, 0, 1)
+      );
+
+      geom.faces.push(
+        [0, 1, 2],
+        [0, 3, 1]
+      );
+
+      geom.uvs.push(
+        0, 0,
+        1, 0,
+        0, 1,
+        1, 1
+      );
+
+      geom.computeNormals(myp5.SEGMENTED);
+
+      expect(geom.vertices.length).toBe(6);
+
+      expect(geom.uvs).toEqual([
+        0, 0,
+        1, 0,
+        0, 1,
+        0, 0,
+        1, 1,
+        1, 0
+      ]);
+
+      expect(geom.uvs.length).toBe(geom.vertices.length * 2);
+    });
+    test('SEGMENTED preserves vertex colors', function () {
+      const geom = new p5.Geometry();
+
+      geom.vertices.push(
+        myp5.createVector(0, 0, 0),
+        myp5.createVector(1, 0, 0),
+        myp5.createVector(0, 1, 0),
+        myp5.createVector(0, 0, 1)
+      );
+
+      geom.faces.push(
+        [0, 1, 2],
+        [0, 3, 1]
+      );
+
+      geom.vertexColors.push(
+        1, 0, 0, 1,
+        0, 1, 0, 1,
+        0, 0, 1, 1,
+        1, 1, 0, 1
+      );
+
+      geom.computeNormals(myp5.SEGMENTED);
+
+      expect(geom.vertexColors).toEqual([
+        1, 0, 0, 1,
+        0, 1, 0, 1,
+        0, 0, 1, 1,
+        1, 0, 0, 1,
+        1, 1, 0, 1,
+        0, 1, 0, 1
+      ]);
+
+      expect(geom.vertexColors.length).toBe(geom.vertices.length * 4);
+    });
+    test('SEGMENTED preserves custom vertex attributes', function () {
+      const geom = new p5.Geometry();
+
+      geom.vertices.push(
+        myp5.createVector(0, 0, 0),
+        myp5.createVector(1, 0, 0),
+        myp5.createVector(0, 1, 0),
+        myp5.createVector(0, 0, 1)
+      );
+
+      geom.faces.push(
+        [0, 1, 2],
+        [0, 3, 1]
+      );
+
+      geom.vertexProperty('aRoughness', [0.1, 0.2, 0.3, 0.4], 1);
+
+      geom.computeNormals(myp5.SEGMENTED);
+
+      expect(geom.aRoughnessSrc).toEqual([
+        0.1, 0.2, 0.3,
+        0.1, 0.4, 0.2
+      ]);
+
+      expect(geom.userVertexProperties.aRoughness.getDataSize()).toBe(1);
+      expect(geom.aRoughnessSrc.length).toBe(geom.vertices.length);
+    });
+    test('SEGMENTED preserves multi-component custom attributes', function () {
+      const geom = new p5.Geometry();
+
+      geom.vertices.push(
+        myp5.createVector(0, 0, 0),
+        myp5.createVector(1, 0, 0),
+        myp5.createVector(0, 1, 0),
+        myp5.createVector(0, 0, 1)
+      );
+
+      geom.faces.push(
+        [0, 1, 2],
+        [0, 3, 1]
+      );
+
+      geom.vertexProperty('aOffset', [
+        1, 2, 3,
+        4, 5, 6,
+        7, 8, 9,
+        10, 11, 12
+      ], 3);
+
+      geom.computeNormals(myp5.SEGMENTED);
+
+      expect(geom.aOffsetSrc).toEqual([
+        1, 2, 3,
+        4, 5, 6,
+        7, 8, 9,
+        1, 2, 3,
+        10, 11, 12,
+        4, 5, 6
+      ]);
+
+      expect(geom.aOffsetSrc.length).toBe(geom.vertices.length * 3);
+    });
   });
 
   suite('computeTangents', function () {
