@@ -248,6 +248,88 @@ suite('p5.Image', function () {
     });
   });
 
+  suite('p5.Image.prototype.copy', function () {
+    function solidImage(w, h, density, col) {
+      const img = myp5.createImage(w, h);
+      img.pixelDensity(density);
+      img.loadPixels();
+      for (let i = 0; i < img.width; i++) {
+        for (let j = 0; j < img.height; j++) {
+          img.set(i, j, col);
+        }
+      }
+      img.updatePixels();
+      return img;
+    }
+
+    function assertAllPixels(img, rgba) {
+      for (let i = 0; i < img.width; i++) {
+        for (let j = 0; j < img.height; j++) {
+          assert.deepEqual(img.get(i, j), rgba);
+        }
+      }
+    }
+
+    test('it copies into the destination area at pixel density 1', function () {
+      const src = solidImage(10, 10, 1, myp5.color(0, 255, 0));
+      const dst = solidImage(10, 10, 1, myp5.color(255, 0, 0));
+      dst.copy(src, 0, 0, 10, 10, 0, 0, 10, 10);
+      assertAllPixels(dst, [0, 255, 0, 255]);
+    });
+
+    test('it scales the destination coordinates when the destination pixel density is above 1', function () {
+      const src = solidImage(10, 10, 1, myp5.color(0, 255, 0));
+      const dst = solidImage(10, 10, 2, myp5.color(255, 0, 0));
+      assert.strictEqual(dst.width, 5);
+      assert.strictEqual(dst.height, 5);
+      dst.copy(src, 0, 0, 5, 5, 0, 0, 5, 5);
+      // The whole logical 5x5 destination should be covered, not just the
+      // top-left physical pixels.
+      assertAllPixels(dst, [0, 255, 0, 255]);
+    });
+
+    test('it scales the destination coordinates for a fractional destination region', function () {
+      const src = solidImage(10, 10, 1, myp5.color(0, 255, 0));
+      const dst = solidImage(10, 10, 2, myp5.color(255, 0, 0));
+      dst.copy(src, 0, 0, 4, 4, 1, 1, 4, 4);
+      // Logical pixel (4, 4) maps to physical (8, 8), which is only covered
+      // when the destination is scaled.
+      assert.deepEqual(dst.get(4, 4), [0, 255, 0, 255]);
+      // Corners outside the copied region stay red.
+      assert.deepEqual(dst.get(0, 0), [255, 0, 0, 255]);
+    });
+  });
+
+  suite('p5.Image.prototype.blend', function () {
+    test('it scales the destination coordinates when the destination pixel density is above 1', function () {
+      const src = myp5.createImage(10, 10);
+      src.loadPixels();
+      for (let i = 0; i < src.width; i++) {
+        for (let j = 0; j < src.height; j++) {
+          src.set(i, j, myp5.color(0, 255, 0));
+        }
+      }
+      src.updatePixels();
+
+      const dst = myp5.createImage(10, 10);
+      dst.pixelDensity(2);
+      dst.loadPixels();
+      for (let i = 0; i < dst.width; i++) {
+        for (let j = 0; j < dst.height; j++) {
+          dst.set(i, j, myp5.color(255, 0, 0));
+        }
+      }
+      dst.updatePixels();
+
+      dst.blend(src, 0, 0, 5, 5, 0, 0, 5, 5, myp5.NORMAL);
+      for (let i = 0; i < dst.width; i++) {
+        for (let j = 0; j < dst.height; j++) {
+          assert.deepEqual(dst.get(i, j), [0, 255, 0, 255]);
+        }
+      }
+    });
+  });
+
   suite.todo('p5.Graphics.get()', function () {
     for (const density of [1, 2]) {
       test(`width and height match at pixel density ${density}`, function () {
