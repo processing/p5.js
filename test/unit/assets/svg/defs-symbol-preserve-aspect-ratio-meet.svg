@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200">
+    <rect width="200" height="200" fill="#c8c8c8"/>
+
+    <defs>
+        <symbol id="left" viewBox="0 0 100 100"
+                preserveAspectRatio="xMinYMid meet">
+            <polygon points="50,5 95,95 50,75 5,95"
+                     fill="#ffffff" stroke="#000000" stroke-width="2"/>
+        </symbol>
+
+        <symbol id="center" viewBox="0 0 100 100"
+                preserveAspectRatio="xMidYMid meet">
+            <polygon points="50,5 95,95 50,75 5,95"
+                     fill="#ffffff" stroke="#000000" stroke-width="2"/>
+        </symbol>
+
+        <symbol id="right" viewBox="0 0 100 100"
+                preserveAspectRatio="xMaxYMid meet">
+            <polygon points="50,5 95,95 50,75 5,95"
+                     fill="#ffffff" stroke="#000000" stroke-width="2"/>
+        </symbol>
+    </defs>
+
+    <use href="#left" x="10" y="10" width="180" height="50"/>
+    <use href="#center" x="10" y="75" width="180" height="50"/>
+    <use href="#right" x="10" y="140" width="180" height="50"/>
+</svg>
