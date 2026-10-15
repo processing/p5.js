@@ -397,13 +397,18 @@ function addCopyingAndReturn(functionBody, varsToReturn, sourcePrefix = null) {
     const tempName = `__copy_${parts.join('_')}_${blockVarCounter++}`;
     tempVarMap.set(varPath, tempName);
 
-    // If sourcePrefix is set (loop case), read from vars.x.y
-    // Otherwise (if-branch case), read directly from x.y
+    // In loop cases, read the flat state key from vars.
+    // Otherwise, read the original member path.
     let sourceExpr = sourcePrefix
-      ? { type: 'Identifier', name: sourcePrefix }
+      ? {
+          type: 'MemberExpression',
+          object: { type: 'Identifier', name: sourcePrefix },
+          property: { type: 'Literal', value: varPath },
+          computed: true
+        }
       : { type: 'Identifier', name: parts[0] };
 
-    const pathParts = sourcePrefix ? parts : parts.slice(1);
+    const pathParts = sourcePrefix ? [] : parts.slice(1);
     for (const part of pathParts) {
       sourceExpr = {
         type: 'MemberExpression',
@@ -1055,7 +1060,6 @@ const ASTCallbacks = {
           };
         }
 
-        // Build right side: __block_2['inputs.color'] or __block_2['x']
         const rightExpr = {
           type: 'MemberExpression',
           object: { type: 'Identifier', name: blockVar },
@@ -1411,16 +1415,12 @@ const ASTCallbacks = {
           };
         }
 
-        // Build right side: __block_2.inputs.color or __block_2.x
-        let rightExpr = { type: 'Identifier', name: blockVar };
-        for (const part of parts) {
-          rightExpr = {
-            type: 'MemberExpression',
-            object: rightExpr,
-            property: { type: 'Identifier', name: part },
-            computed: false
-          };
-        }
+        const rightExpr = {
+          type: 'MemberExpression',
+          object: { type: 'Identifier', name: blockVar },
+          property: { type: 'Literal', value: varPath },
+          computed: true
+        };
 
         statements.push({
           type: 'ExpressionStatement',
