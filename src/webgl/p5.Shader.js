@@ -1164,6 +1164,8 @@ class Shader {
           : data.values;
     } else if (data?.isColor) {
       data = data._getRGBA([1, 1, 1, 1]);
+    } else if (data?.isMatrix) {
+      data = data.matrix;
     }
 
     if (uniform.isArray) {
