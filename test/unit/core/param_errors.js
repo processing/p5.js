@@ -29,7 +29,9 @@ suite('Validate Params', function () {
       return 'mock p5.Graphics';
     },
     _error: () => {},
-    registerDecorator: () => {}
+    registerDecorator: () => {},
+    _strandsSignatures: new Map([['p5.map', true]]),
+    _isStrandsContextActive: false
   };
   const mockP5Prototype = {};
 
@@ -460,6 +462,21 @@ suite('Validate Params', function () {
         4
       ]);
       assert.isFalse(result.success);
+    });
+  });
+
+  suite('validateParams: math functions without strands context', function () {
+    test('map(): fails with string parameters outside strands', function () {
+      const result = mockP5Prototype._validate('p5.map', ['a', 'b']);
+      assert.isFalse(result.success);
+      assert.isTrue(result.error.toString().includes('Expected at least 5 arguments'));
+    });
+
+    test('map(): bypasses FES validation when inside strands context', function () {
+      mockP5._isStrandsContextActive = true;
+      const result = mockP5Prototype._validate('p5.map', ['a', 'b']);
+      assert.isTrue(result.success);
+      mockP5._isStrandsContextActive = false; // reset
     });
   });
 });

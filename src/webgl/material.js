@@ -745,7 +745,13 @@ function material(p5, fn) {
    * @returns {p5.Shader} The material shader
    */
   fn.buildFilterShader = function (callback, scope) {
-    return this.baseFilterShader().modify(callback, scope);
+    const wasInternal = this._isUserCall;
+    this._isUserCall = false;
+    try {
+      return this.baseFilterShader().modify(callback, scope);
+    } finally {
+      this._isUserCall = wasInternal;
+    }
   };
   p5.registerDecorator('p5.prototype.buildFilterShader', markExperimental('p5.strands', p5));
 
@@ -1574,7 +1580,13 @@ function material(p5, fn) {
    * @returns {p5.Shader} The material shader.
    */
   fn.buildMaterialShader = function (cb, scope) {
-    return this.baseMaterialShader().modify(cb, scope);
+    const wasInternal = this._isUserCall;
+    this._isUserCall = false; // Temporarily un-suppress FES so calls inside cb are validated
+    try {
+      return this.baseMaterialShader().modify(cb, scope);
+    } finally {
+      this._isUserCall = wasInternal;
+    }
   };
   p5.registerDecorator('p5.prototype.buildMaterialShader', markExperimental('p5.strands', p5));
 
@@ -1793,7 +1805,13 @@ function material(p5, fn) {
    * @returns {p5.Shader} The normal shader.
    */
   fn.buildNormalShader = function (cb, scope) {
-    return this.baseNormalShader().modify(cb, scope);
+    const wasInternal = this._isUserCall;
+    this._isUserCall = false;
+    try {
+      return this.baseNormalShader().modify(cb, scope);
+    } finally {
+      this._isUserCall = wasInternal;
+    }
   };
   p5.registerDecorator('p5.prototype.buildNormalShader', markExperimental('p5.strands', p5));
 
@@ -1958,7 +1976,13 @@ function material(p5, fn) {
    * @returns {p5.Shader} The color shader.
    */
   fn.buildColorShader = function (cb, scope) {
-    return this.baseColorShader().modify(cb, scope);
+    const wasInternal = this._isUserCall;
+    this._isUserCall = false;
+    try {
+      return this.baseColorShader().modify(cb, scope);
+    } finally {
+      this._isUserCall = wasInternal;
+    }
   };
   p5.registerDecorator('p5.prototype.buildColorShader', markExperimental('p5.strands', p5));
 
@@ -2216,7 +2240,13 @@ function material(p5, fn) {
    * @returns {p5.Shader} The stroke shader.
    */
   fn.buildStrokeShader = function (cb, scope) {
-    return this.baseStrokeShader().modify(cb, scope);
+    const wasInternal = this._isUserCall;
+    this._isUserCall = false;
+    try {
+      return this.baseStrokeShader().modify(cb, scope);
+    } finally {
+      this._isUserCall = wasInternal;
+    }
   };
   p5.registerDecorator('p5.prototype.buildStrokeShader', markExperimental('p5.strands', p5));
 

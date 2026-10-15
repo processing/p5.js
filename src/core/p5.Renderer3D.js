@@ -2722,7 +2722,13 @@ function renderer3D(p5, fn) {
         `buildComputeShader() is only available with the WebGPU renderer. ${webGPUAddonMessage}`
       );
     }
-    return this.baseComputeShader().modify(cb, context, { hook: 'iteration' });
+    const wasInternal = this._isUserCall;
+    this._isUserCall = false;
+    try {
+      return this.baseComputeShader().modify(cb, context, { hook: 'iteration' });
+    } finally {
+      this._isUserCall = wasInternal;
+    }
   };
   p5.registerDecorator('p5.prototype.buildComputeShader', markExperimental('webgpu', p5));
 
