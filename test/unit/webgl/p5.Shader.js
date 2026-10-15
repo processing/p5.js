@@ -934,6 +934,12 @@ suite('p5.Shader', function () {
         assert.strictEqual(pair[0].dimension, 3);
       }
     });
+    
+    test('paletteLerp keeps its argTypes after p5 decorates its methods', () => {
+      // p5 wraps prototype methods (e.g. for parameter validation), which
+      // would drop the argTypes the transpiler reads if they weren't carried over
+      assert.isArray(p5.prototype.paletteLerp.argTypes);
+    });
 
     test('arrays outside of argTypes arguments still become vectors', () => {
       myp5.createCanvas(5, 5, myp5.WEBGL);
