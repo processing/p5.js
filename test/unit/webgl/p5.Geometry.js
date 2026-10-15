@@ -47,6 +47,64 @@ suite('p5.Geometry', function () {
       expect(geom.uvs).toEqual(originalUvs);
       expect(geom.vertexNormals[0]).toEqual(geom.vertexNormals[3]);
     });
+    test('KEEP_CONNECTIONS preserves the existing FLAT behavior', function () {
+      const createGeometry = () => {
+        const geom = new p5.Geometry();
+
+        geom.vertices.push(
+          myp5.createVector(0, 0, 0),
+          myp5.createVector(1, 0, 0),
+          myp5.createVector(0, 1, 0),
+          myp5.createVector(0, 0, 1)
+        );
+
+        geom.faces.push(
+          [0, 1, 2],
+          [0, 3, 1]
+        );
+
+        return geom;
+      };
+
+      const flatGeom = createGeometry();
+      const keepConnectionsGeom = createGeometry();
+      const defaultGeom = createGeometry();
+
+      flatGeom.computeNormals(myp5.FLAT);
+      keepConnectionsGeom.computeNormals(myp5.KEEP_CONNECTIONS);
+      defaultGeom.computeNormals();
+
+      // FLAT and KEEP_CONNECTIONS should produce identical normals.
+      expect(flatGeom.vertexNormals).toEqual(
+        keepConnectionsGeom.vertexNormals
+      );
+
+      // Default behavior should match KEEP_CONNECTIONS.
+      expect(defaultGeom.vertexNormals).toEqual(
+        keepConnectionsGeom.vertexNormals
+      );
+
+      // Vertex connections should remain unchanged.
+      for (const geom of [flatGeom, keepConnectionsGeom, defaultGeom]) {
+        expect(geom.vertices.length).toBe(4);
+        expect(geom.faces).toEqual([
+          [0, 1, 2],
+          [0, 3, 1]
+        ]);
+        expect(geom.vertexNormals.length).toBe(4);
+      }
+
+      // Shared vertices should have averaged face normals.
+      const expected = 1 / Math.sqrt(2);
+
+      for (const index of [0, 1]) {
+        const normal = keepConnectionsGeom.vertexNormals[index];
+
+        expect(normal.x).toBeCloseTo(0, 5);
+        expect(normal.y).toBeCloseTo(expected, 5);
+        expect(normal.z).toBeCloseTo(expected, 5);
+      }
+    });
   });
 
   suite('computeTangents', function () {
