@@ -2145,5 +2145,26 @@ suite('WebGPU p5.Shader', function () {
         }).not.toThrow();
       });
     });
+
+    suite('matrix uniforms (#8992)', () => {
+      test('short aliases declare the same uniforms as the NxN names', async () => {
+        await myp5.createCanvas(5, 5, myp5.WEBGPU);
+        const testShader = myp5.baseMaterialShader().modify(
+          () => {
+            myp5.uniformMat2('uShort2');
+            myp5.uniformMat3('uShort3');
+            myp5.uniformMat4('uShort4');
+            myp5.uniformMat3x3('uLong3');
+          },
+          { myp5 }
+        );
+
+        const src = testShader.vertSrc();
+        assert.include(src, 'uShort2: mat2x2<f32>');
+        assert.include(src, 'uShort3: mat3x3<f32>');
+        assert.include(src, 'uShort4: mat4x4<f32>');
+        assert.include(src, 'uLong3: mat3x3<f32>');
+      });
+    });
   });
 });

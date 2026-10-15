@@ -919,12 +919,20 @@ class Geometry {
    * <a href="#/p5.Geometry/vertexNormals">myGeometry.vertexNormals</a> array.
    *
    * The first parameter, `shadingType`, is optional. Passing the constant
-   * `FLAT`, as in `myGeometry.computeNormals(FLAT)`, provides neighboring
-   * faces with their own copies of the vertices they share. Surfaces appear
-   * tiled with flat shading. Passing the constant `SMOOTH`, as in
-   * `myGeometry.computeNormals(SMOOTH)`, makes neighboring faces reuse their
-   * shared vertices. Surfaces appear smoother with smooth shading. By
-   * default, `shadingType` is `FLAT`.
+   * `KEEP_CONNECTIONS`, as in `myGeometry.computeNormals(KEEP_CONNECTIONS)`,
+   * preserves the geometry's existing vertex connections. Each vertex normal
+   * is calculated by averaging the face normals of its connected faces.
+   * This may produce smooth transitions between connected faces rather
+   * than true flat shading.
+   *
+   * Passing the constant `SMOOTH`, as in
+   * `myGeometry.computeNormals(SMOOTH)`, calculates smooth normals by
+   * grouping vertices with approximately matching positions, without
+   * modifying the original vertices or their attributes.
+   *
+   * The constant `FLAT` is deprecated and behaves identically to
+   * `KEEP_CONNECTIONS`. It is retained for backward compatibility.
+   * By default, `shadingType` is `KEEP_CONNECTIONS`.
    *
    * The second parameter, `options`, is also optional. If an object with a
    * `roundToPrecision` property is passed, as in
@@ -932,7 +940,7 @@ class Geometry {
    * number of decimal places to use for calculations. By default,
    * `roundToPrecision` uses 3 decimal places.
    *
-   * @param {(FLAT|SMOOTH)} [shadingType=FLAT] shading type. either FLAT or SMOOTH. Defaults to `FLAT`.
+   * @param {(KEEP_CONNECTIONS|SMOOTH)} [shadingType=KEEP_CONNECTIONS] shading type. Defaults to `KEEP_CONNECTIONS`.
    * @param {Object} [options] shading options.
    * @chainable
    *
@@ -1055,8 +1063,8 @@ class Geometry {
    *   // Create a p5.Geometry object.
    *   myGeometry = buildGeometry(createShape);
    *
-   *   // Compute normals using default (FLAT) shading.
-   *   myGeometry.computeNormals(FLAT);
+   *   // Compute normals while preserving existing vertex connections.
+   *   myGeometry.computeNormals(KEEP_CONNECTIONS);
    *
    *   describe('A white, helical structure drawn on a dark gray background. Its faces appear faceted.');
    * }
@@ -1191,7 +1199,7 @@ class Geometry {
    *   endShape();
    * }
    */
-  computeNormals(shadingType = constants.FLAT, { roundToPrecision = 3 } = {}) {
+  computeNormals(shadingType = constants.KEEP_CONNECTIONS, { roundToPrecision = 3 } = {}) {
     const vertexNormals = this.vertexNormals;
     const vertices = this.vertices;
     const faces = this.faces;
