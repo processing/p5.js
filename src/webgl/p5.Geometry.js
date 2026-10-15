@@ -913,9 +913,9 @@ class Geometry {
    * A face's orientation is defined by its *normal vector* which points out
    * of the face and is normal (perpendicular) to the surface. Calling
    * `myGeometry.computeNormals()` first calculates each face's normal vector.
-   * Then it calculates the normal vector for each vertex by averaging the
-   * normal vectors of the faces surrounding the vertex. The vertex normals
-   * are stored as <a href="#/p5.Vector">p5.Vector</a> objects in the
+   * It then calculates vertex normals according to the selected shading mode.
+   * The vertex normals are stored as <a href="#/p5.Vector">p5.Vector</a>
+   * objects in the
    * <a href="#/p5.Geometry/vertexNormals">myGeometry.vertexNormals</a> array.
    *
    * The first parameter, `shadingType`, is optional. Passing the constant
@@ -930,6 +930,14 @@ class Geometry {
    * grouping vertices with approximately matching positions, without
    * modifying the original vertices or their attributes.
    *
+   *
+   * Passing the constant `SEGMENTED`, as in
+   * `myGeometry.computeNormals(SEGMENTED)`, produces true flat shading
+   * by assigning each triangle its own face normal. Shared vertices
+   * are duplicated as needed while preserving the original vertex
+   * indices and their connections. Associated vertex attributes,
+   * such as UV coordinates and colors, are preserved.
+   *
    * The constant `FLAT` is deprecated and behaves identically to
    * `KEEP_CONNECTIONS`. It is retained for backward compatibility.
    * By default, `shadingType` is `KEEP_CONNECTIONS`.
@@ -940,7 +948,7 @@ class Geometry {
    * number of decimal places to use for calculations. By default,
    * `roundToPrecision` uses 3 decimal places.
    *
-   * @param {(KEEP_CONNECTIONS|SMOOTH)} [shadingType=KEEP_CONNECTIONS] shading type. Defaults to `KEEP_CONNECTIONS`.
+   * @param {(KEEP_CONNECTIONS|SMOOTH|SEGMENTED)} [shadingType=KEEP_CONNECTIONS] shading type. Defaults to `KEEP_CONNECTIONS`.
    * @param {Object} [options] shading options.
    * @chainable
    *
@@ -1261,7 +1269,8 @@ class Geometry {
       const segmentedVertices = [...vertices];
       const segmentedNormals = vertices.map(() => new Vector(0, 0, 0));
 
-      const segmentedUVs = [...this.uvs];
+      const sourceUVs = this.uvs.flat();
+      const segmentedUVs = [...sourceUVs];
       const segmentedColors = [...this.vertexColors];
       const segmentedStrokeColors = [...this.vertexStrokeColors];
       const segmentedTangents = [...this.vertexTangents];
@@ -1288,9 +1297,9 @@ class Geometry {
             segmentedVertices.push(vertices[vertexIndex].copy());
             segmentedNormals.push(faceNormal.copy());
 
-            if (this.uvs.length > 0) {
+            if (sourceUVs.length > 0) {
               segmentedUVs.push(
-                ...this.uvs.slice(vertexIndex * 2, (vertexIndex + 1) * 2)
+                ...sourceUVs.slice(vertexIndex * 2, (vertexIndex + 1) * 2)
               );
             }
 

@@ -456,6 +456,46 @@ suite('p5.Geometry', function () {
       expect(geom.userVertexProperties.aOffset.getDataSize()).toBe(3);
       expect(geom.aOffsetSrc.length).toBe(geom.vertices.length * 3);
     });
+
+    test('SEGMENTED preserves pair-style UV coordinates', function () {
+      const geom = new p5.Geometry();
+
+      geom.vertices.push(
+        myp5.createVector(0, 0, 0),
+        myp5.createVector(1, 0, 0),
+        myp5.createVector(0, 1, 0),
+        myp5.createVector(0, 0, 1)
+      );
+
+      geom.faces.push(
+        [0, 1, 2],
+        [0, 3, 1]
+      );
+
+      geom.uvs.push(
+        [0, 0],
+        [1, 0],
+        [0, 1],
+        [1, 1]
+      );
+
+      geom.computeNormals(myp5.SEGMENTED);
+
+      expect(geom.faces).toEqual([
+        [0, 1, 2],
+        [4, 3, 5]
+      ]);
+
+      expect(geom.uvs).toEqual([
+        0, 0,
+        1, 0,
+        0, 1,
+        1, 1,
+        0, 0,
+        1, 0
+      ]);
+    });
+
   });
 
   suite('computeTangents', function () {
