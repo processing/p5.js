@@ -770,6 +770,76 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
     );
     return createStrandsNode(id, dimension, strandsContext);
   });
+  augmentFn(fn, p5, 'paletteLerp', function(stopsNode, tNode) {
+    if (!strandsContext.active) return;
+
+    if (!Array.isArray(stopsNode)) {
+      throw new Error(
+        'paletteLerp() first argument must be an array literal: [[color(...), pos], ...]'
+      );
+    }
+    const n = stopsNode.length;
+    if (n < 2 || n > 8) {
+      throw new Error(`paletteLerp() requires 2–8 color stops, got ${n}.`);
+    }
+    for (let i = 0; i < n; i++) {
+      if (!Array.isArray(stopsNode[i]) || stopsNode[i].length !== 2) {
+        throw new Error(
+          `paletteLerp() stop ${i} must be a 2-element array: [color(...), position]`
+        );
+      }
+    }
+
+    // Wrap raw values into StrandsNodes
+    const colors = stopsNode.map(([c]) => p5.strandsNode(c));
+    const positions = stopsNode.map(([, p]) => p5.strandsNode(p));
+    const t = p5.strandsNode(tNode);
+
+    // Helper: mix(a, b, clamp((t - pa) / (pb - pa), 0, 1))
+    function segmentLerp(ca, cb, pa, pb) {
+      const zero = p5.strandsNode(0.0);
+      const one  = p5.strandsNode(1.0);
+      const num  = t.sub(pa);
+      const den  = pb.sub(pa);
+      // mix and clamp are builtin functions, not methods on strands nodes
+      const localT = fn.clamp(num.div(den), zero, one);
+      return buildTernary(
+        strandsContext,
+        pa.equalTo(pb),   // guard: pa == pb → return midpoint
+        fn.mix(ca, cb, p5.strandsNode(0.5)),
+        fn.mix(ca, cb, localT)
+      );
+    }
+
+    // Build nested ternary chain from right to left:
+    // t >= p[last] ? c[last] : (t < p[n-1] ? seg(n-2,n-1) : (...))
+    let result = colors[n - 1];
+    for (let i = n - 2; i >= 0; i--) {
+      const seg = segmentLerp(colors[i], colors[i + 1], positions[i], positions[i + 1]);
+      result = buildTernary(strandsContext, t.lessThan(positions[i + 1]), seg, result);
+    }
+    // Clamp edges
+    result = buildTernary(strandsContext, t.greaterEqual(positions[n - 1]), colors[n - 1], result);
+    result = buildTernary(strandsContext, t.lessEqual(positions[0]), colors[0], result);
+
+    return result;
+  });
+  // Tell the transpiler that argument 0 is a raw array (the stops) whose
+  // elements are themselves raw arrays (the [color, position] pairs) —
+  // both levels left untouched rather than converted to vectors. The
+  // bare 'any' terminal means pair contents aren't constrained any
+  // further; see strands_transpiler.js's ArrayExpression visitor for how
+  // this nesting is walked.
+  fn.paletteLerp.argTypes = [
+    {
+      type: 'Array', // stops
+      subtype: {
+        type: 'Array', // color + position tuples
+        subtype: 'any'
+      }
+    },
+    { type: 'Number' }
+  ];
 
   augmentFn(fn, p5, 'randomSeed', function (seed) {
     if (!strandsContext.active) {
