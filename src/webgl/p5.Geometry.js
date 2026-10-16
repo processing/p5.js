@@ -913,9 +913,9 @@ class Geometry {
    * A face's orientation is defined by its *normal vector* which points out
    * of the face and is normal (perpendicular) to the surface. Calling
    * `myGeometry.computeNormals()` first calculates each face's normal vector.
-   * Then it calculates the normal vector for each vertex by averaging the
-   * normal vectors of the faces surrounding the vertex. The vertex normals
-   * are stored as <a href="#/p5.Vector">p5.Vector</a> objects in the
+   * It then calculates vertex normals according to the selected shading mode.
+   * The vertex normals are stored as <a href="#/p5.Vector">p5.Vector</a>
+   * objects in the
    * <a href="#/p5.Geometry/vertexNormals">myGeometry.vertexNormals</a> array.
    *
    * The first parameter, `shadingType`, is optional. Passing the constant
@@ -930,6 +930,14 @@ class Geometry {
    * grouping vertices with approximately matching positions, without
    * modifying the original vertices or their attributes.
    *
+   *
+   * Passing the constant `SEGMENTED`, as in
+   * `myGeometry.computeNormals(SEGMENTED)`, produces true flat shading
+   * by assigning each triangle its own face normal. Shared vertices
+   * are duplicated as needed while preserving the original vertex
+   * indices and their connections. Associated vertex attributes,
+   * such as UV coordinates and colors, are preserved.
+   *
    * The constant `FLAT` is deprecated and behaves identically to
    * `KEEP_CONNECTIONS`. It is retained for backward compatibility.
    * By default, `shadingType` is `KEEP_CONNECTIONS`.
@@ -940,7 +948,7 @@ class Geometry {
    * number of decimal places to use for calculations. By default,
    * `roundToPrecision` uses 3 decimal places.
    *
-   * @param {(KEEP_CONNECTIONS|SMOOTH)} [shadingType=KEEP_CONNECTIONS] shading type. Defaults to `KEEP_CONNECTIONS`.
+   * @param {(KEEP_CONNECTIONS|SMOOTH|SEGMENTED)} [shadingType=KEEP_CONNECTIONS] shading type. Defaults to `KEEP_CONNECTIONS`.
    * @param {Object} [options] shading options.
    * @chainable
    *
@@ -1199,6 +1207,7 @@ class Geometry {
    *   endShape();
    * }
    */
+
   computeNormals(shadingType = constants.KEEP_CONNECTIONS, { roundToPrecision = 3 } = {}) {
     const vertexNormals = this.vertexNormals;
     const vertices = this.vertices;
@@ -1251,6 +1260,112 @@ class Geometry {
       for (iv = 0; iv < vertices.length; ++iv) {
         vertexNormals.push(smoothNormals[originalToUnique[iv]].copy());
       }
+
+    } else if (shadingType === constants.SEGMENTED) {
+      const usedVertices = new Set();
+      const segmentedFaces = [];
+
+      // Preserve original vertex indices so existing edges remain valid.
+      const segmentedVertices = [...vertices];
+      const segmentedNormals = vertices.map(() => new Vector(0, 0, 0));
+
+      const sourceUVs = this.uvs.flat();
+      const segmentedUVs = [...sourceUVs];
+      const segmentedColors = [...this.vertexColors];
+      const segmentedStrokeColors = [...this.vertexStrokeColors];
+      const segmentedTangents = [...this.vertexTangents];
+
+      // Preserve custom GLSL vertex attributes.
+      const segmentedProperties = {};
+
+      for (const propertyName in this.userVertexProperties) {
+        const prop = this.userVertexProperties[propertyName];
+        segmentedProperties[propertyName] = [...prop.getSrcArray()];
+      }
+
+      faces.forEach((face, faceIndex) => {
+        const faceNormal = this._getFaceNormal(faceIndex).normalize();
+        const newFace = [];
+
+        for (const vertexIndex of face) {
+          let newIndex = vertexIndex;
+
+          if (usedVertices.has(vertexIndex)) {
+            // Append a duplicate only when the original vertex is reused.
+            newIndex = segmentedVertices.length;
+
+            segmentedVertices.push(vertices[vertexIndex].copy());
+            segmentedNormals.push(faceNormal.copy());
+
+            if (sourceUVs.length > 0) {
+              segmentedUVs.push(
+                ...sourceUVs.slice(vertexIndex * 2, (vertexIndex + 1) * 2)
+              );
+            }
+
+            if (this.vertexColors.length > 0) {
+              segmentedColors.push(
+                ...this.vertexColors.slice(
+                  vertexIndex * 4,
+                  (vertexIndex + 1) * 4
+                )
+              );
+            }
+
+            if (this.vertexStrokeColors.length > 0) {
+              segmentedStrokeColors.push(
+                ...this.vertexStrokeColors.slice(
+                  vertexIndex * 4,
+                  (vertexIndex + 1) * 4
+                )
+              );
+            }
+
+            if (this.vertexTangents.length > 0) {
+              segmentedTangents.push(
+                ...this.vertexTangents.slice(
+                  vertexIndex * 4,
+                  (vertexIndex + 1) * 4
+                )
+              );
+            }
+
+            for (const propertyName in this.userVertexProperties) {
+              const prop = this.userVertexProperties[propertyName];
+              const size = prop.getDataSize();
+              const source = prop.getSrcArray();
+
+              segmentedProperties[propertyName].push(
+                ...source.slice(
+                  vertexIndex * size,
+                  (vertexIndex + 1) * size
+                )
+              );
+            }
+          } else {
+            usedVertices.add(vertexIndex);
+            segmentedNormals[vertexIndex] = faceNormal.copy();
+          }
+
+          newFace.push(newIndex);
+        }
+
+        segmentedFaces.push(newFace);
+      });
+
+      this.vertices = segmentedVertices;
+      this.vertexNormals = segmentedNormals;
+      this.faces = segmentedFaces;
+      this.uvs = segmentedUVs;
+      this.vertexColors = segmentedColors;
+      this.vertexStrokeColors = segmentedStrokeColors;
+      this.vertexTangents = segmentedTangents;
+
+      for (const propertyName in this.userVertexProperties) {
+        const prop = this.userVertexProperties[propertyName];
+        this[prop.getSrcName()] = segmentedProperties[propertyName];
+      }
+
     } else {
       vertexNormals.length = 0;
 
@@ -1274,6 +1389,7 @@ class Geometry {
 
     return this;
   }
+
 
   /**
    * computes a per-vertex surface tangent from the uvs, needed for normal
