@@ -970,6 +970,12 @@
         ],
         [
           "String|Request",
+          "Boolean",
+          "function(p5.Geometry)?",
+          "function(Event)?"
+        ],
+        [
+          "String|Request",
           "Object?"
         ]
       ]
@@ -1927,8 +1933,11 @@
     "endShape": {
       "overloads": [
         [
-          "CLOSE?",
+          "CLOSE|OPEN?",
           "Integer?"
+        ],
+        [
+          "Integer"
         ]
       ]
     },

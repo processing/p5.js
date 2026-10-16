@@ -2,7 +2,6 @@ import {
   NodeTypeRequiredFields,
   NodeTypeToName,
   BasePriority,
-  StatementType,
   BaseType
 } from './ir_types';
 import * as FES from './strands_FES';
@@ -149,6 +148,7 @@ function createNode(graph, node) {
   return id;
 }
 
+/* oxlint-disable-next-line no-unused-vars */
 function getNodeKey(node) {
   const key = JSON.stringify(node);
   return key;

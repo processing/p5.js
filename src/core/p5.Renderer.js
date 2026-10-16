@@ -109,6 +109,9 @@ class Renderer {
     // constructor state when getSupportedIndividualVertexProperties()
     // is first consulted.
     this._supportsIndividualTextureCoordinates = undefined;
+
+    this.rendererType = constants.P2D;
+    this._pInst.rendererType = this.rendererType;
   }
 
   get currentShape() {
@@ -452,6 +455,7 @@ function renderer(p5, fn) {
  * Adapted from http://stackoverflow.com/a/25355178
  * @private
  */
+/* oxlint-disable-next-line no-unused-vars */
 function calculateOffset(object) {
   let currentLeft = 0,
     currentTop = 0;

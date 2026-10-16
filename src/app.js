@@ -16,7 +16,9 @@ color(p5);
 // core
 // currently, it only contains the test for parameter validation
 import friendlyErrors from './friendly_errors';
-friendlyErrors(p5);
+if (typeof IS_MINIFIED === 'undefined') {
+  friendlyErrors(p5);
+}
 
 // data
 import data from './data';
@@ -59,6 +61,8 @@ import shader from './webgl/p5.Shader';
 p5.registerAddon(shader);
 import strands from './strands/p5.strands';
 p5.registerAddon(strands);
+import svg from './shape/svg/p5.svg';
+p5.registerAddon(svg);
 
 import { waitForDocumentReady, _globalInit } from './core/init';
 waitForDocumentReady().then(_globalInit);

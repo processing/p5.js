@@ -135,18 +135,28 @@ function rendering(p5, fn) {
       args.unshift(renderer);
     }
 
-    if (!renderers[selectedRenderer]) {
-      if (selectedRenderer === constants.WEBGPU) {
-        p5.FES
-          .log`To create a WEBGPU canvas, remember to add the WebGPU add-on to your project.`();
+    if (!renderers[renderer] && typeof renderer === 'string') {
+      if (renderer === constants.WEBGPU) {
+        p5.FES.log`To create a WEBGPU canvas, add the WebGPU add-on to your project.`();
+        if (renderers[constants.WEBGL]) {
+          p5.FES.log`Falling back to WebGL renderer.`();
+          selectedRenderer = constants.WEBGL;
+        }
+        args.shift();
       } else {
         p5.FES
-          .log`We weren't able to find a renderer called ${selectedRenderer}.`();
+          .log`We weren't able to find a renderer called ${renderer}.`();
       }
     }
 
     // Init our graphics renderer
-    if (this._renderer) this._renderer.remove();
+    if (this._renderer) {
+      this._renderer.remove();
+      const index = this._elements.indexOf(this._renderer);
+      if (index !== -1) {
+        this._elements.splice(index, 1);
+      }
+    }
     this._renderer = new renderers[selectedRenderer](this, w, h, true, ...args);
     this._defaultGraphicsCreated = true;
     this._elements.push(this._renderer);
@@ -162,7 +172,13 @@ function rendering(p5, fn) {
     }
 
     if (this._renderer.contextReady) {
-      return this._renderer.contextReady.then(() => this._renderer);
+      return this._renderer.contextReady.then(() => this._renderer).catch((e) => {
+        if (selectedRenderer !== constants.WEBGPU) {
+          throw new Error('Failed to create canvas.');
+        }
+        p5.FES.log`${e.message} Falling back to WebGL renderer.`();
+        return this.createCanvas(w, h, constants.WEBGL, ...args);
+      });
     } else {
       return this._renderer;
     }

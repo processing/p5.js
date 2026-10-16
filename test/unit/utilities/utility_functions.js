@@ -150,5 +150,38 @@ suite('String functions', function () {
       assert.strictEqual(newArr.length, regularArr.length);
       assert.strictEqual(flag, true);
     });
+
+    test('should not modify regular array by default', function () {
+      const original = [1, 2, 3, 4, 5, 6, 7, 8];
+      const copy = [...original];
+      const result = mockP5Prototype.shuffle(original);
+      assert.notStrictEqual(result, original);
+      assert.deepEqual(original, copy);
+      assert.strictEqual(result.length, original.length);
+    });
+
+    test('should modify regular array in place when modify is true', function () {
+      const original = [1, 2, 3, 4, 5, 6, 7, 8];
+      const result = mockP5Prototype.shuffle(original, true);
+      assert.strictEqual(result, original);
+    });
+
+    test('should not modify typed array by default and return a copy', function () {
+      const original = new Float32Array([1, 2, 3, 4, 5, 6, 7, 8]);
+      const initialCopy = Array.from(original);
+      const result = mockP5Prototype.shuffle(original);
+      assert.instanceOf(result, Float32Array);
+      assert.notStrictEqual(result, original);
+      assert.deepEqual(Array.from(original), initialCopy);
+      assert.strictEqual(result.length, original.length);
+      assert.deepEqual(Array.from(result).sort(), initialCopy.sort());
+    });
+
+    test('should modify typed array in place when modify is true', function () {
+      const original = new Float32Array([1, 2, 3, 4, 5, 6, 7, 8]);
+      const result = mockP5Prototype.shuffle(original, true);
+      assert.instanceOf(result, Float32Array);
+      assert.strictEqual(result, original);
+    });
   });
 });

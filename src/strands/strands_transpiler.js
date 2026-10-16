@@ -8,6 +8,20 @@ import {
   createStrandsShaderNameState,
   getOrCreateInternalShaderName
 } from './strands_names';
+
+// Strands functions opt out of array-to-vector conversion by declaring
+// `argTypes` on themselves (see strands_api.js's `paletteLerp` for an
+// example), rather than being special-cased here. A descriptor of
+// `{ type: 'Array', subtype: { type: 'any' } }` marks an argument as an
+// opaque array: the ArrayExpression visitor leaves it (and anything
+// nested inside it, to any depth) untouched instead of converting it to
+// a vector/strandsNode call. This lets any current or future function —
+// including ones added by addons — take raw array arguments without
+// touching this file again.
+function getArgTypes(fnName, p5) {
+  return p5?.prototype?.[fnName]?.argTypes;
+}
+
 let blockVarCounter = 0;
 let loopVarCounter = 0;
 function replaceBinaryOperator(codeSource) {
@@ -383,13 +397,18 @@ function addCopyingAndReturn(functionBody, varsToReturn, sourcePrefix = null) {
     const tempName = `__copy_${parts.join('_')}_${blockVarCounter++}`;
     tempVarMap.set(varPath, tempName);
 
-    // If sourcePrefix is set (loop case), read from vars.x.y
-    // Otherwise (if-branch case), read directly from x.y
+    // In loop cases, read the flat state key from vars.
+    // Otherwise, read the original member path.
     let sourceExpr = sourcePrefix
-      ? { type: 'Identifier', name: sourcePrefix }
+      ? {
+          type: 'MemberExpression',
+          object: { type: 'Identifier', name: sourcePrefix },
+          property: { type: 'Literal', value: varPath },
+          computed: true
+        }
       : { type: 'Identifier', name: parts[0] };
 
-    const pathParts = sourcePrefix ? parts : parts.slice(1);
+    const pathParts = sourcePrefix ? [] : parts.slice(1);
     for (const part of pathParts) {
       sourceExpr = {
         type: 'MemberExpression',
@@ -440,6 +459,29 @@ function addCopyingAndReturn(functionBody, varsToReturn, sourcePrefix = null) {
     type: 'ReturnStatement',
     argument: returnObj
   });
+}
+
+/*
+ * Rewrites `node` in place into the call expression
+ * `object.methodName(...args)`.
+ *
+ * The rewritten node stays an *expression*, so it is still valid wherever the
+ * original one was: inside a comma (sequence) expression, a ternary, or a call
+ * argument. Turning it into an ExpressionStatement instead would make
+ * escodegen emit a `;` in those positions, producing invalid JavaScript.
+ */
+function replaceWithMethodCall(node, object, methodName, args) {
+  delete node.operator;
+  delete node.left;
+  delete node.right;
+  node.type = 'CallExpression';
+  node.callee = {
+    type: 'MemberExpression',
+    computed: false,
+    object,
+    property: { type: 'Identifier', name: methodName }
+  };
+  node.arguments = args;
 }
 
 const ASTCallbacks = {
@@ -637,8 +679,11 @@ const ASTCallbacks = {
       node.arguments = [];
     }
   },
+  
   // The callbacks for AssignmentExpression and BinaryExpression handle
   // operator overloading including +=, *= assignment expressions
+
+
   ArrayExpression(node, state, ancestors) {
     if (
       ancestors.some(
@@ -648,6 +693,52 @@ const ASTCallbacks = {
       )
     ) {
       return;
+    }
+    // Don't wrap arrays that are (or are nested inside) an argument a
+    // function has declared as opaque via argTypes. We look this up
+    // structurally — via the nearest enclosing CallExpression and which
+    // of its arguments node descends from — rather than depending on
+    // that CallExpression's own visitor having already run, since
+    // acorn-walk's ancestor() calls child callbacks before parent ones.
+    //
+    // Opacity is depth-scoped, not blanket: argType descriptors nest via
+    // `.subtype`, one level per ArrayExpression descended through from
+    // the top-level argument down to this node. We walk that chain in
+    // lockstep with the descriptor so a function can mark the outer
+    // array and some number of inner levels as opaque (`type: 'Array'`)
+    // while still letting arrays beyond that depth resume normal
+    // vectorization — signaled by the descriptor bottoming out at the
+    // bare string `'any'` (or running out) before reaching this node's
+    // depth.
+    for (let i = ancestors.length - 1; i >= 0; i--) {
+      const a = ancestors[i];
+      if (a.type === 'CallExpression') {
+        const fnName = a.callee?.type === 'Identifier'
+          ? a.callee.name
+          : a.callee?.type === 'MemberExpression' && a.callee.property?.type === 'Identifier'
+            ? a.callee.property.name
+            : undefined;
+        const argTypes = fnName && getArgTypes(fnName, state.p5);
+        if (argTypes) {
+          // The chain of nodes from the top-level argument down to (and
+          // including) this array.
+          // ancestors already ends with `node` itself (acorn-walk, in
+          // this codebase, includes the current node as its own last
+          // ancestor entry) — so slicing from i + 1 already gives the
+          // full chain from the top-level argument down to and
+          // including `node`, with no need to append it again.
+          const path = ancestors.slice(i + 1);
+          const argIndex = a.arguments.indexOf(path[0]);
+          let argType = argIndex !== -1 ? argTypes[argIndex] : undefined;
+          for (let depth = 1; depth < path.length && argType; depth++) {
+            argType = argType.subtype;
+          }
+          if (argType?.type === 'Array') {
+            return;
+          }
+        }
+        break; // only consider the nearest enclosing call
+      }
     }
 
     if (node.elements.length < 2 || node.elements.length > 4) {
@@ -704,22 +795,12 @@ const ASTCallbacks = {
     }
     // Handle direct varying variable assignment: myVarying = value
     if (state.varyings[node.left.name]) {
-      node.type = 'ExpressionStatement';
-      node.expression = {
-        type: 'CallExpression',
-        callee: {
-          type: 'MemberExpression',
-          object: {
-            type: 'Identifier',
-            name: node.left.name
-          },
-          property: {
-            type: 'Identifier',
-            name: 'bridge'
-          }
-        },
-        arguments: [node.right]
-      };
+      replaceWithMethodCall(
+        node,
+        { type: 'Identifier', name: node.left.name },
+        'bridge',
+        [node.right]
+      );
     }
     // Handle swizzle assignment to varying variable: myVarying.xyz = value
     // Note: node.left.object might be worldPos.getValue() due to prior Identifier transformation
@@ -729,22 +810,9 @@ const ASTCallbacks = {
         const value = node.right;
         const callee = source.object;
         const member = source.property;
-        node.right = undefined;
-        node.left = undefined;
-        node.operator = undefined;
-        node.callee = {
-          type: 'MemberExpression',
-          object: callee,
-          property: {
-            type: 'Identifier',
-            name: 'set'
-          }
-        };
-        node.arguments = [member, value];
-        node.type = 'CallExpression';
+        replaceWithMethodCall(node, callee, 'set', [member, value]);
         return;
       }
-
       let varyingName = null;
 
       // Check if it's a direct identifier: myVarying.xyz
@@ -767,28 +835,12 @@ const ASTCallbacks = {
 
       if (varyingName) {
         const swizzlePattern = node.left.property.name;
-        node.type = 'ExpressionStatement';
-        node.expression = {
-          type: 'CallExpression',
-          callee: {
-            type: 'MemberExpression',
-            object: {
-              type: 'Identifier',
-              name: varyingName
-            },
-            property: {
-              type: 'Identifier',
-              name: 'bridgeSwizzle'
-            }
-          },
-          arguments: [
-            {
-              type: 'Literal',
-              value: swizzlePattern
-            },
-            node.right
-          ]
-        };
+        replaceWithMethodCall(
+          node,
+          { type: 'Identifier', name: varyingName },
+          'bridgeSwizzle',
+          [{ type: 'Literal', value: swizzlePattern }, node.right]
+        );
       }
     }
   },
@@ -1008,7 +1060,6 @@ const ASTCallbacks = {
           };
         }
 
-        // Build right side: __block_2['inputs.color'] or __block_2['x']
         const rightExpr = {
           type: 'MemberExpression',
           object: { type: 'Identifier', name: blockVar },
@@ -1364,16 +1415,12 @@ const ASTCallbacks = {
           };
         }
 
-        // Build right side: __block_2.inputs.color or __block_2.x
-        let rightExpr = { type: 'Identifier', name: blockVar };
-        for (const part of parts) {
-          rightExpr = {
-            type: 'MemberExpression',
-            object: rightExpr,
-            property: { type: 'Identifier', name: part },
-            computed: false
-          };
-        }
+        const rightExpr = {
+          type: 'MemberExpression',
+          object: { type: 'Identifier', name: blockVar },
+          property: { type: 'Literal', value: varPath },
+          computed: true
+        };
 
         statements.push({
           type: 'ExpressionStatement',
@@ -1607,7 +1654,28 @@ function functionHasSetInControlFlow(functionNode) {
 
   return hasSetInControlFlow;
 }
-
+/*
+ * Does this statement contain a `<hook>.<methodName>()` call?
+ *
+ * Also looks inside comma (sequence) expressions, so that minified-style code
+ * such as `hook.begin(), doSomething();` is still recognised.
+ */
+function statementCallsHookMethod(stmt, methodName, exprString) {
+  if (stmt.type !== 'ExpressionStatement') {
+    return false;
+  }
+  const expressions =
+    stmt.expression?.type === 'SequenceExpression'
+      ? stmt.expression.expressions
+      : [stmt.expression];
+  return expressions.some(
+    expr =>
+      expr?.type === 'CallExpression' &&
+      expr.callee?.type === 'MemberExpression' &&
+      expr.callee?.property?.name === methodName &&
+      escodegen.generate(expr.callee.object) === exprString
+  );
+}
 // Transform a function to use __setValue pattern instead of .set() calls in branches/loops
 function transformFunctionSetCalls(functionNode) {
   if (!functionNode.body || functionNode.body.type !== 'BlockStatement') {
@@ -1662,26 +1730,22 @@ function transformFunctionSetCalls(functionNode) {
 
     let beginCallIndex = -1;
     for (let i = 0; i < functionNode.body.body.length; i++) {
-      const stmt = functionNode.body.body[i];
       if (
-        stmt.type === 'ExpressionStatement' &&
-        stmt.expression?.type === 'CallExpression' &&
-        stmt.expression?.callee?.type === 'MemberExpression' &&
-        stmt.expression?.callee?.property?.name === 'begin'
+        statementCallsHookMethod(functionNode.body.body[i], 'begin', exprString)
       ) {
-        const beginExprString = escodegen.generate(
-          stmt.expression.callee.object
-        );
-        if (beginExprString === exprString) {
-          beginCallIndex = i;
-          break;
-        }
+        beginCallIndex = i;
+        break;
       }
     }
 
-    // Insert intermediate variable after .begin() if found, otherwise at the start
+    // Declare the intermediate variable *before* the statement containing
+    // .begin(), not after it. Minified code can put .begin() and a .set() in
+    // the same comma expression (`hook.begin(), hook.set(x)`). Every .set() on
+    // this hook is rewritten below to assign to this variable, so declaring it
+    // after that statement would use it before its `let` runs. (This pass only
+    // runs for functions with a .set() inside if/for; see #8576.)
     if (beginCallIndex !== -1) {
-      functionNode.body.body.splice(beginCallIndex + 1, 0, intermediateVarDecl);
+      functionNode.body.body.splice(beginCallIndex, 0, intermediateVarDecl);
     } else {
       functionNode.body.body.unshift(intermediateVarDecl);
     }
@@ -1697,25 +1761,16 @@ function transformFunctionSetCalls(functionNode) {
         ) {
           const currentExprString = escodegen.generate(node.callee.object);
           if (currentExprString === exprString && node.arguments.length > 0) {
-            // Find the parent statement
-            let parentStmt = null;
-            for (let i = ancestors.length - 1; i >= 0; i--) {
-              if (ancestors[i].type === 'ExpressionStatement') {
-                parentStmt = ancestors[i];
-                break;
-              }
-            }
-
-            if (parentStmt) {
-              // Replace the .set() call with an assignment
-              parentStmt.type = 'ExpressionStatement';
-              parentStmt.expression = {
-                type: 'AssignmentExpression',
-                operator: '=',
-                left: { type: 'Identifier', name: intermediateVarName },
-                right: node.arguments[0]
-              };
-            }
+            // Replace the .set() call itself with an assignment, in place.
+            // Replacing the enclosing statement instead would discard any
+            // sibling expressions when the call is part of a comma expression.
+            const value = node.arguments[0];
+            delete node.callee;
+            delete node.arguments;
+            node.type = 'AssignmentExpression';
+            node.operator = '=';
+            node.left = { type: 'Identifier', name: intermediateVarName };
+            node.right = value;
           }
         }
       }
@@ -1741,18 +1796,11 @@ function transformFunctionSetCalls(functionNode) {
     // Find the .end() call for this hook
     let endCallIndex = -1;
     for (let i = 0; i < functionNode.body.body.length; i++) {
-      const stmt = functionNode.body.body[i];
       if (
-        stmt.type === 'ExpressionStatement' &&
-        stmt.expression?.type === 'CallExpression' &&
-        stmt.expression?.callee?.type === 'MemberExpression' &&
-        stmt.expression?.callee?.property?.name === 'end'
+        statementCallsHookMethod(functionNode.body.body[i], 'end', exprString)
       ) {
-        const endExprString = escodegen.generate(stmt.expression.callee.object);
-        if (endExprString === exprString) {
-          endCallIndex = i;
-          break;
-        }
+        endCallIndex = i;
+        break;
       }
     }
 
@@ -1912,6 +1960,7 @@ function transformHelperFunctionEarlyReturns(ast, names) {
 
 // Wraps each callback with a uniform context guard, eliminating the need
 // to repeat the early-return check at the top of every handler.
+/* oxlint-disable-next-line no-unused-vars */
 function makeGuardedCallbacks(callbacks) {
   const guarded = {};
   for (const [name, fn] of Object.entries(callbacks)) {
@@ -1933,7 +1982,8 @@ function makeGuardedCallbacks(callbacks) {
 function runNonControlFlowPass(
   ast,
   uniformCallbackNames,
-  initialShaderNameState
+  initialShaderNameState,
+  p5
 ) {
   const nonControlFlowCallbacks = { ...ASTCallbacks };
   delete nonControlFlowCallbacks.IfStatement;
@@ -1944,7 +1994,8 @@ function runNonControlFlowPass(
     shaderNameMap: createStrandsShaderNameMap(),
     shaderNameState: createStrandsShaderNameState(
       initialShaderNameState?.nextSuffix || 0
-    )
+    ),
+    p5
   };
   ancestor(ast, nonControlFlowCallbacks, undefined, state);
   return {
@@ -2012,17 +2063,19 @@ function runControlFlowPass(ast, uniformCallbackNames) {
 }
 
 function buildStrandsCallback(p5, ast, scope) {
-  const transpiledSource = escodegen.generate(ast);
   const scopeKeys = Object.keys(scope);
-  const match =
-    /\(?\s*(?:function)?\s*\w*\s*\(([^)]*)\)\s*(?:=>)?\s*{((?:.|\n)*)}\s*;?\s*\)?/.exec(
-      transpiledSource
-    );
-  if (!match) {
-    console.log(transpiledSource);
+  // Source is wrapped in parens before parsing, so the callback is the
+  // program's single expression. Read params/body from that node so
+  // `param => { ... }` works after escodegen drops the parentheses.
+  const fn = ast.body.length === 1 && ast.body[0].expression;
+  if (
+    !fn ||
+    (fn.type !== 'FunctionExpression' && fn.type !== 'ArrowFunctionExpression')
+  ) {
+    console.log(escodegen.generate(ast));
     throw new Error('Could not parse p5.strands function!');
   }
-  const params = match[1].split(/,\s*/).filter(param => !!param.trim());
+  const params = fn.params.map(param => escodegen.generate(param));
   let paramVals, paramNames;
   if (params.length > 0) {
     paramNames = params;
@@ -2031,7 +2084,10 @@ function buildStrandsCallback(p5, ast, scope) {
     paramNames = scopeKeys;
     paramVals = scopeKeys.map(key => scope[key]);
   }
-  const body = match[2];
+  const body =
+    fn.body.type === 'BlockStatement'
+      ? fn.body.body.map(statement => escodegen.generate(statement)).join('\n')
+      : `return ${escodegen.generate(fn.body)};`;
   try {
     const internalStrandsCallback = new Function('__p5', ...paramNames, body);
     // Create a parameter called __p5, not just p5, because users of instance mode
@@ -2074,7 +2130,8 @@ export function transpileStrandsToJS(
   const { shaderNameMap, shaderNameState } = runNonControlFlowPass(
     ast,
     uniformCallbackNames,
-    initialShaderNameState
+    initialShaderNameState,
+    p5
   );
 
   // Pass 3: transform helper functions with early returns to use __returnValue pattern

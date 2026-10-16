@@ -481,6 +481,35 @@ suite('WebGPU p5.Shader', function () {
         assert.approximately(rightPixel[0], 127, 5); // 0.5 * 255 ≈ 127
       });
 
+      test('preserves a value saved before an if-else when only the else branch updates it', async () => {
+        await myp5.createCanvas(100, 50, myp5.WEBGPU);
+        const testShader = myp5.baseMaterialShader().modify(
+          () => {
+            myp5.getPixelInputs(inputs => {
+              let color = myp5.float(0.2) + inputs.texCoord.x * 0.2;
+              const saved = color;
+              if (inputs.texCoord.x > 0.5) {
+                // Keep color unchanged.
+              } else {
+                color = color + 0.3;
+              }
+              inputs.color = [saved, color, 0, 1];
+              return inputs;
+            });
+          },
+          { myp5 }
+        );
+        myp5.noStroke();
+        myp5.shader(testShader);
+        myp5.plane(myp5.width, myp5.height);
+        const leftPixel = await myp5.get(25, 25);
+        const rightPixel = await myp5.get(75, 25);
+        assert.approximately(leftPixel[0], 64, 5);
+        assert.approximately(leftPixel[1], 140, 5);
+        assert.approximately(rightPixel[0], 89, 5);
+        assert.approximately(rightPixel[1], 89, 5);
+      });
+
       test('handle if-else-if chains', async () => {
         await myp5.createCanvas(50, 50, myp5.WEBGPU);
         const testShader = myp5.baseMaterialShader().modify(
@@ -691,6 +720,9 @@ suite('WebGPU p5.Shader', function () {
 
         const testShader = myp5.baseFilterShader().modify(
           () => {
+            // The constant comparisons below are the subject of this test: they
+            // exercise how p5.strands transpiles boolean intermediate variables.
+            /* oxlint-disable no-constant-binary-expression */
             myp5.getColor((inputs, canvasContent) => {
               let value = 1;
               let condition = 1 > 2;
@@ -705,6 +737,7 @@ suite('WebGPU p5.Shader', function () {
 
               return [0.4, 0, 0, 1];
             });
+            /* oxlint-enable no-constant-binary-expression */
           },
           { myp5 }
         );
@@ -723,6 +756,9 @@ suite('WebGPU p5.Shader', function () {
 
         const testShader = myp5.baseFilterShader().modify(
           () => {
+            // The constant comparisons below are the subject of this test: they
+            // exercise how p5.strands transpiles boolean intermediate variables.
+            /* oxlint-disable no-constant-binary-expression */
             const conditionMet = () => {
               let condition = 1 > 2;
               let value = 1;
@@ -731,6 +767,7 @@ suite('WebGPU p5.Shader', function () {
               }
               return !condition;
             };
+            /* oxlint-enable no-constant-binary-expression */
             myp5.getColor((inputs, canvasContent) => {
               if (conditionMet()) {
                 return [1, 0, 0, 1];
@@ -1616,7 +1653,8 @@ suite('WebGPU p5.Shader', function () {
       test('simple vector multiplication in filter shader', async () => {
         await myp5.createCanvas(50, 50, myp5.WEBGPU);
 
-        const testShader = myp5.baseFilterShader().modify(
+        // Compiling the shader without throwing is what this test checks.
+        myp5.baseFilterShader().modify(
           () => {
             myp5.getColor((inputs, canvasContent) => {
               // Test simple scalar * vector operation
@@ -1879,9 +1917,12 @@ suite('WebGPU p5.Shader', function () {
           () => {
             const buf = myp5.uniformStorage();
             const id = myp5.index.x;
-            if (id == 0) {
+            if (id === 0) {
               buf[0] = 1.0;
               return;
+              // The statement after the early return is the subject of this
+              // test: p5.strands must not emit it.
+              /* oxlint-disable-next-line no-unreachable */
               buf[0] = 2.0; // Should not execute
             }
           },
@@ -2065,6 +2106,8 @@ suite('WebGPU p5.Shader', function () {
         expect(() => {
           myp5.baseMaterialShader().modify(
             () => {
+              // The shared variable is consumed by the p5.strands transpiler, not by JS.
+              /* oxlint-disable-next-line no-unused-vars */
               let worldPosX = myp5.sharedVec3();
               myp5.getWorldInputs(inputs => {
                 worldPosX = inputs.position.x; // scalar → vec3, valid broadcast
@@ -2082,6 +2125,8 @@ suite('WebGPU p5.Shader', function () {
         expect(() => {
           myp5.baseMaterialShader().modify(
             () => {
+              // The shared variable is consumed by the p5.strands transpiler, not by JS.
+              /* oxlint-disable-next-line no-unused-vars */
               let myVec = myp5.sharedVec3();
               myp5.getWorldInputs(inputs => {
                 myVec = inputs.position.xy; // vec2 → vec3 mismatch
@@ -2116,6 +2161,8 @@ suite('WebGPU p5.Shader', function () {
         expect(() => {
           myp5.baseMaterialShader().modify(
             () => {
+              // The shared variable is consumed by the p5.strands transpiler, not by JS.
+              /* oxlint-disable-next-line no-unused-vars */
               let myVec = myp5.sharedVec3();
               myp5.getWorldInputs(inputs => {
                 myVec = inputs.position; // vec3 → vec3, OK
@@ -2125,6 +2172,27 @@ suite('WebGPU p5.Shader', function () {
             { myp5 }
           );
         }).not.toThrow();
+      });
+    });
+
+    suite('matrix uniforms (#8992)', () => {
+      test('short aliases declare the same uniforms as the NxN names', async () => {
+        await myp5.createCanvas(5, 5, myp5.WEBGPU);
+        const testShader = myp5.baseMaterialShader().modify(
+          () => {
+            myp5.uniformMat2('uShort2');
+            myp5.uniformMat3('uShort3');
+            myp5.uniformMat4('uShort4');
+            myp5.uniformMat3x3('uLong3');
+          },
+          { myp5 }
+        );
+
+        const src = testShader.vertSrc();
+        assert.include(src, 'uShort2: mat2x2<f32>');
+        assert.include(src, 'uShort3: mat3x3<f32>');
+        assert.include(src, 'uShort4: mat4x4<f32>');
+        assert.include(src, 'uLong3: mat3x3<f32>');
       });
     });
   });

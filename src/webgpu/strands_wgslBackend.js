@@ -2,20 +2,9 @@ import noiseWGSL from './shaders/functions/noise3DWGSL.js';
 import randomWGSL from './shaders/functions/randomWGSL';
 import randomVertWGSL from './shaders/functions/randomVertWGSL';
 import randomComputeWGSL from './shaders/functions/randomComputeWGSL';
-import {
-  NodeType,
-  OpCodeToSymbol,
-  BlockType,
-  OpCode,
-  NodeTypeToName,
-  isStructType,
-  BaseType,
-  StatementType,
-  DataType,
-  INSTANCE_ID_VARYING_NAME,
-  HOOK_PARAM_PREFIX
-} from '../strands/ir_types';
-import { getNodeDataFromID, extractNodeTypeInfo } from '../strands/ir_dag';
+import inverseWGSL from './shaders/functions/inverseWGSL';
+import { NodeType, OpCodeToSymbol, BlockType, OpCode, NodeTypeToName, isStructType, BaseType, StatementType, DataType, INSTANCE_ID_VARYING_NAME, HOOK_PARAM_PREFIX } from "../strands/ir_types";
+import { getNodeDataFromID, extractNodeTypeInfo } from "../strands/ir_dag";
 import * as FES from '../strands/strands_FES';
 import * as build from '../strands/ir_builders';
 import { createStrandsNode } from '../strands/strands_node';
@@ -73,19 +62,7 @@ const cfgHandlers = {
     for (const nodeID of blockInstructions) {
       const node = getNodeDataFromID(dag, nodeID);
       if (node.nodeType === NodeType.PHI) {
-        // Check if the phi node's first dependency already has a temp name
-        const dependsOn = node.dependsOn || [];
-        if (dependsOn.length > 0) {
-          const firstDependency = dependsOn[0];
-          const existingTempName = generationContext.tempNames[firstDependency];
-          if (existingTempName) {
-            // Reuse the existing temp name instead of creating a new one
-            generationContext.tempNames[nodeID] = existingTempName;
-            continue; // Skip declaration, just alias to existing variable
-          }
-        }
-
-        // Otherwise, create a new temp variable for the phi node
+        // Phi nodes need their own variables to avoid aliasing inputs.
         const tmp = `T${generationContext.nextTempID++}`;
         generationContext.tempNames[nodeID] = tmp;
         const T = extractNodeTypeInfo(dag, nodeID);
@@ -275,25 +252,105 @@ export const wgslBackend = {
 
     for (const { name, typeInfo } of strandsContext.uniforms) {
       if (typeInfo.baseType === 'storage') {
-        const accessMode = isComputeShader ? 'read_write' : 'read';
-        let declaration;
-        if (typeInfo.schema) {
-          const structTypeName = `${name}Element`;
-          declaration = `struct ${structTypeName} ${typeInfo.schema.structBody}\n@group(0) @binding(${bindingIndex}) var<storage, ${accessMode}> ${name}: array<${structTypeName}>;`;
+        if (typeInfo.isStorageList) {
+          this._addStorageListBindings(
+            strandsContext,
+            name,
+            typeInfo,
+            bindingIndex,
+            isComputeShader
+          );
+          bindingIndex += 1;
         } else {
-          declaration = `@group(0) @binding(${bindingIndex}) var<storage, ${accessMode}> ${name}: array<f32>;`;
-        }
+          const accessMode = isComputeShader ? 'read_write' : 'read';
+          let declaration;
+          if (typeInfo.schema) {
+            const structTypeName = `${name}Element`;
+            declaration = `struct ${structTypeName} ${typeInfo.schema.structBody}\n@group(0) @binding(${bindingIndex}) var<storage, ${accessMode}> ${name}: array<${structTypeName}>;`;
+          } else {
+            declaration = `@group(0) @binding(${bindingIndex}) var<storage, ${accessMode}> ${name}: array<f32>;`;
+          }
 
-        if (isComputeShader) {
-          strandsContext.computeDeclarations.add(declaration);
-        } else {
-          strandsContext.vertexDeclarations.add(declaration);
-          strandsContext.fragmentDeclarations.add(declaration);
-        }
+          if (isComputeShader) {
+            strandsContext.computeDeclarations.add(declaration);
+          } else {
+            strandsContext.vertexDeclarations.add(declaration);
+            strandsContext.fragmentDeclarations.add(declaration);
+          }
 
-        bindingIndex += 1;
+          bindingIndex += 1;
+        }
       }
     }
+  },
+
+  _addStorageListBindings(
+    strandsContext,
+    name,
+    typeInfo,
+    bindingIndex,
+    isComputeShader
+  ) {
+    const { schema, maxCapacity } = typeInfo;
+    const elementTypeName = schema ? `${name}Element` : 'f32';
+    const elementTypeDecl = schema
+      ? `struct ${elementTypeName} ${schema.structBody}\n`
+      : '';
+
+    if (isComputeShader) {
+      // Wrapper struct holds a fixed-size data array followed by an atomic
+      // length. The layout matches the single GPU buffer written by createStorageList.
+      const bufTypeName = `${name}_buf`;
+      const bufDecl =
+        `${elementTypeDecl}` +
+        `struct ${bufTypeName} { data: array<${elementTypeName}, ${maxCapacity}>, length: atomic<i32> }\n` +
+        `@group(0) @binding(${bindingIndex}) var<storage, read_write> ${name}: ${bufTypeName};`;
+
+      const pushParam = schema ? `element: ${elementTypeName}` : `value: f32`;
+      const pushStore = schema ? `${name}.data[_idx] = element;` : `${name}.data[_idx] = value;`;
+      const pushFn =
+        `fn _p5_push_${name}(${pushParam}) {\n` +
+        `  let _idx = atomicAdd(&${name}.length, 1);\n` +
+        `  atomicMin(&${name}.length, ${maxCapacity});\n` +
+        `  if (_idx < ${maxCapacity}) { ${pushStore} }\n` +
+        `}`;
+
+      const popReturnType = schema ? elementTypeName : 'f32';
+      const popFn =
+        `fn _p5_pop_${name}() -> ${popReturnType} {\n` +
+        `  let _idx = atomicSub(&${name}.length, 1);\n` +
+        `  atomicMax(&${name}.length, 0);\n` +
+        `  return ${name}.data[_idx - 1];\n` +
+        `}`;
+
+      const lengthFn =
+        `fn _p5_length_${name}() -> i32 {\n` +
+        `  return atomicLoad(&${name}.length);\n` +
+        `}`;
+
+      strandsContext.computeDeclarations.add(bufDecl);
+      strandsContext.computeDeclarations.add(pushFn);
+      strandsContext.computeDeclarations.add(popFn);
+      strandsContext.computeDeclarations.add(lengthFn);
+    } else {
+      // In vertex/fragment shaders the same buffer is declared as a plain
+      // runtime-sized array. The atomic length bytes at the end of the buffer
+      // are beyond the last addressable element (floor(bufSize/stride) == maxCapacity),
+      // so they are never touched from the render side.
+      const dataDecl =
+        `${elementTypeDecl}` +
+        `@group(0) @binding(${bindingIndex}) var<storage, read> ${name}: array<${elementTypeName}>;`;
+      strandsContext.vertexDeclarations.add(dataDecl);
+      strandsContext.fragmentDeclarations.add(dataDecl);
+    }
+  },
+  _storageListDataAccess(generationContext, bufferExpr) {
+    if (generationContext.shaderContext !== 'compute') return bufferExpr;
+    const uniforms = generationContext.strandsContext?.uniforms;
+    if (!uniforms) return bufferExpr;
+    const uniform = uniforms.find(u => u.name === bufferExpr);
+    if (uniform?.typeInfo?.isStorageList) return `${bufferExpr}.data`;
+    return bufferExpr;
   },
   getTypeName(baseType, dimension) {
     const primitiveTypeName = TypeNames[baseType + dimension];
@@ -322,7 +379,7 @@ export const wgslBackend = {
     if (typeInfo.baseType === 'sampler2D') {
       return `${name}: sampler2D`; // Signal that this should not be added to uniform struct
     }
-    // For storage buffers, we don't add them to the uniform struct
+    // For storage buffers/lists, we don't add them to the uniform struct
     // Instead, they become separate storage buffer bindings
     if (typeInfo.baseType === 'storage') {
       return null; // Signal that this should not be added to uniform struct
@@ -396,8 +453,9 @@ export const wgslBackend = {
       const fieldSuffix = targetNode.identifier
         ? `.${targetNode.identifier}`
         : '';
+      const accessExpr = this._storageListDataAccess(generationContext, bufferExpr);
       generationContext.write(
-        `${bufferExpr}[i32(${indexExpr})]${fieldSuffix} = ${sourceExpr}${semicolon}`
+        `${accessExpr}[i32(${indexExpr})]${fieldSuffix} = ${sourceExpr}${semicolon}`
       );
       return;
     }
@@ -526,7 +584,7 @@ export const wgslBackend = {
         } else {
           return node.value;
         }
-      case NodeType.VARIABLE:
+      case NodeType.VARIABLE: {
         // Track shared variable usage context
         if (
           generationContext.shaderContext &&
@@ -567,7 +625,8 @@ export const wgslBackend = {
         }
 
         return node.identifier;
-      case NodeType.OPERATION:
+      }
+      case NodeType.OPERATION: {
         const useParantheses = node.usedBy.length > 0;
         if (node.opCode === OpCode.Nary.CONSTRUCTOR) {
           // TODO: differentiate casts and constructors for more efficient codegen.
@@ -624,6 +683,27 @@ export const wgslBackend = {
             }
           }
 
+          // WGSL has no built-in matrix inverse, so emit a size-specific polyfill
+          // (_p5_inverse_mat2/3/4). WGSL user functions can't be overloaded, hence
+          // the per-dimension names. The inverse node's dimension is the matrix
+          // size, since inverse() returns the same matrix type it receives.
+          if (node.identifier === 'inverse') {
+            const { vertexDeclarations, fragmentDeclarations, computeDeclarations } =
+              generationContext.strandsContext;
+            const declarationsByStage = {
+              vertex: vertexDeclarations,
+              fragment: fragmentDeclarations,
+              compute: computeDeclarations,
+            };
+            // Hooks without a recorded stage fall back to declaring in all of them.
+            const stage = declarationsByStage[generationContext.shaderContext];
+            for (const declarations of stage ? [stage] : Object.values(declarationsByStage)) {
+              declarations.add(inverseWGSL);
+            }
+            const arg = this.generateExpression(generationContext, dag, node.dependsOn[0]);
+            return `_p5_inverse_mat${node.dimension}(${arg})`;
+          }
+
           // Convert atan(y, x) to atan2(y, x) in WGSL
           if (node.identifier === 'atan' && node.dependsOn.length === 2) {
             const functionArgs = node.dependsOn.map(arg =>
@@ -677,7 +757,8 @@ export const wgslBackend = {
             indexID
           );
           const fieldSuffix = node.identifier ? `.${node.identifier}` : '';
-          return `${bufferExpr}[i32(${indexExpr})]${fieldSuffix}`;
+          const accessExpr = this._storageListDataAccess(generationContext, bufferExpr);
+          return `${accessExpr}[i32(${indexExpr})]${fieldSuffix}`;
         }
         if (node.dependsOn.length === 2) {
           const [lID, rID] = node.dependsOn;
@@ -706,6 +787,10 @@ export const wgslBackend = {
           const sym = OpCodeToSymbol[node.opCode];
           return `${sym}${val}`;
         }
+        return FES.internalError(
+          `Operation with opCode ${node.opCode} is not supported in expressions`
+        );
+      }
       case NodeType.PHI:
         // Phi nodes represent conditional merging of values
         // If this phi node has an identifier (like varying variables), use that
@@ -731,9 +816,11 @@ export const wgslBackend = {
           }
         }
       case NodeType.ASSIGNMENT:
-        FES.internalError(`ASSIGNMENT nodes should not be used as expressions`);
+        return FES.internalError(
+          `ASSIGNMENT nodes should not be used as expressions`
+        );
       default:
-        FES.internalError(
+        return FES.internalError(
           `${NodeTypeToName[node.nodeType]} code generation not implemented yet`
         );
     }

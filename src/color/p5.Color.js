@@ -19,7 +19,6 @@ import {
 import {
   ColorSpace,
   to,
-  toGamut,
   serialize,
   parse,
   range,
@@ -128,7 +127,7 @@ class Color {
           });
           this._cachedMode = mode;
           this._cachedColor = to(this._cachedColor, this._cachedColor.spaceId);
-        } catch (err) {
+        } catch {
           // TODO: Invalid color string
           throw new Error('Invalid color string');
         }
@@ -306,6 +305,7 @@ class Color {
   }
 
   // Will do conversion in-Gamut as out of Gamut conversion is only really useful for futher conversions
+  /* oxlint-disable-next-line no-unused-private-class-members */
   #toColorMode(mode) {
     return new Color(this._color, mode);
   }
@@ -319,7 +319,7 @@ class Color {
     return this._array;
   }
 
-  lerp(color, amt, mode){
+  lerp(color, amt, mode) {
     let lerpMode = mode;
     if (typeof amt === 'object') {
       // Passing in options object
@@ -726,13 +726,7 @@ class Color {
   }
 
   _getRGBA(maxes = [1, 1, 1, 1]) {
-    // Get colorjs maxes
     const colorjsMaxes = Color.#colorjsMaxes[RGB];
-
-    // Normalize everything to 0,1 or the provided range (map)
-    let coords = structuredClone(to(this._color, 'srgb').coords);
-    coords.push(this._color.alpha);
-
     const rangeMaxes = maxes.map(v => {
       if (!Array.isArray(v)) {
         return [0, v];
@@ -741,7 +735,15 @@ class Color {
       }
     });
 
-    coords = coords.map((coord, i) => {
+    let coords;
+    if (this.mode === RGB) {
+      coords = [...this._color.coords, this._color.alpha];
+    } else {
+      coords = structuredClone(to(this._color, 'srgb').coords);
+      coords.push(this._color.alpha);
+    }
+
+    return coords.map((coord, i) => {
       return map(
         coord,
         colorjsMaxes[i][0],
@@ -750,8 +752,6 @@ class Color {
         rangeMaxes[i][1]
       );
     });
-
-    return coords;
   }
 
   _getMode() {

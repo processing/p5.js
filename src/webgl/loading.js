@@ -13,7 +13,7 @@ async function fileExists(url) {
   try {
     const response = await fetch(url, { method: 'HEAD' });
     return response.ok;
-  } catch (error) {
+  } catch {
     return false;
   }
 }
@@ -541,6 +541,14 @@ function loading(p5, fn) {
   /**
    * @method loadModel
    * @param  {String|Request} path
+   * @param  {Boolean} normalize
+   * @param  {function(p5.Geometry)} [successCallback]
+   * @param  {function(Event)} [failureCallback]
+   * @return {Promise<p5.Geometry>} new <a href="#/p5.Geometry">p5.Geometry</a> object.
+   */
+  /**
+   * @method loadModel
+   * @param  {String|Request} path
    * @param  {Object} [options] loading options.
    * @param  {String} [options.fileType]
    * @param  {function(p5.Geometry)} [options.successCallback]
@@ -645,7 +653,7 @@ function loading(p5, fn) {
         const parsedMaterials = await Promise.all(parsedMaterialPromises);
         const materials = Object.assign({}, ...parsedMaterials);
         return materials;
-      } catch (error) {
+      } catch {
         return {};
       }
     }
@@ -756,7 +764,6 @@ function loading(p5, fn) {
     // material per kept face, aligned with model.faces, for bucketing later
     const faceMaterials = [];
     let hasColoredVertices = false;
-    let hasColorlessVertices = false;
     for (let line = 0; line < lines.length; ++line) {
       // Each line is a separate object (vertex, face, vertex normal, etc)
       // For each line, split it into tokens on whitespace. The first token
@@ -834,7 +841,6 @@ function loading(p5, fn) {
                   model.vertexColors.push(materialDiffuseColor[2]);
                   model.vertexColors.push(1);
                 } else {
-                  hasColorlessVertices = true;
                   model.vertexColors.push(-1, -1, -1, -1);
                 }
               } else {

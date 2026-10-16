@@ -71,19 +71,7 @@ const cfgHandlers = {
     for (const nodeID of blockInstructions) {
       const node = getNodeDataFromID(dag, nodeID);
       if (node.nodeType === NodeType.PHI) {
-        // Check if the phi node's first dependency already has a temp name
-        const dependsOn = node.dependsOn || [];
-        if (dependsOn.length > 0) {
-          const firstDependency = dependsOn[0];
-          const existingTempName = generationContext.tempNames[firstDependency];
-          if (existingTempName) {
-            // Reuse the existing temp name instead of creating a new one
-            generationContext.tempNames[nodeID] = existingTempName;
-            continue; // Skip declaration, just alias to existing variable
-          }
-        }
-
-        // Otherwise, create a new temp variable for the phi node
+        // Phi nodes need their own variables to avoid aliasing inputs.
         const tmp = `T${generationContext.nextTempID++}`;
         generationContext.tempNames[nodeID] = tmp;
         const T = extractNodeTypeInfo(dag, nodeID);
@@ -211,6 +199,7 @@ export const glslBackend = {
   getRandomVertexShaderSnippet() {
     return randomVertGLSL;
   },
+  
   getTypeName(baseType, dimension) {
     const primitiveTypeName = TypeNames[baseType + dimension];
     if (!primitiveTypeName) {
@@ -353,7 +342,7 @@ export const glslBackend = {
         }
 
         return node.identifier;
-      case NodeType.OPERATION:
+      case NodeType.OPERATION: {
         const useParantheses = node.usedBy.length > 0;
         if (node.opCode === OpCode.Nary.CONSTRUCTOR) {
           // TODO: differentiate casts and constructors for more efficient codegen.
@@ -460,6 +449,10 @@ export const glslBackend = {
           const sym = OpCodeToSymbol[node.opCode];
           return `${sym}${val}`;
         }
+        return FES.internalError(
+          `Operation with opCode ${node.opCode} is not supported in expressions`
+        );
+      }
       case NodeType.PHI:
         // Phi nodes represent conditional merging of values
         // If this phi node has an identifier (like varying variables), use that
@@ -482,19 +475,14 @@ export const glslBackend = {
             );
           } else {
             throw new Error(`No valid inputs for node`);
-            // Fallback: create a default value
-            const typeName = this.getTypeName(node.baseType, node.dimension);
-            if (node.dimension === 1) {
-              return node.baseType === BaseType.FLOAT ? '0.0' : '0';
-            } else {
-              return `${typeName}(0.0)`;
-            }
           }
         }
       case NodeType.ASSIGNMENT:
-        FES.internalError(`ASSIGNMENT nodes should not be used as expressions`);
+        return FES.internalError(
+          `ASSIGNMENT nodes should not be used as expressions`
+        );
       default:
-        FES.internalError(
+        return FES.internalError(
           `${NodeTypeToName[node.nodeType]} code generation not implemented yet`
         );
     }

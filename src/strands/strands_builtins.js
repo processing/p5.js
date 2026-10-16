@@ -326,7 +326,19 @@ const builtInGLSLFunctions = {
       returnType: GenType.FLOAT,
       isp5Function: false
     }
-  ]
+  ],
+
+  ////////// Matrix //////////
+  inverse: [
+    { params: [DataType.mat2], returnType: DataType.mat2, isp5Function: false},
+    { params: [DataType.mat3], returnType: DataType.mat3, isp5Function: false},
+    { params: [DataType.mat4], returnType: DataType.mat4, isp5Function: false},
+  ],
+  transpose: [
+    { params: [DataType.mat2], returnType: DataType.mat2, isp5Function: false},
+    { params: [DataType.mat3], returnType: DataType.mat3, isp5Function: false},
+    { params: [DataType.mat4], returnType: DataType.mat4, isp5Function: false},
+  ],
 };
 
 export const strandsBuiltinFunctions = {
