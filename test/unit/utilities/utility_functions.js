@@ -84,6 +84,33 @@ suite('String functions', function () {
       const result = mockP5Prototype.nfc(num, '3'); // automatic conversion?
       assert.equal(result, '32,000.000');
     });
+
+    test('should round when right is smaller than the decimals present', function () {
+      assert.equal(mockP5Prototype.nfc(12345.67, 1), '12,345.7');
+      assert.equal(mockP5Prototype.nfc(12345.649, 2), '12,345.65');
+    });
+
+    test('should pad when right is larger than the decimals present', function () {
+      assert.equal(mockP5Prototype.nfc(12345.67, 3), '12,345.670');
+      assert.equal(mockP5Prototype.nfc(12345.6, 2), '12,345.60');
+    });
+
+    test('should keep the sign when padding or rounding', function () {
+      assert.equal(mockP5Prototype.nfc(-12345.6, 2), '-12,345.60');
+      assert.equal(mockP5Prototype.nfc(-12345.67, 1), '-12,345.7');
+    });
+
+    test('should drop the decimals when right is 0', function () {
+      assert.equal(mockP5Prototype.nfc(12345.67, 0), '12,346');
+      assert.equal(mockP5Prototype.nfc(12345.4, 0), '12,345');
+    });
+
+    test('should format each entry of an array', function () {
+      assert.deepEqual(mockP5Prototype.nfc([12345.67, 8.9], 2), [
+        '12,345.67',
+        '8.90'
+      ]);
+    });
   });
 
   suite('p5.prototype.nfp', function () {
