@@ -481,6 +481,35 @@ suite('WebGPU p5.Shader', function () {
         assert.approximately(rightPixel[0], 127, 5); // 0.5 * 255 ≈ 127
       });
 
+      test('preserves a value saved before an if-else when only the else branch updates it', async () => {
+        await myp5.createCanvas(100, 50, myp5.WEBGPU);
+        const testShader = myp5.baseMaterialShader().modify(
+          () => {
+            myp5.getPixelInputs(inputs => {
+              let color = myp5.float(0.2) + inputs.texCoord.x * 0.2;
+              const saved = color;
+              if (inputs.texCoord.x > 0.5) {
+                // Keep color unchanged.
+              } else {
+                color = color + 0.3;
+              }
+              inputs.color = [saved, color, 0, 1];
+              return inputs;
+            });
+          },
+          { myp5 }
+        );
+        myp5.noStroke();
+        myp5.shader(testShader);
+        myp5.plane(myp5.width, myp5.height);
+        const leftPixel = await myp5.get(25, 25);
+        const rightPixel = await myp5.get(75, 25);
+        assert.approximately(leftPixel[0], 64, 5);
+        assert.approximately(leftPixel[1], 140, 5);
+        assert.approximately(rightPixel[0], 89, 5);
+        assert.approximately(rightPixel[1], 89, 5);
+      });
+
       test('handle if-else-if chains', async () => {
         await myp5.createCanvas(50, 50, myp5.WEBGPU);
         const testShader = myp5.baseMaterialShader().modify(
