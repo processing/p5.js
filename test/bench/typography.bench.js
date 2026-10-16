@@ -14,7 +14,7 @@ const strs = {
 };
 
 // Parameterizing test cases by function ensures consistency in test parameters across all renderers.
-// Future tests should follow a similar format (e.g. TO_CONTOURS_CASES, etc)
+// Future tests should follow a similar format
 const TO_POINTS_CASES = [
   {label: "textToPoints() single word", str: strs.single, textSize: 20, sampleFactor: 0.5, points: 317, variance: 5, render: false},
   {label: "textToPoints() single word, 150pt", str: strs.single, textSize: 150, sampleFactor: 0.5, points: 2336, variance: 50, render: false},
@@ -22,6 +22,23 @@ const TO_POINTS_CASES = [
   {label: "textToPoints() 10 words", str: strs.ten, textSize: 20, sampleFactor: 0.5, points: 1453, variance: 5, render: false},
   {label: "textToPoints() paragraph", str: strs.paragraph, textSize: 20, sampleFactor: 0.5, points: 21275, variance: 50, render: false},
 ];
+
+// Expected number of contours for each TO_POINTS_CASES entry, in the same order.
+// Contour count depends on the glyph outlines (not textSize or sampleFactor),
+// so the same string gives the same count.
+const EXPECTED_CONTOURS = [
+  16,   // single word
+  16,   // single word, 150pt
+  16,   // single word, with render
+  76,   // 10 words
+  1167, // paragraph
+];
+
+const TO_CONTOURS_CASES = TO_POINTS_CASES.map((c, i) => ({
+  ...c,
+  label: c.label.replace("textToPoints()", "textToContours()"),
+  contours: EXPECTED_CONTOURS[i],
+}));
 
 const TO_MODEL_CASES = [
   {label: "textToModel() single word", str: strs.single, textSize: 20, sampleFactor: 0.5, render: false},
@@ -58,6 +75,16 @@ function drawPoints(myp5, points) {
     }
 }
 
+function drawContours(myp5, contours) {
+  for (let contour of contours) {
+    myp5.beginShape();
+    for (let pt of contour) {
+      myp5.vertex(pt.x, pt.y);
+    }
+    myp5.endShape(myp5.CLOSE);
+  }
+}
+
 const options = { iterations: 20, time: 500 };
 
 describe("Typography: bench 2D", function() {
@@ -84,6 +111,29 @@ describe("Typography: bench 2D", function() {
     );
   }
 
+  for (let testCase of TO_CONTOURS_CASES) {
+    bench(
+      testCase.label,
+      async () => {
+        const contours = font.textToContours(testCase.str, 10, 20, { sampleFactor: testCase.sampleFactor });
+        assert.equal(contours.length, testCase.contours);
+        const total = contours.reduce((n, c) => n + c.length, 0);
+        assert.closeTo(total, testCase.points, testCase.variance);
+        if (testCase.render) {
+          drawContours(myp5, contours);
+        }
+      },
+      {
+        ...options,
+        setup: async () => {
+          ({myp5, font} = await bootstrap());
+          myp5.textSize(testCase.textSize);
+        },
+        teardown: () => myp5.remove()
+      }
+    );
+  }
+
 });
 
 describe("Typography: bench WebGL", function() {
@@ -97,6 +147,29 @@ describe("Typography: bench WebGL", function() {
         assert.closeTo(points.length, testCase.points, testCase.variance);
         if (testCase.render) {
           drawPoints(myp5, points);
+        }
+      },
+      {
+        ...options,
+        setup: async () => {
+          ({myp5, font} = await bootstrap(400, 400, WEBGL));
+          myp5.textSize(testCase.textSize);
+        },
+        teardown: () => myp5.remove()
+      }
+    );
+  }
+
+  for (let testCase of TO_CONTOURS_CASES) {
+    bench(
+      testCase.label,
+      async () => {
+        const contours = font.textToContours(testCase.str, 10, 20, { sampleFactor: testCase.sampleFactor });
+        assert.equal(contours.length, testCase.contours);
+        const total = contours.reduce((n, c) => n + c.length, 0);
+        assert.closeTo(total, testCase.points, testCase.variance);
+        if (testCase.render) {
+          drawContours(myp5, contours);
         }
       },
       {
@@ -145,6 +218,29 @@ describe("Typography: bench WebGPU", function() {
         assert.closeTo(points.length, testCase.points, testCase.variance);
         if (testCase.render) {
           drawPoints(myp5, points);
+        }
+      },
+      {
+        ...options,
+        setup: async () => {
+          ({myp5, font} = await bootstrap(400, 400, WEBGPU));
+          myp5.textSize(testCase.textSize);
+        },
+        teardown: () => myp5.remove()
+      }
+    );
+  }
+
+  for (let testCase of TO_CONTOURS_CASES) {
+    bench(
+      testCase.label,
+      async () => {
+        const contours = font.textToContours(testCase.str, 10, 20, { sampleFactor: testCase.sampleFactor });
+        assert.equal(contours.length, testCase.contours);
+        const total = contours.reduce((n, c) => n + c.length, 0);
+        assert.closeTo(total, testCase.points, testCase.variance);
+        if (testCase.render) {
+          drawContours(myp5, contours);
         }
       },
       {
