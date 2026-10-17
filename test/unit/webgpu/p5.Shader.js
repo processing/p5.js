@@ -481,6 +481,35 @@ suite('WebGPU p5.Shader', function () {
         assert.approximately(rightPixel[0], 127, 5); // 0.5 * 255 ≈ 127
       });
 
+      test('preserves a value saved before an if-else when only the else branch updates it', async () => {
+        await myp5.createCanvas(100, 50, myp5.WEBGPU);
+        const testShader = myp5.baseMaterialShader().modify(
+          () => {
+            myp5.getPixelInputs(inputs => {
+              let color = myp5.float(0.2) + inputs.texCoord.x * 0.2;
+              const saved = color;
+              if (inputs.texCoord.x > 0.5) {
+                // Keep color unchanged.
+              } else {
+                color = color + 0.3;
+              }
+              inputs.color = [saved, color, 0, 1];
+              return inputs;
+            });
+          },
+          { myp5 }
+        );
+        myp5.noStroke();
+        myp5.shader(testShader);
+        myp5.plane(myp5.width, myp5.height);
+        const leftPixel = await myp5.get(25, 25);
+        const rightPixel = await myp5.get(75, 25);
+        assert.approximately(leftPixel[0], 64, 5);
+        assert.approximately(leftPixel[1], 140, 5);
+        assert.approximately(rightPixel[0], 89, 5);
+        assert.approximately(rightPixel[1], 89, 5);
+      });
+
       test('handle if-else-if chains', async () => {
         await myp5.createCanvas(50, 50, myp5.WEBGPU);
         const testShader = myp5.baseMaterialShader().modify(
@@ -2143,6 +2172,27 @@ suite('WebGPU p5.Shader', function () {
             { myp5 }
           );
         }).not.toThrow();
+      });
+    });
+
+    suite('matrix uniforms (#8992)', () => {
+      test('short aliases declare the same uniforms as the NxN names', async () => {
+        await myp5.createCanvas(5, 5, myp5.WEBGPU);
+        const testShader = myp5.baseMaterialShader().modify(
+          () => {
+            myp5.uniformMat2('uShort2');
+            myp5.uniformMat3('uShort3');
+            myp5.uniformMat4('uShort4');
+            myp5.uniformMat3x3('uLong3');
+          },
+          { myp5 }
+        );
+
+        const src = testShader.vertSrc();
+        assert.include(src, 'uShort2: mat2x2<f32>');
+        assert.include(src, 'uShort3: mat3x3<f32>');
+        assert.include(src, 'uShort4: mat4x4<f32>');
+        assert.include(src, 'uLong3: mat3x3<f32>');
       });
     });
   });

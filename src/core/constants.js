@@ -1131,12 +1131,22 @@ export const CLAMP = 'clamp';
 export const MIRROR = 'mirror';
 
 // WEBGL GEOMETRY SHADING
+
 /**
- * @typedef {'flat'} FLAT
- * @property {FLAT} FLAT
+ * @typedef {'keep_connections'} KEEP_CONNECTIONS
+ * @property {KEEP_CONNECTIONS} KEEP_CONNECTIONS
  * @final
  */
-export const FLAT = 'flat';
+export const KEEP_CONNECTIONS = 'keep_connections';
+
+/**
+ * @typedef {'keep_connections'} FLAT
+ * @property {FLAT} FLAT
+ * @final
+ * @deprecated Use `KEEP_CONNECTIONS` instead. May be removed in p5.js 3.0.
+ */
+export const FLAT = KEEP_CONNECTIONS;
+
 /**
  * @typedef {'smooth'} SMOOTH
  * @property {SMOOTH} SMOOTH
@@ -1144,6 +1154,12 @@ export const FLAT = 'flat';
  */
 export const SMOOTH = 'smooth';
 
+/**
+ * @typedef {'segmented'} SEGMENTED
+ * @property {SEGMENTED} SEGMENTED
+ * @final
+ */
+export const SEGMENTED = 'segmented';
 // DEVICE-ORIENTATION
 /**
  * @typedef {'landscape'} LANDSCAPE
