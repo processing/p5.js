@@ -1,6 +1,7 @@
 /**
  * @for p5
  */
+import 'zod/compile';
 import * as constants from '../core/constants.js';
 import * as z from 'zod/mini';
 import dataDoc from '../../docs/parameterData.json';
