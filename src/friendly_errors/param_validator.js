@@ -358,7 +358,7 @@ function validateParams(p5, fn, lifecycles) {
       const schemaItems = schema.def.items;
       const numSchemaItems = schemaItems.length;
       const numRequiredSchemaItems = schemaItems.filter(
-        item => !item.safeParse(undefined).success
+        item => !z.validate(item, undefined)
       ).length;
 
       if (numArgs >= numRequiredSchemaItems && numArgs <= numSchemaItems) {
@@ -388,7 +388,7 @@ function validateParams(p5, fn, lifecycles) {
         const paramSchema = schemaItems[i];
         const arg = args[i];
 
-        if (!paramSchema.safeParse(arg).success) score++;
+        if (!z.validate(paramSchema, arg)) score++;
       }
 
       return score;
@@ -622,12 +622,11 @@ function validateParams(p5, fn, lifecycles) {
       schemaRegistry.set(func, funcSchemas);
     }
 
-    try {
+    if (z.validate(funcSchemas, args)) {
       return {
-        success: true,
-        data: funcSchemas.parse(args)
+        success: true
       };
-    } catch {
+    } else {
       const closestSchema = findClosestSchema(funcSchemas, args);
       const zodError = closestSchema.safeParse(args).error;
       const errorMessage = friendlyParamError(zodError, func, args);
