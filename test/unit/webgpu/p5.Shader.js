@@ -280,6 +280,164 @@ suite('WebGPU p5.Shader', function () {
       assert.deepEqual(secondShader.hooks.varyingVariables, []);
     });
 
+    suite('registered state (#9259)', () => {
+      function stateTestAddon(p5, fn) {
+        fn.testLight = p5.registerStrandsState('testLight', {
+          init(base) {
+            return {
+              config: {},
+              state: { scoped: {}, global: { color: p5.strandsNode(base) } }
+            };
+          },
+          update: {
+            mixTo(state, config, target, amount) {
+              return {
+                scoped: {},
+                global: { color: this.mix(state.global.color, target, amount) }
+              };
+            }
+          },
+          read: { get: state => state.global.color }
+        });
+        fn.testMeter = p5.registerStrandsState('testMeter', {
+          init(gain) {
+            return {
+              config: {},
+              state: {
+                scoped: { gain: p5.strandsNode(gain) },
+                global: { total: p5.strandsNode(0) }
+              }
+            };
+          },
+          update: {
+            setGain(state, config, gain) {
+              return { scoped: { gain: p5.strandsNode(gain) }, global: state.global };
+            },
+            add(state, config, amount) {
+              return {
+                scoped: state.scoped,
+                global: { total: state.global.total.add(state.scoped.gain.mult(amount)) }
+              };
+            }
+          },
+          read: { total: state => state.global.total }
+        });
+      }
+      const addedNames = ['testLight', 'testMeter'];
+      let savedDescriptors;
+      let registeredAddons;
+      beforeAll(() => {
+        savedDescriptors = addedNames.map(name => ({
+          name,
+          descriptor: Object.getOwnPropertyDescriptor(p5.prototype, name)
+        }));
+        registeredAddons = p5._registeredAddons;
+        p5.registerAddon(stateTestAddon);
+      });
+      afterAll(() => {
+        for (const { name, descriptor } of savedDescriptors) {
+          if (descriptor) Object.defineProperty(p5.prototype, name, descriptor);
+          else delete p5.prototype[name];
+        }
+        registeredAddons.delete(stateTestAddon);
+      });
+
+      // Without a WebGPU adapter p5 falls back to WebGL, which would make
+      // these tests pass without testing WGSL.
+      const createWebGPUCanvas = async () => {
+        await myp5.createCanvas(100, 50, myp5.WEBGPU);
+        assert.instanceOf(myp5._renderer, p5.RendererWebGPU);
+        assert.instanceOf(myp5._renderer.device, GPUDevice);
+      };
+      const render = async (callback, scope = {}, options = {}) => {
+        await createWebGPUCanvas();
+        const testShader = myp5.baseMaterialShader().modify(callback, { myp5, ...scope }, options);
+        myp5.noStroke();
+        myp5.shader(testShader);
+        myp5.plane(myp5.width, myp5.height);
+        const samples = [];
+        for (const x of [25, 75]) {
+          samples.push([...(await myp5.get(x, 25))].slice(0, 3));
+        }
+        return samples;
+      };
+      const assertRGB = (actual, expected) => {
+        for (let i = 0; i < 3; i++) {
+          assert.approximately(actual[i], expected[i], 5);
+        }
+      };
+
+      test('updates in branches are merged per pixel', async () => {
+        const [left, right] = await render(() => {
+          myp5.getPixelInputs(inputs => {
+            const light = myp5.testLight([0, 0, 1]);
+            const alias = light;
+            if (inputs.texCoord.x > 0.5) {
+              alias.mixTo([1, 0, 0], 0.5);
+            } else {
+              light.mixTo([0, 1, 0], 0.5);
+            }
+            inputs.color = [light.get(), 1];
+            return inputs;
+          });
+        });
+        assertRGB(left, [0, 128, 128]);
+        assertRGB(right, [128, 0, 128]);
+      });
+
+      test('a value read before an if keeps its value after a branch updates the helper', async () => {
+        const [left, right] = await render(() => {
+          myp5.getPixelInputs(inputs => {
+            const level = myp5.testLight(myp5.float(0.2) + inputs.texCoord.x * 0.2);
+            const saved = level.get();
+            if (inputs.texCoord.x > 0.5) {
+              // unchanged on this side
+            } else {
+              level.mixTo(1.0, 0.5);
+            }
+            inputs.color = [saved, level.get(), 0, 1];
+            return inputs;
+          });
+        });
+        assertRGB(left, [64, 159, 0]);
+        assertRGB(right, [89, 89, 0]);
+      });
+
+      test('updates are carried through loops, including loops that run zero times', async () => {
+        const [left, right] = await render(() => {
+          myp5.getPixelInputs(inputs => {
+            const level = myp5.testLight(myp5.float(0));
+            const count = inputs.texCoord.x > 0.5 ? 3 : 0;
+            for (let i = 0; i < count; i++) {
+              level.mixTo(1.0, 0.5);
+            }
+            const value = level.get();
+            inputs.color = [value, value, 0, 1];
+            return inputs;
+          });
+        });
+        assertRGB(left, [0, 0, 0]);
+        assertRGB(right, [223, 223, 0]);
+      });
+
+      test('popStrandsState() restores scoped fields and keeps global ones', async () => {
+        const [left] = await render(() => {
+          myp5.getPixelInputs(inputs => {
+            const meter = myp5.testMeter(0.5);
+            myp5.pushStrandsState();
+            meter.setGain(1).add(0.2);
+            myp5.popStrandsState();
+            meter.add(0.4);
+            const total = meter.total();
+            inputs.color = [total, total, total, 1];
+            return inputs;
+          });
+        });
+        assertRGB(left, [102, 102, 102]);
+      });
+
+    });
+
     suite('if statement conditionals', () => {
       test('handle simple if statement with true condition', async () => {
         await myp5.createCanvas(50, 50, myp5.WEBGPU);

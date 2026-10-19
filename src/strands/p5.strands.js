@@ -64,7 +64,11 @@ function strands(p5, fn) {
    * @property {Object} _builtinGlobals Cache of builtin-global uniform nodes for the current DAG.
    * @property {Map} sharedVariables Shared variable metadata that tracks vertex/fragment usage to decide whether each variable becomes a local declaration or a varying.
    * @property {Object} activeHook Hook currently being recorded, if any.
-   * @property {Boolean} _instanceIDUsedInFragment Whether fragment-stage code referenced `instanceID`, requiring it to be passed from the vertex shader to the fragment shader.
+   * @property {Object} stateScope Helper records and stack for the active hook, or `null`.
+   * @property {Number} conditionalDepth Current if/else nesting depth.
+   * @property {String} loopPhase Current loop phase: `'header'`, `'body'` or `null`.
+   * @property {String} expressionOperand Current guarded expression operator, or `null`.
+   * @property {Boolean} _instanceIDUsedInFragment Whether fragment code needs `instanceID` from the vertex shader.
    * @property {Set} experimentalFeaturesUsed Experimental subject areas used inside the callback, warned about once FES is restored after the pass.
    */
 
@@ -129,6 +133,10 @@ function strands(p5, fn) {
     ctx._builtinGlobals = createBuiltinGlobalsCache(ctx.dag);
     ctx.sharedVariables = new Map();
     ctx.activeHook = undefined;
+    ctx.stateScope = null;
+    ctx.conditionalDepth = 0;
+    ctx.loopPhase = null;
+    ctx.expressionOperand = null;
     ctx._instanceIDUsedInFragment = false;
     // Experimental subject areas used inside the callback, warned about once
     // the pass is done since FES is switched off while it runs (see below).
@@ -166,6 +174,10 @@ function strands(p5, fn) {
     ctx._builtinGlobals = createBuiltinGlobalsCache(ctx.dag);
     ctx.sharedVariables = new Map();
     ctx.activeHook = undefined;
+    ctx.stateScope = null;
+    ctx.conditionalDepth = 0;
+    ctx.loopPhase = null;
+    ctx.expressionOperand = null;
     ctx._instanceIDUsedInFragment = false;
     ctx.experimentalFeaturesUsed = new Set();
   }

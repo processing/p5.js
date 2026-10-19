@@ -1774,6 +1774,609 @@ suite('p5.Shader', function () {
       });
     });
 
+    suite('registered state (#9259)', () => {
+      function stateTestAddon(p5, fn) {
+        fn.testLight = p5.registerStrandsState('testLight', {
+          init(base) {
+            return {
+              config: {},
+              state: { scoped: {}, global: { color: p5.strandsNode(base) } }
+            };
+          },
+          update: {
+            mixTo(state, config, target, amount) {
+              return {
+                scoped: {},
+                global: { color: this.mix(state.global.color, target, amount) }
+              };
+            },
+            toVec2(state) {
+              return { scoped: {}, global: { color: state.global.color.xy } };
+            }
+          },
+          read: {
+            get: state => state.global.color,
+            mutateAndGet(state) {
+              state.global.color.x = 1;
+              return state.global.color;
+            }
+          }
+        });
+        fn.testMeter = p5.registerStrandsState('testMeter', {
+          init(gain) {
+            return {
+              config: {},
+              state: {
+                scoped: { gain: p5.strandsNode(gain) },
+                global: { total: p5.strandsNode(0) }
+              }
+            };
+          },
+          update: {
+            setGain(state, config, gain) {
+              return { scoped: { gain: p5.strandsNode(gain) }, global: state.global };
+            },
+            add(state, config, amount) {
+              return {
+                scoped: state.scoped,
+                global: { total: state.global.total.add(state.scoped.gain.mult(amount)) }
+              };
+            }
+          },
+          read: { total: state => state.global.total }
+        });
+      }
+
+      // Undo registration after this suite.
+      const addedNames = ['testLight', 'testMeter'];
+      let savedDescriptors;
+      let registeredAddons;
+      beforeAll(() => {
+        savedDescriptors = addedNames.map(name => ({
+          name,
+          descriptor: Object.getOwnPropertyDescriptor(p5.prototype, name)
+        }));
+        registeredAddons = p5._registeredAddons;
+        p5.registerAddon(stateTestAddon);
+      });
+      afterAll(() => {
+        for (const { name, descriptor } of savedDescriptors) {
+          if (descriptor) Object.defineProperty(p5.prototype, name, descriptor);
+          else delete p5.prototype[name];
+        }
+        registeredAddons.delete(stateTestAddon);
+      });
+      beforeEach(() => {
+        mockUserError.mockClear();
+      });
+
+      const render = (callback, scope = {}) => {
+        myp5.createCanvas(100, 50, myp5.WEBGL);
+        const testShader = myp5.baseMaterialShader().modify(callback, { myp5, ...scope });
+        myp5.noStroke();
+        myp5.shader(testShader);
+        myp5.plane(myp5.width, myp5.height);
+      };
+      const sample = (...xs) => xs.map(x => [...myp5.get(x, 25)].slice(0, 3));
+      const assertRGB = (actual, expected) => {
+        for (let i = 0; i < 3; i++) {
+          assert.approximately(actual[i], expected[i], 5);
+        }
+      };
+      const buildError = (callback, scope = {}) => {
+        try {
+          myp5.createCanvas(100, 50, myp5.WEBGL);
+          myp5.baseMaterialShader().modify(callback, { myp5, ...scope });
+        } catch (e) {
+          return e;
+        }
+        return null;
+      };
+      const assertUserError = (error, type, message) => {
+        assert.instanceOf(error, Error);
+        assert.strictEqual(error.message, `[p5.strands ${type}]: ${message}`);
+      };
+      // After a rejected build, the next one still works.
+      const assertRecovers = () => {
+        render(() => {
+          myp5.getPixelInputs(inputs => {
+            inputs.color = [myp5.testLight([0, 0, 1]).get(), 1];
+            return inputs;
+          });
+        });
+        const [left, right] = sample(25, 75);
+        assertRGB(left, [0, 0, 255]);
+        assertRGB(right, [0, 0, 255]);
+      };
+
+      test('registration returns a factory and installs nothing', () => {
+        const targets = [window, p5.prototype, p5.Graphics.prototype];
+        const before = targets.map(t => Object.getOwnPropertyNames(t).length);
+        const factory = p5.registerStrandsState('unusedState', {
+          init: () => ({ config: {}, state: { scoped: {}, global: {} } }),
+          update: { change: state => state },
+          read: { value: () => 0 }
+        });
+        assert.isFunction(factory);
+        assert.deepEqual(targets.map(t => Object.getOwnPropertyNames(t).length), before);
+        for (const target of targets) {
+          for (const name of ['unusedState', 'change', 'value']) {
+            assert.isFalse(Object.hasOwn(target, name), name);
+          }
+        }
+      });
+
+      test('registration rejects an invalid description', () => {
+        const attempt = (...args) => {
+          try {
+            p5.registerStrandsState(...args);
+          } catch (e) {
+            return e;
+          }
+          return null;
+        };
+        const read = { get: () => 0 };
+        assertUserError(attempt(1, { init() {}, update: {}, read }), 'type error',
+          'registerStrandsState expects a string name.');
+        assertUserError(attempt('bad', { update: {}, read }), 'type error',
+          'registerStrandsState expects an object with an init function.');
+        assertUserError(attempt('bad', { init() {}, update: [], read }), 'type error',
+          'registerStrandsState expects update to be an object of functions.');
+        assertUserError(attempt('bad', { init() {}, update: { get: 1 }, read }), 'type error',
+          'registerStrandsState update.get must be a function.');
+        assertUserError(attempt('bad', { init() {}, update: { get() {} }, read }), 'type error',
+          'registerStrandsState cannot use "get" in both update and read.');
+      });
+
+      test('chained updates commit in order', () => {
+        render(() => {
+          myp5.getPixelInputs(inputs => {
+            const light = myp5.testLight([0, 0, 1]);
+            light.mixTo([1, 0, 0], 0.5).mixTo([1, 0, 0], 0.5);
+            inputs.color = [light.get(), 1];
+            return inputs;
+          });
+        });
+        assertRGB(sample(25)[0], [191, 0, 64]);
+      });
+
+      test('each factory call is independent and an alias shares its state', () => {
+        render(() => {
+          myp5.getPixelInputs(inputs => {
+            const a = myp5.testLight([0, 0, 1]);
+            const b = myp5.testLight([0, 1, 0]);
+            const alias = a;
+            alias.mixTo([1, 0, 0], 0.5);
+            inputs.color = [a.get().x, b.get().y, a.get().z, 1];
+            return inputs;
+          });
+        });
+        assertRGB(sample(25)[0], [128, 255, 128]);
+      });
+
+      test('reads do not change stored state, even when they change their arguments', () => {
+        render(() => {
+          myp5.getPixelInputs(inputs => {
+            const light = myp5.testLight([0, 0, 1]);
+            const c = light.get();
+            c.x = 1;
+            const m = light.mutateAndGet();
+            inputs.color = [c.x, m.x, light.get().x, 1];
+            return inputs;
+          });
+        });
+        assertRGB(sample(25)[0], [255, 255, 0]);
+      });
+
+      test('an update in one branch is merged per pixel', () => {
+        render(() => {
+          myp5.getPixelInputs(inputs => {
+            const light = myp5.testLight([0, 0, 1]);
+            if (inputs.texCoord.x > 0.5) {
+              light.mixTo([1, 0, 0], 0.5);
+            }
+            inputs.color = [light.get(), 1];
+            return inputs;
+          });
+        });
+        const [left, right] = sample(25, 75);
+        assertRGB(left, [0, 0, 255]);
+        assertRGB(right, [128, 0, 128]);
+      });
+
+      test('both branches start from the state before the if', () => {
+        render(() => {
+          myp5.getPixelInputs(inputs => {
+            const light = myp5.testLight([0, 0, 1]);
+            if (inputs.texCoord.x > 0.5) {
+              light.mixTo([1, 0, 0], 0.5);
+            } else {
+              light.mixTo([0, 1, 0], 0.5);
+            }
+            inputs.color = [light.get(), 1];
+            return inputs;
+          });
+        });
+        const [left, right] = sample(25, 75);
+        assertRGB(left, [0, 128, 128]);
+        assertRGB(right, [128, 0, 128]);
+      });
+
+      test('nested ifs and else-if chains merge updates', () => {
+        render(() => {
+          myp5.getPixelInputs(inputs => {
+            const nested = myp5.testLight([0, 0, 1]);
+            const chain = myp5.testLight([0, 0, 1]);
+            if (inputs.texCoord.x > 0.5) {
+              nested.mixTo([1, 0, 0], 0.5);
+              if (inputs.texCoord.x > 0.75) {
+                nested.mixTo([0, 1, 0], 0.5);
+              }
+            }
+            if (inputs.texCoord.x > 0.75) {
+              chain.mixTo([1, 0, 0], 0.5);
+            } else if (inputs.texCoord.x > 0.5) {
+              chain.mixTo([0, 1, 0], 0.5);
+            }
+            inputs.color = [nested.get().x, nested.get().y, chain.get().x, 1];
+            return inputs;
+          });
+        });
+        const [left, middle, right] = sample(25, 60, 85);
+        assertRGB(left, [0, 0, 0]);
+        assertRGB(middle, [128, 0, 0]);
+        assertRGB(right, [64, 128, 128]);
+      });
+
+      test('a value read before an if keeps its value after a branch updates the helper', () => {
+        render(() => {
+          myp5.getPixelInputs(inputs => {
+            const level = myp5.testLight(myp5.float(0.2) + inputs.texCoord.x * 0.2);
+            const saved = level.get();
+            if (inputs.texCoord.x > 0.5) {
+              // unchanged on this side
+            } else {
+              level.mixTo(1.0, 0.5);
+            }
+            inputs.color = [saved, level.get(), 0, 1];
+            return inputs;
+          });
+        });
+        const [left, right] = sample(25, 75);
+        // left: saved = 0.2 + 0.25 * 0.2, then mixed halfway to 1
+        assertRGB(left, [64, 159, 0]);
+        assertRGB(right, [89, 89, 0]);
+      });
+
+      test('updates are carried through loop iterations', () => {
+        render(() => {
+          myp5.getPixelInputs(inputs => {
+            const level = myp5.testLight(myp5.float(0));
+            for (let i = 0; i < 3; i++) {
+              level.mixTo(1.0, 0.5);
+            }
+            const value = level.get();
+            inputs.color = [value, value, 0, 1];
+            return inputs;
+          });
+        });
+        assertRGB(sample(25)[0], [223, 223, 0]);
+      });
+
+      test('a loop that runs zero times keeps the state before it', () => {
+        render(() => {
+          myp5.getPixelInputs(inputs => {
+            const level = myp5.testLight(myp5.float(0));
+            const count = inputs.texCoord.x > 0.5 ? 3 : 0;
+            for (let i = 0; i < count; i++) {
+              level.mixTo(1.0, 0.5);
+            }
+            const value = level.get();
+            inputs.color = [value, value, 0, 1];
+            return inputs;
+          });
+        });
+        const [left, right] = sample(25, 75);
+        assertRGB(left, [0, 0, 0]);
+        assertRGB(right, [223, 223, 0]);
+      });
+
+      test('an if inside a loop merges each iteration', () => {
+        render(() => {
+          myp5.getPixelInputs(inputs => {
+            const level = myp5.testLight(myp5.float(0));
+            for (let i = 0; i < 3; i++) {
+              if (inputs.texCoord.x > 0.5) {
+                level.mixTo(1.0, 0.5);
+              }
+            }
+            const value = level.get();
+            inputs.color = [value, value, 0, 1];
+            return inputs;
+          });
+        });
+        const [left, right] = sample(25, 75);
+        assertRGB(left, [0, 0, 0]);
+        assertRGB(right, [223, 223, 0]);
+      });
+
+      test('popStrandsState() restores scoped fields and keeps global ones', () => {
+        render(() => {
+          myp5.getPixelInputs(inputs => {
+            const meter = myp5.testMeter(0.5);
+            myp5.pushStrandsState();
+            meter.setGain(1).add(0.2);
+            myp5.popStrandsState();
+            meter.add(0.4);
+            // 0.2 * 1 before the pop, then 0.4 * 0.5 with the restored gain
+            const total = meter.total();
+            inputs.color = [total, total, total, 1];
+            return inputs;
+          });
+        });
+        assertRGB(sample(25)[0], [102, 102, 102]);
+      });
+
+      test('push and pop inside a branch and a loop body are merged', () => {
+        render(() => {
+          myp5.getPixelInputs(inputs => {
+            const meter = myp5.testMeter(0.5);
+            if (inputs.texCoord.x > 0.5) {
+              myp5.pushStrandsState();
+              meter.setGain(1).add(0.2);
+              myp5.popStrandsState();
+            }
+            for (let i = 0; i < 2; i++) {
+              myp5.pushStrandsState();
+              meter.setGain(0.25).add(0.4);
+              myp5.popStrandsState();
+            }
+            meter.add(0.2);
+            const total = meter.total();
+            inputs.color = [total, total, total, 1];
+            return inputs;
+          });
+        });
+        const [left, right] = sample(25, 75);
+        // left: 2 * 0.25 * 0.4 + 0.5 * 0.2 = 0.3; right adds 0.2
+        assertRGB(left, [77, 77, 77]);
+        assertRGB(right, [128, 128, 128]);
+      });
+
+      test('reads are allowed inside ?: and && operands', () => {
+        render(() => {
+          myp5.getPixelInputs(inputs => {
+            const light = myp5.testLight([0, 0, 1]);
+            const color = inputs.texCoord.x > 0.5 ? light.get() : myp5.vec3(1, 0, 0);
+            const both = inputs.texCoord.x > 0.5 && light.get().z > 0.5;
+            inputs.color = [color.x, both ? 1 : 0, color.z, 1];
+            return inputs;
+          });
+        });
+        const [left, right] = sample(25, 75);
+        assertRGB(left, [255, 0, 0]);
+        assertRGB(right, [0, 255, 255]);
+      });
+
+      test('helpers are rejected outside the hook call that created them', () => {
+        const kept = [];
+        const keep = helper => kept.push(helper);
+        const take = () => kept[kept.length - 1];
+        const factory = 'testLight must be created inside an active Strands hook.';
+        const helper = 'testLight helper must be used in the hook invocation that created it.';
+        assertUserError(buildError(() => {
+          myp5.testLight([0, 0, 1]);
+        }), 'scope error', factory);
+        assertUserError((() => {
+          try {
+            myp5.testLight([0, 0, 1]);
+          } catch (e) {
+            return e;
+          }
+        })(), 'scope error', factory);
+        assertUserError(buildError(() => {
+          myp5.getWorldInputs(inputs => {
+            keep(myp5.testLight([0, 0, 1]));
+            return inputs;
+          });
+          myp5.getPixelInputs(inputs => {
+            inputs.color = [take().get(), 1];
+            return inputs;
+          });
+        }, { keep, take }), 'scope error', helper);
+        assertUserError(buildError(() => {
+          myp5.getPixelInputs(inputs => {
+            take().mixTo([1, 0, 0], 0.5);
+            return inputs;
+          });
+        }, { take }), 'scope error', helper);
+        assertRecovers();
+      });
+
+      test('helpers cannot be created inside an if or a loop', () => {
+        assertUserError(buildError(() => {
+          myp5.getPixelInputs(inputs => {
+            if (inputs.texCoord.x > 0.5) {
+              myp5.testLight([0, 0, 1]);
+            }
+            return inputs;
+          });
+        }), 'scope error', 'testLight must be created before an if/else, not inside one of its branches.');
+        assertUserError(buildError(() => {
+          myp5.getPixelInputs(inputs => {
+            for (let i = 0; i < 3; i++) {
+              myp5.testLight([0, 0, 1]);
+            }
+            return inputs;
+          });
+        }), 'scope error', 'testLight must be created before a for loop, not inside it.');
+        assertRecovers();
+      });
+
+      test('helpers and the state stack are rejected in loop headers', () => {
+        const header = "testMeter helper can only be used in a for loop's body, not its initializer, condition or update.";
+        const limit = () => {
+          myp5.pushStrandsState();
+          return 3;
+        };
+        assertUserError(buildError(() => {
+          myp5.getPixelInputs(inputs => {
+            const meter = myp5.testMeter(0.5);
+            for (let i = meter.total(); i < 3; i++) {
+              inputs.color = [1, 0, 0, 1];
+            }
+            return inputs;
+          });
+        }), 'scope error', header);
+        assertUserError(buildError(() => {
+          myp5.getPixelInputs(inputs => {
+            const meter = myp5.testMeter(0.5);
+            for (let i = 0; i < meter.total(); i++) {
+              inputs.color = [1, 0, 0, 1];
+            }
+            return inputs;
+          });
+        }), 'scope error', header);
+        assertUserError(buildError(() => {
+          myp5.getPixelInputs(inputs => {
+            const meter = myp5.testMeter(0.5);
+            for (let i = 0; i < 3; i += meter.total()) {
+              inputs.color = [1, 0, 0, 1];
+            }
+            return inputs;
+          });
+        }), 'scope error', header);
+        assertUserError(buildError(() => {
+          myp5.getPixelInputs(inputs => {
+            myp5.testMeter(0.5);
+            for (let i = 0; i < limit(); i++) {
+              inputs.color = [1, 0, 0, 1];
+            }
+            return inputs;
+          });
+        }, { limit }), 'scope error',
+          "pushStrandsState() can only be used in a for loop's body, not its initializer, condition or update.");
+        assertRecovers();
+      });
+
+      test('break and early return are rejected in a loop body while helpers exist', () => {
+        assertUserError(buildError(() => {
+          myp5.getPixelInputs(inputs => {
+            const light = myp5.testLight([0, 0, 1]);
+            for (let i = 0; i < 3; i++) {
+              if (inputs.texCoord.x > 0.5) {
+                break;
+              }
+            }
+            inputs.color = [light.get(), 1];
+            return inputs;
+          });
+        }), 'scope error',
+          "break can't be used inside a for loop body while registered Strands helpers exist in this hook.");
+        assertUserError(buildError(() => {
+          myp5.getPixelInputs(inputs => {
+            const light = myp5.testLight([0, 0, 1]);
+            inputs.color = [light.get(), 1];
+            for (let i = 0; i < 3; i++) {
+              if (inputs.texCoord.x > 0.5) {
+                return inputs;
+              }
+            }
+            return inputs;
+          });
+        }), 'scope error',
+          "An early return can't be used inside a for loop body while registered Strands helpers exist in this hook.");
+        assertRecovers();
+      });
+
+      test('updates, creation and the state stack are rejected inside ?: and && operands', () => {
+        const assertOperandError = (callback, subject, where) =>
+          assertUserError(buildError(callback), 'scope error',
+            `${subject} can't be used inside ${where}. Use it in its own statement before the expression.`);
+        assertOperandError(() => {
+          myp5.getPixelInputs(inputs => {
+            const light = myp5.testLight([0, 0, 1]);
+            const color = inputs.texCoord.x > 0.5 ? light.mixTo([1, 0, 0], 0.5).get() : light.get();
+            inputs.color = [color, 1];
+            return inputs;
+          });
+        }, 'testLight helper', 'a branch of a ?: expression');
+        assertOperandError(() => {
+          myp5.getPixelInputs(inputs => {
+            const light = myp5.testLight([0, 0, 1]);
+            const both = inputs.texCoord.x > 0.5 && light.mixTo([1, 0, 0], 0.5).get().x > 0.5;
+            inputs.color = [both ? 1 : 0, 0, 0, 1];
+            return inputs;
+          });
+        }, 'testLight helper', 'an operand of &&');
+        assertOperandError(() => {
+          myp5.getPixelInputs(inputs => {
+            const color = inputs.texCoord.x > 0.5 ? myp5.testLight([0, 0, 1]).get() : myp5.vec3(0);
+            inputs.color = [color, 1];
+            return inputs;
+          });
+        }, 'testLight', 'a branch of a ?: expression');
+        assertOperandError(() => {
+          myp5.getPixelInputs(inputs => {
+            myp5.testMeter(0.5);
+            const keep = inputs.texCoord.x > 0.5 || myp5.pushStrandsState();
+            inputs.color = [keep ? 1 : 0, 0, 0, 1];
+            return inputs;
+          });
+        }, 'pushStrandsState()', 'an operand of ||');
+        assertRecovers();
+      });
+
+      test('state must keep its fields and types', () => {
+        assertUserError(buildError(() => {
+          myp5.getPixelInputs(inputs => {
+            const light = myp5.testLight([0, 0, 1]);
+            light.toVec2();
+            inputs.color = [light.get(), 1];
+            return inputs;
+          });
+        }), 'type error',
+          'testLight state must use a numeric scalar or vector with a fixed field name and type.');
+      });
+
+      test('the state stack must be balanced', () => {
+        assertUserError(buildError(() => {
+          myp5.getPixelInputs(inputs => {
+            myp5.testMeter(0.5);
+            myp5.pushStrandsState();
+            return inputs;
+          });
+        }), 'scope error', 'pushStrandsState() needs a matching popStrandsState() before the hook ends.');
+        assertUserError(buildError(() => {
+          myp5.getPixelInputs(inputs => {
+            myp5.popStrandsState();
+            return inputs;
+          });
+        }), 'scope error', 'popStrandsState() has no matching pushStrandsState().');
+        assertUserError(buildError(() => {
+          myp5.getPixelInputs(inputs => {
+            myp5.pushStrandsState();
+            if (inputs.texCoord.x > 0.5) {
+              myp5.popStrandsState();
+            }
+            myp5.popStrandsState();
+            return inputs;
+          });
+        }), 'scope error',
+          "popStrandsState() can't pop a pushStrandsState() made outside the current if/else branch or for loop body.");
+        assertUserError(buildError(() => {
+          myp5.getPixelInputs(inputs => {
+            if (inputs.texCoord.x > 0.5) {
+              myp5.pushStrandsState();
+            }
+            return inputs;
+          });
+        }), 'scope error',
+          'pushStrandsState() and popStrandsState() must be balanced inside each if/else branch.');
+        assertRecovers();
+      });
+    });
+
     suite('if statement conditionals', () => {
       test('handle simple if statement with true condition', () => {
         myp5.createCanvas(50, 50, myp5.WEBGL);

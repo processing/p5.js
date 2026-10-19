@@ -395,7 +395,21 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
   augmentFn(fn, p5, 'discard', function () {
     build.statementNode(strandsContext, StatementType.DISCARD);
   });
+  // Early exits would skip helper-state writes at the end of the loop.
+  // The generated loop-exit break bypasses this check.
+  function rejectLoopExitWithHelpers(statement) {
+    if (
+      strandsContext.loopPhase === 'body' &&
+      strandsContext.stateScope?.records.length > 0
+    ) {
+      FES.userError(
+        'scope error',
+        `${statement} can't be used inside a for loop body while registered Strands helpers exist in this hook.`
+      );
+    }
+  }
   augmentFn(fn, p5, 'break', function () {
+    rejectLoopExitWithHelpers('break');
     build.statementNode(strandsContext, StatementType.BREAK);
   });
   p5.break = fn.break;
@@ -434,6 +448,29 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
     return buildTernary(strandsContext, condition, ifTrue, ifFalse);
   };
   augmentFn(fn, p5, 'strandsTernary', p5.strandsTernary);
+  // Both sides are built; allow helper reads here, but reject updates.
+  p5.strandsOperand = function (operator, operand) {
+    const previousOperand = strandsContext.expressionOperand;
+    strandsContext.expressionOperand = operator;
+    try {
+      return operand();
+    } finally {
+      strandsContext.expressionOperand = previousOperand;
+    }
+  };
+  function rejectInExpressionOperand(subject) {
+    const operator = strandsContext.expressionOperand;
+    if (operator) {
+      const where =
+        operator === '?:'
+          ? 'a branch of a ?: expression'
+          : `an operand of ${operator}`;
+      FES.userError(
+        'scope error',
+        `${subject} can't be used inside ${where}. Use it in its own statement before the expression.`
+      );
+    }
+  }
   p5.strandsEarlyReturn = function (value) {
     const { dag, cfg } = strandsContext;
 
@@ -443,6 +480,7 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
         'strandsEarlyReturn can only be used inside a hook callback'
       );
     }
+    rejectLoopExitWithHelpers('An early return');
 
     // Convert value to a StrandsNode if it isn't already
     const valueNode = value?.isStrandsNode ? value : p5.strandsNode(value);
@@ -503,6 +541,281 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
     );
     return createStrandsNode(id, dimension, strandsContext); //new StrandsNode(id, dimension, strandsContext);
   };
+  // Addon API; see "Helper state for addons" in contributor_docs/p5.strands.md.
+  p5.registerStrandsState = function (name, spec) {
+    if (typeof name !== 'string') {
+      FES.userError(
+        'type error',
+        'registerStrandsState expects a string name.'
+      );
+    }
+
+    const isRecord = value =>
+      value !== null && typeof value === 'object' && !Array.isArray(value);
+
+    if (!isRecord(spec) || typeof spec.init !== 'function') {
+      FES.userError(
+        'type error',
+        'registerStrandsState expects an object with an init function.'
+      );
+    }
+
+    for (const group of ['update', 'read']) {
+      const methods = spec[group];
+      if (!isRecord(methods)) {
+        FES.userError(
+          'type error',
+          `registerStrandsState expects ${group} to be an object of functions.`
+        );
+      }
+      for (const [method, callback] of Object.entries(methods)) {
+        if (typeof callback !== 'function') {
+          FES.userError(
+            'type error',
+            `registerStrandsState ${group}.${method} must be a function.`
+          );
+        }
+      }
+    }
+
+    for (const method of Object.keys(spec.update)) {
+      if (Object.prototype.hasOwnProperty.call(spec.read, method)) {
+        FES.userError(
+          'type error',
+          `registerStrandsState cannot use "${method}" in both update and read.`
+        );
+      }
+    }
+
+    // Read fields once so getters cannot change values after validation.
+    // Updates must match the existing slot names, types and dimensions.
+    function readState(state, slots) {
+      const groups = isRecord(state)
+        ? { scoped: state.scoped, global: state.global }
+        : null;
+      if (!groups || !isRecord(groups.scoped) || !isRecord(groups.global)) {
+        FES.userError(
+          'type error',
+          `${name} state must have scoped and global objects of fields.`
+        );
+      }
+
+      const fields = ['scoped', 'global'].flatMap(group =>
+        Object.entries(groups[group]).map(([field, value]) => ({
+          group,
+          field,
+          value
+        }))
+      );
+      if (fields.length === 0) {
+        FES.userError(
+          'type error',
+          `${name} state needs at least one scoped or global field.`
+        );
+      }
+
+      return fields.map(({ group, field, value }) => {
+        if (
+          !(value instanceof StrandsNode) ||
+          value.strandsContext !== strandsContext
+        ) {
+          FES.userError(
+            'type error',
+            `${name}.${group}.${field} must be a Strands node from this context.`
+          );
+        }
+
+        const { baseType, dimension } = value.typeInfo();
+        const expected = slots?.find(
+          slot => slot.group === group && slot.name === field
+        );
+        if (
+          ![BaseType.FLOAT, BaseType.INT].includes(baseType) ||
+          !Number.isInteger(dimension) ||
+          dimension < 1 ||
+          dimension > 4 ||
+          (slots && (
+            !expected ||
+            fields.length !== slots.length ||
+            baseType !== expected.baseType ||
+            dimension !== expected.dimension
+          ))
+        ) {
+          FES.userError(
+            'type error',
+            `${name} state must use a numeric scalar or vector with a fixed field name and type.`
+          );
+        }
+
+        return { group, name: field, baseType, dimension, valueId: value.id };
+      });
+    }
+
+    const initialize = spec.init;
+    const updateMethods = Object.entries(spec.update);
+    const readMethods = Object.entries(spec.read);
+    return function (...args) {
+      const scope = strandsContext.stateScope;
+      if (!strandsContext.active || !scope) {
+        FES.userError(
+          'scope error',
+          `${name} must be created inside an active Strands hook.`
+        );
+      }
+      if (strandsContext.conditionalDepth > 0) {
+        FES.userError(
+          'scope error',
+          `${name} must be created before an if/else, not inside one of its branches.`
+        );
+      }
+      if (strandsContext.loopPhase) {
+        FES.userError(
+          'scope error',
+          `${name} must be created before a for loop, not inside it.`
+        );
+      }
+      rejectInExpressionOperand(name);
+
+      const sketch = this;
+      const initialized = initialize.call(sketch, ...args);
+      if (!isRecord(initialized)) {
+        FES.userError(
+          'type error',
+          `${name} init must return an object containing config and state.`
+        );
+      }
+
+      // Each slot is one field's bookkeeping key and current DAG id.
+      const record = {
+        scope,
+        config: initialized.config,
+        slots: readState(initialized.state)
+      };
+      const helper = Object.create(null);
+
+      function assertScope() {
+        if (
+          !strandsContext.active ||
+          record.scope !== strandsContext.stateScope
+        ) {
+          FES.userError(
+            'scope error',
+            `${name} helper must be used in the hook invocation that created it.`
+          );
+        }
+        if (strandsContext.loopPhase === 'header') {
+          FES.userError(
+            'scope error',
+            `${name} helper can only be used in a for loop's body, not its initializer, condition or update.`
+          );
+        }
+      }
+
+      function callbackState() {
+        // Null-prototype groups, so a field named __proto__ is an own field.
+        const state = {
+          scoped: Object.create(null),
+          global: Object.create(null)
+        };
+        for (const slot of record.slots) {
+          state[slot.group][slot.name] = createStrandsNode(
+            slot.valueId,
+            slot.dimension,
+            strandsContext
+          );
+        }
+        return state;
+      }
+
+      for (const [method, callback] of updateMethods) {
+        helper[method] = function (...methodArgs) {
+          assertScope();
+          rejectInExpressionOperand(`${name} helper`);
+          const nextState = callback.call(
+            sketch,
+            callbackState(),
+            record.config,
+            ...methodArgs
+          );
+          const nextSlots = readState(nextState, record.slots);
+          for (const slot of record.slots) {
+            slot.valueId = nextSlots.find(
+              next => next.group === slot.group && next.name === slot.name
+            ).valueId;
+          }
+          return helper;
+        };
+      }
+
+      for (const [method, callback] of readMethods) {
+        helper[method] = function (...methodArgs) {
+          assertScope();
+          return callback.call(
+            sketch,
+            callbackState(),
+            record.config,
+            ...methodArgs
+          );
+        };
+      }
+
+      scope.records.push(record);
+      return helper;
+    };
+  };
+
+  // Push/pop saves and restores scoped fields per hook, leaving globals alone.
+  // Branches and loop bodies must balance their own pushes and pops.
+  function stateStackScope(operation) {
+    const scope = strandsContext.stateScope;
+    if (!strandsContext.active || !scope) {
+      FES.userError(
+        'scope error',
+        `${operation}() must be called inside an active Strands hook.`
+      );
+    }
+    if (strandsContext.loopPhase === 'header') {
+      FES.userError(
+        'scope error',
+        `${operation}() can only be used in a for loop's body, not its initializer, condition or update.`
+      );
+    }
+    rejectInExpressionOperand(`${operation}()`);
+    return scope;
+  }
+  p5.pushStrandsState = function () {
+    const scope = stateStackScope('pushStrandsState');
+    const frame = new Map();
+    for (const record of scope.records) {
+      for (const slot of record.slots) {
+        if (slot.group === 'scoped') {
+          frame.set(slot, slot.valueId);
+        }
+      }
+    }
+    scope.stack.push(frame);
+  };
+  augmentFn(fn, p5, 'pushStrandsState', p5.pushStrandsState);
+  p5.popStrandsState = function () {
+    const scope = stateStackScope('popStrandsState');
+    if (scope.stack.length === 0) {
+      FES.userError(
+        'scope error',
+        'popStrandsState() has no matching pushStrandsState().'
+      );
+    }
+    if (scope.stack.length <= scope.stackFloor) {
+      FES.userError(
+        'scope error',
+        "popStrandsState() can't pop a pushStrandsState() made outside the current if/else branch or for loop body."
+      );
+    }
+    for (const [slot, valueId] of scope.stack.pop()) {
+      slot.valueId = valueId;
+    }
+  };
+  augmentFn(fn, p5, 'popStrandsState', p5.popStrandsState);
+
   //////////////////////////////////////////////
   // Builtins, uniforms, variable constructors
   //////////////////////////////////////////////
@@ -1611,6 +1924,7 @@ export function createShaderHooksFunctions(strandsContext, fn, shader) {
     let entryBlockID;
     function setupHook() {
       strandsContext.activeHook = hook;
+      strandsContext.stateScope = { records: [], stack: [], stackFloor: 0 };
       entryBlockID = CFG.createBasicBlock(cfg, BlockType.FUNCTION);
       CFG.addEdge(cfg, cfg.currentBlock, entryBlockID);
       CFG.pushBlock(cfg, entryBlockID);
@@ -1639,9 +1953,16 @@ export function createShaderHooksFunctions(strandsContext, fn, shader) {
     }
 
     function finishHook() {
+      if (strandsContext.stateScope?.stack.length > 0) {
+        FES.userError(
+          'scope error',
+          'pushStrandsState() needs a matching popStrandsState() before the hook ends.'
+        );
+      }
       hook._active = false;
       const userReturned = hook._result;
       strandsContext.activeHook = undefined;
+      strandsContext.stateScope = null;
 
       const expectedReturnType = hookType.returnType;
       const expectsReturnValue =

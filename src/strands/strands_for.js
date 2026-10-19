@@ -10,6 +10,7 @@ import {
 import { createStrandsNode } from './strands_node';
 import { primitiveConstructorNode } from './ir_builders';
 import { createPhiNode } from './strands_phi_utils';
+import * as FES from './strands_FES';
 
 export class StrandsFor {
   constructor(
@@ -50,8 +51,12 @@ export class StrandsFor {
       phiNode.dimension,
       this.strandsContext
     );
-    const conditionNode = this.conditionCb(loopVarNode);
-    const updateResult = this.updateCb(loopVarNode);
+    const conditionNode = this.runInLoopPhase('header', () =>
+      this.conditionCb(loopVarNode)
+    );
+    const updateResult = this.runInLoopPhase('header', () =>
+      this.updateCb(loopVarNode)
+    );
     CFG.popBlock(cfg);
 
     // Check if loop has bounded iteration count
@@ -103,6 +108,12 @@ export class StrandsFor {
         }
       }
     }
+    for (const [slot, updatedId] of this.stateUpdatedIds) {
+      DAG.getNodeDataFromID(
+        this.strandsContext.dag,
+        this.statePhis.get(slot).id
+      ).dependsOn[1] = updatedId;
+    }
     CFG.popBlock(cfg);
 
     // Create assignment nodes in the branch block for initial values
@@ -126,6 +137,18 @@ export class StrandsFor {
         );
         CFG.recordInBasicBlock(cfg, branchBlock, assignmentID);
       }
+    }
+    // Each helper phi starts from its entry value, so zero iterations keep it.
+    for (const [slot, phi] of this.statePhis) {
+      const assignmentID = DAG.getOrCreateNode(
+        this.strandsContext.dag,
+        DAG.createNodeData({
+          nodeType: NodeType.ASSIGNMENT,
+          dependsOn: [phi.id, this.stateEntryIds.get(slot)],
+          phiBlocks: []
+        })
+      );
+      CFG.recordInBasicBlock(cfg, branchBlock, assignmentID);
     }
     CFG.popBlock(cfg);
 
@@ -152,6 +175,18 @@ export class StrandsFor {
         CFG.recordInBasicBlock(cfg, this.finalBodyBlock, assignmentID);
       }
     }
+    // Each iteration ends by storing the body's final helper values.
+    for (const [slot, updatedId] of this.stateUpdatedIds) {
+      const assignmentID = DAG.getOrCreateNode(
+        this.strandsContext.dag,
+        DAG.createNodeData({
+          nodeType: NodeType.ASSIGNMENT,
+          dependsOn: [this.statePhis.get(slot).id, updatedId],
+          phiBlocks: []
+        })
+      );
+      CFG.recordInBasicBlock(cfg, this.finalBodyBlock, assignmentID);
+    }
     CFG.popBlock(cfg);
 
     // Convert phi nodes to StrandsNodes for the final result
@@ -165,6 +200,12 @@ export class StrandsFor {
     }
 
     CFG.pushBlock(cfg, mergeBlock);
+    // After the loop, updated helpers read their phi; the rest keep their entry.
+    for (const [slot, phi] of this.statePhis) {
+      slot.valueId = this.stateUpdatedIds.has(slot)
+        ? phi.id
+        : this.stateEntryIds.get(slot);
+    }
 
     return finalBodyResults;
   }
@@ -409,7 +450,7 @@ export class StrandsFor {
 
   initializeLoopVariable(cfg, branchBlock) {
     CFG.pushBlock(cfg, branchBlock);
-    let initialVar = this.initialCb();
+    let initialVar = this.runInLoopPhase('header', () => this.initialCb());
 
     // Convert to StrandsNode if it's not already one
     if (!initialVar?.isStrandsNode) {
@@ -433,6 +474,17 @@ export class StrandsFor {
     CFG.popBlock(cfg);
 
     return { initialVar, phiNode };
+  }
+
+  // Restore the loop phase after the callback, including on failure.
+  runInLoopPhase(phase, callback) {
+    const previousPhase = this.strandsContext.loopPhase;
+    this.strandsContext.loopPhase = phase;
+    try {
+      return callback();
+    } finally {
+      this.strandsContext.loopPhase = previousPhase;
+    }
   }
 
   createLogicalNotNode(conditionNode) {
@@ -480,6 +532,31 @@ export class StrandsFor {
         );
       }
     }
+    // Keep helper loop phis separate from user variables.
+    const stateScope = this.strandsContext.stateScope;
+    this.stateEntryIds = new Map();
+    this.statePhis = new Map();
+    for (const record of stateScope?.records ?? []) {
+      for (const slot of record.slots) {
+        const entryNode = createStrandsNode(
+          slot.valueId,
+          slot.dimension,
+          this.strandsContext
+        );
+        this.stateEntryIds.set(slot, slot.valueId);
+        this.statePhis.set(
+          slot,
+          createPhiNode(
+            this.strandsContext,
+            [
+              { value: entryNode, blockId: branchBlock },
+              { value: entryNode, blockId: bodyBlock } // Placeholder, set after the body
+            ],
+            slot.name
+          )
+        );
+      }
+    }
     CFG.popBlock(cfg);
 
     const loopVarNode = createStrandsNode(
@@ -487,7 +564,36 @@ export class StrandsFor {
       phiNode.dimension,
       this.strandsContext
     );
-    this.bodyResults = this.bodyCb(loopVarNode, phiVars) || {};
+    // Read helper fields through their loop phis and limit pops to this body.
+    for (const [slot, phi] of this.statePhis) {
+      slot.valueId = phi.id;
+    }
+    const stackDepth = stateScope?.stack.length ?? 0;
+    const previousFloor = stateScope?.stackFloor;
+    if (stateScope) {
+      stateScope.stackFloor = stackDepth;
+    }
+    try {
+      this.bodyResults =
+        this.runInLoopPhase('body', () => this.bodyCb(loopVarNode, phiVars)) ||
+        {};
+    } finally {
+      if (stateScope) {
+        stateScope.stackFloor = previousFloor;
+      }
+    }
+    if (stateScope && stateScope.stack.length !== stackDepth) {
+      FES.userError(
+        'scope error',
+        'pushStrandsState() and popStrandsState() must be balanced inside a for loop body.'
+      );
+    }
+    this.stateUpdatedIds = new Map();
+    for (const [slot, phi] of this.statePhis) {
+      if (slot.valueId !== phi.id) {
+        this.stateUpdatedIds.set(slot, slot.valueId);
+      }
+    }
     for (const key in this.bodyResults) {
       this.bodyResults[key] = this.strandsContext.p5.strandsNode(
         this.bodyResults[key]
