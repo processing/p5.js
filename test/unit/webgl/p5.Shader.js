@@ -2652,6 +2652,237 @@ suite('p5.Shader', function () {
       });
     });
 
+    suite('shared registered state instance (#9259)', () => {
+      // Deliberately shadow p5's get() for the duration of the build.
+      function brushTestAddon(p5, fn) {
+        fn.testBrush = p5.registerStrandsState('testBrush', {
+          init(base) {
+            return {
+              config: {},
+              state: { scoped: {}, global: { color: p5.strandsNode(base) } }
+            };
+          },
+          update: {
+            paint(state, config, target, amount) {
+              return {
+                scoped: {},
+                global: { color: this.mix(state.global.color, target, amount) }
+              };
+            }
+          },
+          read: { get: state => state.global.color }
+        });
+      }
+      const brushNames = ['paint', 'get'];
+      let savedDescriptor;
+      let registeredAddons;
+      beforeAll(() => {
+        savedDescriptor = Object.getOwnPropertyDescriptor(p5.prototype, 'testBrush');
+        registeredAddons = p5._registeredAddons;
+        p5.registerAddon(brushTestAddon);
+      });
+      afterAll(() => {
+        if (savedDescriptor) {
+          Object.defineProperty(p5.prototype, 'testBrush', savedDescriptor);
+        } else {
+          delete p5.prototype.testBrush;
+        }
+        registeredAddons.delete(brushTestAddon);
+      });
+      beforeEach(() => {
+        mockUserError.mockClear();
+        // The first build in a page permanently installs builtin accessors.
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+        myp5.baseFilterShader().modify(() => {}, { myp5 });
+      });
+
+      const descriptorsOf = () =>
+        [window, p5.prototype, p5.Graphics.prototype].map(target =>
+          Object.getOwnPropertyDescriptors(target)
+        );
+      const assertSameDescriptors = (before, after) => {
+        for (let i = 0; i < before.length; i++) {
+          const names = new Set([...Object.keys(before[i]), ...Object.keys(after[i])]);
+          for (const name of names) {
+            const a = before[i][name];
+            const b = after[i][name];
+            assert.isTrue(
+              !!a && !!b &&
+                ['value', 'get', 'set', 'writable', 'enumerable', 'configurable']
+                  .every(key => Object.is(a[key], b[key])),
+              `${name} changed on target ${i}`
+            );
+          }
+        }
+      };
+      const shared = { hook: 'getFinalColor', globalInstance() { return this.testBrush([0, 0, 1]); } };
+      const render = (callback, scope = {}, options = shared) => {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+        const testShader = myp5.baseMaterialShader().modify(callback, { myp5, ...scope }, options);
+        myp5.noStroke();
+        myp5.shader(testShader);
+        myp5.plane(myp5.width, myp5.height);
+        return [...myp5.get(25, 25)].slice(0, 3);
+      };
+      const buildError = (callback, scope = {}, options = shared) => {
+        try {
+          myp5.createCanvas(50, 50, myp5.WEBGL);
+          myp5.baseMaterialShader().modify(callback, { myp5, ...scope }, options);
+        } catch (e) {
+          return e;
+        }
+        return null;
+      };
+      const assertRGB = (actual, expected) => {
+        for (let i = 0; i < 3; i++) {
+          assert.approximately(actual[i], expected[i], 5);
+        }
+      };
+
+      test('options.globalInstance makes a shared instance usable like p5 functions', () => {
+        const color = render(() => {
+          myp5.paint([1, 0, 0], 0.5);
+          myp5.getFinalColor.set([myp5.get(), 1]);
+        });
+        assertRGB(color, [128, 0, 128]);
+      });
+
+      test('the shared instance is carried through loops and stays independent of factory helpers', () => {
+        const color = render(() => {
+          const own = myp5.testBrush([0, 0, 0]);
+          for (let i = 0; i < 3; i++) {
+            myp5.paint([1, 1, 0], 0.5);
+          }
+          own.paint([0, 0, 1], 0.5);
+          myp5.getFinalColor.set([myp5.get().x, own.get().z, myp5.get().z, 1]);
+        }, {}, { ...shared, globalInstance() { return this.testBrush([0, 0, 0]); } });
+        assertRGB(color, [223, 128, 0]);
+      });
+
+      test('installed methods replace existing properties only during the build', () => {
+        const originalGet = p5.prototype.get;
+        const before = descriptorsOf();
+        const during = {};
+        render(() => {
+          probe();
+          myp5.getFinalColor.set([myp5.get(), 1]);
+        }, {
+          probe: () => {
+            during.window = brushNames.every(name => typeof window[name] === 'function');
+            during.fn = p5.prototype.get !== originalGet;
+            during.graphics = p5.Graphics.prototype.paint === p5.prototype.paint;
+          }
+        });
+        assert.deepEqual(during, { window: true, fn: true, graphics: true });
+        assert.strictEqual(p5.prototype.get, originalGet);
+        assertSameDescriptors(before, descriptorsOf());
+      });
+
+      test('installed methods are restored after a failed build and the error is kept', () => {
+        const thrown = { reason: 'build failed' };
+        const before = descriptorsOf();
+        const error = buildError(() => {
+          myp5.paint([1, 0, 0], 0.5);
+          fail();
+        }, { fail: () => { throw thrown; } });
+        assert.strictEqual(error, thrown);
+        assertSameDescriptors(before, descriptorsOf());
+      });
+
+      test('a helper can install its methods itself inside a hook', () => {
+        const before = descriptorsOf();
+        const color = render(() => {
+          myp5.getPixelInputs(inputs => {
+            myp5.testBrush([0, 0, 1])._installGlobal();
+            myp5.paint([1, 0, 0], 0.5);
+            inputs.color = [myp5.get(), 1];
+            return inputs;
+          });
+        }, {}, {});
+        assertRGB(color, [128, 0, 128]);
+        assertSameDescriptors(before, descriptorsOf());
+      });
+
+      test('a property that cannot be replaced safely is rejected before it is written', () => {
+        // Can't be deleted, so it stays on this page.
+        const getter = () => 'locked';
+        Object.defineProperty(p5.prototype, 'tmpBrushLocked', {
+          get: getter, enumerable: false, configurable: false
+        });
+        const lockedState = p5.registerStrandsState('lockedBrush', {
+          init: () => ({ config: {}, state: { scoped: {}, global: { v: p5.strandsNode(0) } } }),
+          update: {},
+          read: { tmpBrushLocked: state => state.global.v }
+        });
+        const before = descriptorsOf();
+        const error = buildError(() => {
+          myp5.getFinalColor.set(myp5.vec4(1));
+        }, {}, { hook: 'getFinalColor', globalInstance: () => lockedState.call(myp5) });
+        assert.instanceOf(error, TypeError);
+        assert.include(error.message, 'tmpBrushLocked');
+        assert.strictEqual(Object.getOwnPropertyDescriptor(p5.prototype, 'tmpBrushLocked').get, getter);
+        assertSameDescriptors(before, descriptorsOf());
+      });
+
+      test('invalid shared-instance options are rejected', () => {
+        const assertTypeError = (error, message) => {
+          assert.instanceOf(error, Error);
+          assert.strictEqual(error.message, `[p5.strands type error]: ${message}`);
+        };
+        const needsHelper =
+          'options.globalInstance must be a function that returns a helper made by a registerStrandsState() factory.';
+        assertTypeError(
+          buildError(() => {}, {}, { globalInstance: shared.globalInstance }),
+          'options.globalInstance needs options.hook, the hook its shared instance is created in.'
+        );
+        assertTypeError(buildError(() => {}, {}, { hook: 'getFinalColor', globalInstance: {} }), needsHelper);
+        assertTypeError(
+          buildError(() => {}, {}, { hook: 'getFinalColor', globalInstance: () => ({}) }),
+          needsHelper
+        );
+        let reserved = null;
+        try {
+          p5.registerStrandsState('reservedName', {
+            init() {}, update: { _installGlobal() {} }, read: {}
+          });
+        } catch (e) {
+          reserved = e;
+        }
+        assertTypeError(
+          reserved,
+          'registerStrandsState reserves "_installGlobal" for every helper, so it cannot be a method name.'
+        );
+      });
+
+      test('methods cannot be installed inside an if or a loop', () => {
+        const message =
+          "testBrush helper's methods must be installed before an if/else or for loop, not inside one.";
+        for (const callback of [
+          () => {
+            myp5.getPixelInputs(inputs => {
+              const brush = myp5.testBrush([0, 0, 1]);
+              if (inputs.texCoord.x > 0.5) {
+                brush._installGlobal();
+              }
+              return inputs;
+            });
+          },
+          () => {
+            myp5.getPixelInputs(inputs => {
+              const brush = myp5.testBrush([0, 0, 1]);
+              for (let i = 0; i < 2; i++) {
+                brush._installGlobal();
+              }
+              return inputs;
+            });
+          }
+        ]) {
+          const error = buildError(callback, {}, {});
+          assert.strictEqual(error?.message, `[p5.strands scope error]: ${message}`);
+        }
+      });
+    });
+
     suite('if statement conditionals', () => {
       test('handle simple if statement with true condition', () => {
         myp5.createCanvas(50, 50, myp5.WEBGL);

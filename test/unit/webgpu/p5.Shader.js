@@ -465,6 +465,36 @@ suite('WebGPU p5.Shader', function () {
         });
         assertRGB(left, [0, 0, 255]);
       });
+      test('options.globalInstance installs a shared instance for the callback', async () => {
+        const [left] = await render(() => {
+          for (let i = 0; i < 3; i++) {
+            myp5.mixTo([1, 1, 0], 0.5);
+          }
+          myp5.getFinalColor.set([myp5.get(), 1]);
+        }, {}, { hook: 'getFinalColor', globalInstance() { return this.testLight([0, 0, 0]); } });
+        assertRGB(left, [223, 223, 0]);
+        assert.notProperty(window, 'mixTo');
+      });
+
+      test('a compute shader can use a shared instance', async () => {
+        await createWebGPUCanvas();
+        const data = myp5.createStorage(new Float32Array([0, 0, 0, 0]));
+        const computeShader = myp5.baseComputeShader().modify(() => {
+          const buf = myp5.uniformStorage();
+          for (let i = 0; i < 3; i++) {
+            myp5.add(1.5);
+          }
+          buf[myp5.index.x] = myp5.total();
+        }, { myp5 }, { hook: 'iteration', globalInstance() { return this.testMeter(1); } });
+        computeShader.setUniform('buf', data);
+        myp5.compute(computeShader, 4);
+        const result = await data.read();
+        for (let i = 0; i < 4; i++) {
+          expect(result[i]).to.be.closeTo(4.5, 0.001);
+        }
+        assert.notProperty(p5.prototype, 'add');
+      });
+
     });
 
     suite('if statement conditionals', () => {

@@ -300,6 +300,26 @@ function strands(p5, fn) {
             installTemporaryProperty(strandsContext, window, key, hookProp);
             installTemporaryProperty(strandsContext, p5.Graphics.prototype, key, hookProp);
           }
+          // An optional shared instance of a registered Strands helper,
+          // created inside options.hook and installed for the callback.
+          if (options.globalInstance !== undefined) {
+            const instance =
+              typeof options.globalInstance === 'function'
+                ? options.globalInstance.call(strandsContext.renderer._pInst)
+                : undefined;
+            if (typeof instance?._installGlobal !== 'function') {
+              FES.userError(
+                'type error',
+                'options.globalInstance must be a function that returns a helper made by a registerStrandsState() factory.'
+              );
+            }
+            instance._installGlobal();
+          }
+        } else if (options.globalInstance !== undefined) {
+          FES.userError(
+            'type error',
+            'options.globalInstance needs options.hook, the hook its shared instance is created in.'
+          );
         }
         if (strandsContext.renderer?._pInst?._runStrandsInGlobalMode) {
           withTempGlobalMode(strandsContext.renderer._pInst, strandsCallback);

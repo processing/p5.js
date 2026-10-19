@@ -586,6 +586,14 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
         );
       }
     }
+    for (const group of ['update', 'read']) {
+      if (Object.prototype.hasOwnProperty.call(spec[group], '_installGlobal')) {
+        FES.userError(
+          'type error',
+          'registerStrandsState reserves "_installGlobal" for every helper, so it cannot be a method name.'
+        );
+      }
+    }
 
     // Read fields once so getters cannot change values after validation.
     // Updates must match the existing slot names, types and dimensions.
@@ -758,6 +766,22 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
           );
         };
       }
+
+      // Expose helper methods for this build; the install journal restores them.
+      helper._installGlobal = function () {
+        assertScope();
+        if (strandsContext.conditionalDepth > 0 || strandsContext.loopPhase) {
+          FES.userError(
+            'scope error',
+            `${name} helper's methods must be installed before an if/else or for loop, not inside one.`
+          );
+        }
+        rejectInExpressionOperand(`${name} helper`);
+        for (const [method] of [...updateMethods, ...readMethods]) {
+          augmentFnTemporary(fn, strandsContext, method, helper[method]);
+        }
+        return helper;
+      };
 
       scope.records.push(record);
       return helper;
