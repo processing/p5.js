@@ -436,6 +436,35 @@ suite('WebGPU p5.Shader', function () {
         assertRGB(left, [102, 102, 102]);
       });
 
+      test('a caught hook failure fails the build with the original value, and the next build works', async () => {
+        const thrown = { reason: 'hook failed' };
+        await createWebGPUCanvas();
+        let error = null;
+        try {
+          myp5.baseMaterialShader().modify(() => {
+            try {
+              myp5.getPixelInputs(inputs => {
+                myp5.testMeter(0.5);
+                myp5.pushStrandsState();
+                fail();
+                return inputs;
+              });
+            } catch {
+              // ignored by the sketch
+            }
+          }, { myp5, fail: () => { throw thrown; } });
+        } catch (e) {
+          error = e;
+        }
+        assert.strictEqual(error, thrown);
+        const [left] = await render(() => {
+          myp5.getPixelInputs(inputs => {
+            inputs.color = [myp5.testLight([0, 0, 1]).get(), 1];
+            return inputs;
+          });
+        });
+        assertRGB(left, [0, 0, 255]);
+      });
     });
 
     suite('if statement conditionals', () => {

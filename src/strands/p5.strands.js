@@ -68,6 +68,7 @@ function strands(p5, fn) {
    * @property {Number} conditionalDepth Current if/else nesting depth.
    * @property {String} loopPhase Current loop phase: `'header'`, `'body'` or `null`.
    * @property {String} expressionOperand Current guarded expression operator, or `null`.
+   * @property {Object} failedHook First hook failure, `{ hookName, thrown }`, or `null`.
    * @property {Boolean} _instanceIDUsedInFragment Whether fragment code needs `instanceID` from the vertex shader.
    * @property {Set} experimentalFeaturesUsed Experimental subject areas used inside the callback, warned about once FES is restored after the pass.
    */
@@ -134,6 +135,7 @@ function strands(p5, fn) {
     ctx.sharedVariables = new Map();
     ctx.activeHook = undefined;
     ctx.stateScope = null;
+    ctx.failedHook = null;
     ctx.conditionalDepth = 0;
     ctx.loopPhase = null;
     ctx.expressionOperand = null;
@@ -175,6 +177,7 @@ function strands(p5, fn) {
     ctx.sharedVariables = new Map();
     ctx.activeHook = undefined;
     ctx.stateScope = null;
+    ctx.failedHook = null;
     ctx.conditionalDepth = 0;
     ctx.loopPhase = null;
     ctx.expressionOperand = null;
@@ -302,6 +305,9 @@ function strands(p5, fn) {
           withTempGlobalMode(strandsContext.renderer._pInst, strandsCallback);
         } else {
           strandsCallback();
+        }
+        if (strandsContext.failedHook !== null) {
+          throw strandsContext.failedHook.thrown;
         }
         if (options.hook) strandsContext.renderer._pInst[options.hook].end();
         if (strandsContext.activeHook) {

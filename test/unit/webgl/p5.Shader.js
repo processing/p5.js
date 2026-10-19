@@ -2377,6 +2377,281 @@ suite('p5.Shader', function () {
       });
     });
 
+    suite('hook failures caught in sketch code', () => {
+      function failureTestAddon(p5, fn) {
+        fn.testCounter = p5.registerStrandsState('testCounter', {
+          init(start) {
+            return {
+              config: {},
+              state: { scoped: {}, global: { total: p5.strandsNode(start) } }
+            };
+          },
+          update: {
+            add(state, config, amount) {
+              return { scoped: {}, global: { total: state.global.total.add(amount) } };
+            }
+          },
+          read: { total: state => state.global.total }
+        });
+      }
+      let savedDescriptor;
+      let registeredAddons;
+      beforeAll(() => {
+        savedDescriptor = Object.getOwnPropertyDescriptor(p5.prototype, 'testCounter');
+        registeredAddons = p5._registeredAddons;
+        p5.registerAddon(failureTestAddon);
+      });
+      afterAll(() => {
+        if (savedDescriptor) {
+          Object.defineProperty(p5.prototype, 'testCounter', savedDescriptor);
+        } else {
+          delete p5.prototype.testCounter;
+        }
+        registeredAddons.delete(failureTestAddon);
+      });
+
+      // Untranspiled scope functions preserve the original thrown values.
+      const makeRig = () => {
+        const rig = { caught: [], after: null, kept: null };
+        const attempt = run => {
+          try {
+            run();
+            return 'accepted';
+          } catch (e) {
+            return e instanceof Error ? e.message : e;
+          }
+        };
+        rig.scope = {
+          record: value => rig.caught.push(value),
+          keep: helper => {
+            rig.kept = helper;
+          },
+          // Helper operations after the failure, outside any hook.
+          probe: () => {
+            rig.after = {
+              factory: attempt(() => myp5.testCounter(0)),
+              helper: attempt(() => rig.kept.total()),
+              push: attempt(() => myp5.pushStrandsState())
+            };
+          }
+        };
+        return rig;
+      };
+      const outsideHook = {
+        factory: '[p5.strands scope error]: testCounter must be created inside an active Strands hook.',
+        helper: '[p5.strands scope error]: testCounter helper must be used in the hook invocation that created it.',
+        push: '[p5.strands scope error]: pushStrandsState() must be called inside an active Strands hook.'
+      };
+      const build = (callback, scope, options) => {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+        try {
+          myp5.baseMaterialShader().modify(callback, { myp5, ...scope }, options);
+        } catch (e) {
+          return { threw: true, value: e };
+        }
+        return { threw: false };
+      };
+      const assertNextBuildWorks = () => {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+        const testShader = myp5.baseMaterialShader().modify(() => {
+          myp5.getPixelInputs(inputs => {
+            const counter = myp5.testCounter(0.25);
+            counter.add(0.25);
+            inputs.color = [counter.total(), 0, 0, 1];
+            return inputs;
+          });
+        }, { myp5 });
+        myp5.noStroke();
+        myp5.shader(testShader);
+        myp5.plane(myp5.width, myp5.height);
+        assert.approximately(myp5.get(25, 25)[0], 128, 5);
+      };
+
+      for (const [name, thrown] of [
+        ['an Error', new Error('hook failed')],
+        ['undefined', undefined],
+        ['null', null],
+        ['a string', 'hook failed']
+      ]) {
+        test(`a caught throw of ${name} still fails the build with the same value`, () => {
+          const rig = makeRig();
+          const result = build(() => {
+            try {
+              myp5.getPixelInputs(inputs => {
+                keep(myp5.testCounter(0));
+                myp5.pushStrandsState();
+                raise();
+                return inputs;
+              });
+            } catch (e) {
+              record(e);
+            }
+            probe();
+          }, { ...rig.scope, raise: () => { throw thrown; } });
+          assert.strictEqual(rig.caught.length, 1);
+          assert.isTrue(Object.is(rig.caught[0], thrown));
+          // Code after the catch still runs, but the helper scope is gone.
+          assert.deepEqual(rig.after, outsideHook);
+          assert.isTrue(result.threw);
+          assert.isTrue(Object.is(result.value, thrown));
+          assertNextBuildWorks();
+        });
+      }
+
+      test('the first caught failure is the one rethrown', () => {
+        const first = { which: 'first' };
+        const second = { which: 'second' };
+        const rig = makeRig();
+        const result = build(() => {
+          try {
+            myp5.getWorldInputs(inputs => {
+              raiseFirst();
+              return inputs;
+            });
+          } catch (e) {
+            record(e);
+          }
+          try {
+            myp5.getPixelInputs(inputs => {
+              raiseSecond();
+              return inputs;
+            });
+          } catch (e) {
+            record(e);
+          }
+        }, {
+          ...rig.scope,
+          raiseFirst: () => { throw first; },
+          raiseSecond: () => { throw second; }
+        });
+        assert.deepEqual(rig.caught, [first, second]);
+        assert.strictEqual(result.value, first);
+        assertNextBuildWorks();
+      });
+
+      test('an uncaught failure after a caught one leaves modify() unchanged', () => {
+        const caught = { which: 'caught' };
+        const uncaught = { which: 'uncaught' };
+        const result = build(() => {
+          try {
+            myp5.getWorldInputs(inputs => {
+              raiseCaught();
+              return inputs;
+            });
+          } catch {
+            // ignored by the sketch
+          }
+          myp5.getPixelInputs(inputs => {
+            raiseUncaught();
+            return inputs;
+          });
+        }, {
+          raiseCaught: () => { throw caught; },
+          raiseUncaught: () => { throw uncaught; }
+        });
+        assert.strictEqual(result.value, uncaught);
+        assertNextBuildWorks();
+      });
+
+      test('caught failures at the end of a hook still fail the build', () => {
+        const rig = makeRig();
+        const unmatched = build(() => {
+          try {
+            myp5.getPixelInputs(inputs => {
+              keep(myp5.testCounter(0));
+              myp5.pushStrandsState();
+              return inputs;
+            });
+          } catch (e) {
+            record(e);
+          }
+          probe();
+        }, rig.scope);
+        assert.strictEqual(
+          rig.caught[0]?.message,
+          '[p5.strands scope error]: pushStrandsState() needs a matching popStrandsState() before the hook ends.'
+        );
+        assert.deepEqual(rig.after, outsideHook);
+        assert.strictEqual(unmatched.value, rig.caught[0]);
+
+        const flat = makeRig();
+        const missingValue = build(() => {
+          myp5.finalColor.begin();
+          try {
+            myp5.finalColor.end();
+          } catch (e) {
+            record(e);
+          }
+        }, flat.scope);
+        assert.include(String(flat.caught[0]?.message), 'finalColor requires a value');
+        assert.strictEqual(missingValue.value, flat.caught[0]);
+        assertNextBuildWorks();
+      });
+
+      test('a caught failure while a hook is being set up still fails the build', () => {
+        const fault = new Error('setup failed');
+        const rig = makeRig();
+        let callbackRan = false;
+        const result = build(() => {
+          breakSetup();
+          try {
+            myp5.getPixelInputs(inputs => {
+              ran();
+              return inputs;
+            });
+          } catch (e) {
+            record(e);
+          }
+        }, {
+          ...rig.scope,
+          // setupHook() calls set() for getPixelInputs once it is active.
+          breakSetup: () => {
+            myp5.getPixelInputs.set = () => { throw fault; };
+          },
+          ran: () => {
+            callbackRan = true;
+          }
+        });
+        assert.isFalse(callbackRan);
+        assert.deepEqual(rig.caught, [fault]);
+        assert.strictEqual(result.value, fault);
+        assertNextBuildWorks();
+      });
+
+      test('a caught failure in a hook without helpers also fails the build', () => {
+        const thrown = { reason: 'no helpers' };
+        const result = build(() => {
+          try {
+            myp5.getPixelInputs(inputs => {
+              raise();
+              return inputs;
+            });
+          } catch {
+            // ignored by the sketch
+          }
+        }, { raise: () => { throw thrown; } });
+        assert.strictEqual(result.value, thrown);
+        assertNextBuildWorks();
+      });
+
+      test('a caught failure inside an options.hook build still fails the build', () => {
+        const thrown = { reason: 'inner hook' };
+        const result = build(() => {
+          try {
+            myp5.getPixelInputs(inputs => {
+              raise();
+              return inputs;
+            });
+          } catch {
+            // ignored by the sketch
+          }
+          myp5.getFinalColor.set(myp5.vec4(1, 0, 0, 1));
+        }, { raise: () => { throw thrown; } }, { hook: 'getFinalColor' });
+        assert.strictEqual(result.value, thrown);
+        assertNextBuildWorks();
+      });
+    });
+
     suite('if statement conditionals', () => {
       test('handle simple if statement with true condition', () => {
         myp5.createCanvas(50, 50, myp5.WEBGL);

@@ -1858,7 +1858,12 @@ export function createShaderHooksFunctions(strandsContext, fn, shader) {
   for (const hookType of hookTypes) {
     const hook = function (hookUserCallback) {
       const args = setupHook();
-      hook._result = hookUserCallback(...args) ?? hook._result;
+      try {
+        hook._result = hookUserCallback(...args) ?? hook._result;
+      } catch (e) {
+        abandonHook(e);
+        throw e;
+      }
       finishHook();
     };
 
@@ -1923,42 +1928,51 @@ export function createShaderHooksFunctions(strandsContext, fn, shader) {
 
     let entryBlockID;
     function setupHook() {
-      strandsContext.activeHook = hook;
-      strandsContext.stateScope = { records: [], stack: [], stackFloor: 0 };
-      entryBlockID = CFG.createBasicBlock(cfg, BlockType.FUNCTION);
-      CFG.addEdge(cfg, cfg.currentBlock, entryBlockID);
-      CFG.pushBlock(cfg, entryBlockID);
-      const args = createHookArguments(strandsContext, hookType.parameters);
-      hook._active = true;
-      hook._args = args;
-      hook._argIdx = argIdx;
-      hook._properties = [];
-      for (let i = 0; i < args.length; i++) {
-        if (i === argIdx) {
-          for (const key of args[argIdx].structProperties || []) {
-            hook._properties.push(key);
+      try {
+        strandsContext.activeHook = hook;
+        strandsContext.stateScope = { records: [], stack: [], stackFloor: 0 };
+        entryBlockID = CFG.createBasicBlock(cfg, BlockType.FUNCTION);
+        CFG.addEdge(cfg, cfg.currentBlock, entryBlockID);
+        CFG.pushBlock(cfg, entryBlockID);
+        const args = createHookArguments(strandsContext, hookType.parameters);
+        hook._active = true;
+        hook._args = args;
+        hook._argIdx = argIdx;
+        hook._properties = [];
+        for (let i = 0; i < args.length; i++) {
+          if (i === argIdx) {
+            for (const key of args[argIdx].structProperties || []) {
+              hook._properties.push(key);
+            }
+            if (
+              hookType.returnType?.typeName ===
+              hookType.parameters[argIdx].type.typeName
+            ) {
+              hook.set(args[argIdx]);
+            }
+          } else {
+            hook._properties.push(hookType.parameters[i].name);
+            hook[hookType.parameters[i].name] = args[i];
           }
-          if (
-            hookType.returnType?.typeName ===
-            hookType.parameters[argIdx].type.typeName
-          ) {
-            hook.set(args[argIdx]);
-          }
-        } else {
-          hook._properties.push(hookType.parameters[i].name);
-          hook[hookType.parameters[i].name] = args[i];
         }
+        return args;
+      } catch (e) {
+        abandonHook(e);
+        throw e;
       }
-      return args;
+    }
+
+    function abandonHook(thrown) {
+      hook._active = false;
+      strandsContext.activeHook = undefined;
+      strandsContext.stateScope = null;
+      if (strandsContext.failedHook === null) {
+        strandsContext.failedHook = { hookName: hookType.name, thrown };
+      }
     }
 
     function finishHook() {
-      if (strandsContext.stateScope?.stack.length > 0) {
-        FES.userError(
-          'scope error',
-          'pushStrandsState() needs a matching popStrandsState() before the hook ends.'
-        );
-      }
+      const unmatchedPush = strandsContext.stateScope?.stack.length > 0;
       hook._active = false;
       const userReturned = hook._result;
       strandsContext.activeHook = undefined;
@@ -1969,18 +1983,6 @@ export function createShaderHooksFunctions(strandsContext, fn, shader) {
         isStructType(expectedReturnType) ||
         (expectedReturnType.dataType &&
           expectedReturnType.typeName?.trim() !== 'void');
-
-      if (
-        expectsReturnValue &&
-        userReturned === undefined &&
-        hook.earlyReturns.length === 0
-      ) {
-        FES.userError(
-          'scope error',
-          `${hook._publicName} requires a value. Make sure to call ` +
-            `${hook._publicName}.set(value) before ${hook._publicName}.end().`
-        );
-      }
 
       let rootNodeID = null;
       const handleRetVal = retNode => {
@@ -2083,24 +2085,46 @@ export function createShaderHooksFunctions(strandsContext, fn, shader) {
           );
         }
       };
-      for (const { valueNode, earlyReturnID } of hook.earlyReturns) {
-        const id = handleRetVal(valueNode);
-        if (id !== null) {
-          dag.dependsOn[earlyReturnID] = [id];
-        } else {
-          dag.dependsOn[earlyReturnID] = [];
+      try {
+        if (unmatchedPush) {
+          FES.userError(
+            'scope error',
+            'pushStrandsState() needs a matching popStrandsState() before the hook ends.'
+          );
         }
+        if (
+          expectsReturnValue &&
+          userReturned === undefined &&
+          hook.earlyReturns.length === 0
+        ) {
+          FES.userError(
+            'scope error',
+            `${hook._publicName} requires a value. Make sure to call ` +
+              `${hook._publicName}.set(value) before ${hook._publicName}.end().`
+          );
+        }
+        for (const { valueNode, earlyReturnID } of hook.earlyReturns) {
+          const id = handleRetVal(valueNode);
+          if (id !== null) {
+            dag.dependsOn[earlyReturnID] = [id];
+          } else {
+            dag.dependsOn[earlyReturnID] = [];
+          }
+        }
+        rootNodeID = userReturned ? handleRetVal(userReturned) : undefined;
+        const fullHookName = `${hookType.returnType.typeName} ${hookType.name}`;
+        const hookInfo = availableHooks[fullHookName];
+        strandsContext.hooks.push({
+          hookType,
+          entryBlockID,
+          rootNodeID,
+          shaderContext: hookInfo?.shaderContext // 'vertex', 'fragment', or 'compute'
+        });
+        CFG.popBlock(cfg);
+      } catch (e) {
+        abandonHook(e);
+        throw e;
       }
-      rootNodeID = userReturned ? handleRetVal(userReturned) : undefined;
-      const fullHookName = `${hookType.returnType.typeName} ${hookType.name}`;
-      const hookInfo = availableHooks[fullHookName];
-      strandsContext.hooks.push({
-        hookType,
-        entryBlockID,
-        rootNodeID,
-        shaderContext: hookInfo?.shaderContext // 'vertex', 'fragment', or 'compute'
-      });
-      CFG.popBlock(cfg);
     }
     hook.begin = setupHook;
     hook.end = finishHook;
