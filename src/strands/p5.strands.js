@@ -18,7 +18,9 @@ import {
 import { generateShaderCode } from './strands_codegen';
 import {
   initGlobalStrandsAPI,
-  createShaderHooksFunctions
+  createShaderHooksFunctions,
+  installTemporaryProperty,
+  restoreTemporaryProperties
 } from './strands_api';
 import {
   createStrandsShaderNameMap,
@@ -55,9 +57,7 @@ function strands(p5, fn) {
    * @property {Object} renderer Renderer whose shader is being modified.
    * @property {Object} baseShader Base shader being modified in the current pass.
    * @property {Boolean} previousFES Previous value of `p5.disableFriendlyErrors`, restored after the pass.
-   * @property {Object} windowOverrides Original temporary hook targets saved from `window`.
-   * @property {Object} fnOverrides Original temporary hook targets saved from `p5.prototype`.
-   * @property {Object} graphicsOverrides Original temporary hook targets saved from `p5.Graphics.prototype`.
+   * @property {Array} tempProps Temporary property descriptors, restored newest first.
    * @property {Number} _noiseOctaves Noise octave override captured by `noiseDetail()`.
    * @property {Number} _noiseAmpFalloff Noise falloff override captured by `noiseDetail()`.
    * @property {Number} _randomSeed Random seed override captured by `randomSeed()`.
@@ -122,9 +122,7 @@ function strands(p5, fn) {
     ctx.renderer = renderer;
     ctx.baseShader = baseShader;
     ctx.previousFES = p5.disableFriendlyErrors;
-    ctx.windowOverrides = {};
-    ctx.fnOverrides = {};
-    ctx.graphicsOverrides = {};
+    ctx.tempProps = [];
     ctx._noiseOctaves = null;
     ctx._noiseAmpFalloff = null;
     ctx._randomSeed = null;
@@ -161,9 +159,7 @@ function strands(p5, fn) {
     ctx.renderer = null;
     ctx.baseShader = null;
     ctx.previousFES = p5.disableFriendlyErrors;
-    ctx.windowOverrides = {};
-    ctx.fnOverrides = {};
-    ctx.graphicsOverrides = {};
+    ctx.tempProps = [];
     ctx._noiseOctaves = null;
     ctx._noiseAmpFalloff = null;
     ctx._randomSeed = null;
@@ -179,27 +175,15 @@ function strands(p5, fn) {
    *
    * @private
    * @param {StrandsContext} ctx The strands context object.
+   * @return {Error[]} Errors from temporary writes that could not be undone.
    */
   function deinitStrandsContext(ctx) {
     p5.disableFriendlyErrors = ctx.previousFES;
-    for (const key in ctx.windowOverrides) {
-      window[key] = ctx.windowOverrides[key];
-    }
-    for (const key in ctx.fnOverrides) {
-      fn[key] = ctx.fnOverrides[key];
-    }
-    // Clean up the hooks temporarily installed on p5.Graphics.prototype (#8549)
-    const GraphicsProto = p5.Graphics?.prototype;
-    if (GraphicsProto) {
-      for (const key in ctx.graphicsOverrides) {
-        if (ctx.graphicsOverrides[key] === undefined) {
-          delete GraphicsProto[key];
-        } else {
-          GraphicsProto[key] = ctx.graphicsOverrides[key];
-        }
-      }
-    }
+    // Undo hooks, hook aliases and options.hook properties (incl. #8549's
+    // p5.Graphics.prototype entries) exactly, newest first.
+    const restoreErrors = restoreTemporaryProperties(ctx);
     resetTransientStrandsContext(ctx);
+    return restoreErrors;
   }
 
   const strandsContext = {};
@@ -231,15 +215,21 @@ function strands(p5, fn) {
   // Entry Point
   //////////////////////////////////////////////
   const oldModify = p5.Shader.prototype.modify;
+  // Track nested modify() calls.
+  let modifyDepth = 0;
 
   p5.Shader.prototype.modify = function (
     shaderModifier,
     scope = {},
     options = {}
   ) {
-    const fnOverrides = {};
-    const windowOverrides = {};
-    const graphicsOverrides = {};
+    // Report restore failures only after a successful build.
+    let modified;
+    let restoreErrors = [];
+    // Preserve the outer install journal; nested builds remain unsupported.
+    const nested = modifyDepth > 0;
+    const enclosingTempProps = strandsContext.tempProps;
+    modifyDepth++;
     try {
       if (
         shaderModifier instanceof Function ||
@@ -291,12 +281,9 @@ function strands(p5, fn) {
           for (const key of strandsContext.renderer._pInst[options.hook]
             ._properties) {
             const hookProp = strandsContext.renderer._pInst[options.hook][key];
-            fnOverrides[key] = fn[key];
-            fn[key] = hookProp;
-            windowOverrides[key] = window[key];
-            window[key] = hookProp;
-            graphicsOverrides[key] = p5.Graphics.prototype[key];
-            p5.Graphics.prototype[key] = hookProp;
+            installTemporaryProperty(strandsContext, fn, key, hookProp);
+            installTemporaryProperty(strandsContext, window, key, hookProp);
+            installTemporaryProperty(strandsContext, p5.Graphics.prototype, key, hookProp);
           }
         }
         if (strandsContext.renderer?._pInst?._runStrandsInGlobalMode) {
@@ -318,30 +305,29 @@ function strands(p5, fn) {
         const hooksObject = generateShaderCode(strandsContext);
 
         // Call modify with the generated hooks object
-        return oldModify.call(this, hooksObject);
+        modified = oldModify.call(this, hooksObject);
       } else {
-        return oldModify.call(this, shaderModifier);
+        modified = oldModify.call(this, shaderModifier);
       }
     } finally {
-      for (const key in fnOverrides) {
-        fn[key] = fnOverrides[key];
-      }
-      for (const key in windowOverrides) {
-        window[key] = windowOverrides[key];
-      }
-      for (const key in graphicsOverrides) {
-        p5.Graphics[key] = graphicsOverrides[key];
-      }
+      modifyDepth--;
       // FES is switched off while the callback runs, so experimental features
       // used inside it can't warn on the spot. They record their subject area
       // instead, and we warn once FES has been restored by deinit below.
       const experimentalFeaturesUsed = [...strandsContext.experimentalFeaturesUsed];
       // Reset the strands runtime context
-      deinitStrandsContext(strandsContext);
+      restoreErrors = deinitStrandsContext(strandsContext);
+      if (nested) {
+        strandsContext.tempProps = enclosingTempProps;
+      }
       for (const subjectArea of experimentalFeaturesUsed) {
         warnExperimental(p5, this._renderer?._pInst, subjectArea);
       }
     }
+    if (restoreErrors.length > 0) {
+      throw restoreErrors[0];
+    }
+    return modified;
   };
 }
 

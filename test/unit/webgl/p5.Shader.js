@@ -1495,6 +1495,285 @@ suite('p5.Shader', function () {
       });
     });
 
+    suite('temporary installs', () => {
+      // Hooks, aliases and options.hook properties must not outlive the build.
+      const targets = () => [
+        ['window', window],
+        ['p5.prototype', p5.prototype],
+        ['p5.Graphics.prototype', p5.Graphics.prototype],
+        ['p5.Graphics', p5.Graphics]
+      ];
+      const snapshot = () =>
+        new Map(
+          targets().map(([label, target]) => [
+            label,
+            Object.getOwnPropertyDescriptors(target)
+          ])
+        );
+      const sameDescriptor = (a, b) =>
+        ['value', 'get', 'set', 'writable', 'enumerable', 'configurable'].every(
+          key => Object.is(a[key], b[key])
+        );
+      const differences = (before, after) => {
+        const out = [];
+        for (const [label, descriptors] of before) {
+          const now = after.get(label);
+          for (const name of new Set([
+            ...Object.keys(descriptors),
+            ...Object.keys(now)
+          ])) {
+            if (!(name in descriptors)) out.push(`${label}.${name} added`);
+            else if (!(name in now)) out.push(`${label}.${name} removed`);
+            else if (!sameDescriptor(descriptors[name], now[name])) {
+              out.push(`${label}.${name} changed`);
+            }
+          }
+        }
+        return out;
+      };
+      const catchError = run => {
+        try {
+          run();
+        } catch (e) {
+          return e;
+        }
+        return null;
+      };
+      // Strands overrides map() only while a build is active.
+      const strandsInactive = () => myp5.map(5, 0, 10, 0, 100) === 50;
+      // Warm up permanent builtin accessors before taking snapshots.
+      beforeEach(() => {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+        myp5.baseFilterShader().modify(() => {}, { myp5 });
+      });
+      // Set aliases through the constructor; modify(object) cannot set them.
+      const aliasedShader = aliases => {
+        const base = myp5.baseMaterialShader();
+        return new p5.Shader(base._renderer, base._vertSrc, base._fragSrc, {
+          declarations: base.hooks.declarations,
+          uniforms: { ...base.hooks.uniforms },
+          vertex: { ...base.hooks.vertex },
+          fragment: { ...base.hooks.fragment },
+          hookAliases: { ...base.hooks.hookAliases, getPixelInputs: aliases }
+        });
+      };
+      const redBuild = testShader =>
+        testShader.modify(() => {
+          myp5.getPixelInputs(inputs => {
+            inputs.color = [1, 0, 0, 1];
+            return inputs;
+          });
+        }, { myp5 });
+      const drawCenter = testShader => {
+        myp5.noStroke();
+        myp5.shader(testShader);
+        myp5.plane(myp5.width, myp5.height);
+        return [...myp5.get(25, 25)].slice(0, 3);
+      };
+
+      test('a successful build leaves no temporary property behind', () => {
+        const before = snapshot();
+        const testShader = redBuild(myp5.baseMaterialShader());
+        assert.deepEqual(differences(before, snapshot()), []);
+        assert.deepEqual(drawCenter(testShader), [255, 0, 0]);
+      });
+
+      test('a failed build leaves no temporary property behind and keeps the thrown value', () => {
+        const thrown = { reason: 'hook failed' };
+        const testShader = aliasedShader(['tmpInstallFailAlias']);
+        const before = snapshot();
+        let installedDuring = false;
+        const error = catchError(() =>
+          testShader.modify(() => {
+            myp5.getPixelInputs(inputs => {
+              fail();
+              return inputs;
+            });
+          }, {
+            myp5,
+            fail: () => {
+              installedDuring =
+                window.tmpInstallFailAlias === p5.prototype.getPixelInputs;
+              throw thrown;
+            }
+          })
+        );
+        assert.isTrue(installedDuring);
+        assert.strictEqual(error, thrown);
+        assert.isTrue(strandsInactive());
+        assert.deepEqual(differences(before, snapshot()), []);
+      });
+
+      test('existing properties are replaced without running setters and restored exactly', () => {
+        const testShader = aliasedShader(['tmpInstallExisting']);
+        let setterCalls = 0;
+        Object.defineProperty(window, 'tmpInstallExisting', {
+          value: 'window original', writable: true, enumerable: false, configurable: true
+        });
+        Object.defineProperty(p5.prototype, 'tmpInstallExisting', {
+          get: () => 'fn original', set: () => { setterCalls++; },
+          enumerable: false, configurable: true
+        });
+        Object.defineProperty(p5.Graphics.prototype, 'tmpInstallExisting', {
+          value: 'read-only original', writable: false, enumerable: true, configurable: true
+        });
+        try {
+          const before = snapshot();
+          const during = {};
+          const built = testShader.modify(() => {
+            probe();
+            myp5.getPixelInputs(inputs => {
+              inputs.color = [0, 1, 0, 1];
+              return inputs;
+            });
+          }, {
+            myp5,
+            probe: () => {
+              const hook = p5.prototype.getPixelInputs;
+              for (const [label, target] of targets().slice(0, 3)) {
+                during[label] =
+                  Object.getOwnPropertyDescriptor(target, 'tmpInstallExisting')
+                    ?.value === hook;
+              }
+            }
+          });
+          assert.deepEqual(during, {
+            window: true, 'p5.prototype': true, 'p5.Graphics.prototype': true
+          });
+          assert.strictEqual(setterCalls, 0);
+          assert.deepEqual(differences(before, snapshot()), []);
+          assert.deepEqual(drawCenter(built), [0, 255, 0]);
+        } finally {
+          delete window.tmpInstallExisting;
+          delete p5.prototype.tmpInstallExisting;
+          delete p5.Graphics.prototype.tmpInstallExisting;
+        }
+      });
+
+      test('a name installed twice in one build gets its original back', () => {
+        const testShader = aliasedShader(['tmpInstallTwice', 'tmpInstallTwice']);
+        const original = function original() {};
+        window.tmpInstallTwice = original;
+        try {
+          const before = snapshot();
+          redBuild(testShader);
+          assert.strictEqual(window.tmpInstallTwice, original);
+          assert.deepEqual(differences(before, snapshot()), []);
+        } finally {
+          delete window.tmpInstallTwice;
+        }
+      });
+
+      test('options.hook properties are removed from p5.Graphics.prototype', () => {
+        const before = snapshot();
+        const testShader = myp5.baseMaterialShader().modify(() => {
+          myp5.getFinalColor.set(myp5.vec4(1, 0, 1, 1));
+        }, { myp5 }, { hook: 'getFinalColor' });
+        assert.deepEqual(differences(before, snapshot()), []);
+        assert.deepEqual(drawCenter(testShader), [255, 0, 255]);
+      });
+
+      test('a non-configurable writable property is assigned and restored', () => {
+        // Like a global `var`. It can't be deleted, so it stays on this page.
+        const original = function original() {};
+        Object.defineProperty(window, 'tmpInstallVarLike', {
+          value: original, writable: true, enumerable: true, configurable: false
+        });
+        const testShader = aliasedShader(['tmpInstallVarLike']);
+        const before = snapshot();
+        let during = false;
+        testShader.modify(() => {
+          probe();
+          myp5.getPixelInputs(inputs => inputs);
+        }, {
+          myp5,
+          probe: () => {
+            during = window.tmpInstallVarLike === p5.prototype.getPixelInputs;
+          }
+        });
+        assert.isTrue(during);
+        assert.strictEqual(window.tmpInstallVarLike, original);
+        assert.deepEqual(differences(before, snapshot()), []);
+      });
+
+      test('a property that can be neither redefined nor assigned is rejected before it is written', () => {
+        // Can't be deleted, so it stays on this page.
+        const getter = () => 'locked';
+        Object.defineProperty(p5.prototype, 'tmpInstallLocked', {
+          get: getter, enumerable: false, configurable: false
+        });
+        const testShader = aliasedShader(['tmpInstallLocked']);
+        const before = snapshot();
+        const error = catchError(() => redBuild(testShader));
+        assert.instanceOf(error, TypeError);
+        assert.include(error.message, 'tmpInstallLocked');
+        assert.strictEqual(
+          Object.getOwnPropertyDescriptor(p5.prototype, 'tmpInstallLocked').get,
+          getter
+        );
+        assert.isTrue(strandsInactive());
+        assert.deepEqual(differences(before, snapshot()), []);
+      });
+
+      test('a restore that fails is reported without replacing a build error', () => {
+        // Freeze each alias to force a restore failure; it remains on this page.
+        const freezeBuild = (name, thrown) =>
+          catchError(() =>
+            aliasedShader([name]).modify(() => {
+              freeze();
+              myp5.getPixelInputs(inputs => inputs);
+              fail();
+            }, {
+              myp5,
+              freeze: () => Object.defineProperty(p5.Graphics.prototype, name, {
+                value: 'frozen', writable: false, configurable: false
+              }),
+              fail: () => {
+                if (thrown) throw thrown;
+              }
+            })
+          );
+        const thrown = { reason: 'build failed' };
+        const successError = freezeBuild('tmpInstallFrozenA', null);
+        const failureError = freezeBuild('tmpInstallFrozenB', thrown);
+        assert.instanceOf(successError, TypeError);
+        assert.strictEqual(failureError, thrown);
+        for (const name of ['tmpInstallFrozenA', 'tmpInstallFrozenB']) {
+          assert.isFalse(Object.hasOwn(window, name));
+          assert.isFalse(Object.hasOwn(p5.prototype, name));
+        }
+        assert.isTrue(strandsInactive());
+      });
+
+      test('a modify() inside another build undoes only its own installs', () => {
+        // Building a shader inside another build is unsupported, and the
+        // outer build fails; both builds must still clean up after themselves.
+        // Nested builds leave friendly errors off, as on main; restore them.
+        const previousFES = p5.disableFriendlyErrors;
+        try {
+          const before = snapshot();
+          const outer = aliasedShader(['tmpInstallOuterAlias']);
+          let innerError = null;
+          catchError(() =>
+            outer.modify(() => {
+              buildInner();
+              myp5.getPixelInputs(inputs => inputs);
+            }, {
+              myp5,
+              buildInner: () => {
+                innerError = catchError(() => redBuild(myp5.baseMaterialShader()));
+              }
+            }, { hook: 'getFinalColor' })
+          );
+          assert.isNull(innerError);
+          assert.isTrue(strandsInactive());
+          assert.deepEqual(differences(before, snapshot()), []);
+        } finally {
+          p5.disableFriendlyErrors = previousFES;
+        }
+      });
+    });
+
     suite('if statement conditionals', () => {
       test('handle simple if statement with true condition', () => {
         myp5.createCanvas(50, 50, myp5.WEBGL);

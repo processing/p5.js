@@ -257,24 +257,60 @@ function augmentFn(fn, p5, name, value) {
   }
 }
 
-/*
- * Temporarily augment window, p5.prototype (fn), and p5.Graphics.prototype
- * with a hook function. Saves previous values into strandsContext override
- * stores so deinitStrandsContext can restore them.
- */
+// Install a temporary hook on the global, sketch and graphics APIs.
 function augmentFnTemporary(fn, strandsContext, name, value) {
-  strandsContext.windowOverrides[name] = window[name];
-  strandsContext.fnOverrides[name] = fn[name];
-  window[name] = value;
-  fn[name] = value;
+  installTemporaryProperty(strandsContext, window, name, value);
+  installTemporaryProperty(strandsContext, fn, name, value);
   const GraphicsProto = strandsContext.p5?.Graphics?.prototype;
   if (GraphicsProto) {
-    strandsContext.graphicsOverrides[name] =
-      Object.prototype.hasOwnProperty.call(GraphicsProto, name)
-        ? GraphicsProto[name]
-        : undefined;
-    GraphicsProto[name] = value;
+    installTemporaryProperty(strandsContext, GraphicsProto, name, value);
   }
+}
+
+// Save the own descriptor and replace the property without invoking setters.
+// Reject properties that cannot be redefined or assigned.
+export function installTemporaryProperty(strandsContext, target, name, value) {
+  const descriptor = Object.getOwnPropertyDescriptor(target, name);
+  const assignable = descriptor && 'value' in descriptor && descriptor.writable;
+  if (descriptor && !descriptor.configurable && !assignable) {
+    throw new TypeError(
+      `p5.strands can't temporarily replace "${String(name)}": the existing property can't be changed.`
+    );
+  }
+  strandsContext.tempProps.push({ target, name, descriptor });
+  if (!descriptor || descriptor.configurable) {
+    Object.defineProperty(target, name, {
+      value,
+      writable: true,
+      enumerable: descriptor ? descriptor.enumerable : true,
+      configurable: true
+    });
+  } else {
+    target[name] = value;
+  }
+}
+
+// Restore newest first, attempting every entry. Return errors so cleanup
+// does not replace an error from the build.
+export function restoreTemporaryProperties(strandsContext) {
+  const entries = strandsContext.tempProps;
+  strandsContext.tempProps = [];
+  const errors = [];
+  for (let i = entries.length - 1; i >= 0; i--) {
+    const { target, name, descriptor } = entries[i];
+    try {
+      if (!descriptor) {
+        delete target[name];
+      } else if (descriptor.configurable) {
+        Object.defineProperty(target, name, descriptor);
+      } else {
+        target[name] = descriptor.value;
+      }
+    } catch (e) {
+      errors.push(e);
+    }
+  }
+  return errors;
 }
 
 /**
