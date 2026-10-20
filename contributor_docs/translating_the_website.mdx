@@ -27,53 +27,57 @@ Issues may mark a translation as **missing** or **outdated**. Follow the file pa
 ## Workflow overview
 
 ```mermaid
+---
+title: Workflow overview of language contribution
+---
 flowchart TD
-    ChooseIssue[Choose a translation issue] --> Comment[Comment with your language]
-    Comment --> ForkClone[Fork and clone p5.js-website]
-    ForkClone --> Edit[Translate the file]
-    Edit --> RemoveFlag[Remove needsTranslation line]
-    RemoveFlag --> Preview[Run npm run dev]
-    Preview --> OpenPR[Open a pull request]
-
-# Translate the p5.js Website
-
-Translation is a great first contribution if you want to contribute to p5.js. You don't need to understand the whole codebase, instead just the language you are translating into in enough.
-
-This page covers finding a translation task, editing the file, previewing locally, and opening a pull request.
-
-## Before you begin
-
-1. Read the [Community Statement](https://p5js.org/about/#community-statement).
-2. Create a [GitHub account](https://github.com/signup) if you do not have one.
-3. See the already existing translation issues on [`processing/p5.js-website`](https://github.com/processing/p5.js-website/issues?q=is%3Aissue+is%3Aopen+label%3A%22needs+translation%22) and you can pick one to work on.
-4. Comment on the issue with the language you want to work on (for example, Spanish or Hindi). That helps avoid duplicate work.
-
-Issues may mark a translation as **missing** or **outdated**. Follow the file path listed in the issue.
-
-## Workflow overview
+    ChooseIssue[Choose a translation issue] -- Comment[Comment with your language]
+    Comment -- ForkClone[Fork and clone p5.js-website]
+    ForkClone -- Edit[Translate the file]
+    Edit -- RemoveFlag[Remove needsTranslation line]
+    RemoveFlag -- Preview[Run npm run dev]
+    Preview -- OpenPR[Open a pull request]
+```
 
 ```mermaid
+---
+title: Assumed local repo folder setup
+---
 flowchart TD
-    ChooseIssue[Choose a translation issue] --> Comment[Comment with your language]
-    Comment --> ForkClone[Fork and clone p5.js-website]
-    ForkClone --> Edit[Translate the file]
-    Edit --> RemoveFlag[Remove needsTranslation line]
-    RemoveFlag --> Preview[Run npm run dev]
-    Preview --> OpenPR[Open a pull request]
+    parent --- p5.js
+    parent --- p5.js-website
 ```
 
 ## 1. Fork and clone
 
 1. Open [`processing/p5.js-website`](https://github.com/processing/p5.js-website).
 2. Click **Fork** in the upper-right corner.
-3. Clone your fork and install dependencies:
+
+The second step to work on the p5.js-website translation code is to fork the p5.js-website repository. Forking has a specific meaning in open source, but for our purpose, it means creating a copy of the repository and storing it in your own GitHub account. To fork a repo, simply click on the "Fork" button near the top of the page, and GitHub will make a copy of the repo in your account.
+
+![Screenshot of the main page of repository. A button, labeled with a fork icon and "Fork 59.3k," is outlined in dark orange.](images/fork.png)
+
+3. Clone your fork 
+
+Once the fork is created, navigate to your fork's page and copy the git URL by clicking the green "Code" button.
+
+![Screenshot of the list of files on the landing page of a repository. The "Code" button is highlighted with a dark orange outline.](images/code-button.png)
+
+Next go to the command line in your local environment and clone this git repository. "Clone" simply means download a copy of the repo to your local machine. Run the following command in a folder where you want to store the p5.js-website source code folder.
+
+```
+git clone [git_url]
+```
+
+Replace `[git_url]` with the URL you just copied above. This can take several minutes, depending on the speed of your internet connection, a good time to make some coffee! Once the process is finished, you can open up the downloaded folder named `p5.js-website` in your preferred text editor and start looking around.
+
+4. Install dependencies:
 
 ```bash
-git clone https://github.com/YOUR-GITHUB-USERNAME/p5.js-website.git
 cd p5.js-website
 npm install
 ```
-Remember to replace `YOUR-GITHUB-USERNAME` with your [GitHub username](https://docs.github.com/en/account-and-profile/how-tos/email-preferences/remembering-your-github-username-or-email).
+This command helps you move to the right folder, and then install the required dependencies to run the project properly.
 
 ## 2. Create a branch
 
@@ -134,7 +138,7 @@ Stop the server with `Control + C` on Windows, Mac, and Linux when you are done.
 git status
 git add path/to/your/translated-file.mdx
 git commit -m "docs: update Spanish translation for the color example"
-git push -u origin translate-short-description-es
+git push -u origin translation/translate-short-description-es
 ```
 
 On GitHub, open a pull request into `processing/p5.js-website`.
