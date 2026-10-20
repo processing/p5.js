@@ -92,4 +92,42 @@ suite('Touch Events', function () {
       assert.strictEqual(myp5.mouseIsPressed, false);
     });
   });
+    suite('p5.prototype._onpointerup', function () {
+    test('should keep mouseIsPressed true while another pointer is still down', function () {
+      window.dispatchEvent(touchEvent1);
+      window.dispatchEvent(touchEvent2);
+      assert.strictEqual(myp5.mouseIsPressed, true);
+
+      // Release only the second finger; the first is still touching.
+      const upEvent = new PointerEvent('pointerup', {
+        pointerId: 2,
+        clientX: 200,
+        clientY: 200,
+        pointerType: 'touch'
+      });
+      window.dispatchEvent(upEvent);
+
+      assert.strictEqual(myp5.mouseIsPressed, true);
+    });
+
+    test('should reset mouseIsPressed once the last pointer is released', function () {
+      window.dispatchEvent(touchEvent1);
+      window.dispatchEvent(touchEvent2);
+
+      window.dispatchEvent(new PointerEvent('pointerup', {
+        pointerId: 2,
+        clientX: 200,
+        clientY: 200,
+        pointerType: 'touch'
+      }));
+      window.dispatchEvent(new PointerEvent('pointerup', {
+        pointerId: 1,
+        clientX: 100,
+        clientY: 100,
+        pointerType: 'touch'
+      }));
+
+      assert.strictEqual(myp5.mouseIsPressed, false);
+    });
+  });
 });
