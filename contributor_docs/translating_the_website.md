@@ -124,7 +124,7 @@ Confirm that:
 - the page loads without errors;
 - formatting, links, and code still look right.
 
-Stop the server with `Control + C` on Windows, Mac, and Linux when you are done.
+Now if everything looks normal, we top the server. In the terminal, press `Control + C` (works if you are on Windows, Mac, and Linux) and it should stop your server.
 
 ## 5. Commit, push, and open a pull request
 
@@ -143,7 +143,11 @@ In the PR description:
 - link the issue (`Addresses #1234`);
 - note that you ran `npm run dev` and verified the translation.
 
-A maintainer or language steward may leave review comments. Push updates to the same branch, the PR updates automatically. And the review and update loop can run.
+First a translation steward will review your translations and leave review comments, if needed. Depending upon the availability of stewards, this might take a few weeks or even longer. In the meantime, if you want to help review others' translation in your own language, and become a steward yourself, check https://p5js.org/contribute/steward_guidelines/.
+
+After the translation steward approved your translation, one of the maintainers will review and merge your PR. 
+
+In between, if you need to make changes to the PR, then just push updates to the same branch, the PR updates automatically.
 
 ## Translation coverage
 
@@ -152,12 +156,12 @@ You can see overall [translation progress/coverage](https://editor.p5js.org/aash
 <iframe 
   src="https://editor.p5js.org/aashishpanthi/full/1nNkSHrUe" 
   width="100%" 
-  height="300" 
+  height="400" 
   style={{ border: 'none' }}
 ></iframe>
 
 ---
 
-> For routes, UI strings, English fallback, and how localization works in the website code, see the [localization documentation](https://github.com/processing/p5.js-website/blob/main/docs/localization.md).
+> For more technical side of the translation architecture about routes, UI strings, English fallback, and how localization works in the website code, see the [localization documentation](https://github.com/processing/p5.js-website/blob/main/docs/localization.md).
 
 Questions are welcome on the issue or pull request. Ask rather than guess when wording or technical terms are unclear.
