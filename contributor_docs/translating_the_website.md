@@ -162,6 +162,6 @@ You can see overall [translation progress/coverage](https://editor.p5js.org/aash
 
 ---
 
-> For more technical side of the translation architecture about routes, UI strings, English fallback, and how localization works in the website code, see the [localization documentation](https://github.com/processing/p5.js-website/blob/main/docs/localization.md).
+> For more technical details about the translation architecture, including routes, UI strings, English fallback, and how localization works in the website code, see the [localization documentation](https://github.com/processing/p5.js-website/blob/main/docs/localization.md).
 
 Questions are welcome on the issue or pull request. Ask rather than guess when wording or technical terms are unclear.
