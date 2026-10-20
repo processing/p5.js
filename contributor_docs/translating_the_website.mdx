@@ -4,7 +4,6 @@ Translation is a great first contribution if you want to contribute to p5.js. Yo
 
 This page covers finding a translation task, editing the file, previewing locally, and opening a pull request.
 
-
 ## Table of Contents
 - [Before you begin](#before-you-begin)
 - [Workflow overview](#workflow-overview)
@@ -19,7 +18,7 @@ This page covers finding a translation task, editing the file, previewing locall
 
 1. Read the [Community Statement](https://p5js.org/about/#community-statement).
 2. Create a [GitHub account](https://github.com/signup) if you do not have one.
-3. See the already existing translation issues on [`processing/p5.js-website`](https://github.com/processing/p5.js-website/issues?q=is%3Aissue+is%3Aopen+label%3A%22needs+translation%22) and you can pick one to work on.
+3. See the already existing translation issues on [`processing/p5.js-website`](https://github.com/processing/p5.js-website/issues?q=is%3Aissue+is%3Aopen+label%3A%22needs+translation%22), and you can pick one to work on.
 4. Comment on the issue with the language you want to work on (for example, Spanish or Hindi). That helps avoid duplicate work.
 
 Issues may mark a translation as **missing** or **outdated**. Follow the file path listed in the issue.
@@ -72,6 +71,8 @@ This command helps you move to the right folder, and then install the required d
 
 ## 2. Create a branch
 
+It is important for your new work to be in a new branch. It helps during translation, helps maintainers review your code, and supports the PR/issues workflow. The default branch is `main`; to make changes, create a new branch with a very descriptive name.
+
 ```bash
 git checkout -b translation/translate-short-description-es
 ```
@@ -80,9 +81,9 @@ Use a clear name and your language code (`es`, `hi`, `ko`, or `zh-Hans`) for the
 
 ## 3. Edit the translation file
 
-Website content lives under `src/content`. You'll see folders like examples, events, people, etc. English is in `en/`. Translations use the same path with another language folder (and language code):
+Website content lives under `src/content` folder. You'll see folders like examples, events, people, etc. English is in `en/`. Translations use the same path with another language folder (and language code):
 
-For example, the corresponding Spanish file for the English file `src/content/examples/en/.../description.mdx` is `src/content/examples/es/.../description.mdx`.
+For example, the Spanish equivalent of `src/content/examples/en/.../description.mdx` is `src/content/examples/es/.../description.mdx`.
 
 Open the exact path from the issue. If a stub already exists, translate that file instead of creating a new one.
 
@@ -149,7 +150,7 @@ You can see overall [translation progress/coverage](https://editor.p5js.org/aash
 <iframe 
   src="https://editor.p5js.org/aashishpanthi/full/1nNkSHrUe" 
   width="100%" 
-  height="400" 
+  height="300" 
   style={{ border: 'none' }}
 ></iframe>
 
