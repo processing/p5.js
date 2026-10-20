@@ -699,12 +699,35 @@ export function SVGImportAddon(p5, fn, lifecycles) {
             ? this.num(node, "height")
             : (referenced.height?.baseVal?.value || vb.height);
 
-          const scale = Math.min(w / vb.width, h / vb.height); // default: xMidYMid meet
-          this.tStack.current.translateSelf(
-            (w - vb.width * scale) / 2 - vb.x * scale,
-            (h - vb.height * scale) / 2 - vb.y * scale
-          );
-          this.tStack.current.scaleSelf(scale, scale);
+          const preserveAspectRatio = referenced.getAttribute("preserveAspectRatio");
+
+          if (preserveAspectRatio?.trim() === "none") {
+            const scaleX = w / vb.width;
+            const scaleY = h / vb.height;
+
+            this.tStack.current.translateSelf(
+              -vb.x * scaleX,
+              -vb.y * scaleY
+            );
+            this.tStack.current.scaleSelf(scaleX, scaleY);
+          } else {
+            const scale = Math.min(w / vb.width, h / vb.height);
+
+            // Default SVG alignment is xMidYMid meet.
+            const alignment = preserveAspectRatio?.trim().split(/\s+/)[0] || "xMidYMid";
+
+            const alignX = alignment.startsWith("xMin") ? 0
+              : alignment.startsWith("xMax") ? 1 : 0.5;
+
+            const alignY = alignment.endsWith("YMin") ? 0
+              : alignment.endsWith("YMax") ? 1 : 0.5;
+
+            this.tStack.current.translateSelf(
+              (w - vb.width * scale) * alignX - vb.x * scale,
+              (h - vb.height * scale) * alignY - vb.y * scale
+            );
+            this.tStack.current.scaleSelf(scale, scale);
+          }
         }
         this.visit(referenced);
       });
