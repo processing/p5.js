@@ -1,4 +1,4 @@
-<!‐- Guide to translating the p5.js-website content. ‐->
+<!-- Guide to translating the p5.js-website content. -->
 
 # Translate the p5.js Website
 
