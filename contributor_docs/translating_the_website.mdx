@@ -31,21 +31,12 @@ Issues may mark a translation as **missing** or **outdated**. Follow the file pa
 title: Workflow overview of language contribution
 ---
 flowchart TD
-    ChooseIssue[Choose a translation issue] -- Comment[Comment with your language]
-    Comment -- ForkClone[Fork and clone p5.js-website]
-    ForkClone -- Edit[Translate the file]
-    Edit -- RemoveFlag[Remove needsTranslation line]
-    RemoveFlag -- Preview[Run npm run dev]
-    Preview -- OpenPR[Open a pull request]
-```
-
-```mermaid
----
-title: Assumed local repo folder setup
----
-flowchart TD
-    parent --- p5.js
-    parent --- p5.js-website
+    ChooseIssue[Choose a translation issue] --> Comment[Comment with your language]
+    Comment --> ForkClone[Fork and clone p5.js-website]
+    ForkClone --> Edit[Translate the file]
+    Edit --> RemoveFlag[Remove needsTranslation line]
+    RemoveFlag --> Preview[Run npm run dev]
+    Preview --> OpenPR[Open a pull request]
 ```
 
 ## 1. Fork and clone
