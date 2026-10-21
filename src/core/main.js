@@ -560,6 +560,25 @@ function createBindGlobal(instance) {
   };
 }
 
+// Decorators return a new function, which would otherwise drop any
+// properties attached to the original (for example the `argTypes` that
+// p5.strands functions declare for the transpiler). Carry those over so
+// decorating a function does not strip its metadata.
+function copyFunctionProperties(original, decorated) {
+  if (
+    typeof original !== 'function' ||
+    typeof decorated !== 'function' ||
+    original === decorated
+  ) {
+    return;
+  }
+  for (const key of Object.keys(original)) {
+    if (!(key in decorated)) {
+      decorated[key] = original[key];
+    }
+  }
+}
+
 // Generic function to decorate classes
 function decorateClass(Target, decorations, path) {
   // Static properties
@@ -575,6 +594,7 @@ function decorateClass(Target, decorations, path) {
               static: true
             });
             if (result) {
+              copyFunctionProperties(Target[key], result);
               Object.defineProperty(Target, key, {
                 enumerable: true,
                 writable: true,
@@ -613,6 +633,7 @@ function decorateClass(Target, decorations, path) {
               static: false
             });
             if (result) {
+              copyFunctionProperties(Target.prototype[member], result);
               Object.defineProperty(Target.prototype, member, {
                 enumerable: true,
                 writable: true,
