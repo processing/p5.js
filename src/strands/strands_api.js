@@ -251,6 +251,8 @@ function installInstanceIndexAccessor(strandsContext) {
  */
 function augmentFn(fn, p5, name, value) {
   fn[name] = value;
+  p5?._strandsSignatures?.set(name, true);
+  p5?._strandsSignatures?.set(`p5.${name}`, true);
   const GraphicsProto = p5?.Graphics?.prototype;
   if (GraphicsProto) {
     GraphicsProto[name] = value;
@@ -397,6 +399,7 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
   p5._strandsSignatures.set('discard', true);
   augmentFn(fn, p5, 'discard', function () {
     build.statementNode(strandsContext, StatementType.DISCARD);
+  });
   // Early exits would skip helper-state writes at the end of the loop.
   // The generated loop-exit break bypasses this check.
   function rejectLoopExitWithHelpers(statement) {
@@ -1682,6 +1685,8 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
   }
 
   // Storage buffer uniform function for compute shaders
+  p5?._strandsSignatures?.set('uniformStorage', true);
+  p5?._strandsSignatures?.set('p5.uniformStorage', true);
   fn.uniformStorage = function (name, bufferOrSchema) {
     const shaderName = resolveShaderName(
       strandsContext,
