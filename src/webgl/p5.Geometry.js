@@ -16,11 +16,14 @@ import {
 import { Vector } from '../math/p5.Vector';
 import { downloadFile } from '../io/utilities';
 
-class Geometry {
+class Geometry extends GeometryPart {
   constructor(detailX, detailY, callback, renderer) {
+    super(
+      `_p5_Geometry_${Geometry.nextId++}`,
+      createPartState()
+    );
     this.renderer = renderer;
-    this.vertices = [];
-
+  
     this.boundingBoxCache = null;
 
     //an array containing every vertex for stroke drawing
@@ -40,42 +43,22 @@ class Geometry {
     // represents. See the doc comments for _addCap and _addJoin for diagrams.
     this.lineSides = new DataArray();
 
-    this.vertexNormals = [];
-
-    // per-vertex surface tangents for normal mapping, stored flat as
-    // [x, y, z, w] where w is the bitangent handedness. computeTangents() fills
-    // this; empty until a normal-mapped model needs it.
-    this.vertexTangents = [];
-
-    this.faces = [];
-
-    this.uvs = [];
     // a 2D array containing edge connectivity pattern for create line vertices
     //based on faces for most objects;
     this.edges = [];
-    this.vertexColors = [];
-
+    
     // One color per vertex representing the stroke color at that vertex
     this.vertexStrokeColors = [];
-
-    this.userVertexProperties = {};
 
     // One color per line vertex, generated automatically based on
     // vertexStrokeColors in _edgesToVertices()
     this.lineVertexColors = new DataArray();
     this.detailX = detailX !== undefined ? detailX : 1;
     this.detailY = detailY !== undefined ? detailY : 1;
-    this.dirtyFlags = {};
+  
 
     this._hasFillTransparency = undefined;
     this._hasStrokeTransparency = undefined;
-
-    this.gid = `_p5_Geometry_${Geometry.nextId}`;
-    Geometry.nextId++;
-
-    // a geometry can act as its own single part: this is the default material
-    // state used when it is drawn that way (see _wrapInSinglePart).
-    this.partState = createPartState();
 
     // every geometry is one or more parts (see p5.GeometryPart). loaders that
     // know about materials fill parts themselves; anything built the old way
