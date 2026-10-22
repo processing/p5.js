@@ -1141,6 +1141,9 @@
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/Srinidhi444"><img src="https://avatars.githubusercontent.com/u/174924896?v=4?s=64" width="64px;" alt="Srinidhi Kulkarni"/><br /><sub><b>Srinidhi Kulkarni</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=Srinidhi444" title="Code">💻</a></td>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/BhumitSahani"><img src="https://avatars.githubusercontent.com/u/238242032?v=4?s=64" width="64px;" alt="Bhumit"/><br /><sub><b>Bhumit</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=BhumitSahani" title="Code">💻</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="16.66%"><a href="https://github.com/xsupremeyx"><img src="https://avatars.githubusercontent.com/u/86472828?v=4?s=64" width="64px;" alt="Yash Mishra"/><br /><sub><b>Yash Mishra</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=xsupremeyx" title="Code">💻</a></td>
+    </tr>
   </tbody>
 </table>
 
