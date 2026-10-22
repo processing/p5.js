@@ -198,6 +198,86 @@ suite('p5.GeometryPart', function () {
       expect(geom.parts.length).toEqual(1);
       expect(geom.parts[0].vertices.length).toEqual(1);
     });
+
+    test('Geometry inherits vertexProperty from GeometryPart', function () {
+      const geom = new p5.Geometry(
+        undefined,
+        undefined,
+        undefined,
+        myp5._renderer
+      );
+
+      expect(geom.vertexProperty).toBe(
+        p5.GeometryPart.prototype.vertexProperty
+      );
+
+      geom.vertexProperty('customAttr', [1, 2, 3], 3);
+
+      expect(geom.userVertexProperties.customAttr).toBeDefined();
+      expect(geom.customAttrSrc).toEqual([1, 2, 3]);
+    });
+
+    test('Geometry inherits hasFillTransparency from GeometryPart', function () {
+      const geom = new p5.Geometry(
+        undefined,
+        undefined,
+        undefined,
+        myp5._renderer
+      );
+
+      expect(geom.hasFillTransparency).toBe(
+        p5.GeometryPart.prototype.hasFillTransparency
+      );
+    });
+
+    test('detects transparent vertex colors after they change', function () {
+      const geom = new p5.Geometry(
+        undefined,
+        undefined,
+        undefined,
+        myp5._renderer
+      );
+
+      geom.vertexColors = [1, 1, 1, 1];
+      expect(geom.hasFillTransparency()).toBe(false);
+
+      geom.vertexColors = [1, 1, 1, 0.5];
+      expect(geom.hasFillTransparency()).toBe(true);
+
+      geom.vertexColors = [1, 1, 1, 1];
+      expect(geom.hasFillTransparency()).toBe(false);
+    });
+
+    test('detects transparent material fill on a single-part geometry', function () {
+      const geom = new p5.Geometry(
+        undefined,
+        undefined,
+        undefined,
+        myp5._renderer
+      );
+
+      geom.partState.fill = [1, 0, 0, 0.5];
+
+      expect(geom.hasFillTransparency()).toBe(true);
+    });
+
+    test('computes face normals for a GeometryPart', function () {
+      const part = new p5.GeometryPart('face-normal-test');
+
+      part.vertices = [
+        new p5.Vector(0, 0, 0),
+        new p5.Vector(1, 0, 0),
+        new p5.Vector(0, 1, 0)
+      ];
+
+      part.faces = [[0, 1, 2]];
+
+      const normal = part._getFaceNormal(0);
+
+      expect(normal.x).toBeCloseTo(0);
+      expect(normal.y).toBeCloseTo(0);
+      expect(normal.z).toBeCloseTo(Math.PI / 2);
+    });
   });
 
   suite('multi-material rendering', function () {
