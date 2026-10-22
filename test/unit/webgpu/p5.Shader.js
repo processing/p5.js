@@ -280,7 +280,7 @@ suite('WebGPU p5.Shader', function () {
       assert.deepEqual(secondShader.hooks.varyingVariables, []);
     });
 
-    suite('registered state (#9259)', () => {
+    suite('registered state', () => {
       function stateTestAddon(p5, fn) {
         fn.testLight = p5.registerStrandsState('testLight', {
           init(base) {
@@ -322,8 +322,47 @@ suite('WebGPU p5.Shader', function () {
           },
           read: { total: state => state.global.total }
         });
+        fn.testMatrix = p5.registerStrandsState('testMatrix', {
+          init(scale) {
+            return {
+              config: {},
+              state: {
+                scoped: { transform: this.mat2(scale) },
+                global: { applied: this.mat2(1) }
+              }
+            };
+          },
+          update: {
+            scale(state, config, amount) {
+              return {
+                scoped: { transform: state.scoped.transform.mult(this.mat2(amount)) },
+                global: state.global
+              };
+            },
+            commit(state) {
+              return {
+                scoped: state.scoped,
+                global: { applied: state.global.applied.mult(state.scoped.transform) }
+              };
+            },
+            toMat3(state) {
+              return { scoped: { transform: this.mat3(state.scoped.transform) }, global: state.global };
+            }
+          },
+          read: {
+            transformed: (state, config, v) => state.scoped.transform.mult(p5.strandsNode(v)),
+            applied: (state, config, v) => state.global.applied.mult(p5.strandsNode(v))
+          }
+        });
+        fn.testFlag = p5.registerStrandsState('testFlag', {
+          init(value) {
+            return { config: {}, state: { scoped: {}, global: { on: value } } };
+          },
+          update: { put: (state, config, on) => ({ scoped: {}, global: { on } }) },
+          read: { on: state => state.global.on }
+        });
       }
-      const addedNames = ['testLight', 'testMeter'];
+      const addedNames = ['testLight', 'testMeter', 'testMatrix', 'testFlag'];
       let savedDescriptors;
       let registeredAddons;
       beforeAll(() => {
@@ -420,13 +459,13 @@ suite('WebGPU p5.Shader', function () {
         assertRGB(right, [223, 223, 0]);
       });
 
-      test('popStrandsState() restores scoped fields and keeps global ones', async () => {
+      test('pop() restores scoped fields and keeps global ones', async () => {
         const [left] = await render(() => {
           myp5.getPixelInputs(inputs => {
             const meter = myp5.testMeter(0.5);
-            myp5.pushStrandsState();
+            myp5.push();
             meter.setGain(1).add(0.2);
-            myp5.popStrandsState();
+            myp5.pop();
             meter.add(0.4);
             const total = meter.total();
             inputs.color = [total, total, total, 1];
@@ -434,6 +473,115 @@ suite('WebGPU p5.Shader', function () {
           });
         });
         assertRGB(left, [102, 102, 102]);
+      });
+
+      test('matrix fields can be initialized, updated and read', async () => {
+        const [left] = await render(() => {
+          myp5.getPixelInputs(inputs => {
+            const frame = myp5.testMatrix(1);
+            frame.scale(0.5).commit().scale(0.5);
+            const scoped = frame.transformed([1, 1]);
+            const applied = frame.applied([1, 1]);
+            inputs.color = [scoped.x, applied.y, 0, 1];
+            return inputs;
+          });
+        });
+        assertRGB(left, [64, 128, 0]);
+      });
+
+      test('matrix fields are merged across branches', async () => {
+        const [left, right] = await render(() => {
+          myp5.getPixelInputs(inputs => {
+            const frame = myp5.testMatrix(1);
+            if (inputs.texCoord.x > 0.5) {
+              frame.scale(0.5);
+            } else {
+              frame.scale(0.25).commit();
+            }
+            const scoped = frame.transformed([1, 1]);
+            const applied = frame.applied([1, 1]);
+            inputs.color = [scoped.x, applied.x, 0, 1];
+            return inputs;
+          });
+        });
+        assertRGB(left, [64, 64, 0]);
+        assertRGB(right, [128, 255, 0]);
+      });
+
+      test('matrix fields are carried through loops, including loops that run zero times', async () => {
+        const [left, right] = await render(() => {
+          myp5.getPixelInputs(inputs => {
+            const frame = myp5.testMatrix(1);
+            const count = inputs.texCoord.x > 0.5 ? 2 : 0;
+            for (let i = 0; i < count; i++) {
+              frame.scale(0.5).commit();
+            }
+            const scoped = frame.transformed([1, 1]);
+            const applied = frame.applied([1, 1]);
+            inputs.color = [scoped.x, applied.x, 0, 1];
+            return inputs;
+          });
+        });
+        assertRGB(left, [255, 255, 0]);
+        assertRGB(right, [64, 32, 0]);
+      });
+
+      test('push() and pop() restore matrix fields and keep global ones', async () => {
+        const [left, right] = await render(() => {
+          myp5.getPixelInputs(inputs => {
+            const frame = myp5.testMatrix(1);
+            if (inputs.texCoord.x > 0.5) {
+              myp5.push();
+              frame.scale(0.5).commit();
+              myp5.pop();
+            }
+            for (let i = 0; i < 2; i++) {
+              myp5.push();
+              frame.scale(0.5).commit();
+              myp5.pop();
+            }
+            frame.commit();
+            const scoped = frame.transformed([1, 1]);
+            const applied = frame.applied([1, 1]);
+            inputs.color = [scoped.x, applied.x, 0, 1];
+            return inputs;
+          });
+        });
+        assertRGB(left, [255, 64, 0]);
+        assertRGB(right, [255, 32, 0]);
+      });
+
+      test('matrix updates must keep their size', async () => {
+        await createWebGPUCanvas();
+        expect(() =>
+          myp5.baseMaterialShader().modify(() => {
+            myp5.getPixelInputs(inputs => {
+              myp5.testMatrix(1).toMat3();
+              return inputs;
+            });
+          }, { myp5 })
+        ).toThrowError(
+          'testMatrix updates must return the same fields as init, with the same types and sizes.'
+        );
+      });
+
+      test('bool fields are merged across branches and loops', async () => {
+        const [left, right] = await render(() => {
+          myp5.getPixelInputs(inputs => {
+            const branch = myp5.testFlag(inputs.texCoord.x > 2);
+            const loop = myp5.testFlag(inputs.texCoord.x > 2);
+            if (inputs.texCoord.x > 0.5) {
+              branch.put(inputs.texCoord.x > 0);
+            }
+            for (let i = 0; i < 2; i++) {
+              loop.put(inputs.texCoord.x < 0.5);
+            }
+            inputs.color = [branch.on() ? 1 : 0, loop.on() ? 1 : 0, 0, 1];
+            return inputs;
+          });
+        });
+        assertRGB(left, [0, 255, 0]);
+        assertRGB(right, [255, 0, 0]);
       });
 
       test('a caught hook failure fails the build with the original value, and the next build works', async () => {
@@ -445,7 +593,7 @@ suite('WebGPU p5.Shader', function () {
             try {
               myp5.getPixelInputs(inputs => {
                 myp5.testMeter(0.5);
-                myp5.pushStrandsState();
+                myp5.push();
                 fail();
                 return inputs;
               });

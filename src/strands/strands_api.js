@@ -593,7 +593,29 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
           'registerStrandsState reserves "_installGlobal" for every helper, so it cannot be a method name.'
         );
       }
+      // An installed push/pop would hide, and could recurse into, the stack.
+      for (const method of ['push', 'pop']) {
+        if (Object.prototype.hasOwnProperty.call(spec[group], method)) {
+          FES.userError(
+            'type error',
+            `registerStrandsState reserves "${method}" for saving and restoring helper state, so it cannot be a method name.`
+          );
+        }
+      }
+      // The transpiler rewrites .set() calls inside if/for as hook setters.
+      if (Object.prototype.hasOwnProperty.call(spec[group], 'set')) {
+        FES.userError(
+          'type error',
+          'registerStrandsState reserves "set" because p5.strands treats .set() inside if and for as a hook setter, so it cannot be a method name.'
+        );
+      }
     }
+
+    // Types that branch and loop variables can hold in both backends.
+    const isStateType = (baseType, dimension) =>
+      [BaseType.FLOAT, BaseType.INT, BaseType.BOOL].includes(baseType)
+        ? [1, 2, 3, 4].includes(dimension)
+        : baseType === BaseType.MAT && [2, 3, 4].includes(dimension);
 
     // Read fields once so getters cannot change values after validation.
     // Updates must match the existing slot names, types and dimensions.
@@ -633,25 +655,31 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
           );
         }
 
-        const { baseType, dimension } = value.typeInfo();
+        // Use the graph's type, which has no float fallback for other nodes.
+        const { baseType, dimension } = DAG.extractNodeTypeInfo(
+          strandsContext.dag,
+          value.id
+        );
+        if (!isStateType(baseType, dimension)) {
+          FES.userError(
+            'type error',
+            `${name}.${group}.${field} must be a float, int or bool scalar or vector, or a mat2, mat3 or mat4.`
+          );
+        }
         const expected = slots?.find(
           slot => slot.group === group && slot.name === field
         );
         if (
-          ![BaseType.FLOAT, BaseType.INT].includes(baseType) ||
-          !Number.isInteger(dimension) ||
-          dimension < 1 ||
-          dimension > 4 ||
-          (slots && (
+          slots && (
             !expected ||
             fields.length !== slots.length ||
             baseType !== expected.baseType ||
             dimension !== expected.dimension
-          ))
+          )
         ) {
           FES.userError(
             'type error',
-            `${name} state must use a numeric scalar or vector with a fixed field name and type.`
+            `${name} updates must return the same fields as init, with the same types and sizes.`
           );
         }
 
@@ -788,7 +816,8 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
     };
   };
 
-  // Push/pop saves and restores scoped fields per hook, leaving globals alone.
+  // During a build, push()/pop() save and restore helpers' scoped fields
+  // per hook instead of drawing state, leaving global fields alone.
   // Branches and loop bodies must balance their own pushes and pops.
   function stateStackScope(operation) {
     const scope = strandsContext.stateScope;
@@ -807,8 +836,12 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
     rejectInExpressionOperand(`${operation}()`);
     return scope;
   }
-  p5.pushStrandsState = function () {
-    const scope = stateStackScope('pushStrandsState');
+  const originalPush = fn.push;
+  augmentFn(fn, p5, 'push', function (...args) {
+    if (!strandsContext.active) {
+      return originalPush.apply(this, args);
+    }
+    const scope = stateStackScope('push');
     const frame = new Map();
     for (const record of scope.records) {
       for (const slot of record.slots) {
@@ -818,27 +851,29 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
       }
     }
     scope.stack.push(frame);
-  };
-  augmentFn(fn, p5, 'pushStrandsState', p5.pushStrandsState);
-  p5.popStrandsState = function () {
-    const scope = stateStackScope('popStrandsState');
+  });
+  const originalPop = fn.pop;
+  augmentFn(fn, p5, 'pop', function (...args) {
+    if (!strandsContext.active) {
+      return originalPop.apply(this, args);
+    }
+    const scope = stateStackScope('pop');
     if (scope.stack.length === 0) {
       FES.userError(
         'scope error',
-        'popStrandsState() has no matching pushStrandsState().'
+        'pop() has no matching push().'
       );
     }
     if (scope.stack.length <= scope.stackFloor) {
       FES.userError(
         'scope error',
-        "popStrandsState() can't pop a pushStrandsState() made outside the current if/else branch or for loop body."
+        "pop() can't pop a push() made outside the current if/else branch or for loop body."
       );
     }
     for (const [slot, valueId] of scope.stack.pop()) {
       slot.valueId = valueId;
     }
-  };
-  augmentFn(fn, p5, 'popStrandsState', p5.popStrandsState);
+  });
 
   //////////////////////////////////////////////
   // Builtins, uniforms, variable constructors
@@ -2113,7 +2148,7 @@ export function createShaderHooksFunctions(strandsContext, fn, shader) {
         if (unmatchedPush) {
           FES.userError(
             'scope error',
-            'pushStrandsState() needs a matching popStrandsState() before the hook ends.'
+            'push() needs a matching pop() before the hook ends.'
           );
         }
         if (

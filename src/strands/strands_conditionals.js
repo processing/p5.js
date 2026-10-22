@@ -109,7 +109,7 @@ function buildConditional(strandsContext, conditional) {
     if (stateScope && stateScope.stack.length !== stackDepth) {
       FES.userError(
         'scope error',
-        'pushStrandsState() and popStrandsState() must be balanced inside each if/else branch.'
+        'push() and pop() must be balanced inside each if/else branch.'
       );
     }
     for (const [slot, inputs] of stateInputs) {

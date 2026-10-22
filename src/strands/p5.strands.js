@@ -230,21 +230,22 @@ function strands(p5, fn) {
   // Entry Point
   //////////////////////////////////////////////
   const oldModify = p5.Shader.prototype.modify;
-  // Track nested modify() calls.
-  let modifyDepth = 0;
 
   p5.Shader.prototype.modify = function (
     shaderModifier,
     scope = {},
     options = {}
   ) {
+    // Builds share one context, so reject a nested call before it touches it.
+    if (strandsContext.active) {
+      FES.userError(
+        'scope error',
+        "modify() can't be called while a p5.strands shader is being built."
+      );
+    }
     // Report restore failures only after a successful build.
     let modified;
     let restoreErrors = [];
-    // Preserve the outer install journal; nested builds remain unsupported.
-    const nested = modifyDepth > 0;
-    const enclosingTempProps = strandsContext.tempProps;
-    modifyDepth++;
     try {
       if (
         shaderModifier instanceof Function ||
@@ -348,16 +349,12 @@ function strands(p5, fn) {
         modified = oldModify.call(this, shaderModifier);
       }
     } finally {
-      modifyDepth--;
       // FES is switched off while the callback runs, so experimental features
       // used inside it can't warn on the spot. They record their subject area
       // instead, and we warn once FES has been restored by deinit below.
       const experimentalFeaturesUsed = [...strandsContext.experimentalFeaturesUsed];
       // Reset the strands runtime context
       restoreErrors = deinitStrandsContext(strandsContext);
-      if (nested) {
-        strandsContext.tempProps = enclosingTempProps;
-      }
       for (const subjectArea of experimentalFeaturesUsed) {
         warnExperimental(p5, this._renderer?._pInst, subjectArea);
       }

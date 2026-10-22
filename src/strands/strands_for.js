@@ -585,7 +585,7 @@ export class StrandsFor {
     if (stateScope && stateScope.stack.length !== stackDepth) {
       FES.userError(
         'scope error',
-        'pushStrandsState() and popStrandsState() must be balanced inside a for loop body.'
+        'push() and pop() must be balanced inside a for loop body.'
       );
     }
     this.stateUpdatedIds = new Map();
