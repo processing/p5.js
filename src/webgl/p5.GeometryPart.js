@@ -131,7 +131,7 @@ class GeometryPart {
     return false;
   }
 
-   _getFaceNormal(faceId) {
+  _getFaceNormal(faceId) {
     //This assumes that vA->vB->vC is a counter-clockwise ordering
     const face = this.faces[faceId];
     const vA = this.vertices[face[0]];

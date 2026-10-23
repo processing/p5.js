@@ -305,4 +305,120 @@ suite('p5.GeometryPart', function () {
       strokeSpy.mockRestore();
     });
   });
+
+  test('draws parts when the aggregate has no vertices', function () {
+    const renderer = myp5.createCanvas(50, 50, myp5.WEBGL);
+
+    const geom = new p5.Geometry(
+      undefined,
+      undefined,
+      undefined,
+      renderer
+    );
+
+    const partA = new p5.GeometryPart(`${geom.gid}|part0`);
+    const partB = new p5.GeometryPart(`${geom.gid}|part1`);
+
+    partA.vertices = [
+      new p5.Vector(0, 0, 0),
+      new p5.Vector(10, 0, 0),
+      new p5.Vector(0, 10, 0)
+    ];
+    partA.faces = [[0, 1, 2]];
+
+    partB.vertices = [
+      new p5.Vector(0, 0, 0),
+      new p5.Vector(-10, 0, 0),
+      new p5.Vector(0, -10, 0)
+    ];
+    partB.faces = [[0, 1, 2]];
+
+    geom.parts = [partA, partB];
+
+    expect(geom.vertices).toHaveLength(0);
+
+    const fillSpy = vi.spyOn(renderer, '_drawFills');
+
+    try {
+      myp5.fill(255);
+      myp5.noStroke();
+      myp5.model(geom);
+
+      expect(fillSpy).toHaveBeenCalledTimes(2);
+      expect(fillSpy.mock.calls[0][0]).toBe(partA);
+      expect(fillSpy.mock.calls[1][0]).toBe(partB);
+    } finally {
+      fillSpy.mockRestore();
+    }
+  });
+
+  test('skips empty parts but draws valid parts', function () {
+    const renderer = myp5.createCanvas(50, 50, myp5.WEBGL);
+
+    const geom = new p5.Geometry(
+      undefined,
+      undefined,
+      undefined,
+      renderer
+    );
+
+    const emptyPart = new p5.GeometryPart(`${geom.gid}|empty`);
+    const validPart = new p5.GeometryPart(`${geom.gid}|valid`);
+
+    validPart.vertices = [
+      new p5.Vector(0, 0, 0),
+      new p5.Vector(10, 0, 0),
+      new p5.Vector(0, 10, 0)
+    ];
+    validPart.faces = [[0, 1, 2]];
+
+    geom.parts = [emptyPart, validPart];
+
+    const fillSpy = vi.spyOn(renderer, '_drawFills');
+
+    try {
+      myp5.fill(255);
+      myp5.noStroke();
+      myp5.model(geom);
+
+      expect(fillSpy).toHaveBeenCalledTimes(1);
+      expect(fillSpy.mock.calls[0][0]).toBe(validPart);
+    } finally {
+      fillSpy.mockRestore();
+    }
+  });
+
+  test('continues drawing single-part geometry', function () {
+    const renderer = myp5.createCanvas(50, 50, myp5.WEBGL);
+
+    const geom = new p5.Geometry(
+      undefined,
+      undefined,
+      function () {
+        this.vertices.push(
+          new p5.Vector(0, 0, 0),
+          new p5.Vector(10, 0, 0),
+          new p5.Vector(0, 10, 0)
+        );
+
+        this.faces.push([0, 1, 2]);
+      },
+      renderer
+    );
+
+    expect(geom.parts[0]).toBe(geom);
+
+    const fillSpy = vi.spyOn(renderer, '_drawFills');
+
+    try {
+      myp5.fill(255);
+      myp5.noStroke();
+      myp5.model(geom);
+
+      expect(fillSpy).toHaveBeenCalledTimes(1);
+      expect(fillSpy.mock.calls[0][0]).toBe(geom);
+    } finally {
+      fillSpy.mockRestore();
+    }
+  });
 });
