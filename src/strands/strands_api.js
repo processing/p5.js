@@ -251,6 +251,8 @@ function installInstanceIndexAccessor(strandsContext) {
  */
 function augmentFn(fn, p5, name, value) {
   fn[name] = value;
+  p5?._strandsSignatures?.set(name, true);
+  p5?._strandsSignatures?.set(`p5.${name}`, true);
   const GraphicsProto = p5?.Graphics?.prototype;
   if (GraphicsProto) {
     GraphicsProto[name] = value;
@@ -364,6 +366,8 @@ function resolveShaderName(strandsContext, name, apiName) {
 // User nodes
 //////////////////////////////////////////////
 export function initGlobalStrandsAPI(p5, fn, strandsContext) {
+  p5._strandsSignatures = new Map();
+
   // We augment the strands node with operations programatically
   // this means methods like .add, .sub, etc can be chained
   for (const { name, arity, opCode } of OperatorTable) {
@@ -392,6 +396,7 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
   //////////////////////////////////////////////
   // Unique Functions
   //////////////////////////////////////////////
+  p5._strandsSignatures.set('discard', true);
   augmentFn(fn, p5, 'discard', function () {
     build.statementNode(strandsContext, StatementType.DISCARD);
   });
@@ -408,11 +413,13 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
       );
     }
   }
+  p5._strandsSignatures.set('break', true);
   augmentFn(fn, p5, 'break', function () {
     rejectLoopExitWithHelpers('break');
     build.statementNode(strandsContext, StatementType.BREAK);
   });
   p5.break = fn.break;
+  p5._strandsSignatures.set('instanceID', true);
   augmentFn(fn, p5, 'instanceID', function () {
     const node = build.variableNode(
       strandsContext,
@@ -426,6 +433,7 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
   p5.strandsIf = function (conditionNode, ifBody) {
     return new StrandsConditional(strandsContext, conditionNode, ifBody);
   };
+  p5._strandsSignatures.set('strandsIf', true);
   augmentFn(fn, p5, 'strandsIf', p5.strandsIf);
   p5.strandsFor = function (
     initialCb,
@@ -443,10 +451,12 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
       initialVars
     ).build();
   };
+  p5._strandsSignatures.set('strandsFor', true);
   augmentFn(fn, p5, 'strandsFor', p5.strandsFor);
   p5.strandsTernary = function (condition, ifTrue, ifFalse) {
     return buildTernary(strandsContext, condition, ifTrue, ifFalse);
   };
+  p5._strandsSignatures.set('strandsTernary', true);
   augmentFn(fn, p5, 'strandsTernary', p5.strandsTernary);
   // Both sides are built; allow helper reads here, but reject updates.
   p5.strandsOperand = function (operator, operand) {
@@ -506,6 +516,7 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
 
     return valueNode;
   };
+  p5._strandsSignatures.set('strandsEarlyReturn', true);
   augmentFn(fn, p5, 'strandsEarlyReturn', p5.strandsEarlyReturn);
   p5.strandsNode = function (...args) {
     if (args.length === 1 && args[0] instanceof StrandsNode) {
@@ -877,10 +888,11 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
 
   //////////////////////////////////////////////
   // Builtins, uniforms, variable constructors
-  //////////////////////////////////////////////
   for (const [functionName, overrides] of Object.entries(
     strandsBuiltinFunctions
   )) {
+    p5._strandsSignatures.set(functionName, true);
+    p5._strandsSignatures.set(`p5.${functionName}`, true);
     const isp5Function = overrides[0].isp5Function;
     if (isp5Function) {
       const originalFn = fn[functionName];
@@ -915,6 +927,7 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
 
   // Alias lerp to GLSL mix in strands context
   const originalLerp = fn.lerp;
+  p5._strandsSignatures.set('lerp', true);
   augmentFn(fn, p5, 'lerp', function (...args) {
     if (strandsContext.active) {
       return this.mix(...args);
@@ -924,6 +937,7 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
   });
 
   const originalMap = fn.map;
+  p5._strandsSignatures.set('map', true);
   augmentFn(fn, p5, 'map', function (...args) {
     if (!strandsContext.active) {
       return originalMap.apply(this, args);
@@ -945,6 +959,7 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
   });
 
   const originalColor = fn.color;
+  p5._strandsSignatures.set('color', true);
   augmentFn(fn, p5, 'color', function (...args) {
     if (!strandsContext.active) {
       return originalColor.apply(this, args);
@@ -961,6 +976,7 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
     return createStrandsNode(id, dimension, strandsContext);
   });
   const originalLerpColor = fn.lerpColor;
+  p5._strandsSignatures.set('lerpColor', true);
   augmentFn(fn, p5, 'lerpColor', function (...args) {
     if (!strandsContext.active) {
       return originalLerpColor.apply(this, args);
@@ -970,6 +986,7 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
   });
   // Component accessors: extract scalar channels from a vec4 color
   const originalRed = fn.red;
+  p5._strandsSignatures.set('red', true);
   augmentFn(fn, p5, 'red', function (...args) {
     if (!strandsContext.active) {
       return originalRed.apply(this, args);
@@ -978,6 +995,7 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
   });
 
   const originalGreen = fn.green;
+  p5._strandsSignatures.set('green', true);
   augmentFn(fn, p5, 'green', function (...args) {
     if (!strandsContext.active) {
       return originalGreen.apply(this, args);
@@ -986,6 +1004,7 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
   });
 
   const originalBlue = fn.blue;
+  p5._strandsSignatures.set('blue', true);
   augmentFn(fn, p5, 'blue', function (...args) {
     if (!strandsContext.active) {
       return originalBlue.apply(this, args);
@@ -994,6 +1013,7 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
   });
 
   const originalAlpha = fn.alpha;
+  p5._strandsSignatures.set('alpha', true);
   augmentFn(fn, p5, 'alpha', function (...args) {
     if (!strandsContext.active) {
       return originalAlpha.apply(this, args);
@@ -1054,6 +1074,7 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
     return instance.vec3(h, s, l);
   };
   const originalHue = fn.hue;
+  p5._strandsSignatures.set('hue', true);
   augmentFn(fn, p5, 'hue', function (...args) {
     if (!strandsContext.active) return originalHue.apply(this, args);
     const colorNode = p5.strandsNode(args[0]);
@@ -1061,6 +1082,7 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
   });
 
   const originalSaturation = fn.saturation;
+  p5._strandsSignatures.set('saturation', true);
   augmentFn(fn, p5, 'saturation', function (...args) {
     if (!strandsContext.active) return originalSaturation.apply(this, args);
     const colorNode = p5.strandsNode(args[0]);
@@ -1068,6 +1090,7 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
   });
 
   const originalBrightness = fn.brightness;
+  p5._strandsSignatures.set('brightness', true);
   augmentFn(fn, p5, 'brightness', function (...args) {
     if (!strandsContext.active) return originalBrightness.apply(this, args);
     const colorNode = p5.strandsNode(args[0]);
@@ -1075,12 +1098,14 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
   });
 
   const originalLightness = fn.lightness;
+  p5._strandsSignatures.set('lightness', true);
   augmentFn(fn, p5, 'lightness', function (...args) {
     if (!strandsContext.active) return originalLightness.apply(this, args);
     const colorNode = p5.strandsNode(args[0]);
     return _rgb2hsl(this, this.vec3(colorNode.x, colorNode.y, colorNode.z)).z;
   });
 
+  p5._strandsSignatures.set('getTexture', true);
   augmentFn(fn, p5, 'getTexture', function (...rawArgs) {
     if (strandsContext.active) {
       const { id, dimension } = strandsContext.backend.createGetTextureCall(
@@ -1096,6 +1121,7 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
 
   // Add texture function as alias for getTexture with p5 fallback
   const originalTexture = fn.texture;
+  p5._strandsSignatures.set('texture', true);
   augmentFn(fn, p5, 'texture', function (...args) {
     if (strandsContext.active) {
       return this.getTexture(...args);
@@ -1112,6 +1138,7 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
   const originalRandomSeed = fn.randomSeed;
   const originalMillis = fn.millis;
 
+  p5._strandsSignatures.set('noiseDetail', true);
   augmentFn(fn, p5, 'noiseDetail', function (lod, falloff = 0.5) {
     if (!strandsContext.active) {
       return originalNoiseDetail.apply(this, arguments);
@@ -1121,6 +1148,7 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
     strandsContext._noiseAmpFalloff = falloff;
   });
 
+  p5._strandsSignatures.set('noise', true);
   augmentFn(fn, p5, 'noise', function (...args) {
     if (!strandsContext.active) {
       return originalNoise.apply(this, args); // fallback to regular p5.js noise
@@ -1249,6 +1277,7 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
     { type: 'Number' }
   ];
 
+  p5._strandsSignatures.set('randomSeed', true);
   augmentFn(fn, p5, 'randomSeed', function (seed) {
     if (!strandsContext.active) {
       return originalRandomSeed.apply(this, arguments);
@@ -1256,6 +1285,7 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
     strandsContext._randomSeed = seed;
   });
 
+  p5._strandsSignatures.set('random', true);
   augmentFn(fn, p5, 'random', function (...args) {
     if (!strandsContext.active) {
       return originalRandom.apply(this, args);
@@ -1353,6 +1383,7 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
     }
   });
 
+  p5._strandsSignatures.set('randomGaussian', true);
   augmentFn(fn, p5, 'randomGaussian', function (...args) {
     if (!strandsContext.active) {
       return originalRandomGaussian.apply(this, args);
@@ -1369,6 +1400,7 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
     return z.mult(stdDev).add(mean);
   });
 
+  p5._strandsSignatures.set('millis', true);
   augmentFn(fn, p5, 'millis', function (...args) {
     if (!strandsContext.active) {
       return originalMillis.apply(this, args);
@@ -1417,6 +1449,7 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
         typeAliases.push(pascalTypeName.slice(0, 4));
       }
     }
+    p5._strandsSignatures.set(`uniform${pascalTypeName}`, true);
     augmentFn(
       fn,
       p5,
@@ -1441,6 +1474,7 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
       }
     );
     // Shared variables with smart context detection
+    p5._strandsSignatures.set(`shared${pascalTypeName}`, true);
     augmentFn(fn, p5, `shared${pascalTypeName}`, function (name) {
       const shaderName = resolveShaderName(
         strandsContext,
@@ -1464,6 +1498,7 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
     });
 
     // Alias varying* as shared* for backward compatibility
+    p5._strandsSignatures.set(`varying${pascalTypeName}`, true);
     augmentFn(
       fn,
       p5,
@@ -1474,11 +1509,15 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
     for (const typeAlias of typeAliases) {
       // For compatibility, also alias uniformVec2 as uniformVector2, what we initially
       // documented these as
+      p5._strandsSignatures.set(`uniform${typeAlias}`, true);
       augmentFn(fn, p5, `uniform${typeAlias}`, fn[`uniform${pascalTypeName}`]);
+      p5._strandsSignatures.set(`varying${typeAlias}`, true);
       augmentFn(fn, p5, `varying${typeAlias}`, fn[`varying${pascalTypeName}`]);
+      p5._strandsSignatures.set(`shared${typeAlias}`, true);
       augmentFn(fn, p5, `shared${typeAlias}`, fn[`shared${pascalTypeName}`]);
     }
     const originalp5Fn = fn[typeInfo.fnName];
+    p5._strandsSignatures.set(typeInfo.fnName, true);
     augmentFn(fn, p5, typeInfo.fnName, function (...args) {
       if (strandsContext.active) {
         if (
@@ -1646,6 +1685,8 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
   }
 
   // Storage buffer uniform function for compute shaders
+  p5?._strandsSignatures?.set('uniformStorage', true);
+  p5?._strandsSignatures?.set('p5.uniformStorage', true);
   fn.uniformStorage = function (name, bufferOrSchema) {
     const shaderName = resolveShaderName(
       strandsContext,

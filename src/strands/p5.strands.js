@@ -125,7 +125,6 @@ function strands(p5, fn) {
     ctx.backend = backend;
     ctx.active = active;
     ctx.renderer = renderer;
-    ctx.baseShader = baseShader;
     ctx.previousFES = p5.disableFriendlyErrors;
     ctx.tempProps = [];
     ctx._noiseOctaves = null;
@@ -144,7 +143,7 @@ function strands(p5, fn) {
     // the pass is done since FES is switched off while it runs (see below).
     ctx.experimentalFeaturesUsed = new Set();
     if (active) {
-      p5.disableFriendlyErrors = true;
+      p5._isStrandsContextActive = true;
     }
   }
 
@@ -167,7 +166,6 @@ function strands(p5, fn) {
     ctx.backend = undefined;
     ctx.active = false;
     ctx.renderer = null;
-    ctx.baseShader = null;
     ctx.previousFES = p5.disableFriendlyErrors;
     ctx.tempProps = [];
     ctx._noiseOctaves = null;
@@ -193,7 +191,7 @@ function strands(p5, fn) {
    * @return {Error[]} Errors from temporary writes that could not be undone.
    */
   function deinitStrandsContext(ctx) {
-    p5.disableFriendlyErrors = ctx.previousFES;
+    p5._isStrandsContextActive = false;
     // Undo hooks, hook aliases and options.hook properties (incl. #8549's
     // p5.Graphics.prototype entries) exactly, newest first.
     const restoreErrors = restoreTemporaryProperties(ctx);
