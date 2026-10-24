@@ -1143,6 +1143,7 @@
     </tr>
     <tr>
       <td align="center" valign="top" width="16.66%"><a href="https://github.com/xsupremeyx"><img src="https://avatars.githubusercontent.com/u/86472828?v=4?s=64" width="64px;" alt="Yash Mishra"/><br /><sub><b>Yash Mishra</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=xsupremeyx" title="Code">💻</a></td>
+      <td align="center" valign="top" width="16.66%"><a href="https://backupdrill.com"><img src="https://avatars.githubusercontent.com/u/20788648?v=4?s=64" width="64px;" alt="Super Lede"/><br /><sub><b>Super Lede</b></sub></a><br /><a href="https://github.com/processing/p5.js/commits?author=supertj" title="Documentation">📖</a></td>
     </tr>
   </tbody>
 </table>
