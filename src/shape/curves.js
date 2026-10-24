@@ -199,6 +199,11 @@ function curves(p5, fn) {
 
     this._renderer.bezier(...args);
 
+    // Accessibility output
+    if (this._addAccsOutput()) {
+      this._accsOutput('bezier', args);
+    }
+
     return this;
   };
 
@@ -685,6 +690,11 @@ function curves(p5, fn) {
       return this;
     }
     this._renderer.spline(...args);
+
+    // Accessibility output
+    if (this._addAccsOutput()) {
+      this._accsOutput('spline', args);
+    }
 
     return this;
   };

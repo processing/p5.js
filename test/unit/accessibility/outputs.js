@@ -189,6 +189,213 @@ suite('outputs', function () {
         });
       });
     });
+
+    test('should create text output for bezier()', function () {
+      return new Promise(function (resolve, reject) {
+        expected =
+          '<li><a href="#myCanvasIDtextOutputshape0">red bezier</a>, at middle, covering 3% of the canvas.</li>';
+        new p5(function (p) {
+          p.setup = function () {
+            let cnv = p.createCanvas(100, 100);
+            cnv.id('myCanvasID');
+            p.textOutput();
+            p.fill(255, 0, 0);
+            p.bezier(10, 10, 30, 5, 60, 80, 80, 90);
+          };
+          p.draw = function () {
+            if (p.frameCount === 1) {
+              let actual = document.getElementById(
+                'myCanvasIDtextOutput_list'
+              ).innerHTML;
+              if (actual === expected) {
+                resolve();
+              } else {
+                reject(' expected: ' + expected + '  ---> found: ' + actual);
+              }
+              p.remove();
+            }
+          };
+        });
+      });
+    });
+
+    test('should create text output for spline()', function () {
+      return new Promise(function (resolve, reject) {
+        expected =
+          '<li><a href="#myCanvasIDtextOutputshape0">blue spline</a>, at middle, covering 4% of the canvas.</li>';
+        new p5(function (p) {
+          p.setup = function () {
+            let cnv = p.createCanvas(100, 100);
+            cnv.id('myCanvasID');
+            p.textOutput();
+            p.fill(0, 0, 255);
+            p.spline(10, 10, 30, 5, 60, 80, 80, 90);
+          };
+          p.draw = function () {
+            if (p.frameCount === 1) {
+              let actual = document.getElementById(
+                'myCanvasIDtextOutput_list'
+              ).innerHTML;
+              if (actual === expected) {
+                resolve();
+              } else {
+                reject(' expected: ' + expected + '  ---> found: ' + actual);
+              }
+              p.remove();
+            }
+          };
+        });
+      });
+    });
+
+    test('should create text output for spline() with ends EXCLUDE', function () {
+      return new Promise(function (resolve, reject) {
+        expected =
+          '<li><a href="#myCanvasIDtextOutputshape0">blue spline</a>, at middle, covering 0% of the canvas.</li>';
+        new p5(function (p) {
+          p.setup = function () {
+            let cnv = p.createCanvas(100, 100);
+            cnv.id('myCanvasID');
+            p.textOutput();
+            p.splineProperty('ends', p.EXCLUDE);
+            p.fill(0, 0, 255);
+            p.spline(10, 10, 30, 5, 60, 80, 80, 90);
+          };
+          p.draw = function () {
+            if (p.frameCount === 1) {
+              let actual = document.getElementById(
+                'myCanvasIDtextOutput_list'
+              ).innerHTML;
+              if (actual === expected) {
+                resolve();
+              } else {
+                reject(' expected: ' + expected + '  ---> found: ' + actual);
+              }
+              p.remove();
+            }
+          };
+        });
+      });
+    });
+
+    test('should create text output for spline() with non-zero tightness', function () {
+      return new Promise(function (resolve, reject) {
+        expected =
+          '<li><a href="#myCanvasIDtextOutputshape0">blue spline</a>, at middle, covering 3% of the canvas.</li>';
+        new p5(function (p) {
+          p.setup = function () {
+            let cnv = p.createCanvas(100, 100);
+            cnv.id('myCanvasID');
+            p.textOutput();
+            p.splineProperty('tightness', 2);
+            p.fill(0, 0, 255);
+            p.spline(10, 10, 30, 5, 60, 80, 80, 90);
+          };
+          p.draw = function () {
+            if (p.frameCount === 1) {
+              let actual = document.getElementById(
+                'myCanvasIDtextOutput_list'
+              ).innerHTML;
+              if (actual === expected) {
+                resolve();
+              } else {
+                reject(' expected: ' + expected + '  ---> found: ' + actual);
+              }
+              p.remove();
+            }
+          };
+        });
+      });
+    });
+
+    test('should create text output for spline() with noFill (stroked)', function () {
+      return new Promise(function (resolve, reject) {
+        expected =
+          '<li><a href="#myCanvasIDtextOutputshape0">black spline</a>, at middle, covering 0% of the canvas.</li>';
+        new p5(function (p) {
+          p.setup = function () {
+            let cnv = p.createCanvas(100, 100);
+            cnv.id('myCanvasID');
+            p.textOutput();
+            p.noFill();
+            p.stroke(0);
+            p.spline(10, 10, 30, 5, 60, 80, 80, 90);
+          };
+          p.draw = function () {
+            if (p.frameCount === 1) {
+              let actual = document.getElementById(
+                'myCanvasIDtextOutput_list'
+              ).innerHTML;
+              if (actual === expected) {
+                resolve();
+              } else {
+                reject(' expected: ' + expected + '  ---> found: ' + actual);
+              }
+              p.remove();
+            }
+          };
+        });
+      });
+    });
+
+    test('should create text output for bezier() with noFill (stroked)', function () {
+      return new Promise(function (resolve, reject) {
+        expected =
+          '<li><a href="#myCanvasIDtextOutputshape0">black bezier</a>, at middle, covering 0% of the canvas.</li>';
+        new p5(function (p) {
+          p.setup = function () {
+            let cnv = p.createCanvas(100, 100);
+            cnv.id('myCanvasID');
+            p.textOutput();
+            p.noFill();
+            p.stroke(0);
+            p.bezier(10, 10, 30, 5, 60, 80, 80, 90);
+          };
+          p.draw = function () {
+            if (p.frameCount === 1) {
+              let actual = document.getElementById(
+                'myCanvasIDtextOutput_list'
+              ).innerHTML;
+              if (actual === expected) {
+                resolve();
+              } else {
+                reject(' expected: ' + expected + '  ---> found: ' + actual);
+              }
+              p.remove();
+            }
+          };
+        });
+      });
+    });
+
+    test('should maintain consistent area for bezier() when translated', function () {
+      return new Promise(function (resolve, reject) {
+        expected =
+          '<li><a href="#myCanvasIDtextOutputshape0">red bezier</a>, at mid right, covering 3% of the canvas.</li>';
+        new p5(function (p) {
+          p.setup = function () {
+            let cnv = p.createCanvas(100, 100);
+            cnv.id('myCanvasID');
+            p.textOutput();
+            p.fill(255, 0, 0);
+            p.bezier(60, 10, 80, 5, 110, 80, 130, 90);
+          };
+          p.draw = function () {
+            if (p.frameCount === 1) {
+              let actual = document.getElementById(
+                'myCanvasIDtextOutput_list'
+              ).innerHTML;
+              if (actual === expected) {
+                resolve();
+              } else {
+                reject(' expected: ' + expected + '  ---> found: ' + actual);
+              }
+              p.remove();
+            }
+          };
+        });
+      });
+    });
   });
 
   suite('p5.prototype.gridOutput', function () {
@@ -335,6 +542,83 @@ suite('outputs', function () {
               } else {
                 reject(' expected: ' + expected + '  ---> found: ' + actual);
               }
+              p.remove();
+            }
+          };
+        });
+      });
+    });
+
+    test('should create text output for bezier()', function () {
+      return new Promise(function (resolve, reject) {
+        expected = 'red bezier, location = middle, area = 3 %';
+        new p5(function (p) {
+          p.setup = function () {
+            let cnv = p.createCanvas(100, 100);
+            cnv.id('myCanvasID');
+          };
+          p.draw = function () {
+            p.gridOutput();
+            p.fill(255, 0, 0);
+            p.bezier(10, 10, 30, 5, 60, 80, 80, 90);
+            if (p.frameCount === 2) {
+              let actual = document.getElementById(
+                'myCanvasIDgridOutputshape0'
+              ).innerHTML;
+              if (actual === expected) {
+                resolve();
+              } else {
+                reject(' expected: ' + expected + '  ---> found: ' + actual);
+              }
+              p.remove();
+            }
+          };
+        });
+      });
+    });
+
+    test('should create text output for spline()', function () {
+      return new Promise(function (resolve, reject) {
+        expected = 'blue spline, location = middle, area = 4 %';
+        new p5(function (p) {
+          p.setup = function () {
+            let cnv = p.createCanvas(100, 100);
+            cnv.id('myCanvasID');
+          };
+          p.draw = function () {
+            p.gridOutput();
+            p.fill(0, 0, 255);
+            p.spline(10, 10, 30, 5, 60, 80, 80, 90);
+            if (p.frameCount === 2) {
+              let actual = document.getElementById(
+                'myCanvasIDgridOutputshape0'
+              ).innerHTML;
+              if (actual === expected) {
+                resolve();
+              } else {
+                reject(' expected: ' + expected + '  ---> found: ' + actual);
+              }
+              p.remove();
+            }
+          };
+        });
+      });
+    });
+
+
+    test('should not crash gridOutput for off-canvas shape with negative coordinates', function () {
+      return new Promise(function (resolve) {
+        new p5(function (p) {
+          p.setup = function () {
+            let cnv = p.createCanvas(100, 100);
+            cnv.id('myCanvasID');
+          };
+          p.draw = function () {
+            p.gridOutput();
+            p.fill(255, 0, 0);
+            p.circle(-50, -50, 20);
+            if (p.frameCount === 2) {
+              resolve();
               p.remove();
             }
           };
