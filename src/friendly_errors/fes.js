@@ -1,57 +1,59 @@
-import { TL } from "tl-util";
-import enTranslations from "../../translations/en/extracted.json" with { type: "json" };
-import { VERSION } from "../core/constants";
-TL.addTranslations(["en", "en-US", "en-GB"], enTranslations);
+import { TL } from 'tl-util';
+import enTranslations from '../../translations/en/extracted.json' with { type: 'json' };
+import { VERSION } from '../core/constants';
+TL.addTranslations(['en', 'en-US', 'en-GB'], enTranslations);
 
 const defaultLanguage = navigator.language;
-let translationPromise;
-if (storageAvailable("localStorage")) {
-  const localTranslation = window.localStorage.getItem(`${defaultLanguage}-${VERSION}`);
-  translationPromise = new Promise(async (resolve) => {
-    if (localTranslation) {
-      TL.addTranslations(defaultLanguage, JSON.parse(localTranslation));
-      resolve();
-    } else {
+const localStorageAvailable = storageAvailable('localStorage');
+const localTranslation = localStorageAvailable
+  ? window.localStorage.getItem(`${defaultLanguage}-${VERSION}`)
+  : null;
+let translationPromise = new Promise(async resolve => {
+  if (localTranslation) {
+    TL.addTranslations(defaultLanguage, JSON.parse(localTranslation));
+    resolve();
+  } else {
+    try {
+      // Locally provided translation file has first priority
+      let translationResponse = await fetch(`./${defaultLanguage}.json`);
+      if (!translationResponse.ok) {
+        throw new Error('Cannot reach local file');
+      }
+
+      const translation = await translationResponse.json();
+      TL.addTranslations(defaultLanguage, translation);
+      if (localStorageAvailable) {
+        window.localStorage.setItem(
+          `${defaultLanguage}-${VERSION}`,
+          JSON.stringify(translation)
+        );
+      }
+    } catch {
       try {
-        // Locally provided translation file has first priority
-        let translationResponse = await fetch(`./${defaultLanguage}.json`);
+        // CDN hosted file will be loaded if local is not present
+        let translationResponse = await fetch(
+          `https://cdn.jsdelivr.net/npm/p5@${VERSION}/translations/${defaultLanguage}/extracted.json`
+        );
         if (!translationResponse.ok) {
-          throw new Error("Cannot reach local file");
+          throw new Error('Cannot reach CDN file');
         }
 
         const translation = await translationResponse.json();
         TL.addTranslations(defaultLanguage, translation);
-        window.localStorage.setItem(
-          `${defaultLanguage}-${VERSION}`,
-          JSON.stringify(translation),
-        );
-      } catch {
-        try {
-          // CDN hosted file will be loaded if local is not present
-          let translationResponse = await fetch(
-            `https://cdn.jsdelivr.net/npm/p5@${VERSION}/translations/${defaultLanguage}/extracted.json`,
-          );
-          if (!translationResponse.ok) {
-            throw new Error("Cannot reach CDN file");
-          }
-
-          const translation = await translationResponse.json();
-          TL.addTranslations(defaultLanguage, translation);
+        if (localStorageAvailable) {
           window.localStorage.setItem(
             `${defaultLanguage}-${VERSION}`,
-            JSON.stringify(translation),
+            JSON.stringify(translation)
           );
-        } catch {
-          // If CDN also cannot be reached, do nothing
         }
-      } finally {
-        resolve();
+      } catch {
+        // If CDN also cannot be reached, do nothing
       }
+    } finally {
+      resolve();
     }
-  });
-} else {
-  translationPromise = Promise.resolve();
-}
+  }
+});
 
 export class FES {
   static languageCode = navigator.languages;
@@ -66,10 +68,10 @@ export class FES {
     const styleStrings = [];
     const translation = TL.tl(
       strings,
-      ...values.map((value) => {
+      ...values.map(value => {
         if (value instanceof StyledMessage) {
           const ret = `%c${value.message.toString(FES.languageCode)}%c`;
-          styleStrings.push(value.styleString, "");
+          styleStrings.push(value.styleString, '');
           return ret;
         } else if (value?.message && value?.styleStrings) {
           styleStrings.push(...value.styleStrings);
@@ -77,19 +79,19 @@ export class FES {
         } else {
           return value;
         }
-      }),
+      })
     );
     const results = translation.toString(FES.languageCode);
 
-    const executor = (options) => {
+    const executor = options => {
       const { prefix } = Object.assign(
         {
-          prefix: TL.tl`🌸 p5.js says: `,
+          prefix: TL.tl`🌸 p5.js says: `
         },
-        options,
+        options
       );
 
-      let footer = "";
+      let footer = '';
       if (options?.reference) {
         footer += mapToReference(results, options.reference);
       }
@@ -97,7 +99,7 @@ export class FES {
       if (prefix instanceof TL) {
         console[method](
           prefix.toString(FES.languageCode) + results + footer,
-          ...styleStrings,
+          ...styleStrings
         );
       } else if (prefix === false) {
         console[method](results + footer, ...styleStrings);
@@ -117,23 +119,23 @@ export class FES {
   }
 
   static log(strings, ...values) {
-    return FES.#printMessage("log", strings, ...values);
+    return FES.#printMessage('log', strings, ...values);
   }
 
   static debug(strings, ...values) {
-    return FES.#printMessage("debug", strings, ...values);
+    return FES.#printMessage('debug', strings, ...values);
   }
 
   static error(strings, ...values) {
-    return FES.#printMessage("error", strings, ...values);
+    return FES.#printMessage('error', strings, ...values);
   }
 
   static info(strings, ...values) {
-    return FES.#printMessage("info", strings, ...values);
+    return FES.#printMessage('info', strings, ...values);
   }
 
   static warn(strings, ...values) {
-    return FES.#printMessage("warn", strings, ...values);
+    return FES.#printMessage('warn', strings, ...values);
   }
 
   // Just an alias to TL
@@ -150,14 +152,14 @@ export class FES {
       TL.tl`seventh`,
       TL.tl`eighth`,
       TL.tl`ninth`,
-      TL.tl`tenth`,
+      TL.tl`tenth`
     ],
     types: {
       string: TL.tl`string`,
       boolean: TL.tl`boolean`,
       number: TL.tl`number`,
-      function: TL.tl`function`,
-    },
+      function: TL.tl`function`
+    }
   };
 }
 
@@ -179,7 +181,7 @@ export function style(message, mod) {
   const styleString = Object.entries(mod).reduce((acc, [key, val]) => {
     acc += `${key}: ${val};`;
     return acc;
-  }, "");
+  }, '');
   if (message instanceof StyledMessage) {
     message.styleString += styleString;
     return message;
@@ -189,23 +191,23 @@ export function style(message, mod) {
 }
 
 export function red(message) {
-  return style(message, { color: "red" });
+  return style(message, { color: 'red' });
 }
 
 export function white(message) {
-  return style(message, { color: "white" });
+  return style(message, { color: 'white' });
 }
 
 export function bgBlack(message) {
-  return style(message, { background: "black" });
+  return style(message, { background: 'black' });
 }
 
 export function bgGrey(message) {
-  return style(message, { background: "grey" });
+  return style(message, { background: 'grey' });
 }
 
 export function underline(message) {
-  return style(message, { "text-decoration": "underline" });
+  return style(message, { 'text-decoration': 'underline' });
 }
 
 /**
@@ -220,19 +222,19 @@ export function underline(message) {
  * @returns {String}
  */
 function mapToReference(message, func) {
-  let msgWithReference = "";
-  if (func == null || func.substring(0, 4) === "load") {
+  let msgWithReference = '';
+  if (func == null || func.substring(0, 4) === 'load') {
     msgWithReference = message;
   } else {
-    const methodParts = func.split(".");
+    const methodParts = func.split('.');
     const referenceSection =
-      methodParts.length > 1 ? `${methodParts[0]}.${methodParts[1]}` : "p5";
+      methodParts.length > 1 ? `${methodParts[0]}.${methodParts[1]}` : 'p5';
 
     const funcName =
-      methodParts.length === 1 ? func : methodParts.slice(2).join("/");
+      methodParts.length === 1 ? func : methodParts.slice(2).join('/');
 
     //Whenever func having p5.[Class] is encountered, we need to have the error link as mentioned below else different link
-    if (funcName.startsWith("p5.")) {
+    if (funcName.startsWith('p5.')) {
       msgWithReference = ` (https://p5js.org/reference/${referenceSection}.${funcName})`;
     } else {
       msgWithReference = ` (https://p5js.org/reference/${referenceSection}/${funcName})`;
@@ -247,14 +249,14 @@ function storageAvailable(type) {
   let storage;
   try {
     storage = window[type];
-    const x = "__storage_test__";
+    const x = '__storage_test__';
     storage.setItem(x, x);
     storage.removeItem(x);
     return true;
   } catch (e) {
     return (
       e instanceof DOMException &&
-      e.name === "QuotaExceededError" &&
+      e.name === 'QuotaExceededError' &&
       // acknowledge QuotaExceededError only if there's something already stored
       storage &&
       storage.length !== 0
@@ -267,7 +269,7 @@ export { TL };
 
 export default function (p5, fn, lifecycles) {
   p5.FES = FES;
-  Object.defineProperty(p5.FES, "disableFriendlyErrors", {
-    get: () => p5.disableFriendlyErrors,
+  Object.defineProperty(p5.FES, 'disableFriendlyErrors', {
+    get: () => p5.disableFriendlyErrors
   });
 }
