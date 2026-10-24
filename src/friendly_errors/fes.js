@@ -6,7 +6,7 @@ TL.addTranslations(["en", "en-US", "en-GB"], enTranslations);
 const defaultLanguage = navigator.language;
 let translationPromise;
 if (storageAvailable("localStorage")) {
-  const localTranslation = window.localStorage.getItem(defaultLanguage);
+  const localTranslation = window.localStorage.getItem(`${defaultLanguage}-${VERSION}`);
   translationPromise = new Promise(async (resolve) => {
     if (localTranslation) {
       TL.addTranslations(defaultLanguage, JSON.parse(localTranslation));
@@ -22,7 +22,7 @@ if (storageAvailable("localStorage")) {
         const translation = await translationResponse.json();
         TL.addTranslations(defaultLanguage, translation);
         window.localStorage.setItem(
-          defaultLanguage,
+          `${defaultLanguage}-${VERSION}`,
           JSON.stringify(translation),
         );
       } catch {
@@ -38,7 +38,7 @@ if (storageAvailable("localStorage")) {
           const translation = await translationResponse.json();
           TL.addTranslations(defaultLanguage, translation);
           window.localStorage.setItem(
-            defaultLanguage,
+            `${defaultLanguage}-${VERSION}`,
             JSON.stringify(translation),
           );
         } catch {
