@@ -772,33 +772,170 @@ class MediaElement extends Element {
       this._frameOnCanvas = this._pInst.frameCount;
     }
   }
-  loadPixels(...args) {
+  loadPixels() {
     this._ensureCanvas();
-    return this._loadPixels(...args);
+    const pixelsState = this._pixelsState;
+    const pd = this._pixelDensity;
+    const w = this.width * pd;
+    const h = this.height * pd;
+    const imageData = this.drawingContext.getImageData(0, 0, w, h);
+    pixelsState.imageData = imageData;
+    this.pixels = pixelsState.pixels = imageData.data;
+    this.setModified(true);
   }
   updatePixels(x, y, w, h) {
     if (this.loadedmetadata) {
       // wait for metadata
       this._ensureCanvas();
-      this._updatePixels(x, y, w, h);
+      const pixelsState = this._pixelsState;
+      const pd = this._pixelDensity;
+      if (
+        x === undefined &&
+        y === undefined &&
+        w === undefined &&
+        h === undefined
+      ) {
+        x = 0;
+        y = 0;
+        w = this.width;
+        h = this.height;
+      }
+      x *= pd;
+      y *= pd;
+      w *= pd;
+      h *= pd;
+
+      if (pixelsState.imageData) {
+        this.drawingContext.putImageData(pixelsState.imageData, 0, 0, x, y, w, h);
+      }
     }
     this.setModified(true);
     return this;
   }
-  get(...args) {
+  get(x, y, w, h) {
     this._ensureCanvas();
-    return this._get(...args);
+    const pixelsState = this._pixelsState;
+    const pd = this._pixelDensity;
+    const canvas = this.canvas;
+
+    if (typeof x === 'undefined' && typeof y === 'undefined') {
+      // get()
+      x = y = 0;
+      w = pixelsState.width;
+      h = pixelsState.height;
+    } else {
+      x *= pd;
+      y *= pd;
+
+      if (typeof w === 'undefined' && typeof h === 'undefined') {
+        // get(x,y)
+        if (x < 0 || y < 0 || x >= canvas.width || y >= canvas.height) {
+          return [0, 0, 0, 0];
+        }
+
+        return this._getPixel(x, y);
+      }
+      // get(x,y,w,h)
+    }
+
+    if (this._pInst && typeof this._pInst.createImage === 'function') {
+      const region = this._pInst.createImage(w * pd, h * pd);
+      region.pixelDensity(pd);
+      region.canvas
+        .getContext('2d')
+        .drawImage(canvas, x, y, w * pd, h * pd, 0, 0, w * pd, h * pd);
+      return region;
+    }
+
+    const regionCanvas = document.createElement('canvas');
+    regionCanvas.width = w * pd;
+    regionCanvas.height = h * pd;
+    regionCanvas
+      .getContext('2d')
+      .drawImage(canvas, x, y, w * pd, h * pd, 0, 0, w * pd, h * pd);
+    return regionCanvas;
   }
-  _getPixel(...args) {
+  _getPixel(x, y) {
     this.loadPixels();
-    return this._imageGetPixel(...args);
+    const imageData = this.drawingContext.getImageData(x, y, 1, 1).data;
+    return [
+      imageData[0],
+      imageData[1],
+      imageData[2],
+      imageData[3]
+    ];
   }
 
   set(x, y, imgOrCol) {
     if (this.loadedmetadata) {
       // wait for metadata
       this._ensureCanvas();
-      this._set(x, y, imgOrCol);
+      // round down to get integer numbers
+      x = Math.floor(x);
+      y = Math.floor(y);
+      const pixelsState = this._pixelsState;
+      if (imgOrCol && (imgOrCol.canvas || imgOrCol.elt)) {
+        const srcCanvas = imgOrCol.canvas || imgOrCol.elt;
+        this.drawingContext.save();
+        this.drawingContext.setTransform(1, 0, 0, 1, 0, 0);
+        this.drawingContext.scale(this._pixelDensity, this._pixelDensity);
+        this.drawingContext.clearRect(x, y, imgOrCol.width, imgOrCol.height);
+        this.drawingContext.drawImage(srcCanvas, x, y);
+        this.drawingContext.restore();
+      } else {
+        let r = 0,
+          g = 0,
+          b = 0,
+          a = 0;
+        let idx =
+          4 *
+          (y * this._pixelDensity * (this.width * this._pixelDensity) +
+            x * this._pixelDensity);
+        if (!pixelsState.imageData) {
+          pixelsState.loadPixels();
+        }
+        if (typeof imgOrCol === 'number') {
+          if (idx < pixelsState.pixels.length) {
+            r = imgOrCol;
+            g = imgOrCol;
+            b = imgOrCol;
+            a = 255;
+          }
+        } else if (Array.isArray(imgOrCol)) {
+          if (imgOrCol.length < 4) {
+            throw new Error('pixel array must be of the form [R, G, B, A]');
+          }
+          if (idx < pixelsState.pixels.length) {
+            r = imgOrCol[0];
+            g = imgOrCol[1];
+            b = imgOrCol[2];
+            a = imgOrCol[3];
+          }
+        } else if (imgOrCol?.isColor) {
+          if (idx < pixelsState.pixels.length) {
+            [r, g, b, a] = imgOrCol._getRGBA([255, 255, 255, 255]);
+          }
+        } else if (imgOrCol && imgOrCol.levels) {
+          if (idx < pixelsState.pixels.length) {
+            r = imgOrCol.levels[0];
+            g = imgOrCol.levels[1];
+            b = imgOrCol.levels[2];
+            a = imgOrCol.levels[3];
+          }
+        }
+        for (let i = 0; i < this._pixelDensity; i++) {
+          for (let j = 0; j < this._pixelDensity; j++) {
+            idx =
+              4 *
+              ((y * this._pixelDensity + j) * this.width * this._pixelDensity +
+                (x * this._pixelDensity + i));
+            pixelsState.pixels[idx] = r;
+            pixelsState.pixels[idx + 1] = g;
+            pixelsState.pixels[idx + 2] = b;
+            pixelsState.pixels[idx + 3] = a;
+          }
+        }
+      }
       this.setModified(true);
     }
   }
@@ -807,12 +944,106 @@ class MediaElement extends Element {
     if (args[0] && typeof args[0]._ensureCanvas === 'function') {
       args[0]._ensureCanvas();
     }
-    this._copy(...args);
+    let srcImage, sx, sy, sw, sh, dx, dy, dw, dh;
+    if (args.length === 9) {
+      srcImage = args[0];
+      sx = args[1];
+      sy = args[2];
+      sw = args[3];
+      sh = args[4];
+      dx = args[5];
+      dy = args[6];
+      dw = args[7];
+      dh = args[8];
+    } else if (args.length === 8) {
+      srcImage = this;
+      sx = args[0];
+      sy = args[1];
+      sw = args[2];
+      sh = args[3];
+      dx = args[4];
+      dy = args[5];
+      dw = args[6];
+      dh = args[7];
+    } else {
+      throw new Error('Signature not supported');
+    }
+
+    this._copyHelper(this, srcImage, sx, sy, sw, sh, dx, dy, dw, dh);
   }
-  mask(...args) {
+  _copyHelper(dstImage, srcImage, sx, sy, sw, sh, dx, dy, dw, dh) {
+    const srcCanvas = srcImage.canvas || srcImage.elt;
+    const s = srcCanvas ? srcCanvas.width / srcImage.width : 1;
+    let sxMod = 0;
+    let syMod = 0;
+    if (srcImage._renderer && srcImage._renderer.isP3D) {
+      sxMod = srcImage.width / 2;
+      syMod = srcImage.height / 2;
+    }
+    if (dstImage._renderer && dstImage._renderer.isP3D) {
+      dstImage.push();
+      dstImage.resetMatrix();
+      dstImage.noLights();
+      dstImage.blendMode(dstImage.BLEND);
+      dstImage.imageMode(dstImage.CORNER);
+      dstImage._renderer.image(
+        srcImage,
+        sx + sxMod,
+        sy + syMod,
+        sw,
+        sh,
+        dx,
+        dy,
+        dw,
+        dh
+      );
+      dstImage.pop();
+    } else if (srcCanvas) {
+      dstImage.drawingContext.drawImage(
+        srcCanvas,
+        s * (sx + sxMod),
+        s * (sy + syMod),
+        s * sw,
+        s * sh,
+        dx,
+        dy,
+        dw,
+        dh
+      );
+    }
+  }
+  mask(p5Image) {
     this.loadPixels();
+    if (p5Image === undefined) {
+      p5Image = this;
+    }
+    if (p5Image && typeof p5Image._ensureCanvas === 'function') {
+      p5Image._ensureCanvas();
+    }
+    const currBlend = this.drawingContext.globalCompositeOperation;
+
+    let imgScaleFactor = this._pixelDensity;
+    let maskScaleFactor = 1;
+    if (p5Image._renderer) {
+      maskScaleFactor = p5Image._pInst?._renderer?._pixelDensity || 1;
+    }
+
+    const copyArgs = [
+      p5Image,
+      0,
+      0,
+      maskScaleFactor * p5Image.width,
+      maskScaleFactor * p5Image.height,
+      0,
+      0,
+      imgScaleFactor * this.width,
+      imgScaleFactor * this.height
+    ];
+
+    this.drawingContext.globalCompositeOperation = 'destination-in';
+    this.copy(...copyArgs);
+    this.drawingContext.globalCompositeOperation = currBlend;
     this.setModified(true);
-    this._mask(...args);
   }
   /**
    * helper method for web GL mode to figure out if the element
@@ -1720,23 +1951,6 @@ function media(p5, fn) {
    * }
    */
   p5.MediaElement = MediaElement;
-
-  if (p5.Image) {
-    MediaElement.prototype._loadPixels = p5.Image.prototype.loadPixels;
-    MediaElement.prototype._updatePixels = p5.Image.prototype.updatePixels;
-    MediaElement.prototype._get = p5.Image.prototype.get;
-    MediaElement.prototype._imageGetPixel = p5.Image.prototype._getPixel;
-    MediaElement.prototype._set = p5.Image.prototype.set;
-    MediaElement.prototype._copy = p5.Image.prototype.copy;
-    MediaElement.prototype._copyHelper = p5.Image.prototype._copyHelper;
-    MediaElement.prototype._mask = p5.Image.prototype.mask;
-  } else if (p5.Renderer2D) {
-    MediaElement.prototype._loadPixels = p5.Renderer2D.prototype.loadPixels;
-    MediaElement.prototype._updatePixels = p5.Renderer2D.prototype.updatePixels;
-    MediaElement.prototype._get = p5.Renderer2D.prototype.get;
-    MediaElement.prototype._imageGetPixel = p5.Renderer2D.prototype._getPixel;
-    MediaElement.prototype._set = p5.Renderer2D.prototype.set;
-  }
 
   // Patch MediaElement to give it access to fn, which p5.sound may attach things to
   // if present in a sketch
