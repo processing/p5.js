@@ -877,6 +877,18 @@ suite('DOM', function () {
         assert.isTrue(testElement.option(option).disabled);
       }
     });
+
+    test('calling disable(false) should re-enable all the radio inputs', function () {
+      const options = ['Monday', 'Friday', 'Saturday', 'Sunday'];
+      const testElement = mockP5Prototype.createRadio();
+      for (const option of options) testElement.option(option);
+
+      testElement.disable();
+      testElement.disable(false);
+      for (const option of options) {
+        assert.isFalse(testElement.option(option).disabled);
+      }
+    });
   });
 
   suite('p5.prototype.createColorPicker', function () {
