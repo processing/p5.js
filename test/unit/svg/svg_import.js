@@ -1151,6 +1151,95 @@ suite('<defs> and <use> elements', function () {
     assert.closeTo(node.state.transform.d, 1, 0.001);
   });
 
+  test('use respects preserveAspectRatio=xMinYMin meet', function () {
+    const record = createSVG(`
+    <svg xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <symbol id="left" viewBox="0 0 100 100"
+                preserveAspectRatio="xMinYMin meet">
+          <rect x="0" y="0" width="100" height="100" />
+        </symbol>
+      </defs>
+      <use href="#left" width="200" height="100" />
+    </svg>
+  `);
+
+    const scope = firstChild(record);
+    const node = scope.children[0];
+
+    assert.closeTo(node.state.transform.a, 1, 0.001);
+    assert.closeTo(node.state.transform.d, 1, 0.001);
+    assert.closeTo(node.state.transform.e, 0, 0.001);
+    assert.closeTo(node.state.transform.f, 0, 0.001);
+  });
+
+  const meetAlignments = [
+    ['xMinYMin', 0, 0],
+    ['xMidYMin', 0.5, 0],
+    ['xMaxYMin', 1, 0],
+    ['xMinYMid', 0, 0.5],
+    ['xMidYMid', 0.5, 0.5],
+    ['xMaxYMid', 1, 0.5],
+    ['xMinYMax', 0, 1],
+    ['xMidYMax', 0.5, 1],
+    ['xMaxYMax', 1, 1]
+  ];
+
+  for (const [alignment, alignX, alignY] of meetAlignments) {
+    for (const [width, height] of [[200, 100], [100, 200]]) {
+      test(`use respects ${alignment} meet in ${width}x${height}`, function () {
+        const record = createSVG(`
+        <svg xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <symbol id="aligned" viewBox="0 0 100 100"
+                    preserveAspectRatio="${alignment} meet">
+              <rect x="0" y="0" width="100" height="100" />
+            </symbol>
+          </defs>
+          <use href="#aligned" width="${width}" height="${height}" />
+        </svg>
+      `);
+
+        const node = firstChild(record).children[0];
+        const scale = Math.min(width / 100, height / 100);
+
+        assert.closeTo(node.state.transform.a, scale, 0.001);
+        assert.closeTo(node.state.transform.d, scale, 0.001);
+        assert.closeTo(
+          node.state.transform.e,
+          (width - 100 * scale) * alignX,
+          0.001
+        );
+        assert.closeTo(
+          node.state.transform.f,
+          (height - 100 * scale) * alignY,
+          0.001
+        );
+      });
+    }
+  }
+
+  test('use meet alignment accounts for viewBox origin', function () {
+    const record = createSVG(`
+    <svg xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <symbol id="offset" viewBox="10 20 100 100"
+                preserveAspectRatio="xMaxYMax meet">
+          <rect x="10" y="20" width="100" height="100" />
+        </symbol>
+      </defs>
+      <use href="#offset" width="200" height="100" />
+    </svg>
+  `);
+
+    const node = firstChild(record).children[0];
+
+    assert.closeTo(node.state.transform.a, 1, 0.001);
+    assert.closeTo(node.state.transform.d, 1, 0.001);
+    assert.closeTo(node.state.transform.e, 90, 0.001);
+    assert.closeTo(node.state.transform.f, -20, 0.001);
+  });
+
   test('use with preserveAspectRatio=none accounts for viewBox origin', function () {
     const record = createSVG(`
       <svg xmlns="http://www.w3.org/2000/svg">
