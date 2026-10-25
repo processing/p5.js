@@ -349,6 +349,26 @@ function replaceIdentifierReferences(node, oldName, newName) {
   return replaceInNode(node);
 }
 
+// Track the operand while evaluating it once in its original order.
+function wrapExpressionOperand(operator, expression) {
+  return {
+    type: 'CallExpression',
+    callee: { type: 'Identifier', name: '__p5.strandsOperand' },
+    arguments: [
+      { type: 'Literal', value: operator },
+      {
+        type: 'ArrowFunctionExpression',
+        id: null,
+        params: [],
+        body: expression,
+        expression: true,
+        generator: false,
+        async: false
+      }
+    ]
+  };
+}
+
 // Shared handler for both BinaryExpression and LogicalExpression —
 // both follow the same operator-to-method-call transformation pattern.
 function transformBinaryOrLogical(node, state, ancestors) {
@@ -360,6 +380,13 @@ function transformBinaryOrLogical(node, state, ancestors) {
     )
   ) {
     return;
+  }
+  if (
+    node.type === 'LogicalExpression' &&
+    (node.operator === '&&' || node.operator === '||')
+  ) {
+    node.left = wrapExpressionOperand(node.operator, node.left);
+    node.right = wrapExpressionOperand(node.operator, node.right);
   }
   node.left = {
     type: 'CallExpression',
@@ -769,6 +796,11 @@ const ASTCallbacks = {
     const unsafeTypes = ['Literal', 'ArrayExpression', 'Identifier'];
     if (node.operator !== '=') {
       const methodName = replaceBinaryOperator(node.operator.replace('=', ''));
+      // Guard the RHS of logical assignments without wrapping the target.
+      const right =
+        node.operator === '&&=' || node.operator === '||='
+          ? wrapExpressionOperand(node.operator, node.right)
+          : node.right;
       const rightReplacementNode = {
         type: 'CallExpression',
         callee: {
@@ -788,7 +820,7 @@ const ASTCallbacks = {
             name: methodName
           }
         },
-        arguments: [node.right]
+        arguments: [right]
       };
       node.operator = '=';
       node.right = rightReplacementNode;
@@ -857,11 +889,10 @@ const ASTCallbacks = {
     ) {
       return;
     }
-    // Transform condition ? consequent : alternate
-    // into __p5.strandsTernary(condition, consequent, alternate)
+    // Lower ?: to strandsTernary, guarding branches but not the condition.
     const test = node.test;
-    const consequent = node.consequent;
-    const alternate = node.alternate;
+    const consequent = wrapExpressionOperand('?:', node.consequent);
+    const alternate = wrapExpressionOperand('?:', node.alternate);
     node.type = 'CallExpression';
     node.callee = { type: 'Identifier', name: '__p5.strandsTernary' };
     node.arguments = [test, consequent, alternate];
