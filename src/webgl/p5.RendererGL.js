@@ -36,6 +36,7 @@ import imageLightVert from './shaders/imageLight.vert';
 import imageLightDiffusedFrag from './shaders/imageLightDiffused.frag';
 import imageLightSpecularFrag from './shaders/imageLightSpecular.frag';
 import filterBaseFrag from './shaders/filters/base.frag';
+import colorFieldBaseFrag from './shaders/field/base.frag';
 
 const { lineDefs } = getStrokeDefs((n, v) => `#define ${n} ${v}\n`);
 
@@ -55,7 +56,8 @@ const defaultShaders = {
   imageLightDiffusedFrag,
   imageLightSpecularFrag,
   filterBaseVert,
-  filterBaseFrag
+  filterBaseFrag,
+  colorFieldBaseFrag
 };
 for (const key in defaultShaders) {
   defaultShaders[key] = webgl2CompatibilityShader + defaultShaders[key];
@@ -922,6 +924,27 @@ class RendererGL extends Renderer3D {
       );
     }
     return this._baseFilterShader;
+  }
+
+  baseColorFieldShader() {
+    if (!this._baseColorFieldShader) {
+      // Reuses the filter vertex shader so that a field is drawn through the
+      // same (default) camera setup as filter()
+      this._baseColorFieldShader = new Shader(
+        this,
+        this._webGL2CompatibilityPrefix('vert', 'highp') +
+          defaultShaders.filterBaseVert,
+        this._webGL2CompatibilityPrefix('frag', 'highp') +
+          defaultShaders.colorFieldBaseFrag,
+        {
+          vertex: {},
+          fragment: {
+            'FieldInputs getField': '(FieldInputs inputs) { return inputs; }'
+          }
+        }
+      );
+    }
+    return this._baseColorFieldShader;
   }
 
   _webGL2CompatibilityPrefix(shaderType, floatPrecision) {

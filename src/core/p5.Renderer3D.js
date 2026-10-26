@@ -1160,6 +1160,25 @@ export class Renderer3D extends Renderer {
     this.pop();
   }
 
+  colorField(fieldShader) {
+    // Draws into whatever is currently being drawn to (the canvas, or the
+    // active framebuffer). Unlike filter(), nothing is read back from the
+    // target, so no intermediate framebuffer is needed.
+    const target = this.activeFramebuffer() || this;
+    this.push();
+    this.states.setValue('strokeColor', null);
+    target.filterCamera._resize();
+    this.setCamera(target.filterCamera);
+    this.resetMatrix();
+    this.clearDepth();
+    this.noLights();
+    this.shader(fieldShader);
+    this.plane(target.width, target.height);
+    // Don't let the full-screen plane affect geometry drawn afterwards
+    this.clearDepth();
+    this.pop();
+  }
+
   // Pass this off to the host instance so that we can treat a renderer and a
   // framebuffer the same in filter()
 

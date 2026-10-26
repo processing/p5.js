@@ -1685,6 +1685,56 @@ visualSuite('WebGL', function () {
     );
   });
 
+    visualSuite('colorField', function () {
+    visualTest('On the main canvas', function (p5, screenshot) {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      const shader = p5.buildColorFieldShader(
+        () => {
+          p5.field.begin();
+          p5.field.color = [p5.field.texCoord, 0, 1];
+          p5.field.end();
+        },
+        { p5 }
+      );
+      p5.colorField(shader);
+      screenshot();
+    });
+
+    visualTest('On a framebuffer', function (p5, screenshot) {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      const shader = p5.buildColorFieldShader(
+        () => {
+          p5.field.begin();
+          p5.field.color = [p5.field.texCoord, 0, 1];
+          p5.field.end();
+        },
+        { p5 }
+      );
+      const fbo = p5.createFramebuffer();
+      fbo.begin();
+      p5.colorField(shader);
+      fbo.end();
+      p5.imageMode(p5.CENTER);
+      p5.image(fbo, 0, 0);
+      screenshot();
+    });
+
+    visualTest('Blends with transparency', function (p5, screenshot) {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      const shader = p5.buildColorFieldShader(
+        () => {
+          p5.field.begin();
+          p5.field.color = [1, 0, 0, p5.field.texCoord.x];
+          p5.field.end();
+        },
+        { p5 }
+      );
+      p5.background(0, 0, 255);
+      p5.colorField(shader);
+      screenshot();
+    });
+  });
+
   visualSuite('p5.strands', () => {
     visualTest('it recovers from p5.strands errors', (p5, screenshot) => {
       p5.createCanvas(50, 50, p5.WEBGL);
