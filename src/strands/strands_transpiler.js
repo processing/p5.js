@@ -8,6 +8,20 @@ import {
   createStrandsShaderNameState,
   getOrCreateInternalShaderName
 } from './strands_names';
+
+// Strands functions opt out of array-to-vector conversion by declaring
+// `argTypes` on themselves (see strands_api.js's `paletteLerp` for an
+// example), rather than being special-cased here. A descriptor of
+// `{ type: 'Array', subtype: { type: 'any' } }` marks an argument as an
+// opaque array: the ArrayExpression visitor leaves it (and anything
+// nested inside it, to any depth) untouched instead of converting it to
+// a vector/strandsNode call. This lets any current or future function —
+// including ones added by addons — take raw array arguments without
+// touching this file again.
+function getArgTypes(fnName, p5) {
+  return p5?.prototype?.[fnName]?.argTypes;
+}
+
 let blockVarCounter = 0;
 let loopVarCounter = 0;
 function replaceBinaryOperator(codeSource) {
@@ -335,6 +349,26 @@ function replaceIdentifierReferences(node, oldName, newName) {
   return replaceInNode(node);
 }
 
+// Track the operand while evaluating it once in its original order.
+function wrapExpressionOperand(operator, expression) {
+  return {
+    type: 'CallExpression',
+    callee: { type: 'Identifier', name: '__p5.strandsOperand' },
+    arguments: [
+      { type: 'Literal', value: operator },
+      {
+        type: 'ArrowFunctionExpression',
+        id: null,
+        params: [],
+        body: expression,
+        expression: true,
+        generator: false,
+        async: false
+      }
+    ]
+  };
+}
+
 // Shared handler for both BinaryExpression and LogicalExpression —
 // both follow the same operator-to-method-call transformation pattern.
 function transformBinaryOrLogical(node, state, ancestors) {
@@ -346,6 +380,13 @@ function transformBinaryOrLogical(node, state, ancestors) {
     )
   ) {
     return;
+  }
+  if (
+    node.type === 'LogicalExpression' &&
+    (node.operator === '&&' || node.operator === '||')
+  ) {
+    node.left = wrapExpressionOperand(node.operator, node.left);
+    node.right = wrapExpressionOperand(node.operator, node.right);
   }
   node.left = {
     type: 'CallExpression',
@@ -383,13 +424,18 @@ function addCopyingAndReturn(functionBody, varsToReturn, sourcePrefix = null) {
     const tempName = `__copy_${parts.join('_')}_${blockVarCounter++}`;
     tempVarMap.set(varPath, tempName);
 
-    // If sourcePrefix is set (loop case), read from vars.x.y
-    // Otherwise (if-branch case), read directly from x.y
+    // In loop cases, read the flat state key from vars.
+    // Otherwise, read the original member path.
     let sourceExpr = sourcePrefix
-      ? { type: 'Identifier', name: sourcePrefix }
+      ? {
+          type: 'MemberExpression',
+          object: { type: 'Identifier', name: sourcePrefix },
+          property: { type: 'Literal', value: varPath },
+          computed: true
+        }
       : { type: 'Identifier', name: parts[0] };
 
-    const pathParts = sourcePrefix ? parts : parts.slice(1);
+    const pathParts = sourcePrefix ? [] : parts.slice(1);
     for (const part of pathParts) {
       sourceExpr = {
         type: 'MemberExpression',
@@ -660,8 +706,11 @@ const ASTCallbacks = {
       node.arguments = [];
     }
   },
+  
   // The callbacks for AssignmentExpression and BinaryExpression handle
   // operator overloading including +=, *= assignment expressions
+
+
   ArrayExpression(node, state, ancestors) {
     if (
       ancestors.some(
@@ -671,6 +720,52 @@ const ASTCallbacks = {
       )
     ) {
       return;
+    }
+    // Don't wrap arrays that are (or are nested inside) an argument a
+    // function has declared as opaque via argTypes. We look this up
+    // structurally — via the nearest enclosing CallExpression and which
+    // of its arguments node descends from — rather than depending on
+    // that CallExpression's own visitor having already run, since
+    // acorn-walk's ancestor() calls child callbacks before parent ones.
+    //
+    // Opacity is depth-scoped, not blanket: argType descriptors nest via
+    // `.subtype`, one level per ArrayExpression descended through from
+    // the top-level argument down to this node. We walk that chain in
+    // lockstep with the descriptor so a function can mark the outer
+    // array and some number of inner levels as opaque (`type: 'Array'`)
+    // while still letting arrays beyond that depth resume normal
+    // vectorization — signaled by the descriptor bottoming out at the
+    // bare string `'any'` (or running out) before reaching this node's
+    // depth.
+    for (let i = ancestors.length - 1; i >= 0; i--) {
+      const a = ancestors[i];
+      if (a.type === 'CallExpression') {
+        const fnName = a.callee?.type === 'Identifier'
+          ? a.callee.name
+          : a.callee?.type === 'MemberExpression' && a.callee.property?.type === 'Identifier'
+            ? a.callee.property.name
+            : undefined;
+        const argTypes = fnName && getArgTypes(fnName, state.p5);
+        if (argTypes) {
+          // The chain of nodes from the top-level argument down to (and
+          // including) this array.
+          // ancestors already ends with `node` itself (acorn-walk, in
+          // this codebase, includes the current node as its own last
+          // ancestor entry) — so slicing from i + 1 already gives the
+          // full chain from the top-level argument down to and
+          // including `node`, with no need to append it again.
+          const path = ancestors.slice(i + 1);
+          const argIndex = a.arguments.indexOf(path[0]);
+          let argType = argIndex !== -1 ? argTypes[argIndex] : undefined;
+          for (let depth = 1; depth < path.length && argType; depth++) {
+            argType = argType.subtype;
+          }
+          if (argType?.type === 'Array') {
+            return;
+          }
+        }
+        break; // only consider the nearest enclosing call
+      }
     }
 
     if (node.elements.length < 2 || node.elements.length > 4) {
@@ -701,6 +796,11 @@ const ASTCallbacks = {
     const unsafeTypes = ['Literal', 'ArrayExpression', 'Identifier'];
     if (node.operator !== '=') {
       const methodName = replaceBinaryOperator(node.operator.replace('=', ''));
+      // Guard the RHS of logical assignments without wrapping the target.
+      const right =
+        node.operator === '&&=' || node.operator === '||='
+          ? wrapExpressionOperand(node.operator, node.right)
+          : node.right;
       const rightReplacementNode = {
         type: 'CallExpression',
         callee: {
@@ -720,7 +820,7 @@ const ASTCallbacks = {
             name: methodName
           }
         },
-        arguments: [node.right]
+        arguments: [right]
       };
       node.operator = '=';
       node.right = rightReplacementNode;
@@ -789,11 +889,10 @@ const ASTCallbacks = {
     ) {
       return;
     }
-    // Transform condition ? consequent : alternate
-    // into __p5.strandsTernary(condition, consequent, alternate)
+    // Lower ?: to strandsTernary, guarding branches but not the condition.
     const test = node.test;
-    const consequent = node.consequent;
-    const alternate = node.alternate;
+    const consequent = wrapExpressionOperand('?:', node.consequent);
+    const alternate = wrapExpressionOperand('?:', node.alternate);
     node.type = 'CallExpression';
     node.callee = { type: 'Identifier', name: '__p5.strandsTernary' };
     node.arguments = [test, consequent, alternate];
@@ -992,7 +1091,6 @@ const ASTCallbacks = {
           };
         }
 
-        // Build right side: __block_2['inputs.color'] or __block_2['x']
         const rightExpr = {
           type: 'MemberExpression',
           object: { type: 'Identifier', name: blockVar },
@@ -1348,16 +1446,12 @@ const ASTCallbacks = {
           };
         }
 
-        // Build right side: __block_2.inputs.color or __block_2.x
-        let rightExpr = { type: 'Identifier', name: blockVar };
-        for (const part of parts) {
-          rightExpr = {
-            type: 'MemberExpression',
-            object: rightExpr,
-            property: { type: 'Identifier', name: part },
-            computed: false
-          };
-        }
+        const rightExpr = {
+          type: 'MemberExpression',
+          object: { type: 'Identifier', name: blockVar },
+          property: { type: 'Literal', value: varPath },
+          computed: true
+        };
 
         statements.push({
           type: 'ExpressionStatement',
@@ -1919,7 +2013,8 @@ function makeGuardedCallbacks(callbacks) {
 function runNonControlFlowPass(
   ast,
   uniformCallbackNames,
-  initialShaderNameState
+  initialShaderNameState,
+  p5
 ) {
   const nonControlFlowCallbacks = { ...ASTCallbacks };
   delete nonControlFlowCallbacks.IfStatement;
@@ -1930,7 +2025,8 @@ function runNonControlFlowPass(
     shaderNameMap: createStrandsShaderNameMap(),
     shaderNameState: createStrandsShaderNameState(
       initialShaderNameState?.nextSuffix || 0
-    )
+    ),
+    p5
   };
   ancestor(ast, nonControlFlowCallbacks, undefined, state);
   return {
@@ -2065,7 +2161,8 @@ export function transpileStrandsToJS(
   const { shaderNameMap, shaderNameState } = runNonControlFlowPass(
     ast,
     uniformCallbackNames,
-    initialShaderNameState
+    initialShaderNameState,
+    p5
   );
 
   // Pass 3: transform helper functions with early returns to use __returnValue pattern

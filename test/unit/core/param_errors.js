@@ -39,6 +39,16 @@ suite('Validate Params', function () {
 
   afterAll(function () {});
 
+  suite('validateParams: loadModel', function () {
+    test('loadModel(): Boolean normalize argument', function () {
+      const result = mockP5Prototype._validate('p5.loadModel', [
+        'modellTest.obj',
+        true
+      ]);
+
+      assert.isTrue(result.success);
+    });
+  });
   suite(
     'validateParams: multiple types allowed for single parameter',
     function () {

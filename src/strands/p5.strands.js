@@ -6,6 +6,7 @@
 
 import { transpileStrandsToJS } from './strands_transpiler';
 import { BlockType } from './ir_types';
+import * as FES from './strands_FES';
 
 import { createDirectedAcyclicGraph } from './ir_dag';
 import {
@@ -17,7 +18,9 @@ import {
 import { generateShaderCode } from './strands_codegen';
 import {
   initGlobalStrandsAPI,
-  createShaderHooksFunctions
+  createShaderHooksFunctions,
+  installTemporaryProperty,
+  restoreTemporaryProperties
 } from './strands_api';
 import {
   createStrandsShaderNameMap,
@@ -54,16 +57,19 @@ function strands(p5, fn) {
    * @property {Object} renderer Renderer whose shader is being modified.
    * @property {Object} baseShader Base shader being modified in the current pass.
    * @property {Boolean} previousFES Previous value of `p5.disableFriendlyErrors`, restored after the pass.
-   * @property {Object} windowOverrides Original temporary hook targets saved from `window`.
-   * @property {Object} fnOverrides Original temporary hook targets saved from `p5.prototype`.
-   * @property {Object} graphicsOverrides Original temporary hook targets saved from `p5.Graphics.prototype`.
+   * @property {Array} tempProps Temporary property descriptors, restored newest first.
    * @property {Number} _noiseOctaves Noise octave override captured by `noiseDetail()`.
    * @property {Number} _noiseAmpFalloff Noise falloff override captured by `noiseDetail()`.
    * @property {Number} _randomSeed Random seed override captured by `randomSeed()`.
    * @property {Object} _builtinGlobals Cache of builtin-global uniform nodes for the current DAG.
    * @property {Map} sharedVariables Shared variable metadata that tracks vertex/fragment usage to decide whether each variable becomes a local declaration or a varying.
    * @property {Object} activeHook Hook currently being recorded, if any.
-   * @property {Boolean} _instanceIDUsedInFragment Whether fragment-stage code referenced `instanceID`, requiring it to be passed from the vertex shader to the fragment shader.
+   * @property {Object} stateScope Helper records and stack for the active hook, or `null`.
+   * @property {Number} conditionalDepth Current if/else nesting depth.
+   * @property {String} loopPhase Current loop phase: `'header'`, `'body'` or `null`.
+   * @property {String} expressionOperand Current guarded expression operator, or `null`.
+   * @property {Object} failedHook First hook failure, `{ hookName, thrown }`, or `null`.
+   * @property {Boolean} _instanceIDUsedInFragment Whether fragment code needs `instanceID` from the vertex shader.
    * @property {Set} experimentalFeaturesUsed Experimental subject areas used inside the callback, warned about once FES is restored after the pass.
    */
 
@@ -121,15 +127,18 @@ function strands(p5, fn) {
     ctx.renderer = renderer;
     ctx.baseShader = baseShader;
     ctx.previousFES = p5.disableFriendlyErrors;
-    ctx.windowOverrides = {};
-    ctx.fnOverrides = {};
-    ctx.graphicsOverrides = {};
+    ctx.tempProps = [];
     ctx._noiseOctaves = null;
     ctx._noiseAmpFalloff = null;
     ctx._randomSeed = null;
     ctx._builtinGlobals = createBuiltinGlobalsCache(ctx.dag);
     ctx.sharedVariables = new Map();
     ctx.activeHook = undefined;
+    ctx.stateScope = null;
+    ctx.failedHook = null;
+    ctx.conditionalDepth = 0;
+    ctx.loopPhase = null;
+    ctx.expressionOperand = null;
     ctx._instanceIDUsedInFragment = false;
     // Experimental subject areas used inside the callback, warned about once
     // the pass is done since FES is switched off while it runs (see below).
@@ -160,15 +169,18 @@ function strands(p5, fn) {
     ctx.renderer = null;
     ctx.baseShader = null;
     ctx.previousFES = p5.disableFriendlyErrors;
-    ctx.windowOverrides = {};
-    ctx.fnOverrides = {};
-    ctx.graphicsOverrides = {};
+    ctx.tempProps = [];
     ctx._noiseOctaves = null;
     ctx._noiseAmpFalloff = null;
     ctx._randomSeed = null;
     ctx._builtinGlobals = createBuiltinGlobalsCache(ctx.dag);
     ctx.sharedVariables = new Map();
     ctx.activeHook = undefined;
+    ctx.stateScope = null;
+    ctx.failedHook = null;
+    ctx.conditionalDepth = 0;
+    ctx.loopPhase = null;
+    ctx.expressionOperand = null;
     ctx._instanceIDUsedInFragment = false;
     ctx.experimentalFeaturesUsed = new Set();
   }
@@ -178,27 +190,15 @@ function strands(p5, fn) {
    *
    * @private
    * @param {StrandsContext} ctx The strands context object.
+   * @return {Error[]} Errors from temporary writes that could not be undone.
    */
   function deinitStrandsContext(ctx) {
     p5.disableFriendlyErrors = ctx.previousFES;
-    for (const key in ctx.windowOverrides) {
-      window[key] = ctx.windowOverrides[key];
-    }
-    for (const key in ctx.fnOverrides) {
-      fn[key] = ctx.fnOverrides[key];
-    }
-    // Clean up the hooks temporarily installed on p5.Graphics.prototype (#8549)
-    const GraphicsProto = p5.Graphics?.prototype;
-    if (GraphicsProto) {
-      for (const key in ctx.graphicsOverrides) {
-        if (ctx.graphicsOverrides[key] === undefined) {
-          delete GraphicsProto[key];
-        } else {
-          GraphicsProto[key] = ctx.graphicsOverrides[key];
-        }
-      }
-    }
+    // Undo hooks, hook aliases and options.hook properties (incl. #8549's
+    // p5.Graphics.prototype entries) exactly, newest first.
+    const restoreErrors = restoreTemporaryProperties(ctx);
     resetTransientStrandsContext(ctx);
+    return restoreErrors;
   }
 
   const strandsContext = {};
@@ -236,9 +236,16 @@ function strands(p5, fn) {
     scope = {},
     options = {}
   ) {
-    const fnOverrides = {};
-    const windowOverrides = {};
-    const graphicsOverrides = {};
+    // Builds share one context, so reject a nested call before it touches it.
+    if (strandsContext.active) {
+      FES.userError(
+        'scope error',
+        "modify() can't be called while a p5.strands shader is being built."
+      );
+    }
+    // Report restore failures only after a successful build.
+    let modified;
+    let restoreErrors = [];
     try {
       if (
         shaderModifier instanceof Function ||
@@ -290,20 +297,46 @@ function strands(p5, fn) {
           for (const key of strandsContext.renderer._pInst[options.hook]
             ._properties) {
             const hookProp = strandsContext.renderer._pInst[options.hook][key];
-            fnOverrides[key] = fn[key];
-            fn[key] = hookProp;
-            windowOverrides[key] = window[key];
-            window[key] = hookProp;
-            graphicsOverrides[key] = p5.Graphics.prototype[key];
-            p5.Graphics.prototype[key] = hookProp;
+            installTemporaryProperty(strandsContext, fn, key, hookProp);
+            installTemporaryProperty(strandsContext, window, key, hookProp);
+            installTemporaryProperty(strandsContext, p5.Graphics.prototype, key, hookProp);
           }
+          // An optional shared instance of a registered Strands helper,
+          // created inside options.hook and installed for the callback.
+          if (options.globalInstance !== undefined) {
+            const instance =
+              typeof options.globalInstance === 'function'
+                ? options.globalInstance.call(strandsContext.renderer._pInst)
+                : undefined;
+            if (typeof instance?._installGlobal !== 'function') {
+              FES.userError(
+                'type error',
+                'options.globalInstance must be a function that returns a helper made by a registerStrandsState() factory.'
+              );
+            }
+            instance._installGlobal();
+          }
+        } else if (options.globalInstance !== undefined) {
+          FES.userError(
+            'type error',
+            'options.globalInstance needs options.hook, the hook its shared instance is created in.'
+          );
         }
         if (strandsContext.renderer?._pInst?._runStrandsInGlobalMode) {
           withTempGlobalMode(strandsContext.renderer._pInst, strandsCallback);
         } else {
           strandsCallback();
         }
+        if (strandsContext.failedHook !== null) {
+          throw strandsContext.failedHook.thrown;
+        }
         if (options.hook) strandsContext.renderer._pInst[options.hook].end();
+        if (strandsContext.activeHook) {
+          FES.userError(
+            'scope error',
+            `It looks like ${strandsContext.activeHook._publicName}.begin() was called without a matching ${strandsContext.activeHook._publicName}.end().`
+          );
+        }
         popBlock(strandsContext.cfg);
 
         // 3. Generate shader code hooks object from the IR
@@ -311,30 +344,25 @@ function strands(p5, fn) {
         const hooksObject = generateShaderCode(strandsContext);
 
         // Call modify with the generated hooks object
-        return oldModify.call(this, hooksObject);
+        modified = oldModify.call(this, hooksObject);
       } else {
-        return oldModify.call(this, shaderModifier);
+        modified = oldModify.call(this, shaderModifier);
       }
     } finally {
-      for (const key in fnOverrides) {
-        fn[key] = fnOverrides[key];
-      }
-      for (const key in windowOverrides) {
-        window[key] = windowOverrides[key];
-      }
-      for (const key in graphicsOverrides) {
-        p5.Graphics[key] = graphicsOverrides[key];
-      }
       // FES is switched off while the callback runs, so experimental features
       // used inside it can't warn on the spot. They record their subject area
       // instead, and we warn once FES has been restored by deinit below.
       const experimentalFeaturesUsed = [...strandsContext.experimentalFeaturesUsed];
       // Reset the strands runtime context
-      deinitStrandsContext(strandsContext);
+      restoreErrors = deinitStrandsContext(strandsContext);
       for (const subjectArea of experimentalFeaturesUsed) {
         warnExperimental(p5, this._renderer?._pInst, subjectArea);
       }
     }
+    if (restoreErrors.length > 0) {
+      throw restoreErrors[0];
+    }
+    return modified;
   };
 }
 
