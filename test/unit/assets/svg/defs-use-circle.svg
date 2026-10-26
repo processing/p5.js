@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200">
+  <!-- A single circle defined in defs and stamped four times -->
+  <defs>
+    <circle id="dot" cx="0" cy="0" r="25"
+            fill="white" stroke="black" stroke-width="1"/>
+  </defs>
+
+  <rect x="0" y="0" width="200" height="200" fill="#c8c8c8"/>
+
+  <use href="#dot" x="50"  y="50"/>
+  <use href="#dot" x="150" y="50"/>
+  <use href="#dot" x="50"  y="150"/>
+  <use href="#dot" x="150" y="150"/>
+</svg>

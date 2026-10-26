@@ -55,6 +55,9 @@ export default defineConfig([
       banner,
       minify: true
     },
+    treeshake: {
+      moduleSideEffects: false
+    },
     plugins: [
       ...plugins,
       alias({

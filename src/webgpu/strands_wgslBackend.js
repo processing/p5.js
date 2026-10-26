@@ -2,20 +2,9 @@ import noiseWGSL from './shaders/functions/noise3DWGSL.js';
 import randomWGSL from './shaders/functions/randomWGSL';
 import randomVertWGSL from './shaders/functions/randomVertWGSL';
 import randomComputeWGSL from './shaders/functions/randomComputeWGSL';
-import {
-  NodeType,
-  OpCodeToSymbol,
-  BlockType,
-  OpCode,
-  NodeTypeToName,
-  isStructType,
-  BaseType,
-  StatementType,
-  DataType,
-  INSTANCE_ID_VARYING_NAME,
-  HOOK_PARAM_PREFIX
-} from '../strands/ir_types';
-import { getNodeDataFromID, extractNodeTypeInfo } from '../strands/ir_dag';
+import inverseWGSL from './shaders/functions/inverseWGSL';
+import { NodeType, OpCodeToSymbol, BlockType, OpCode, NodeTypeToName, isStructType, BaseType, StatementType, DataType, INSTANCE_ID_VARYING_NAME, HOOK_PARAM_PREFIX } from "../strands/ir_types";
+import { getNodeDataFromID, extractNodeTypeInfo } from "../strands/ir_dag";
 import * as FES from '../strands/strands_FES';
 import * as build from '../strands/ir_builders';
 import { createStrandsNode } from '../strands/strands_node';
@@ -73,19 +62,7 @@ const cfgHandlers = {
     for (const nodeID of blockInstructions) {
       const node = getNodeDataFromID(dag, nodeID);
       if (node.nodeType === NodeType.PHI) {
-        // Check if the phi node's first dependency already has a temp name
-        const dependsOn = node.dependsOn || [];
-        if (dependsOn.length > 0) {
-          const firstDependency = dependsOn[0];
-          const existingTempName = generationContext.tempNames[firstDependency];
-          if (existingTempName) {
-            // Reuse the existing temp name instead of creating a new one
-            generationContext.tempNames[nodeID] = existingTempName;
-            continue; // Skip declaration, just alias to existing variable
-          }
-        }
-
-        // Otherwise, create a new temp variable for the phi node
+        // Phi nodes need their own variables to avoid aliasing inputs.
         const tmp = `T${generationContext.nextTempID++}`;
         generationContext.tempNames[nodeID] = tmp;
         const T = extractNodeTypeInfo(dag, nodeID);
@@ -94,6 +71,9 @@ const cfgHandlers = {
         let defaultValue;
         if (T.dimension === 1) {
           defaultValue = this.defaultScalarValue(T.baseType);
+        } else if (T.baseType === BaseType.MAT) {
+          // Matrices can't be built from N scalars; use the zero matrix.
+          defaultValue = `${typeName}()`;
         } else {
           // For vector types, use constructor with repeated scalar values
           const scalarDefault = this.defaultScalarValue(T.baseType);
@@ -704,6 +684,27 @@ export const wgslBackend = {
             } else {
               return `${left} % ${right}`;
             }
+          }
+
+          // WGSL has no built-in matrix inverse, so emit a size-specific polyfill
+          // (_p5_inverse_mat2/3/4). WGSL user functions can't be overloaded, hence
+          // the per-dimension names. The inverse node's dimension is the matrix
+          // size, since inverse() returns the same matrix type it receives.
+          if (node.identifier === 'inverse') {
+            const { vertexDeclarations, fragmentDeclarations, computeDeclarations } =
+              generationContext.strandsContext;
+            const declarationsByStage = {
+              vertex: vertexDeclarations,
+              fragment: fragmentDeclarations,
+              compute: computeDeclarations,
+            };
+            // Hooks without a recorded stage fall back to declaring in all of them.
+            const stage = declarationsByStage[generationContext.shaderContext];
+            for (const declarations of stage ? [stage] : Object.values(declarationsByStage)) {
+              declarations.add(inverseWGSL);
+            }
+            const arg = this.generateExpression(generationContext, dag, node.dependsOn[0]);
+            return `_p5_inverse_mat${node.dimension}(${arg})`;
           }
 
           // Convert atan(y, x) to atan2(y, x) in WGSL

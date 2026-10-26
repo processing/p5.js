@@ -46,6 +46,15 @@ class p5 {
   // FES stub
   static _checkForUserDefinedFunctions = () => {};
   static _friendlyFileLoadError = () => {};
+  static _friendlyError = () => {};
+  static _checkForUserDefinedFunctions = () => {};
+  static FES = {
+    log: () => () => {},
+    warn: () => () => {},
+    error: () => () => {},
+    debug: () => () => {},
+    info: () => () => {}
+  };
 
   constructor(sketch, node) {
     // Apply addon defined decorations
@@ -385,11 +394,7 @@ class p5 {
       this._removeAbortController.abort();
 
       // remove DOM elements created by p5
-      for (const e of this._elements) {
-        if (e.elt && e.elt.parentNode) {
-          e.elt.parentNode.removeChild(e.elt);
-        }
-      }
+      this._elements.slice().forEach(e => e.remove());
 
       // Run `remove` hooks
       await this._runLifecycleHook('remove');
@@ -535,6 +540,25 @@ function createBindGlobal(instance) {
   };
 }
 
+// Decorators return a new function, which would otherwise drop any
+// properties attached to the original (for example the `argTypes` that
+// p5.strands functions declare for the transpiler). Carry those over so
+// decorating a function does not strip its metadata.
+function copyFunctionProperties(original, decorated) {
+  if (
+    typeof original !== 'function' ||
+    typeof decorated !== 'function' ||
+    original === decorated
+  ) {
+    return;
+  }
+  for (const key of Object.keys(original)) {
+    if (!(key in decorated)) {
+      decorated[key] = original[key];
+    }
+  }
+}
+
 // Generic function to decorate classes
 function decorateClass(Target, decorations, path) {
   // Static properties
@@ -550,6 +574,7 @@ function decorateClass(Target, decorations, path) {
               static: true
             });
             if (result) {
+              copyFunctionProperties(Target[key], result);
               Object.defineProperty(Target, key, {
                 enumerable: true,
                 writable: true,
@@ -588,6 +613,7 @@ function decorateClass(Target, decorations, path) {
               static: false
             });
             if (result) {
+              copyFunctionProperties(Target.prototype[member], result);
               Object.defineProperty(Target.prototype, member, {
                 enumerable: true,
                 writable: true,
