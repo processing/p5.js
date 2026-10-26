@@ -4482,6 +4482,64 @@ suite('p5.Shader', function () {
         assert.approximately(pixelColor[0], 127, 5); // 0.5 * 255 ≈ 127
       });
 
+      test('handle state updates made before break in a loop', () => {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+
+        const testShader = myp5.baseMaterialShader().modify(
+          () => {
+            myp5.getPixelInputs(inputs => {
+              let c = 0;
+
+              for (let i = 0; i < 4; i++) {
+                c += 0.25;
+                if (i >= 1) break;
+              }
+
+              inputs.color = [c, c, c, 1.0];
+              return inputs;
+            });
+          },
+          { myp5 }
+        );
+
+        myp5.noStroke();
+        myp5.shader(testShader);
+        myp5.plane(myp5.width, myp5.height);
+
+        const pixelColor = myp5.get(25, 25);
+        assert.approximately(pixelColor[0], 127, 5); // 0.5 * 255 ≈ 127
+      });
+
+      test('handle state update inside if immediately before break', () => {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+
+        const testShader = myp5.baseMaterialShader().modify(
+          () => {
+            myp5.getPixelInputs(inputs => {
+              let c = 0;
+
+              for (let i = 0; i < 4; i++) {
+                if (i >= 1) {
+                  c = 0.5;
+                  break;
+                }
+              }
+
+              inputs.color = [c, c, c, 1.0];
+              return inputs;
+            });
+          },
+          { myp5 }
+        );
+
+        myp5.noStroke();
+        myp5.shader(testShader);
+        myp5.plane(myp5.width, myp5.height);
+
+        const pixelColor = myp5.get(25, 25);
+        assert.approximately(pixelColor[0], 127, 5); // 0.5 * 255 ≈ 127
+      });
+
       test('handle statements after for loop before return', () => {
         myp5.createCanvas(50, 50, myp5.WEBGL);
 

@@ -245,6 +245,86 @@ function buildPropertyPath(memberExpr) {
   return parts.join('.');
 }
 
+function makeVarExpression(varPath) {
+  const parts = varPath.split('.');
+  let expr = { type: 'Identifier', name: parts[0] };
+  for (let i = 1; i < parts.length; i++) {
+    expr = {
+      type: 'MemberExpression',
+      object: expr,
+      property: { type: 'Identifier', name: parts[i] },
+      computed: false
+    };
+  }
+  return expr;
+}
+
+function collectAssignedVarsInLoop(forNode) {
+  const localVars = new Set();
+  if (forNode.init?.type === 'VariableDeclaration') {
+    for (const decl of forNode.init.declarations) {
+      if (decl.id?.type === 'Identifier') {
+        localVars.add(decl.id.name);
+      }
+    }
+  }
+
+  ancestor(forNode.body, {
+    VariableDeclarator(node, ancestors) {
+      if (ancestors.some(a => a.type === 'ForStatement')) {
+        return;
+      }
+      if (node.id?.type === 'Identifier') {
+        localVars.add(node.id.name);
+      }
+    }
+  });
+
+  const assignedVars = new Set();
+  ancestor(forNode.body, {
+    AssignmentExpression(node, ancestors) {
+      if (ancestors.some(a => a.type === 'ForStatement')) {
+        return;
+      }
+      const left = node.left;
+      if (left.type === 'Identifier') {
+        if (!localVars.has(left.name)) {
+          assignedVars.add(left.name);
+        }
+      } else if (left.type === 'MemberExpression') {
+        const propertyPath = buildPropertyPath(left);
+        if (propertyPath) {
+          const baseName = propertyPath.split('.')[0];
+          if (!localVars.has(baseName)) {
+            assignedVars.add(propertyPath);
+          }
+        }
+      }
+    },
+    UpdateExpression(node, ancestors) {
+      if (ancestors.some(a => a.type === 'ForStatement')) {
+        return;
+      }
+      const arg = node.argument;
+      if (arg.type === 'Identifier') {
+        if (!localVars.has(arg.name)) {
+          assignedVars.add(arg.name);
+        }
+      } else if (arg.type === 'MemberExpression') {
+        const propertyPath = buildPropertyPath(arg);
+        if (propertyPath) {
+          const baseName = propertyPath.split('.')[0];
+          if (!localVars.has(baseName)) {
+            assignedVars.add(propertyPath);
+          }
+        }
+      }
+    }
+  });
+
+  return assignedVars;
+}
+
 // Replace all references to original variables with temp variables
 // and wrap literal assignments in strandsNode calls
 function replaceReferences(node, tempVarMap) {
@@ -577,11 +657,34 @@ const ASTCallbacks = {
     ) {
       return;
     }
+    let enclosingFor;
+    for (let i = ancestors.length - 1; i >= 0; i--) {
+      if (ancestors[i].type === 'ForStatement') {
+        enclosingFor = ancestors[i];
+        break;
+      }
+    }
+    const assignedVars = enclosingFor
+      ? collectAssignedVarsInLoop(enclosingFor)
+      : new Set();
+
     node.callee = {
       type: 'Identifier',
       name: '__p5.break'
     };
-    node.arguments = [];
+    node.arguments = [
+      {
+        type: 'ObjectExpression',
+        properties: Array.from(assignedVars).map(varPath => ({
+          type: 'Property',
+          key: { type: 'Literal', value: varPath },
+          value: makeVarExpression(varPath),
+          kind: 'init',
+          computed: false,
+          shorthand: false
+        }))
+      }
+    ];
     node.type = 'CallExpression';
   },
   MemberExpression(node, state, ancestors) {

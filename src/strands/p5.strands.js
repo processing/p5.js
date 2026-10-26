@@ -138,6 +138,7 @@ function strands(p5, fn) {
     ctx.failedHook = null;
     ctx.conditionalDepth = 0;
     ctx.loopPhase = null;
+    ctx.loopStack = [];
     ctx.expressionOperand = null;
     ctx._instanceIDUsedInFragment = false;
     // Experimental subject areas used inside the callback, warned about once
@@ -180,6 +181,7 @@ function strands(p5, fn) {
     ctx.failedHook = null;
     ctx.conditionalDepth = 0;
     ctx.loopPhase = null;
+    ctx.loopStack = [];
     ctx.expressionOperand = null;
     ctx._instanceIDUsedInFragment = false;
     ctx.experimentalFeaturesUsed = new Set();

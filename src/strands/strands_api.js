@@ -408,8 +408,27 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
       );
     }
   }
-  augmentFn(fn, p5, 'break', function () {
+  augmentFn(fn, p5, 'break', function (loopState) {
     rejectLoopExitWithHelpers('break');
+    const { dag, cfg } = strandsContext;
+    const activeLoop = strandsContext.loopStack?.at(-1);
+    if (activeLoop?.phiNodesForBody && loopState) {
+      for (const [varName, val] of Object.entries(loopState)) {
+        const phiNode = activeLoop.phiNodesForBody[varName];
+        if (phiNode && val !== undefined && val !== null) {
+          const valNode = val.isStrandsNode ? val : p5.strandsNode(val);
+          if (valNode.id !== phiNode.id) {
+            const assignmentNode = DAG.createNodeData({
+              nodeType: NodeType.ASSIGNMENT,
+              dependsOn: [phiNode.id, valNode.id],
+              phiBlocks: []
+            });
+            const assignmentID = DAG.getOrCreateNode(dag, assignmentNode);
+            CFG.recordInBasicBlock(cfg, cfg.currentBlock, assignmentID);
+          }
+        }
+      }
+    }
     build.statementNode(strandsContext, StatementType.BREAK);
   });
   p5.break = fn.break;

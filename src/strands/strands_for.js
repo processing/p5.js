@@ -532,6 +532,7 @@ export class StrandsFor {
         );
       }
     }
+    this.phiNodesForBody = phiNodesForBody;
     // Keep helper loop phis separate from user variables.
     const stateScope = this.strandsContext.stateScope;
     this.stateEntryIds = new Map();
@@ -573,11 +574,14 @@ export class StrandsFor {
     if (stateScope) {
       stateScope.stackFloor = stackDepth;
     }
+    this.strandsContext.loopStack = this.strandsContext.loopStack || [];
+    this.strandsContext.loopStack.push(this);
     try {
       this.bodyResults =
         this.runInLoopPhase('body', () => this.bodyCb(loopVarNode, phiVars)) ||
         {};
     } finally {
+      this.strandsContext.loopStack.pop();
       if (stateScope) {
         stateScope.stackFloor = previousFloor;
       }
