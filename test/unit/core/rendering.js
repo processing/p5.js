@@ -375,6 +375,25 @@ suite('Rendering', function () {
       const pixelFromImg = myp5.get(15, 15);
       assert.deepEqual(pixelFromGfx, pixelFromImg);
     });
+
+    test('set() preserves drawing context state', function () {
+      const gfx = myp5.createGraphics(1, 1);
+
+      myp5.push();
+      myp5.translate(50, 50);
+
+      myp5.set(90, 90, gfx);
+
+      let transform = myp5.drawingContext.getTransform();
+      assert.equal(transform.e, 50);
+      assert.equal(transform.f, 50);
+
+      myp5.pop();
+
+      transform = myp5.drawingContext.getTransform();
+      assert.equal(transform.e, 0);
+      assert.equal(transform.f, 0);
+    });
   });
 
   suite('p5.prototype.createGraphics pixelDensity', function () {

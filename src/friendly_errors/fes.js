@@ -1,48 +1,59 @@
 import { TL } from 'tl-util';
-
-TL.addTranslations(['en', 'en-US', 'en-GB'], {
-  paramTooFew: {
-    '${minArgs}_[one]':
-      'Expected at least ${minArgs} argument, but received fewer in ${functionName}(). ${referenceLink}',
-    '${minArgs}_[*]':
-      'Expected at least ${minArgs} arguments, but received fewer in ${functionName}(). ${referenceLink}'
-  },
-  paramTooMany: {
-    '${minArgs}_[one]':
-      'Expected at most ${minArgs} argument, but received fewer in ${functionName}(). ${referenceLink}',
-    '${minArgs}_[*]':
-      'Expected at most ${minArgs} arguments, but received fewer in ${functionName}(). ${referenceLink}'
-  },
-  paramType:
-    'Expected ${expectedType} at the ${position} parameter in ${functionName}.',
-  redeclare:
-    '${errorType} "${name}" on line ${line} is being redeclared and conflicts with a p5.js ${errorType}. p5.js reference: ${url}',
-  referenceLink: 'For more information, see ${referenceURL}.',
-  ordinalFirst: 'first',
-  typeString: 'string',
-  typeBoolean: 'boolean',
-  typeFunction: 'function',
-  typeNumber: 'number'
-});
+import enTranslations from '../../translations/en/extracted.json' with { type: 'json' };
+import { VERSION } from '../core/constants';
+TL.addTranslations(['en', 'en-US', 'en-GB'], enTranslations);
 
 const defaultLanguage = navigator.language;
-const localTranslation = window.localStorage.getItem(defaultLanguage);
-let translationPromise;
-if (localTranslation) {
-  TL.addTranslations(defaultLanguage, JSON.parse(localTranslation));
-  translationPromise = Promise.resolve();
-} else {
-  translationPromise = fetch('./fes-zh.json')
-    .then(res => {
-      if (res.ok) return res.json();
-      throw null;
-    })
-    .then(data => {
-      TL.addTranslations(defaultLanguage, data);
-      window.localStorage.setItem(defaultLanguage, JSON.stringify(data));
-    })
-    .catch(() => Promise.resolve());
-}
+const localStorageAvailable = storageAvailable('localStorage');
+const localTranslation = localStorageAvailable
+  ? window.localStorage.getItem(`${defaultLanguage}-${VERSION}`)
+  : null;
+let translationPromise = new Promise(async resolve => {
+  if (localTranslation) {
+    TL.addTranslations(defaultLanguage, JSON.parse(localTranslation));
+    resolve();
+  } else {
+    try {
+      // Locally provided translation file has first priority
+      let translationResponse = await fetch(`./${defaultLanguage}.json`);
+      if (!translationResponse.ok) {
+        throw new Error('Cannot reach local file');
+      }
+
+      const translation = await translationResponse.json();
+      TL.addTranslations(defaultLanguage, translation);
+      if (localStorageAvailable) {
+        window.localStorage.setItem(
+          `${defaultLanguage}-${VERSION}`,
+          JSON.stringify(translation)
+        );
+      }
+    } catch {
+      try {
+        // CDN hosted file will be loaded if local is not present
+        let translationResponse = await fetch(
+          `https://cdn.jsdelivr.net/npm/p5@${VERSION}/translations/${defaultLanguage}/extracted.json`
+        );
+        if (!translationResponse.ok) {
+          throw new Error('Cannot reach CDN file');
+        }
+
+        const translation = await translationResponse.json();
+        TL.addTranslations(defaultLanguage, translation);
+        if (localStorageAvailable) {
+          window.localStorage.setItem(
+            `${defaultLanguage}-${VERSION}`,
+            JSON.stringify(translation)
+          );
+        }
+      } catch {
+        // If CDN also cannot be reached, do nothing
+      }
+    } finally {
+      resolve();
+    }
+  }
+});
 
 export class FES {
   static languageCode = navigator.languages;
@@ -131,11 +142,23 @@ export class FES {
   static TL = TL;
 
   static premade = {
-    ordinals: [TL.tl`first`],
+    ordinals: [
+      TL.tl`first`,
+      TL.tl`second`,
+      TL.tl`third`,
+      TL.tl`fourth`,
+      TL.tl`fifth`,
+      TL.tl`sixth`,
+      TL.tl`seventh`,
+      TL.tl`eighth`,
+      TL.tl`ninth`,
+      TL.tl`tenth`
+    ],
     types: {
       string: TL.tl`string`,
       boolean: TL.tl`boolean`,
-      number: TL.tl`number`
+      number: TL.tl`number`,
+      function: TL.tl`function`
     }
   };
 }
@@ -218,6 +241,27 @@ function mapToReference(message, func) {
     }
   }
   return msgWithReference;
+}
+
+// Feature detect localStorage API is available, from:
+// https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API/Using_the_Web_Storage_API
+function storageAvailable(type) {
+  let storage;
+  try {
+    storage = window[type];
+    const x = '__storage_test__';
+    storage.setItem(x, x);
+    storage.removeItem(x);
+    return true;
+  } catch (e) {
+    return (
+      e instanceof DOMException &&
+      e.name === 'QuotaExceededError' &&
+      // acknowledge QuotaExceededError only if there's something already stored
+      storage &&
+      storage.length !== 0
+    );
+  }
 }
 
 // Re-export TL
