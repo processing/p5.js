@@ -71,6 +71,9 @@ const cfgHandlers = {
         let defaultValue;
         if (T.dimension === 1) {
           defaultValue = this.defaultScalarValue(T.baseType);
+        } else if (T.baseType === BaseType.MAT) {
+          // Matrices can't be built from N scalars; use the zero matrix.
+          defaultValue = `${typeName}()`;
         } else {
           // For vector types, use constructor with repeated scalar values
           const scalarDefault = this.defaultScalarValue(T.baseType);

@@ -21,7 +21,7 @@
     "test/**/*.js": "oxlint",
     "utils/**/*.{js,mjs}": "oxlint"
   },
-  "version": "2.3.2",
+  "version": "2.4.0-rc.1",
   "dependencies": {
     "@davepagurek/bezier-path": "^0.0.7",
     "@japont/unicode-range": "^1.0.0",
@@ -52,7 +52,7 @@
     "msw": "^2.15.0",
     "nanoid": "^6.0.1",
     "oxc-parser": "^0.148.0",
-    "oxfmt": "^0.60.0",
+    "oxfmt": "^0.73.0",
     "oxlint": "^1.75.0",
     "pixelmatch": "^7.2.0",
     "pkg-pr-new": "^0.0.80",
