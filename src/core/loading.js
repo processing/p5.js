@@ -12,6 +12,7 @@
  * Registers loading indicator decorators for createCanvas(), resizeCanvas(), and noCanvas() 
  * to manage the loading indicator overlay.
  *
+ * @private
  * @param {*} p5 The p5 constructor
  * @param {*} fn The p5 prototype object
  * @param {*} lifecycles Lifecycle hooks for the sketch
