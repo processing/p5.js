@@ -941,6 +941,21 @@ suite('p5.Shader', function () {
       assert.isArray(p5.prototype.paletteLerp.argTypes);
     });
 
+    test('paletteLerp() falls back to the CPU implementation outside of strands', () => {
+      myp5.colorMode(myp5.RGB);
+      const c = myp5.paletteLerp(
+        [
+          [myp5.color(255, 0, 0), 0],
+          [myp5.color(0, 0, 255), 1]
+        ],
+        0.5
+      );
+      assert.isDefined(c);
+      assert.closeTo(c._color.coords[0] * 255, 127.5, 1);
+      assert.closeTo(c._color.coords[1] * 255, 0, 1);
+      assert.closeTo(c._color.coords[2] * 255, 127.5, 1);
+    });
+
     test('arrays outside of argTypes arguments still become vectors', () => {
       myp5.createCanvas(5, 5, myp5.WEBGL);
       // More than 4 elements would be an error if this were a vector
