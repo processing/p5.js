@@ -11,6 +11,7 @@
  * Creates a loading indicator when the sketch's setup() function is running.
  * It is called and removed automatically using the presetup and postsetup lifecycles hooks.
  *
+ * @private
  * @param {*} p5 The p5 constructor
  * @param {*} fn The p5 prototype object
  * @param {*} lifecycles Lifecycle hooks for the sketch
