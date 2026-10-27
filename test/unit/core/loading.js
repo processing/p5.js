@@ -228,6 +228,97 @@ suite('Loading indicator', function () {
     assert.strictEqual(overlay.parentNode, canvas.parentNode);
   });
 
+  test('tracks canvas overlay positions during loading', function () {
+    let frameCallbacks = [];
+    const requestAnimationFrame = vi
+      .spyOn(window, 'requestAnimationFrame')
+      .mockImplementation(callback => {
+        frameCallbacks.push(callback);
+        return frameCallbacks.length;
+      });
+
+    const sketches = [];
+    const stepFrames = () => {
+      const callbacks = frameCallbacks;
+      frameCallbacks = [];
+      callbacks.forEach(cb => cb());
+    };
+
+    const makeSketch = (w, h, delay, label) => {
+      const c = document.createElement('canvas');
+      c.width = w;
+      c.height = h;
+      c.style.width = `${w}px`;
+      c.style.height = `${h}px`;
+      c.setAttribute('data-label', label);
+
+      let top = 0;
+      let left = 0;
+      Object.defineProperty(c, 'offsetTop', {
+        get: () => top,
+        configurable: true
+      });
+      Object.defineProperty(c, 'offsetLeft', {
+        get: () => left,
+        configurable: true
+      });
+
+      container.appendChild(c);
+
+      const p = {
+        canvas: c,
+        _isSketchLoading: true,
+        setOffset(newTop, newLeft) {
+          top = newTop;
+          left = newLeft;
+        }
+      };
+
+      lifecycles.presetup.call(p);
+      callCreateCanvas(p);
+      sketches.push(p);
+      return p;
+    };
+
+    try {
+      const p1 = makeSketch(600, 300, 7000, 'big 600x300');
+      p1.setOffset(10, 10);
+      stepFrames();
+      assert.strictEqual(p1._loadingOverlay.style.top, '10px');
+
+      const p2 = makeSketch(200, 200, 7000, 'small 200x200');
+      p2.setOffset(110, 620);
+      stepFrames();
+      assert.strictEqual(p2._loadingOverlay.style.top, '110px');
+
+      const p3 = makeSketch(100, 500, 7000, 'tall 100x500');
+      p3.setOffset(10, 830);
+      p1.setOffset(210, 10);
+      p2.setOffset(310, 620);
+
+      stepFrames();
+
+      assert.strictEqual(p1._loadingOverlay.style.top, '210px');
+      assert.strictEqual(p1._loadingOverlay.style.left, '10px');
+      assert.strictEqual(p1._loadingOverlay.style.width, '600px');
+      assert.strictEqual(p1._loadingOverlay.style.height, '300px');
+
+      assert.strictEqual(p2._loadingOverlay.style.top, '310px');
+      assert.strictEqual(p2._loadingOverlay.style.left, '620px');
+      assert.strictEqual(p2._loadingOverlay.style.width, '200px');
+      assert.strictEqual(p2._loadingOverlay.style.height, '200px');
+
+      assert.strictEqual(p3._loadingOverlay.style.top, '10px');
+      assert.strictEqual(p3._loadingOverlay.style.left, '830px');
+      assert.strictEqual(p3._loadingOverlay.style.width, '100px');
+      assert.strictEqual(p3._loadingOverlay.style.height, '500px');
+    } 
+    finally {
+      sketches.forEach(p => lifecycles.postsetup.call(p));
+      requestAnimationFrame.mockRestore();
+    }
+  });
+
   test('test multiple indicators for multiple instances', async function () {
     const instance1 = document.createElement('div');
     const instance2 = document.createElement('div');
