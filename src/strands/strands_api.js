@@ -257,24 +257,60 @@ function augmentFn(fn, p5, name, value) {
   }
 }
 
-/*
- * Temporarily augment window, p5.prototype (fn), and p5.Graphics.prototype
- * with a hook function. Saves previous values into strandsContext override
- * stores so deinitStrandsContext can restore them.
- */
+// Install a temporary hook on the global, sketch and graphics APIs.
 function augmentFnTemporary(fn, strandsContext, name, value) {
-  strandsContext.windowOverrides[name] = window[name];
-  strandsContext.fnOverrides[name] = fn[name];
-  window[name] = value;
-  fn[name] = value;
+  installTemporaryProperty(strandsContext, window, name, value);
+  installTemporaryProperty(strandsContext, fn, name, value);
   const GraphicsProto = strandsContext.p5?.Graphics?.prototype;
   if (GraphicsProto) {
-    strandsContext.graphicsOverrides[name] =
-      Object.prototype.hasOwnProperty.call(GraphicsProto, name)
-        ? GraphicsProto[name]
-        : undefined;
-    GraphicsProto[name] = value;
+    installTemporaryProperty(strandsContext, GraphicsProto, name, value);
   }
+}
+
+// Save the own descriptor and replace the property without invoking setters.
+// Reject properties that cannot be redefined or assigned.
+export function installTemporaryProperty(strandsContext, target, name, value) {
+  const descriptor = Object.getOwnPropertyDescriptor(target, name);
+  const assignable = descriptor && 'value' in descriptor && descriptor.writable;
+  if (descriptor && !descriptor.configurable && !assignable) {
+    throw new TypeError(
+      `p5.strands can't temporarily replace "${String(name)}": the existing property can't be changed.`
+    );
+  }
+  strandsContext.tempProps.push({ target, name, descriptor });
+  if (!descriptor || descriptor.configurable) {
+    Object.defineProperty(target, name, {
+      value,
+      writable: true,
+      enumerable: descriptor ? descriptor.enumerable : true,
+      configurable: true
+    });
+  } else {
+    target[name] = value;
+  }
+}
+
+// Restore newest first, attempting every entry. Return errors so cleanup
+// does not replace an error from the build.
+export function restoreTemporaryProperties(strandsContext) {
+  const entries = strandsContext.tempProps;
+  strandsContext.tempProps = [];
+  const errors = [];
+  for (let i = entries.length - 1; i >= 0; i--) {
+    const { target, name, descriptor } = entries[i];
+    try {
+      if (!descriptor) {
+        delete target[name];
+      } else if (descriptor.configurable) {
+        Object.defineProperty(target, name, descriptor);
+      } else {
+        target[name] = descriptor.value;
+      }
+    } catch (e) {
+      errors.push(e);
+    }
+  }
+  return errors;
 }
 
 /**
@@ -359,7 +395,21 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
   augmentFn(fn, p5, 'discard', function () {
     build.statementNode(strandsContext, StatementType.DISCARD);
   });
+  // Early exits would skip helper-state writes at the end of the loop.
+  // The generated loop-exit break bypasses this check.
+  function rejectLoopExitWithHelpers(statement) {
+    if (
+      strandsContext.loopPhase === 'body' &&
+      strandsContext.stateScope?.records.length > 0
+    ) {
+      FES.userError(
+        'scope error',
+        `${statement} can't be used inside a for loop body while registered Strands helpers exist in this hook.`
+      );
+    }
+  }
   augmentFn(fn, p5, 'break', function () {
+    rejectLoopExitWithHelpers('break');
     build.statementNode(strandsContext, StatementType.BREAK);
   });
   p5.break = fn.break;
@@ -398,6 +448,29 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
     return buildTernary(strandsContext, condition, ifTrue, ifFalse);
   };
   augmentFn(fn, p5, 'strandsTernary', p5.strandsTernary);
+  // Both sides are built; allow helper reads here, but reject updates.
+  p5.strandsOperand = function (operator, operand) {
+    const previousOperand = strandsContext.expressionOperand;
+    strandsContext.expressionOperand = operator;
+    try {
+      return operand();
+    } finally {
+      strandsContext.expressionOperand = previousOperand;
+    }
+  };
+  function rejectInExpressionOperand(subject) {
+    const operator = strandsContext.expressionOperand;
+    if (operator) {
+      const where =
+        operator === '?:'
+          ? 'a branch of a ?: expression'
+          : `an operand of ${operator}`;
+      FES.userError(
+        'scope error',
+        `${subject} can't be used inside ${where}. Use it in its own statement before the expression.`
+      );
+    }
+  }
   p5.strandsEarlyReturn = function (value) {
     const { dag, cfg } = strandsContext;
 
@@ -407,6 +480,7 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
         'strandsEarlyReturn can only be used inside a hook callback'
       );
     }
+    rejectLoopExitWithHelpers('An early return');
 
     // Convert value to a StrandsNode if it isn't already
     const valueNode = value?.isStrandsNode ? value : p5.strandsNode(value);
@@ -467,6 +541,340 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
     );
     return createStrandsNode(id, dimension, strandsContext); //new StrandsNode(id, dimension, strandsContext);
   };
+  // Addon API; see "Helper state for addons" in contributor_docs/p5.strands.md.
+  p5.registerStrandsState = function (name, spec) {
+    if (typeof name !== 'string') {
+      FES.userError(
+        'type error',
+        'registerStrandsState expects a string name.'
+      );
+    }
+
+    const isRecord = value =>
+      value !== null && typeof value === 'object' && !Array.isArray(value);
+
+    if (!isRecord(spec) || typeof spec.init !== 'function') {
+      FES.userError(
+        'type error',
+        'registerStrandsState expects an object with an init function.'
+      );
+    }
+
+    for (const group of ['update', 'read']) {
+      const methods = spec[group];
+      if (!isRecord(methods)) {
+        FES.userError(
+          'type error',
+          `registerStrandsState expects ${group} to be an object of functions.`
+        );
+      }
+      for (const [method, callback] of Object.entries(methods)) {
+        if (typeof callback !== 'function') {
+          FES.userError(
+            'type error',
+            `registerStrandsState ${group}.${method} must be a function.`
+          );
+        }
+      }
+    }
+
+    for (const method of Object.keys(spec.update)) {
+      if (Object.prototype.hasOwnProperty.call(spec.read, method)) {
+        FES.userError(
+          'type error',
+          `registerStrandsState cannot use "${method}" in both update and read.`
+        );
+      }
+    }
+    for (const group of ['update', 'read']) {
+      if (Object.prototype.hasOwnProperty.call(spec[group], '_installGlobal')) {
+        FES.userError(
+          'type error',
+          'registerStrandsState reserves "_installGlobal" for every helper, so it cannot be a method name.'
+        );
+      }
+      // An installed push/pop would hide, and could recurse into, the stack.
+      for (const method of ['push', 'pop']) {
+        if (Object.prototype.hasOwnProperty.call(spec[group], method)) {
+          FES.userError(
+            'type error',
+            `registerStrandsState reserves "${method}" for saving and restoring helper state, so it cannot be a method name.`
+          );
+        }
+      }
+      // The transpiler rewrites .set() calls inside if/for as hook setters.
+      if (Object.prototype.hasOwnProperty.call(spec[group], 'set')) {
+        FES.userError(
+          'type error',
+          'registerStrandsState reserves "set" because p5.strands treats .set() inside if and for as a hook setter, so it cannot be a method name.'
+        );
+      }
+    }
+
+    // Types that branch and loop variables can hold in both backends.
+    const isStateType = (baseType, dimension) =>
+      [BaseType.FLOAT, BaseType.INT, BaseType.BOOL].includes(baseType)
+        ? [1, 2, 3, 4].includes(dimension)
+        : baseType === BaseType.MAT && [2, 3, 4].includes(dimension);
+
+    // Read fields once so getters cannot change values after validation.
+    // Updates must match the existing slot names, types and dimensions.
+    function readState(state, slots) {
+      const groups = isRecord(state)
+        ? { scoped: state.scoped, global: state.global }
+        : null;
+      if (!groups || !isRecord(groups.scoped) || !isRecord(groups.global)) {
+        FES.userError(
+          'type error',
+          `${name} state must have scoped and global objects of fields.`
+        );
+      }
+
+      const fields = ['scoped', 'global'].flatMap(group =>
+        Object.entries(groups[group]).map(([field, value]) => ({
+          group,
+          field,
+          value
+        }))
+      );
+      if (fields.length === 0) {
+        FES.userError(
+          'type error',
+          `${name} state needs at least one scoped or global field.`
+        );
+      }
+
+      return fields.map(({ group, field, value }) => {
+        if (
+          !(value instanceof StrandsNode) ||
+          value.strandsContext !== strandsContext
+        ) {
+          FES.userError(
+            'type error',
+            `${name}.${group}.${field} must be a Strands node from this context.`
+          );
+        }
+
+        // Use the graph's type, which has no float fallback for other nodes.
+        const { baseType, dimension } = DAG.extractNodeTypeInfo(
+          strandsContext.dag,
+          value.id
+        );
+        if (!isStateType(baseType, dimension)) {
+          FES.userError(
+            'type error',
+            `${name}.${group}.${field} must be a float, int or bool scalar or vector, or a mat2, mat3 or mat4.`
+          );
+        }
+        const expected = slots?.find(
+          slot => slot.group === group && slot.name === field
+        );
+        if (
+          slots && (
+            !expected ||
+            fields.length !== slots.length ||
+            baseType !== expected.baseType ||
+            dimension !== expected.dimension
+          )
+        ) {
+          FES.userError(
+            'type error',
+            `${name} updates must return the same fields as init, with the same types and sizes.`
+          );
+        }
+
+        return { group, name: field, baseType, dimension, valueId: value.id };
+      });
+    }
+
+    const initialize = spec.init;
+    const updateMethods = Object.entries(spec.update);
+    const readMethods = Object.entries(spec.read);
+    return function (...args) {
+      const scope = strandsContext.stateScope;
+      if (!strandsContext.active || !scope) {
+        FES.userError(
+          'scope error',
+          `${name} must be created inside an active Strands hook.`
+        );
+      }
+      if (strandsContext.conditionalDepth > 0) {
+        FES.userError(
+          'scope error',
+          `${name} must be created before an if/else, not inside one of its branches.`
+        );
+      }
+      if (strandsContext.loopPhase) {
+        FES.userError(
+          'scope error',
+          `${name} must be created before a for loop, not inside it.`
+        );
+      }
+      rejectInExpressionOperand(name);
+
+      const sketch = this;
+      const initialized = initialize.call(sketch, ...args);
+      if (!isRecord(initialized)) {
+        FES.userError(
+          'type error',
+          `${name} init must return an object containing config and state.`
+        );
+      }
+
+      // Each slot is one field's bookkeeping key and current DAG id.
+      const record = {
+        scope,
+        config: initialized.config,
+        slots: readState(initialized.state)
+      };
+      const helper = Object.create(null);
+
+      function assertScope() {
+        if (
+          !strandsContext.active ||
+          record.scope !== strandsContext.stateScope
+        ) {
+          FES.userError(
+            'scope error',
+            `${name} helper must be used in the hook invocation that created it.`
+          );
+        }
+        if (strandsContext.loopPhase === 'header') {
+          FES.userError(
+            'scope error',
+            `${name} helper can only be used in a for loop's body, not its initializer, condition or update.`
+          );
+        }
+      }
+
+      function callbackState() {
+        // Null-prototype groups, so a field named __proto__ is an own field.
+        const state = {
+          scoped: Object.create(null),
+          global: Object.create(null)
+        };
+        for (const slot of record.slots) {
+          state[slot.group][slot.name] = createStrandsNode(
+            slot.valueId,
+            slot.dimension,
+            strandsContext
+          );
+        }
+        return state;
+      }
+
+      for (const [method, callback] of updateMethods) {
+        helper[method] = function (...methodArgs) {
+          assertScope();
+          rejectInExpressionOperand(`${name} helper`);
+          const nextState = callback.call(
+            sketch,
+            callbackState(),
+            record.config,
+            ...methodArgs
+          );
+          const nextSlots = readState(nextState, record.slots);
+          for (const slot of record.slots) {
+            slot.valueId = nextSlots.find(
+              next => next.group === slot.group && next.name === slot.name
+            ).valueId;
+          }
+          return helper;
+        };
+      }
+
+      for (const [method, callback] of readMethods) {
+        helper[method] = function (...methodArgs) {
+          assertScope();
+          return callback.call(
+            sketch,
+            callbackState(),
+            record.config,
+            ...methodArgs
+          );
+        };
+      }
+
+      // Expose helper methods for this build; the install journal restores them.
+      helper._installGlobal = function () {
+        assertScope();
+        if (strandsContext.conditionalDepth > 0 || strandsContext.loopPhase) {
+          FES.userError(
+            'scope error',
+            `${name} helper's methods must be installed before an if/else or for loop, not inside one.`
+          );
+        }
+        rejectInExpressionOperand(`${name} helper`);
+        for (const [method] of [...updateMethods, ...readMethods]) {
+          augmentFnTemporary(fn, strandsContext, method, helper[method]);
+        }
+        return helper;
+      };
+
+      scope.records.push(record);
+      return helper;
+    };
+  };
+
+  // During a build, push()/pop() save and restore helpers' scoped fields
+  // per hook instead of drawing state, leaving global fields alone.
+  // Branches and loop bodies must balance their own pushes and pops.
+  function stateStackScope(operation) {
+    const scope = strandsContext.stateScope;
+    if (!strandsContext.active || !scope) {
+      FES.userError(
+        'scope error',
+        `${operation}() must be called inside an active Strands hook.`
+      );
+    }
+    if (strandsContext.loopPhase === 'header') {
+      FES.userError(
+        'scope error',
+        `${operation}() can only be used in a for loop's body, not its initializer, condition or update.`
+      );
+    }
+    rejectInExpressionOperand(`${operation}()`);
+    return scope;
+  }
+  const originalPush = fn.push;
+  augmentFn(fn, p5, 'push', function (...args) {
+    if (!strandsContext.active) {
+      return originalPush.apply(this, args);
+    }
+    const scope = stateStackScope('push');
+    const frame = new Map();
+    for (const record of scope.records) {
+      for (const slot of record.slots) {
+        if (slot.group === 'scoped') {
+          frame.set(slot, slot.valueId);
+        }
+      }
+    }
+    scope.stack.push(frame);
+  });
+  const originalPop = fn.pop;
+  augmentFn(fn, p5, 'pop', function (...args) {
+    if (!strandsContext.active) {
+      return originalPop.apply(this, args);
+    }
+    const scope = stateStackScope('pop');
+    if (scope.stack.length === 0) {
+      FES.userError(
+        'scope error',
+        'pop() has no matching push().'
+      );
+    }
+    if (scope.stack.length <= scope.stackFloor) {
+      FES.userError(
+        'scope error',
+        "pop() can't pop a push() made outside the current if/else branch or for loop body."
+      );
+    }
+    for (const [slot, valueId] of scope.stack.pop()) {
+      slot.valueId = valueId;
+    }
+  });
+
   //////////////////////////////////////////////
   // Builtins, uniforms, variable constructors
   //////////////////////////////////////////////
@@ -770,6 +1178,76 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
     );
     return createStrandsNode(id, dimension, strandsContext);
   });
+  augmentFn(fn, p5, 'paletteLerp', function(stopsNode, tNode) {
+    if (!strandsContext.active) return;
+
+    if (!Array.isArray(stopsNode)) {
+      throw new Error(
+        'paletteLerp() first argument must be an array literal: [[color(...), pos], ...]'
+      );
+    }
+    const n = stopsNode.length;
+    if (n < 2 || n > 8) {
+      throw new Error(`paletteLerp() requires 2–8 color stops, got ${n}.`);
+    }
+    for (let i = 0; i < n; i++) {
+      if (!Array.isArray(stopsNode[i]) || stopsNode[i].length !== 2) {
+        throw new Error(
+          `paletteLerp() stop ${i} must be a 2-element array: [color(...), position]`
+        );
+      }
+    }
+
+    // Wrap raw values into StrandsNodes
+    const colors = stopsNode.map(([c]) => p5.strandsNode(c));
+    const positions = stopsNode.map(([, p]) => p5.strandsNode(p));
+    const t = p5.strandsNode(tNode);
+
+    // Helper: mix(a, b, clamp((t - pa) / (pb - pa), 0, 1))
+    function segmentLerp(ca, cb, pa, pb) {
+      const zero = p5.strandsNode(0.0);
+      const one  = p5.strandsNode(1.0);
+      const num  = t.sub(pa);
+      const den  = pb.sub(pa);
+      // mix and clamp are builtin functions, not methods on strands nodes
+      const localT = fn.clamp(num.div(den), zero, one);
+      return buildTernary(
+        strandsContext,
+        pa.equalTo(pb),   // guard: pa == pb → return midpoint
+        fn.mix(ca, cb, p5.strandsNode(0.5)),
+        fn.mix(ca, cb, localT)
+      );
+    }
+
+    // Build nested ternary chain from right to left:
+    // t >= p[last] ? c[last] : (t < p[n-1] ? seg(n-2,n-1) : (...))
+    let result = colors[n - 1];
+    for (let i = n - 2; i >= 0; i--) {
+      const seg = segmentLerp(colors[i], colors[i + 1], positions[i], positions[i + 1]);
+      result = buildTernary(strandsContext, t.lessThan(positions[i + 1]), seg, result);
+    }
+    // Clamp edges
+    result = buildTernary(strandsContext, t.greaterEqual(positions[n - 1]), colors[n - 1], result);
+    result = buildTernary(strandsContext, t.lessEqual(positions[0]), colors[0], result);
+
+    return result;
+  });
+  // Tell the transpiler that argument 0 is a raw array (the stops) whose
+  // elements are themselves raw arrays (the [color, position] pairs) —
+  // both levels left untouched rather than converted to vectors. The
+  // bare 'any' terminal means pair contents aren't constrained any
+  // further; see strands_transpiler.js's ArrayExpression visitor for how
+  // this nesting is walked.
+  fn.paletteLerp.argTypes = [
+    {
+      type: 'Array', // stops
+      subtype: {
+        type: 'Array', // color + position tuples
+        subtype: 'any'
+      }
+    },
+    { type: 'Number' }
+  ];
 
   augmentFn(fn, p5, 'randomSeed', function (seed) {
     if (!strandsContext.active) {
@@ -1439,7 +1917,12 @@ export function createShaderHooksFunctions(strandsContext, fn, shader) {
   for (const hookType of hookTypes) {
     const hook = function (hookUserCallback) {
       const args = setupHook();
-      hook._result = hookUserCallback(...args) ?? hook._result;
+      try {
+        hook._result = hookUserCallback(...args) ?? hook._result;
+      } catch (e) {
+        abandonHook(e);
+        throw e;
+      }
       finishHook();
     };
 
@@ -1504,56 +1987,61 @@ export function createShaderHooksFunctions(strandsContext, fn, shader) {
 
     let entryBlockID;
     function setupHook() {
-      strandsContext.activeHook = hook;
-      entryBlockID = CFG.createBasicBlock(cfg, BlockType.FUNCTION);
-      CFG.addEdge(cfg, cfg.currentBlock, entryBlockID);
-      CFG.pushBlock(cfg, entryBlockID);
-      const args = createHookArguments(strandsContext, hookType.parameters);
-      hook._active = true;
-      hook._args = args;
-      hook._argIdx = argIdx;
-      hook._properties = [];
-      for (let i = 0; i < args.length; i++) {
-        if (i === argIdx) {
-          for (const key of args[argIdx].structProperties || []) {
-            hook._properties.push(key);
+      try {
+        strandsContext.activeHook = hook;
+        strandsContext.stateScope = { records: [], stack: [], stackFloor: 0 };
+        entryBlockID = CFG.createBasicBlock(cfg, BlockType.FUNCTION);
+        CFG.addEdge(cfg, cfg.currentBlock, entryBlockID);
+        CFG.pushBlock(cfg, entryBlockID);
+        const args = createHookArguments(strandsContext, hookType.parameters);
+        hook._active = true;
+        hook._args = args;
+        hook._argIdx = argIdx;
+        hook._properties = [];
+        for (let i = 0; i < args.length; i++) {
+          if (i === argIdx) {
+            for (const key of args[argIdx].structProperties || []) {
+              hook._properties.push(key);
+            }
+            if (
+              hookType.returnType?.typeName ===
+              hookType.parameters[argIdx].type.typeName
+            ) {
+              hook.set(args[argIdx]);
+            }
+          } else {
+            hook._properties.push(hookType.parameters[i].name);
+            hook[hookType.parameters[i].name] = args[i];
           }
-          if (
-            hookType.returnType?.typeName ===
-            hookType.parameters[argIdx].type.typeName
-          ) {
-            hook.set(args[argIdx]);
-          }
-        } else {
-          hook._properties.push(hookType.parameters[i].name);
-          hook[hookType.parameters[i].name] = args[i];
         }
+        return args;
+      } catch (e) {
+        abandonHook(e);
+        throw e;
       }
-      return args;
+    }
+
+    function abandonHook(thrown) {
+      hook._active = false;
+      strandsContext.activeHook = undefined;
+      strandsContext.stateScope = null;
+      if (strandsContext.failedHook === null) {
+        strandsContext.failedHook = { hookName: hookType.name, thrown };
+      }
     }
 
     function finishHook() {
+      const unmatchedPush = strandsContext.stateScope?.stack.length > 0;
       hook._active = false;
       const userReturned = hook._result;
       strandsContext.activeHook = undefined;
+      strandsContext.stateScope = null;
 
       const expectedReturnType = hookType.returnType;
       const expectsReturnValue =
         isStructType(expectedReturnType) ||
         (expectedReturnType.dataType &&
           expectedReturnType.typeName?.trim() !== 'void');
-
-      if (
-        expectsReturnValue &&
-        userReturned === undefined &&
-        hook.earlyReturns.length === 0
-      ) {
-        FES.userError(
-          'scope error',
-          `${hook._publicName} requires a value. Make sure to call ` +
-            `${hook._publicName}.set(value) before ${hook._publicName}.end().`
-        );
-      }
 
       let rootNodeID = null;
       const handleRetVal = retNode => {
@@ -1656,24 +2144,46 @@ export function createShaderHooksFunctions(strandsContext, fn, shader) {
           );
         }
       };
-      for (const { valueNode, earlyReturnID } of hook.earlyReturns) {
-        const id = handleRetVal(valueNode);
-        if (id !== null) {
-          dag.dependsOn[earlyReturnID] = [id];
-        } else {
-          dag.dependsOn[earlyReturnID] = [];
+      try {
+        if (unmatchedPush) {
+          FES.userError(
+            'scope error',
+            'push() needs a matching pop() before the hook ends.'
+          );
         }
+        if (
+          expectsReturnValue &&
+          userReturned === undefined &&
+          hook.earlyReturns.length === 0
+        ) {
+          FES.userError(
+            'scope error',
+            `${hook._publicName} requires a value. Make sure to call ` +
+              `${hook._publicName}.set(value) before ${hook._publicName}.end().`
+          );
+        }
+        for (const { valueNode, earlyReturnID } of hook.earlyReturns) {
+          const id = handleRetVal(valueNode);
+          if (id !== null) {
+            dag.dependsOn[earlyReturnID] = [id];
+          } else {
+            dag.dependsOn[earlyReturnID] = [];
+          }
+        }
+        rootNodeID = userReturned ? handleRetVal(userReturned) : undefined;
+        const fullHookName = `${hookType.returnType.typeName} ${hookType.name}`;
+        const hookInfo = availableHooks[fullHookName];
+        strandsContext.hooks.push({
+          hookType,
+          entryBlockID,
+          rootNodeID,
+          shaderContext: hookInfo?.shaderContext // 'vertex', 'fragment', or 'compute'
+        });
+        CFG.popBlock(cfg);
+      } catch (e) {
+        abandonHook(e);
+        throw e;
       }
-      rootNodeID = userReturned ? handleRetVal(userReturned) : undefined;
-      const fullHookName = `${hookType.returnType.typeName} ${hookType.name}`;
-      const hookInfo = availableHooks[fullHookName];
-      strandsContext.hooks.push({
-        hookType,
-        entryBlockID,
-        rootNodeID,
-        shaderContext: hookInfo?.shaderContext // 'vertex', 'fragment', or 'compute'
-      });
-      CFG.popBlock(cfg);
     }
     hook.begin = setupHook;
     hook.end = finishHook;
