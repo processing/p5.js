@@ -92,6 +92,11 @@ function _createLoadingOverlay(pInst) {
       if (!pInst._isSketchLoading) {
         return;
       }
+
+      const currentCanvas = pInst.canvas?.elt || pInst.canvas;
+      if (currentCanvas) {
+        _positionCanvas(overlay, currentCanvas);
+      }
       
       ctx.clearRect(0, 0, overlay.width, overlay.height);
       const frame = frameCount++;
@@ -135,28 +140,36 @@ function _createLoadingOverlay(pInst) {
  * @param {HTMLCanvasElement} actualCanvas The sketch canvas element.
  */
 function _positionCanvas(loadingCanvas, actualCanvas) {
-  loadingCanvas.width = actualCanvas.width;
-  loadingCanvas.height = actualCanvas.height;
+  if (loadingCanvas.width !== actualCanvas.width) {
+    loadingCanvas.width = actualCanvas.width;
+  }
+  if (loadingCanvas.height !== actualCanvas.height) {
+    loadingCanvas.height = actualCanvas.height;
+  }
 
   const width = actualCanvas.style.width || `${actualCanvas.offsetWidth || actualCanvas.width}px`;
   const height = actualCanvas.style.height || `${actualCanvas.offsetHeight || actualCanvas.height}px`;
+  const top = `${actualCanvas.offsetTop}px`;
+  const left = `${actualCanvas.offsetLeft}px`;
 
-  Object.assign(loadingCanvas.style, {
-    width,
-    height,
+  if (loadingCanvas.style.top !== top) loadingCanvas.style.top = top;
+  if (loadingCanvas.style.left !== left) loadingCanvas.style.left = left;
+  if (loadingCanvas.style.width !== width) loadingCanvas.style.width = width;
+  if (loadingCanvas.style.height !== height) loadingCanvas.style.height = height;
+
+  if (loadingCanvas.style.position !== 'absolute') {
+    Object.assign(loadingCanvas.style, {
     position: 'absolute',
-    top: `${actualCanvas.offsetTop}px`,
-    left: `${actualCanvas.offsetLeft}px`,
     margin: '0',
     padding: '0',
     pointerEvents: 'none',
     zIndex: '9999'
   });
+  }
 }
 
 /**
- * Stops the loading indicator animation and removes the overlay canvas from the DO
- *
+ * Stops the loading indicator animation and removes the overlay canvas from the DOM.
  * @private
  * @param {p5} pInst The p5 instance.
  */
