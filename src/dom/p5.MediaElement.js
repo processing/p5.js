@@ -891,7 +891,7 @@ class MediaElement extends Element {
    *
    * // Set isDone when playback ends.
    * function handleEnd() {
-   *   isDone = false;
+   *   isDone = true;
    * }
    */
   onended(callback) {
