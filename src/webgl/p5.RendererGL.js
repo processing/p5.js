@@ -62,6 +62,125 @@ for (const key in defaultShaders) {
 }
 
 /**
+ * CPU counterpart of the WebGPU `StorageBuffer`: holds data as plain JS
+ * values (typed arrays for number lists, arrays of objects for structs) so
+ * compute shaders can run without a GPU.
+ */
+class CpuStorageBuffer {
+    constructor(
+      data,
+      renderer,
+      schema = null,
+      arrayType = Float32Array,
+      length = null
+    ) {
+      this._isStorageBuffer = true;
+      this.data = data;
+      this.length = length ?? data.length;
+      this._renderer = renderer;
+      this._schema = schema;
+      // Struct buffers are always packed as floats
+      this._arrayType = schema !== null ? Float32Array : arrayType;
+    }
+
+    update(data) {
+      if (this._schema !== null) {
+        // Buffer was created with a struct array
+        if (
+          !Array.isArray(data) ||
+          data.length === 0 ||
+          typeof data[0] !== 'object' ||
+          Array.isArray(data[0])
+        ) {
+          throw new Error(
+            'update() expects an array of objects matching the original struct format'
+          );
+        }
+
+        const newSchema = this._renderer._inferStructSchema(data[0]);
+        const sameShape =
+        newSchema.fields.length === this._schema.fields.length &&
+        newSchema.fields.every((f, i) => {
+          const o = this._schema.fields[i];
+          return f.name === o.name && f.dim === o.dim && f.kind === o.kind;
+        });
+
+        if (!sameShape) {
+          throw new Error(
+            `update() data structure doesn't match the original.\n` +
+              `  Expected: ${JSON.stringify(this._schema, null, 2)}\n` +
+              `  Got:      ${JSON.stringify(newSchema, null, 2)}`
+          );
+        }
+
+        if (data.length > this.length) {
+          throw new Error(
+            `update() data length (${data.length}) exceeds buffer length (${this.length})`
+          );
+        }
+        this.data = data.slice();
+      } else {
+        // Buffer was created with a number array
+        const ArrayType = this._arrayType;
+        let typedData;
+        if (data instanceof ArrayType) {
+          typedData = data.slice();
+        } else if (Array.isArray(data)) {
+          typedData = new ArrayType(data);
+        } else {
+          throw new Error(
+            `update() expects a ${ArrayType.name} or array of numbers for this buffer`
+          );
+        }
+
+        if (typedData.length > this.length) {
+          throw new Error(
+            `update() data (${typedData.length}) exceeds buffer length (${this.length})`
+          );
+        }
+        this.data = typedData;
+      }
+    }
+
+    async read() {
+      if (this._schema !== null) {
+        return this.data.map(item => ({ ...item }));
+      }
+      return this.data.slice();
+    }
+
+    set(index, value) {
+      if (this._schema !== null) {
+        // buffer was created with an array of structs
+        if (
+          typeof value !== 'object' ||
+          value === null ||
+          Array.isArray(value)
+        ) {
+          throw new Error(
+            'set() expects a plain object matching the original struct format for this buffer'
+          );
+        }
+
+        if (index < 0 || index >= this.length) {
+          throw new Error(
+            `set() index ${index} is out of bounds for this buffer (length ${this.length})`
+          );
+        }
+
+        this.data[index] = value;
+      } else {
+        // buffer was created with a float array
+        if (typeof value !== 'number') {
+          throw new Error('set() expects a number for this float buffer');
+        }
+
+        this.data[index] = value;
+      }
+    }
+  }
+
+/**
  * 3D graphics class
  * @private
  * @class p5.RendererGL
@@ -107,6 +226,9 @@ class RendererGL extends Renderer3D {
 
     this._cachedBlendMode = undefined;
     this.strandsBackend = glslBackend;
+
+    // Storage buffers for compute shaders
+    this._storageBuffers = new Set();
   }
 
   setupContext() {
@@ -2030,6 +2152,151 @@ class RendererGL extends Renderer3D {
       }
       this.bindFramebuffer(prevFramebuffer);
     }
+  }
+
+  // Maps a plain JS value to the WGSL type string that represents it in a struct.
+    _jsValueToWgslType(value) {
+      if (typeof value === 'number') return 'f32';
+      // Duck typing instead of instanceof to avoid importing a separate
+      // copy of the Color/Vector classes
+      if (value?.isVector) {
+        if (value.dimensions === 2) return 'vec2f';
+        if (value.dimensions === 3) return 'vec3f';
+        if (value.dimensions === 4) return 'vec4f';
+        throw new Error(
+          `Unsupported vector dimension ${value.dimensions} for struct storage field`
+        );
+      }
+      if (value?.isColor) {
+        return 'vec4f';
+      }
+      if (Array.isArray(value)) {
+        if (value.length === 2) return 'vec2f';
+        if (value.length === 3) return 'vec3f';
+        if (value.length === 4) return 'vec4f';
+        throw new Error(
+          `Unsupported array length ${value.length} for struct storage field`
+        );
+      }
+      throw new Error(
+        `Unsupported value type ${typeof value} for struct storage field`
+      );
+    }
+
+  // Infers a minimal struct schema for CPU storage from one example element.
+  //
+  // Returns { name, dim, kind } where:
+  //    name: string - JS property name
+  //    dim:  number - float component count, used when creating StrandsNodes
+  // TODO: ADD KIND COMMENT
+  _inferStructSchema(firstElement) {
+    const fields = Object.entries(firstElement).map(([name, value]) => {
+      if (typeof value === 'number') {
+        return { name, dim: 1, kind: 'number' };
+      }
+      if (Array.isArray(value)) {
+        return { name, dim: value.length, kind: 'array' };
+      }
+      if (value?.isVector) {
+        return { name, dim: value.dimensions ?? 3, kind: 'vector' };
+      }
+      if (value?.isColor) {
+        return { name, dim: 4, kind: 'color' };
+      }
+      throw new Error(
+        `createStorage() field "${name}" must be a number, an array of numbers, ` +
+          'a p5.Vector or a p5.Color.'
+      );
+    });
+    return { fields };
+  }
+  /**
+   * Creates CPU-backed storage for the compute fallback: a number creates a
+   * zero-filled list of that length, otherwise data is copied in. Struct
+   * data (arrays of objects) keeps plain JS values, so no GPU packing
+   * happens here. Mirrors `RendererWebGPU.createStorage` validation.
+   */
+  createStorage(dataOrCount) {
+      // Struct array: an array of plain objects
+      if (
+        Array.isArray(dataOrCount) &&
+        dataOrCount.length > 0 &&
+        typeof dataOrCount[0] === 'object' &&
+        !Array.isArray(dataOrCount[0])
+      ) {
+        if (!p5.disableFriendlyErrors && dataOrCount.length > 1) {
+          const firstKeys = Object.keys(dataOrCount[0]);
+          let warned = false;
+          for (let i = 1; i < dataOrCount.length; i++) {
+            const el = dataOrCount[i];
+            const elKeys = Object.keys(el);
+            const sameKeys =
+              firstKeys.length === elKeys.length &&
+              firstKeys.every((k, j) => k === elKeys[j]);
+            if (!sameKeys) {
+              p5._friendlyError(
+                `Element ${i} has different fields than element 0. ` +
+                  `All elements should have the same properties.`,
+                'createStorage'
+              );
+              break;
+            }
+            for (const key of firstKeys) {
+              const firstType = this._jsValueToWgslType(dataOrCount[0][key]);
+              const elType = this._jsValueToWgslType(el[key]);
+              if (firstType !== elType) {
+                p5._friendlyError(
+                  `The "${key}" property of element ${i} has type ${elType} ` +
+                    `but element 0 has type ${firstType}. Properties should have the same type across all elements.`,
+                  'createStorage'
+                );
+                warned = true;
+                break;
+              }
+            }
+            if (warned) break;
+          }
+        }
+        // to here; basically this is to check that struct array is uniform and appropriate.
+        const schema = this._inferStructSchema(dataOrCount[0]);
+        const storageBuffer = new CpuStorageBuffer(dataOrCount.slice(), this, schema, Float32Array, dataOrCount.length);
+        this._storageBuffers.add(storageBuffer);
+        return storageBuffer;
+      }
+
+      // Determine buffer initial data
+      let initialData;
+      if (typeof dataOrCount === 'number') {
+        // createStorage(count) - zero-initialized, nothing to infer a type from
+        initialData = new Float32Array(dataOrCount);
+      } else {
+        // createStorage(array) - from data
+        if (
+          ArrayBuffer.isView(dataOrCount) &&
+          !(dataOrCount instanceof DataView)
+        ) {
+          initialData = dataOrCount;
+        } else if (Array.isArray(dataOrCount)) {
+          // Plain arrays default to floats for back compat
+          initialData = new Float32Array(dataOrCount);
+        } else {
+          throw new Error('createStorage expects a number or array/TypedArray');
+        }
+      }
+      const ArrayType = initialData.constructor;
+
+      const storageBuffer = new CpuStorageBuffer(
+        initialData.slice(),
+        this,
+        null,
+        ArrayType,
+        initialData.length
+      );
+
+      // Track for cleanup
+      this._storageBuffers.add(storageBuffer);
+
+      return storageBuffer;
   }
 }
 
