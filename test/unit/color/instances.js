@@ -95,6 +95,36 @@ suite('color/Instances', function () {
       assert.arrayApproximately(d.array(), [1, 0.2, 0.4, 0.8], 1e-6);
     });
 
+    test('setAlpha() uses the alpha range of the color mode', async function () {
+      const sketch = await createSketch(p => p.colorMode(p.HSB));
+
+      const c = sketch.color(200, 50, 80);
+      c.setAlpha(0.5);
+      assert.arrayApproximately(
+        c.array(),
+        sketch.color(200, 50, 80, 0.5).array(),
+        1e-6
+      );
+
+      sketch.colorMode(sketch.HSL, 360, 100, 100, 255);
+      const d = sketch.color(200, 50, 80);
+      d.setAlpha(51);
+      assert.approximately(d.array()[3], 0.2, 1e-6);
+    });
+
+    test('setRed(), setGreen() and setBlue() use the RGB ranges in other color modes', async function () {
+      const sketch = await createSketch(p => {
+        p.colorMode(p.RGB, 100);
+        p.colorMode(p.HSB, 360, 100, 100, 1);
+      });
+
+      const c = sketch.color(0, 0, 0);
+      c.setRed(100);
+      c.setGreen(50);
+      assert.approximately(c.array()[0], 1, 1e-6);
+      assert.approximately(c.array()[1], 0.5, 1e-6);
+    });
+
     test('setters use the ranges of a p5.Graphics for its colors', async function () {
       const sketch = await createSketch();
       const g = sketch.createGraphics(10, 10);

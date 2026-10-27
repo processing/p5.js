@@ -1110,12 +1110,15 @@ function color(p5, fn, lifecycles) {
   p5.Color.addColorMode(OKLCH, OKLCHSpace);
 
   // The setters take values in the range of the sketch's colorMode(), so they
-  // look up the ranges of the sketch that created the color. This is done once
-  // for the shared prototype, not once per sketch.
+  // look up the ranges of the sketch that created the color. Red, green and
+  // blue use the RGB ranges. Alpha uses the ranges of the color's own mode, like
+  // alpha() does. This is done once for the shared prototype, not once per
+  // sketch.
   const setRangeFor = channel => setter =>
     function (value, max) {
-      const maxes = this._getOwnerMaxes()?.[RGB];
-      return setter.call(this, value, max || maxes?.[channel]);
+      const mode = channel === 3 ? this.mode : RGB;
+      const range = this._getOwnerMaxes()?.[mode]?.[channel];
+      return setter.call(this, value, max || range);
     };
   p5.registerDecorator('p5.Color.prototype.setRed', setRangeFor(0));
   p5.registerDecorator('p5.Color.prototype.setGreen', setRangeFor(1));
