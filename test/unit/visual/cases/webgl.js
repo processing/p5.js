@@ -743,6 +743,48 @@ visualSuite('WebGL', function () {
       p5.filter(filterShader);
       screenshot();
     });
+
+    visualTest('loadNormalShader', async (p5, screenshot) => {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      const normalShader = await p5.loadNormalShader(
+        '/test/unit/assets/testNormal.js'
+      );
+
+      // The shader should shift the plane to the right
+      p5.noStroke();
+      p5.shader(normalShader);
+      p5.plane(20, 20);
+      screenshot();
+    });
+
+    visualTest('loadColorShader', async (p5, screenshot) => {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      const colorShader = await p5.loadColorShader(
+        '/test/unit/assets/testColor.js'
+      );
+
+      // The shader should swap red and green, so the plane appears green
+      p5.noStroke();
+      p5.fill(255, 0, 0);
+      p5.shader(colorShader);
+      p5.plane(20, 20);
+      screenshot();
+    });
+
+    visualTest('loadStrokeShader', async (p5, screenshot) => {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      const strokeShader = await p5.loadStrokeShader(
+        '/test/unit/assets/testStroke.js'
+      );
+
+      // The shader should make the line three times as thick
+      p5.background(255);
+      p5.stroke(0);
+      p5.strokeWeight(4);
+      p5.strokeShader(strokeShader);
+      p5.line(-20, 0, 20, 0);
+      screenshot();
+    });
   });
 
   visualSuite('Strokes', function () {
@@ -1100,6 +1142,150 @@ visualSuite('WebGL', function () {
         screenshot();
       }
     );
+    visualTest(
+      'computeNormals(SMOOTH) preserves smooth normals',
+      function (p5, screenshot) {
+        p5.createCanvas(100, 100, p5.WEBGL);
+        p5.noiseSeed(0);
+        const geom = p5.buildGeometry(() => {
+          const verticesPerRing = 20;
+          const rings = 20;
+
+          for (let ring = 0; ring < rings - 1; ring++) {
+            p5.beginShape(p5.QUAD_STRIP);
+
+            for (let i = 0; i <= verticesPerRing; i++) {
+              for (const ringOffset of [0, 1]) {
+                const y = p5.map(
+                  ring + ringOffset,
+                  0,
+                  rings,
+                  40,
+                  -40
+                );
+                const angle = p5.map(
+                  i,
+                  0,
+                  verticesPerRing,
+                  0,
+                  p5.TWO_PI
+                );
+
+                const position = p5.createVector(40, 0).rotate(angle);
+
+                const radius = p5.noise(
+                  200 + position.x * 0.01,
+                  200 + y * 0.01,
+                  200 + position.y * 0.01
+                );
+
+                const squishedPosition = p5.createVector(
+                  position.x * radius,
+                  y,
+                  position.y * radius
+                );
+
+                p5.vertex(
+                  squishedPosition.x,
+                  squishedPosition.y,
+                  squishedPosition.z
+                );
+              }
+            }
+
+            p5.endShape();
+          }
+        });
+
+        geom.computeNormals(p5.SMOOTH);
+
+        p5.background(255);
+        p5.normalMaterial();
+        p5.rotateY(0.5);
+        p5.model(geom);
+
+        screenshot();
+      }
+    );
+
+    for (const withStroke of [false, true]) {
+      visualTest(
+        `computeNormals(SEGMENTED) ${withStroke ? 'with strokes' : 'without strokes'}`,
+        function (p5, screenshot) {
+          p5.createCanvas(100, 100, p5.WEBGL);
+          p5.noiseSeed(0);
+
+          const geom = p5.buildGeometry(() => {
+            const verticesPerRing = 20;
+            const rings = 20;
+
+            for (let ring = 0; ring < rings - 1; ring++) {
+              p5.beginShape(p5.QUAD_STRIP);
+
+              for (let i = 0; i <= verticesPerRing; i++) {
+                for (const ringOffset of [0, 1]) {
+                  const y = p5.map(
+                    ring + ringOffset,
+                    0,
+                    rings,
+                    40,
+                    -40
+                  );
+
+                  const angle = p5.map(
+                    i,
+                    0,
+                    verticesPerRing,
+                    0,
+                    p5.TWO_PI
+                  );
+
+                  const position = p5.createVector(40, 0).rotate(angle);
+
+                  const radius = p5.noise(
+                    200 + position.x * 0.01,
+                    200 + y * 0.01,
+                    200 + position.y * 0.01
+                  );
+
+                  const squishedPosition = p5.createVector(
+                    position.x * radius,
+                    y,
+                    position.y * radius
+                  );
+
+                  p5.vertex(
+                    squishedPosition.x,
+                    squishedPosition.y,
+                    squishedPosition.z
+                  );
+                }
+              }
+
+              p5.endShape();
+            }
+          });
+
+          geom.computeNormals(p5.SEGMENTED);
+
+          p5.background(255);
+          p5.normalMaterial();
+
+          if (withStroke) {
+            p5.stroke(0);
+            p5.strokeWeight(1);
+          } else {
+            p5.noStroke();
+          }
+
+          p5.rotateY(0.5);
+          p5.model(geom);
+
+          screenshot();
+        }
+      );
+    }
+
   });
 
   visualSuite('font data', () => {
@@ -1511,6 +1697,93 @@ visualSuite('WebGL', function () {
       p5.circle(p5.noise(0), p5.noise(0), 20);
       screenshot();
     });
+
+    visualTest(
+      'paletteLerp() maps texCoord through a multi-stop gradient in a filter',
+      (p5, screenshot) => {
+        p5.createCanvas(50, 50, p5.WEBGL);
+        const shader = p5.baseFilterShader().modify(
+          () => {
+            p5.filterColor.begin();
+            p5.filterColor.set(
+              p5.paletteLerp(
+                [
+                  [[1, 0, 0, 1], 0.0],
+                  [[1, 1, 0, 1], 0.33],
+                  [[0, 1, 0, 1], 0.66],
+                  [[0, 0, 1, 1], 1.0]
+                ],
+                p5.filterColor.texCoord.x
+              )
+            );
+            p5.filterColor.end();
+          },
+          { p5 }
+        );
+        p5.background(220);
+        p5.filter(shader);
+        screenshot();
+      }
+    );
+
+    visualTest(
+      'paletteLerp() handles uneven stop positions and more than 4 stops',
+      (p5, screenshot) => {
+        p5.createCanvas(50, 50, p5.WEBGL);
+        const shader = p5.baseFilterShader().modify(
+          () => {
+            p5.filterColor.begin();
+            // Stops bunched toward the right, with flat regions on either end
+            p5.filterColor.set(
+              p5.paletteLerp(
+                [
+                  [[0, 0, 0, 1], 0.2],
+                  [[1, 0, 0, 1], 0.4],
+                  [[1, 0.5, 0, 1], 0.55],
+                  [[1, 1, 0, 1], 0.65],
+                  [[1, 1, 1, 1], 0.8]
+                ],
+                p5.filterColor.texCoord.x
+              )
+            );
+            p5.filterColor.end();
+          },
+          { p5 }
+        );
+        p5.background(220);
+        p5.filter(shader);
+        screenshot();
+      }
+    );
+
+    visualTest(
+      'paletteLerp() can be driven by a different input than texCoord.x',
+      (p5, screenshot) => {
+        p5.createCanvas(50, 50, p5.WEBGL);
+        const shader = p5.baseFilterShader().modify(
+          () => {
+            p5.filterColor.begin();
+            // Diagonal gradient between two stops
+            const uv = p5.filterColor.texCoord;
+            const t = (uv.x + uv.y) / 2;
+            p5.filterColor.set(
+              p5.paletteLerp(
+                [
+                  [[0.1, 0.1, 0.5, 1], 0.0],
+                  [[1, 0.8, 0.2, 1], 1.0]
+                ],
+                t
+              )
+            );
+            p5.filterColor.end();
+          },
+          { p5 }
+        );
+        p5.background(220);
+        p5.filter(shader);
+        screenshot();
+      }
+    );
 
     visualTest('random() colors a basic shader', (p5, screenshot) => {
       p5.createCanvas(50, 50, p5.WEBGL);
