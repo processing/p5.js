@@ -317,5 +317,70 @@ suite('p5.Texture', function () {
       expect(tex.width).to.equal(canvas.width);
       expect(tex.height).to.equal(canvas.height);
     });
+  
+    suite('textureWrap() object setter (#9164)', function () {
+      test('getter returns the current modes as {x, y}', function () {
+        myp5.textureWrap(myp5.REPEAT, myp5.MIRROR);
+        assert.deepEqual(myp5.textureWrap(), {
+          x: myp5.REPEAT,
+          y: myp5.MIRROR
+        });
+      });
+
+      test('passing the getter result back preserves both modes', function () {
+        myp5.textureWrap(myp5.REPEAT, myp5.MIRROR);
+        myp5.textureWrap(myp5.textureWrap());
+        assert.deepEqual(myp5.textureWrap(), {
+          x: myp5.REPEAT,
+          y: myp5.MIRROR
+        });
+      });
+
+      test('a supplied object sets the two directions independently', function () {
+        myp5.textureWrap({ x: myp5.REPEAT, y: myp5.MIRROR });
+        assert.equal(myp5._renderer.states.textureWrapX, myp5.REPEAT);
+        assert.equal(myp5._renderer.states.textureWrapY, myp5.MIRROR);
+      });
+
+      test('accepts an object with no prototype', function () {
+        // The FES param validator throws on a null-prototype object because
+        // buildTypeMismatchMessage() calls toString() on the argument. Disable
+        // it here so this test exercises textureWrap() rather than the FES.
+        const prev = p5.disableFriendlyErrors;
+        p5.disableFriendlyErrors = true;
+        try {
+          const modes = Object.create(null);
+          modes.x = myp5.REPEAT;
+          modes.y = myp5.MIRROR;
+          myp5.textureWrap(modes);
+          assert.equal(myp5._renderer.states.textureWrapY, myp5.MIRROR);
+        } finally {
+          p5.disableFriendlyErrors = prev;
+        }
+      });
+
+      test('textureWrap(null) does not throw', function () {
+        assert.doesNotThrow(() => myp5.textureWrap(null));
+      });
+
+      test('the y mode reaches WebGL after a round trip', function () {
+        myp5.textureWrap(myp5.REPEAT, myp5.MIRROR);
+        myp5.textureWrap(myp5.textureWrap());
+        myp5._renderer.getTexture(texImg1);
+        expect(texParamSpy).toHaveBeenCalledWith(
+          myp5._renderer.GL.TEXTURE_2D,
+          myp5._renderer.GL.TEXTURE_WRAP_T,
+          myp5._renderer.GL.MIRRORED_REPEAT
+        );
+      });
+
+      test('warns once for an unrecognised wrap mode', function () {
+        const fesSpy = vi.spyOn(p5, '_friendlyError');
+        myp5.textureWrap('not-a-mode');
+        myp5.textureWrap('also-not-a-mode');
+        expect(fesSpy).toHaveBeenCalledTimes(1);
+        fesSpy.mockRestore();
+      });
+    });
   });
 });

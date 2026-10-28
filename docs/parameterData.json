@@ -3479,6 +3479,9 @@
           "CLAMP|REPEAT|MIRROR",
           "CLAMP|REPEAT|MIRROR?"
         ],
+        [
+          "Object"
+        ],
         []
       ]
     },
