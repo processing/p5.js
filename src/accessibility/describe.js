@@ -2,10 +2,9 @@
  * @module Environment
  * @submodule Environment
  * @for p5
- * @requires core
  */
 
-function describe(p5, fn){
+function describe(p5, fn) {
   const descContainer = '_Description'; //Fallback container
   const fallbackDescId = '_fallbackDesc'; //Fallback description
   const fallbackTableId = '_fallbackTable'; //Fallback Table
@@ -36,8 +35,6 @@ function describe(p5, fn){
    * @param  {(FALLBACK|LABEL)} [display] either LABEL or FALLBACK.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   background('pink');
    *
@@ -51,11 +48,8 @@ function describe(p5, fn){
    *   // Add a general description of the canvas.
    *   describe('A pink square with a red heart in the bottom-right corner.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   background('pink');
    *
@@ -70,16 +64,12 @@ function describe(p5, fn){
    *   // and display it for debugging.
    *   describe('A pink square with a red heart in the bottom-right corner.', LABEL);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
-   * 
+   * @example
    * function setup(){
    *  createCanvas(100, 100);
    * };
-   * 
+   *
    * function draw() {
    *   background(200);
    *
@@ -96,16 +86,12 @@ function describe(p5, fn){
    *   // Add a general description of the canvas.
    *   describe(`A green circle at (${x}, 50) moves from left to right on a gray square.`);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
-   * 
+   * @example
    * function setup(){
    * createCanvas(100, 100);
    * }
-   * 
+   *
    * function draw() {
    *   background(200);
    *
@@ -123,10 +109,8 @@ function describe(p5, fn){
    *   // and display it for debugging.
    *   describe(`A green circle at (${x}, 50) moves from left to right on a gray square.`, LABEL);
    * }
-   * </code>
-   * </div>
    */
-  fn.describe = function(text, display) {
+  fn.describe = function (text, display) {
     // p5._validateParameters('describe', arguments);
     if (typeof text !== 'string') {
       return;
@@ -197,8 +181,6 @@ function describe(p5, fn){
    * @param  {(FALLBACK|LABEL)} [display] either LABEL or FALLBACK.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   background('pink');
    *
@@ -220,11 +202,8 @@ function describe(p5, fn){
    *   // Add a general description of the canvas.
    *   describe('A red heart and yellow circle over a pink background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   background('pink');
    *
@@ -248,11 +227,9 @@ function describe(p5, fn){
    *   // Add a general description of the canvas.
    *   describe('A red heart and yellow circle over a pink background.');
    * }
-   * </code>
-   * </div>
    */
 
-  fn.describeElement = function(name, text, display) {
+  fn.describeElement = function (name, text, display) {
     // p5._validateParameters('describeElement', arguments);
     if (typeof text !== 'string' || typeof name !== 'string') {
       return;
@@ -336,7 +313,7 @@ function describe(p5, fn){
    */
 
   //creates HTML structure for canvas descriptions
-  fn._describeHTML = function(type, text) {
+  fn._describeHTML = function (type, text) {
     const cnvId = this.canvas.id;
     if (type === 'fallback') {
       //if there is no description container
@@ -424,7 +401,7 @@ function describe(p5, fn){
   }
 
   //creates HTML structure for element descriptions
-  fn._describeElementHTML = function(type, name, text) {
+  fn._describeElementHTML = function (type, name, text) {
     const cnvId = this.canvas.id;
     if (type === 'fallback') {
       //if there is no description container
@@ -510,6 +487,6 @@ function describe(p5, fn){
 
 export default describe;
 
-if(typeof p5 !== 'undefined'){
+if (typeof p5 !== 'undefined') {
   describe(p5, p5.prototype);
 }

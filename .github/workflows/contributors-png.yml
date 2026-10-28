@@ -1,0 +1,20 @@
+name: Generate Contributors PNG
+
+on:
+  push:
+    paths:
+      - '.all-contributorsrc'
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    if: github.ref == 'refs/heads/main' && github.repository == 'processing/p5.js'
+    runs-on: ubuntu-26.04
+    steps:
+      - name: Generate contributors image and open PR
+        uses: processing/all-contributors-image@cfb102304bd496071b6003be0bea2ac0b89b4e3a # v0.1.0
+        with:
+          token: ${{ secrets.ACCESS_TOKEN }}
+          base-branch: main

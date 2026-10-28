@@ -1,5 +1,9 @@
 import p5 from '../../../src/app.js';
-import { createP5Iframe, P5_SCRIPT_TAG, P5_SCRIPT_URL } from '../../js/p5_helpers';
+import {
+  createP5Iframe,
+  P5_SCRIPT_TAG,
+  P5_SCRIPT_URL
+} from '../../js/p5_helpers';
 import { vi } from 'vitest';
 
 suite('Core', function () {
@@ -105,9 +109,7 @@ suite('Core', function () {
         try {
           globalObject.text = 'hi';
           bind('text', noop);
-          expect(
-            _friendlyErrorStub
-          ).toHaveBeenCalledTimes(1);
+          expect(_friendlyErrorStub).toHaveBeenCalledTimes(1);
         } finally {
           vi.restoreAllMocks();
         }
@@ -177,6 +179,38 @@ suite('Core', function () {
       globalObject.mouseX = 50;
       assert.equal(globalObject.mouseX, 50);
       assert.isUndefined(logMsg);
+    });
+  });
+
+  suite('millis()', () => {
+    let myp5;
+
+    beforeEach(() => {
+      vi.useFakeTimers();
+    });
+    afterEach(() => {
+      vi.useRealTimers();
+      if (myp5) {
+        myp5.remove();
+        myp5 = undefined;
+      }
+    });
+
+    test('millis() starts at 0 when the draw loop begins', async () => {
+      const t = await new Promise(resolve => {
+        myp5 = new p5(p => {
+          p.setup = () => {
+            // Pretend setup takes 1s
+            vi.advanceTimersByTime(1000);
+          };
+          p.draw = () => {
+            // Pretend draw() happens 50ms after setup
+            vi.advanceTimersByTime(50);
+            resolve(p.millis());
+          };
+        });
+      });
+      expect(t).toEqual(50);
     });
   });
 });

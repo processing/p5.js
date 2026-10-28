@@ -9,12 +9,14 @@
 - Airbnb [JavaScript 风格指南](https://airbnb.io/javascript/) (MIT)
 
 我们的社区庞大而多样。许多人使用 p5.js 学习编程，其中很大一部分是 K-12 年级的学生。阅读本指南后，你将了解：
+
 - 如何编写有效、包容和易于访问的文档。
 - 如何为文档编写简单的代码示例。
 
 ## 目录
 
 ### 写作
+
 - [YUIDoc](#yuidoc)
 - [英语](#英语)
 - [牛津逗号](#牛津逗号)
@@ -23,6 +25,7 @@
 - [可访问性和残障](#可访问性和残障)
 
 ### 代码
+
 - [代码示例](#代码示例)
 - [注释](#注释)
 - [空白](#空白)
@@ -116,12 +119,12 @@ Always use `let` to declare variables.
 
 **代词**
 
-| 推荐 | 不推荐 |
-| -- | -- |
-| they | he or she |
-| them | him or her |
-| their | his or her |
-| theirs | his or hers |
+| 推荐       | 不推荐             |
+| ---------- | ------------------ |
+| they       | he or she          |
+| them       | him or her         |
+| their      | his or her         |
+| theirs     | his or hers        |
 | themselves | himself or herself |
 
 **[⬆ 返回顶部](#目录)**
@@ -142,16 +145,16 @@ Always use `let` to declare variables.
 
 以下术语改编自 WordPress 文档指南中的[编写包容性文档](https://make.wordpress.org/docs/style-guide/general-guidelines/inclusivity/#accessibility-terminology)。有关以人为本语言的更多背景，请参见 CDC 的[与残障人士沟通指南](https://www.cdc.gov/ncbddd/disabilityandhealth/materials/factsheets/fs-communicating-with-people.html)。
 
-| 推荐 | 不推荐 |
-| -- | -- |
-| 残障人士 | 残疾人、残障、能力不同、有挑战、不正常 |
-| 非残障人士 | 正常人、健康人、健全人 |
-| 有[残障] | 受害者、遭受、受...影响、被...折磨 |
-| 无法说话，使用合成语音 | 哑巴、失语 |
-| 聋人，听力低下 | 听力障碍 |
-| 盲人，视力低下 | 视力障碍，视觉挑战 |
-| 认知或发育障碍 | 智力挑战，学习缓慢 |
-| 行动不便的人，身体残障的人 | 瘸子，残障 |
+| 推荐                       | 不推荐                                 |
+| -------------------------- | -------------------------------------- |
+| 残障人士                   | 残疾人、残障、能力不同、有挑战、不正常 |
+| 非残障人士                 | 正常人、健康人、健全人                 |
+| 有[残障]                   | 受害者、遭受、受...影响、被...折磨     |
+| 无法说话，使用合成语音     | 哑巴、失语                             |
+| 聋人，听力低下             | 听力障碍                               |
+| 盲人，视力低下             | 视力障碍，视觉挑战                     |
+| 认知或发育障碍             | 智力挑战，学习缓慢                     |
+| 行动不便的人，身体残障的人 | 瘸子，残障                             |
 
 ## 代码示例
 
@@ -165,7 +168,7 @@ Always use `let` to declare variables.
 
 ```javascript
 // 不好。
-let magicWord = 'Please';  // 记住这个。
+let magicWord = 'Please'; // 记住这个。
 
 // 好。
 // 记住这个。
@@ -202,7 +205,6 @@ let magicWord = 'Please';
 - 使用 `//` 进行多行注释。
 
 ```javascript
-
 // 不好。
 /**
  * 我将使用 // 进行多行注释。
@@ -227,7 +229,6 @@ let magicWord = 'Please';
 // 我将使用 // 进行多行注释。
 // 我将使用 // 进行多行注释。
 // 我将使用 // 进行多行注释。
-
 ```
 
 **[⬆ 返回顶部](#目录)**
@@ -257,7 +258,7 @@ function setup() {
 
 ```javascript
 // 不好。
-function setup(){
+function setup() {
   createCanvas(400, 400);
 }
 
@@ -271,8 +272,8 @@ function setup() {
 
 ```javascript
 // 不好。
-if(keyIsPressed === true) {
-  doStuff ();
+if (keyIsPressed === true) {
+  doStuff();
 }
 
 // 好。
@@ -281,8 +282,8 @@ if (keyIsPressed === true) {
 }
 
 // 不好。
-function setup () {
-  createCanvas (400, 400);
+function setup() {
+  createCanvas(400, 400);
 }
 
 // 好。
@@ -295,7 +296,7 @@ function setup() {
 
 ```javascript
 // 不好。
-let y=x+5;
+let y = x + 5;
 
 // 好。
 let y = x + 5;
@@ -309,7 +310,7 @@ let y = x + 5;
 
 ```javascript
 // 不好。
-let x = 0
+let x = 0;
 
 // 好。
 let x = 0;
@@ -439,7 +440,7 @@ let dragonball = 'z';
 ```javascript
 // 不好 - 不必要的搜索。
 function getCharacter(name = 'default') {
-  let character = characters.find((c) => c.name === name);
+  let character = characters.find(c => c.name === name);
 
   if (name === 'default') {
     return false;
@@ -448,7 +449,7 @@ function getCharacter(name = 'default') {
   if (character) {
     return character;
   }
-  
+
   return false;
 }
 
@@ -458,12 +459,12 @@ function getCharacter(name = 'default') {
     return false;
   }
 
-  let character = characters.find((c) => c.name === name);
+  let character = characters.find(c => c.name === name);
 
   if (character) {
     return character;
   }
-  
+
   return false;
 }
 ```
@@ -492,7 +493,7 @@ num -= 1;
 
 ```javascript
 // 不好。
-let name = "Hilma af Klint";
+let name = 'Hilma af Klint';
 
 // 不好 - 模板字面量应包含插值或换行。
 let name = `Hilma af Klint`;
@@ -507,15 +508,18 @@ let name = 'Hilma af Klint';
 
 ```javascript
 // 不好。
-let essay = 'You see us as you want to see us: \
+let essay =
+  'You see us as you want to see us: \
 in the simplest terms, in the most convenient definitions.';
 
 // 不好。
-let essay = 'You see us as you want to see us: ' +
+let essay =
+  'You see us as you want to see us: ' +
   'in the simplest terms, in the most convenient definitions.';
 
 // 好。
-let essay = 'You see us as you want to see us: in the simplest terms, in the most convenient definitions.';
+let essay =
+  'You see us as you want to see us: in the simplest terms, in the most convenient definitions.';
 ```
 
 - 需要时使用模板字符串而不是连接。
@@ -526,7 +530,11 @@ let essay = 'You see us as you want to see us: in the simplest terms, in the mos
 let name = 'Dave';
 
 // 不好。
-text(name + ', this conversation can serve no purpose anymore. Goodbye.' + name, 0, 0);
+text(
+  name + ', this conversation can serve no purpose anymore. Goodbye.' + name,
+  0,
+  0
+);
 
 // 好。
 text(`${name}, this conversation can serve no purpose anymore. Goodbye.`, 0, 0);
@@ -594,13 +602,13 @@ if (collection.length > 0) {
 
 ```javascript
 // 不好。
-let huh = a && b < 0 || c > 0 || d + 1 === 0;
+let huh = (a && b < 0) || c > 0 || d + 1 === 0;
 
 // 好。
-let huh = (a && b < 0) || c > 0 || (d + 1 === 0);
+let huh = (a && b < 0) || c > 0 || d + 1 === 0;
 
 // 不好。
-if (a || b && c) {
+if (a || (b && c)) {
   return d;
 }
 
@@ -610,7 +618,7 @@ if (a || (b && c)) {
 }
 
 // 不好。
-let what = a + b / c * d;
+let what = a + (b / c) * d;
 
 // 好。
 let what = a + (b / c) * d;
@@ -622,8 +630,7 @@ let what = a + (b / c) * d;
 
 ```javascript
 // 不好。
-if (mouseIsPressed === true)
-  circle(mouseX, mouseY, 50);
+if (mouseIsPressed === true) circle(mouseX, mouseY, 50);
 
 // 更好。
 if (mouseIsPressed === true) circle(mouseX, mouseY, 50);
@@ -641,8 +648,7 @@ if (mouseIsPressed === true) {
 if (mouseIsPressed === true) {
   thing1();
   thing2();
-}
-else {
+} else {
   thing3();
 }
 
@@ -683,15 +689,19 @@ function mouseIsOnLeft() {
 
 ```javascript
 // 不好。
-if ((number === 123 || letters === 'abc') && mouseIsPressed === true && keyIsPressed === true) {
+if (
+  (number === 123 || letters === 'abc') &&
+  mouseIsPressed === true &&
+  keyIsPressed === true
+) {
   doStuff();
 }
 
 // 好。
 if (
-  (number === 123 || letters === 'abc')
-  && mouseIsPressed === true
-  && keyIsPressed === true
+  (number === 123 || letters === 'abc') &&
+  mouseIsPressed === true &&
+  keyIsPressed === true
 ) {
   doStuff();
 }
@@ -753,7 +763,7 @@ for (let d of diameters) {
 }
 
 // 好。
-diameters.forEach((d) => circle(0, 0, d));
+diameters.forEach(d => circle(0, 0, d));
 ```
 
 **[⬆ 返回顶部](#目录)**
@@ -777,16 +787,16 @@ let ball = {};
 ```javascript
 // 不好。
 let secretObject = {
-  'x': 100,
-  'y': 200,
-  'top-secret': 'classified',
+  x: 100,
+  y: 200,
+  'top-secret': 'classified'
 };
 
 // 好。
 let secretObject = {
   x: 3,
   y: 4,
-  'top-secret': 'classified',
+  'top-secret': 'classified'
 };
 ```
 
@@ -797,7 +807,7 @@ let turtle = {
   name: 'Leonardo',
   color: 'dodgerblue',
   weapon: '🗡️',
-  food: '🍕',
+  food: '🍕'
 };
 
 // 不好。
@@ -814,7 +824,7 @@ let turtle = {
   name: 'Leonardo',
   color: 'dodgerblue',
   weapon: '🗡️',
-  food: '🍕',
+  food: '🍕'
 };
 
 function getProp(prop) {
@@ -829,14 +839,14 @@ let turtleName = getProp('name');
 ```javascript
 // 不好。
 let mathematician = {
-    firstName: 'Ada'
-  , lastName: 'Lovelace'
+  firstName: 'Ada',
+  lastName: 'Lovelace'
 };
 
 // 好。
 let mathematician = {
   firstName: 'Ada',
-  lastName: 'Lovelace',
+  lastName: 'Lovelace'
 };
 ```
 
@@ -852,7 +862,7 @@ let artist = {
 // 好。
 let artist = {
   firstName: 'Lauren',
-  lastName: 'McCarthy',
+  lastName: 'McCarthy'
 };
 ```
 
@@ -900,19 +910,25 @@ let numbersCopy = numbers.slice();
 
 ```javascript
 // 不好。
-let matrix = [[1, 0, 0],
-                [0, 1, 0],
-                [0, 0, 1]];
+let matrix = [
+  [1, 0, 0],
+  [0, 1, 0],
+  [0, 0, 1]
+];
 
 // 好。
 let matrix = [
   [1, 0, 0],
   [0, 1, 0],
-  [0, 0, 1],
+  [0, 0, 1]
 ];
 
 // 也好。
-let matrix = [[1, 0, 0], [0, 1, 0], [0, 0, 1]];
+let matrix = [
+  [1, 0, 0],
+  [0, 1, 0],
+  [0, 0, 1]
+];
 ```
 
 **[⬆ 返回顶部](#目录)**
@@ -989,14 +1005,14 @@ function setup() {
 
 // 好。
 function setup() {
-  loadImage('assets/moonwalk.jpg', (img) => {
+  loadImage('assets/moonwalk.jpg', img => {
     image(img, 0, 0);
   });
 }
 
 // 不好。
 function preload() {
-  loadImage('assets/moonwalk.jpg', (img) => {
+  loadImage('assets/moonwalk.jpg', img => {
     // 复杂的预处理...
   });
 }
@@ -1017,19 +1033,19 @@ function processImage(img) {
 
 ```javascript
 // 不好。
-[1, 2, 3].map((number) => {
+[1, 2, 3].map(number => {
   let squared = number ** 2;
   `${number} squared is ${squared}.`;
 });
 
 // 不好。
-[1, 2, 3].map((number) => {
+[1, 2, 3].map(number => {
   let squared = number ** 2;
   return `${number} squared is ${squared}.`;
 });
 
 // 好。
-[1, 2, 3].map((number) => `${number} squared is ${number ** 2}.`);
+[1, 2, 3].map(number => `${number} squared is ${number ** 2}.`);
 ```
 
 - 始终在参数周围包含括号。
@@ -1041,7 +1057,7 @@ function processImage(img) {
 [1, 2, 3].map(number => number * number);
 
 // 好。
-[1, 2, 3].map((number) => number * number);
+[1, 2, 3].map(number => number * number);
 ```
 
 **[⬆ 返回顶部](#目录)**
@@ -1054,9 +1070,7 @@ function processImage(img) {
 
 ```javascript
 // 不好。
-fill(0)
-  .strokeWeight(6)
-  .textSize(20);
+fill(0).strokeWeight(6).textSize(20);
 
 // 不好。
 fill(0).strokeWeight(6).textSize(20);
@@ -1205,7 +1219,7 @@ class Mover {
 // 好。
 class Mover {
   // ...
-  
+
   update() {
     this.x += this.xspeed;
     this.y += this.yspeed;
@@ -1225,6 +1239,7 @@ class Mover {
 - 始终从名为"assets"的文件夹加载资源。
 
 > 为什么？它模拟了良好的项目组织。这也是在 p5.js 网站上加载资源所必需的。将资源放在以下文件夹中以将其包含在我们的在线文档中：
+
 - 示例：[src/data/examples/assets](https://github.com/processing/p5.js-website/tree/main/src/data/examples)
 - 参考页面：[src/templates/pages/reference/assets](https://github.com/processing/p5.js-website/tree/main/src/templates/pages/reference/assets)
 - 学习页面：[src/assets/learn](https://github.com/processing/p5.js-website/tree/main/src/assets/learn)
@@ -1243,4 +1258,4 @@ function preload() {
 }
 ```
 
-**[⬆ 返回顶部](#目录)** 
+**[⬆ 返回顶部](#目录)**

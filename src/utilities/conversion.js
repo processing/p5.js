@@ -2,10 +2,9 @@
  * @module Data
  * @submodule Conversion
  * @for p5
- * @requires core
  */
 
-function conversion(p5, fn){
+function conversion(p5, fn) {
   /**
    * Converts a `String` to a floating point (decimal) `Number`.
    *
@@ -25,8 +24,6 @@ function conversion(p5, fn){
    * @return {Number} converted number.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -50,11 +47,8 @@ function conversion(p5, fn){
    *
    *   describe('The text "12.3 × 2 = 24.6" written in black on a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -73,15 +67,13 @@ function conversion(p5, fn){
    *
    *   describe('Three white, concentric circles on a gray background.');
    * }
-   * </code>
-   * </div>
    */
   /**
    * @method float
    * @param {String[]} ns array of strings to convert.
    * @return {Number[]} converted numbers.
    */
-  fn.float = function(str) {
+  fn.float = function (str) {
     if (str instanceof Array) {
       return str.map(parseFloat);
     }
@@ -109,8 +101,6 @@ function conversion(p5, fn){
    * @return {Number} converted number.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -131,11 +121,8 @@ function conversion(p5, fn){
    *
    *   describe('The text "false : 0" written in black on a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -156,11 +143,8 @@ function conversion(p5, fn){
    *
    *   describe('The text "12.34 ≈ 12" written in black on a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -181,11 +165,8 @@ function conversion(p5, fn){
    *
    *   describe('The text "12.34 ≈ 12" written in black on a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -204,15 +185,13 @@ function conversion(p5, fn){
    *
    *   describe('Three white, concentric circles on a gray background.');
    * }
-   * </code>
-   * </div>
    */
   /**
    * @method int
    * @param {Array} ns values to convert.
    * @return {Number[]} converted numbers.
    */
-  fn.int = function(n, radix = 10) {
+  fn.int = function (n, radix = 10) {
     if (n === Infinity || n === 'Infinity') {
       return Infinity;
     } else if (n === -Infinity || n === '-Infinity') {
@@ -246,8 +225,6 @@ function conversion(p5, fn){
    * @return {String} converted string.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -268,11 +245,8 @@ function conversion(p5, fn){
    *
    *   describe('The text "false : false" written in black on a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -293,11 +267,8 @@ function conversion(p5, fn){
    *
    *   describe('The text "123 = 123" written in black on a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -326,10 +297,8 @@ function conversion(p5, fn){
    *
    *   describe('The text "123456" written in black on a gray background.');
    * }
-   * </code>
-   * </div>
    */
-  fn.str = function(n) {
+  fn.str = function (n) {
     if (n instanceof Array) {
       return n.map(fn.str);
     } else {
@@ -354,8 +323,6 @@ function conversion(p5, fn){
    * @return {Boolean} converted Boolean value.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -379,11 +346,8 @@ function conversion(p5, fn){
    *
    *   describe('A red circle on a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -407,11 +371,8 @@ function conversion(p5, fn){
    *
    *   describe('A blue circle on a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -444,15 +405,13 @@ function conversion(p5, fn){
    *     'A row of circles on a gray background. The two circles on the left are red and the two on the right are blue.'
    *   );
    * }
-   * </code>
-   * </div>
    */
   /**
    * @method boolean
    * @param {Array} ns values to convert.
    * @return {Boolean[]} converted Boolean values.
    */
-  fn.boolean = function(n) {
+  fn.boolean = function (n) {
     if (typeof n === 'number') {
       return n !== 0;
     } else if (typeof n === 'string') {
@@ -486,8 +445,6 @@ function conversion(p5, fn){
    * @return {Number} converted byte value.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -508,11 +465,8 @@ function conversion(p5, fn){
    *
    *   describe('The text "true : 1" written in black on a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -533,11 +487,8 @@ function conversion(p5, fn){
    *
    *   describe('The text "256 : 0" written in black on a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -558,11 +509,8 @@ function conversion(p5, fn){
    *
    *   describe('The text "256 : 0" written in black on a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -591,18 +539,16 @@ function conversion(p5, fn){
    *     'Three gray circles on a gray background. The circles get lighter from left to right.'
    *   );
    * }
-   * </code>
-   * </div>
    */
   /**
    * @method byte
    * @param {Array} ns values to convert.
    * @return {Number[]} converted byte values.
    */
-  fn.byte = function(n) {
+  fn.byte = function (n) {
     const nn = fn.int(n, 10);
     if (typeof nn === 'number') {
-      return (nn + 128) % 256 - 128;
+      return ((nn + 128) % 256) - 128;
     } else if (nn instanceof Array) {
       return nn.map(fn.byte);
     }
@@ -628,8 +574,6 @@ function conversion(p5, fn){
    * @return {String} converted single-character string.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -650,11 +594,8 @@ function conversion(p5, fn){
    *
    *   describe('The text "65 : A" written in black on a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -675,11 +616,8 @@ function conversion(p5, fn){
    *
    *   describe('The text "65 : A" written in black on a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -709,15 +647,13 @@ function conversion(p5, fn){
    *     'The text "65 : A", "66 : B", and "67 : C" written on three separate lines. The text is in black on a gray background.'
    *   );
    * }
-   * </code>
-   * </div>
    */
   /**
    * @method char
    * @param {Array} ns values to convert.
    * @return {String[]} converted single-character strings.
    */
-  fn.char = function(n) {
+  fn.char = function (n) {
     if (typeof n === 'number' && !isNaN(n)) {
       return String.fromCharCode(n);
     } else if (n instanceof Array) {
@@ -742,8 +678,6 @@ function conversion(p5, fn){
    * @return {Number} converted number.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -764,11 +698,8 @@ function conversion(p5, fn){
    *
    *   describe('The text "A : 65" written in black on a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -798,15 +729,13 @@ function conversion(p5, fn){
    *     'The text "A : 65", "B : 66", and "C :67" written on three separate lines. The text is in black on a gray background.'
    *   );
    * }
-   * </code>
-   * </div>
    */
   /**
    * @method unchar
    * @param {String[]} ns values to convert.
    * @return {Number[]} converted numbers.
    */
-  fn.unchar = function(n) {
+  fn.unchar = function (n) {
     if (typeof n === 'string' && n.length === 1) {
       return n.charCodeAt(0);
     } else if (n instanceof Array) {
@@ -836,8 +765,6 @@ function conversion(p5, fn){
    * @return {String} converted hexadecimal value.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -858,11 +785,8 @@ function conversion(p5, fn){
    *
    *   describe('The text "20 = 00000014" written in black on a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -884,11 +808,8 @@ function conversion(p5, fn){
    *
    *   describe('The text "20 = 14" written in black on a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -919,8 +840,6 @@ function conversion(p5, fn){
    *     'The text "1 = 01", "10 = 0A", and "100 = 64" written on three separate lines. The text is in black on a gray background.'
    *   );
    * }
-   * </code>
-   * </div>
    */
   /**
    * @method hex
@@ -928,7 +847,7 @@ function conversion(p5, fn){
    * @param {Number} [digits]
    * @return {String[]} converted hexadecimal values.
    */
-  fn.hex = function(n, digits) {
+  fn.hex = function (n, digits) {
     digits = digits === undefined || digits === null ? (digits = 8) : digits;
     if (n instanceof Array) {
       return n.map(n => fn.hex(n, digits));
@@ -939,9 +858,7 @@ function conversion(p5, fn){
       if (n < 0) {
         n = 0xffffffff + n + 1;
       }
-      let hex = Number(n)
-        .toString(16)
-        .toUpperCase();
+      let hex = Number(n).toString(16).toUpperCase();
       while (hex.length < digits) {
         hex = `0${hex}`;
       }
@@ -969,8 +886,6 @@ function conversion(p5, fn){
    * @return {Number} converted number.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -991,11 +906,8 @@ function conversion(p5, fn){
    *
    *   describe('The text "FF = 255" written in black on a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1026,15 +938,13 @@ function conversion(p5, fn){
    *     'The text "00 = 0", "80 = 128", and "FF = 255" written on three separate lines. The text is in black on a gray background.'
    *   );
    * }
-   * </code>
-   * </div>
    */
   /**
    * @method unhex
    * @param {String[]} ns values to convert.
    * @return {Number[]} converted numbers.
    */
-  fn.unhex = function(n) {
+  fn.unhex = function (n) {
     if (n instanceof Array) {
       return n.map(fn.unhex);
     } else {
@@ -1045,6 +955,6 @@ function conversion(p5, fn){
 
 export default conversion;
 
-if(typeof p5 !== 'undefined'){
+if (typeof p5 !== 'undefined') {
   conversion(p5, p5.prototype);
 }

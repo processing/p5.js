@@ -8,9 +8,12 @@ import * as constants from './constants';
 import { Framebuffer } from '../webgl/p5.Framebuffer';
 
 let renderers;
-function rendering(p5, fn){
+function rendering(p5, fn) {
   // Extend additional renderers object to p5 class, new renderer can be similarly attached
-  renderers = p5.renderers = {};
+  if (!p5.renderers) {
+    p5.renderers = {};
+  }
+  renderers = p5.renderers;
 
   /**
    * Creates a canvas element on the web page.
@@ -30,7 +33,7 @@ function rendering(p5, fn){
    * the sketch's rendering mode. If an existing
    * <a href="https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement" target="_blank">HTMLCanvasElement</a>
    * is passed, as in `createCanvas(900, 500, myCanvas)`, then it will be used
-   * by the sketch.
+   * by the sketch. To use `WEBGPU` mode, make sure you have the WebGPU mode addon included.
    *
    * The fourth parameter is also optional. If an existing
    * <a href="https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement" target="_blank">HTMLCanvasElement</a>
@@ -42,16 +45,16 @@ function rendering(p5, fn){
    * system variable to check what version is being used, or call
    * `setAttributes({ version: 1 })` to create a WebGL1 context.
    *
+   * Note: In WebGPU mode, you must `await` this function.
+   *
    * @method createCanvas
    * @param  {Number} [width] width of the canvas. Defaults to 100.
    * @param  {Number} [height] height of the canvas. Defaults to 100.
-   * @param  {(P2D|WEBGL|P2DHDR)} [renderer] either P2D or WEBGL. Defaults to `P2D`.
+   * @param  {(P2D|WEBGL|P2DP3)} [renderer] either P2D or WEBGL. Defaults to `P2D`.
    * @param  {HTMLCanvasElement} [canvas] existing canvas element that should be used for the sketch.
    * @return {p5.Renderer} new `p5.Renderer` that holds the canvas.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -62,11 +65,8 @@ function rendering(p5, fn){
    *
    *   describe('A diagonal line drawn from top-left to bottom-right on a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 50);
    *
@@ -77,11 +77,8 @@ function rendering(p5, fn){
    *
    *   describe('A diagonal line drawn from top-left to bottom-right on a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Use WebGL mode.
    *
    * function setup() {
@@ -94,11 +91,8 @@ function rendering(p5, fn){
    *
    *   describe('A diagonal line drawn from top-left to bottom-right on a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   // Create a p5.Render object.
    *   let cnv = createCanvas(50, 50);
@@ -113,8 +107,14 @@ function rendering(p5, fn){
    *
    *   describe('A diagonal line drawn from top-left to bottom-right on a gray background.');
    * }
-   * </code>
-   * </div>
+   */
+  /**
+   * @method createCanvas
+   * @param  {Number} width
+   * @param  {Number} height
+   * @param  {WEBGPU} renderer
+   * @param  {HTMLCanvasElement} [canvas]
+   * @return {Promise<p5.Renderer>}
    */
   /**
    * @method createCanvas
@@ -127,16 +127,36 @@ function rendering(p5, fn){
     // p5._validateParameters('createCanvas', arguments);
     //optional: renderer, otherwise defaults to p2d
 
-    let selectedRenderer = constants.P2D
+    let selectedRenderer = constants.P2D;
     // Check third argument whether it is renderer constants
-    if(Reflect.ownKeys(renderers).includes(renderer)){
+    if (Reflect.ownKeys(renderers).includes(renderer)) {
       selectedRenderer = renderer;
-    }else{
+    } else {
       args.unshift(renderer);
     }
 
+    if (!renderers[renderer] && typeof renderer === 'string') {
+      if (renderer === constants.WEBGPU) {
+        p5.FES.log`To create a WEBGPU canvas, add the WebGPU add-on to your project.`();
+        if (renderers[constants.WEBGL]) {
+          p5.FES.log`Falling back to WebGL renderer.`();
+          selectedRenderer = constants.WEBGL;
+        }
+        args.shift();
+      } else {
+        p5.FES
+          .log`We weren't able to find a renderer called ${renderer}.`();
+      }
+    }
+
     // Init our graphics renderer
-    if(this._renderer) this._renderer.remove();
+    if (this._renderer) {
+      this._renderer.remove();
+      const index = this._elements.indexOf(this._renderer);
+      if (index !== -1) {
+        this._elements.splice(index, 1);
+      }
+    }
     this._renderer = new renderers[selectedRenderer](this, w, h, true, ...args);
     this._defaultGraphicsCreated = true;
     this._elements.push(this._renderer);
@@ -145,13 +165,23 @@ function rendering(p5, fn){
     // Make the renderer own `pixels`
     if (!Object.hasOwn(this, 'pixels')) {
       Object.defineProperty(this, 'pixels', {
-        get(){
+        get() {
           return this._renderer?.pixels;
         }
       });
     }
 
-    return this._renderer;
+    if (this._renderer.contextReady) {
+      return this._renderer.contextReady.then(() => this._renderer).catch((e) => {
+        if (selectedRenderer !== constants.WEBGPU) {
+          throw new Error('Failed to create canvas.');
+        }
+        p5.FES.log`${e.message} Falling back to WebGL renderer.`();
+        return this.createCanvas(w, h, constants.WEBGL, ...args);
+      });
+    } else {
+      return this._renderer;
+    }
   };
 
   /**
@@ -189,8 +219,6 @@ function rendering(p5, fn){
    *                              to `false`.
    *
    * @example
-   * <div>
-   * <code>
    * // Double-click to resize the canvas.
    *
    * function setup() {
@@ -212,11 +240,8 @@ function rendering(p5, fn){
    * function doubleClicked() {
    *   resizeCanvas(50, 50);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Resize the web browser to change the canvas size.
    *
    * function setup() {
@@ -236,8 +261,6 @@ function rendering(p5, fn){
    * function windowResized() {
    *   resizeCanvas(windowWidth, windowHeight);
    * }
-   * </code>
-   * </div>
    */
   fn.resizeCanvas = function (w, h, noRedraw) {
     // p5._validateParameters('resizeCanvas', arguments);
@@ -266,13 +289,9 @@ function rendering(p5, fn){
    * @method noCanvas
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   noCanvas();
    * }
-   * </code>
-   * </div>
    */
   fn.noCanvas = function () {
     if (this.canvas) {
@@ -321,8 +340,6 @@ function rendering(p5, fn){
    * @return {p5.Graphics} new graphics buffer.
    *
    * @example
-   * <div>
-   * <code>
    * //  Double-click to draw the contents of the graphics buffer.
    *
    * let pg;
@@ -348,11 +365,8 @@ function rendering(p5, fn){
    *     image(pg, 25, 25);
    *   }
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * //  Double-click to draw the contents of the graphics buffer.
    *
    * let pg;
@@ -382,8 +396,6 @@ function rendering(p5, fn){
    *     image(pg, 25, 25);
    *   }
    * }
-   * </code>
-   * </div>
    */
   /**
    * @method createGraphics
@@ -394,9 +406,9 @@ function rendering(p5, fn){
    */
   fn.createGraphics = function (w, h, ...args) {
     /**
-      * args[0] is expected to be renderer
-      * args[1] is expected to be canvas
-      */
+     * args[0] is expected to be renderer
+     * args[1] is expected to be canvas
+     */
     if (args[0] instanceof HTMLCanvasElement) {
       args[1] = args[0];
       args[0] = constants.P2D;
@@ -434,11 +446,19 @@ function rendering(p5, fn){
    *
    * @method createFramebuffer
    * @param {Object} [options] configuration options.
+   * @param {UNSIGNED_BYTE|FLOAT|HALF_FLOAT} [options.format=UNSIGNED_BYTE] The data format of the texture.
+   * @param {RGB|RGBA} [options.channels=RGBA] What color channels to include in the texture.
+   * @param {Boolean} [options.depth=true] Whether to store depth information in the framebuffer.
+   * @param {UNSIGNED_INT|FLOAT} [options.depthFormat=FLOAT] The format to store depth values in.
+   * @param {Boolean} [options.stencil=true] Whether to include a stencil buffer (required for clipping.)
+   * @param {Boolean|Number} [options.antialias] Whether to antialias when drawing to this framebuffer. Either a boolean, or the number of antialias samples to use.
+   * @param {Number} [options.width] The width of the framebuffer. By default, it will match the main canvas.
+   * @param {Number} [options.height] The height of the framebuffer. By default, it will match the main canvas.
+   * @param {Number} [options.density] The pixel density of the framebuffer. By default, it will match the main canvas.
+   * @param {LINEAR|NEAREST} [options.textureFiltering=LINEAR] The strategy used when reading values in the framebuffer in between pixels.
    * @return {p5.Framebuffer} new framebuffer.
    *
    * @example
-   * <div>
-   * <code>
    * let myBuffer;
    *
    * function setup() {
@@ -484,11 +504,8 @@ function rendering(p5, fn){
    *     }
    *   }
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let myBuffer;
    *
    * function setup() {
@@ -538,8 +555,6 @@ function rendering(p5, fn){
    *     }
    *   }
    * }
-   * </code>
-   * </div>
    */
   fn.createFramebuffer = function (options) {
     return new Framebuffer(this._renderer, options);
@@ -568,8 +583,6 @@ function rendering(p5, fn){
    *                         (none) and 1 (far clipping plane). Defaults to 1.
    *
    * @example
-   * <div>
-   * <code>
    * let previous;
    * let current;
    *
@@ -622,8 +635,6 @@ function rendering(p5, fn){
    *   // Display the current p5.Framebuffer.
    *   image(current, -50, -50);
    * }
-   * </code>
-   * </div>
    */
   fn.clearDepth = function (depth) {
     this._assert3d('clearDepth');
@@ -632,19 +643,17 @@ function rendering(p5, fn){
 
   /**
    * A system variable that provides direct access to the sketch's
-   * `&lt;canvas&gt;` element.
+   * `<canvas>` element.
    *
-   * The `&lt;canvas&gt;` element provides many specialized features that aren't
+   * The `<canvas>` element provides many specialized features that aren't
    * included in the p5.js library. The `drawingContext` system variable
    * provides access to these features by exposing the sketch's
    * <a href="https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D">CanvasRenderingContext2D</a>
    * object.
    *
-   * @property drawingContext
+   * @property {CanvasRenderingContext2D|WebGLRenderingContext|WebGL2RenderingContext} drawingContext
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -661,11 +670,8 @@ function rendering(p5, fn){
    *
    *   describe("A white circle on a gray background. The circle's edges are shadowy.");
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -684,14 +690,12 @@ function rendering(p5, fn){
    *
    *   describe('A fiery sun drawn on a light blue background.');
    * }
-   * </code>
-   * </div>
    */
 }
 
 export default rendering;
 export { renderers };
 
-if(typeof p5 !== 'undefined'){
+if (typeof p5 !== 'undefined') {
   rendering(p5, p5.prototype);
 }

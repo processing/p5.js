@@ -2,10 +2,9 @@
  * @module Data
  * @submodule Utility Functions
  * @for p5
- * @requires core
  */
 
-function utilityFunctions(p5, fn){
+function utilityFunctions(p5, fn) {
   /**
    * Converts a `Number` into a `String` with a given number of digits.
    *
@@ -44,8 +43,6 @@ function utilityFunctions(p5, fn){
    * @return {String} formatted string.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -80,8 +77,6 @@ function utilityFunctions(p5, fn){
    *     'The numbers "123.45", "-0123.45", "0123.45", and "0123.5" written on four separate lines. The text is in black on a gray background.'
    *   );
    * }
-   * </code>
-   * </div>
    */
   /**
    * @method nf
@@ -90,7 +85,7 @@ function utilityFunctions(p5, fn){
    * @param {Integer|String} [right]
    * @return {String[]} formatted strings.
    */
-  fn.nf = function(nums, left, right) {
+  fn.nf = function (nums, left, right) {
     // p5._validateParameters('nf', arguments);
     if (nums instanceof Array) {
       return nums.map(x => doNf(x, left, right));
@@ -123,7 +118,10 @@ function utilityFunctions(p5, fn){
       let roundedOff = num.toFixed(right);
       [leftPart, rightPart] = roundedOff.toString().split('.');
       leftPart = leftPart.padStart(left, '0');
-      let result = typeof rightPart === 'undefined' ? leftPart : leftPart + '.' + rightPart;
+      let result =
+        typeof rightPart === 'undefined'
+          ? leftPart
+          : leftPart + '.' + rightPart;
       return isNegative ? '-' + result : result;
     }
   }
@@ -153,8 +151,6 @@ function utilityFunctions(p5, fn){
    * @return {String} formatted string.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -180,11 +176,8 @@ function utilityFunctions(p5, fn){
    *     'The numbers "12,345" and "12,345.00" written on separate lines. The text is in black on a gray background.'
    *   );
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -214,8 +207,6 @@ function utilityFunctions(p5, fn){
    *     'The text "12345 : 12,345" and "6789 : 6,789" written on two separate lines. The text is in black on a gray background.'
    *   );
    * }
-   * </code>
-   * </div>
    */
   /**
    * @method nfc
@@ -223,7 +214,7 @@ function utilityFunctions(p5, fn){
    * @param  {Integer|String} [right]
    * @return {String[]} formatted strings.
    */
-  fn.nfc = function(num, right) {
+  fn.nfc = function (num, right) {
     // p5._validateParameters('nfc', arguments);
     if (num instanceof Array) {
       return num.map(x => doNfc(x, right));
@@ -288,8 +279,6 @@ function utilityFunctions(p5, fn){
    * @return {String} formatted string.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -319,11 +308,8 @@ function utilityFunctions(p5, fn){
    *     'The text "123 : +123" and "-123 : -123.00" written on separate lines. The text is in black on a gray background.'
    *   );
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -355,8 +341,6 @@ function utilityFunctions(p5, fn){
    *     'The text "123 : +0123.0" and "-4.56 : 00-4.6" written on separate lines. The text is in black on a gray background.'
    *   );
    * }
-   * </code>
-   * </div>
    */
   /**
    * @method nfp
@@ -365,7 +349,7 @@ function utilityFunctions(p5, fn){
    * @param {Integer} [right]
    * @return {String[]} formatted strings.
    */
-  fn.nfp = function(...args) {
+  fn.nfp = function (...args) {
     // p5._validateParameters('nfp', args);
     const nfRes = fn.nf.apply(this, args);
     if (nfRes instanceof Array) {
@@ -413,8 +397,6 @@ function utilityFunctions(p5, fn){
    * @return {String} formatted string.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -440,11 +422,8 @@ function utilityFunctions(p5, fn){
    *     'The numbers -123 and 123 written on separate lines. The numbers align vertically. The text is in black on a gray background.'
    *   );
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -472,8 +451,6 @@ function utilityFunctions(p5, fn){
    *     'The numbers "-0123.5" and "0123.5" written on separate lines. The numbers align vertically. The text is in black on a gray background.'
    *   );
    * }
-   * </code>
-   * </div>
    */
   /**
    * @method nfs
@@ -482,7 +459,7 @@ function utilityFunctions(p5, fn){
    * @param {Integer} [right]
    * @return {String[]} formatted strings.
    */
-  fn.nfs = function(...args) {
+  fn.nfs = function (...args) {
     // p5._validateParameters('nfs', args);
     const nfRes = fn.nf.apply(this, args);
     if (nfRes instanceof Array) {
@@ -521,8 +498,6 @@ function utilityFunctions(p5, fn){
    * @return {String[]} separated strings.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -556,11 +531,8 @@ function utilityFunctions(p5, fn){
    *     'The words "rock", "paper", "scissors", and "shoot" written on separate lines. The text is black on a gray background.'
    *   );
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -594,11 +566,8 @@ function utilityFunctions(p5, fn){
    *     'The words "rock", "paper", "scissors", and "shoot" written on separate lines. The text is black on a gray background.'
    *   );
    * }
-   * </code>
-   * </div>
    *
-   * <div class='notest'>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -632,10 +601,8 @@ function utilityFunctions(p5, fn){
    *     'The words "rock", "paper", "scissors", and "shoot" written on separate lines. The text is black on a gray background.'
    *   );
    * }
-   * </code>
-   * </div>
    */
-  fn.splitTokens = function(value, delims) {
+  fn.splitTokens = function (value, delims) {
     // p5._validateParameters('splitTokens', arguments);
     let d;
     if (typeof delims !== 'undefined') {
@@ -676,12 +643,10 @@ function utilityFunctions(p5, fn){
    *
    * @method shuffle
    * @param  {Array} array array to shuffle.
-   * @param  {Boolean} [bool] if `true`, shuffle the original array in place. Defaults to `false`.
+   * @param  {Boolean} [modify] if `true`, shuffle the original array in place. Defaults to `false`.
    * @return {Array} shuffled array.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -723,11 +688,8 @@ function utilityFunctions(p5, fn){
    *     'Two rows of circles on a gray background. The top row follows the color sequence ROYGBIV. The bottom row has all the same colors but they are shuffled.'
    *   );
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -756,12 +718,9 @@ function utilityFunctions(p5, fn){
    *     'A row of colorful circles on a gray background. Their sequence changes each time the sketch runs.'
    *   );
    * }
-   * </code>
-   * </div>
    */
-  fn.shuffle = function (arr, bool) {
-    const isView = ArrayBuffer && ArrayBuffer.isView && ArrayBuffer.isView(arr);
-    arr = bool || isView ? arr : arr.slice();
+  fn.shuffle = function (arr, modify) {
+    arr = modify ? arr : arr.slice();
 
     let rnd,
       tmp,
@@ -780,6 +739,6 @@ function utilityFunctions(p5, fn){
 
 export default utilityFunctions;
 
-if(typeof p5 !== 'undefined'){
+if (typeof p5 !== 'undefined') {
   utilityFunctions(p5, p5.prototype);
 }

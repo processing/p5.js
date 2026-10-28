@@ -1,7 +1,7 @@
 function setup() {
   noCanvas();
   loadJSON(
-    'http://api.openweathermap.org/data/2.5/station?id=5091',
+    'https://wttr.in/Berlin?format=j1',
     parseStuff,
     'json'
   );

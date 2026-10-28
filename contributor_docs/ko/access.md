@@ -26,12 +26,12 @@
 
 우리는 각자의 정체성을 설명하는 용어의 복잡성을 인식합니다. 언어는 미묘하고, 진화하며, 논쟁의 여지가 있습니다. 이 목록이 모든 경우를 다루지는 않습니다. 우리는 우리의 약속과 p5.js 커뮤니티의 다양한 요구 사항을 명명하고 책임질 수 있도록 시도하고 있습니다.
 
-
 ### 예시
+
 다음은 접근성을 향상을 위한 노력의 예시입니다:
 
 - 문서 및 기타 자료를 더 많은 언어로 번역하여 언어 제국주의[^4]에서 벗어나는 것 (예: Rolando Vargas의 [프로세싱(Processing) 쿠나어 번역](https://medium.com/@ProcessingOrg/culture-as-translation-processing-in-kuna-language-with-rolando-vargas-and-edinson-izquierdo-8079f14851f7), Felipe Santos Gomes, Julia Brasil, Katherine Finn Zander, Marcela Mancino의 [Pê Cinco: 포르투갈어 사용자를 위한 국제화 및 보급화](https://medium.com/processing-foundation/translating-p5-js-into-portuguese-for-the-brazilian-community-14b969e77ab1))
-- 스크린 리더 같은 보조 기술에 대한 지원 개선 (예: Katie Liu의 [p5.js에 대한 대체 텍스트(alt text) 추가](https://medium.com/processing-foundation/adding-alt-text-e2c7684e44f8), Claire Kearney-Volpe의 [P5 접근성 향상 프로젝트](https://medium.com/processing-foundation/p5-accessibility-115d84535fa8)) 
+- 스크린 리더 같은 보조 기술에 대한 지원 개선 (예: Katie Liu의 [p5.js에 대한 대체 텍스트(alt text) 추가](https://medium.com/processing-foundation/adding-alt-text-e2c7684e44f8), Claire Kearney-Volpe의 [P5 접근성 향상 프로젝트](https://medium.com/processing-foundation/p5-accessibility-115d84535fa8))
 - 우리 도구가 [웹 콘텐츠 접근성 지침(WCAG)](https://www.w3.org/TR/WCAG21/)을 준수하도록 하고, 사용자들이 프로젝트에서 이를 쉽게 따를 수 있도록 노력하기
 - p5.js 오류 메시지를 사용하는 사람들에게 더 유용한 도움 제공하기 (예: [p5.js 친절한 오류 메세지 시스템(FES)](https://github.com/processing/p5.js/blob/main/contributor_docs/friendly_error_system.md))
 - 크리에이티브 코딩 및 디지털 아트 영역에서 역사적으로 배제되고 차별을 받은 공동체들 속 p5.js 학습자를 멘토링 및 지원하기
@@ -39,20 +39,22 @@
 - 교육 자료 생성 지원 (예: Adekemi Sijuwade-Ukadike의 [A11y Syllabus](http://a11ysyllabus.site/))
 - WCAG 지침을 따르고, 평이한 언어를 사용하며, 다양한 경험을 가진 초심자에 초점을 맞춘 작업 문서 및 보고서 게시 (예: [OSACC p5.js 접근성 보고서](https://github.com/processing/OSACC-p5.js-Access-Report))
 
-
 ## 유지보수
+
 우리는 접근성 향상을 지지하지 않는 기능 요청을 받지 않을 것입니다. 이 기준은 우리의 이슈 및 풀 리퀘스트 템플릿에 반영됩니다. 또한, 기존 p5.js 기능 세트를 유지겠다는 의사를 단언합니다. 우리는 코드베이스의 어느 부분에 속하는 버그든지 상관없이 수정하고 싶습니다. 우리는 도구의 일관성이 초심자의 접근성을 향상한다고 믿습니다. 접근성을 향상시키는 기능 요청의 예시는 다음과 같습니다:
 하드웨어 성능이 낮은 사람들을 위한 성능 향상 (예: 프레임 버퍼에 그리기/읽기 지원)
 API의 일관성 (예: beginShape()와 endShape()로 호를 만들기 위한 arcVertex() 추가)
 
-___
+---
 
 이 문서를 '살아있는 문서'로 생각해 주시기 바랍니다. 접근성의 우선순위를 정하는 것이 무엇을 의미하는지에 대한 대화를 이어갈 것입니다. 이 문서가 설명하는 가치에 대해 이야기를 나눌 수 있도록 우리의 커뮤니티에 초대합니다. 아이디어나 제안할 것이 있다면 Github에서 이슈로 공유하거나 [hello@p5js.org](mailto:hello@p5js.org)로 이메일을 보내주시기 바랍니다.
 
 이 버전의 p5.js 접근성 성명서는 2023년 오픈 소스 아트 기여자 컨퍼런스에서 Evelyn Masso, Nat Decker, Bobby Joe Smith III, Sammie Veeler, Sonia (Suhyun) Choi, Xin Xin, Kate Hollenbach, Lauren Lee McCarthy, Caroline Sinders, Qianqian Ye, Tristan Jovani Magno Espinoza, Tanvi Sharma, Tsige Tafesse, Sarah Ciston의 협업을 통해 수정되었습니다. 이는 프로세싱 재단 펠로우십의 지원을 통해 Bobby Joe Smith III와 Nat Decker가 최종 확정, 발표했습니다.
 
 [^1]: Crenshaw, Kimberlé (1989). "Demarginalizing the intersection of race and sex: a black feminist critique of antidiscrimination doctrine, feminist theory and antiracist politics". University of Chicago Legal Forum. 1989 (1): 139–167. ISSN 0892-5593. 전문은 Archive.org에서 확인 가능합니다.
-[^2]: 대문자 "Deaf"는 문화적으로 청각 장애인이거나 청각 장애인 공동체의 일원을 의미하는 반면, 소문자 "deaf"는 앞서 설명된 대문자 "Deaf" 정체성과는 무관히 쓰이는 청각학적 용어입니다.
-[^3]: 청각 장애 커뮤니티 내에는 ‘사람 우선’ vs ‘정체성 우선’ 언어 사이의 다양한 선호가 있습니다.  [Unpacking the debate over person-first vs. identity-first language in the autism community](https://news.northeastern.edu/2018/07/12/unpacking-the-debate-over-person-first-vs-identity-first-language-in-the-autism-community/)와 [I am Disabled: On Identity-First Versus People-First Language](https://thebodyisnotanapology.com/magazine/i-am-disabled-on-identity-first-versus-people-first-language/)를 읽어보세요.
-[^4]: 언어 제국주의는 제국주의의 확장과 세계화로 인해 모국어를 희생해가며 영어와 같은 특정 언어를 지속적으로 지배, 우선, 강요하는 것을 말합니다.
 
+[^2]: 대문자 "Deaf"는 문화적으로 청각 장애인이거나 청각 장애인 공동체의 일원을 의미하는 반면, 소문자 "deaf"는 앞서 설명된 대문자 "Deaf" 정체성과는 무관히 쓰이는 청각학적 용어입니다.
+
+[^3]: 청각 장애 커뮤니티 내에는 ‘사람 우선’ vs ‘정체성 우선’ 언어 사이의 다양한 선호가 있습니다. [Unpacking the debate over person-first vs. identity-first language in the autism community](https://news.northeastern.edu/2018/07/12/unpacking-the-debate-over-person-first-vs-identity-first-language-in-the-autism-community/)와 [I am Disabled: On Identity-First Versus People-First Language](https://thebodyisnotanapology.com/magazine/i-am-disabled-on-identity-first-versus-people-first-language/)를 읽어보세요.
+
+[^4]: 언어 제국주의는 제국주의의 확장과 세계화로 인해 모국어를 희생해가며 영어와 같은 특정 언어를 지속적으로 지배, 우선, 강요하는 것을 말합니다.

@@ -2,7 +2,6 @@
  * @module Image
  * @submodule Loading & Displaying
  * @for p5
- * @requires core
  */
 
 import canvas from '../core/helpers';
@@ -11,7 +10,41 @@ import { request } from '../io/files';
 import * as omggif from 'omggif';
 import { GIFEncoder, quantize, nearestColorIndex } from 'gifenc';
 
-function loadingDisplaying(p5, fn){
+function loadingDisplaying(p5, fn) {
+  /**
+   * The largest possible number of pixels a gif frame can contain.
+   *
+   * This static property defines how large, in terms of dimension, a gif image
+   * is allowed to be loaded into a p5 sketch. The default value is
+   * 16,000,000. This means an image's width multiplied by its height must not
+   * exceed 100,000,000. For example, an image with width 10,000 and height
+   * 10,000 is just enough, as well as an image with width 5000 and height
+   * 20,000. An image with width 20,000 and height 20,000 is not allowed and
+   * will cause an error when it is loaded.
+   *
+   * To avoid this error, you should try to reduce the image dimension of the
+   * gif. If that is not possible or not desirable, you can set
+   * `MAX_GIF_PIXELS` to a higher value instead.
+   *
+   * @static
+   * @property {Boolean} MAX_GIF_PIXELS
+   *
+   * @example
+   * // META: norender
+   * // Increase the maximum pixel counts to 200,000,000
+   * p5.MAX_GIF_PIXELS = 200_000_000;
+   *
+   * let img;
+   * async function setup() {
+   *   createCanvas(100, 100);
+   *
+   *   background(200);
+   *
+   *   img = await loadImage('./a-large-animated.gif');
+   * }
+   */
+  p5.MAX_GIF_PIXELS = 4000 * 4000; // 4 Channel per pixels for total of 64MB
+
   /**
    * Loads an image to create a <a href="#/p5.Image">p5.Image</a> object.
    *
@@ -47,8 +80,6 @@ function loadingDisplaying(p5, fn){
    * @return {Promise<p5.Image>}   the <a href="#/p5.Image">p5.Image</a> object.
    *
    * @example
-   * <div>
-   * <code>
    * let img;
    *
    * // Load the image and create a p5.Image object.
@@ -61,11 +92,8 @@ function loadingDisplaying(p5, fn){
    *
    *   describe('Image of the underside of a white umbrella and a gridded ceiling.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * async function setup() {
    *   // Call handleImage() once the image loads.
    *   await loadImage('assets/laDefense.jpg', handleImage);
@@ -77,11 +105,8 @@ function loadingDisplaying(p5, fn){
    * function handleImage(img) {
    *   image(img, 0, 0);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * async function setup() {
    *   // Call handleImage() once the image loads or
    *   // call handleError() if an error occurs.
@@ -99,17 +124,11 @@ function loadingDisplaying(p5, fn){
    * function handleError(event) {
    *   console.error('Oops!', event);
    * }
-   * </code>
-   * </div>
    */
-  fn.loadImage = async function(
-    path,
-    successCallback,
-    failureCallback
-  ) {
+  fn.loadImage = async function (path, successCallback, failureCallback) {
     // p5._validateParameters('loadImage', arguments);
 
-    try{
+    try {
       let pImg = new p5.Image(1, 1, this);
 
       const req = new Request(path, {
@@ -129,15 +148,26 @@ function loadingDisplaying(p5, fn){
       }
 
       if (contentType && contentType.includes('image/gif')) {
-        await _createGif(
-          data,
-          pImg
-        );
-
+        await _createGif(data, pImg);
       } else {
         // Non-GIF Section
-        const blob = new Blob([data]);
-        const img = await createImageBitmap(blob);
+        const img = await new Promise((resolve, reject) => {
+          const img = new Image();
+          const blob = new Blob([data], { type: contentType });
+          const url = URL.createObjectURL(blob);
+
+          img.onerror = e => {
+            URL.revokeObjectURL(url);
+            reject(e);
+          };
+
+          img.onload = () => {
+            URL.revokeObjectURL(url);
+            resolve(img);
+          };
+
+          img.src = url;
+        });
 
         pImg.width = pImg.canvas.width = img.width;
         pImg.height = pImg.canvas.height = img.height;
@@ -146,16 +176,19 @@ function loadingDisplaying(p5, fn){
         pImg.drawingContext.drawImage(img, 0, 0);
       }
 
-      pImg.modified = true;
-
-      if(successCallback){
-        return successCallback(pImg);
-      }else{
-        return pImg;
-      }
-
-    } catch(err) {
-      p5._friendlyFileLoadError(0, path);
+      const cb = () => {
+        pImg.modified = true;
+        if (successCallback) {
+          return successCallback(pImg);
+        } else {
+          return pImg;
+        }
+      };
+      return this._internal ? this._internal(cb) : cb();
+    } catch (err) {
+      // p5._friendlyFileLoadError(0, path);
+      // TODO: Additional general error message specific to image error
+      //       File error is already taken cared of by `request`
       if (typeof failureCallback === 'function') {
         return failureCallback(err);
       } else {
@@ -183,16 +216,13 @@ function loadingDisplaying(p5, fn){
    * @param  {String} filename file name of gif.
    * @param  {Number} duration duration in seconds to capture from the sketch.
    * @param  {Object} [options] an object that can contain five more properties:
-   *                  `delay`, a Number specifying how much time to wait before recording;
-   *                  `units`, a String that can be either 'seconds' or 'frames'. By default it's 'seconds’;
-   *                  `silent`, a Boolean that defines presence of progress notifications. By default it’s `false`;
-   *                  `notificationDuration`, a Number that defines how long in seconds the final notification
-   *                  will live. By default it's `0`, meaning the notification will never be removed;
-   *                  `notificationID`, a String that specifies the id of the notification's DOM element. By default it’s `'progressBar’`.
+   * @param {Number} [options.delay=0] How much time to wait before recording.
+   * @param {'seconds'|'frames'} [options.units='seconds'] The units of the duration and delay.
+   * @param {Boolean} [options.silent=false] Whether to show progress notifications.
+   * @param {Number} [options.notificationDuration=0] How long in seconds the final notification will live, or 0 for it to remain permanently.
+   * @param {String} [options.notificationID='progressBar'] The id to give to the notification's DOM element.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -216,11 +246,8 @@ function loadingDisplaying(p5, fn){
    *     saveGif('mySketch', 5);
    *   }
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -245,10 +272,8 @@ function loadingDisplaying(p5, fn){
    *     saveGif('mySketch', 5, { delay: 1 });
    *   }
    * }
-   * </code>
-   * </div>
    */
-  fn.saveGif = async function(
+  fn.saveGif = async function (
     fileName,
     duration,
     options = {
@@ -256,7 +281,8 @@ function loadingDisplaying(p5, fn){
       units: 'seconds',
       silent: false,
       notificationDuration: 0,
-      notificationID: 'progressBar'
+      notificationID: 'progressBar',
+      reset: true
     }
   ) {
     // validate parameters
@@ -268,12 +294,13 @@ function loadingDisplaying(p5, fn){
     }
 
     // extract variables for more comfortable use
-    const delay = (options && options.delay) || 0;  // in seconds
-    const units = (options && options.units) || 'seconds';  // either 'seconds' or 'frames'
+    const delay = (options && options.delay) || 0; // in seconds
+    const units = (options && options.units) || 'seconds'; // either 'seconds' or 'frames'
     const silent = (options && options.silent) || false;
     const notificationDuration = (options && options.notificationDuration) || 0;
     const notificationID = (options && options.notificationID) || 'progressBar';
-
+    const resetAnimation =
+      options && options.reset !== undefined ? options.reset : true;
     // if arguments in the options object are not correct, cancel operation
     if (typeof delay !== 'number') {
       throw TypeError('Delay parameter must be a number');
@@ -300,7 +327,11 @@ function loadingDisplaying(p5, fn){
     // get the project's framerate
     let _frameRate = this._targetFrameRate;
     // if it is undefined or some non useful value, assume it's 60
-    if (_frameRate === Infinity || _frameRate === undefined || _frameRate === 0) {
+    if (
+      _frameRate === Infinity ||
+      _frameRate === undefined ||
+      _frameRate === 0
+    ) {
       _frameRate = 60;
     }
 
@@ -309,7 +340,7 @@ function loadingDisplaying(p5, fn){
     // this delay has nothing to do with the
     // delay in options, but rather is the delay
     // we have to specify to the gif encoder between frames.
-    let gifFrameDelay = 1 / _frameRate * 1000;
+    let gifFrameDelay = (1 / _frameRate) * 1000;
 
     // constrain it to be always greater than 20,
     // otherwise it won't work in some browsers and systems
@@ -320,11 +351,19 @@ function loadingDisplaying(p5, fn){
     // that duration translates to
     const nFrames = units === 'seconds' ? duration * _frameRate : duration;
     const nFramesDelay = units === 'seconds' ? delay * _frameRate : delay;
-    const totalNumberOfFrames = nFrames + nFramesDelay;
 
     // initialize variables for the frames processing
-    let frameIterator = nFramesDelay;
-    this.frameCount = frameIterator;
+    let frameIterator;
+    let totalNumberOfFrames;
+
+    if (resetAnimation) {
+      frameIterator = nFramesDelay;
+      this.frameCount = frameIterator;
+      totalNumberOfFrames = nFrames + nFramesDelay;
+    } else {
+      frameIterator = this.frameCount + nFramesDelay;
+      totalNumberOfFrames = frameIterator + nFrames;
+    }
 
     const lastPixelDensity = this._renderer._pixelDensity;
     this.pixelDensity(1);
@@ -336,7 +375,7 @@ function loadingDisplaying(p5, fn){
       document.getElementById(notificationID).remove();
 
     let p;
-    if (!silent){
+    if (!silent) {
       p = this.createP('');
       p.id(notificationID);
       p.style('font-size', '16px');
@@ -353,7 +392,9 @@ function loadingDisplaying(p5, fn){
       // if we have a WEBGL context, initialize the pixels array
       // and the gl context to use them inside the loop
       gl = this.drawingContext;
-      pixels = new Uint8Array(gl.drawingBufferWidth * gl.drawingBufferHeight * 4);
+      pixels = new Uint8Array(
+        gl.drawingBufferWidth * gl.drawingBufferHeight * 4
+      );
     }
 
     // stop the loop since we are going to manually redraw
@@ -365,7 +406,7 @@ function loadingDisplaying(p5, fn){
     //
     // Waiting on this empty promise means we'll continue as soon as setup
     // finishes without waiting for another frame.
-    await Promise.resolve();
+    await new Promise(requestAnimationFrame);
 
     while (frameIterator < totalNumberOfFrames) {
       /*
@@ -375,7 +416,7 @@ function loadingDisplaying(p5, fn){
         to be drawn and immediately save it to a buffer and continue
       */
       this.redraw();
-
+      await new Promise(requestAnimationFrame);
       // depending on the context we'll extract the pixels one way
       // or another
       let data = undefined;
@@ -396,8 +437,12 @@ function loadingDisplaying(p5, fn){
 
         data = _flipPixels(pixels, this.width, this.height);
       } else {
-        data = this.drawingContext.getImageData(0, 0, this.width, this.height)
-          .data;
+        data = this.drawingContext.getImageData(
+          0,
+          0,
+          this.width,
+          this.height
+        ).data;
       }
 
       frames.push(data);
@@ -406,9 +451,9 @@ function loadingDisplaying(p5, fn){
       if (!silent) {
         p.html(
           'Saved frame <b>' +
-          frames.length.toString() +
-          '</b> out of ' +
-          nFrames.toString()
+            frames.length.toString() +
+            '</b> out of ' +
+            nFrames.toString()
         );
       }
       await new Promise(resolve => setTimeout(resolve, 0));
@@ -493,10 +538,12 @@ function loadingDisplaying(p5, fn){
 
       if (!silent) {
         p.html(
-          'Rendered frame <b>' + i.toString() + '</b> out of ' + nFrames.toString()
+          'Rendered frame <b>' +
+            i.toString() +
+            '</b> out of ' +
+            nFrames.toString()
         );
       }
-
 
       // this just makes the process asynchronous, preventing
       // that the encoding locks up the browser
@@ -517,9 +564,9 @@ function loadingDisplaying(p5, fn){
     this._recording = false;
     this.loop();
 
-    if (!silent){
+    if (!silent) {
       p.html('Done. Downloading your gif!🌸');
-      if(notificationDuration > 0)
+      if (notificationDuration > 0)
         setTimeout(() => p.remove(), notificationDuration * 1000);
     }
 
@@ -610,13 +657,22 @@ function loadingDisplaying(p5, fn){
     pImg.height = pImg.canvas.height = gifReader.height;
     const frames = [];
     const numFrames = gifReader.numFrames();
+
+    if (pImg.width * pImg.height > p5.MAX_GIF_PIXELS) {
+      // GIF is too big, refuse to proceed
+      p5.FES.log`The GIF is over the maximum allowed dimension. Try to shrink the image or set p5.MAX_GIF_PIXELS to a higher value.`();
+      throw new Error("The GIF is over the maximum allowed dimension.");
+    }
+
     let framePixels = new Uint8ClampedArray(pImg.width * pImg.height * 4);
 
     const loadGIFFrameIntoImage = (frameNum, gifReader) => {
       try {
         gifReader.decodeAndBlitFrameRGBA(frameNum, framePixels);
       } catch (e) {
-        p5._friendlyFileLoadError(8, pImg.src);
+        // p5._friendlyFileLoadError(8, pImg.src);
+        p5.FES
+          .log`There was some trouble loading your GIF. Make sure that your GIF is using 87a or 89a encoding.`();
         throw e;
       }
     };
@@ -796,7 +852,16 @@ function loadingDisplaying(p5, fn){
    */
   function _imageFit(fit, xAlign, yAlign, dx, dy, dw, dh, sx, sy, sw, sh) {
     if (fit === constants.COVER) {
-      const { x, y, w, h } = _imageCover(xAlign, yAlign, dw, dh, sx, sy, sw, sh);
+      const { x, y, w, h } = _imageCover(
+        xAlign,
+        yAlign,
+        dw,
+        dh,
+        sx,
+        sy,
+        sw,
+        sh
+      );
       sx = x;
       sy = y;
       sw = w;
@@ -910,8 +975,6 @@ function loadingDisplaying(p5, fn){
    * @param  {Number}   [height] height to draw the image.
    *
    * @example
-   * <div>
-   * <code>
    * let img;
    *
    * async function setup() {
@@ -927,11 +990,8 @@ function loadingDisplaying(p5, fn){
    *
    *   describe('An image of the underside of a white umbrella with a gridded ceiling above. The image has dark gray borders on its left and top.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let img;
    *
    * async function setup() {
@@ -947,11 +1007,8 @@ function loadingDisplaying(p5, fn){
    *
    *   describe('An image of the underside of a white umbrella with a gridded ceiling above. The image is drawn in the top left corner of a dark gray square.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let img;
    *
    * async function setup() {
@@ -967,11 +1024,8 @@ function loadingDisplaying(p5, fn){
    *
    *   describe('An image of a gridded ceiling drawn in the center of a dark gray square.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let img;
    *
    * async function setup() {
@@ -986,11 +1040,8 @@ function loadingDisplaying(p5, fn){
    *
    *   describe('An image of an astronaut on the moon. The top and bottom borders of the image are dark gray.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let img;
    *
    * async function setup() {
@@ -1006,8 +1057,6 @@ function loadingDisplaying(p5, fn){
    *
    *   describe('A pixelated image of the underside of a white umbrella with a gridded ceiling above.');
    * }
-   * </code>
-   * </div>
    */
   /**
    * @method image
@@ -1031,7 +1080,7 @@ function loadingDisplaying(p5, fn){
    * @param {(LEFT|RIGHT|CENTER)} [xAlign=CENTER] either LEFT, RIGHT or CENTER default is CENTER
    * @param {(TOP|BOTTOM|CENTER)} [yAlign=CENTER] either TOP, BOTTOM or CENTER default is CENTER
    */
-  fn.image = function(
+  fn.image = function (
     img,
     dx,
     dy,
@@ -1098,7 +1147,13 @@ function loadingDisplaying(p5, fn){
     _sh *= pd;
     _sw *= pd;
 
-    let vals = canvas.modeAdjust(_dx, _dy, _dw, _dh, this._renderer.states.imageMode);
+    let vals = canvas.modeAdjust(
+      _dx,
+      _dy,
+      _dw,
+      _dh,
+      this._renderer.states.imageMode
+    );
     vals = _imageFit(
       fit,
       xAlign,
@@ -1146,6 +1201,9 @@ function loadingDisplaying(p5, fn){
    * sets the alpha value. For example, `tint(255, 0, 0, 100)` will give images
    * a red tint and make them transparent.
    *
+   * Calling `tint()` without an argument returns the current tint as a
+   * <a href="#/p5.Color">p5.Color</a> object.
+   *
    * @method tint
    * @param  {Number}        v1      red or hue value.
    * @param  {Number}        v2      green or saturation value.
@@ -1153,8 +1211,6 @@ function loadingDisplaying(p5, fn){
    * @param  {Number}        [alpha]
    *
    * @example
-   * <div>
-   * <code>
    * let img;
    *
    * async function setup() {
@@ -1173,11 +1229,8 @@ function loadingDisplaying(p5, fn){
    *
    *   describe('Two images of an umbrella and a ceiling side-by-side. The image on the right has a red tint.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let img;
    *
    * async function setup() {
@@ -1196,13 +1249,10 @@ function loadingDisplaying(p5, fn){
    *
    *   describe('Two images of an umbrella and a ceiling side-by-side. The image on the right has a red tint.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let img;
-   **
+   *
    * async function setup() {
    *   // Load the image.
    *   img = await loadImage('assets/laDefense.jpg');
@@ -1219,11 +1269,8 @@ function loadingDisplaying(p5, fn){
    *
    *   describe('Two images of an umbrella and a ceiling side-by-side. The image on the right has a transparent red tint.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let img;
    *
    * async function setup() {
@@ -1242,34 +1289,36 @@ function loadingDisplaying(p5, fn){
    *
    *   describe('Two images of an umbrella and a ceiling side-by-side. The image on the right is transparent.');
    * }
-   * </code>
-   * </div>
    */
   /**
    * @method tint
    * @param  {String}        value   CSS color string.
    */
-
   /**
    * @method tint
    * @param  {Number}        gray   grayscale value.
    * @param  {Number}        [alpha]
    */
-
   /**
    * @method tint
    * @param  {Number[]}      values  array containing the red, green, blue &
    *                                 alpha components of the color.
    */
-
   /**
    * @method tint
    * @param  {p5.Color}      color   the tint color
    */
-  fn.tint = function(...args) {
-    // p5._validateParameters('tint', args);
-    const c = this.color(...args);
-    this._renderer.states.setValue('tint', c._getRGBA([255, 255, 255, 255]));
+  /**
+   * @method tint
+   * @return {p5.Color}      the current tint color
+   */
+  fn.tint = function (...args) {
+    if (args.length === 0) {
+      return this._renderer.states.tint; // getter
+    } else {
+      this._renderer.states.setValue('tint', this.color(...args));
+      return this;
+    }
   };
 
   /**
@@ -1280,8 +1329,6 @@ function loadingDisplaying(p5, fn){
    * @method noTint
    *
    * @example
-   * <div>
-   * <code>
    * let img;
    *
    * async function setup() {
@@ -1302,11 +1349,10 @@ function loadingDisplaying(p5, fn){
    *
    *   describe('Two images of an umbrella and a ceiling side-by-side. The image on the left has a red tint.');
    * }
-   * </code>
-   * </div>
    */
-  fn.noTint = function() {
+  fn.noTint = function () {
     this._renderer.states.setValue('tint', null);
+    return this;
   };
 
   /**
@@ -1338,13 +1384,12 @@ function loadingDisplaying(p5, fn){
    * <a href="#/p5/image">image()</a> as the x- and y-coordinates of the image's
    * center. The next parameters are its width and height.
    *
+   * Calling `imageMode()` without an argument returns the current image mode, either `CORNER`, `CORNERS`, or `CENTER`.
+   *
    * @method imageMode
    * @param {(CORNER|CORNERS|CENTER)} mode either CORNER, CORNERS, or CENTER.
    *
    * @example
-   *
-   * <div>
-   * <code>
    * let img;
    *
    * async function setup() {
@@ -1363,11 +1408,8 @@ function loadingDisplaying(p5, fn){
    *
    *   describe('A square image of a brick wall is drawn at the top left of a gray square.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let img;
    *
    * async function setup() {
@@ -1386,11 +1428,8 @@ function loadingDisplaying(p5, fn){
    *
    *   describe('An image of a brick wall is drawn on a gray square. The image is squeezed into a small rectangular area.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let img;
    *
    * async function setup() {
@@ -1409,11 +1448,17 @@ function loadingDisplaying(p5, fn){
    *
    *   describe('A square image of a brick wall is drawn on a gray square.');
    * }
-   * </code>
-   * </div>
    */
-  fn.imageMode = function(m) {
+  /**
+   * @method imageMode
+   * @return {(CORNER|CORNERS|CENTER)}      the current image mode
+   */
+  fn.imageMode = function (m) {
     // p5._validateParameters('imageMode', arguments);
+    if (typeof m === 'undefined') {
+      // getter
+      return this._renderer.states.imageMode;
+    }
     if (
       m === constants.CORNER ||
       m === constants.CORNERS ||
@@ -1426,6 +1471,6 @@ function loadingDisplaying(p5, fn){
 
 export default loadingDisplaying;
 
-if(typeof p5 !== 'undefined'){
+if (typeof p5 !== 'undefined') {
   loadingDisplaying(p5, p5.prototype);
 }

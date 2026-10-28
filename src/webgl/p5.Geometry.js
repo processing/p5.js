@@ -2,15 +2,19 @@
  * @module Shape
  * @submodule 3D Primitives
  * @for p5
- * @requires core
- * @requires p5.Geometry
  */
 
 //some of the functions are adjusted from Three.js(http://threejs.org)
 
 import * as constants from '../core/constants';
 import { DataArray } from './p5.DataArray';
+import {
+  GeometryPart,
+  createPartState,
+  createUserVertexProperty
+} from './p5.GeometryPart';
 import { Vector } from '../math/p5.Vector';
+import { downloadFile } from '../io/utilities';
 
 class Geometry {
   constructor(detailX, detailY, callback, renderer) {
@@ -18,7 +22,6 @@ class Geometry {
     this.vertices = [];
 
     this.boundingBoxCache = null;
-
 
     //an array containing every vertex for stroke drawing
     this.lineVertices = new DataArray();
@@ -38,6 +41,11 @@ class Geometry {
     this.lineSides = new DataArray();
 
     this.vertexNormals = [];
+
+    // per-vertex surface tangents for normal mapping, stored flat as
+    // [x, y, z, w] where w is the bitangent handedness. computeTangents() fills
+    // this; empty until a normal-mapped model needs it.
+    this.vertexTangents = [];
 
     this.faces = [];
 
@@ -64,118 +72,141 @@ class Geometry {
 
     this.gid = `_p5_Geometry_${Geometry.nextId}`;
     Geometry.nextId++;
+
+    // a geometry can act as its own single part: this is the default material
+    // state used when it is drawn that way (see _wrapInSinglePart).
+    this.partState = createPartState();
+
+    // every geometry is one or more parts (see p5.GeometryPart). loaders that
+    // know about materials fill parts themselves; anything built the old way
+    // becomes its own single part below.
+    this.parts = [];
+
     if (callback instanceof Function) {
       callback.call(this);
     }
+
+    if (this.parts.length === 0) {
+      this._wrapInSinglePart();
+    }
+  }
+
+  // a geometry with no material breakdown is its own single part. using the
+  // geometry itself (rather than a wrapper) means drawing the part is exactly
+  // drawing the geometry: same buffers, gid, dirty flags and custom attributes.
+  _wrapInSinglePart() {
+    this.parts = [this];
   }
 
   /**
- * Calculates the position and size of the smallest box that contains the geometry.
- *
- * A bounding box is the smallest rectangular prism that contains the entire
- * geometry. It's defined by the box's minimum and maximum coordinates along
- * each axis, as well as the size (length) and offset (center).
- *
- * Calling `myGeometry.calculateBoundingBox()` returns an object with four
- * properties that describe the bounding box:
- *
- * ```js
- * // Get myGeometry's bounding box.
- * let bbox = myGeometry.calculateBoundingBox();
- *
- * // Print the bounding box to the console.
- * console.log(bbox);
- *
- * // {
- * //  // The minimum coordinate along each axis.
- * //  min: { x: -1, y: -2, z: -3 },
- * //
- * //  // The maximum coordinate along each axis.
- * //  max: { x: 1, y: 2, z: 3},
- * //
- * //  // The size (length) along each axis.
- * //  size: { x: 2, y: 4, z: 6},
- * //
- * //  // The offset (center) along each axis.
- * //  offset: { x: 0, y: 0, z: 0}
- * // }
- * ```
- *
- * @returns {Object} bounding box of the geometry.
- *
- * @example
- * <div>
- * <code>
- * // Click and drag the mouse to view the scene from different angles.
- *
- * let particles;
- *
- * function setup() {
- *   createCanvas(100, 100, WEBGL);
- *
- *   // Create a new p5.Geometry object with random spheres.
- *   particles = buildGeometry(createParticles);
- *
- *   describe('Ten white spheres placed randomly against a gray background. A box encloses the spheres.');
- * }
- *
- * function draw() {
- *   background(50);
- *
- *   // Enable orbiting with the mouse.
- *   orbitControl();
- *
- *   // Turn on the lights.
- *   lights();
- *
- *   // Style the particles.
- *   noStroke();
- *   fill(255);
- *
- *   // Draw the particles.
- *   model(particles);
- *
- *   // Calculate the bounding box.
- *   let bbox = particles.calculateBoundingBox();
- *
- *   // Translate to the bounding box's center.
- *   translate(bbox.offset.x, bbox.offset.y, bbox.offset.z);
- *
- *   // Style the bounding box.
- *   stroke(255);
- *   noFill();
- *
- *   // Draw the bounding box.
- *   box(bbox.size.x, bbox.size.y, bbox.size.z);
- * }
- *
- * function createParticles() {
- *   for (let i = 0; i < 10; i += 1) {
- *     // Calculate random coordinates.
- *     let x = randomGaussian(0, 15);
- *     let y = randomGaussian(0, 15);
- *     let z = randomGaussian(0, 15);
- *
- *     push();
- *     // Translate to the particle's coordinates.
- *     translate(x, y, z);
- *     // Draw the particle.
- *     sphere(3);
- *     pop();
- *   }
- * }
- * </code>
- * </div>
- */
+   * Calculates the position and size of the smallest box that contains the geometry.
+   *
+   * A bounding box is the smallest rectangular prism that contains the entire
+   * geometry. It's defined by the box's minimum and maximum coordinates along
+   * each axis, as well as the size (length) and offset (center).
+   *
+   * Calling `myGeometry.calculateBoundingBox()` returns an object with four
+   * properties that describe the bounding box:
+   *
+   * ```js
+   * // Get myGeometry's bounding box.
+   * let bbox = myGeometry.calculateBoundingBox();
+   *
+   * // Print the bounding box to the console.
+   * console.log(bbox);
+   *
+   * // {
+   * //  // The minimum coordinate along each axis.
+   * //  min: { x: -1, y: -2, z: -3 },
+   * //
+   * //  // The maximum coordinate along each axis.
+   * //  max: { x: 1, y: 2, z: 3},
+   * //
+   * //  // The size (length) along each axis.
+   * //  size: { x: 2, y: 4, z: 6},
+   * //
+   * //  // The offset (center) along each axis.
+   * //  offset: { x: 0, y: 0, z: 0}
+   * // }
+   * ```
+   *
+   * @returns {Object} bounding box of the geometry.
+   *
+   * @example
+   * // Click and drag the mouse to view the scene from different angles.
+   *
+   * let particles;
+   *
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *
+   *   // Create a new p5.Geometry object with random spheres.
+   *   particles = buildGeometry(createParticles);
+   *
+   *   describe('Ten white spheres placed randomly against a gray background. A box encloses the spheres.');
+   * }
+   *
+   * function draw() {
+   *   background(50);
+   *
+   *   // Enable orbiting with the mouse.
+   *   orbitControl();
+   *
+   *   // Turn on the lights.
+   *   lights();
+   *
+   *   // Style the particles.
+   *   noStroke();
+   *   fill(255);
+   *
+   *   // Draw the particles.
+   *   model(particles);
+   *
+   *   // Calculate the bounding box.
+   *   let bbox = particles.calculateBoundingBox();
+   *
+   *   // Translate to the bounding box's center.
+   *   translate(bbox.offset.x, bbox.offset.y, bbox.offset.z);
+   *
+   *   // Style the bounding box.
+   *   stroke(255);
+   *   noFill();
+   *
+   *   // Draw the bounding box.
+   *   box(bbox.size.x, bbox.size.y, bbox.size.z);
+   * }
+   *
+   * function createParticles() {
+   *   for (let i = 0; i < 10; i += 1) {
+   *     // Calculate random coordinates.
+   *     let x = randomGaussian(0, 15);
+   *     let y = randomGaussian(0, 15);
+   *     let z = randomGaussian(0, 15);
+   *
+   *     push();
+   *     // Translate to the particle's coordinates.
+   *     translate(x, y, z);
+   *     // Draw the particle.
+   *     sphere(3);
+   *     pop();
+   *   }
+   * }
+   */
   calculateBoundingBox() {
     if (this.boundingBoxCache) {
       return this.boundingBoxCache; // Return cached result if available
     }
 
     let minVertex = new Vector(
-      Number.MAX_VALUE, Number.MAX_VALUE, Number.MAX_VALUE);
+      Number.MAX_VALUE,
+      Number.MAX_VALUE,
+      Number.MAX_VALUE
+    );
     let maxVertex = new Vector(
-      Number.MIN_VALUE, Number.MIN_VALUE, Number.MIN_VALUE);
+      Number.MIN_VALUE,
+      Number.MIN_VALUE,
+      Number.MIN_VALUE
+    );
 
     for (let i = 0; i < this.vertices.length; i++) {
       let vertex = this.vertices[i];
@@ -188,10 +219,16 @@ class Geometry {
       maxVertex.z = Math.max(maxVertex.z, vertex.z);
     }
     // Calculate size and offset properties
-    let size = new Vector(maxVertex.x - minVertex.x,
-      maxVertex.y - minVertex.y, maxVertex.z - minVertex.z);
-    let offset = new Vector((minVertex.x + maxVertex.x) / 2,
-      (minVertex.y + maxVertex.y) / 2, (minVertex.z + maxVertex.z) / 2);
+    let size = new Vector(
+      maxVertex.x - minVertex.x,
+      maxVertex.y - minVertex.y,
+      maxVertex.z - minVertex.z
+    );
+    let offset = new Vector(
+      (minVertex.x + maxVertex.x) / 2,
+      (minVertex.y + maxVertex.y) / 2,
+      (minVertex.z + maxVertex.z) / 2
+    );
 
     // Cache the result for future access
     this.boundingBoxCache = {
@@ -205,6 +242,9 @@ class Geometry {
   }
 
   reset() {
+    // Notify renderer that geometry is being reset (for buffer cleanup)
+    this.renderer?.onReset?.(this);
+
     this._hasFillTransparency = undefined;
     this._hasStrokeTransparency = undefined;
 
@@ -219,9 +259,10 @@ class Geometry {
     this.vertexStrokeColors.length = 0;
     this.lineVertexColors.clear();
     this.vertexNormals.length = 0;
+    this.vertexTangents.length = 0;
     this.uvs.length = 0;
 
-    for (const propName in this.userVertexProperties){
+    for (const propName in this.userVertexProperties) {
       this.userVertexProperties[propName].delete();
     }
     this.userVertexProperties = {};
@@ -264,8 +305,6 @@ class Geometry {
    * <a href="#/p5/fill">fill()</a> function to apply color to the geometry.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
@@ -309,8 +348,6 @@ class Geometry {
    *     'Three squares drawn against a gray background. Red squares are at the center and the bottom-right. A blue square is at the top-right.'
    *   );
    * }
-   * </code>
-   * </div>
    */
   clearColors() {
     this.vertexColors = [];
@@ -330,13 +367,11 @@ class Geometry {
    * @param {String} [fileName='model.obj'] The name of the file to save the model as.
    *                                        If not specified, the default file name will be 'model.obj'.
    * @example
-   * <div>
-   * <code>
    * let myModel;
    * let saveBtn;
    * function setup() {
    *   createCanvas(200, 200, WEBGL);
-   *   myModel = buildGeometry(function()) {
+   *   myModel = buildGeometry(function() {
    *     for (let i = 0; i < 5; i++) {
    *       push();
    *       translate(
@@ -363,12 +398,9 @@ class Geometry {
    *   rotateY(millis() * 0.002);
    *   model(myModel);
    * }
-   * </code>
-   * </div>
    */
   saveObj(fileName = 'model.obj') {
-    let objStr= '';
-
+    let objStr = '';
 
     // Vertices
     this.vertices.forEach(v => {
@@ -387,7 +419,6 @@ class Geometry {
       this.vertexNormals.forEach(n => {
         objStr += `vn ${n.x} ${n.y} ${n.z}\n`;
       });
-
     }
     // Faces, obj vertex indices begin with 1 and not 0
     // texture coordinate (uvs) and vertexNormal indices
@@ -395,7 +426,7 @@ class Geometry {
     // ex 1/1/1 or 2//2 for vertices without uvs
     this.faces.forEach(face => {
       let faceStr = 'f';
-      face.forEach(index =>{
+      face.forEach(index => {
         faceStr += ' ';
         faceStr += index + 1;
         if (this.vertexNormals.length > 0 || this.uvs.length > 0) {
@@ -413,8 +444,7 @@ class Geometry {
     });
 
     const blob = new Blob([objStr], { type: 'text/plain' });
-    fn.downloadFile(blob, fileName , 'obj');
-
+    downloadFile(blob, fileName, 'obj');
   }
 
   /**
@@ -431,11 +461,9 @@ class Geometry {
    * @method saveStl
    * @param {String} [fileName='model.stl'] The name of the file to save the model as.
    *                                        If not specified, the default file name will be 'model.stl'.
-   * @param {Object} [options] Optional settings. Options can include a boolean `binary` property, which
-   * controls whether or not a binary .stl file is saved. It defaults to false.
+   * @param {Object} [options] Optional settings.
+   * @param {Boolean} [options.binary=false] Whether or not a binary .stl file is saved.
    * @example
-   * <div>
-   * <code>
    * let myModel;
    * let saveBtn1;
    * let saveBtn2;
@@ -474,10 +502,8 @@ class Geometry {
    *   rotateY(millis() * 0.002);
    *   model(myModel);
    * }
-   * </code>
-   * </div>
    */
-  saveStl(fileName = 'model.stl', { binary = false } = {}){
+  saveStl(fileName = 'model.stl', { binary = false } = {}) {
     let modelOutput;
     let name = fileName.substring(0, fileName.lastIndexOf('.'));
     let faceNormals = [];
@@ -536,7 +562,7 @@ class Geometry {
       modelOutput += 'endsolid ' + name + '\n';
     }
     const blob = new Blob([modelOutput], { type: 'text/plain' });
-    fn.downloadFile(blob, fileName, 'stl');
+    downloadFile(blob, fileName, 'stl');
   }
 
   /**
@@ -576,8 +602,6 @@ class Geometry {
    * @for p5.Geometry
    *
    * @example
-   * <div>
-   * <code>
    * let img;
    *
    * async function setup() {
@@ -617,8 +641,6 @@ class Geometry {
    * function createShape() {
    *   plane(40);
    * }
-   * </code>
-   * </div>
    */
   flipU() {
     this.uvs = this.uvs.flat().map((val, index) => {
@@ -668,8 +690,6 @@ class Geometry {
    * @for p5.Geometry
    *
    * @example
-   * <div>
-   * <code>
    * let img;
    *
    * async function setup() {
@@ -709,8 +729,6 @@ class Geometry {
    * function createShape() {
    *   plane(40);
    * }
-   * </code>
-   * </div>
    */
   flipV() {
     this.uvs = this.uvs.flat().map((val, index) => {
@@ -757,8 +775,6 @@ class Geometry {
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
    * // Click and drag the mouse to view the scene from different angles.
    *
    * let myGeometry;
@@ -800,11 +816,8 @@ class Geometry {
    *   // Draw the p5.Geometry object.
    *   model(myGeometry);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * let myGeometry;
@@ -848,8 +861,6 @@ class Geometry {
    *   // Compute the faces array.
    *   this.computeFaces();
    * }
-   * </code>
-   * </div>
    */
   computeFaces() {
     this.faces.length = 0;
@@ -902,18 +913,34 @@ class Geometry {
    * A face's orientation is defined by its *normal vector* which points out
    * of the face and is normal (perpendicular) to the surface. Calling
    * `myGeometry.computeNormals()` first calculates each face's normal vector.
-   * Then it calculates the normal vector for each vertex by averaging the
-   * normal vectors of the faces surrounding the vertex. The vertex normals
-   * are stored as <a href="#/p5.Vector">p5.Vector</a> objects in the
+   * It then calculates vertex normals according to the selected shading mode.
+   * The vertex normals are stored as <a href="#/p5.Vector">p5.Vector</a>
+   * objects in the
    * <a href="#/p5.Geometry/vertexNormals">myGeometry.vertexNormals</a> array.
    *
    * The first parameter, `shadingType`, is optional. Passing the constant
-   * `FLAT`, as in `myGeometry.computeNormals(FLAT)`, provides neighboring
-   * faces with their own copies of the vertices they share. Surfaces appear
-   * tiled with flat shading. Passing the constant `SMOOTH`, as in
-   * `myGeometry.computeNormals(SMOOTH)`, makes neighboring faces reuse their
-   * shared vertices. Surfaces appear smoother with smooth shading. By
-   * default, `shadingType` is `FLAT`.
+   * `KEEP_CONNECTIONS`, as in `myGeometry.computeNormals(KEEP_CONNECTIONS)`,
+   * preserves the geometry's existing vertex connections. Each vertex normal
+   * is calculated by averaging the face normals of its connected faces.
+   * This may produce smooth transitions between connected faces rather
+   * than true flat shading.
+   *
+   * Passing the constant `SMOOTH`, as in
+   * `myGeometry.computeNormals(SMOOTH)`, calculates smooth normals by
+   * grouping vertices with approximately matching positions, without
+   * modifying the original vertices or their attributes.
+   *
+   *
+   * Passing the constant `SEGMENTED`, as in
+   * `myGeometry.computeNormals(SEGMENTED)`, produces true flat shading
+   * by assigning each triangle its own face normal. Shared vertices
+   * are duplicated as needed while preserving the original vertex
+   * indices and their connections. Associated vertex attributes,
+   * such as UV coordinates and colors, are preserved.
+   *
+   * The constant `FLAT` is deprecated and behaves identically to
+   * `KEEP_CONNECTIONS`. It is retained for backward compatibility.
+   * By default, `shadingType` is `KEEP_CONNECTIONS`.
    *
    * The second parameter, `options`, is also optional. If an object with a
    * `roundToPrecision` property is passed, as in
@@ -921,13 +948,11 @@ class Geometry {
    * number of decimal places to use for calculations. By default,
    * `roundToPrecision` uses 3 decimal places.
    *
-   * @param {(FLAT|SMOOTH)} [shadingType=FLAT] shading type. either FLAT or SMOOTH. Defaults to `FLAT`.
+   * @param {(KEEP_CONNECTIONS|SMOOTH|SEGMENTED)} [shadingType=KEEP_CONNECTIONS] shading type. Defaults to `KEEP_CONNECTIONS`.
    * @param {Object} [options] shading options.
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
    * // Click and drag the mouse to view the scene from different angles.
    *
    * let myGeometry;
@@ -988,11 +1013,8 @@ class Geometry {
    *     pop();
    *   }
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * let myGeometry;
@@ -1037,11 +1059,8 @@ class Geometry {
    *   // Draw the p5.Geometry object.
    *   model(myGeometry);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * let myGeometry;
@@ -1052,8 +1071,8 @@ class Geometry {
    *   // Create a p5.Geometry object.
    *   myGeometry = buildGeometry(createShape);
    *
-   *   // Compute normals using default (FLAT) shading.
-   *   myGeometry.computeNormals(FLAT);
+   *   // Compute normals while preserving existing vertex connections.
+   *   myGeometry.computeNormals(KEEP_CONNECTIONS);
    *
    *   describe('A white, helical structure drawn on a dark gray background. Its faces appear faceted.');
    * }
@@ -1088,11 +1107,8 @@ class Geometry {
    *   }
    *   endShape();
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * let myGeometry;
@@ -1139,11 +1155,8 @@ class Geometry {
    *   }
    *   endShape();
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * let myGeometry;
@@ -1193,81 +1206,261 @@ class Geometry {
    *   }
    *   endShape();
    * }
-   * </code>
-   * </div>
    */
-  computeNormals(shadingType = constants.FLAT, { roundToPrecision = 3 } = {}) {
+
+  computeNormals(shadingType = constants.KEEP_CONNECTIONS, { roundToPrecision = 3 } = {}) {
     const vertexNormals = this.vertexNormals;
-    let vertices = this.vertices;
+    const vertices = this.vertices;
     const faces = this.faces;
     let iv;
 
     if (shadingType === constants.SMOOTH) {
       const vertexIndices = {};
       const uniqueVertices = [];
+      const originalToUnique = [];
 
       const power = Math.pow(10, roundToPrecision);
       const rounded = val => Math.round(val * power) / power;
       const getKey = vert =>
         `${rounded(vert.x)},${rounded(vert.y)},${rounded(vert.z)}`;
 
-      // loop through each vertex and add uniqueVertices
       for (let i = 0; i < vertices.length; i++) {
         const vertex = vertices[i];
         const key = getKey(vertex);
+
         if (vertexIndices[key] === undefined) {
           vertexIndices[key] = uniqueVertices.length;
           uniqueVertices.push(vertex);
         }
+
+        originalToUnique[i] = vertexIndices[key];
       }
 
-      // update face indices to use the deduplicated vertex indices
-      faces.forEach(face => {
+      const smoothNormals = [];
+
+      for (iv = 0; iv < uniqueVertices.length; ++iv) {
+        smoothNormals.push(new Vector(0, 0, 0));
+      }
+
+      faces.forEach((face, f) => {
+        const faceNormal = this._getFaceNormal(f);
+
         for (let fv = 0; fv < 3; ++fv) {
-          const originalVertexIndex = face[fv];
-          const originalVertex = vertices[originalVertexIndex];
-          const key = getKey(originalVertex);
-          face[fv] = vertexIndices[key];
+          const vertexIndex = originalToUnique[face[fv]];
+          smoothNormals[vertexIndex].add(faceNormal);
         }
       });
 
-      // update edge indices to use the deduplicated vertex indices
-      this.edges.forEach(edge => {
-        for (let ev = 0; ev < 2; ++ev) {
-          const originalVertexIndex = edge[ev];
-          const originalVertex = vertices[originalVertexIndex];
-          const key = getKey(originalVertex);
-          edge[ev] = vertexIndices[key];
-        }
-      });
-
-      // update the deduplicated vertices
-      this.vertices = vertices = uniqueVertices;
-    }
-
-    // initialize the vertexNormals array with empty vectors
-    vertexNormals.length = 0;
-    for (iv = 0; iv < vertices.length; ++iv) {
-      vertexNormals.push(new Vector());
-    }
-
-    // loop through all the faces adding its normal to the normal
-    // of each of its vertices
-    faces.forEach((face, f) => {
-      const faceNormal = this._getFaceNormal(f);
-
-      // all three vertices get the normal added
-      for (let fv = 0; fv < 3; ++fv) {
-        const vertexIndex = face[fv];
-        vertexNormals[vertexIndex].add(faceNormal);
+      for (iv = 0; iv < smoothNormals.length; ++iv) {
+        smoothNormals[iv].normalize();
       }
-    });
 
-    // normalize the normals
-    for (iv = 0; iv < vertices.length; ++iv) {
-      vertexNormals[iv].normalize();
+      vertexNormals.length = 0;
+
+      for (iv = 0; iv < vertices.length; ++iv) {
+        vertexNormals.push(smoothNormals[originalToUnique[iv]].copy());
+      }
+
+    } else if (shadingType === constants.SEGMENTED) {
+      const usedVertices = new Set();
+      const segmentedFaces = [];
+
+      // Preserve original vertex indices so existing edges remain valid.
+      const segmentedVertices = [...vertices];
+      const segmentedNormals = vertices.map(() => new Vector(0, 0, 0));
+
+      const sourceUVs = this.uvs.flat();
+      const segmentedUVs = [...sourceUVs];
+      const segmentedColors = [...this.vertexColors];
+      const segmentedStrokeColors = [...this.vertexStrokeColors];
+      const segmentedTangents = [...this.vertexTangents];
+
+      // Preserve custom GLSL vertex attributes.
+      const segmentedProperties = {};
+
+      for (const propertyName in this.userVertexProperties) {
+        const prop = this.userVertexProperties[propertyName];
+        segmentedProperties[propertyName] = [...prop.getSrcArray()];
+      }
+
+      faces.forEach((face, faceIndex) => {
+        const faceNormal = this._getFaceNormal(faceIndex).normalize();
+        const newFace = [];
+
+        for (const vertexIndex of face) {
+          let newIndex = vertexIndex;
+
+          if (usedVertices.has(vertexIndex)) {
+            // Append a duplicate only when the original vertex is reused.
+            newIndex = segmentedVertices.length;
+
+            segmentedVertices.push(vertices[vertexIndex].copy());
+            segmentedNormals.push(faceNormal.copy());
+
+            if (sourceUVs.length > 0) {
+              segmentedUVs.push(
+                ...sourceUVs.slice(vertexIndex * 2, (vertexIndex + 1) * 2)
+              );
+            }
+
+            if (this.vertexColors.length > 0) {
+              segmentedColors.push(
+                ...this.vertexColors.slice(
+                  vertexIndex * 4,
+                  (vertexIndex + 1) * 4
+                )
+              );
+            }
+
+            if (this.vertexStrokeColors.length > 0) {
+              segmentedStrokeColors.push(
+                ...this.vertexStrokeColors.slice(
+                  vertexIndex * 4,
+                  (vertexIndex + 1) * 4
+                )
+              );
+            }
+
+            if (this.vertexTangents.length > 0) {
+              segmentedTangents.push(
+                ...this.vertexTangents.slice(
+                  vertexIndex * 4,
+                  (vertexIndex + 1) * 4
+                )
+              );
+            }
+
+            for (const propertyName in this.userVertexProperties) {
+              const prop = this.userVertexProperties[propertyName];
+              const size = prop.getDataSize();
+              const source = prop.getSrcArray();
+
+              segmentedProperties[propertyName].push(
+                ...source.slice(
+                  vertexIndex * size,
+                  (vertexIndex + 1) * size
+                )
+              );
+            }
+          } else {
+            usedVertices.add(vertexIndex);
+            segmentedNormals[vertexIndex] = faceNormal.copy();
+          }
+
+          newFace.push(newIndex);
+        }
+
+        segmentedFaces.push(newFace);
+      });
+
+      this.vertices = segmentedVertices;
+      this.vertexNormals = segmentedNormals;
+      this.faces = segmentedFaces;
+      this.uvs = segmentedUVs;
+      this.vertexColors = segmentedColors;
+      this.vertexStrokeColors = segmentedStrokeColors;
+      this.vertexTangents = segmentedTangents;
+
+      for (const propertyName in this.userVertexProperties) {
+        const prop = this.userVertexProperties[propertyName];
+        this[prop.getSrcName()] = segmentedProperties[propertyName];
+      }
+
+    } else {
+      vertexNormals.length = 0;
+
+      for (iv = 0; iv < vertices.length; ++iv) {
+        vertexNormals.push(new Vector(0, 0, 0));
+      }
+
+      faces.forEach((face, f) => {
+        const faceNormal = this._getFaceNormal(f);
+
+        for (let fv = 0; fv < 3; ++fv) {
+          const vertexIndex = face[fv];
+          vertexNormals[vertexIndex].add(faceNormal);
+        }
+      });
+
+      for (iv = 0; iv < vertices.length; ++iv) {
+        vertexNormals[iv].normalize();
+      }
     }
 
+    return this;
+  }
+
+
+  /**
+   * computes a per-vertex surface tangent from the uvs, needed for normal
+   * (bump) mapping. the tangent points along the +u texture direction; its w
+   * component stores the bitangent handedness so the shader can rebuild the
+   * bitangent as cross(normal, tangent) * w. results are stored flat as
+   * [x, y, z, w] per vertex on this.vertexTangents. needs uvs and vertex
+   * normals, so run computeNormals() first if the model has none.
+   * @private
+   * @chainable
+   */
+  computeTangents() {
+    const vertices = this.vertices;
+    const faces = this.faces;
+    const uvs = this.uvs.flat();
+    const normals = this.vertexNormals;
+
+    // nothing to build a tangent basis from without uvs and normals
+    if (uvs.length === 0 || normals.length === 0) {
+      this.vertexTangents = [];
+      return this;
+    }
+
+    // accumulate the +u direction (tan) and +v direction (bitan) per vertex
+    const tan = [];
+    const bitan = [];
+    for (let i = 0; i < vertices.length; i++) {
+      tan.push(new Vector(0, 0, 0));
+      bitan.push(new Vector(0, 0, 0));
+    }
+    const uvAt = i => ({ x: uvs[i * 2] || 0, y: uvs[i * 2 + 1] || 0 });
+
+    for (const face of faces) {
+      const [i0, i1, i2] = face;
+      const e1 = Vector.sub(vertices[i1], vertices[i0]);
+      const e2 = Vector.sub(vertices[i2], vertices[i0]);
+      const w0 = uvAt(i0);
+      const w1 = uvAt(i1);
+      const w2 = uvAt(i2);
+      const du1 = w1.x - w0.x;
+      const dv1 = w1.y - w0.y;
+      const du2 = w2.x - w0.x;
+      const dv2 = w2.y - w0.y;
+
+      const denom = du1 * dv2 - du2 * dv1;
+      const r = denom === 0 ? 0 : 1 / denom;
+      const sdir = Vector.sub(Vector.mult(e1, dv2), Vector.mult(e2, dv1)).mult(r);
+      const tdir = Vector.sub(Vector.mult(e2, du1), Vector.mult(e1, du2)).mult(r);
+
+      for (const idx of face) {
+        tan[idx].add(sdir);
+        bitan[idx].add(tdir);
+      }
+    }
+
+    // orthonormalise each tangent against its normal and record handedness
+    const tangents = [];
+    for (let i = 0; i < vertices.length; i++) {
+      const n = normals[i] || new Vector(0, 0, 1);
+      let t = Vector.sub(tan[i], Vector.mult(n, n.dot(tan[i])));
+      if (t.magSq() === 0) {
+        // degenerate uvs: pick any direction perpendicular to the normal
+        const seed = Math.abs(n.x) < 0.9 ? new Vector(1, 0, 0) : new Vector(0, 1, 0);
+        t = Vector.sub(seed, Vector.mult(n, n.dot(seed)));
+      }
+      t.normalize();
+      const handedness = Vector.cross(n, t).dot(bitan[i]) < 0 ? -1 : 1;
+      tangents.push(t.x, t.y, t.z, handedness);
+    }
+
+    this.vertexTangents = tangents;
     return this;
   }
 
@@ -1349,8 +1542,6 @@ class Geometry {
 
   /**
    * @example
-   * <div>
-   * <code>
    * let tetrahedron;
    * function setup() {
    *   createCanvas(200, 200, WEBGL);
@@ -1378,6 +1569,7 @@ class Geometry {
    *   tetrahedron.faces.push([1, 2, 3]);
    *   tetrahedron.makeEdgesFromFaces();
    * }
+   *
    * function draw() {
    *   background(200);
    *   strokeWeight(2);
@@ -1385,8 +1577,6 @@ class Geometry {
    *   rotateY(millis() * 0.001);
    *   model(tetrahedron);
    * }
-   * </code>
-   * </div>
    */
   makeEdgesFromFaces() {
     this._makeTriangleEdges();
@@ -1419,30 +1609,33 @@ class Geometry {
     for (let i = 0; i < this.edges.length; i++) {
       const prevEdge = this.edges[i - 1];
       const currEdge = this.edges[i];
+      const isPoint = currEdge[0] === currEdge[1];
       const begin = this.vertices[currEdge[0]];
       const end = this.vertices[currEdge[1]];
-      const prevColor = (this.vertexStrokeColors.length > 0 && prevEdge)
-        ? this.vertexStrokeColors.slice(
-          prevEdge[1] * 4,
-          (prevEdge[1] + 1) * 4
-        )
-        : [0, 0, 0, 0];
-      const fromColor = this.vertexStrokeColors.length > 0
-        ? this.vertexStrokeColors.slice(
-          currEdge[0] * 4,
-          (currEdge[0] + 1) * 4
-        )
-        : [0, 0, 0, 0];
-      const toColor = this.vertexStrokeColors.length > 0
-        ? this.vertexStrokeColors.slice(
-          currEdge[1] * 4,
-          (currEdge[1] + 1) * 4
-        )
-        : [0, 0, 0, 0];
-      const dir = end
-        .copy()
-        .sub(begin)
-        .normalize();
+      const prevColor =
+        this.vertexStrokeColors.length > 0 && prevEdge
+          ? this.vertexStrokeColors.slice(
+              prevEdge[1] * 4,
+              (prevEdge[1] + 1) * 4
+            )
+          : [0, 0, 0, 0];
+      const fromColor =
+        this.vertexStrokeColors.length > 0
+          ? this.vertexStrokeColors.slice(
+              currEdge[0] * 4,
+              (currEdge[0] + 1) * 4
+            )
+          : [0, 0, 0, 0];
+      const toColor =
+        this.vertexStrokeColors.length > 0
+          ? this.vertexStrokeColors.slice(
+              currEdge[1] * 4,
+              (currEdge[1] + 1) * 4
+            )
+          : [0, 0, 0, 0];
+      const dir = isPoint
+        ? new Vector(0, 1, 0)
+        : end.copy().sub(begin).normalize();
       const dirOK = dir.magSq() > 0;
       if (dirOK) {
         this._addSegment(begin, end, fromColor, toColor, dir);
@@ -1462,17 +1655,15 @@ class Geometry {
               this._addJoin(begin, lastValidDir, dir, fromColor);
             }
           }
+        } else if (isPoint) {
+          this._addCap(begin, dir.copy().mult(-1), fromColor);
+          this._addCap(begin, dir, fromColor);
         } else {
           // Start a new line
           if (dirOK && !connected.has(currEdge[0])) {
             const existingCap = potentialCaps.get(currEdge[0]);
             if (existingCap) {
-              this._addJoin(
-                begin,
-                existingCap.dir,
-                dir,
-                fromColor
-              );
+              this._addJoin(begin, existingCap.dir, dir, fromColor);
               potentialCaps.delete(currEdge[0]);
               connected.add(currEdge[0]);
             } else {
@@ -1483,7 +1674,7 @@ class Geometry {
               });
             }
           }
-          if (lastValidDir && !connected.has(prevEdge[1])) {
+          if (!isPoint && lastValidDir && !connected.has(prevEdge[1])) {
             const existingCap = potentialCaps.get(prevEdge[1]);
             if (existingCap) {
               this._addJoin(
@@ -1509,12 +1700,7 @@ class Geometry {
         if (i === this.edges.length - 1 && !connected.has(currEdge[1])) {
           const existingCap = potentialCaps.get(currEdge[1]);
           if (existingCap) {
-            this._addJoin(
-              end,
-              dir,
-              existingCap.dir.copy().mult(-1),
-              toColor
-            );
+            this._addJoin(end, dir, existingCap.dir.copy().mult(-1), toColor);
             potentialCaps.delete(currEdge[1]);
             connected.add(currEdge[1]);
           } else {
@@ -1553,13 +1739,7 @@ class Geometry {
    * @private
    * @chainable
    */
-  _addSegment(
-    begin,
-    end,
-    fromColor,
-    toColor,
-    dir
-  ) {
+  _addSegment(begin, end, fromColor, toColor, dir) {
     const a = begin.array();
     const b = end.array();
     const dirArr = dir.array();
@@ -1636,12 +1816,7 @@ class Geometry {
    * @private
    * @chainable
    */
-  _addJoin(
-    point,
-    fromTangent,
-    toTangent,
-    color
-  ) {
+  _addJoin(point, fromTangent, toTangent, color) {
     const ptArray = point.array();
     const tanInArray = fromTangent.array();
     const tanOutArray = toTangent.array();
@@ -1671,8 +1846,6 @@ class Geometry {
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
    * let myGeometry;
    *
    * function setup() {
@@ -1705,8 +1878,6 @@ class Geometry {
    *   // Draw the torus.
    *   model(myGeometry);
    * }
-   * </code>
-   * </div>
    */
   normalize() {
     if (this.vertices.length > 0) {
@@ -1761,8 +1932,6 @@ class Geometry {
    * See also the global <a href="#/p5/vertexProperty">vertexProperty()</a> function.
    *
    * @example
-   * <div>
-   * <code>
    * let geo;
    *
    * function cartesianToSpherical(x, y, z) {
@@ -1832,92 +2001,31 @@ class Geometry {
    *   // Draw the geometry
    *   model(geo);
    * }
-   * </code>
-   * </div>
    *
    * @param {String} propertyName the name of the vertex property.
    * @param {Number|Number[]} data the data tied to the vertex property.
    * @param {Number} [size] optional size of each unit of data.
    */
-  vertexProperty(propertyName, data, size){
+  vertexProperty(propertyName, data, size) {
     let prop;
-    if (!this.userVertexProperties[propertyName]){
+    if (!this.userVertexProperties[propertyName]) {
       prop = this.userVertexProperties[propertyName] =
         this._userVertexPropertyHelper(propertyName, data, size);
     }
     prop = this.userVertexProperties[propertyName];
-    if (size){
+    if (size) {
       prop.pushDirect(data);
-    } else{
+    } else {
       prop.setCurrentData(data);
       prop.pushCurrentData();
     }
   }
 
-  _userVertexPropertyHelper(propertyName, data, size){
-    const geometryInstance = this;
-    const prop = this.userVertexProperties[propertyName] = {
-      name: propertyName,
-      dataSize: size ? size : data.length ? data.length : 1,
-      geometry: geometryInstance,
-      // Getters
-      getName(){
-        return this.name;
-      },
-      getCurrentData(){
-        if (this.currentData === undefined) {
-          this.currentData = new Array(this.getDataSize()).fill(0);
-        }
-        return this.currentData;
-      },
-      getDataSize() {
-        return this.dataSize;
-      },
-      getSrcName() {
-        const src = this.name.concat('Src');
-        return src;
-      },
-      getDstName() {
-        const dst = this.name.concat('Buffer');
-        return dst;
-      },
-      getSrcArray() {
-        const srcName = this.getSrcName();
-        return this.geometry[srcName];
-      },
-      //Setters
-      setCurrentData(data) {
-        const size = data.length ? data.length : 1;
-        // if (size != this.getDataSize()){
-        //   p5._friendlyError(`Custom vertex property '${this.name}' has been set with various data sizes. You can change it's name, or if it was an accident, set '${this.name}' to have the same number of inputs each time!`, 'vertexProperty()');
-        // }
-        this.currentData = data;
-      },
-      // Utilities
-      pushCurrentData(){
-        const data = this.getCurrentData();
-        this.pushDirect(data);
-      },
-      pushDirect(data) {
-        if (data.length){
-          this.getSrcArray().push(...data);
-        } else{
-          this.getSrcArray().push(data);
-        }
-      },
-      resetSrcArray(){
-        this.geometry[this.getSrcName()] = [];
-      },
-      delete() {
-        const srcName = this.getSrcName();
-        delete this.geometry[srcName];
-        delete this;
-      }
-    };
-    this[prop.getSrcName()] = [];
-    return this.userVertexProperties[propertyName];
+  _userVertexPropertyHelper(propertyName, data, size) {
+    // shared with GeometryPart so parts carry custom attributes identically
+    return createUserVertexProperty(this, propertyName, data, size);
   }
-};
+}
 
 /**
  * Keeps track of how many custom geometry objects have been made so that each
@@ -1925,7 +2033,7 @@ class Geometry {
  */
 Geometry.nextId = 0;
 
-function geometry(p5, fn){
+function geometry(p5, fn) {
   /**
    * A class to describe a 3D shape.
    *
@@ -1952,11 +2060,9 @@ function geometry(p5, fn){
    * @class p5.Geometry
    * @param  {Integer} [detailX] number of vertices along the x-axis.
    * @param  {Integer} [detailY] number of vertices along the y-axis.
-   * @param {function} [callback] function to call once the geometry is created.
+   * @param {Function} [callback] function to call once the geometry is created.
    *
    * @example
-   * <div>
-   * <code>
    * // Click and drag the mouse to view the scene from different angles.
    *
    * let myGeometry;
@@ -1987,11 +2093,8 @@ function geometry(p5, fn){
    *   // Draw the p5.Geometry object.
    *   model(myGeometry);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * let myGeometry;
@@ -2031,11 +2134,8 @@ function geometry(p5, fn){
    *   // left to top to right.
    *   this.faces.push([0, 1, 2]);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * let myGeometry;
@@ -2078,11 +2178,8 @@ function geometry(p5, fn){
    *   // Compute the surface normals to help with lighting.
    *   this.computeNormals();
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * // Adapted from Paul Wheeler's wonderful p5.Geometry tutorial.
@@ -2159,10 +2256,9 @@ function geometry(p5, fn){
    *   // Compute the surface normals to help with lighting.
    *   this.computeNormals();
    * }
-   * </code>
-   * </div>
    */
   p5.Geometry = Geometry;
+  p5.GeometryPart = GeometryPart;
 
   /**
    * An array with the geometry's vertices.
@@ -2177,10 +2273,9 @@ function geometry(p5, fn){
    * @property vertices
    * @for p5.Geometry
    * @name vertices
+   * @deprecated planned for removal in 3.0, access geometry data through `parts` instead
    *
    * @example
-   * <div>
-   * <code>
    * // Click and drag the mouse to view the scene from different angles.
    *
    * let myGeometry;
@@ -2211,11 +2306,8 @@ function geometry(p5, fn){
    *   // Draw the p5.Geometry object.
    *   model(myGeometry);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * let myGeometry;
@@ -2263,8 +2355,6 @@ function geometry(p5, fn){
    *     pop();
    *   }
    * }
-   * </code>
-   * </div>
    */
 
   /**
@@ -2281,10 +2371,9 @@ function geometry(p5, fn){
    * @property vertexNormals
    * @name vertexNormals
    * @for p5.Geometry
+   * @deprecated planned for removal in 3.0, access geometry data through `parts` instead
    *
    * @example
-   * <div>
-   * <code>
    * // Click and drag the mouse to view the scene from different angles.
    *
    * let myGeometry;
@@ -2345,11 +2434,8 @@ function geometry(p5, fn){
    *     pop();
    *   }
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Click and drag the mouse to view the scene from different angles.
    *
    * let myGeometry;
@@ -2394,8 +2480,6 @@ function geometry(p5, fn){
    *   // Display the p5.Geometry object.
    *   model(myGeometry);
    * }
-   * </code>
-   * </div>
    */
 
   /**
@@ -2428,10 +2512,9 @@ function geometry(p5, fn){
    * @property faces
    * @name faces
    * @for p5.Geometry
+   * @deprecated planned for removal in 3.0, access geometry data through `parts` instead
    *
    * @example
-   * <div>
-   * <code>
    * // Click and drag the mouse to view the scene from different angles.
    *
    * let myGeometry;
@@ -2481,8 +2564,6 @@ function geometry(p5, fn){
    *
    *   }
    * }
-   * </code>
-   * </div>
    */
 
   /**
@@ -2503,10 +2584,9 @@ function geometry(p5, fn){
    * @property uvs
    * @name uvs
    * @for p5.Geometry
+   * @deprecated planned for removal in 3.0, access geometry data through `parts` instead
    *
    * @example
-   * <div>
-   * <code>
    * let img;
    *
    * async function setup() {
@@ -2546,14 +2626,19 @@ function geometry(p5, fn){
    * function createShape() {
    *   plane(40);
    * }
-   * </code>
-   * </div>
+   */
+
+  /**
+   * A unique identifier for this geometry. The renderer will use this to cache resources.
+   *
+   * @property {String} gid
+   * @for p5.Geometry
    */
 }
 
 export default geometry;
 export { Geometry };
 
-if(typeof p5 !== 'undefined'){
+if (typeof p5 !== 'undefined') {
   geometry(p5, p5.prototype);
 }

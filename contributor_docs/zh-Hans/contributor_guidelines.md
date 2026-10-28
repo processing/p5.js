@@ -8,7 +8,6 @@
 
 本文档尽管内容较多且覆盖面很广，但我们还是会尽量清晰地注明所有步骤和要点。你可以使用目录查找特定章节。如果文档中的某些章节与你要贡献的内容无关，可以选择跳过。
 
-
 **如果你是一个新贡献者，你可以从第一章节 “关于 Issues” 开始阅读。如果你想查看关于开发流程的详细指南，可以移步 “开发者快速入门指南” 章节**
 
 # 目录
@@ -16,39 +15,39 @@
 - [贡献者指南](#贡献者指南)
 - [目录](#目录)
 - [关于 Issues](#关于-issues)
-   * [所谓 “Issues” 是指什么？](#所谓-issues-是指什么)
-   * [Issue 模板](#issue-模板)
-      + [抓到个 bug](#抓到个-bug)
-      + [增强现有功能](#增强现有功能)
-      + [新功能开发请求](#新功能开发请求)
-      + [发起讨论](#发起讨论)
+  - [所谓 “Issues” 是指什么？](#所谓-issues-是指什么)
+  - [Issue 模板](#issue-模板)
+    - [抓到个 bug](#抓到个-bug)
+    - [增强现有功能](#增强现有功能)
+    - [新功能开发请求](#新功能开发请求)
+    - [发起讨论](#发起讨论)
 - [修改 p5.js 代码库](#修改-p5js-代码库)
-   * [必备条件](#必备条件)
-   * [介绍](#介绍)
-   * [开发者快速入门指南](#开发者快速入门指南)
-   * [使用 GitHub 的编辑功能](#使用-github-的编辑功能)
-   * [Fork p5.js 并在你的 Fork 中工作](#fork-p5js-并在你的-fork-中工作)
-      + [使用 GitHub 桌面版](#使用-github-桌面版)
-      + [使用 git 命令行界面](#使用-git-命令行界面)
-   * [代码库拆解](#代码库拆解)
-   * [构建设置](#构建设置)
-   * [Git 工作流程](#git-工作流程)
-      + [源代码](#源代码)
-      + [单元测试](#单元测试)
-      + [内联文档](#内联文档)
-      + [无障碍](#无障碍)
-   * [代码规范](#代码规范)
-   * [设计原则](#设计原则)
+  - [必备条件](#必备条件)
+  - [介绍](#介绍)
+  - [开发者快速入门指南](#开发者快速入门指南)
+  - [使用 GitHub 的编辑功能](#使用-github-的编辑功能)
+  - [Fork p5.js 并在你的 Fork 中工作](#fork-p5js-并在你的-fork-中工作)
+    - [使用 GitHub 桌面版](#使用-github-桌面版)
+    - [使用 git 命令行界面](#使用-git-命令行界面)
+  - [代码库拆解](#代码库拆解)
+  - [构建设置](#构建设置)
+  - [Git 工作流程](#git-工作流程)
+    - [源代码](#源代码)
+    - [单元测试](#单元测试)
+    - [内联文档](#内联文档)
+    - [无障碍](#无障碍)
+  - [代码规范](#代码规范)
+  - [设计原则](#设计原则)
 - [拉取请求](#拉取请求)
-   * [创建拉取请求](#创建拉取请求)
-      + [拉取请求信息](#拉取请求信息)
-      + [标题](#标题)
-      + [解决](#解决)
-      + [更改](#更改)
-      + [更改的截图](#更改的截图)
-      + [PR 检查列表](#pr-检查列表)
-      + [变基和解决冲突](#变基和解决冲突)
-   * [讨论和修改](#讨论和修改)
+  - [创建拉取请求](#创建拉取请求)
+    - [拉取请求信息](#拉取请求信息)
+    - [标题](#标题)
+    - [解决](#解决)
+    - [更改](#更改)
+    - [更改的截图](#更改的截图)
+    - [PR 检查列表](#pr-检查列表)
+    - [变基和解决冲突](#变基和解决冲突)
+  - [讨论和修改](#讨论和修改)
 
 ---
 
@@ -62,7 +61,7 @@ p5.js 的 GitHub 存储库上的大部分活动都发生在 Issues 板块，Issu
 
 “Issues” 是 GitHub 上描述问题的帖子的通用名称。这个 Issue 可以是一份错误报告，一个添加新功能的请求、一个讨论、或任何与 p5.js 资料库开发有关的帖子。任意 GitHub 账号，乃至于机器人，都可以在每个问题下面评论！这里就是贡献者们讨论与本项目开发相关议题的地方。
 
-尽管提出问题可以有各种各样的理由，但我们通常只使用问题来讨论与 p5.js 源代码开发相关的主题。其他例如调试你个人的代码、邀请合作者加入你个人的项目或其他与上述主题无关的内容应该在[论坛](https://discourse.processing.com)或其他诸如[Discord](https://discord.gg/SHQ8dH25r9)之类平台上讨论。
+尽管提出问题可以有各种各样的理由，但我们通常只使用问题来讨论与 p5.js 源代码开发相关的主题。其他例如调试你个人的代码、邀请合作者加入你个人的项目或其他与上述主题无关的内容应该在[论坛](https://discourse.processing.com)或其他诸如[Discord](https://discord.p5js.org)之类平台上讨论。
 
 我们创建了简单易用的 Issue 模板，助你判定某一主题到底是 GitHub 的问题，还是该在其他地方发布的问题！
 
@@ -72,7 +71,7 @@ p5.js 的 Issue 模板不仅能助力管理员和维护者更好地理解和审�
 
 ![Screenshot of an example of what an issue looks like on GitHub. The title of the issue in the screenshot is "Warning being logged in Safari when using a filter shader in 2D mode #6597"](../images/github-issue.png)
 
-若要提交新的 Issue，请点进 p5.js 存储库的 ”Issues“ 选项卡，然后点击右侧的  “New issue”按钮。点击后，将显示几个不同的选项，每个选项对应一个相关的 Issue 模板，或者将你重新定向到其他适当的地方提交你的 Issue。建议你选择最贴近需求的选项，以确保你的问题能够迅速得到关注。
+若要提交新的 Issue，请点进 p5.js 存储库的 ”Issues“ 选项卡，然后点击右侧的 “New issue”按钮。点击后，将显示几个不同的选项，每个选项对应一个相关的 Issue 模板，或者将你重新定向到其他适当的地方提交你的 Issue。建议你选择最贴近需求的选项，以确保你的问题能够迅速得到关注。
 
 ![Cropped screenshot of the GitHub repository's issue page with the green "New issue" button highlighted with a red box surrounding it.](../images/new-issue.png)
 
@@ -209,7 +208,8 @@ Bug 报告只有在至少一名[领域管理员或维护者](https://github.com/
 1. [创建一个 p5.js 的 fork](https://docs.github.com/en/get-started/quickstart/fork-a-repo)
 2. [将你创建的 fork 克隆到你的电脑](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository)
 3. [使用以下命令添加 upstream](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/configuring-a-remote-repository-for-a-fork)
-    ```
+
+   ```
    git remote add upstream https://github.com/processing/p5.js
    ```
 
@@ -232,7 +232,7 @@ Bug 报告只有在至少一名[领域管理员或维护者](https://github.com/
    ```
 
 7. 当你开始对代码库进行更改时，应频繁进行测试（尽管测试耗时，但能确保现有行为未被改坏）。
-   
+
    ```
    npm test
    ```
@@ -249,7 +249,6 @@ Bug 报告只有在至少一名[领域管理员或维护者](https://github.com/
 但是，除非要进行的更改非常简单，否则不建议使用该功能。主要是因为，如要对源代码进行较复杂的更改，则应该先在本地进行构建和测试，然后再提交拉取请求。对于大多数人来说，使用本地开发环境通常比该编辑功能提供的基本编辑环境更为流畅。
 
 ## Fork p5.js 并在你的 Fork 中工作
-
 
 第一步是 Fork p5.js 存储库。在开源项目中，Fork 具有特定的含义，但对于我们的目的来说，它意味着创建存储库的副本并将其存储在你自己的 GitHub 帐户中。要 Fork 一个存储库，只需点击页面顶部附近的"Fork"按钮，GitHub 将在你的帐户中创建存储库的副本。
 
@@ -290,7 +289,6 @@ git clone [git_url]
 - `src` - 最终生成 `p5.js` 和 `p5.min.js` 文件的所有代码都存放于此。
 - [`test`](../unit_testing.md) - 存放单元测试代码和测试所有文档示例代码的位置。
 - `tasks` - 存放详细的自定义构建代码的位置。
-- `Gruntfile.js` - 主要的构建配置文件。
 - `contributor_docs` - 存放文档和其他贡献者文档的位置。
 
 其他文件和文件夹要么是配置文件，要么是其他类型的支持文件，大多数情况下，你不需要对它们做任何修改。
@@ -505,6 +503,7 @@ git push -u origin [分支名称]
 2. 运行 `git fetch upstream`
 3. 运行 `git rebase upstream/main`
 4. 可能会有冲突！如果只涉及到 `lib/p5.js` 和 `lib/p5.min.js`，就很容易解决，只需重新构建项目。如果其他文件存在冲突，并且你不确定如何解决，去寻求帮助吧！
+
 ```
 npm test
 git add -u

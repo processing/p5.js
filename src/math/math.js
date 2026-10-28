@@ -1,7 +1,6 @@
 /**
  * @module Math
  * @for p5
- * @requires core
  */
 
 function math(p5, fn) {
@@ -23,6 +22,10 @@ function math(p5, fn) {
    * This allows for flexibility in representing vectors in higher-dimensional
    * spaces.
    *
+   * Calling `createVector()` **with no arguments** is **deprecated** and will emit
+   * a friendly warning. Use `createVector(0)`, `createVector(0, 0)`, or
+   * `createVector(0, 0, 0)` instead.
+   *
    * <a href="#/p5.Vector">p5.Vector</a> objects are often used to program
    * motion because they simplify the math. For example, a moving ball has a
    * position and a velocity. Position describes where the ball is in space. The
@@ -34,12 +37,10 @@ function math(p5, fn) {
    * <a href="#/p5.Vector">p5.Vector</a> class.
    *
    * @method createVector
-   * @param {...Number} x Zero or more numbers, representing each component of the vector.
+   * @param {...Number} x List of numbers representing each component of the vector.
    * @return {p5.Vector} new <a href="#/p5.Vector">p5.Vector</a> object.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -58,11 +59,8 @@ function math(p5, fn) {
    *
    *   describe('Three black dots form a diagonal line from top left to bottom right.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let pos;
    * let vel;
    *
@@ -92,18 +90,20 @@ function math(p5, fn) {
    *   strokeWeight(5);
    *   point(pos);
    * }
-   * </code>
-   * </div>
    */
-  fn.createVector = function (x, y, z) {
+  fn.createVector = function (...args) {
     if (this instanceof p5) {
+      if (!this._boundFromRadians) {
+        this._boundFromRadians = this._fromRadians.bind(this);
+        this._boundToRadians = this._toRadians.bind(this);
+      }
       return new p5.Vector(
-        this._fromRadians.bind(this),
-        this._toRadians.bind(this),
-        ...arguments
+        this._boundFromRadians,
+        this._boundToRadians,
+        ...args
       );
     } else {
-      return new p5.Vector(x, y, z);
+      return new p5.Vector(...args);
     }
   };
 
@@ -122,13 +122,10 @@ function math(p5, fn) {
    * @return {p5.Matrix} new <a href="#/p5.Matrix">p5.Matrix</a> object.
    *
    * @example
-   * <div class="norender">
-   * <code>
+   * // META:norender
    * function setup() {
    *   let matrix = createMatrix([1, 2, 3, 4, 5, 6, 7, 8, 9]);
    * }
-   * </code>
-   * </div>
    */
   fn.createMatrix = function (...args) {
     return new p5.Matrix(...args);
@@ -137,6 +134,6 @@ function math(p5, fn) {
 
 export default math;
 
-if (typeof p5 !== "undefined") {
+if (typeof p5 !== 'undefined') {
   math(p5, p5.prototype);
 }

@@ -1,0 +1,1464 @@
+/**
+ * @module 3D
+ * @submodule p5.strands
+ * @for p5
+ */
+
+import { transpileStrandsToJS } from './strands_transpiler';
+import { BlockType } from './ir_types';
+import * as FES from './strands_FES';
+
+import { createDirectedAcyclicGraph } from './ir_dag';
+import {
+  createControlFlowGraph,
+  createBasicBlock,
+  pushBlock,
+  popBlock
+} from './ir_cfg';
+import { generateShaderCode } from './strands_codegen';
+import {
+  initGlobalStrandsAPI,
+  createShaderHooksFunctions,
+  installTemporaryProperty,
+  restoreTemporaryProperties
+} from './strands_api';
+import {
+  createStrandsShaderNameMap,
+  createStrandsShaderNameState
+} from './strands_names';
+import { warnExperimental } from '../core/experimental';
+
+function strands(p5, fn) {
+  // Whether or not strands callbacks should be forced to be executed in global mode.
+  // This is turned on while loading shaders from files, when there is not a feasible
+  // way to pass context in.
+  fn._runStrandsInGlobalMode = false;
+
+  //////////////////////////////////////////////
+  // Global Runtime
+  //////////////////////////////////////////////
+
+  /**
+   * @private
+   * @typedef {Object} StrandsContext
+   * @property {Object} p5 Reference to the p5 class.
+   * @property {Boolean} _builtinGlobalsAccessorsInstalled Whether builtin global accessors have been installed on `window`, `p5.prototype`, and `p5.Graphics.prototype` as needed.
+   * @property {Object} dag DAG for the current strands IR.
+   * @property {Object} cfg CFG for the current strands IR.
+   * @property {Array} uniforms Collected uniforms and their default value providers.
+   * @property {Object} shaderNameMap Bidirectional name map used to translate between user-facing and generated internal shader variable names.
+   * @property {Object} shaderNameState Numeric suffix counter used when generating internal shader names.
+   * @property {Set} vertexDeclarations Declarations outside the generated hook functions to prepend to vertex shader code.
+   * @property {Set} fragmentDeclarations Declarations outside the generated hook functions to prepend to fragment shader code.
+   * @property {Set} computeDeclarations Declarations outside the generated hook functions to prepend to compute shader code.
+   * @property {Array} hooks Collected hook IR entries to turn into shader hook source.
+   * @property {Object} backend Active shader backend used for code generation and backend-specific helpers.
+   * @property {Boolean} active Whether strands interception is currently active.
+   * @property {Object} renderer Renderer whose shader is being modified.
+   * @property {Object} baseShader Base shader being modified in the current pass.
+   * @property {Boolean} previousFES Previous value of `p5.disableFriendlyErrors`, restored after the pass.
+   * @property {Array} tempProps Temporary property descriptors, restored newest first.
+   * @property {Number} _noiseOctaves Noise octave override captured by `noiseDetail()`.
+   * @property {Number} _noiseAmpFalloff Noise falloff override captured by `noiseDetail()`.
+   * @property {Number} _randomSeed Random seed override captured by `randomSeed()`.
+   * @property {Object} _builtinGlobals Cache of builtin-global uniform nodes for the current DAG.
+   * @property {Map} sharedVariables Shared variable metadata that tracks vertex/fragment usage to decide whether each variable becomes a local declaration or a varying.
+   * @property {Object} activeHook Hook currently being recorded, if any.
+   * @property {Object} stateScope Helper records and stack for the active hook, or `null`.
+   * @property {Number} conditionalDepth Current if/else nesting depth.
+   * @property {String} loopPhase Current loop phase: `'header'`, `'body'` or `null`.
+   * @property {String} expressionOperand Current guarded expression operator, or `null`.
+   * @property {Object} failedHook First hook failure, `{ hookName, thrown }`, or `null`.
+   * @property {Boolean} _instanceIDUsedInFragment Whether fragment code needs `instanceID` from the vertex shader.
+   * @property {Set} experimentalFeaturesUsed Experimental subject areas used inside the callback, warned about once FES is restored after the pass.
+   */
+
+  /**
+   * Initializes the persistent strands context.
+   *
+   * Some strands context fields should persist across multiple shader `modify()` calls.
+   * e.g. there is no need to set p5 class reference multiple times,
+   * and the builtin globals accessors should only be installed once.
+   *
+   * @private
+   * @param {StrandsContext} ctx The strands context object.
+   */
+  function initPersistentStrandsContext(ctx) {
+    ctx.p5 = p5;
+    ctx._builtinGlobalsAccessorsInstalled = false;
+    resetTransientStrandsContext(ctx);
+  }
+
+  function createBuiltinGlobalsCache(dag) {
+    return {
+      dag,
+      nodes: new Map(),
+      uniformsAdded: new Set()
+    };
+  }
+
+  /**
+   * Initializes the transient strands context for one active shader `modify()` pass.
+   *
+   * @private
+   * @param {StrandsContext} ctx The strands context object.
+   * @param {Object} backend The backend to use for shader execution.
+   * @param {Object} [options] Options for initializing the context.
+   * @param {Boolean} [options.active] Whether the context is active.
+   * @param {Object} [options.renderer] The renderer to use.
+   * @param {Object} [options.baseShader] The base shader to use.
+   */
+  function initStrandsContext(
+    ctx,
+    backend,
+    { active = false, renderer = null, baseShader = null } = {}
+  ) {
+    ctx.dag = createDirectedAcyclicGraph();
+    ctx.cfg = createControlFlowGraph();
+    ctx.uniforms = [];
+    ctx.shaderNameMap = createStrandsShaderNameMap();
+    ctx.shaderNameState = createStrandsShaderNameState();
+    ctx.vertexDeclarations = new Set();
+    ctx.fragmentDeclarations = new Set();
+    ctx.computeDeclarations = new Set();
+    ctx.hooks = [];
+    ctx.backend = backend;
+    ctx.active = active;
+    ctx.renderer = renderer;
+    ctx.baseShader = baseShader;
+    ctx.previousFES = p5.disableFriendlyErrors;
+    ctx.tempProps = [];
+    ctx._noiseOctaves = null;
+    ctx._noiseAmpFalloff = null;
+    ctx._randomSeed = null;
+    ctx._builtinGlobals = createBuiltinGlobalsCache(ctx.dag);
+    ctx.sharedVariables = new Map();
+    ctx.activeHook = undefined;
+    ctx.stateScope = null;
+    ctx.failedHook = null;
+    ctx.conditionalDepth = 0;
+    ctx.loopPhase = null;
+    ctx.expressionOperand = null;
+    ctx._instanceIDUsedInFragment = false;
+    // Experimental subject areas used inside the callback, warned about once
+    // the pass is done since FES is switched off while it runs (see below).
+    ctx.experimentalFeaturesUsed = new Set();
+    if (active) {
+      p5.disableFriendlyErrors = true;
+    }
+  }
+
+  /**
+   * Resets the transient fields of the strands context.
+   *
+   * @private
+   * @param {StrandsContext} ctx The strands context object.
+   */
+  function resetTransientStrandsContext(ctx) {
+    ctx.dag = createDirectedAcyclicGraph();
+    ctx.cfg = createControlFlowGraph();
+    ctx.uniforms = [];
+    ctx.shaderNameMap = createStrandsShaderNameMap();
+    ctx.shaderNameState = createStrandsShaderNameState();
+    ctx.vertexDeclarations = new Set();
+    ctx.fragmentDeclarations = new Set();
+    ctx.computeDeclarations = new Set();
+    ctx.hooks = [];
+    ctx.backend = undefined;
+    ctx.active = false;
+    ctx.renderer = null;
+    ctx.baseShader = null;
+    ctx.previousFES = p5.disableFriendlyErrors;
+    ctx.tempProps = [];
+    ctx._noiseOctaves = null;
+    ctx._noiseAmpFalloff = null;
+    ctx._randomSeed = null;
+    ctx._builtinGlobals = createBuiltinGlobalsCache(ctx.dag);
+    ctx.sharedVariables = new Map();
+    ctx.activeHook = undefined;
+    ctx.stateScope = null;
+    ctx.failedHook = null;
+    ctx.conditionalDepth = 0;
+    ctx.loopPhase = null;
+    ctx.expressionOperand = null;
+    ctx._instanceIDUsedInFragment = false;
+    ctx.experimentalFeaturesUsed = new Set();
+  }
+
+  /**
+   * Deinitializes the strands context after a shader `modify()` pass is complete.
+   *
+   * @private
+   * @param {StrandsContext} ctx The strands context object.
+   * @return {Error[]} Errors from temporary writes that could not be undone.
+   */
+  function deinitStrandsContext(ctx) {
+    p5.disableFriendlyErrors = ctx.previousFES;
+    // Undo hooks, hook aliases and options.hook properties (incl. #8549's
+    // p5.Graphics.prototype entries) exactly, newest first.
+    const restoreErrors = restoreTemporaryProperties(ctx);
+    resetTransientStrandsContext(ctx);
+    return restoreErrors;
+  }
+
+  const strandsContext = {};
+  initPersistentStrandsContext(strandsContext);
+  initGlobalStrandsAPI(p5, fn, strandsContext);
+
+  function withTempGlobalMode(pInst, callback) {
+    if (pInst._isGlobal) return callback();
+
+    const prev = {};
+    for (const key of Object.getOwnPropertyNames(fn)) {
+      const descriptor = Object.getOwnPropertyDescriptor(fn, key);
+      if (descriptor && !descriptor.get && typeof fn[key] === 'function') {
+        prev[key] = window[key];
+        window[key] = fn[key].bind(pInst);
+      }
+    }
+
+    try {
+      callback();
+    } finally {
+      for (const key in prev) {
+        window[key] = prev[key];
+      }
+    }
+  }
+
+  //////////////////////////////////////////////
+  // Entry Point
+  //////////////////////////////////////////////
+  const oldModify = p5.Shader.prototype.modify;
+
+  p5.Shader.prototype.modify = function (
+    shaderModifier,
+    scope = {},
+    options = {}
+  ) {
+    // Builds share one context, so reject a nested call before it touches it.
+    if (strandsContext.active) {
+      FES.userError(
+        'scope error',
+        "modify() can't be called while a p5.strands shader is being built."
+      );
+    }
+    // Report restore failures only after a successful build.
+    let modified;
+    let restoreErrors = [];
+    try {
+      if (
+        shaderModifier instanceof Function ||
+        typeof shaderModifier === 'string'
+      ) {
+        // Reset the context object every time modify is called;
+        // const backend = glslBackend;
+        initStrandsContext(strandsContext, this._renderer.strandsBackend, {
+          active: true,
+          renderer: this._renderer,
+          baseShader: this
+        });
+        createShaderHooksFunctions(strandsContext, fn, this);
+        // TODO: expose this, is internal for debugging for now.
+        options.parser = true;
+        options.srcLocations = false;
+
+        // 1. Transpile from strands DSL to JS
+        let strandsCallback;
+        if (options.parser) {
+          // #7955 Wrap function declaration code in brackets so anonymous functions are not top level statements, which causes an error in acorn when parsing
+          // https://github.com/acornjs/acorn/issues/1385
+          const sourceString =
+            typeof shaderModifier === 'string'
+              ? `(${shaderModifier})`
+              : `(${shaderModifier.toString()})`;
+          const transpiledStrands = transpileStrandsToJS(
+            p5,
+            sourceString,
+            options.srcLocations,
+            scope,
+            this.hooks.shaderNameState
+          );
+          strandsCallback = transpiledStrands.callback;
+          strandsContext.shaderNameMap = transpiledStrands.shaderNameMap;
+          strandsContext.shaderNameState = transpiledStrands.shaderNameState;
+        } else {
+          strandsCallback = shaderModifier;
+        }
+
+        // 2. Build the IR from JavaScript API
+        const globalScope = createBasicBlock(
+          strandsContext.cfg,
+          BlockType.GLOBAL
+        );
+        pushBlock(strandsContext.cfg, globalScope);
+        if (options.hook) {
+          strandsContext.renderer._pInst[options.hook].begin();
+          for (const key of strandsContext.renderer._pInst[options.hook]
+            ._properties) {
+            const hookProp = strandsContext.renderer._pInst[options.hook][key];
+            installTemporaryProperty(strandsContext, fn, key, hookProp);
+            installTemporaryProperty(strandsContext, window, key, hookProp);
+            installTemporaryProperty(strandsContext, p5.Graphics.prototype, key, hookProp);
+          }
+          // An optional shared instance of a registered Strands helper,
+          // created inside options.hook and installed for the callback.
+          if (options.globalInstance !== undefined) {
+            const instance =
+              typeof options.globalInstance === 'function'
+                ? options.globalInstance.call(strandsContext.renderer._pInst)
+                : undefined;
+            if (typeof instance?._installGlobal !== 'function') {
+              FES.userError(
+                'type error',
+                'options.globalInstance must be a function that returns a helper made by a registerStrandsState() factory.'
+              );
+            }
+            instance._installGlobal();
+          }
+        } else if (options.globalInstance !== undefined) {
+          FES.userError(
+            'type error',
+            'options.globalInstance needs options.hook, the hook its shared instance is created in.'
+          );
+        }
+        if (strandsContext.renderer?._pInst?._runStrandsInGlobalMode) {
+          withTempGlobalMode(strandsContext.renderer._pInst, strandsCallback);
+        } else {
+          strandsCallback();
+        }
+        if (strandsContext.failedHook !== null) {
+          throw strandsContext.failedHook.thrown;
+        }
+        if (options.hook) strandsContext.renderer._pInst[options.hook].end();
+        if (strandsContext.activeHook) {
+          FES.userError(
+            'scope error',
+            `It looks like ${strandsContext.activeHook._publicName}.begin() was called without a matching ${strandsContext.activeHook._publicName}.end().`
+          );
+        }
+        popBlock(strandsContext.cfg);
+
+        // 3. Generate shader code hooks object from the IR
+        // .......
+        const hooksObject = generateShaderCode(strandsContext);
+
+        // Call modify with the generated hooks object
+        modified = oldModify.call(this, hooksObject);
+      } else {
+        modified = oldModify.call(this, shaderModifier);
+      }
+    } finally {
+      // FES is switched off while the callback runs, so experimental features
+      // used inside it can't warn on the spot. They record their subject area
+      // instead, and we warn once FES has been restored by deinit below.
+      const experimentalFeaturesUsed = [...strandsContext.experimentalFeaturesUsed];
+      // Reset the strands runtime context
+      restoreErrors = deinitStrandsContext(strandsContext);
+      for (const subjectArea of experimentalFeaturesUsed) {
+        warnExperimental(p5, this._renderer?._pInst, subjectArea);
+      }
+    }
+    if (restoreErrors.length > 0) {
+      throw restoreErrors[0];
+    }
+    return modified;
+  };
+}
+
+export default strands;
+
+if (typeof p5 !== 'undefined') {
+  p5.registerAddon(strands);
+}
+
+/* ------------------------------------------------------------- */
+/**
+ * @typedef {Object} WorldInputsHook
+ * @property {any} position
+ * @property {any} normal
+ * @property {any} texCoord
+ * @property {any} color
+ * @property {function(): undefined} begin
+ * @property {function(): undefined} end
+ */
+
+/**
+ * @property {WorldInputsHook} worldInputs
+ * @beta
+ * @description
+ * A shader hook block that modifies the world-space properties of each vertex in a shader. This hook can be used inside <a href="#/p5/buildColorShader">`buildColorShader()`</a> and similar shader <a href="#/p5.Shader/modify">`modify()`</a> calls to customize vertex positions, normals, texture coordinates, and colors before rendering. Modifications happen between the `.begin()` and `.end()` methods of the hook. "World space" refers to the coordinate system of the 3D scene, before any camera or projection transformations are applied.
+ *
+ * `worldInputs` has the following properties:
+ * - `position`: a three-component vector representing the original position of the vertex.
+ * - `normal`: a three-component vector representing the direction the surface is facing.
+ * - `texCoord`: a two-component vector representing the texture coordinates.
+ * - `color`: a four-component vector representing the color of the vertex (red, green, blue, alpha).
+ *
+ * This hook is available in:
+ * - <a href="#/p5/buildMaterialShader">`buildMaterialShader()`</a>
+ * - <a href="#/p5/buildNormalShader">`buildNormalShader()`</a>
+ * - <a href="#/p5/buildColorShader">`buildColorShader()`</a>
+ * - <a href="#/p5/buildStrokeShader">`buildStrokeShader()`</a>
+ *
+ * @example
+ * let myShader;
+ * function setup() {
+ *   createCanvas(200, 200, WEBGL);
+ *   myShader = buildMaterialShader(material);
+ * }
+ *
+ * function material() {
+ *   let t = millis();
+ *   worldInputs.begin();
+ *   // Move the vertex up and down in a wave in world space
+ *   // In world space, moving the object (e.g., with translate()) will affect these coordinates
+ *   // The sphere is ~50 units tall here, so 20 gives a noticeable wave
+ *   worldInputs.position.y += 20 * sin(t * 0.001 + worldInputs.position.x * 0.05);
+ *   worldInputs.end();
+ * }
+ *
+ * function draw() {
+ *   background(255);
+ *   shader(myShader);
+ *   lights();
+ *   noStroke();
+ *   fill('red');
+ *   sphere(50);
+ * }
+ */
+
+/**
+ * @typedef {Object} CombineColorsHook
+ * @property {any} baseColor
+ * @property {any} diffuse
+ * @property {any} ambientColor
+ * @property {any} ambient
+ * @property {any} specularColor
+ * @property {any} specular
+ * @property {any} emissive
+ * @property {any} opacity
+ * @property {function(): undefined} begin
+ * @property {function(): undefined} end
+ * @property {function(color: any): void} set
+ */
+
+/**
+ * @property {CombineColorsHook} combineColors
+ * @beta
+ * @description
+ * A shader hook block that modifies how color components are combined in the fragment shader. This hook can be used inside <a href="#/p5/buildMaterialShader">`buildMaterialShader()`</a> and similar shader <a href="#/p5.Shader/modify">`modify()`</a> calls to control the final color output of a material. Modifications happen between the `.begin()` and `.end()` methods of the hook.
+ *
+ * `combineColors` has the following properties:
+ *
+ * - `baseColor`: a three-component vector representing the base color (red, green, blue).
+ * - `diffuse`: a single number representing the diffuse reflection.
+ * - `ambientColor`: a three-component vector representing the ambient color.
+ * - `ambient`: a single number representing the ambient reflection.
+ * - `specularColor`: a three-component vector representing the specular color.
+ * - `specular`: a single number representing the specular reflection.
+ * - `emissive`: a three-component vector representing the emissive color.
+ * - `opacity`: a single number representing the opacity.
+ *
+ * Call `.set()` on the hook with a vector with four components (red, green, blue, alpha) for the final color.
+ *
+ * This hook is available in:
+ * - <a href="#/p5/buildMaterialShader">`buildMaterialShader()`</a>
+ *
+ * @example
+ * let myShader;
+ * function setup() {
+ *   createCanvas(200, 200, WEBGL);
+ *   myShader = buildMaterialShader(material);
+ * }
+ *
+ * function material() {
+ *   combineColors.begin();
+ *   // Custom color combination: add a green tint using vector properties
+ *   combineColors.set([
+ *     combineColors.baseColor * combineColors.diffuse +
+ *       combineColors.ambientColor * combineColors.ambient +
+ *       combineColors.specularColor * combineColors.specular +
+ *       combineColors.emissive +
+ *       [0, 0.2, 0], // Green tint
+ *     combineColors.opacity
+ *   ]);
+ *   combineColors.end();
+ * }
+ *
+ * function draw() {
+ *   background(255);
+ *   shader(myShader);
+ *   lights();
+ *   noStroke();
+ *   fill('white');
+ *   sphere(50);
+ * }
+ */
+
+/**
+ * @property instanceIndex
+ * @beta
+ * @description
+ * Returns the index of the current instance when drawing multiple copies of a
+ * shape with <a href="#/p5/model">`model(count)`</a>. The first instance has an
+ * index of `0`, the second has `1`, and so on.
+ *
+ * This lets each copy of a shape behave differently. For example, you can use
+ * the index to place instances at different positions, give them different colors,
+ * or animate them at different speeds.
+ *
+ * `instanceIndex` can only be used inside a p5.strands shader callback.
+ *
+ * (Note: `instanceID()` is also available as a function for compatibility.)
+ *
+ * ```js example
+ * let instancesShader;
+ * let instance;
+ * let count = 5;
+ *
+ * function drawInstance() {
+ *   sphere(15);
+ * }
+ *
+ * function setup() {
+ *   createCanvas(200, 200, WEBGL);
+ *   instance = buildGeometry(drawInstance);
+ *   instancesShader = buildMaterialShader(drawSpaced);
+ *   describe('Five red spheres arranged in a horizontal line.');
+ * }
+ *
+ * function drawSpaced() {
+ *   worldInputs.begin();
+ *   // Spread spheres evenly across the canvas based on their index
+ *   let spacing = width / count;
+ *   worldInputs.position.x +=
+ *     (instanceIndex - (count - 1) / 2) * spacing;
+ *   worldInputs.end();
+ * }
+ *
+ * function draw() {
+ *   background(220);
+ *   lights();
+ *   noStroke();
+ *   fill('red');
+ *   shader(instancesShader);
+ *   model(instance, count);
+ * }
+ * ```
+ *
+ * If you are using WebGPU mode, a common pattern is to use `instanceIndex` to look up data made with
+ * <a href="#/p5/createStorage">`createStorage()`</a>.
+ * This lets you give each instance different properties.
+ *
+ * ```js example
+ * let instanceData;
+ * let instancesShader;
+ * let instance;
+ * let count = 5;
+ *
+ * async function setup() {
+ *   await createCanvas(200, 200, WEBGPU);
+ *
+ *   let data = [];
+ *   for (let i = 0; i < count; i++) {
+ *     data.push({
+ *       position: createVector(
+ *         random(-1, 1) * width / 2,
+ *         random(-1, 1) * height / 2,
+ *         0,
+ *       ),
+ *       color: color(
+ *         random(255),
+ *         random(255),
+ *         random(255)
+ *       )
+ *     });
+ *   }
+ *   instanceData = createStorage(data);
+ *   instance = buildGeometry(drawInstance);
+ *   instancesShader = buildMaterialShader(drawInstances);
+ *   describe('Five spheres at random positions, each a different random color.');
+ * }
+ *
+ * function drawInstance() {
+ *   sphere(15);
+ * }
+ *
+ * function drawInstances() {
+ *   let data = uniformStorage(instanceData);
+ *   let itemColor = sharedVec4();
+ *
+ *   worldInputs.begin();
+ *   let item = data[instanceIndex];
+ *   itemColor = item.color;
+ *   worldInputs.position += item.position;
+ *   worldInputs.end();
+ *
+ *   finalColor.begin();
+ *   finalColor.set(itemColor);
+ *   finalColor.end();
+ * }
+ *
+ * function draw() {
+ *   background(220);
+ *   lights();
+ *   noStroke();
+ *   shader(instancesShader);
+ *   model(instance, count);
+ * }
+ * ```
+ *
+ * This can be paired with <a href="#/p5/buildComputeShader">`buildComputeShader`</a>
+ * to update the data being read.
+ *
+ * @type {*}
+ */
+
+/**
+ * @method instanceID
+ * @beta
+ * @deprecated Use <a href="#/p5/instanceIndex">`instanceIndex`</a> instead.
+ * @description
+ * A function alias for <a href="#/p5/instanceIndex">`instanceIndex`</a>, kept for compatibility.
+ * Prefer using <a href="#/p5/instanceIndex">`instanceIndex`</a> directly as a value instead.
+ *
+ * Returns the index of the current instance when drawing multiple copies of a
+ * shape with <a href="#/p5/model">`model(count)`</a>.
+ *
+ * `instanceID()` can only be used inside a p5.strands shader callback.
+ *
+ * @returns {*} The index of the current instance.
+ */
+
+/**
+ * @method smoothstep
+ * @beta
+ * @description
+ * A shader function that performs smooth Hermite interpolation between `0.0`
+ * and `1.0`.
+ *
+ * This function is equivalent to the GLSL built-in
+ * `smoothstep(edge0, edge1, x)` and is available inside p5.strands shader
+ * callbacks. It is commonly used to create soft transitions, smooth edges,
+ * fades, and anti-aliased effects.
+ *
+ * Smoothstep is useful when a threshold or cutoff is needed, but with a
+ * gradual transition instead of a hard edge.
+ *
+ * - Returns `0.0` when `x` is less than or equal to `edge0`
+ * - Returns `1.0` when `x` is greater than or equal to `edge1`
+ * - Smoothly interpolates between `0.0` and `1.0` when `x` is between them
+ *
+ * @param {Number} edge0
+ *        Lower edge of the transition
+ * @param {Number} edge1
+ *        Upper edge of the transition
+ * @param {Number} x
+ *        Input value to interpolate
+ *
+ * @returns {Number}
+ *          A value between `0.0` and `1.0`
+ *
+ * @example
+ * // Example 1: A soft vertical fade using smoothstep
+ *
+ * let fadeShader;
+ *
+ * function fadeCallback() {
+ *   getColor((inputs) => {
+ *     // x goes from 0 → 1 across the canvas
+ *     let x = inputs.texCoord.x;
+ *
+ *     // smoothstep creates a soft transition instead of a hard edge
+ *     let t = smoothstep(0.25, 0.35, x);
+ *
+ *     // Use t directly as brightness
+ *     return [t, t, t, 1];
+ *   });
+ * }
+ *
+ * function setup() {
+ *   createCanvas(300, 200, WEBGL);
+ *   fadeShader = buildFilterShader(fadeCallback);
+ * }
+ *
+ * function draw() {
+ *   background(0);
+ *   filter(fadeShader);
+ * }
+ *
+ * @example
+ * // Example 2: Animate the smooth transition over time
+ *
+ * let animatedShader;
+ *
+ * function animatedFadeCallback() {
+ *   getColor((inputs) => {
+ *     let x = inputs.texCoord.x;
+ *
+ *     // Move the smoothstep band back and forth over time
+ *     let center = 0.5 + 0.25 * sin(millis() * 0.001);
+ *     let t = smoothstep(center - 0.05, center + 0.05, x);
+ *
+ *     return [t, t, t, 1];
+ *   });
+ * }
+ *
+ * function setup() {
+ *   createCanvas(300, 200, WEBGL);
+ *   animatedShader = buildFilterShader(animatedFadeCallback);
+ * }
+ *
+ * function draw() {
+ *   background(0);
+ *   filter(animatedShader);
+ * }
+ */
+
+/**
+ * @method beforeVertex
+ * @private
+ * @description
+ * Registers a callback to run custom code at the very start of the vertex shader. This hook can be used inside <a href="#/p5/baseColorShader">baseColorShader()</a>.modify() and similar shader <a href="#/p5.Shader/modify">modify()</a> calls to set up variables or perform calculations that affect every vertex before processing begins. The callback receives no arguments.
+ *
+ * Note: This hook is currently limited to per-vertex operations; storing variables for later use is not supported.
+ *
+ * This hook is available in:
+ * - <a href="#/p5/baseColorShader">baseColorShader()</a>
+ * - <a href="#/p5/baseMaterialShader">baseMaterialShader()</a>
+ * - <a href="#/p5/baseNormalShader">baseNormalShader()</a>
+ * - <a href="#/p5/baseStrokeShader">baseStrokeShader()</a>
+ *
+ * @param {Function} callback
+ *        A callback function which is called before each vertex is processed.
+ */
+
+/**
+ * @method afterVertex
+ * @private
+ * @description
+ * Registers a callback to run custom code at the very end of the vertex shader. This hook can be used inside <a href="#/p5/baseColorShader">baseColorShader()</a>.modify() and similar shader <a href="#/p5.Shader/modify">modify()</a> calls to perform cleanup or final calculations after all vertex processing is done. The callback receives no arguments.
+ *
+ * Note: This hook is currently limited to per-vertex operations; storing variables for later use is not supported.
+ *
+ * This hook is available in:
+ * - <a href="#/p5/baseColorShader">baseColorShader()</a>
+ * - <a href="#/p5/baseMaterialShader">baseMaterialShader()</a>
+ * - <a href="#/p5/baseNormalShader">baseNormalShader()</a>
+ * - <a href="#/p5/baseStrokeShader">baseStrokeShader()</a>
+ *
+ * @param {Function} callback
+ *        A callback function which is called after each vertex is processed.
+ */
+
+/**
+ * @method beforeFragment
+ * @private
+ * @description
+ * Registers a callback to run custom code at the very start of the fragment shader. This hook can be used inside <a href="#/p5/baseColorShader">baseColorShader()</a>.modify() and similar shader <a href="#/p5.Shader/modify">modify()</a> calls to set up variables or perform calculations that affect every pixel before color calculations begin. The callback receives no arguments.
+ *
+ * This hook is available in:
+ * - <a href="#/p5/baseColorShader">baseColorShader()</a>
+ * - <a href="#/p5/baseMaterialShader">baseMaterialShader()</a>
+ * - <a href="#/p5/baseNormalShader">baseNormalShader()</a>
+ * - <a href="#/p5/baseStrokeShader">baseStrokeShader()</a>
+ *
+ * @param {Function} callback
+ *        A callback function which is called before each fragment is processed.
+ *
+ * @example
+ * let myShader;
+ * function setup() {
+ *   createCanvas(200, 200, WEBGL);
+ *   myShader = baseColorShader().modify(() => {
+ *     beforeFragment(() => {
+ *       // Set a value for use in getFinalColor
+ *       this.brightness = 0.5 + 0.5 * sin(millis() * 0.001);
+ *     });
+ *     getFinalColor(color => {
+ *       // Use the value set in beforeFragment to tint the color
+ *       color.r *= this.brightness; // Tint red channel
+ *       return color;
+ *     });
+ *   });
+ * }
+ *
+ * function draw() {
+ *   background(220);
+ *   shader(myShader);
+ *   noStroke();
+ *   fill('teal');
+ *   box(100);
+ * }
+ */
+
+/**
+ * @typedef {Object} PixelInputsHook
+ * @property {any} normal
+ * @property {any} texCoord
+ * @property {any} ambientLight
+ * @property {any} ambientMaterial
+ * @property {any} specularMaterial
+ * @property {any} emissiveMaterial
+ * @property {any} color
+ * @property {any} shininess
+ * @property {any} metalness
+ * @property {any} tangent
+ * @property {any} center
+ * @property {any} position
+ * @property {any} strokeWeight
+ * @property {function(): undefined} begin
+ * @property {function(): undefined} end
+ */
+
+/**
+ * @property {PixelInputsHook} pixelInputs
+ * @beta
+ * @description
+ * A shader hook block that modifies the properties of each pixel before the final color is calculated. This hook can be used inside <a href="#/p5/buildMaterialShader">`buildMaterialShader()`</a> and similar shader <a href="#/p5.Shader/modify">`modify()`</a> calls to adjust per-pixel data before lighting is applied. Modifications happen between the `.begin()` and `.end()` methods of the hook.
+ *
+ * The properties of `pixelInputs` depend on the shader:
+ *
+ * - In <a href="#/p5/buildMaterialShader">`buildMaterialShader()`</a>:
+ *   - `normal`: a three-component vector representing the surface normal.
+ *   - `texCoord`: a two-component vector representing the texture coordinates (u, v).
+ *   - `ambientLight`: a three-component vector representing the ambient light color.
+ *   - `ambientMaterial`: a three-component vector representing the material's ambient color.
+ *   - `specularMaterial`: a three-component vector representing the material's specular color.
+ *   - `emissiveMaterial`: a three-component vector representing the material's emissive color.
+ *   - `color`: a four-component vector representing the base color (red, green, blue, alpha).
+ *   - `shininess`: a number controlling specular highlights.
+ *   - `metalness`: a number controlling the metalness factor.
+ *
+ * - In <a href="#/p5/buildStrokeShader">`buildStrokeShader()`</a>:
+ *   - `color`: a four-component vector representing the stroke color (red, green, blue, alpha).
+ *   - `tangent`: a two-component vector representing the stroke tangent.
+ *   - `center`: a two-component vector representing the cap/join center.
+ *   - `position`: a two-component vector representing the current fragment position.
+ *   - `strokeWeight`: a number representing the stroke weight in pixels.
+ *
+ * This hook is available in:
+ * - <a href="#/p5/buildMaterialShader">`buildMaterialShader()`</a>
+ * - <a href="#/p5/buildStrokeShader">`buildStrokeShader()`</a>
+ *
+ * @example
+ * let myShader;
+ * function setup() {
+ *   createCanvas(200, 200, WEBGL);
+ *   myShader = buildMaterialShader(material);
+ * }
+ *
+ * function material() {
+ *   let t = millis();
+ *   pixelInputs.begin();
+ *   // Animate alpha (transparency) based on x position
+ *   pixelInputs.color.a = 0.5 + 0.5 *
+ *     sin(pixelInputs.texCoord.x * 10.0 + t * 0.002);
+ *   pixelInputs.end();
+ * }
+ *
+ * function draw() {
+ *   background(240);
+ *   shader(myShader);
+ *   lights();
+ *   noStroke();
+ *   fill('purple');
+ *   circle(0, 0, 100);
+ * }
+ */
+
+/**
+ * @method shouldDiscard
+ * @private
+ * @description
+ * Registers a callback to decide whether to discard (skip drawing) a fragment (pixel) in the fragment shader. This hook can be used inside <a href="#/p5/baseStrokeShader">baseStrokeShader()</a>.modify() and similar shader <a href="#/p5.Shader/modify">modify()</a> calls to create effects like round points or custom masking. The callback receives a boolean:
+ * - `willDiscard`: true if the fragment would be discarded by default
+ *
+ * Return true to discard the fragment, or false to keep it.
+ *
+ * This hook is available in:
+ * - <a href="#/p5/baseStrokeShader">baseStrokeShader()</a>
+ *
+ * @param {Function} callback
+ *        A callback function which receives a boolean and should return a boolean.
+ *
+ * @example
+ * let myShader;
+ * function setup() {
+ *   createCanvas(200, 200, WEBGL);
+ *   myShader = baseStrokeShader().modify({
+ *      'bool shouldDiscard': '(bool outside) { return outside; }'
+ *   });
+ * }
+ *
+ * function draw() {
+ *   background(255);
+ *   strokeShader(myShader);
+ *   strokeWeight(30);
+ *   line(-width/3, 0, width/3, 0);
+ * }
+ */
+
+/**
+ * @typedef {Object} FinalColorHook
+ * @property {any} color
+ * @property {any} texCoord
+ * @property {function(): undefined} begin
+ * @property {function(): undefined} end
+ * @property {function(color: any): void} set
+ */
+
+/**
+ * @property {FinalColorHook} finalColor
+ * @beta
+ * @description
+ * A shader hook block that modifies the final color of each pixel after all lighting is applied. This hook can be used inside <a href="#/p5/buildMaterialShader">`buildMaterialShader()`</a> and similar shader <a href="#/p5.Shader/modify">`modify()`</a> calls to adjust the color before it appears on the screen. Modifications happen between the `.begin()` and `.end()` methods of the hook.
+ *
+ * `finalColor` has the following properties:
+ * - `color`: a four-component vector representing the pixel color (red, green, blue, alpha).
+ * - `texCoord`: a two-component vector representing the texture coordinates (u, v)
+ *
+ * Call `.set()` on the hook with a vector with four components (red, green, blue, alpha) to update the final color.
+ *
+ * This hook is available in:
+ * - <a href="#/p5/buildColorShader">`buildColorShader()`</a>
+ * - <a href="#/p5/buildMaterialShader">`buildMaterialShader()`</a>
+ * - <a href="#/p5/buildNormalShader">`buildNormalShader()`</a>
+ * - <a href="#/p5/buildStrokeShader">`buildStrokeShader()`</a>
+ *
+ * @example
+ * let myShader;
+ * function setup() {
+ *   createCanvas(200, 200, WEBGL);
+ *   myShader = buildMaterialShader(material);
+ * }
+ *
+ * function material() {
+ *   finalColor.begin();
+ *   let color = finalColor.color;
+ *   // Add a blue tint to the output color
+ *   color.b += 0.4;
+ *   finalColor.set(color);
+ *   finalColor.end();
+ * }
+ *
+ * function draw() {
+ *   background(230);
+ *   shader(myShader);
+ *   noStroke();
+ *   fill('green');
+ *   circle(0, 0, 100);
+ * }
+ */
+
+/**
+ * @method afterFragment
+ * @private
+ * @description
+ * Registers a callback to run custom code at the very end of the fragment shader. This hook can be used inside <a href="#/p5/baseColorShader">baseColorShader()</a>.modify() and similar shader <a href="#/p5.Shader/modify">modify()</a> calls to perform cleanup or final per-pixel effects after all color calculations are done. The callback receives no arguments.
+ *
+ * This hook is available in:
+ * - <a href="#/p5/baseColorShader">baseColorShader()</a>
+ * - <a href="#/p5/baseMaterialShader">baseMaterialShader()</a>
+ * - <a href="#/p5/baseNormalShader">baseNormalShader()</a>
+ * - <a href="#/p5/baseStrokeShader">baseStrokeShader()</a>
+ *
+ * @param {Function} callback
+ *        A callback function which is called after each fragment is processed.
+ *
+ * @example
+ * let myShader;
+ * function setup() {
+ *   createCanvas(200, 200, WEBGL);
+ *   myShader = baseColorShader().modify(() => {
+ *     getFinalColor(color => {
+ *       // Add a purple tint to the color
+ *       color.b += 0.2;
+ *       return color;
+ *     });
+ *     afterFragment(() => {
+ *       // This hook runs after the final color is set for each fragment.
+ *       // You could use this for debugging or advanced effects.
+ *     });
+ *   });
+ * }
+ *
+ * function draw() {
+ *   background(240);
+ *   shader(myShader);
+ *   noStroke();
+ *   fill('purple');
+ *   sphere(60);
+ * }
+ */
+
+/**
+ * @typedef {Object} FilterColorHook
+ * @property {any} texCoord
+ * @property {any} canvasSize
+ * @property {any} texelSize
+ * @property {any} canvasContent
+ * @property {function(): undefined} begin
+ * @property {function(): undefined} end
+ * @property {function(color: any): void} set
+ */
+
+/**
+ * @property {FilterColorHook} filterColor
+ * @description
+ * A shader hook block that sets the color for each pixel in a filter shader. This hook can be used inside <a href="#/p5/buildFilterShader">`buildFilterShader()`</a> to control the output color for each pixel.
+ *
+ * `filterColor` has the following properties:
+ * - `texCoord`: a two-component vector representing the texture coordinates (u, v).
+ * - `canvasSize`: a two-component vector representing the canvas size in pixels (width, height).
+ * - `texelSize`: a two-component vector representing the size of a single texel in texture space.
+ * - `canvasContent`: a texture containing the sketch's contents before the filter is applied.
+ *
+ * Call `.set()` on the hook with a vector with four components (red, green, blue, alpha) to update the final color.
+ *
+ * This hook is available in:
+ * - <a href="#/p5/buildFilterShader">`buildFilterShader()`</a>
+ *
+ * @example
+ * let myShader;
+ * function setup() {
+ *   createCanvas(200, 200, WEBGL);
+ *   myShader = buildFilterShader(warp);
+ * }
+ *
+ * function warp() {
+ *   filterColor.begin();
+ *   // Warp the texture coordinates for a wavy effect
+ *   let warped = [
+ *     filterColor.texCoord.x,
+ *     filterColor.texCoord.y + 0.1 * sin(filterColor.texCoord.x * 10)
+ *   ];
+ *   let tex = filterColor.canvasContent;
+ *   filterColor.set(getTexture(tex, warped));
+ *   filterColor.end();
+ * }
+ *
+ * function draw() {
+ *   background(180);
+ *   // Draw something to the canvas
+ *   fill('yellow');
+ *   circle(0, 0, 150);
+ *   filter(myShader);
+ * }
+ */
+
+/**
+ * @typedef {Object} ObjectInputsHook
+ * @property {any} position
+ * @property {any} normal
+ * @property {any} texCoord
+ * @property {any} color
+ * @property {function(): undefined} begin
+ * @property {function(): undefined} end
+ */
+
+/**
+ * @property {ObjectInputsHook} objectInputs
+ * @beta
+ * @description
+ * A shader hook block to modify the properties of each vertex before any transformations are applied. This hook can be used inside <a href="#/p5/buildMaterialShader">`buildMaterialShader()`</a> and similar shader <a href="#/p5.Shader/modify">`modify()`</a> calls to customize vertex positions, normals, texture coordinates, and colors before rendering. Modifications happen between the `.begin()` and `.end()` methods of the hook. "Object space" refers to the coordinate system of the 3D scene before any transformations, cameras, or projection transformations are applied.
+ *
+ * `objectInputs` has the following properties:
+ * - `position`: a three-component vector representing the original position of the vertex.
+ * - `normal`: a three-component vector representing the direction the surface is facing.
+ * - `texCoord`: a two-component vector representing the texture coordinates.
+ * - `color`: a four-component vector representing the color of the vertex (red, green, blue, alpha).
+ *
+ * This hook is available in:
+ * - <a href="#/p5/buildColorShader">`buildColorShader()`</a>
+ * - <a href="#/p5/buildMaterialShader">`buildMaterialShader()`</a>
+ * - <a href="#/p5/buildNormalShader">`buildNormalShader()`</a>
+ * - <a href="#/p5/buildStrokeShader">`buildStrokeShader()`</a>
+ *
+ * @example
+ * let myShader;
+ * function setup() {
+ *   createCanvas(200, 200, WEBGL);
+ *   myShader = buildMaterialShader(material);
+ * }
+ *
+ * function material() {
+ *   let t = millis();
+ *   objectInputs.begin();
+ *   // Create a sine wave along the object
+ *   objectInputs.position.y += sin(t * 0.001 + objectInputs.position.x);
+ *   objectInputs.end();
+ * }
+ *
+ * function draw() {
+ *   background(220);
+ *   shader(myShader);
+ *   noStroke();
+ *   fill('orange');
+ *   sphere(50);
+ * }
+ */
+
+/**
+ * @typedef {Object} CameraInputsHook
+ * @property {any} position
+ * @property {any} normal
+ * @property {any} texCoord
+ * @property {any} color
+ * @property {function(): undefined} begin
+ * @property {function(): undefined} end
+ */
+
+/**
+ * @property {CameraInputsHook} cameraInputs
+ * @beta
+ * @description
+ * A shader hook block that adjusts vertex properties from the perspective of the camera. This hook can be used inside <a href="#/p5/buildMaterialShader">`buildMaterialShader()`</a> and similar shader <a href="#/p5.Shader/modify">`modify()`</a> calls to customize vertex positions, normals, texture coordinates, and colors before rendering. "Camera space" refers to the coordinate system of the 3D scene after transformations have been applied, seen relative to the camera.
+ *
+ * `cameraInputs`  has the following properties:
+ * - `position`: a three-component vector representing the position after camera transformation.
+ * - `normal`: a three-component vector representing the normal after camera transformation.
+ * - `texCoord`: a two-component vector representing the texture coordinates.
+ * - `color`: a four-component vector representing the color of the vertex (red, green, blue, alpha).
+ *
+ * This hook is available in:
+ * - <a href="#/p5/buildColorShader">`buildColorShader()`</a>
+ * - <a href="#/p5/buildMaterialShader">`buildMaterialShader()`</a>
+ * - <a href="#/p5/buildNormalShader">`buildNormalShader()`</a>
+ * - <a href="#/p5/buildStrokeShader">`buildStrokeShader()`</a>
+ *
+ * @example
+ * let myShader;
+ * function setup() {
+ *   createCanvas(200, 200, WEBGL);
+ *   myShader = buildMaterialShader(material);
+ * }
+ *
+ * function material() {
+ *   let t = millis();
+ *   cameraInputs.begin();
+ *   // Move vertices in camera space based on their x position
+ *   cameraInputs.position.y += 30 * sin(cameraInputs.position.x * 0.05 + t * 0.001);
+ *   // Tint all vertices blue
+ *   cameraInputs.color.b = 1;
+ *   cameraInputs.end();
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *   shader(myShader);
+ *   noStroke();
+ *   fill('red');
+ *   sphere(50);
+ * }
+ */
+
+/**
+ * Declares a storage buffer uniform inside a <a href="#/p5.Shader/modify">modify()</a> callback,
+ * making a <a href="#/p5/createStorage">createStorage()</a> buffer accessible in the shader.
+ *
+ * Pass a `p5.StorageBuffer` (or a function returning one) as the second argument
+ * to set it as the default value, applied automatically each frame. Pass a plain
+ * object with the same field layout as the buffer's struct elements to declare the
+ * schema without binding a specific buffer.
+ *
+ * When called without a name, p5.strands automatically uses the name of the
+ * variable it is assigned to as the uniform name.
+ *
+ * Note: `uniformStorage` is only available when using p5.strands.
+ *
+ * @method uniformStorage
+ * @beta
+ * @webgpu
+ * @webgpuOnly
+ * @submodule p5.strands
+ * @param {String} name The name of the storage buffer uniform in the shader.
+ * @param {p5.StorageBuffer|Function|Object} [bufferOrSchema] A storage buffer to bind,
+ *   a function returning a storage buffer (called each frame), or a plain object
+ *   describing the struct field layout.
+ * @returns {*} A strands node representing the storage buffer.
+ */
+/**
+ * @method uniformStorage
+ * @param {p5.StorageBuffer|Function|Object} [bufferOrSchema]
+ * @returns {*}
+ */
+
+/**
+ *
+ * @method getTexture
+ * @beta
+ *
+ * @param texture The texture to sample from.
+ * (e.g. a p5.Image, p5.Graphics, or p5.Framebuffer).
+ *
+ * @param coords The 2D coordinates to sample from.
+ * This should be between [0,0] (the top-left) and [1,1] (the bottom-right)
+ * of the texture.  It should be compatible with a vec2.
+ *
+ * @returns {*} The color of the given texture at the given coordinates.  This
+ * will behave as a vec4 holding components r, g, b, and a (alpha), with each component being in the range 0.0 to 1.0.
+ *
+ * @example
+ * // A filter shader (using p5.strands) which will
+ * // sample and invert the color of each pixel
+ * // from the canvas.
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   let myShader = buildFilterShader(buildIt);
+ *
+ *   background("white");
+ *   fill("red");
+ *   circle(0, 0, 50);
+ *
+ *   filter(myShader); //Try commenting this out!
+ *
+ *   describe("A cyan circle on black background");
+ * }
+ *
+ * function buildIt() {
+ *   filterColor.begin();
+ *
+ *   //Sample the color of the pixel from the
+ *   //canvas at the same coordinate.
+ *   let c = getTexture(filterColor.canvasContent,
+ *                      filterColor.texCoord);
+ *
+ *   //Make a new color by inverting r, g, and b
+ *   let newColor = [1 - c.r, 1 - c.g, 1 - c.b, c.a];
+ *
+ *   //Finally, use it for this pixel!
+ *   filterColor.set(newColor);
+ *
+ *   filterColor.end();
+ * }
+ *
+ * @example
+ * // This primitive edge-detection filter samples
+ * // and compares the colors of the current pixel
+ * // on the canvas, and a little to the right.
+ * // It marks if they differ much.
+ * let myShader;
+ *
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   myShader = buildFilterShader(myShaderBuilder);
+ *   describe("A rough partial outline of a square rotating around a circle");
+ * }
+ *
+ * function draw() {
+ *   drawADesign();
+ *
+ *   filter(myShader); // try commenting this out
+ * }
+ *
+ * function myShaderBuilder() {
+ *   filterColor.begin();
+ *
+ *   //The position of the current pixel...
+ *   let coordHere = filterColor.texCoord;
+ *   //and some small amount to the right.
+ *   let coordRight = coordHere + [0.01, 0];
+ *
+ *   //The canvas content is a texture.
+ *   let cnvTex = filterColor.canvasContent;
+ *
+ *   //Sample the colors from it at our two positions
+ *   let colorHere = getTexture(cnvTex, coordHere);
+ *   let colorRight = getTexture(cnvTex, coordRight);
+ *
+ *   // Calculate a (very rough) color difference.
+ *   let difference = length(colorHere - colorRight);
+ *
+ *   //We'll use a black color by default...
+ *   let resultColor = [0, 0, 0, 1];
+ *   //or white if the samples were different.
+ *   if (difference > 0.3) {
+ *     resultColor = [1, 1, 1, 1];
+ *   }
+ *   filterColor.set(resultColor);
+ *
+ *   filterColor.end();
+ * }
+ *
+ * //Draw a few shapes, just to test the filter with
+ * function drawADesign() {
+ *   background(50);
+ *   noStroke();
+ *   lights();
+ *   sphere(20);
+ *   rotate(frameCount / 300);
+ *   square(0, 0, 30);
+ * }
+ */
+
+/**
+ * @method getWorldInputs
+ * @beta
+ * @param {Function} callback
+ */
+
+/**
+ * @method getPixelInputs
+ * @beta
+ * @param {Function} callback
+ */
+
+/**
+ * @method getFinalColor
+ * @beta
+ * @param {Function} callback
+ */
+
+/**
+ * @method getColor
+ * @beta
+ * @param {Function} callback
+ */
+
+/**
+ * @method getObjectInputs
+ * @beta
+ * @param {Function} callback
+ */
+
+/**
+ * @method getCameraInputs
+ * @beta
+ * @param {Function} callback
+ */
+
+/**
+ * Performs linear interpolation between two values.
+ *
+ * The `mix()` function linearly interpolates between two values based on a third
+ * parameter. It's a GLSL built-in function available in p5.strands shaders.
+ *
+ * The function computes: `x * (1 - a) + y * a`
+ *
+ * When `a` is 0.0, the function returns `x`. When `a` is 1.0, it returns `y`.
+ * Values between 0.0 and 1.0 produce a linear blend between the two values.
+ *
+ * This function works with scalars, vectors (vec2, vec3, vec4), and can also
+ * accept a boolean for the third parameter to select between the two values.
+ *
+ * Note: This function is only available inside shader code created with
+ * <a href="#/p5/buildMaterialShader">buildMaterialShader()</a>,
+ * <a href="#/p5/buildColorShader">buildColorShader()</a>, or similar functions.
+ * For regular p5.js code, use <a href="#/p5/lerp">lerp()</a> instead.
+ *
+ * @method mix
+ * @param  {Number|p5.Vector} x first value to interpolate from.
+ * @param  {Number|p5.Vector} y second value to interpolate to.
+ * @param  {Number|Boolean} a interpolation amount (0.0-1.0) or boolean selector.
+ * @return {Number|p5.Vector} interpolated value.
+ *
+ * @example
+ * <div modernizr='webgl'>
+ * <code>
+ * let myShader;
+ *
+ * function setup() {
+ *   createCanvas(200, 200, WEBGL);
+ *   myShader = buildMaterialShader(applyMix);
+ *   describe('A sphere that transitions smoothly between red and blue.');
+ * }
+ *
+ * function applyMix() {
+ *   let factor = uniformFloat();
+ *
+ *   pixelInputs.begin();
+ *   // Mix between red and blue based on factor
+ *   let red = vec3(1, 0, 0);
+ *   let blue = vec3(0, 0, 1);
+ *   let mixedColor = mix(red, blue, factor);
+ *   pixelInputs.color = vec4(mixedColor, 1);
+ *   // Set ambient color to match to avoid default ambient lighting
+ *   pixelInputs.ambientColor = pixelInputs.color.rgb;
+ *   pixelInputs.end();
+ * }
+ *
+ * function draw() {
+ *   background(255);
+ *   shader(myShader);
+ *   // Oscillate factor between 0 and 1
+ *   let factor = (sin(frameCount * 0.02) + 1) / 2;
+ *   myShader.setUniform('factor', factor);
+ *   noStroke();
+ *   sphere(80);
+ * }
+ * </code>
+ * </div>
+ *
+ * @example
+ * <div modernizr='webgl'>
+ * <code>
+ * let myShader;
+ *
+ * function setup() {
+ *   createCanvas(200, 200, WEBGL);
+ *   myShader = buildMaterialShader(positionMix);
+ *   describe('A sphere with vertices that blend between two positions.');
+ * }
+ *
+ * function positionMix() {
+ *   let time = uniformFloat();
+ *
+ *   worldInputs.begin();
+ *   // Blend vertex position between original and modified
+ *   let originalPos = worldInputs.position;
+ *   let modifiedPos = originalPos + vec3(0, sin(time * 0.001) * 20, 0);
+ *   let factor = (sin(worldInputs.position.x * 0.1) + 1) / 2;
+ *   worldInputs.position = mix(originalPos, modifiedPos, factor);
+ *   worldInputs.end();
+ * }
+ *
+ * function draw() {
+ *   background(220);
+ *   shader(myShader);
+ *   myShader.setUniform('time', millis());
+ *   lights();
+ *   noStroke();
+ *   fill('red');
+ *   sphere(70);
+ * }
+ * </code>
+ * </div>
+ *
+ * @example
+ * <div modernizr='webgl'>
+ * <code>
+ * let myShader;
+ *
+ * function setup() {
+ *   createCanvas(200, 200, WEBGL);
+ *   myShader = buildMaterialShader(gradientMix);
+ *   describe('A torus with a color gradient created using mix().');
+ * }
+ *
+ * function gradientMix() {
+ *   pixelInputs.begin();
+ *   // Create a gradient based on texture coordinates
+ *   let gradient = pixelInputs.texCoord.x;
+ *   let color1 = vec3(1, 0.5, 0); // Orange
+ *   let color2 = vec3(0.5, 0, 1); // Purple
+ *   let mixedColor = mix(color1, color2, gradient);
+ *   pixelInputs.color = vec4(mixedColor, 1);
+ *   // Set ambient color to match to avoid default ambient lighting
+ *   pixelInputs.ambientColor = pixelInputs.color.rgb;
+ *   pixelInputs.end();
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *   shader(myShader);
+ *   lights();
+ *   noStroke();
+ *   rotateX(frameCount * 0.01);
+ *   rotateY(frameCount * 0.01);
+ *   torus(60, 20);
+ * }
+ * </code>
+ * </div>
+ */

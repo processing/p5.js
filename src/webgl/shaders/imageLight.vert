@@ -1,12 +1,12 @@
 precision highp float;
-attribute vec3 aPosition;
-attribute vec3 aNormal;
-attribute vec2 aTexCoord;
+IN vec3 aPosition;
+IN vec3 aNormal;
+IN vec2 aTexCoord;
 
-varying vec3 localPos;
-varying vec3 vWorldNormal;
-varying vec3 vWorldPosition;
-varying vec2 vTexCoord;
+OUT vec3 localPos;
+OUT vec3 vWorldNormal;
+OUT vec3 vWorldPosition;
+OUT vec2 vTexCoord;
 
 uniform mat4 uModelViewMatrix;
 uniform mat4 uProjectionMatrix;

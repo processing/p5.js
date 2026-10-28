@@ -1,9 +1,8 @@
-import nj from "@d4c/numjs/build/module/numjs.min.js";
-import { Vector } from "../p5.Vector";
-import { MatrixInterface } from "./MatrixInterface";
+import nj from '@d4c/numjs/build/module/numjs.min.js';
+import { Vector } from '../p5.Vector';
+import { MatrixInterface } from './MatrixInterface';
 
 /**
- * @requires constants
  * @todo see methods below needing further implementation.
  * future consideration: implement SIMD optimizations
  * when browser compatibility becomes available
@@ -11,11 +10,9 @@ import { MatrixInterface } from "./MatrixInterface";
  *   Reference/Global_Objects/SIMD
  */
 
-let GLMAT_ARRAY_TYPE = Array;
-let isMatrixArray = (x) => Array.isArray(x);
-if (typeof Float32Array !== "undefined") {
-  GLMAT_ARRAY_TYPE = Float32Array;
-  isMatrixArray = (x) => Array.isArray(x) || x instanceof Float32Array;
+let isMatrixArray = x => Array.isArray(x);
+if (typeof Float32Array !== 'undefined') {
+  isMatrixArray = x => Array.isArray(x) || x instanceof Float32Array;
 }
 
 /**
@@ -31,8 +28,6 @@ if (typeof Float32Array !== "undefined") {
  * @param {Array} [mat4] column-major array literal of our 4×4 matrix
  * @param {Array} [mat3] column-major array literal of our 3×3 matrix
  * @example
- * <div>
- * <code>
  * function setup() {
  *   createCanvas(100, 100);
  *
@@ -42,14 +37,12 @@ if (typeof Float32Array !== "undefined") {
  *   let p1 = createMatrix(1,1,1,1,1,1,1,1,1);
  *   console.log(p1);
  * }
- * </code>
- * </div>
  */
 // const matrixEngine = "numjs";
-export class MatrixNumjs extends MatrixInterface{
+export class MatrixNumjs extends MatrixInterface {
   constructor(...args) {
     // This is default behavior when object
-    super(...args)
+    super(...args);
 
     if (args[0] === 3) {
       this._mat3 = Array.isArray(args[1]) ? nj.array(args[1]) : nj.identity(3);
@@ -130,14 +123,12 @@ export class MatrixNumjs extends MatrixInterface{
     return this;
   }
 
-
   /**
    * Gets a copy of the vector, returns a MatrixNumjs object.
    *
    * @return {MatrixNumjs} the copy of the MatrixNumjs object
    */
   get() {
-    let temp = new MatrixNumjs(this.mat4);
     return new MatrixNumjs(this.mat4);
   }
 
@@ -528,7 +519,6 @@ export class MatrixNumjs extends MatrixInterface{
       x = x[0]; // must be last
     }
     this._mat4 = this._mat4.flatten();
-    const vect = nj.array([x, y, z, 1]);
     this._mat4.set(0, x * this._mat4.get(0));
     this._mat4.set(1, x * this._mat4.get(1));
     this._mat4.set(2, x * this._mat4.get(2));
@@ -811,12 +801,11 @@ export class MatrixNumjs extends MatrixInterface{
    * @chainable
    */
   mult3x3(multMatrix) {
-    let _src;
     let tempMatrix = multMatrix;
     if (multMatrix === this || multMatrix === this._mat3) {
       // mat3; // only need to allocate in this rare case
     } else if (multMatrix instanceof MatrixNumjs) {
-      _src = multMatrix.mat3;
+      // tempMatrix already holds the matrix we need
     } else if (isMatrixArray(multMatrix)) {
       multMatrix._mat3 = nj.array(arguments);
     } else if (arguments.length === 9) {
@@ -963,4 +952,3 @@ export class MatrixNumjs extends MatrixInterface{
   //  0.0,0.0,0.0,1.0
   //];
 }
-

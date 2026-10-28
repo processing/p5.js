@@ -1,11 +1,11 @@
 // import p5 from "../../../src/app.js";
-import { bench, describe } from "vitest";
-import p5 from "../../src/app";
+import { bench, describe } from 'vitest';
+import p5 from '../../src/app';
 
 const options = { iterations: 20, time: 500 };
-describe("Rendering bench test", () => {
+describe('Rendering bench test', () => {
   bench(
-    "normal",
+    'normal',
     async () => {
       try {
         var myp5;
@@ -17,7 +17,7 @@ describe("Rendering bench test", () => {
         });
         await vi.waitFor(() => {
           if (myp5 === undefined) {
-            throw new Error("not ready");
+            throw new Error('not ready');
           }
         });
 
@@ -35,7 +35,7 @@ describe("Rendering bench test", () => {
   );
 
   bench(
-    "thousand",
+    'thousand',
     async () => {
       try {
         var myp5;
@@ -47,7 +47,7 @@ describe("Rendering bench test", () => {
         });
         await vi.waitFor(() => {
           if (myp5 === undefined) {
-            throw new Error("not ready");
+            throw new Error('not ready');
           }
         });
 
@@ -68,7 +68,7 @@ describe("Rendering bench test", () => {
   );
 
   bench(
-    "10k",
+    '10k',
     async () => {
       try {
         var myp5;
@@ -80,7 +80,7 @@ describe("Rendering bench test", () => {
         });
         await vi.waitFor(() => {
           if (myp5 === undefined) {
-            throw new Error("not ready");
+            throw new Error('not ready');
           }
         });
 
@@ -101,9 +101,9 @@ describe("Rendering bench test", () => {
   );
 });
 
-describe("Another suite", () => {
+describe('Another suite', () => {
   bench(
-    "normal v2",
+    'normal v2',
     async () => {
       try {
         var myp5;
@@ -115,7 +115,7 @@ describe("Another suite", () => {
         });
         await vi.waitFor(() => {
           if (myp5 === undefined) {
-            throw new Error("not ready");
+            throw new Error('not ready');
           }
         });
 
@@ -133,7 +133,7 @@ describe("Another suite", () => {
   );
 
   bench(
-    "thousand v2",
+    'thousand v2',
     async () => {
       try {
         var myp5;
@@ -145,7 +145,7 @@ describe("Another suite", () => {
         });
         await vi.waitFor(() => {
           if (myp5 === undefined) {
-            throw new Error("not ready");
+            throw new Error('not ready');
           }
         });
 
@@ -166,7 +166,7 @@ describe("Another suite", () => {
   );
 
   bench(
-    "10k v2",
+    '10k v2',
     async () => {
       try {
         var myp5;
@@ -178,7 +178,7 @@ describe("Another suite", () => {
         });
         await vi.waitFor(() => {
           if (myp5 === undefined) {
-            throw new Error("not ready");
+            throw new Error('not ready');
           }
         });
 

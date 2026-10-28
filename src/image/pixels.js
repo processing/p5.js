@@ -2,148 +2,11 @@
  * @module Image
  * @submodule Pixels
  * @for p5
- * @requires core
  */
 
 import Filters from './filters';
 
-function pixels(p5, fn){
-  /**
-   * An array containing the color of each pixel on the canvas.
-   *
-   * Colors are stored as numbers representing red, green, blue, and alpha
-   * (RGBA) values. `pixels` is a one-dimensional array for performance reasons.
-   *
-   * Each pixel occupies four elements in the `pixels` array, one for each RGBA
-   * value. For example, the pixel at coordinates (0, 0) stores its RGBA values
-   * at `pixels[0]`, `pixels[1]`, `pixels[2]`, and `pixels[3]`, respectively.
-   * The next pixel at coordinates (1, 0) stores its RGBA values at `pixels[4]`,
-   * `pixels[5]`, `pixels[6]`, and `pixels[7]`. And so on. The `pixels` array
-   * for a 100&times;100 canvas has 100 &times; 100 &times; 4 = 40,000 elements.
-   *
-   * Some displays use several smaller pixels to set the color at a single
-   * point. The <a href="#/p5/pixelDensity">pixelDensity()</a> function returns
-   * the pixel density of the canvas. High density displays often have a
-   * <a href="#/p5/pixelDensity">pixelDensity()</a> of 2. On such a display, the
-   * `pixels` array for a 100&times;100 canvas has 200 &times; 200 &times; 4 =
-   * 160,000 elements.
-   *
-   * Accessing the RGBA values for a point on the canvas requires a little math
-   * as shown below. The <a href="#/p5/loadPixels">loadPixels()</a> function
-   * must be called before accessing the `pixels` array. The
-   * <a href="#/p5/updatePixels">updatePixels()</a> function must be called
-   * after any changes are made.
-   *
-   * @property {Number[]} pixels
-   *
-   * @example
-   * <div>
-   * <code>
-   * function setup() {
-   *   createCanvas(100, 100);
-   *   background(128);
-   *
-   *   // Load the pixels array.
-   *   loadPixels();
-   *
-   *   // Set the dot's coordinates.
-   *   let x = 50;
-   *   let y = 50;
-   *
-   *   // Get the pixel density.
-   *   let d = pixelDensity();
-   *
-   *   // Set the pixel(s) at the center of the canvas black.
-   *   for (let i = 0; i < d; i += 1) {
-   *     for (let j = 0; j < d; j += 1) {
-   *       let index = 4 * ((y * d + j) * width * d + (x * d + i));
-   *       // Red.
-   *       pixels[index] = 0;
-   *       // Green.
-   *       pixels[index + 1] = 0;
-   *       // Blue.
-   *       pixels[index + 2] = 0;
-   *       // Alpha.
-   *       pixels[index + 3] = 255;
-   *     }
-   *   }
-   *
-   *   // Update the canvas.
-   *   updatePixels();
-   *
-   *   describe('A black dot in the middle of a gray rectangle.');
-   * }
-   * </code>
-   * </div>
-   *
-   * <div>
-   * <code>
-   * function setup() {
-   *   createCanvas(100, 100);
-   *
-   *   // Load the pixels array.
-   *   loadPixels();
-   *
-   *   // Get the pixel density.
-   *   let d = pixelDensity();
-   *
-   *   // Calculate the halfway index in the pixels array.
-   *   let halfImage = 4 * (d * width) * (d * height / 2);
-   *
-   *   // Make the top half of the canvas red.
-   *   for (let i = 0; i < halfImage; i += 4) {
-   *     // Red.
-   *     pixels[i] = 255;
-   *     // Green.
-   *     pixels[i + 1] = 0;
-   *     // Blue.
-   *     pixels[i + 2] = 0;
-   *     // Alpha.
-   *     pixels[i + 3] = 255;
-   *   }
-   *
-   *   // Update the canvas.
-   *   updatePixels();
-   *
-   *   describe('A red rectangle drawn above a gray rectangle.');
-   * }
-   * </code>
-   * </div>
-   *
-   * <div>
-   * <code>
-   * function setup() {
-   *   createCanvas(100, 100);
-   *
-   *   // Create a p5.Color object.
-   *   let pink = color(255, 102, 204);
-   *
-   *   // Load the pixels array.
-   *   loadPixels();
-   *
-   *   // Get the pixel density.
-   *   let d = pixelDensity();
-   *
-   *   // Calculate the halfway index in the pixels array.
-   *   let halfImage = 4 * (d * width) * (d * height / 2);
-   *
-   *   // Make the top half of the canvas red.
-   *   for (let i = 0; i < halfImage; i += 4) {
-   *     pixels[i] = red(pink);
-   *     pixels[i + 1] = green(pink);
-   *     pixels[i + 2] = blue(pink);
-   *     pixels[i + 3] = alpha(pink);
-   *   }
-   *
-   *   // Update the canvas.
-   *   updatePixels();
-   *
-   *   describe('A pink rectangle drawn above a gray rectangle.');
-   * }
-   * </code>
-   * </div>
-   */
-
+function pixels(p5, fn) {
   /**
    * Copies a region of pixels from one image to another.
    *
@@ -179,8 +42,6 @@ function pixels(p5, fn){
    *     SOFT_LIGHT, DODGE, BURN, ADD or NORMAL.
    *
    * @example
-   * <div>
-   * <code>
    * let img0;
    * let img1;
    *
@@ -202,11 +63,8 @@ function pixels(p5, fn){
    *
    *   describe('A wall of bricks in front of a mountain landscape. The same wall of bricks appears faded on the right of the image.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let img0;
    * let img1;
    *
@@ -228,11 +86,8 @@ function pixels(p5, fn){
    *
    *   describe('A wall of bricks in front of a mountain landscape. The same wall of bricks appears transparent on the right of the image.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let img0;
    * let img1;
    *
@@ -254,8 +109,6 @@ function pixels(p5, fn){
    *
    *   describe('A wall of bricks in front of a mountain landscape. The same wall of bricks appears washed out on the right of the image.');
    * }
-   * </code>
-   * </div>
    */
   /**
    * @method blend
@@ -269,7 +122,7 @@ function pixels(p5, fn){
    * @param  {Integer} dh
    * @param  {(BLEND|DARKEST|LIGHTEST|DIFFERENCE|MULTIPLY|EXCLUSION|SCREEN|REPLACE|OVERLAY|HARD_LIGHT|SOFT_LIGHT|DODGE|BURN|ADD|NORMAL)} blendMode
    */
-  fn.blend = function(...args) {
+  fn.blend = function (...args) {
     // p5._validateParameters('blend', args);
     if (this._renderer) {
       this._renderer.blend(...args);
@@ -307,8 +160,6 @@ function pixels(p5, fn){
    * @param  {Integer} dh destination image height.
    *
    * @example
-   * <div>
-   * <code>
    * let img;
    *
    * async function setup() {
@@ -330,8 +181,6 @@ function pixels(p5, fn){
    *
    *   describe('An image of a mountain landscape. A square region is outlined in white. A larger square contains a pixelated view of the outlined region.');
    * }
-   * </code>
-   * </div>
    */
   /**
    * @method copy
@@ -344,7 +193,7 @@ function pixels(p5, fn){
    * @param  {Integer} dw
    * @param  {Integer} dh
    */
-  fn.copy = function(...args) {
+  fn.copy = function (...args) {
     let srcImage, sx, sy, sw, sh, dx, dy, dw, dh;
     if (args.length === 9) {
       srcImage = args[0];
@@ -373,18 +222,7 @@ function pixels(p5, fn){
     fn._copyHelper(this, srcImage, sx, sy, sw, sh, dx, dy, dw, dh);
   };
 
-  fn._copyHelper = (
-    dstImage,
-    srcImage,
-    sx,
-    sy,
-    sw,
-    sh,
-    dx,
-    dy,
-    dw,
-    dh
-  ) => {
+  fn._copyHelper = (dstImage, srcImage, sx, sy, sw, sh, dx, dy, dw, dh) => {
     const s = srcImage.canvas.width / srcImage.width;
     // adjust coord system for 3D when renderer
     // ie top-left = -width/2, -height/2
@@ -482,8 +320,6 @@ function pixels(p5, fn){
    *                                filters (CPU); defaults to `true`.
    *
    * @example
-   * <div>
-   * <code>
    * let img;
    *
    * async function setup() {
@@ -500,11 +336,8 @@ function pixels(p5, fn){
    *
    *   describe('A blue brick wall.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let img;
    *
    * async function setup() {
@@ -521,11 +354,8 @@ function pixels(p5, fn){
    *
    *   describe('A brick wall drawn in grayscale.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let img;
    *
    * async function setup() {
@@ -542,11 +372,8 @@ function pixels(p5, fn){
    *
    *   describe('A brick wall drawn in black and white.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let img;
    *
    * async function setup() {
@@ -563,11 +390,8 @@ function pixels(p5, fn){
    *
    *   describe('A red brick wall.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let img;
    *
    * async function setup() {
@@ -584,11 +408,8 @@ function pixels(p5, fn){
    *
    *   describe('An image of a red brick wall drawn with limited color palette.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let img;
    *
    * async function setup() {
@@ -605,11 +426,8 @@ function pixels(p5, fn){
    *
    *   describe('A blurry image of a red brick wall.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let img;
    *
    * async function setup() {
@@ -626,11 +444,8 @@ function pixels(p5, fn){
    *
    *   describe('A red brick wall with bright lines between each brick.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let img;
    *
    * async function setup() {
@@ -647,11 +462,8 @@ function pixels(p5, fn){
    *
    *   describe('A red brick wall with faint lines between each brick.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let img;
    *
    * async function setup() {
@@ -669,8 +481,6 @@ function pixels(p5, fn){
    *
    *   describe('A blurry image of a red brick wall.');
    * }
-   * </code>
-   * </div>
    */
 
   /**
@@ -678,7 +488,7 @@ function pixels(p5, fn){
    * @private
    * @returns {p5.Graphics}
    */
-  fn.getFilterGraphicsLayer = function() {
+  fn.getFilterGraphicsLayer = function () {
     return this._renderer.getFilterGraphicsLayer();
   };
 
@@ -693,7 +503,7 @@ function pixels(p5, fn){
    * @param {p5.Shader}  shaderFilter  shader that's been loaded, with the
    *                                   frag shader using a `tex0` uniform.
    */
-  fn.filter = function(...args) {
+  fn.filter = function (...args) {
     // p5._validateParameters('filter', args);
 
     let { shader, operation, value, useWebGL } = parseFilterArgs(...args);
@@ -714,7 +524,7 @@ function pixels(p5, fn){
       return;
     }
 
-    if(!useWebGL && this._renderer.isP3D) {
+    if (!useWebGL && this._renderer.isP3D) {
       console.warn('filter() with useWebGL=false is not supported in WEBGL');
     }
 
@@ -725,7 +535,6 @@ function pixels(p5, fn){
 
     // when this is P2D renderer, create/use hidden webgl renderer
     else {
-
       if (shader) {
         this._renderer.filterRenderer.setOperation(operation, value, shader);
       } else {
@@ -752,8 +561,7 @@ function pixels(p5, fn){
     if (args[0] instanceof p5.Shader) {
       result.shader = args[0];
       return result;
-    }
-    else {
+    } else {
       result.operation = args[0];
     }
 
@@ -761,7 +569,7 @@ function pixels(p5, fn){
       result.value = args[1];
     }
 
-    if (args[args.length-1] === false) {
+    if (args[args.length - 1] === false) {
       result.useWebGL = false;
     }
     return result;
@@ -796,8 +604,6 @@ function pixels(p5, fn){
    * @param  {Number}         h height of the subsection to be returned.
    * @return {p5.Image}       subsection as a <a href="#/p5.Image">p5.Image</a> object.
    * @example
-   * <div>
-   * <code>
    * let img;
    *
    * async function setup() {
@@ -817,11 +623,8 @@ function pixels(p5, fn){
    *
    *   describe('Two identical mountain landscapes shown side-by-side.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let img;
    *
    * async function setup() {
@@ -845,11 +648,8 @@ function pixels(p5, fn){
    *
    *   describe('A mountain landscape with an olive green square in its center.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let img;
    *
    * async function setup() {
@@ -869,8 +669,6 @@ function pixels(p5, fn){
    *
    *   describe('A mountain landscape drawn on top of another mountain landscape.');
    * }
-   * </code>
-   * </div>
    */
   /**
    * @method get
@@ -882,7 +680,7 @@ function pixels(p5, fn){
    * @param  {Number}        y
    * @return {Number[]}      color of the pixel at (x, y) in array format `[R, G, B, A]`.
    */
-  fn.get = function(x, y, w, h) {
+  fn.get = function (x, y, w, h) {
     // p5._validateParameters('get', arguments);
     return this._renderer.get(...arguments);
   };
@@ -896,8 +694,6 @@ function pixels(p5, fn){
    *
    * @method loadPixels
    * @example
-   * <div>
-   * <code>
    * let img;
    *
    * async function setup() {
@@ -928,12 +724,10 @@ function pixels(p5, fn){
    *
    *   describe('Two identical images of mountain landscapes, one on top of the other.');
    * }
-   * </code>
-   * </div>
    */
-  fn.loadPixels = function(...args) {
+  fn.loadPixels = function (...args) {
     // p5._validateParameters('loadPixels', args);
-    this._renderer.loadPixels();
+    return this._renderer.loadPixels();
   };
 
   /**
@@ -959,8 +753,6 @@ function pixels(p5, fn){
    * @param {Number|Number[]|Object} c grayscale value | pixel array |
    *                                <a href="#/p5.Color">p5.Color</a> object | <a href="#/p5.Image">p5.Image</a> to copy.
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -977,11 +769,8 @@ function pixels(p5, fn){
    *
    *   describe('Four black dots arranged in a square drawn on a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1001,11 +790,8 @@ function pixels(p5, fn){
    *
    *   describe('Four black dots arranged in a square drawn on a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1027,11 +813,8 @@ function pixels(p5, fn){
    *
    *   describe('A horiztonal color gradient from black to white.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let img;
    *
    * async function setup() {
@@ -1048,10 +831,8 @@ function pixels(p5, fn){
    *
    *   describe('An image of a mountain landscape.');
    * }
-   * </code>
-   * </div>
    */
-  fn.set = function(x, y, imgOrCol) {
+  fn.set = function (x, y, imgOrCol) {
     this._renderer.set(x, y, imgOrCol);
   };
 
@@ -1072,8 +853,6 @@ function pixels(p5, fn){
    * @param  {Number} [w]    width of region to update.
    * @param  {Number} [h]    height of region to update.
    * @example
-   * <div>
-   * <code>
    * let img;
    *
    * async function setup() {
@@ -1104,10 +883,8 @@ function pixels(p5, fn){
    *
    *   describe('Two identical images of mountain landscapes, one on top of the other.');
    * }
-   * </code>
-   * </div>
    */
-  fn.updatePixels = function(x, y, w, h) {
+  fn.updatePixels = function (x, y, w, h) {
     // p5._validateParameters('updatePixels', arguments);
     // graceful fail - if loadPixels() or set() has not been called, pixel
     // array will be empty, ignore call to updatePixels()
@@ -1116,10 +893,136 @@ function pixels(p5, fn){
     }
     this._renderer.updatePixels(x, y, w, h);
   };
+
+  /**
+   * An array containing the color of each pixel on the canvas.
+   *
+   * Colors are stored as numbers representing red, green, blue, and alpha
+   * (RGBA) values. `pixels` is a one-dimensional array for performance reasons.
+   *
+   * Each pixel occupies four elements in the `pixels` array, one for each RGBA
+   * value. For example, the pixel at coordinates (0, 0) stores its RGBA values
+   * at `pixels[0]`, `pixels[1]`, `pixels[2]`, and `pixels[3]`, respectively.
+   * The next pixel at coordinates (1, 0) stores its RGBA values at `pixels[4]`,
+   * `pixels[5]`, `pixels[6]`, and `pixels[7]`. And so on. The `pixels` array
+   * for a 100&times;100 canvas has 100 &times; 100 &times; 4 = 40,000 elements.
+   *
+   * Some displays use several smaller pixels to set the color at a single
+   * point. The <a href="#/p5/pixelDensity">pixelDensity()</a> function returns
+   * the pixel density of the canvas. High density displays often have a
+   * <a href="#/p5/pixelDensity">pixelDensity()</a> of 2. On such a display, the
+   * `pixels` array for a 100&times;100 canvas has 200 &times; 200 &times; 4 =
+   * 160,000 elements.
+   *
+   * Accessing the RGBA values for a point on the canvas requires a little math
+   * as shown below. The <a href="#/p5/loadPixels">loadPixels()</a> function
+   * must be called before accessing the `pixels` array. The
+   * <a href="#/p5/updatePixels">updatePixels()</a> function must be called
+   * after any changes are made.
+   *
+   * @property {Number[]} pixels
+   *
+   * @example
+   * function setup() {
+   *   createCanvas(100, 100);
+   *   background(128);
+   *
+   *   // Load the pixels array.
+   *   loadPixels();
+   *
+   *   // Set the dot's coordinates.
+   *   let x = 50;
+   *   let y = 50;
+   *
+   *   // Get the pixel density.
+   *   let d = pixelDensity();
+   *
+   *   // Set the pixel(s) at the center of the canvas black.
+   *   for (let i = 0; i < d; i += 1) {
+   *     for (let j = 0; j < d; j += 1) {
+   *       let index = 4 * ((y * d + j) * width * d + (x * d + i));
+   *       // Red.
+   *       pixels[index] = 0;
+   *       // Green.
+   *       pixels[index + 1] = 0;
+   *       // Blue.
+   *       pixels[index + 2] = 0;
+   *       // Alpha.
+   *       pixels[index + 3] = 255;
+   *     }
+   *   }
+   *
+   *   // Update the canvas.
+   *   updatePixels();
+   *
+   *   describe('A black dot in the middle of a gray rectangle.');
+   * }
+   *
+   * @example
+   * function setup() {
+   *   createCanvas(100, 100);
+   *
+   *   // Load the pixels array.
+   *   loadPixels();
+   *
+   *   // Get the pixel density.
+   *   let d = pixelDensity();
+   *
+   *   // Calculate the halfway index in the pixels array.
+   *   let halfImage = 4 * (d * width) * (d * height / 2);
+   *
+   *   // Make the top half of the canvas red.
+   *   for (let i = 0; i < halfImage; i += 4) {
+   *     // Red.
+   *     pixels[i] = 255;
+   *     // Green.
+   *     pixels[i + 1] = 0;
+   *     // Blue.
+   *     pixels[i + 2] = 0;
+   *     // Alpha.
+   *     pixels[i + 3] = 255;
+   *   }
+   *
+   *   // Update the canvas.
+   *   updatePixels();
+   *
+   *   describe('A red rectangle drawn above a gray rectangle.');
+   * }
+   *
+   * @example
+   * function setup() {
+   *   createCanvas(100, 100);
+   *
+   *   // Create a p5.Color object.
+   *   let pink = color(255, 102, 204);
+   *
+   *   // Load the pixels array.
+   *   loadPixels();
+   *
+   *   // Get the pixel density.
+   *   let d = pixelDensity();
+   *
+   *   // Calculate the halfway index in the pixels array.
+   *   let halfImage = 4 * (d * width) * (d * height / 2);
+   *
+   *   // Make the top half of the canvas red.
+   *   for (let i = 0; i < halfImage; i += 4) {
+   *     pixels[i] = red(pink);
+   *     pixels[i + 1] = green(pink);
+   *     pixels[i + 2] = blue(pink);
+   *     pixels[i + 3] = alpha(pink);
+   *   }
+   *
+   *   // Update the canvas.
+   *   updatePixels();
+   *
+   *   describe('A pink rectangle drawn above a gray rectangle.');
+   * }
+   */
 }
 
 export default pixels;
 
-if(typeof p5 !== 'undefined'){
+if (typeof p5 !== 'undefined') {
   pixels(p5, p5.prototype);
 }

@@ -1,12 +1,12 @@
 // import p5 from "../../../src/app.js";
-import { bench, describe } from "vitest";
-import p5 from "../../src/app";
+import { bench, describe } from 'vitest';
+import p5 from '../../src/app';
 
 const options = { iterations: 1, time: 1500 };
-const ITERATIONS = 100
-describe.sequential("Dave bench test", () => {
-  bench(
-    "TEST CPU TRANSFORMS true",
+const ITERATIONS = 100;
+describe.sequential('Dave bench test', () => {
+  (bench(
+    'TEST CPU TRANSFORMS true',
     async () => {
       try {
         const TEST_CPU_TRANSFORMS = true;
@@ -18,7 +18,7 @@ describe.sequential("Dave bench test", () => {
         });
         await vi.waitFor(() => {
           if (myp5 === undefined) {
-            throw new Error("not ready");
+            throw new Error('not ready');
           }
         });
         let fps;
@@ -31,7 +31,7 @@ describe.sequential("Dave bench test", () => {
               myp5.random(-200, 200),
               myp5.random(-200, 200)
             ),
-            vel: myp5.createVector(myp5.random(-2, 2), myp5.random(-2, 2)),
+            vel: myp5.createVector(myp5.random(-2, 2), myp5.random(-2, 2))
           });
         }
         fps = myp5.createP();
@@ -44,7 +44,7 @@ describe.sequential("Dave bench test", () => {
 
         for (const s of state) {
           s.pos.add(s.vel);
-          for (const axis of ["x", "y"]) {
+          for (const axis of ['x', 'y']) {
             if (s.pos[axis] < -200) {
               s.pos[axis] = -200;
               s.vel[axis] *= -1;
@@ -76,7 +76,7 @@ describe.sequential("Dave bench test", () => {
           // Flattens into a single buffer
           const shape = myp5.buildGeometry(drawCircles);
           myp5.model(shape);
-          myp5.freeGeometry(myp5.model);
+          myp5.freeGeometry(shape);
         } else {
           drawCircles();
         }
@@ -86,9 +86,9 @@ describe.sequential("Dave bench test", () => {
     },
     options
   ),
-    options;
-  bench(
-    "TEST CPU TRANSFORMS false",
+    options);
+  (bench(
+    'TEST CPU TRANSFORMS false',
     async () => {
       const TEST_CPU_TRANSFORMS = false;
       var myp5;
@@ -99,7 +99,7 @@ describe.sequential("Dave bench test", () => {
       });
       await vi.waitFor(() => {
         if (myp5 === undefined) {
-          throw new Error("not ready");
+          throw new Error('not ready');
         }
       });
       let fps;
@@ -112,7 +112,7 @@ describe.sequential("Dave bench test", () => {
             myp5.random(-200, 200),
             myp5.random(-200, 200)
           ),
-          vel: myp5.createVector(myp5.random(-2, 2), myp5.random(-2, 2)),
+          vel: myp5.createVector(myp5.random(-2, 2), myp5.random(-2, 2))
         });
       }
       fps = myp5.createP();
@@ -125,7 +125,7 @@ describe.sequential("Dave bench test", () => {
 
       for (const s of state) {
         s.pos.add(s.vel);
-        for (const axis of ["x", "y"]) {
+        for (const axis of ['x', 'y']) {
           if (s.pos[axis] < -200) {
             s.pos[axis] = -200;
             s.vel[axis] *= -1;
@@ -164,5 +164,5 @@ describe.sequential("Dave bench test", () => {
     },
     options
   ),
-    options;
+    options);
 });

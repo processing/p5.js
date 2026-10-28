@@ -1,17 +1,17 @@
 import { expect } from 'chai';
 import preprocessor from '../../docs/preprocessor';
 
-suite('docs preprocessor', function() {
-  suite('mergeOverloadedMethods()', function() {
+suite('docs preprocessor', function () {
+  suite('mergeOverloadedMethods()', function () {
     const merge = preprocessor.mergeOverloadedMethods;
 
-    const ensureMergeDoesNothing = function(data) {
+    const ensureMergeDoesNothing = function (data) {
       const dataCopy = JSON.parse(JSON.stringify(data));
       merge(dataCopy);
       expect(dataCopy).to.eql(data);
     };
 
-    test('should merge methods with the same name', function() {
+    test('should merge methods with the same name', function () {
       const data = {
         classes: {
           Bar: {},
@@ -70,7 +70,7 @@ suite('docs preprocessor', function() {
       });
     });
 
-    test('should not merge methods from different classes', function() {
+    test('should not merge methods from different classes', function () {
       ensureMergeDoesNothing({
         classes: {
           Bar: {},
@@ -84,7 +84,7 @@ suite('docs preprocessor', function() {
       });
     });
 
-    test('should not merge properties', function() {
+    test('should not merge properties', function () {
       ensureMergeDoesNothing({
         classes: {
           Bar: {},
@@ -99,10 +99,10 @@ suite('docs preprocessor', function() {
     });
   });
 
-  suite('renderDescriptionsAsMarkdown', function() {
+  suite('renderDescriptionsAsMarkdown', function () {
     const render = preprocessor.renderDescriptionsAsMarkdown;
 
-    test('should work', function() {
+    test('should work', function () {
       const data = {
         modules: {},
         classes: {

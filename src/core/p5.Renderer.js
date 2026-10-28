@@ -4,6 +4,16 @@
  * @for p5
  */
 
+/**
+ * `pInst` may be:
+ *
+ *  The main sketch-wide `p5` instance (global canvas), or
+ *  an off-screen `p5.Graphics` wrapper.
+ *
+ * Therefore a renderer must only call properties / methods that exist
+ * on both objects.
+ */
+
 import { Color } from '../color/p5.Color';
 import * as constants from '../core/constants';
 import { Image } from '../image/p5.Image';
@@ -21,7 +31,7 @@ class ClonableObject {
   clone() {
     return new ClonableObject(this);
   }
-};
+}
 
 class Renderer {
   static states = {
@@ -35,6 +45,11 @@ class Renderer {
     rectMode: constants.CORNER,
     ellipseMode: constants.CENTER,
     strokeWeight: 1,
+    bezierOrder: 3,
+    splineProperties: new ClonableObject({
+      ends: constants.INCLUDE,
+      tightness: 0
+    }),
 
     textFont: { family: 'sans-serif' },
     textLeading: 15,
@@ -42,24 +57,28 @@ class Renderer {
     textSize: 12,
     textAlign: constants.LEFT,
     textBaseline: constants.BASELINE,
-    bezierOrder: 3,
-    splineProperties: new ClonableObject({ ends: constants.INCLUDE, tightness: 0 }),
     textWrap: constants.WORD,
-
-    // added v2.0
-    fontStyle: constants.NORMAL, // v1: textStyle
+    fontStyle: constants.NORMAL, // v1: was textStyle
     fontStretch: constants.NORMAL,
     fontWeight: constants.NORMAL,
     lineHeight: constants.NORMAL,
     fontVariant: constants.NORMAL,
     direction: 'inherit'
-  }
+  };
 
   constructor(pInst, w, h, isMainCanvas) {
     this._pInst = pInst;
     this._isMainCanvas = isMainCanvas;
     this.pixels = [];
-    this._pixelDensity = Math.ceil(window.devicePixelRatio) || 1;
+
+    const defaultRatio =
+      typeof window !== 'undefined' ? Math.ceil(window.devicePixelRatio) : 1;
+    if (isMainCanvas) {
+      this._pixelDensity = defaultRatio;
+    } else {
+      const parentDensity = pInst._pInst?._renderer?._pixelDensity;
+      this._pixelDensity = parentDensity || defaultRatio;
+    }
 
     this.width = w;
     this.height = h;
@@ -84,6 +103,15 @@ class Renderer {
     this._clipInvert = false;
 
     this._currentShape = undefined; // Lazily generate current shape
+
+    // Lazily cached by _individualTextureCoordinates(); initialized here
+    // (rather than computed) so subclasses can rely on their own
+    // constructor state when getSupportedIndividualVertexProperties()
+    // is first consulted.
+    this._supportsIndividualTextureCoordinates = undefined;
+
+    this.rendererType = constants.P2D;
+    this._pInst.rendererType = this.rendererType;
   }
 
   get currentShape() {
@@ -93,11 +121,9 @@ class Renderer {
     return this._currentShape;
   }
 
-  remove() {
+  remove() {}
 
-  }
-
-  pixelDensity(val){
+  pixelDensity(val) {
     let returnValue;
     if (typeof val === 'number') {
       if (val !== this._pixelDensity) {
@@ -115,7 +141,7 @@ class Renderer {
   // and push it into the push pop stack
   push() {
     this._pushPopDepth++;
-    this._pushPopStack.push(this.states.getDiff());
+    this._pushPopStack.push(this.states.takeDiff());
   }
 
   // Pop the previous states out of the push pop stack and
@@ -138,11 +164,22 @@ class Renderer {
     }
   }
 
-  bezierVertex(x, y, z = 0, u = 0, v = 0) {
-    const position = new Vector(x, y, z);
-    const textureCoordinates = this.getSupportedIndividualVertexProperties().textureCoordinates
+  // Builds the per-vertex texture-coordinates argument, caching whether
+  // the renderer supports them so the descriptor object isn't rebuilt on
+  // every vertex call.
+  _individualTextureCoordinates(u, v) {
+    if (this._supportsIndividualTextureCoordinates === undefined) {
+      this._supportsIndividualTextureCoordinates =
+        this.getSupportedIndividualVertexProperties().textureCoordinates;
+    }
+    return this._supportsIndividualTextureCoordinates
       ? new Vector(u, v)
       : undefined;
+  }
+
+  bezierVertex(x, y, z = 0, u = 0, v = 0) {
+    const position = new Vector(x, y, z);
+    const textureCoordinates = this._individualTextureCoordinates(u, v);
     this.currentShape.bezierVertex(position, textureCoordinates);
   }
 
@@ -150,7 +187,10 @@ class Renderer {
     if (value === undefined) {
       return this.states.splineProperties[key];
     } else {
-      this.states.setValue('splineProperties', this.states.splineProperties.clone());
+      this.states.setValue(
+        'splineProperties',
+        this.states.splineProperties.clone()
+      );
       this.states.splineProperties[key] = value;
     }
     this.updateShapeProperties();
@@ -168,9 +208,7 @@ class Renderer {
 
   splineVertex(x, y, z = 0, u = 0, v = 0) {
     const position = new Vector(x, y, z);
-    const textureCoordinates = this.getSupportedIndividualVertexProperties().textureCoordinates
-      ? new Vector(u, v)
-      : undefined;
+    const textureCoordinates = this._individualTextureCoordinates(u, v);
     this.currentShape.splineVertex(position, textureCoordinates);
   }
 
@@ -202,14 +240,12 @@ class Renderer {
   }
 
   drawShape(shape, count) {
-    throw new Error('Unimplemented')
+    throw new Error('Unimplemented');
   }
 
   vertex(x, y, z = 0, u = 0, v = 0) {
     const position = new Vector(x, y, z);
-    const textureCoordinates = this.getSupportedIndividualVertexProperties().textureCoordinates
-      ? new Vector(u, v)
-      : undefined;
+    const textureCoordinates = this._individualTextureCoordinates(u, v);
     this.currentShape.vertex(position, textureCoordinates);
   }
 
@@ -248,7 +284,9 @@ class Renderer {
 
   beginClip(options = {}) {
     if (this._clipping) {
-      throw new Error("It looks like you're trying to clip while already in the middle of clipping. Did you forget to endClip()?");
+      throw new Error(
+        "It looks like you're trying to clip while already in the middle of clipping. Did you forget to endClip()?"
+      );
     }
     this._clipping = true;
     this._clipInvert = options.invert;
@@ -256,7 +294,9 @@ class Renderer {
 
   endClip() {
     if (!this._clipping) {
-      throw new Error("It looks like you've called endClip() without beginClip(). Did you forget to call beginClip() first?");
+      throw new Error(
+        "It looks like you've called endClip() without beginClip(). Did you forget to call beginClip() first?"
+      );
     }
     this._clipping = false;
   }
@@ -274,7 +314,7 @@ class Renderer {
     const canvas = this.canvas;
 
     if (typeof x === 'undefined' && typeof y === 'undefined') {
-    // get()
+      // get()
       x = y = 0;
       w = this.width;
       h = this.height;
@@ -283,33 +323,34 @@ class Renderer {
       y *= pd;
 
       if (typeof w === 'undefined' && typeof h === 'undefined') {
-      // get(x,y)
+        // get(x,y)
         if (x < 0 || y < 0 || x >= canvas.width || y >= canvas.height) {
           return [0, 0, 0, 0];
         }
 
         return this._getPixel(x, y);
       }
-    // get(x,y,w,h)
+      // get(x,y,w,h)
     }
 
-    const region = new Image(w*pd, h*pd);
+    const region = new Image(w * pd, h * pd);
     region.pixelDensity(pd);
     region.canvas
       .getContext('2d')
-      .drawImage(canvas, x, y, w * pd, h * pd, 0, 0, w*pd, h*pd);
+      .drawImage(canvas, x, y, w * pd, h * pd, 0, 0, w * pd, h * pd);
 
     return region;
   }
 
-  scale(x, y){
-
-  }
+  scale(x, y) {}
 
   fill(...args) {
-    this.states.setValue('fillSet', true);
-    this.states.setValue('fillColor', this._pInst.color(...args));
-    this.updateShapeVertexProperties();
+    if (args.length > 0) {
+      this.states.setValue('fillSet', true);
+      this.states.setValue('fillColor', this._pInst.color(...args));
+      this.updateShapeVertexProperties();
+    }
+    return this.states.fillColor;
   }
 
   noFill() {
@@ -317,14 +358,16 @@ class Renderer {
   }
 
   strokeWeight(w) {
-    if (w === undefined) {
+    if (typeof w === 'undefined') {
       return this.states.strokeWeight;
-    } else {
-      this.states.setValue('strokeWeight', w);
     }
+    this.states.setValue('strokeWeight', w);
   }
 
   stroke(...args) {
+    if (args.length === 0) {
+      return this.states.strokeColor;
+    }
     this.states.setValue('strokeSet', true);
     this.states.setValue('strokeColor', this._pInst.color(...args));
     this.updateShapeVertexProperties();
@@ -335,13 +378,13 @@ class Renderer {
   }
 
   getCommonVertexProperties() {
-    return {}
+    return {};
   }
 
   getSupportedIndividualVertexProperties() {
     return {
-      textureCoordinates: false,
-    }
+      textureCoordinates: false
+    };
   }
 
   updateShapeProperties(modified) {
@@ -355,7 +398,7 @@ class Renderer {
 
   updateShapeVertexProperties(modified) {
     const props = this.getCommonVertexProperties();
-    if (!modified || Object.keys(modified).some((k) => k in props)) {
+    if (!modified || Object.keys(modified).some(k => k in props)) {
       const shape = this.currentShape;
       for (const key in props) {
         shape[key](props[key]);
@@ -367,9 +410,32 @@ class Renderer {
     return this;
   }
 
-};
+  finishDraw() {
+    // Default no-op implementation
+    // Override in specific renderers as needed
+  }
 
-function renderer(p5, fn){
+  ///////////////////////////////
+  //// TEXT SUPPORT METHODS
+  //////////////////////////////
+
+  _middleAlignOffset = function () {
+    const { textFont, textSize } = this.states;
+    const font = textFont?.font;
+    const ctx = this.textDrawingContext();
+    const metrics = ctx.measureText('X');
+    let sCapHeight = (font?.data || {})['OS/2']?.sCapHeight;
+    if (sCapHeight) {
+      const unitsPerEm = font.data.head.unitsPerEm;
+      sCapHeight *= textSize / unitsPerEm;
+    } else {
+      sCapHeight = metrics.fontBoundingBoxAscent;
+    }
+    return metrics.alphabeticBaseline + sCapHeight / 2;
+  };
+}
+
+function renderer(p5, fn) {
   /**
    * Main graphics and rendering context, as well as the base API
    * implementation for p5.js "core". To be used as the superclass for
@@ -389,6 +455,7 @@ function renderer(p5, fn){
  * Adapted from http://stackoverflow.com/a/25355178
  * @private
  */
+/* oxlint-disable-next-line no-unused-vars */
 function calculateOffset(object) {
   let currentLeft = 0,
     currentTop = 0;

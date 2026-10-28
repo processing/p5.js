@@ -4,30 +4,79 @@ on:
   push:
     branches:
       - main
-      - dev-2.0
+      - stable
   pull_request:
     branches:
       - '*'
 
+permissions:
+  contents: read
+
 jobs:
   test:
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-26.04
+            browser: chrome
+          # - os: windows-latest
+          #   browser: chrome
+
+    runs-on: ${{ matrix.os }}
 
     steps:
-      - uses: actions/checkout@v1
-      - name: Use Node.js 20.x
-        uses: actions/setup-node@v1
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          node-version: 20.x
+          persist-credentials: false
+
+      - name: Use Node.js 22.x
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 22.x
+
+      - name: Verify Chrome (Ubuntu)
+        if: matrix.os == 'ubuntu-26.04' && matrix.browser == 'chrome'
+        run: |
+          google-chrome --version
+
+      - name: Verify Chrome (Windows)
+        if: matrix.os == 'windows-latest' && matrix.browser == 'chrome'
+        run: |
+          & "C:\Program Files\Google\Chrome\Application\chrome.exe" --version
+
       - name: Get node modules
         run: npm ci
         env:
           CI: true
-      - name: build and test
-        run: npm test
+
+      - name: Build and test (Ubuntu)
+        id: test
+        if: matrix.os == 'ubuntu-26.04'
+        run: npm test -- --project=unit-tests
+        continue-on-error: true
         env:
           CI: true
-      - name: report test coverage
-        run: bash <(curl -s https://codecov.io/bash) -f coverage/coverage-final.json
+
+      - name: Generate Visual Test Report
+        if: always()
+        run: node visual-report.js
         env:
           CI: true
+      - name: Upload Visual Test Report
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: visual-test-report
+          path: test/unit/visual/visual-report.html
+          retention-days: 14
+      - name: generate TypeScript types
+        run: npm run generate-types
+        env:
+          CI: true
+      - name: test TypeScript types
+        run: npm run test:types
+        env:
+          CI: true
+      - name: fail job if tests failed
+        if: steps.test.outcome != 'success'
+        run: exit 1
