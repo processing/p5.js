@@ -97,7 +97,7 @@ class p5 {
     // If the user has created a global setup or draw function,
     // assume "global" mode and make everything global (i.e. on the window)
     if (!sketch) {
-      if (typeof window.p5 !== 'undefined') {
+      if (typeof window._p5Instance !== 'undefined') {
         console.warn('p5.js appears to have been imported multiple times. This could cause errors.');
         return;
       }
@@ -107,7 +107,6 @@ class p5 {
         return;
       }
       p5.instance = this;
-      window.p5 = p5;
 
       // Loop through methods on the prototype and attach them to the window
       // All methods and properties with name starting with '_' will be skipped
