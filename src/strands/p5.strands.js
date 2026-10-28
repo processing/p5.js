@@ -125,6 +125,7 @@ function strands(p5, fn) {
     ctx.backend = backend;
     ctx.active = active;
     ctx.renderer = renderer;
+    ctx.baseShader = baseShader;
     ctx.previousFES = p5.disableFriendlyErrors;
     ctx.tempProps = [];
     ctx._noiseOctaves = null;
@@ -166,6 +167,7 @@ function strands(p5, fn) {
     ctx.backend = undefined;
     ctx.active = false;
     ctx.renderer = null;
+    ctx.baseShader = null;
     ctx.previousFES = p5.disableFriendlyErrors;
     ctx.tempProps = [];
     ctx._noiseOctaves = null;
