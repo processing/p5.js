@@ -555,6 +555,7 @@ class Renderer2D extends Renderer {
       const height = imgOrCol.height;
       this.drawingContext.clearRect(x, y, width, height);
       this.drawingContext.drawImage(imgOrCol.canvas, x, y, width, height);
+      this.drawingContext.restore();
     } else {
       let r = 0,
         g = 0,

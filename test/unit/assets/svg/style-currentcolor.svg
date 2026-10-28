@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" color="#e74c3c">
+  <rect x="0" y="0" width="200" height="200" fill="#c8c8c8"/>
+  <!-- stroke uses currentColor, which resolves from the svg color attribute -->
+  <circle cx="60"  cy="70"  r="40" fill="white" stroke="currentColor" stroke-width="3"/>
+  <rect   x="110" y="30"   width="60" height="80" fill="currentColor" opacity="0.7"/>
+  <!-- nested color override -->
+  <g color="#3498db">
+    <circle cx="100" cy="155" r="35" fill="white" stroke="currentColor" stroke-width="3"/>
+  </g>
+</svg>

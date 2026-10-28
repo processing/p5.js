@@ -39,6 +39,16 @@ suite('Validate Params', function () {
 
   afterAll(function () {});
 
+  suite('validateParams: loadModel', function () {
+    test('loadModel(): Boolean normalize argument', function () {
+      const result = mockP5Prototype._validate('p5.loadModel', [
+        'modellTest.obj',
+        true
+      ]);
+
+      assert.isTrue(result.success);
+    });
+  });
   suite(
     'validateParams: multiple types allowed for single parameter',
     function () {
@@ -188,6 +198,35 @@ suite('Validate Params', function () {
     });
   });
 
+    suite('validateParams: modes object for textureWrap()', function () {
+    test('textureWrap(): two constants', () => {
+      const result = mockP5Prototype._validate('p5.textureWrap', [
+        constants.REPEAT,
+        constants.MIRROR
+      ]);
+      assert.isTrue(result.success);
+    });
+
+    test('textureWrap(): modes object from the getter', () => {
+      const result = mockP5Prototype._validate('p5.textureWrap', [
+        { x: constants.REPEAT, y: constants.MIRROR }
+      ]);
+      assert.isTrue(result.success);
+    });
+
+    test('textureWrap(): no args', () => {
+      const result = mockP5Prototype._validate('p5.textureWrap', []);
+      assert.isTrue(result.success);
+    });
+
+    test('textureWrap(): invalid constant', () => {
+      const result = mockP5Prototype._validate('p5.textureWrap', [
+        'fake-constant'
+      ]);
+      assert.isFalse(result.success);
+    });
+  });
+
   suite('validateParams: promise where no promise is expected', function () {
     test('image(): promise for first argument', function () {
       const result = mockP5Prototype._validate('p5.image', [
@@ -197,7 +236,7 @@ suite('Validate Params', function () {
       ]);
       assert.equal(
         result.error.toString(),
-        'Did you mean to put `await` before a loading function? An unexpected Promise was found. Expected Image or Element or Texture or Framebuffer or FramebufferTexture or Renderer or Graphics at the first parameter in p5.image().'
+        'Did you mean to put `await` before a loading function? An unexpected Promise was found. Expected Image or Element or Texture or Framebuffer or FramebufferTexture or Renderer or Graphics at the first parameter, but received Promise in p5.image().'
       );
     });
   });

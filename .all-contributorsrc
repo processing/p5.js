@@ -5170,7 +5170,9 @@
         "eventOrganizing",
         "blog",
         "tutorial",
-        "video"
+        "video",
+        "bug",
+        "code"
       ]
     },
     {
@@ -7608,7 +7610,9 @@
       "avatar_url": "https://avatars.githubusercontent.com/u/186502464?v=4",
       "profile": "https://github.com/Danyccsf",
       "contributions": [
-        "test"
+        "test",
+        "bug",
+        "code"
       ]
     },
     {
@@ -7620,6 +7624,70 @@
         "code",
         "test",
         "bug"
+      ]
+    },
+    {
+      "login": "bhabishnu",
+      "name": "bhabishnu ",
+      "avatar_url": "https://avatars.githubusercontent.com/u/156663652?v=4",
+      "profile": "https://github.com/bhabishnu",
+      "contributions": [
+        "bug",
+        "code"
+      ]
+    },
+    {
+      "login": "shakeelmohamed",
+      "name": "Shakeel Mohamed",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1480063?v=4",
+      "profile": "https://github.com/shakeelmohamed",
+      "contributions": [
+        "test"
+      ]
+    },
+    {
+      "login": "michtesar",
+      "name": "Michael Tesař",
+      "avatar_url": "https://avatars.githubusercontent.com/u/16868864?v=4",
+      "profile": "https://github.com/michtesar",
+      "contributions": [
+        "test"
+      ]
+    },
+    {
+      "login": "Srinidhi444",
+      "name": "Srinidhi Kulkarni",
+      "avatar_url": "https://avatars.githubusercontent.com/u/174924896?v=4",
+      "profile": "https://github.com/Srinidhi444",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "BhumitSahani",
+      "name": "Bhumit",
+      "avatar_url": "https://avatars.githubusercontent.com/u/238242032?v=4",
+      "profile": "https://github.com/BhumitSahani",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "xsupremeyx",
+      "name": "Yash Mishra",
+      "avatar_url": "https://avatars.githubusercontent.com/u/86472828?v=4",
+      "profile": "https://github.com/xsupremeyx",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "supertj",
+      "name": "Super Lede",
+      "avatar_url": "https://avatars.githubusercontent.com/u/20788648?v=4",
+      "profile": "https://backupdrill.com",
+      "contributions": [
+        "doc"
       ]
     }
   ],
