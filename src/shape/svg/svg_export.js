@@ -287,12 +287,16 @@ export function SVGExportAddon(p5, fn, lifecycles) {
         this._currentOpacity = 1;
         return 'none';
       }
+      if (color === 'currentColor' || (typeof color === 'string' && color.toLowerCase() === 'currentcolor')) {
+        this._currentOpacity = 1;
+        return 'currentColor';
+      }
       const [, , , alpha] = color._getRGBA([255, 255, 255, 255]);
 
       this._currentOpacity = alpha / 255;
 
-          return color.toString('#rrggbb');
-      }
+      return color.toString('#rrggbb');
+    }
 
     _applyStyle(el) {
       const state = this.currentState;
@@ -941,14 +945,18 @@ export function SVGExportAddon(p5, fn, lifecycles) {
         p.applyMatrix(m.a, m.b, m.c, m.d, m.e, m.f);
       }
 
-      if (state.fill) {
+      if (state.fill === 'currentColor' || (typeof state.fill === 'string' && state.fill.toLowerCase() === 'currentcolor')) {
+        // Inherit active p5 fill: do not call fill() or noFill()
+      } else if (state.fill) {
         const [r, g, b, a] = state.fill._getRGBA([255, 255, 255, 255]);
         p.fill(r, g, b, a);
       } else {
         p.noFill();
       }
 
-      if (state.stroke) {
+      if (state.stroke === 'currentColor' || (typeof state.stroke === 'string' && state.stroke.toLowerCase() === 'currentcolor')) {
+        // Inherit active p5 stroke: do not call stroke() or noStroke()
+      } else if (state.stroke) {
         const [r, g, b, a] = state.stroke._getRGBA([255, 255, 255, 255]);
         p.stroke(r, g, b, a);
       } else {
