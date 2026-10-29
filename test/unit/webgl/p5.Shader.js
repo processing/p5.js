@@ -941,6 +941,21 @@ suite('p5.Shader', function () {
       assert.isArray(p5.prototype.paletteLerp.argTypes);
     });
 
+    test('paletteLerp() falls back to the CPU implementation outside of strands', () => {
+      myp5.colorMode(myp5.RGB);
+      const c = myp5.paletteLerp(
+        [
+          [myp5.color(255, 0, 0), 0],
+          [myp5.color(0, 0, 255), 1]
+        ],
+        0.5
+      );
+      assert.isDefined(c);
+      assert.closeTo(c._color.coords[0] * 255, 127.5, 1);
+      assert.closeTo(c._color.coords[1] * 255, 0, 1);
+      assert.closeTo(c._color.coords[2] * 255, 127.5, 1);
+    });
+
     test('arrays outside of argTypes arguments still become vectors', () => {
       myp5.createCanvas(5, 5, myp5.WEBGL);
       // More than 4 elements would be an error if this were a vector
@@ -4480,6 +4495,150 @@ suite('p5.Shader', function () {
         // Should break after 5 iterations: 5 * 0.1 = 0.5
         const pixelColor = myp5.get(25, 25);
         assert.approximately(pixelColor[0], 127, 5); // 0.5 * 255 ≈ 127
+      });
+
+      test('keep a value updated before break in a for loop', () => {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+
+        const testShader = myp5.baseMaterialShader().modify(
+          () => {
+            myp5.getPixelInputs(inputs => {
+              let c = 0;
+              for (let i = 0; i < 4; i++) {
+                c += 0.25;
+                if (i >= 1) break;
+              }
+              inputs.color = [c, 0, 0, 1];
+              return inputs;
+            });
+          },
+          { myp5 }
+        );
+
+        myp5.noStroke();
+        myp5.shader(testShader);
+        myp5.plane(myp5.width, myp5.height);
+
+        const pixelColor = myp5.get(25, 25);
+        assert.approximately(pixelColor[0], 127, 5);
+      });
+
+      test('keep a value assigned in the branch that breaks', () => {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+
+        const testShader = myp5.baseMaterialShader().modify(
+          () => {
+            myp5.getPixelInputs(inputs => {
+              let c = 0;
+              for (let i = 0; i < 4; i++) {
+                if (i >= 1) {
+                  c = 0.5;
+                  break;
+                }
+              }
+              inputs.color = [c, 0, 0, 1];
+              return inputs;
+            });
+          },
+          { myp5 }
+        );
+
+        myp5.noStroke();
+        myp5.shader(testShader);
+        myp5.plane(myp5.width, myp5.height);
+
+        const pixelColor = myp5.get(25, 25);
+        assert.approximately(pixelColor[0], 127, 5);
+      });
+
+      test('keep each loop value as it was at the break', () => {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+
+        const testShader = myp5.baseMaterialShader().modify(
+          () => {
+            myp5.getPixelInputs(inputs => {
+              let a = 0;
+              let b = 0;
+              for (let i = 0; i < 4; i++) {
+                b += 0.25;
+                if (i >= 2) break;
+                a += 0.25;
+              }
+              inputs.color = [a, b, 0, 1];
+              return inputs;
+            });
+          },
+          { myp5 }
+        );
+
+        myp5.noStroke();
+        myp5.shader(testShader);
+        myp5.plane(myp5.width, myp5.height);
+
+        const pixelColor = myp5.get(25, 25);
+        assert.approximately(pixelColor[0], 127, 5);
+        assert.approximately(pixelColor[1], 191, 5);
+      });
+
+      test('keep a value when an outer loop breaks after an inner loop', () => {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+
+        const testShader = myp5.baseMaterialShader().modify(
+          () => {
+            myp5.getPixelInputs(inputs => {
+              let c = 0;
+              for (let j = 0; j < 4; j++) {
+                for (let i = 0; i < 2; i++) {
+                  c += 0.125;
+                }
+                if (j >= 1) break;
+              }
+              inputs.color = [c, 0, 0, 1];
+              return inputs;
+            });
+          },
+          { myp5 }
+        );
+
+        myp5.noStroke();
+        myp5.shader(testShader);
+        myp5.plane(myp5.width, myp5.height);
+
+        const pixelColor = myp5.get(25, 25);
+        assert.approximately(pixelColor[0], 127, 5);
+      });
+
+      test('keep an outer value updated in the branch where an inner loop breaks', () => {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+
+        const testShader = myp5.baseMaterialShader().modify(
+          () => {
+            myp5.getPixelInputs(inputs => {
+              let c = 0;
+              let d = 0;
+              for (let j = 0; j < 2; j++) {
+                for (let i = 0; i < 4; i++) {
+                  c += 0.125;
+                  if (i >= 1) {
+                    d += 0.375;
+                    break;
+                  }
+                }
+              }
+              inputs.color = [c, d, 0, 1];
+              return inputs;
+            });
+          },
+          { myp5 }
+        );
+
+        myp5.noStroke();
+        myp5.shader(testShader);
+        myp5.plane(myp5.width, myp5.height);
+
+        const pixelColor = myp5.get(25, 25);
+        assert.approximately(pixelColor[0], 127, 5);
+        assert.approximately(pixelColor[1], 191, 5);
       });
 
       test('handle statements after for loop before return', () => {
