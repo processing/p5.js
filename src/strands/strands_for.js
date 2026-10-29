@@ -573,11 +573,15 @@ export class StrandsFor {
     if (stateScope) {
       stateScope.stackFloor = stackDepth;
     }
+    this.phiNodesForBody = phiNodesForBody;
+    const previousLoop = this.strandsContext.activeLoop;
+    this.strandsContext.activeLoop = this;
     try {
       this.bodyResults =
         this.runInLoopPhase('body', () => this.bodyCb(loopVarNode, phiVars)) ||
         {};
     } finally {
+      this.strandsContext.activeLoop = previousLoop;
       if (stateScope) {
         stateScope.stackFloor = previousFloor;
       }
@@ -599,10 +603,30 @@ export class StrandsFor {
         this.bodyResults[key]
       );
     }
-    this.phiNodesForBody = phiNodesForBody;
     // Capture the final block after body execution before popping
     this.finalBodyBlock = cfg.currentBlock;
     CFG.popBlock(cfg);
+  }
+
+  // Called by break, which skips the end-of-body writes.
+  commitCarriedValues(values) {
+    const cfg = this.strandsContext.cfg;
+    for (const [varName, value] of Object.entries(values)) {
+      const phiNode = this.phiNodesForBody[varName];
+      if (!phiNode) continue;
+      const assignmentID = DAG.getOrCreateNode(
+        this.strandsContext.dag,
+        DAG.createNodeData({
+          nodeType: NodeType.ASSIGNMENT,
+          dependsOn: [
+            phiNode.id,
+            this.strandsContext.p5.strandsNode(value).id
+          ],
+          phiBlocks: []
+        })
+      );
+      CFG.recordInBasicBlock(cfg, cfg.currentBlock, assignmentID);
+    }
   }
 
   loopIsBounded(initialVar, conditionNode, updateVar) {

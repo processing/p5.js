@@ -67,6 +67,7 @@ function strands(p5, fn) {
    * @property {Object} stateScope Helper records and stack for the active hook, or `null`.
    * @property {Number} conditionalDepth Current if/else nesting depth.
    * @property {String} loopPhase Current loop phase: `'header'`, `'body'` or `null`.
+   * @property {Object} activeLoop Innermost `StrandsFor` whose body is being recorded, or `null`.
    * @property {String} expressionOperand Current guarded expression operator, or `null`.
    * @property {Object} failedHook First hook failure, `{ hookName, thrown }`, or `null`.
    * @property {Boolean} _instanceIDUsedInFragment Whether fragment code needs `instanceID` from the vertex shader.
@@ -138,6 +139,7 @@ function strands(p5, fn) {
     ctx.failedHook = null;
     ctx.conditionalDepth = 0;
     ctx.loopPhase = null;
+    ctx.activeLoop = null;
     ctx.expressionOperand = null;
     ctx._instanceIDUsedInFragment = false;
     // Experimental subject areas used inside the callback, warned about once
@@ -180,6 +182,7 @@ function strands(p5, fn) {
     ctx.failedHook = null;
     ctx.conditionalDepth = 0;
     ctx.loopPhase = null;
+    ctx.activeLoop = null;
     ctx.expressionOperand = null;
     ctx._instanceIDUsedInFragment = false;
     ctx.experimentalFeaturesUsed = new Set();
