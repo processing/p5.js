@@ -18,6 +18,7 @@ let documentationData = dataDoc;
 function validateParams(p5, fn, lifecycles) {
   // Cache for Zod schemas
   let schemaRegistry = new Map();
+  let strandsSchemaRegistry = new Map();
 
   // Mapping names of p5 types to their constructor functions.
   // p5Constructors:
@@ -200,6 +201,17 @@ function validateParams(p5, fn, lifecycles) {
       // For primitive types and web API objects.
       else if (schemaMap[baseType]) {
         typeSchema = schemaMap[baseType];
+        if (
+          p5._isStrandsContextActive &&
+          ['Number', 'Integer', 'Boolean', 'String'].includes(baseType)
+        ) {
+          typeSchema = z.union([
+            typeSchema,
+            z.custom(val => val && val.isStrandsNode, {
+              message: 'Expected StrandsNode'
+            })
+          ]);
+        }
       }
       // Tuple types
       else if (
@@ -572,7 +584,7 @@ function validateParams(p5, fn, lifecycles) {
         errorStackParser.parse(Error()).slice(3)
       );
       const locationStr = getFriendlyStack(stacktrace, true);
-      FES.log`${locationStr} ${message}`();
+      FES.log`${locationStr ? locationStr + ' ' : ''}${message}`();
     }
     return message;
   };
@@ -615,11 +627,21 @@ function validateParams(p5, fn, lifecycles) {
       };
     }
 
-    let funcSchemas = schemaRegistry.get(func);
+    let activeRegistry = p5._isStrandsContextActive ? strandsSchemaRegistry : schemaRegistry;
+    let funcSchemas = activeRegistry.get(func);
+    
     if (!funcSchemas) {
-      funcSchemas = generateZodSchemasForFunc(func);
+      // Check _strandsSignatures for explicit bypass entries (value === true)
+      // that only apply inside an active strands context.
+      if (p5._isStrandsContextActive && p5._strandsSignatures?.has(func)) {
+        funcSchemas = z.any();
+      }
+      
+      if (!funcSchemas) {
+        funcSchemas = generateZodSchemasForFunc(func);
+      }
       if (!funcSchemas) return;
-      schemaRegistry.set(func, funcSchemas);
+      activeRegistry.set(func, funcSchemas);
     }
 
     if (z.validate(funcSchemas, args)) {
