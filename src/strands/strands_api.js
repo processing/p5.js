@@ -1179,8 +1179,11 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
     );
     return createStrandsNode(id, dimension, strandsContext);
   });
+  const originalPaletteLerp = fn.paletteLerp;
   augmentFn(fn, p5, 'paletteLerp', function(stopsNode, tNode) {
-    if (!strandsContext.active) return;
+    if (!strandsContext.active) {
+      return originalPaletteLerp.apply(this, arguments);
+    }
 
     if (!Array.isArray(stopsNode)) {
       throw new Error(
