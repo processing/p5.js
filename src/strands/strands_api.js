@@ -408,8 +408,9 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
       );
     }
   }
-  augmentFn(fn, p5, 'break', function () {
+  augmentFn(fn, p5, 'break', function (carriedValues = {}) {
     rejectLoopExitWithHelpers('break');
+    strandsContext.activeLoop?.commitCarriedValues(carriedValues);
     build.statementNode(strandsContext, StatementType.BREAK);
   });
   p5.break = fn.break;
