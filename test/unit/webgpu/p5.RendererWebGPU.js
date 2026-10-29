@@ -711,6 +711,123 @@ suite('WebGPU p5.RendererWebGPU', function () {
     });
   });
 
+  suite('Storage element type check', function () {
+    let spy;
+
+    // Only count the element type warning, not other friendly errors
+    const typeWarnings = () =>
+      spy.mock.calls.filter(([msg]) => String(msg).includes('is declared as'));
+
+    const atomicShader = () =>
+      myp5.buildComputeShader({
+        computeDeclarations: `
+          @group(0) @binding(1) var<storage, read_write> counts: array<atomic<u32>>;
+        `,
+        'void iteration': `(index: vec3<i32>) {
+          atomicAdd(&counts[index.x], 5u);
+        }`
+      });
+
+    beforeEach(function () {
+      spy = vi.spyOn(p5, '_friendlyError').mockImplementation(() => {});
+    });
+
+    afterEach(function () {
+      spy.mockRestore();
+    });
+
+    test('parses the element type out of array<atomic<u32>>', function () {
+      const buf = myp5.createStorage(new Uint32Array([10, 20, 30, 40]));
+      const shader = atomicShader();
+      shader.setUniform('counts', buf);
+      myp5.compute(shader, 4);
+
+      const parsed = shader._storageBuffersByName.counts;
+      expect(parsed.elementType).to.equal('atomic<u32>');
+      expect(parsed.expectedArrayType).to.equal(Uint32Array);
+    });
+
+    test('warns once when a Float32Array is bound to array<atomic<u32>>', function () {
+      const buf = myp5.createStorage(new Float32Array([1, 2, 3, 4]));
+      const shader = atomicShader();
+      shader.setUniform('counts', buf);
+      myp5.compute(shader, 4);
+      myp5.compute(shader, 4);
+
+      const warnings = typeWarnings();
+      expect(warnings).to.have.length(1);
+      expect(warnings[0][0]).to.contain('array<atomic<u32>>');
+      expect(warnings[0][0]).not.to.contain('array<array<');
+      expect(warnings[0][0]).to.contain('Uint32Array');
+    });
+
+    test('does not warn when a Uint32Array is bound to array<atomic<u32>>', async function () {
+      const buf = myp5.createStorage(new Uint32Array([10, 20, 30, 40]));
+      const shader = atomicShader();
+      shader.setUniform('counts', buf);
+      myp5.compute(shader, 4);
+
+      const result = await buf.read();
+      expect(typeWarnings()).to.have.length(0);
+      expect(Array.from(result)).to.deep.equal([15, 25, 35, 45]);
+    });
+
+    test('does not warn for a p5.strands float buffer', function () {
+      const buf = myp5.createStorage(new Float32Array([1, 2, 3, 4]));
+      const shader = myp5.buildComputeShader(
+        () => {
+          const d = myp5.uniformStorage();
+          d[myp5.index.x] = d[myp5.index.x] * 2;
+        },
+        { myp5 }
+      );
+      shader.setUniform('d', buf);
+      myp5.compute(shader, 4);
+
+      expect(shader._storageBuffersByName.d.elementType).to.equal('f32');
+      expect(typeWarnings()).to.have.length(0);
+    });
+
+    test('does not throw or warn for a StorageList drawn with instances()', async function () {
+      myp5.pixelDensity(1);
+      const list = myp5.createStorageList(5);
+      list.push(0.0);
+      const shader = myp5.buildMaterialShader(
+        () => {
+          const l = myp5.uniformStorage('l', list);
+          myp5.worldInputs.begin();
+          myp5.worldInputs.position.x += l[myp5.instanceIndex];
+          myp5.worldInputs.end();
+        },
+        { myp5, list }
+      );
+
+      myp5.background(0);
+      myp5.noStroke();
+      myp5.fill(255);
+      myp5.shader(shader);
+      myp5.instances(list).rect(-10, -10, 20, 20);
+
+      const pixel = await myp5.get(25, 25);
+      expect(pixel[0]).to.equal(255);
+      expect(typeWarnings()).to.have.length(0);
+    });
+
+    test('does not warn for a StorageList in a compute shader', function () {
+      const list = myp5.createStorageList(10);
+      const shader = myp5.buildComputeShader(
+        () => {
+          const l = myp5.uniformStorage('l', list);
+          l.push(1.0);
+        },
+        { myp5, list }
+      );
+      myp5.compute(shader, 4);
+
+      expect(typeWarnings()).to.have.length(0);
+    });
+  });
+
   suite('p5.strands', function () {
     test('a uniform whose name matches a hook parameter name does not break', async function () {
       myp5.pixelDensity(1);
