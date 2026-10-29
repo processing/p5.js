@@ -523,18 +523,15 @@ function material(p5, fn) {
       const fragString = await fragSrc.join('\n');
 
       // Test if we've loaded GLSL or not by checking for the existence of `void main`
-      let loadedShader;
-      if (/void\s+main/.exec(fragString)) {
-        loadedShader = this._internal(() =>
-          this.createFilterShader(fragString, true)
-        );
-      } else {
-        loadedShader = this._internal(() =>
-          withGlobalStrands(this, () =>
-            this.baseFilterShader().modify(new Function(fragString))
-          )
-        );
-      }
+      const build = /void\s+main/.exec(fragString)
+        ? () => this.createFilterShader(fragString, true)
+        : () =>
+            withGlobalStrands(this, () =>
+              this.baseFilterShader().modify(new Function(fragString))
+            );
+
+      // _internal() is provided by FES, which is not included in p5.min.js
+      let loadedShader = this._internal ? this._internal(build) : build();
 
       if (successCallback) {
         loadedShader = successCallback(loadedShader) || loadedShader;
@@ -1637,9 +1634,9 @@ function material(p5, fn) {
   fn.loadMaterialShader = async function (url, onSuccess, onFail) {
     try {
       const cb = await urlToStrandsCallback(url);
-      let shader = this._internal(() =>
-        withGlobalStrands(this, () => this.buildMaterialShader(cb))
-      );
+      const build = () =>
+        withGlobalStrands(this, () => this.buildMaterialShader(cb));
+      let shader = this._internal ? this._internal(build) : build();
       if (onSuccess) {
         shader = onSuccess(shader) || shader;
       }
@@ -1857,9 +1854,9 @@ function material(p5, fn) {
   fn.loadNormalShader = async function (url, onSuccess, onFail) {
     try {
       const cb = await urlToStrandsCallback(url);
-      let shader = this._internal(() =>
-        this.withGlobalStrands(this, () => this.buildNormalShader(cb))
-      );
+      const build = () =>
+        withGlobalStrands(this, () => this.buildNormalShader(cb));
+      let shader = this._internal ? this._internal(build) : build();
       if (onSuccess) {
         shader = onSuccess(shader) || shader;
       }
@@ -2022,9 +2019,9 @@ function material(p5, fn) {
   fn.loadColorShader = async function (url, onSuccess, onFail) {
     try {
       const cb = await urlToStrandsCallback(url);
-      let shader = this._internal(() =>
-        withGlobalStrands(this, () => this.buildColorShader(cb))
-      );
+      const build = () =>
+        withGlobalStrands(this, () => this.buildColorShader(cb));
+      let shader = this._internal ? this._internal(build) : build();
       if (onSuccess) {
         shader = onSuccess(shader) || shader;
       }
@@ -2285,9 +2282,9 @@ function material(p5, fn) {
   fn.loadStrokeShader = async function (url, onSuccess, onFail) {
     try {
       const cb = await urlToStrandsCallback(url);
-      let shader = this._internal(() =>
-        withGlobalStrands(this, () => this.buildStrokeShader(cb))
-      );
+      const build = () =>
+        withGlobalStrands(this, () => this.buildStrokeShader(cb));
+      let shader = this._internal ? this._internal(build) : build();
       if (onSuccess) {
         shader = onSuccess(shader) || shader;
       }
@@ -3186,6 +3183,28 @@ function material(p5, fn) {
     }
   };
 
+    const VALID_WRAP_MODES = [
+    constants.CLAMP,
+    constants.REPEAT,
+    constants.MIRROR
+  ];
+
+  // Warns once per sketch if a wrap mode isn't one of the three constants.
+  // Non-blocking: the value is still stored, and an unrecognised mode
+  // continues to fall back to CLAMP in the renderer.
+  function warnInvalidWrapMode(pInst, value, paramName) {
+    if (p5.disableFriendlyErrors) return;
+    if (VALID_WRAP_MODES.includes(value)) return;
+    if (pInst._textureWrapWarned) return;
+
+    pInst._textureWrapWarned = true;
+    p5._friendlyError(
+      `textureWrap() expects CLAMP, REPEAT, or MIRROR, but received ` +
+        `${value} for ${paramName}. The texture will fall back to CLAMP.`,
+      'textureWrap'
+    );
+  }
+
   /**
    * Changes the way textures behave when a shape’s uv coordinates go beyond the
    * texture.
@@ -3285,7 +3304,8 @@ function material(p5, fn) {
    * Note: `textureWrap()` can only be used in WebGL mode.
    *
    * Calling `textureWrap()` with no arguments returns an object with the current
-   * mode for x and y directions, as in `{ wrapX: CLAMP, wrapY: REPEAT }`.
+   * mode for x and y directions, as in `{ x: CLAMP, y: REPEAT }`. That object can
+   * be passed straight back into `textureWrap()` to restore both modes.
    *
    * @method textureWrap
    * @param {(CLAMP|REPEAT|MIRROR)} wrapX either CLAMP, REPEAT, or MIRROR
@@ -3442,6 +3462,13 @@ function material(p5, fn) {
    *   endShape();
    * }
    */
+    /**
+   * @method textureWrap
+   * @param {Object} modes an object with `x` and `y` properties holding wrap
+   *                       modes, as returned by calling `textureWrap()` with
+   *                       no arguments
+   * @chainable
+   */
   /**
    * @method textureWrap
    * @return {{x: (CLAMP|REPEAT|MIRROR), y: (CLAMP|REPEAT|MIRROR)}} The current texture wrapping for x and y.
@@ -3455,10 +3482,18 @@ function material(p5, fn) {
       };
     }
     // accept what is returned from the getter
-    if (wrapX.hasOwnProperty('x') && wrapX.hasOwnProperty('y')) {
-      wrapX = wrapX.x;
-      wrapY = wrapX.y;
+    if (
+      wrapX !== null &&
+      typeof wrapX === 'object' &&
+      Object.hasOwn(wrapX, 'x') &&
+      Object.hasOwn(wrapX, 'y')
+    ) {
+      ({ x: wrapX, y: wrapY } = wrapX);
     }
+
+    warnInvalidWrapMode(this, wrapX, 'wrapX');
+    warnInvalidWrapMode(this, wrapY, 'wrapY');
+
     this._renderer.states.setValue('textureWrapX', wrapX);
     this._renderer.states.setValue('textureWrapY', wrapY);
 

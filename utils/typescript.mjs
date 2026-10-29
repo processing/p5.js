@@ -134,6 +134,9 @@ function processStrandsFunctions() {
         typeAliases.push('Texture');
       } else if (/^vec/.test(typeInfo.fnName)) {
         typeAliases.push(pascalTypeName.replace('Vec', 'Vector'));
+      } else if (/^mat\dx\d$/.test(typeInfo.fnName)) {
+        // mat3x3 -> Mat3, so uniformMat3() works alongside uniformMat3x3()
+        typeAliases.push(pascalTypeName.slice(0, 4));
       }
     }
 
