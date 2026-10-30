@@ -19,18 +19,20 @@ function environment(p5, fn, lifecycles) {
   const windowPrint = isBrowser ? window.print : null;
   let windowPrintDisabled = false;
 
-  lifecycles.presetup = function () {
-    const events = ['resize'];
+  if (lifecycles) {
+    lifecycles.presetup = function () {
+      const events = ['resize'];
 
-    if (isBrowser) {
-      for (const event of events) {
-        window.addEventListener(event, this[`_on${event}`].bind(this), {
-          passive: false,
-          signal: this._removeSignal
-        });
+      if (isBrowser) {
+        for (const event of events) {
+          window.addEventListener(event, this[`_on${event}`].bind(this), {
+            passive: false,
+            signal: this._removeSignal
+          });
+        }
       }
-    }
-  };
+    };
+  }
 
   /**
    * Displays text in the web browser's console.
