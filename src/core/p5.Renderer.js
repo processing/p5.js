@@ -375,6 +375,66 @@ class Renderer extends p5.Element {
           );
           y += p.textLeading();
         }
+      } else if (
+        textWrapStyle === constants.PRETTY ||
+        textWrapStyle === constants.BALANCE
+      ) {
+        const nlines = [];
+        for (let lineIndex = 0; lineIndex < lines.length; lineIndex++) {
+          const wordsArr = lines[lineIndex]
+            .split(' ')
+            .filter(s => s.length > 0);
+          const spaceW = this.textWidth(' ');
+          const N = wordsArr.length;
+          const widths = wordsArr.map(s => this.textWidth(s));
+          const dp = new Array(N + 1).fill(Infinity);
+          const next = new Array(N + 1).fill(-1);
+          dp[N] = 0;
+          for (let i = N - 1; i >= 0; i--) {
+            let sum = 0;
+            for (let j = i; j < N; j++) {
+              sum += widths[j];
+              const gaps = j - i;
+              const total = sum + gaps * spaceW;
+              if (total > maxWidth) break;
+              const slack = maxWidth - total;
+              const cost = (j === N - 1 ? 0 : slack * slack) + dp[j + 1];
+              if (cost < dp[i]) {
+                dp[i] = cost;
+                next[i] = j + 1;
+              }
+            }
+          }
+          let i = 0;
+          while (i < N) {
+            const j = next[i] > 0 ? next[i] : i + 1;
+            nlines.push(wordsArr.slice(i, j).join(' '));
+            i = j;
+          }
+        }
+
+        let offset = 0;
+        if (this._textBaseline === constants.CENTER) {
+          offset = (nlines.length - 1) * p.textLeading() / 2;
+        } else if (this._textBaseline === constants.BOTTOM) {
+          offset = (nlines.length - 1) * p.textLeading();
+        }
+
+        for (let i = 0; i < nlines.length; i++) {
+          this._justifyActive = this._textAlign === constants.JUSTIFIED;
+          this._justifyWidth = maxWidth;
+          this._justifyIsLastLine = i === nlines.length - 1;
+          this._renderText(
+            p,
+            nlines[i],
+            x,
+            y - offset,
+            finalMaxHeight,
+            finalMinHeight
+          );
+          this._justifyActive = false;
+          y += p.textLeading();
+        }
       } else {
         let nlines = [];
         for (let lineIndex = 0; lineIndex < lines.length; lineIndex++) {
