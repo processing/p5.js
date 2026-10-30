@@ -747,6 +747,94 @@ function material(p5, fn) {
   p5.registerDecorator('p5.prototype.buildFilterShader', markExperimental('p5.strands', p5));
 
   /**
+   * Creates a <a href="#/p5.Shader">p5.Shader</a> that colors every pixel of
+   * the canvas based on its coordinates, to be used with
+   * <a href="#/p5/colorField">`colorField()`</a>.
+   *
+   * Use it for things like gradients, noise and warping, where each pixel's
+   * color depends on where it is rather than on what was already drawn.
+   * Unlike a filter, a color field doesn't read the existing canvas.
+   *
+   * Pass a function that uses p5.strands. Inside it, call `field.begin()`,
+   * read the pixel's normalized position from `field.texCoord`, assign the
+   * resulting color to `field.color`, then call `field.end()`.
+   *
+   * ```js
+   * let myField;
+   *
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *   myField = buildColorFieldShader(gradient);
+   * }
+   *
+   * function gradient() {
+   *   field.begin();
+   *   field.color = [field.texCoord, 0, 1];
+   *   field.end();
+   * }
+   *
+   * function draw() {
+   *   colorField(myField);
+   * }
+   * ```
+   *
+   * @method buildColorFieldShader
+   * @beta
+   * @submodule p5.strands
+   * @param {Function} callback A function building a p5.strands shader.
+   * @param {Object} [scope] An optional scope object passed to .modify().
+   * @returns {p5.Shader} The color field shader.
+   */
+  fn.buildColorFieldShader = function (callback, scope) {
+    this._assert3d('buildColorFieldShader');
+    return this._renderer.baseColorFieldShader().modify(callback, scope);
+  };
+  p5.registerDecorator('p5.prototype.buildColorFieldShader', markExperimental('p5.strands', p5));
+
+  /**
+   * Fills the whole canvas, or the active
+   * <a href="#/p5.Framebuffer">p5.Framebuffer</a>, using a color field shader
+   * made with <a href="#/p5/buildColorFieldShader">`buildColorFieldShader()`</a>.
+   *
+   * The field is drawn independently of the camera and any transformations.
+   * It follows the current <a href="#/p5/blendMode">`blendMode()`</a>, so
+   * fields that use transparency can be layered. Geometry drawn afterwards is
+   * not affected by the field's depth.
+   *
+   * @method colorField
+   * @beta
+   * @param {p5.Shader} fieldShader A shader made with `buildColorFieldShader()`.
+   *
+   * @example
+   * <div>
+   * <code>
+   * let myField;
+   *
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *   myField = buildColorFieldShader(gradient);
+   *   describe('A gradient that is black at the top left, red at the top right, green at the bottom left and yellow at the bottom right.');
+   * }
+   *
+   * function gradient() {
+   *   field.begin();
+   *   field.color = [field.texCoord, 0, 1];
+   *   field.end();
+   * }
+   *
+   * function draw() {
+   *   colorField(myField);
+   * }
+   * </code>
+   * </div>
+   */
+  fn.colorField = function (fieldShader) {
+    this._assert3d('colorField');
+    this._renderer.colorField(fieldShader);
+    return this;
+  };
+
+  /**
    * Creates a <a href="#/p5.Shader">p5.Shader</a> object to be used with the
    * <a href="#/p5/filter">filter()</a> function using GLSL.
    *
