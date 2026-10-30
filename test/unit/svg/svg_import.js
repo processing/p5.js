@@ -1314,3 +1314,160 @@ suite('Path parser — T and S fallback (no preceding matching command)', functi
     assert.closeTo(bv[0].y, 0, 0.001);
   });
 });
+
+suite('currentColor inheritance during import', function () {
+  test('fill="currentColor" without ancestor color retains "currentColor" marker', function () {
+    const record = createSVG(`
+      <svg xmlns="http://www.w3.org/2000/svg">
+        <circle cx="50" cy="50" r="40" fill="currentColor"/>
+      </svg>
+    `);
+    const node = firstChild(record);
+    assert.strictEqual(node.state.fill, 'currentColor');
+  });
+
+  test('stroke="currentColor" without ancestor color retains "currentColor" marker', function () {
+    const record = createSVG(`
+      <svg xmlns="http://www.w3.org/2000/svg">
+        <circle cx="50" cy="50" r="40" stroke="currentColor"/>
+      </svg>
+    `);
+    const node = firstChild(record);
+    assert.strictEqual(node.state.stroke, 'currentColor');
+  });
+
+  test('fill="currentColor" in inline style retains "currentColor" marker', function () {
+    const record = createSVG(`
+      <svg xmlns="http://www.w3.org/2000/svg">
+        <rect x="0" y="0" width="20" height="20" style="fill: currentColor;"/>
+      </svg>
+    `);
+    const node = firstChild(record);
+    assert.strictEqual(node.state.fill, 'currentColor');
+  });
+
+  test('fill="currentColor" resolves to ancestor color attribute when present', function () {
+    const record = createSVG(`
+      <svg xmlns="http://www.w3.org/2000/svg" color="#e74c3c">
+        <rect x="0" y="0" width="20" height="20" fill="currentColor"/>
+      </svg>
+    `);
+    const node = firstChild(record);
+    assert.isNotNull(node.state.fill);
+    assert.notStrictEqual(node.state.fill, 'currentColor');
+    assert.strictEqual(node.state.fill._src, '#e74c3c');
+  });
+
+  test('stroke="currentColor" resolves to nested ancestor color override', function () {
+    const record = createSVG(`
+      <svg xmlns="http://www.w3.org/2000/svg" color="#e74c3c">
+        <g color="#3498db">
+          <circle cx="50" cy="50" r="20" stroke="currentColor"/>
+        </g>
+      </svg>
+    `);
+    // Scope -> Scope -> ShapeNode
+    const gScope = record.children[0];
+    const node = gScope.children[0];
+    assert.isNotNull(node.state.stroke);
+    assert.notStrictEqual(node.state.stroke, 'currentColor');
+    assert.strictEqual(node.state.stroke._src, '#3498db');
+  });
+
+  test('unspecified fill defaults to black, unspecified stroke defaults to null', function () {
+    const record = createSVG(`
+      <svg xmlns="http://www.w3.org/2000/svg">
+        <rect x="0" y="0" width="20" height="20"/>
+      </svg>
+    `);
+    const node = firstChild(record);
+    assert.isNotNull(node.state.fill);
+    assert.notStrictEqual(node.state.fill, 'currentColor');
+    assert.strictEqual(node.state.fill._src, 'rgb(0, 0, 0)');
+    assert.isNull(node.state.stroke);
+  });
+
+  test('explicit fill and stroke overrides are preserved', function () {
+    const record = createSVG(`
+      <svg xmlns="http://www.w3.org/2000/svg">
+        <rect x="0" y="0" width="20" height="20" fill="blue" stroke="red"/>
+      </svg>
+    `);
+    const node = firstChild(record);
+    assert.strictEqual(node.state.fill._src, 'blue');
+    assert.strictEqual(node.state.stroke._src, 'red');
+  });
+
+  test('color attribute on the same element resolves currentColor', function () {
+    const record = createSVG(`
+      <svg xmlns="http://www.w3.org/2000/svg">
+        <circle cx="50" cy="50" r="40" color="blue" fill="currentColor"/>
+      </svg>
+    `);
+    const node = firstChild(record);
+    assert.isNotNull(node.state.fill);
+    assert.notStrictEqual(node.state.fill, 'currentColor');
+    assert.strictEqual(node.state.fill._src, 'blue');
+  });
+
+  test('color in inline style on the same element resolves currentColor', function () {
+    const record = createSVG(`
+      <svg xmlns="http://www.w3.org/2000/svg">
+        <circle cx="50" cy="50" r="40" style="color: green; fill: currentColor;"/>
+      </svg>
+    `);
+    const node = firstChild(record);
+    assert.isNotNull(node.state.fill);
+    assert.notStrictEqual(node.state.fill, 'currentColor');
+    assert.strictEqual(node.state.fill._src, 'green');
+  });
+
+  test('child element color overrides parent color for currentColor', function () {
+    const record = createSVG(`
+      <svg xmlns="http://www.w3.org/2000/svg" color="red">
+        <circle cx="50" cy="50" r="40" color="blue" fill="currentColor"/>
+      </svg>
+    `);
+    const node = firstChild(record);
+    assert.strictEqual(node.state.fill._src, 'blue');
+  });
+
+  test('deeply nested groups inherit ancestor color without redeclaring', function () {
+    const record = createSVG(`
+      <svg xmlns="http://www.w3.org/2000/svg" color="purple">
+        <g>
+          <g>
+            <circle cx="50" cy="50" r="40" fill="currentColor"/>
+          </g>
+        </g>
+      </svg>
+    `);
+    const outerGroup = record.children[0];
+    const innerGroup = outerGroup.children[0];
+    const node = innerGroup.children[0];
+    assert.strictEqual(node.state.fill._src, 'purple');
+  });
+
+  test('independent fill and stroke markers on the same shape', function () {
+    const record = createSVG(`
+      <svg xmlns="http://www.w3.org/2000/svg">
+        <circle cx="50" cy="50" r="40" fill="currentColor" stroke="black"/>
+        <rect x="0" y="0" width="10" height="10" fill="yellow" stroke="currentColor"/>
+        <line x1="0" y1="0" x2="10" y2="10" fill="currentColor" stroke="currentColor"/>
+      </svg>
+    `);
+    const circle = record.children[0];
+    const rect = record.children[1];
+    const line = record.children[2];
+
+    assert.strictEqual(circle.state.fill, 'currentColor');
+    assert.strictEqual(circle.state.stroke._src, 'black');
+
+    assert.strictEqual(rect.state.fill._src, 'yellow');
+    assert.strictEqual(rect.state.stroke, 'currentColor');
+
+    assert.strictEqual(line.state.fill, 'currentColor');
+    assert.strictEqual(line.state.stroke, 'currentColor');
+  });
+});
+

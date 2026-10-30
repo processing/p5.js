@@ -330,7 +330,7 @@ class RenderContext {
       this.strokeOpacity = 1;
       this.visibility = "visible";
       this.display = "inline";
-      this.color = "rgb(0, 0, 0)";
+      this.color = null;
       //todo future properties like blendMode, etc.
     }
   }
@@ -396,9 +396,10 @@ export function SVGImportAddon(p5, fn, lifecycles) {
       }
       let parsedColor = colorStr.trim();
       if (parsedColor.toLowerCase() === "currentcolor") {
-        parsedColor = context.color || "rgb(0, 0, 0)";
-        if (parsedColor.toLowerCase() === "currentcolor") {
-          parsedColor = "rgb(0, 0, 0)";
+        if (context.color) {
+          parsedColor = context.color;
+        } else {
+          return "currentColor";
         }
       }
       try {
