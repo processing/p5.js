@@ -567,7 +567,7 @@ export class Renderer3D extends Renderer {
 
   model(model, count) {
     count = count ?? this._instanceCount ?? 1;
-    if (model.vertices.length > 0) {
+    if (model.vertices.length > 0 ||  model.parts.some(part => part.vertices.length > 0)) {
       if (this.geometryBuilder) {
         this.geometryBuilder.addRetained(model);
       } else {
@@ -605,7 +605,6 @@ export class Renderer3D extends Renderer {
 
     if (
       this.states.fillColor &&
-      geometry.vertices.length >= 3 &&
       ![constants.LINES, constants.POINTS].includes(mode)
     ) {
       // draw every part. a geometry always has at least one part (the
@@ -613,6 +612,7 @@ export class Renderer3D extends Renderer {
       // fallback is needed. a part with no material state draws straight;
       // multi-material parts apply their own material around the draw.
       for (const part of geometry.parts) {
+        if (part.vertices.length < 3) continue;
         const state = part.partState;
         // fill/ambientColor/specularColor are arrays and texture is a p5.Image,
         // so they're truthy when set; shininess is a number where 0 is valid.

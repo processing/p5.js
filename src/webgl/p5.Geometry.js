@@ -16,10 +16,13 @@ import {
 import { Vector } from '../math/p5.Vector';
 import { downloadFile } from '../io/utilities';
 
-class Geometry {
+class Geometry extends GeometryPart {
   constructor(detailX, detailY, callback, renderer) {
+    super(
+      `_p5_Geometry_${Geometry.nextId++}`,
+      createPartState()
+    );
     this.renderer = renderer;
-    this.vertices = [];
 
     this.boundingBoxCache = null;
 
@@ -40,42 +43,20 @@ class Geometry {
     // represents. See the doc comments for _addCap and _addJoin for diagrams.
     this.lineSides = new DataArray();
 
-    this.vertexNormals = [];
-
-    // per-vertex surface tangents for normal mapping, stored flat as
-    // [x, y, z, w] where w is the bitangent handedness. computeTangents() fills
-    // this; empty until a normal-mapped model needs it.
-    this.vertexTangents = [];
-
-    this.faces = [];
-
-    this.uvs = [];
     // a 2D array containing edge connectivity pattern for create line vertices
     //based on faces for most objects;
     this.edges = [];
-    this.vertexColors = [];
 
     // One color per vertex representing the stroke color at that vertex
     this.vertexStrokeColors = [];
-
-    this.userVertexProperties = {};
 
     // One color per line vertex, generated automatically based on
     // vertexStrokeColors in _edgesToVertices()
     this.lineVertexColors = new DataArray();
     this.detailX = detailX !== undefined ? detailX : 1;
     this.detailY = detailY !== undefined ? detailY : 1;
-    this.dirtyFlags = {};
 
-    this._hasFillTransparency = undefined;
     this._hasStrokeTransparency = undefined;
-
-    this.gid = `_p5_Geometry_${Geometry.nextId}`;
-    Geometry.nextId++;
-
-    // a geometry can act as its own single part: this is the default material
-    // state used when it is drawn that way (see _wrapInSinglePart).
-    this.partState = createPartState();
 
     // every geometry is one or more parts (see p5.GeometryPart). loaders that
     // know about materials fill parts themselves; anything built the old way
@@ -270,18 +251,6 @@ class Geometry {
     this.dirtyFlags = {};
   }
 
-  hasFillTransparency() {
-    if (this._hasFillTransparency === undefined) {
-      this._hasFillTransparency = false;
-      for (let i = 0; i < this.vertexColors.length; i += 4) {
-        if (this.vertexColors[i + 3] < 1) {
-          this._hasFillTransparency = true;
-          break;
-        }
-      }
-    }
-    return this._hasFillTransparency;
-  }
   hasStrokeTransparency() {
     if (this._hasStrokeTransparency === undefined) {
       this._hasStrokeTransparency = false;
@@ -879,27 +848,7 @@ class Geometry {
     return this;
   }
 
-  _getFaceNormal(faceId) {
-    //This assumes that vA->vB->vC is a counter-clockwise ordering
-    const face = this.faces[faceId];
-    const vA = this.vertices[face[0]];
-    const vB = this.vertices[face[1]];
-    const vC = this.vertices[face[2]];
-    const ab = Vector.sub(vB, vA);
-    const ac = Vector.sub(vC, vA);
-    const n = Vector.cross(ab, ac);
-    const ln = Vector.mag(n);
-    let sinAlpha = ln / (Vector.mag(ab) * Vector.mag(ac));
-    if (sinAlpha === 0 || isNaN(sinAlpha)) {
-      console.warn(
-        'p5.Geometry.prototype._getFaceNormal:',
-        'face has colinear sides or a repeated vertex'
-      );
-      return n;
-    }
-    if (sinAlpha > 1) sinAlpha = 1; // handle float rounding error
-    return n.mult(Math.asin(sinAlpha) / ln);
-  }
+
   /**
    * Calculates the normal vector for each vertex on the geometry.
    *
@@ -1390,79 +1339,6 @@ class Geometry {
     return this;
   }
 
-
-  /**
-   * computes a per-vertex surface tangent from the uvs, needed for normal
-   * (bump) mapping. the tangent points along the +u texture direction; its w
-   * component stores the bitangent handedness so the shader can rebuild the
-   * bitangent as cross(normal, tangent) * w. results are stored flat as
-   * [x, y, z, w] per vertex on this.vertexTangents. needs uvs and vertex
-   * normals, so run computeNormals() first if the model has none.
-   * @private
-   * @chainable
-   */
-  computeTangents() {
-    const vertices = this.vertices;
-    const faces = this.faces;
-    const uvs = this.uvs.flat();
-    const normals = this.vertexNormals;
-
-    // nothing to build a tangent basis from without uvs and normals
-    if (uvs.length === 0 || normals.length === 0) {
-      this.vertexTangents = [];
-      return this;
-    }
-
-    // accumulate the +u direction (tan) and +v direction (bitan) per vertex
-    const tan = [];
-    const bitan = [];
-    for (let i = 0; i < vertices.length; i++) {
-      tan.push(new Vector(0, 0, 0));
-      bitan.push(new Vector(0, 0, 0));
-    }
-    const uvAt = i => ({ x: uvs[i * 2] || 0, y: uvs[i * 2 + 1] || 0 });
-
-    for (const face of faces) {
-      const [i0, i1, i2] = face;
-      const e1 = Vector.sub(vertices[i1], vertices[i0]);
-      const e2 = Vector.sub(vertices[i2], vertices[i0]);
-      const w0 = uvAt(i0);
-      const w1 = uvAt(i1);
-      const w2 = uvAt(i2);
-      const du1 = w1.x - w0.x;
-      const dv1 = w1.y - w0.y;
-      const du2 = w2.x - w0.x;
-      const dv2 = w2.y - w0.y;
-
-      const denom = du1 * dv2 - du2 * dv1;
-      const r = denom === 0 ? 0 : 1 / denom;
-      const sdir = Vector.sub(Vector.mult(e1, dv2), Vector.mult(e2, dv1)).mult(r);
-      const tdir = Vector.sub(Vector.mult(e2, du1), Vector.mult(e1, du2)).mult(r);
-
-      for (const idx of face) {
-        tan[idx].add(sdir);
-        bitan[idx].add(tdir);
-      }
-    }
-
-    // orthonormalise each tangent against its normal and record handedness
-    const tangents = [];
-    for (let i = 0; i < vertices.length; i++) {
-      const n = normals[i] || new Vector(0, 0, 1);
-      let t = Vector.sub(tan[i], Vector.mult(n, n.dot(tan[i])));
-      if (t.magSq() === 0) {
-        // degenerate uvs: pick any direction perpendicular to the normal
-        const seed = Math.abs(n.x) < 0.9 ? new Vector(1, 0, 0) : new Vector(0, 1, 0);
-        t = Vector.sub(seed, Vector.mult(n, n.dot(seed)));
-      }
-      t.normalize();
-      const handedness = Vector.cross(n, t).dot(bitan[i]) < 0 ? -1 : 1;
-      tangents.push(t.x, t.y, t.z, handedness);
-    }
-
-    this.vertexTangents = tangents;
-    return this;
-  }
 
   /**
    * Averages the vertex normals. Used in curved
@@ -2002,24 +1878,7 @@ class Geometry {
    *   model(geo);
    * }
    *
-   * @param {String} propertyName the name of the vertex property.
-   * @param {Number|Number[]} data the data tied to the vertex property.
-   * @param {Number} [size] optional size of each unit of data.
    */
-  vertexProperty(propertyName, data, size) {
-    let prop;
-    if (!this.userVertexProperties[propertyName]) {
-      prop = this.userVertexProperties[propertyName] =
-        this._userVertexPropertyHelper(propertyName, data, size);
-    }
-    prop = this.userVertexProperties[propertyName];
-    if (size) {
-      prop.pushDirect(data);
-    } else {
-      prop.setCurrentData(data);
-      prop.pushCurrentData();
-    }
-  }
 
   _userVertexPropertyHelper(propertyName, data, size) {
     // shared with GeometryPart so parts carry custom attributes identically
