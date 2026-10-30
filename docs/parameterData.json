@@ -976,6 +976,10 @@
         ],
         [
           "String|Request",
+          "function(p5.Geometry)"
+        ],
+        [
+          "String|Request",
           "Object?"
         ]
       ]

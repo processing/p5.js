@@ -48,6 +48,14 @@ suite('Validate Params', function () {
 
       assert.isTrue(result.success);
     });
+    test('loadModel(): success callback argument', function () {
+      const result = mockP5Prototype._validate('p5.loadModel', [
+        'modellTest.obj',
+        function () {}
+      ]);
+
+      assert.isTrue(result.success);
+    });
   });
   suite(
     'validateParams: multiple types allowed for single parameter',
