@@ -639,6 +639,10 @@ class RendererGL extends Renderer3D {
     return true;
   }
 
+  textureNeedsRecreating(_texture) {
+    return false;
+  }
+
   viewport(w, h) {
     this._viewport = [0, 0, w, h];
     this.GL.viewport(0, 0, w, h);

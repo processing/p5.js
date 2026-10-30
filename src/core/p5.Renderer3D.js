@@ -1796,8 +1796,12 @@ export class Renderer3D extends Renderer {
     }
 
     const texture = this.textures.get(src);
-    if (texture) {
+    if (texture && !this.textureNeedsRecreating(texture)) {
       return texture;
+    }
+    if (texture) {
+      texture.remove();
+      this.textures.delete(src);
     }
 
     const tex = new Texture(this, src);

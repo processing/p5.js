@@ -154,7 +154,7 @@ class Texture {
     if (this._shouldDeferUpload()) {
       this._renderer.uploadTextureFromData(
         this.textureHandle,
-        new Uint8Array(1, 1, 1, 1),
+        new Uint8Array(4),
         1,
         1
       );
