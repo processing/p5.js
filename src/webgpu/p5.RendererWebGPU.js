@@ -4550,7 +4550,7 @@ ${hookUniformFields}}
               if (firstType !== elType) {
                 p5._friendlyError(
                   `The "${key}" property of element ${i} has type ${elType} ` +
-                    `but element 0 has type ${firstType}. Proporties should have the same type across all elements.`,
+                    `but element 0 has type ${firstType}. Properties should have the same type across all elements.`,
                   'createStorage'
                 );
                 warned = true;
