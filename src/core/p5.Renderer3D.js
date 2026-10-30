@@ -2718,6 +2718,13 @@ function renderer3D(p5, fn) {
    * @webgpu
    * @webgpuOnly
    * @param {Function} callback A function building a p5.strands compute shader.
+   * @param {Object} [scope] An optional scope object passed to .modify().
+   * @returns {p5.Shader} The compute shader.
+   */
+  /**
+   * @method buildComputeShader
+   * @param {Object} hooks An object specifying p5.strands hooks in WGSL.
+   * @param {Object} [scope] An optional scope object passed to .modify().
    * @returns {p5.Shader} The compute shader.
    */
   fn.buildComputeShader = function (cb, context) {

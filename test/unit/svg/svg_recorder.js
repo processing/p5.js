@@ -37,6 +37,7 @@ function createPInst() {
       translate() {},
       rotate() {},
       scale() {},
+      resetMatrix() {},
       background() {},
       clear() {}
     },
@@ -53,6 +54,7 @@ function createPInst() {
     translate() {},
     rotate() {},
     scale() {},
+    resetMatrix() {},
     background(...args) {
       if (this._renderer && typeof this._renderer.background === 'function') {
         return this._renderer.background.apply(this._renderer, args);
@@ -350,6 +352,52 @@ suite('ShapeRecorder — scale interceptor', function() {
 
     // outside: restored
     assert.strictEqual(pInst.scale, origScale);
+  });
+});
+
+suite('ShapeRecorder — translate and resetMatrix interceptors', function() {
+  test('translate(vector) uses the x and y of the vector', function() {
+    const pInst = createPInst();
+
+    const record = pInst.buildShape(() => {
+      pInst.translate({ x: 30, y: 40 });
+      const shape = new MockShape('translated_shape');
+      pInst._renderer.drawShape(shape);
+    });
+
+    const m = record.data.children[0].state.transform;
+    // e and f are the x and y translation of the matrix
+    assert.closeTo(m.e, 30, 0.0001, 'e (translateX) should be 30');
+    assert.closeTo(m.f, 40, 0.0001, 'f (translateY) should be 40');
+  });
+
+  test('translate(x, y) still works with plain numbers', function() {
+    const pInst = createPInst();
+
+    const record = pInst.buildShape(() => {
+      pInst.translate(30, 40);
+      const shape = new MockShape('number_translated_shape');
+      pInst._renderer.drawShape(shape);
+    });
+
+    const m = record.data.children[0].state.transform;
+    assert.closeTo(m.e, 30, 0.0001, 'e (translateX) should be 30');
+    assert.closeTo(m.f, 40, 0.0001, 'f (translateY) should be 40');
+  });
+
+  test('resetMatrix() resets the recorded transform to identity', function() {
+    const pInst = createPInst();
+
+    const record = pInst.buildShape(() => {
+      pInst.translate(100, 100);
+      pInst.resetMatrix();
+      const shape = new MockShape('reset_shape');
+      pInst._renderer.drawShape(shape);
+    });
+
+    const m = record.data.children[0].state.transform;
+    assert.closeTo(m.e, 0, 0.0001, 'e should be 0 after resetMatrix');
+    assert.closeTo(m.f, 0, 0.0001, 'f should be 0 after resetMatrix');
   });
 });
 

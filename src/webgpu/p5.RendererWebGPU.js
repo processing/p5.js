@@ -3041,7 +3041,12 @@ function rendererWebGPU(p5, fn) {
 
         // Parse storage buffers
         while ((match = storageRegex.exec(src)) !== null) {
-          const [, group, binding, accessMode, name, elementType] = match;
+          const [, group, binding, accessMode, name, bindingType] = match;
+          // The regex captures the whole binding type, e.g. array<atomic<u32>>
+          // or array<f32, 5>. Unwrap arrays so the element type check below
+          // sees just the element type. Struct names are left as-is.
+          const elementType =
+            bindingType.match(/^array<(.+?)(?:,\s*\d+)?>$/)?.[1] ?? bindingType;
           const groupIndex = parseInt(group);
           const bindingIndex = parseInt(binding);
 
@@ -4494,6 +4499,8 @@ ${hookUniformFields}}
       // Resolved once when the shader was parsed
       const expected = parsedStorage?.expectedArrayType;
       if (!expected) return;
+      // Storage lists only hold floats or structs, so they can't mismatch
+      if (storageBuffer._isStorageList) return;
       if (storageBuffer._checkedArrayType === expected) return;
       storageBuffer._checkedArrayType = expected;
 
