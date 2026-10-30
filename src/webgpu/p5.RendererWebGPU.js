@@ -1787,6 +1787,10 @@ function rendererWebGPU(p5, fn) {
       return false;
     }
 
+    supportsVideoUpload() {
+      return this._supportsVideoUpload !== false;
+    }
+
     viewport() {}
 
     zClipRange() {
@@ -3130,11 +3134,25 @@ function rendererWebGPU(p5, fn) {
     }
 
     uploadTextureFromSource({ gpuTexture }, source) {
-      this.queue.copyExternalImageToTexture(
-        { source },
-        { texture: gpuTexture },
-        [source.width, source.height]
-      );
+      const isVideo = source instanceof HTMLVideoElement;
+      // Chrome throws if a video has no decoded frame yet
+      if (isVideo && source.readyState < 2) return;
+
+      try {
+        this.queue.copyExternalImageToTexture(
+          { source },
+          { texture: gpuTexture },
+          [source.videoWidth || source.width, source.videoHeight || source.height]
+        );
+      } catch (e) {
+        // As of 10/30/2026, Firefox doesn't accept video elements as a copy
+        // source. Texture will hand us a canvas from the next update onward.
+        if (isVideo && e instanceof TypeError) {
+          this._supportsVideoUpload = false;
+          return;
+        }
+        throw e;
+      }
 
       // Force submission to ensure texture upload completes before usage
       this._hasPendingDraws = true;

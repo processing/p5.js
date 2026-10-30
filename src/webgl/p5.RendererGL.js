@@ -635,6 +635,10 @@ class RendererGL extends Renderer3D {
     return true;
   }
 
+  supportsVideoUpload() {
+    return true;
+  }
+
   viewport(w, h) {
     this._viewport = [0, 0, w, h];
     this.GL.viewport(0, 0, w, h);

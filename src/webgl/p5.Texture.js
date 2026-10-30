@@ -100,8 +100,12 @@ class Texture {
       textureData = this.src.canvas;
     } else if (this.isSrcMediaElement || this.isSrcHTMLElement) {
       // createCapture elements that are flipped need
-      // to go through a canvas
-      if (this.isSrcMediaElement && this.src.flipped) {
+      // to go through a canvas, as do all videos when the renderer can't
+      // upload from a video element directly
+      if (
+        this.isSrcMediaElement &&
+        (this.src.flipped || !this._renderer.supportsVideoUpload())
+      ) {
         this.src._ensureCanvas();
         textureData = this.src.canvas;
       } else {
