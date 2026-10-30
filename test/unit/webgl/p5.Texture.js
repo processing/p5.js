@@ -299,6 +299,11 @@ suite('p5.Texture', function () {
       expect(tex.width).to.equal(texImg2.width);
       expect(tex.height).to.equal(texImg2.height);
     });
+    test('Keeps the same texture when the p5.Image size changes', function () {
+      const tex = myp5._renderer.getTexture(texImg2);
+      texImg2.resize(texImg2.width * 2, texImg2.height * 2);
+      expect(myp5._renderer.getTexture(texImg2)).to.equal(tex);
+    });
     test('Handles changes to p5.Graphics size', function () {
       const tex = myp5._renderer.getTexture(texImg1);
       expect(tex.width).to.equal(texImg1.width);
