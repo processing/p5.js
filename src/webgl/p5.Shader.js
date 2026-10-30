@@ -560,6 +560,10 @@ p5.Shader = class {
       const initializer = this.hooks.uniforms[key];
       let value;
       if (initializer instanceof Function) {
+        // TODO: Detect outside variable references in uniform initializers
+        // This should be done during transpilation in strands_transpiler.js
+        // by analyzing which variables are declared in the strand's scope
+        // and checking if referenced variables in uniforms are in that scope
         value = initializer();
       } else {
         value = initializer;
