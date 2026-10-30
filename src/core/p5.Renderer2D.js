@@ -1217,7 +1217,41 @@ class Renderer2D extends p5.Renderer {
     p.push(); // fix to #803
 
     if (!this._isOpenType()) {
-      // a system/browser font
+      if (
+        this._textAlign === constants.JUSTIFIED &&
+        this._justifyActive &&
+        !this._justifyIsLastLine &&
+        this._justifyWidth > 0
+      ) {
+        const words = line.split(/\s+/).filter(s => s.length > 0);
+        if (words.length > 1) {
+          const widths = words.map(s => this.textWidth(s));
+          const sum = widths.reduce((a, b) => a + b, 0);
+          const extra = this._justifyWidth - sum;
+          if (extra > 0) {
+            const gap = extra / (words.length - 1);
+            let cx = x;
+            if (this._doStroke && this._strokeSet) {
+              for (let i = 0; i < words.length; i++) {
+                this.drawingContext.strokeText(words[i], cx, y);
+                cx += widths[i] + (i < words.length - 1 ? gap : 0);
+              }
+            }
+            cx = x;
+            if (!this._clipping && this._doFill) {
+              if (!this._fillSet) {
+                this._setFill(constants._DEFAULT_TEXT_FILL);
+              }
+              for (let i = 0; i < words.length; i++) {
+                this.drawingContext.fillText(words[i], cx, y);
+                cx += widths[i] + (i < words.length - 1 ? gap : 0);
+              }
+            }
+            p.pop();
+            return p;
+          }
+        }
+      }
 
       // no stroke unless specified by user
       if (this._doStroke && this._strokeSet) {
@@ -1272,7 +1306,10 @@ class Renderer2D extends p5.Renderer {
     this.drawingContext.font = `${this._textStyle || 'normal'} ${this._textSize ||
       12}px ${fontNameString}`;
 
-    this.drawingContext.textAlign = this._textAlign;
+    const _ta = this._textAlign === constants.JUSTIFIED
+      ? constants.LEFT
+      : this._textAlign;
+    this.drawingContext.textAlign = _ta;
     if (this._textBaseline === constants.CENTER) {
       this.drawingContext.textBaseline = constants._CTX_MIDDLE;
     } else {
