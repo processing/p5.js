@@ -146,6 +146,68 @@ suite('WebGPU p5.RendererWebGPU', function () {
     });
   });
 
+  suite('uploadTextureFromSource() with video', function () {
+    let copySpy;
+
+    const makeVideo = readyState => {
+      const video = document.createElement('video');
+      Object.defineProperties(video, {
+        readyState: { value: readyState },
+        videoWidth: { value: 640 },
+        videoHeight: { value: 480 }
+      });
+      return video;
+    };
+
+    beforeEach(function () {
+      copySpy = vi
+        .spyOn(myp5._renderer.queue, 'copyExternalImageToTexture')
+        .mockImplementation(() => {});
+    });
+
+    afterEach(function () {
+      copySpy.mockRestore();
+    });
+
+    test('skips videos that have no decoded frame yet', function () {
+      const handle = { gpuTexture: {} };
+      myp5._renderer.uploadTextureFromSource(handle, makeVideo(1));
+      expect(copySpy).not.toHaveBeenCalled();
+      expect(myp5._renderer.supportsVideoUpload()).to.equal(true);
+    });
+
+    test('copies using the real video size', function () {
+      const handle = { gpuTexture: {} };
+      const video = makeVideo(4);
+      myp5._renderer.uploadTextureFromSource(handle, video);
+      expect(copySpy).toHaveBeenCalledWith(
+        { source: video },
+        { texture: handle.gpuTexture },
+        [640, 480]
+      );
+    });
+
+    test('stops uploading video directly if the browser rejects it', function () {
+      const handle = { gpuTexture: {} };
+      copySpy.mockImplementation(() => {
+        throw new TypeError('source could not be converted');
+      });
+      myp5._renderer.uploadTextureFromSource(handle, makeVideo(4));
+      expect(myp5._renderer.supportsVideoUpload()).to.equal(false);
+    });
+
+    test('rethrows errors that are not about the source type', function () {
+      const handle = { gpuTexture: {} };
+      copySpy.mockImplementation(() => {
+        throw new Error('device lost');
+      });
+      expect(() => {
+        myp5._renderer.uploadTextureFromSource(handle, makeVideo(4));
+      }).toThrow('device lost');
+      expect(myp5._renderer.supportsVideoUpload()).to.equal(true);
+    });
+  });
+
   suite('Stability', function () {
     test('pixelDensity() after setAttributes() should not crash', async function () {
       // This test simulates the issue where a synchronous call (pixelDensity)

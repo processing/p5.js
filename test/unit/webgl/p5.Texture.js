@@ -308,6 +308,17 @@ suite('p5.Texture', function () {
       expect(tex.width).to.equal(texImg1.width);
       expect(tex.height).to.equal(texImg1.height);
     });
+    test('Reads from the video element when video upload is supported', function () {
+      const video = myp5.createVideo('');
+      const tex = myp5._renderer.getTexture(video);
+      expect(tex._getTextureDataFromSource()).to.equal(video.elt);
+    });
+    test('Reads from a canvas when video upload is not supported', function () {
+      const video = myp5.createVideo('');
+      const tex = myp5._renderer.getTexture(video);
+      vi.spyOn(myp5._renderer, 'supportsVideoUpload').mockReturnValue(false);
+      expect(tex._getTextureDataFromSource()).to.equal(video.canvas);
+    });
     test('Handles changes to p5.Renderer size', function () {
       const tex = texImg1._renderer.getTexture(canvas);
       expect(tex.width).to.equal(canvas.width);
