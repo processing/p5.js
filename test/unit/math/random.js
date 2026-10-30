@@ -150,6 +150,38 @@ suite('Random', function () {
       });
     });
 
+    suite('instance mode / multiple instances', function () {
+      test('should maintain independent Gaussian sequences across instances when interleaved', function () {
+        const pA = Object.create(mockP5Prototype);
+        const pB = Object.create(mockP5Prototype);
+
+        // Baseline: pA sequence with seed 42
+        pA.randomSeed(42);
+        const expectedA0 = pA.randomGaussian();
+        const expectedA1 = pA.randomGaussian();
+        const expectedA2 = pA.randomGaussian();
+        const expectedA3 = pA.randomGaussian();
+
+        // Interleaved: pB calls randomGaussian between pA calls
+        pA.randomSeed(42);
+        pB.randomSeed(99);
+
+        const actualA0 = pA.randomGaussian();
+        // pB generates a pair with seed 99, which overwrites module y2 in buggy code
+        pB.randomGaussian();
+        const actualA1 = pA.randomGaussian();
+        pB.randomGaussian();
+        const actualA2 = pA.randomGaussian();
+        pB.randomGaussian();
+        const actualA3 = pA.randomGaussian();
+
+        assert.equal(actualA0, expectedA0);
+        assert.equal(actualA1, expectedA1);
+        assert.equal(actualA2, expectedA2);
+        assert.equal(actualA3, expectedA3);
+      });
+    });
+
     suite('randomGaussian(42, 0)', function () {
       test('should return 42', function () {
         let result = mockP5Prototype.randomGaussian(42, 0);

@@ -15,7 +15,6 @@ function random(p5, fn) {
   const a = 1664525;
   // c and m should be co-prime
   const c = 1013904223;
-  let y2 = 0;
 
   // Linear Congruential Generator that stores its state at instance[stateProperty]
   fn._lcg = function (stateProperty) {
@@ -360,7 +359,7 @@ function random(p5, fn) {
   fn.randomGaussian = function (mean, sd = 1) {
     let y1, x1, x2, w;
     if (this._gaussian_previous) {
-      y1 = y2;
+      y1 = this._gaussian_y2;
       this._gaussian_previous = false;
     } else {
       do {
@@ -370,7 +369,7 @@ function random(p5, fn) {
       } while (w >= 1);
       w = Math.sqrt((-2 * Math.log(w)) / w);
       y1 = x1 * w;
-      y2 = x2 * w;
+      this._gaussian_y2 = x2 * w;
       this._gaussian_previous = true;
     }
 
