@@ -1046,6 +1046,17 @@ class RendererGL extends Renderer3D {
     return this._baseFilterShader;
   }
 
+  baseComputeShader() {
+    if (!this._baseComputeShader) {
+      this._baseComputeShader = new Shader(this, 'void main() {}', {
+        compute: {
+          'void iteration': '(ivec3 index) {}'
+        }
+      });
+    }
+    return this._baseComputeShader;
+  }
+
   _webGL2CompatibilityPrefix(shaderType, floatPrecision) {
     let code = '';
     if (this.webglVersion === constants.WEBGL2) {
@@ -2297,6 +2308,13 @@ class RendererGL extends Renderer3D {
       this._storageBuffers.add(storageBuffer);
 
       return storageBuffer;
+  }
+
+  // Runs a compute shader on the CPU fallback path.
+  compute(shader, x, y = 1, z = 1) {
+    if (shader.shaderType !== 'compute') {
+      throw new Error('compute() can only be called with a compute shader');
+    }
   }
 }
 

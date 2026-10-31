@@ -11,6 +11,10 @@ export function getShaderHookTypes(shader, hookName) {
     fullSrc = shader._fragSrc;
   }
   if (!body) {
+    body = shader.hooks.compute[hookName];
+    fullSrc = shader._computeSrc;
+  }
+  if (!body) {
     throw new Error(`Can't find hook ${hookName}!`);
   }
   const nameParts = hookName.split(/\s+/g);
