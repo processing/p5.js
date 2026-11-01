@@ -146,6 +146,117 @@ suite('WebGPU p5.RendererWebGPU', function () {
     });
   });
 
+  suite('uploadTextureFromSource() with video', function () {
+    let copySpy;
+
+    const makeVideo = readyState => {
+      const video = document.createElement('video');
+      Object.defineProperties(video, {
+        readyState: { value: readyState },
+        videoWidth: { value: 640 },
+        videoHeight: { value: 480 }
+      });
+      return video;
+    };
+
+    beforeEach(function () {
+      copySpy = vi
+        .spyOn(myp5._renderer.queue, 'copyExternalImageToTexture')
+        .mockImplementation(() => {});
+    });
+
+    afterEach(function () {
+      copySpy.mockRestore();
+    });
+
+    test('skips videos that have no decoded frame yet', function () {
+      const handle = { gpuTexture: {} };
+      myp5._renderer.uploadTextureFromSource(handle, makeVideo(1));
+      expect(copySpy).not.toHaveBeenCalled();
+      expect(myp5._renderer.supportsVideoUpload()).to.equal(true);
+    });
+
+    test('copies using the real video size', function () {
+      const handle = { gpuTexture: {} };
+      const video = makeVideo(4);
+      myp5._renderer.uploadTextureFromSource(handle, video);
+      expect(copySpy).toHaveBeenCalledWith(
+        { source: video },
+        { texture: handle.gpuTexture },
+        [640, 480]
+      );
+    });
+
+    test('stops uploading video directly if the browser rejects it', function () {
+      const handle = { gpuTexture: {} };
+      copySpy.mockImplementation(() => {
+        throw new TypeError('source could not be converted');
+      });
+      myp5._renderer.uploadTextureFromSource(handle, makeVideo(4));
+      expect(myp5._renderer.supportsVideoUpload()).to.equal(false);
+    });
+
+    test('rethrows errors that are not about the source type', function () {
+      const handle = { gpuTexture: {} };
+      copySpy.mockImplementation(() => {
+        throw new Error('device lost');
+      });
+      expect(() => {
+        myp5._renderer.uploadTextureFromSource(handle, makeVideo(4));
+      }).toThrow('device lost');
+      expect(myp5._renderer.supportsVideoUpload()).to.equal(true);
+    });
+  });
+
+  suite('texture recreation', function () {
+    afterEach(function () {
+      vi.restoreAllMocks();
+    });
+
+    test('getTexture returns a new texture after the source is resized', function () {
+      const img = myp5.createImage(10, 10);
+      const before = myp5._renderer.getTexture(img);
+      img.resize(20, 20);
+      const after = myp5._renderer.getTexture(img);
+      expect(after).not.to.equal(before);
+      expect(after.textureHandle.gpuTexture.width).to.equal(20);
+      expect(after.textureHandle.gpuTexture.height).to.equal(20);
+    });
+
+    test('getTexture reuses the texture when the source is unchanged', function () {
+      const img = myp5.createImage(10, 10);
+      const before = myp5._renderer.getTexture(img);
+      expect(myp5._renderer.getTexture(img)).to.equal(before);
+    });
+
+    test('does not recreate textures for sources with no size yet', function () {
+      const video = myp5.createVideo('');
+      const tex = myp5._renderer.getTexture(video);
+      expect(myp5._renderer.textureNeedsRecreating(tex)).to.equal(false);
+      expect(tex.textureHandle.gpuTexture.width).to.equal(1);
+      expect(tex.textureHandle.gpuTexture.height).to.equal(1);
+    });
+
+    test('_updateTexture swaps in the new texture and dirties the bind group', function () {
+      const img = myp5.createImage(10, 10);
+      const tex = myp5._renderer.getTexture(img);
+      const uniform = { group: 0, binding: 2, texture: tex };
+      const shader = { buffersDirty: new Set() };
+      img.resize(20, 20);
+      myp5._renderer._updateTexture(uniform, tex, shader);
+      expect(uniform.texture).not.to.equal(tex);
+      expect(uniform.texture.textureHandle.gpuTexture.width).to.equal(20);
+      expect(shader.buffersDirty.has(2)).to.equal(true);
+    });
+
+    test('placeholder upload for an unloaded source is a full pixel', function () {
+      const writeSpy = vi.spyOn(myp5._renderer.queue, 'writeTexture');
+      myp5._renderer.getTexture(myp5.createVideo(''));
+      expect(writeSpy).toHaveBeenCalled();
+      expect(writeSpy.mock.calls[0][1].byteLength).to.equal(4);
+    });
+  });
+
   suite('Stability', function () {
     test('pixelDensity() after setAttributes() should not crash', async function () {
       // This test simulates the issue where a synchronous call (pixelDensity)
@@ -708,6 +819,123 @@ suite('WebGPU p5.RendererWebGPU', function () {
       stagingBuffer.destroy();
 
       expect(rawCounter).to.equal(2);
+    });
+  });
+
+  suite('Storage element type check', function () {
+    let spy;
+
+    // Only count the element type warning, not other friendly errors
+    const typeWarnings = () =>
+      spy.mock.calls.filter(([msg]) => String(msg).includes('is declared as'));
+
+    const atomicShader = () =>
+      myp5.buildComputeShader({
+        computeDeclarations: `
+          @group(0) @binding(1) var<storage, read_write> counts: array<atomic<u32>>;
+        `,
+        'void iteration': `(index: vec3<i32>) {
+          atomicAdd(&counts[index.x], 5u);
+        }`
+      });
+
+    beforeEach(function () {
+      spy = vi.spyOn(p5, '_friendlyError').mockImplementation(() => {});
+    });
+
+    afterEach(function () {
+      spy.mockRestore();
+    });
+
+    test('parses the element type out of array<atomic<u32>>', function () {
+      const buf = myp5.createStorage(new Uint32Array([10, 20, 30, 40]));
+      const shader = atomicShader();
+      shader.setUniform('counts', buf);
+      myp5.compute(shader, 4);
+
+      const parsed = shader._storageBuffersByName.counts;
+      expect(parsed.elementType).to.equal('atomic<u32>');
+      expect(parsed.expectedArrayType).to.equal(Uint32Array);
+    });
+
+    test('warns once when a Float32Array is bound to array<atomic<u32>>', function () {
+      const buf = myp5.createStorage(new Float32Array([1, 2, 3, 4]));
+      const shader = atomicShader();
+      shader.setUniform('counts', buf);
+      myp5.compute(shader, 4);
+      myp5.compute(shader, 4);
+
+      const warnings = typeWarnings();
+      expect(warnings).to.have.length(1);
+      expect(warnings[0][0]).to.contain('array<atomic<u32>>');
+      expect(warnings[0][0]).not.to.contain('array<array<');
+      expect(warnings[0][0]).to.contain('Uint32Array');
+    });
+
+    test('does not warn when a Uint32Array is bound to array<atomic<u32>>', async function () {
+      const buf = myp5.createStorage(new Uint32Array([10, 20, 30, 40]));
+      const shader = atomicShader();
+      shader.setUniform('counts', buf);
+      myp5.compute(shader, 4);
+
+      const result = await buf.read();
+      expect(typeWarnings()).to.have.length(0);
+      expect(Array.from(result)).to.deep.equal([15, 25, 35, 45]);
+    });
+
+    test('does not warn for a p5.strands float buffer', function () {
+      const buf = myp5.createStorage(new Float32Array([1, 2, 3, 4]));
+      const shader = myp5.buildComputeShader(
+        () => {
+          const d = myp5.uniformStorage();
+          d[myp5.index.x] = d[myp5.index.x] * 2;
+        },
+        { myp5 }
+      );
+      shader.setUniform('d', buf);
+      myp5.compute(shader, 4);
+
+      expect(shader._storageBuffersByName.d.elementType).to.equal('f32');
+      expect(typeWarnings()).to.have.length(0);
+    });
+
+    test('does not throw or warn for a StorageList drawn with instances()', async function () {
+      myp5.pixelDensity(1);
+      const list = myp5.createStorageList(5);
+      list.push(0.0);
+      const shader = myp5.buildMaterialShader(
+        () => {
+          const l = myp5.uniformStorage('l', list);
+          myp5.worldInputs.begin();
+          myp5.worldInputs.position.x += l[myp5.instanceIndex];
+          myp5.worldInputs.end();
+        },
+        { myp5, list }
+      );
+
+      myp5.background(0);
+      myp5.noStroke();
+      myp5.fill(255);
+      myp5.shader(shader);
+      myp5.instances(list).rect(-10, -10, 20, 20);
+
+      const pixel = await myp5.get(25, 25);
+      expect(pixel[0]).to.equal(255);
+      expect(typeWarnings()).to.have.length(0);
+    });
+
+    test('does not warn for a StorageList in a compute shader', function () {
+      const list = myp5.createStorageList(10);
+      const shader = myp5.buildComputeShader(
+        () => {
+          const l = myp5.uniformStorage('l', list);
+          l.push(1.0);
+        },
+        { myp5, list }
+      );
+      myp5.compute(shader, 4);
+
+      expect(typeWarnings()).to.have.length(0);
     });
   });
 
