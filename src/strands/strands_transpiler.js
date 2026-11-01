@@ -1326,46 +1326,7 @@ const ASTCallbacks = {
     };
 
     // Analyze which outer scope variables are assigned in the loop body
-    const assignedVars = new Set();
-
-    // First pass: collect all variable declarations in the body
-    const localVars = new Set();
-    ancestor(bodyFunction.body, {
-      VariableDeclarator(node, ancestors) {
-        // Skip if we're inside a block that contains strands control flow
-        if (ancestors.some(statementContainsStrandsControlFlow)) return;
-        if (node.id.type === 'Identifier') {
-          localVars.add(node.id.name);
-        }
-      }
-    });
-
-    // Second pass: find assignments to non-local variables using acorn-walk
-    ancestor(bodyFunction.body, {
-      AssignmentExpression(node, ancestors) {
-        // Skip if we're inside a block that contains strands control flow
-        if (ancestors.some(statementContainsStrandsControlFlow)) {
-          return;
-        }
-
-        const left = node.left;
-        if (left.type === 'Identifier') {
-          // Direct variable assignment: x = value
-          if (!localVars.has(left.name)) {
-            assignedVars.add(left.name);
-          }
-        } else if (left.type === 'MemberExpression') {
-          // Property assignment: obj.prop = value or obj.a.b = value
-          const propertyPath = buildPropertyPath(left);
-          if (propertyPath) {
-            const baseName = propertyPath.split('.')[0];
-            if (!localVars.has(baseName)) {
-              assignedVars.add(propertyPath);
-            }
-          }
-        }
-      }
-    });
+    const assignedVars = findLoopCarriedVars(bodyFunction.body);
 
     if (assignedVars.size > 0) {
       addCopyingAndReturn(bodyFunction.body, assignedVars, 'vars');
@@ -1493,6 +1454,90 @@ const ASTCallbacks = {
     delete node.update;
   }
 };
+
+function findLoopCarriedVars(loopBody) {
+  const assignedVars = new Set();
+
+  // First pass: collect all variable declarations in the body
+  const localVars = new Set();
+  ancestor(loopBody, {
+    VariableDeclarator(node, ancestors) {
+      // Skip if we're inside a block that contains strands control flow
+      if (ancestors.some(statementContainsStrandsControlFlow)) return;
+      if (node.id.type === 'Identifier') {
+        localVars.add(node.id.name);
+      }
+    }
+  });
+
+  // Second pass: find assignments to non-local variables using acorn-walk
+  ancestor(loopBody, {
+    AssignmentExpression(node, ancestors) {
+      // Skip if we're inside a block that contains strands control flow
+      if (ancestors.some(statementContainsStrandsControlFlow)) {
+        return;
+      }
+
+      const left = node.left;
+      if (left.type === 'Identifier') {
+        // Direct variable assignment: x = value
+        if (!localVars.has(left.name)) {
+          assignedVars.add(left.name);
+        }
+      } else if (left.type === 'MemberExpression') {
+        // Property assignment: obj.prop = value or obj.a.b = value
+        const propertyPath = buildPropertyPath(left);
+        if (propertyPath) {
+          const baseName = propertyPath.split('.')[0];
+          if (!localVars.has(baseName)) {
+            assignedVars.add(propertyPath);
+          }
+        }
+      }
+    }
+  });
+
+  return assignedVars;
+}
+
+// A break skips the end-of-body writes, so it passes along the loop's
+// current values. This runs before nested control flow is transformed, so
+// the later renaming points each name at its live value at the break.
+function addCarriedValuesToBreaks(loopBody) {
+  const carriedVars = findLoopCarriedVars(loopBody);
+  ancestor(loopBody, {
+    CallExpression(node, ancestors) {
+      if (node.callee.name !== '__p5.break') return;
+      // Breaks in a nested loop belong to that loop
+      if (ancestors.some(a => a.type === 'ForStatement')) return;
+      node.arguments = [
+        {
+          type: 'ObjectExpression',
+          properties: Array.from(carriedVars).map(varPath => {
+            const parts = varPath.split('.');
+            let expr = { type: 'Identifier', name: parts[0] };
+            for (let i = 1; i < parts.length; i++) {
+              expr = {
+                type: 'MemberExpression',
+                object: expr,
+                property: { type: 'Identifier', name: parts[i] },
+                computed: false
+              };
+            }
+            return {
+              type: 'Property',
+              key: { type: 'Literal', value: varPath },
+              value: expr,
+              kind: 'init',
+              computed: false,
+              shorthand: false
+            };
+          })
+        }
+      ];
+    }
+  });
+}
 
 // Helper function to check if a function body contains return statements in control flow
 function functionHasEarlyReturns(functionNode) {
@@ -2071,7 +2116,10 @@ function runControlFlowPass(ast, uniformCallbackNames) {
       if (node.init) c(node.init, state);
       if (node.test) c(node.test, state);
       if (node.update) c(node.update, state);
-      if (node.body) c(node.body, state);
+      if (node.body) {
+        addCarriedValuesToBreaks(node.body);
+        c(node.body, state);
+      }
       ASTCallbacks.ForStatement(node, state, []);
       state.inControlFlow--;
     },

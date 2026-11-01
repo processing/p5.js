@@ -21,7 +21,7 @@
     "test/**/*.js": "oxlint",
     "utils/**/*.{js,mjs}": "oxlint"
   },
-  "version": "2.4.0-rc.1",
+  "version": "2.4.0-rc.2",
   "dependencies": {
     "@davepagurek/bezier-path": "^0.0.7",
     "@japont/unicode-range": "^1.0.0",

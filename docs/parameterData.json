@@ -3281,7 +3281,7 @@
     "createStorage": {
       "overloads": [
         [
-          "Number|Array|Float32Array|Object[]"
+          "Number|Array|Float32Array|Uint32Array|Int32Array|Object[]"
         ]
       ]
     },
@@ -3334,7 +3334,12 @@
     "buildComputeShader": {
       "overloads": [
         [
-          "Function"
+          "Function",
+          "Object?"
+        ],
+        [
+          "Object",
+          "Object?"
         ]
       ]
     },
@@ -4612,7 +4617,7 @@
     "update": {
       "overloads": [
         [
-          "Number[]|Float32Array|Object[]"
+          "Number[]|Float32Array|Uint32Array|Int32Array|Object[]"
         ]
       ]
     },
