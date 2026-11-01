@@ -510,9 +510,9 @@ suite('p5.Shader', function () {
       myp5.createCanvas(5, 5, myp5.WEBGL);
       myp5.pixelDensity(1);
       const myShader = myp5.buildColorFieldShader(() => {
-        field.begin();
-        field.color = [1, 0, 0, 1];
-        field.end();
+        fieldColor.begin();
+        fieldColor.set([1, 0, 0, 1]);
+        fieldColor.end();
       });
       myp5.background(0);
       myp5.colorField(myShader);
@@ -524,17 +524,35 @@ suite('p5.Shader', function () {
       myp5.createCanvas(5, 5, myp5.WEBGL);
       myp5.pixelDensity(1);
       const myShader = myp5.buildColorFieldShader(() => {
-        field.begin();
-        field.color = [1, 0, 0, 1];
-        field.end();
+        fieldColor.begin();
+        fieldColor.set([1, 0, 0, 1]);
+        fieldColor.end();
       });
       myp5.background(0);
       myp5.colorField(myShader);
       myp5.noStroke();
       myp5.fill(0, 0, 255);
-      myp5.plane(myp5.width, myp5.height);
+      // Slightly behind the field's plane, so it only shows if the field's
+      // depth was cleared afterwards
+      myp5.translate(0, 0, -1);
+      myp5.plane(myp5.width * 2, myp5.height * 2);
       myp5.loadPixels();
       expect(Array.from(myp5.pixels.slice(0, 4))).toEqual([0, 0, 255, 255]);
+    });
+
+    test('colorField still draws after noFill()', () => {
+      myp5.createCanvas(5, 5, myp5.WEBGL);
+      myp5.pixelDensity(1);
+      const myShader = myp5.buildColorFieldShader(() => {
+        fieldColor.begin();
+        fieldColor.set([1, 0, 0, 1]);
+        fieldColor.end();
+      });
+      myp5.background(0);
+      myp5.noFill();
+      myp5.colorField(myShader);
+      myp5.loadPixels();
+      expect(Array.from(myp5.pixels.slice(0, 4))).toEqual([255, 0, 0, 255]);
     });
 
     test('accepts an arrow function with an unparenthesized parameter', () => {

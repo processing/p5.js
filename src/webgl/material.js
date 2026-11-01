@@ -755,9 +755,10 @@ function material(p5, fn) {
    * color depends on where it is rather than on what was already drawn.
    * Unlike a filter, a color field doesn't read the existing canvas.
    *
-   * Pass a function that uses p5.strands. Inside it, call `field.begin()`,
-   * read the pixel's normalized position from `field.texCoord`, assign the
-   * resulting color to `field.color`, then call `field.end()`.
+   * Pass a function that uses p5.strands. Inside it, call
+   * `fieldColor.begin()`, read the pixel's normalized position from
+   * `fieldColor.texCoord`, pass the resulting color to `fieldColor.set()`,
+   * then call `fieldColor.end()`.
    *
    * ```js
    * let myField;
@@ -768,9 +769,9 @@ function material(p5, fn) {
    * }
    *
    * function gradient() {
-   *   field.begin();
-   *   field.color = [field.texCoord, 0, 1];
-   *   field.end();
+   *   fieldColor.begin();
+   *   fieldColor.set([fieldColor.texCoord, 0, 1]);
+   *   fieldColor.end();
    * }
    *
    * function draw() {
@@ -813,13 +814,13 @@ function material(p5, fn) {
    * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *   myField = buildColorFieldShader(gradient);
-   *   describe('A gradient that is black at the top left, red at the top right, green at the bottom left and yellow at the bottom right.');
+   *   describe('A gradient that fades from black at the top left to blue and yellow.');
    * }
    *
    * function gradient() {
-   *   field.begin();
-   *   field.color = [field.texCoord, 0, 1];
-   *   field.end();
+   *   fieldColor.begin();
+   *   fieldColor.set([fieldColor.texCoord, 0, 1]);
+   *   fieldColor.end();
    * }
    *
    * function draw() {

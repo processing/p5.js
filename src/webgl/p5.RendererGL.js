@@ -939,7 +939,12 @@ class RendererGL extends Renderer3D {
         {
           vertex: {},
           fragment: {
-            'FieldInputs getField': '(FieldInputs inputs) { return inputs; }'
+            'vec4 getColor': `(FieldInputs inputs) {
+              return vec4(0.0, 0.0, 0.0, 1.0);
+            }`
+          },
+          hookAliases: {
+            getColor: ['fieldColor']
           }
         }
       );

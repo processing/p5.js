@@ -1167,6 +1167,8 @@ export class Renderer3D extends Renderer {
     const target = this.activeFramebuffer() || this;
     this.push();
     this.states.setValue('strokeColor', null);
+    // The plane is skipped when there's no fill color (e.g. after noFill())
+    this.fill(0);
     target.filterCamera._resize();
     this.setCamera(target.filterCamera);
     this.resetMatrix();

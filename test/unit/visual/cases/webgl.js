@@ -1690,9 +1690,9 @@ visualSuite('WebGL', function () {
       p5.createCanvas(50, 50, p5.WEBGL);
       const shader = p5.buildColorFieldShader(
         () => {
-          p5.field.begin();
-          p5.field.color = [p5.field.texCoord, 0, 1];
-          p5.field.end();
+          p5.fieldColor.begin();
+          p5.fieldColor.set([p5.fieldColor.texCoord, 0, 1]);
+          p5.fieldColor.end();
         },
         { p5 }
       );
@@ -1704,9 +1704,9 @@ visualSuite('WebGL', function () {
       p5.createCanvas(50, 50, p5.WEBGL);
       const shader = p5.buildColorFieldShader(
         () => {
-          p5.field.begin();
-          p5.field.color = [p5.field.texCoord, 0, 1];
-          p5.field.end();
+          p5.fieldColor.begin();
+          p5.fieldColor.set([p5.fieldColor.texCoord, 0, 1]);
+          p5.fieldColor.end();
         },
         { p5 }
       );
@@ -1723,9 +1723,9 @@ visualSuite('WebGL', function () {
       p5.createCanvas(50, 50, p5.WEBGL);
       const shader = p5.buildColorFieldShader(
         () => {
-          p5.field.begin();
-          p5.field.color = [1, 0, 0, p5.field.texCoord.x];
-          p5.field.end();
+          p5.fieldColor.begin();
+          p5.fieldColor.set([1, 0, 0, p5.fieldColor.texCoord.x]);
+          p5.fieldColor.end();
         },
         { p5 }
       );

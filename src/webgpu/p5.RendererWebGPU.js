@@ -23,6 +23,10 @@ import {
   baseFilterFragmentShader
 } from './shaders/filters/base';
 import {
+  baseColorFieldVertexShader,
+  baseColorFieldFragmentShader
+} from './shaders/field/base';
+import {
   imageLightVertexShader,
   imageLightDiffusedFragmentShader,
   imageLightSpecularFragmentShader
@@ -4992,6 +4996,28 @@ ${hookUniformFields}}
         );
       }
       return this._baseFilterShader;
+    }
+
+    baseColorFieldShader() {
+      if (!this._baseColorFieldShader) {
+        this._baseColorFieldShader = new Shader(
+          this,
+          baseColorFieldVertexShader,
+          baseColorFieldFragmentShader,
+          {
+            vertex: {},
+            fragment: {
+              'vec4<f32> getColor': `(inputs: FieldInputs) -> vec4<f32> {
+                return vec4<f32>(0.0, 0.0, 0.0, 1.0);
+              }`
+            },
+            hookAliases: {
+              getColor: ['fieldColor']
+            }
+          }
+        );
+      }
+      return this._baseColorFieldShader;
     }
 
     baseComputeShader() {
