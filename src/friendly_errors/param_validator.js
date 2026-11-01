@@ -69,13 +69,21 @@ function validateParams(p5, fn, lifecycles) {
   // eventually contain both primitive types and web API objects.
   const schemaMap = {
     Any: z.any(),
+    any: z.any(),
     Array: z.array(z.any()),
+    array: z.array(z.any()),
     Boolean: z.boolean(),
+    boolean: z.boolean(),
     Function: z.function(),
+    function: z.function(),
     Integer: z.number().check(z.int()),
+    integer: z.number().check(z.int()),
     Number: z.union([z.number(), z.literal(Infinity), z.literal(-Infinity)]),
+    number: z.union([z.number(), z.literal(Infinity), z.literal(-Infinity)]),
     Object: z.object({}),
-    String: z.string()
+    object: z.object({}),
+    String: z.string(),
+    string: z.string()
   };
 
   const webAPIObjects = [
@@ -235,6 +243,11 @@ function validateParams(p5, fn, lifecycles) {
         typeSchema = z.union(
           types.map(t => generateTypeSchema(t)).filter(s => s !== undefined)
         );
+      } else if (
+        (baseType.startsWith("'") && baseType.endsWith("'")) ||
+        (baseType.startsWith('"') && baseType.endsWith('"'))
+      ) {
+        typeSchema = z.literal(baseType.slice(1, -1));
       } else if (baseType.endsWith('[]')) {
         typeSchema = z.array(generateTypeSchema(baseType.slice(0, -2)));
       } else {
@@ -246,9 +259,28 @@ function validateParams(p5, fn, lifecycles) {
       return typeSchema;
     };
 
+    const isParamOptional = p =>
+      typeof p === 'object' && p !== null
+        ? Boolean(p.optional)
+        : Boolean(p?.endsWith('?'));
+
     // Generate a schema for a single parameter. In the case where a parameter can
     // be of multiple types, `generateTypeSchema` is called for each type.
     const generateParamSchema = param => {
+      if (typeof param === 'object' && param !== null) {
+        const shape = {};
+        for (const [propName, propTypeStr] of Object.entries(
+          param.properties || {}
+        )) {
+          shape[propName] = generateParamSchema(propTypeStr).schema;
+        }
+        let schema = z.object(shape);
+        if (param.optional) {
+          schema = z.optional(schema);
+        }
+        return { schema, rest: false };
+      }
+
       const isOptional = param?.endsWith('?');
       param = param?.replace(/\?$/, '');
 
@@ -281,12 +313,12 @@ function validateParams(p5, fn, lifecycles) {
     // combinations that are valid for all numbers of parameters.
     const generateOverloadCombinations = params => {
       // No optional parameters, return the original parameter list right away.
-      if (!params.some(p => p?.endsWith('?'))) {
+      if (!params.some(isParamOptional)) {
         return [params];
       }
 
       const requiredParamsCount = params.filter(
-        p => p === null || !p.endsWith('?')
+        p => p === null || !isParamOptional(p)
       ).length;
       const result = [];
 
@@ -388,7 +420,24 @@ function validateParams(p5, fn, lifecycles) {
         const paramSchema = schemaItems[i];
         const arg = args[i];
 
-        if (!z.validate(paramSchema, arg)) score++;
+        if (!z.validate(paramSchema, arg)) {
+          const isArgObject =
+            typeof arg === 'object' && arg !== null && !Array.isArray(arg);
+          const isSchemaObject =
+            paramSchema.def?.type === 'object' ||
+            (paramSchema.def?.type === 'optional' &&
+              paramSchema.def?.innerType?.def?.type === 'object') ||
+            (z.ZodMiniObject && paramSchema instanceof z.ZodMiniObject) ||
+            (z.ZodMiniOptional &&
+              paramSchema instanceof z.ZodMiniOptional &&
+              paramSchema.def?.innerType instanceof z.ZodMiniObject);
+
+          if (isArgObject && !isSchemaObject) {
+            score += 3;
+          } else {
+            score += 1;
+          }
+        }
       }
 
       return score;
@@ -431,15 +480,27 @@ function validateParams(p5, fn, lifecycles) {
     // one by one.
     let currentError = zodErrorObj.issues[0];
 
+    const argIdx = currentError.path[0];
+    const isNested = currentError.path.length > 1;
+    const propName = isNested ? currentError.path.slice(1).join('.') : null;
+    const position =
+      FES.premade.ordinals[argIdx] ||
+      ordinals[argIdx] ||
+      `parameter #${Number(argIdx) + 1}`;
+
     // Helper function to build a type mismatch message.
     const buildTypeMismatchMessage = (
       actualType,
       expectedTypeStr,
-      position
+      pos,
+      prop
     ) => {
-      const positionStr = position
-        ? FES.log`at the ${ordinals[position]} parameter`
-        : '';
+      let positionStr = '';
+      if (prop) {
+        positionStr = FES.log`for property '${prop}' in the ${pos} parameter`;
+      } else if (pos) {
+        positionStr = FES.log`at the ${pos} parameter`;
+      }
       const actualTypeStr = actualType
         ? FES.log`, but received ${actualType}`
         : '';
@@ -502,12 +563,21 @@ function validateParams(p5, fn, lifecycles) {
         }
 
         const expectedTypesStr = Array.from(expectedTypes).join(' or ');
-        const position = error.path.join('.');
+        const unionArgIdx = error.path[0];
+        const unionIsNested = error.path.length > 1;
+        const unionPropName = unionIsNested
+          ? error.path.slice(1).join('.')
+          : null;
+        const unionPosition =
+          FES.premade.ordinals[unionArgIdx] ||
+          ordinals[unionArgIdx] ||
+          `parameter #${Number(unionArgIdx) + 1}`;
 
         message = FES.log`${message}${buildTypeMismatchMessage(
           actualType,
           expectedTypesStr,
-          position
+          unionPosition,
+          unionPropName
         )} in ${func + '()'}.`;
       }
 
@@ -536,10 +606,23 @@ function validateParams(p5, fn, lifecycles) {
         break;
       }
       case 'invalid_type': {
-        const position = FES.premade.ordinals[currentError.path.join('.')];
-        const expectedType = FES.premade.types[currentError.expected];
-        // NOTE: need type info
-        message = FES.log`Expected ${expectedType} at the ${position} parameter in ${func + '()'}.`;
+        const expectedType =
+          FES.premade.types[currentError.expected] || currentError.expected;
+        if (isNested) {
+          message = FES.log`Expected ${expectedType} for property '${propName}' in the ${position} parameter in ${func + '()'}.`;
+        } else {
+          message = FES.log`Expected ${expectedType} at the ${position} parameter in ${func + '()'}.`;
+        }
+        break;
+      }
+      case 'invalid_value': {
+        const expectedVal =
+          currentError.values?.join(' or ') || 'valid value';
+        if (isNested) {
+          message = FES.log`Expected ${expectedVal} for property '${propName}' in the ${position} parameter in ${func + '()'}.`;
+        } else {
+          message = FES.log`Expected ${expectedVal} at the ${position} parameter in ${func + '()'}.`;
+        }
         break;
       }
       case 'too_big': {
@@ -550,10 +633,13 @@ function validateParams(p5, fn, lifecycles) {
         break;
       }
       case 'custom': {
-        const position = FES.premade.ordinals[currentError.path.join('.')];
         const match = currentError.message.match(/Input not instance of (\w+)/);
         if (match) {
-          message = FES.log`Expected ${match[1]} at the ${position} parameter in ${func + '()'}.`;
+          if (isNested) {
+            message = FES.log`Expected ${match[1]} for property '${propName}' in the ${position} parameter in ${func + '()'}.`;
+          } else {
+            message = FES.log`Expected ${match[1]} at the ${position} parameter in ${func + '()'}.`;
+          }
           break;
         }
         // Unrecognized custom errors fall through to the default logging below.

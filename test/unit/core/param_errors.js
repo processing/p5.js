@@ -49,6 +49,79 @@ suite('Validate Params', function () {
       assert.isTrue(result.success);
     });
   });
+
+  suite('validateParams: options object properties (#7752)', function () {
+    test('loadModel(): valid options object passes', function () {
+      const result = mockP5Prototype._validate('p5.loadModel', [
+        'model.obj',
+        { normalize: true, fileType: '.obj' }
+      ]);
+      assert.isTrue(result.success);
+    });
+
+    test('loadModel(): omitted optional options object passes', function () {
+      const result = mockP5Prototype._validate('p5.loadModel', [
+        'model.obj'
+      ]);
+      assert.isTrue(result.success);
+    });
+
+    test('loadModel(): invalid property type targets options overload and names property', function () {
+      const result = mockP5Prototype._validate('p5.loadModel', [
+        'model.obj',
+        { normalize: 'NOT_A_BOOLEAN' }
+      ]);
+      assert.isFalse(result.success);
+      assert.include(
+        result.error.toString(),
+        "Expected boolean for property 'normalize' in the second parameter"
+      );
+    });
+
+    test('loadModel(): unlisted extra properties pass without false positives', function () {
+      const result = mockP5Prototype._validate('p5.loadModel', [
+        'model.obj',
+        { normalize: true, customVendorFlag: 123 }
+      ]);
+      assert.isTrue(result.success);
+    });
+
+    test('saveGif(): valid options with string literal union passes', function () {
+      const result = mockP5Prototype._validate('p5.saveGif', [
+        'sketch',
+        5,
+        { delay: 1, units: 'frames' }
+      ]);
+      assert.isTrue(result.success);
+    });
+
+    test('saveGif(): invalid string literal in options reports property error', function () {
+      const result = mockP5Prototype._validate('p5.saveGif', [
+        'sketch',
+        5,
+        { units: 'hours' }
+      ]);
+      assert.isFalse(result.success);
+      assert.include(
+        result.error.toString(),
+        "property 'units'"
+      );
+    });
+
+    test('orbitControl(): invalid option property type reports property error', function () {
+      const result = mockP5Prototype._validate('p5.orbitControl', [
+        1,
+        2,
+        3,
+        { disableTouchActions: 'NOT_A_BOOLEAN' }
+      ]);
+      assert.isFalse(result.success);
+      assert.include(
+        result.error.toString(),
+        "property 'disableTouchActions'"
+      );
+    });
+  });
   suite(
     'validateParams: multiple types allowed for single parameter',
     function () {
