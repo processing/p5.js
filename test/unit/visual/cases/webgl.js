@@ -1871,6 +1871,28 @@ visualSuite('WebGL', function () {
       screenshot();
     });
 
+    visualTest(
+      'minifier-style && and || statements act as conditionals',
+      (p5, screenshot) => {
+        p5.createCanvas(50, 50, p5.WEBGL);
+        const shader = p5.baseFilterShader().modify(
+          () => {
+            p5.getColor(inputs => {
+              let value = 0;
+              // Minifiers write `if (cond) action` as `cond && action`
+              inputs.texCoord.x > 0.5 && (value = 0.5);
+              inputs.texCoord.y > 0.5 || (value = value + 0.25);
+              return [value, value, value, 1];
+            });
+          },
+          { p5 }
+        );
+        p5.background(0);
+        p5.filter(shader);
+        screenshot();
+      }
+    );
+
     visualTest('lerp maps to mix in strands context', (p5, screenshot) => {
       p5.createCanvas(50, 50, p5.WEBGL);
       // lerp should behave identically to mix inside strands

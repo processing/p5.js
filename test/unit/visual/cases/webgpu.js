@@ -289,6 +289,28 @@ visualSuite('WebGPU', function () {
     });
 
     visualTest(
+      'minifier-style && and || statements act as conditionals',
+      async function (p5, screenshot) {
+        await p5.createCanvas(50, 50, p5.WEBGPU);
+        const shader = p5.baseFilterShader().modify(
+          () => {
+            p5.getColor(inputs => {
+              let value = 0;
+              // Minifiers write `if (cond) action` as `cond && action`
+              inputs.texCoord.x > 0.5 && (value = 0.5);
+              inputs.texCoord.y > 0.5 || (value = value + 0.25);
+              return [value, value, value, 1];
+            });
+          },
+          { p5 }
+        );
+        p5.background(0);
+        p5.filter(shader);
+        await screenshot();
+      }
+    );
+
+    visualTest(
       'filter shaders can sample a texture inside a conditional branch',
       async function (p5, screenshot) {
         await p5.createCanvas(50, 50, p5.WEBGPU);
