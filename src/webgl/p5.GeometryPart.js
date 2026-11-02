@@ -1,5 +1,5 @@
 import { Vector } from '../math/p5.Vector';
-
+import { DataArray } from './p5.DataArray';
 /**
  * @module Shape
  * @submodule 3D Primitives
@@ -96,6 +96,36 @@ class GeometryPart {
     this.faces = [];
     this.uvs = [];
     this.vertexColors = [];
+
+    // A 2D array containing edge connectivity patterns
+    // based on faces for most objects.
+    this.edges = [];
+
+    // One color per vertex representing the stroke color at that vertex.
+    this.vertexStrokeColors = [];
+
+    // An array containing every vertex for stroke drawing.
+    this.lineVertices = new DataArray();
+
+    // The tangents going into or out of a vertex on a line. Along a straight
+    // line segment, both should be equal. At an endpoint, one or the other
+    // will not exist and will be all 0. In joins between line segments, they
+    // may be different, as they will be the tangents on either side of the join.
+    this.lineTangentsIn = new DataArray();
+    this.lineTangentsOut = new DataArray();
+
+    // When drawing lines with thickness, entries in this buffer represent which
+    // side of the centerline the vertex will be placed. The sign of the number
+    // will represent the side of the centerline, and the absolute value will be
+    // used as an enum to determine which part of the cap or join each vertex
+    // represents. See the doc comments for _addCap and _addJoin for diagrams.
+    this.lineSides = new DataArray();
+
+    // One color per line vertex, generated automatically based on
+    // vertexStrokeColors in _edgesToVertices().
+    this.lineVertexColors = new DataArray();
+
+    this._hasStrokeTransparency = undefined;
 
     this.partState = partState || createPartState();
     this.dirtyFlags = {};
@@ -225,6 +255,330 @@ class GeometryPart {
     this.vertexTangents = tangents;
     return this;
   }
+
+  /**
+   * Create a 2D array for establishing stroke connections
+   * @private
+   * @chainable
+   */
+  _makeTriangleEdges() {
+    this.edges.length = 0;
+
+    for (let j = 0; j < this.faces.length; j++) {
+      this.edges.push([this.faces[j][0], this.faces[j][1]]);
+      this.edges.push([this.faces[j][1], this.faces[j][2]]);
+      this.edges.push([this.faces[j][2], this.faces[j][0]]);
+    }
+
+    return this;
+  }
+
+  /**
+   * @example
+   * let tetrahedron;
+   * function setup() {
+   *   createCanvas(200, 200, WEBGL);
+   *   describe('A rotating tetrahedron');
+   *
+   *   tetrahedron = new p5.Geometry();
+   *
+   *   // Give each geometry a unique gid
+   *   tetrahedron.gid = 'tetrahedron';
+   *
+   *   // Add four points of the tetrahedron
+   *
+   *   let radius = 50;
+   *   // A 2D triangle:
+   *   tetrahedron.vertices.push(createVector(radius, 0, 0));
+   *   tetrahedron.vertices.push(createVector(radius, 0, 0).rotate(TWO_PI / 3));
+   *   tetrahedron.vertices.push(createVector(radius, 0, 0).rotate(TWO_PI * 2 / 3));
+   *   // Add a tip in the z axis:
+   *   tetrahedron.vertices.push(createVector(0, 0, radius));
+   *
+   *   // Create the four faces by connecting the sets of three points
+   *   tetrahedron.faces.push([0, 1, 2]);
+   *   tetrahedron.faces.push([0, 1, 3]);
+   *   tetrahedron.faces.push([0, 2, 3]);
+   *   tetrahedron.faces.push([1, 2, 3]);
+   *   tetrahedron.makeEdgesFromFaces();
+   * }
+   *
+   * function draw() {
+   *   background(200);
+   *   strokeWeight(2);
+   *   orbitControl();
+   *   rotateY(millis() * 0.001);
+   *   model(tetrahedron);
+   * }
+   */
+  makeEdgesFromFaces() {
+    this._makeTriangleEdges();
+  }
+
+  /**
+   * Converts each line segment into the vertices and vertex attributes needed
+   * to turn the line into a polygon on screen. This will include:
+   * - Two triangles line segment to create a rectangle
+   * - Two triangles per endpoint to create a stroke cap rectangle. A fragment
+   *   shader is responsible for displaying the appropriate cap style within
+   *   that rectangle.
+   * - Four triangles per join between adjacent line segments, creating a quad on
+   *   either side of the join, perpendicular to the lines. A vertex shader will
+   *   discard the quad in the "elbow" of the join, and a fragment shader will
+   *   display the appropriate join style within the remaining quad.
+   *
+   * @private
+   * @chainable
+   */
+  _edgesToVertices(renderer = this.renderer) {
+    this.lineVertices.clear();
+    this.lineTangentsIn.clear();
+    this.lineTangentsOut.clear();
+    this.lineSides.clear();
+    this.lineVertexColors.clear();
+    this._hasStrokeTransparency = undefined;
+
+    const potentialCaps = new Map();
+    const connected = new Set();
+    let lastValidDir;
+    for (let i = 0; i < this.edges.length; i++) {
+      const prevEdge = this.edges[i - 1];
+      const currEdge = this.edges[i];
+      const isPoint = currEdge[0] === currEdge[1];
+      const begin = this.vertices[currEdge[0]];
+      const end = this.vertices[currEdge[1]];
+      const prevColor =
+        this.vertexStrokeColors.length > 0 && prevEdge
+          ? this.vertexStrokeColors.slice(
+              prevEdge[1] * 4,
+              (prevEdge[1] + 1) * 4
+            )
+          : [0, 0, 0, 0];
+      const fromColor =
+        this.vertexStrokeColors.length > 0
+          ? this.vertexStrokeColors.slice(
+              currEdge[0] * 4,
+              (currEdge[0] + 1) * 4
+            )
+          : [0, 0, 0, 0];
+      const toColor =
+        this.vertexStrokeColors.length > 0
+          ? this.vertexStrokeColors.slice(
+              currEdge[1] * 4,
+              (currEdge[1] + 1) * 4
+            )
+          : [0, 0, 0, 0];
+      const dir = isPoint
+        ? new Vector(0, 1, 0)
+        : end.copy().sub(begin).normalize();
+      const dirOK = dir.magSq() > 0;
+      if (dirOK) {
+        this._addSegment(begin, end, fromColor, toColor, dir,renderer);
+      }
+      if (!renderer?._simpleLines) {
+        if (i > 0 && prevEdge[1] === currEdge[0]) {
+          if (!connected.has(currEdge[0])) {
+            connected.add(currEdge[0]);
+            potentialCaps.delete(currEdge[0]);
+            // Add a join if this segment shares a vertex with the previous. Skip
+            // actually adding join vertices if either the previous segment or this
+            // one has a length of 0.
+            //
+            // Don't add a join if the tangents point in the same direction, which
+            // would mean the edges line up exactly, and there is no need for a join.
+            if (lastValidDir && dirOK && dir.dot(lastValidDir) < 1 - 1e-8) {
+              this._addJoin(begin, lastValidDir, dir, fromColor);
+            }
+          }
+        } else if (isPoint) {
+          this._addCap(begin, dir.copy().mult(-1), fromColor);
+          this._addCap(begin, dir, fromColor);
+        } else {
+          // Start a new line
+          if (dirOK && !connected.has(currEdge[0])) {
+            const existingCap = potentialCaps.get(currEdge[0]);
+            if (existingCap) {
+              this._addJoin(begin, existingCap.dir, dir, fromColor);
+              potentialCaps.delete(currEdge[0]);
+              connected.add(currEdge[0]);
+            } else {
+              potentialCaps.set(currEdge[0], {
+                point: begin,
+                dir: dir.copy().mult(-1),
+                color: fromColor
+              });
+            }
+          }
+          if (!isPoint && lastValidDir && !connected.has(prevEdge[1])) {
+            const existingCap = potentialCaps.get(prevEdge[1]);
+            if (existingCap) {
+              this._addJoin(
+                this.vertices[prevEdge[1]],
+                lastValidDir,
+                existingCap.dir.copy().mult(-1),
+                prevColor
+              );
+              potentialCaps.delete(prevEdge[1]);
+              connected.add(prevEdge[1]);
+            } else {
+              // Close off the last segment with a cap
+              potentialCaps.set(prevEdge[1], {
+                point: this.vertices[prevEdge[1]],
+                dir: lastValidDir,
+                color: prevColor
+              });
+            }
+            lastValidDir = undefined;
+          }
+        }
+
+        if (i === this.edges.length - 1 && !connected.has(currEdge[1])) {
+          const existingCap = potentialCaps.get(currEdge[1]);
+          if (existingCap) {
+            this._addJoin(end, dir, existingCap.dir.copy().mult(-1), toColor);
+            potentialCaps.delete(currEdge[1]);
+            connected.add(currEdge[1]);
+          } else {
+            potentialCaps.set(currEdge[1], {
+              point: end,
+              dir,
+              color: toColor
+            });
+          }
+        }
+
+        if (dirOK) {
+          lastValidDir = dir;
+        }
+      }
+    }
+    for (const { point, dir, color } of potentialCaps.values()) {
+      this._addCap(point, dir, color);
+    }
+    return this;
+  }
+
+  /**
+   * Adds the vertices and vertex attributes for two triangles making a rectangle
+   * for a straight line segment. A vertex shader is responsible for picking
+   * proper coordinates on the screen given the centerline positions, the tangent,
+   * and the side of the centerline each vertex belongs to. Sides follow the
+   * following scheme:
+   *
+   *  -1            -1
+   *   o-------------o
+   *   |             |
+   *   o-------------o
+   *   1             1
+   *
+   * @private
+   * @chainable
+   */
+  _addSegment(begin, end, fromColor, toColor, dir,renderer = this.renderer) {
+    const a = begin.array();
+    const b = end.array();
+    const dirArr = dir.array();
+    this.lineSides.push(1, 1, -1, 1, -1, -1);
+    for (const tangents of [this.lineTangentsIn, this.lineTangentsOut]) {
+      for (let i = 0; i < 6; i++) {
+        tangents.push(...dirArr);
+      }
+    }
+    this.lineVertices.push(...a, ...b, ...a, ...b, ...b, ...a);
+    if (!renderer?._simpleLines) {
+      this.lineVertexColors.push(
+        ...fromColor,
+        ...toColor,
+        ...fromColor,
+        ...toColor,
+        ...toColor,
+        ...fromColor
+      );
+    }
+    return this;
+  }
+
+  /**
+   * Adds the vertices and vertex attributes for two triangles representing the
+   * stroke cap of a line. A fragment shader is responsible for displaying the
+   * appropriate cap style within the rectangle they make.
+   *
+   * The lineSides buffer will include the following values for the points on
+   * the cap rectangle:
+   *
+   *           -1  -2
+   * -----------o---o
+   *            |   |
+   * -----------o---o
+   *            1   2
+   * @private
+   * @chainable
+   */
+  _addCap(point, tangent, color) {
+    const ptArray = point.array();
+    const tanInArray = tangent.array();
+    const tanOutArray = [0, 0, 0];
+    for (let i = 0; i < 6; i++) {
+      this.lineVertices.push(...ptArray);
+      this.lineTangentsIn.push(...tanInArray);
+      this.lineTangentsOut.push(...tanOutArray);
+      this.lineVertexColors.push(...color);
+    }
+    this.lineSides.push(-1, 2, -2, 1, 2, -1);
+    return this;
+  }
+
+  /**
+   * Adds the vertices and vertex attributes for four triangles representing a
+   * join between two adjacent line segments. This creates a quad on either side
+   * of the shared vertex of the two line segments, with each quad perpendicular
+   * to the lines. A vertex shader will discard all but the quad in the "elbow" of
+   * the join, and a fragment shader will display the appropriate join style
+   * within the remaining quad.
+   *
+   * The lineSides buffer will include the following values for the points on
+   * the join rectangles:
+   *
+   *            -1     -2
+   * -------------o----o
+   *              |    |
+   *       1 o----o----o -3
+   *         |    | 0  |
+   * --------o----o    |
+   *        2|    3    |
+   *         |         |
+   *         |         |
+   * @private
+   * @chainable
+   */
+  _addJoin(point, fromTangent, toTangent, color) {
+    const ptArray = point.array();
+    const tanInArray = fromTangent.array();
+    const tanOutArray = toTangent.array();
+    for (let i = 0; i < 12; i++) {
+      this.lineVertices.push(...ptArray);
+      this.lineTangentsIn.push(...tanInArray);
+      this.lineTangentsOut.push(...tanOutArray);
+      this.lineVertexColors.push(...color);
+    }
+    this.lineSides.push(-1, -3, -2, -1, 0, -3);
+    this.lineSides.push(3, 1, 2, 3, 0, 1);
+    return this;
+  }
+
+  hasStrokeTransparency() {
+    if (this._hasStrokeTransparency === undefined) {
+      this._hasStrokeTransparency = false;
+      for (let i = 0; i < this.lineVertexColors.length; i += 4) {
+        if (this.lineVertexColors[i + 3] < 1) {
+          this._hasStrokeTransparency = true;
+          break;
+        }
+      }
+    }
+    return this._hasStrokeTransparency;
+  }
+
 }
 
 export { GeometryPart, createPartState, createUserVertexProperty };

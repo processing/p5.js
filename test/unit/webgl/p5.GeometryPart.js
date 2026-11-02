@@ -421,4 +421,84 @@ suite('p5.GeometryPart', function () {
       fillSpy.mockRestore();
     }
   });
+
+  test('parts have independent stroke data', function () {
+    const partA = new p5.GeometryPart('part-a');
+    const partB = new p5.GeometryPart('part-b');
+
+    partA.edges.push([0, 1]);
+    partA.vertexStrokeColors.push(1, 0, 0, 1);
+    partA.lineVertices.push(0, 0, 0);
+
+    expect(partB.edges).toEqual([]);
+    expect(partB.vertexStrokeColors).toEqual([]);
+    expect(partB.lineVertices.length).toBe(0);
+  });
+
+  test('generates edges from part-local faces', function () {
+    const part = new p5.GeometryPart('triangle');
+
+    part.vertices = [
+      new p5.Vector(0, 0, 0),
+      new p5.Vector(10, 0, 0),
+      new p5.Vector(0, 10, 0)
+    ];
+
+    part.faces = [[0, 1, 2]];
+
+    part.makeEdgesFromFaces();
+
+    expect(part.edges).toEqual([
+      [0, 1],
+      [1, 2],
+      [2, 0]
+    ]);
+  });
+  test('generates stroke geometry for an independent part', function () {
+    const part = new p5.GeometryPart('line');
+
+    part.vertices = [
+      new p5.Vector(0, 0, 0),
+      new p5.Vector(10, 0, 0)
+    ];
+
+    part.edges = [[0, 1]];
+    part.vertexStrokeColors = [
+      1, 0, 0, 1,
+      0, 1, 0, 1
+    ];
+
+    part._edgesToVertices({ _simpleLines: false });
+
+    expect(part.lineVertices.length).toBeGreaterThan(0);
+    expect(part.lineTangentsIn.length).toBeGreaterThan(0);
+    expect(part.lineTangentsOut.length).toBeGreaterThan(0);
+    expect(part.lineSides.length).toBeGreaterThan(0);
+    expect(part.lineVertexColors.length).toBeGreaterThan(0);
+
+    const previousColorCount = part.lineVertexColors.length;
+
+    part._edgesToVertices({ _simpleLines: false });
+
+    expect(part.lineVertexColors.length).toBe(previousColorCount);
+  });
+
+  test('respects simple line mode on a standalone part', function () {
+    const part = new p5.GeometryPart('simple-line');
+
+    part.vertices = [
+      new p5.Vector(0, 0, 0),
+      new p5.Vector(10, 0, 0)
+    ];
+
+    part.edges = [[0, 1]];
+
+    part._edgesToVertices({ _simpleLines: false });
+    const fullLineVertices = part.lineVertices.length;
+
+    part._edgesToVertices({ _simpleLines: true });
+    const simpleLineVertices = part.lineVertices.length;
+
+    expect(simpleLineVertices).toBeLessThan(fullLineVertices);
+  });
 });

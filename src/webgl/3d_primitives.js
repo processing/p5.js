@@ -1681,7 +1681,7 @@ function primitives3D(p5, fn) {
       arcGeom.computeNormals();
 
       if (detail <= 50) {
-        arcGeom._edgesToVertices(arcGeom);
+        arcGeom._edgesToVertices();
       } else if (this.states.strokeColor) {
         console.log(
           `Cannot apply a stroke to an ${shape} with more than 50 detail`
