@@ -296,10 +296,15 @@ visualSuite('WebGPU', function () {
           () => {
             p5.getColor(inputs => {
               let value = 0;
+              let red = 0;
               // Minifiers write `if (cond) action` as `cond && action`
               inputs.texCoord.x > 0.5 && (value = 0.5);
               inputs.texCoord.y > 0.5 || (value = value + 0.25);
-              return [value, value, value, 1];
+              // ...and `if (cond) a; else b` as `cond ? a : b`
+              inputs.texCoord.x > 0.75 && inputs.texCoord.y > 0.75
+                ? (red = 1, value = 0)
+                : (red = value);
+              return [red, value, value, 1];
             });
           },
           { p5 }
