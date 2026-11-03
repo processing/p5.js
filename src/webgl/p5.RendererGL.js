@@ -17,6 +17,7 @@ import { RGB, RGBA } from '../color/creating_reading';
 import { Image } from '../image/p5.Image';
 import { glslBackend } from './strands_glslBackend';
 import { getShaderHookTypes } from './shaderHookUtils';
+import { cpuStorageTextureFor } from './cpuStorageTexture';
 
 import filterBaseVert from './shaders/filters/base.vert';
 import lightingShader from './shaders/lighting.glsl';
@@ -1402,7 +1403,7 @@ class RendererGL extends Renderer3D {
   // Routes CPU storage buffers to data textures so render shaders can read
   // `uniformStorage()` data on WebGL.
   getTexture(input) {
-    if (input?._isCpuStorage) {
+    if (input?._isStorageBuffer) {
       return cpuStorageTextureFor(this, input);
     }
     return super.getTexture(input);
