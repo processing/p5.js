@@ -304,6 +304,52 @@ suite('Environment', function () {
       myp5.pixelDensity(2);
       assert.strictEqual(myp5.pixelDensity(), 2);
     });
+
+    test('createCanvas keeps a pixelDensity set beforehand', async function () {
+      const sketch = await new Promise(function (resolve, reject) {
+        new p5(function (p) {
+          p.setup = function () {
+            try {
+              p.pixelDensity(3);
+              p.createCanvas(80, 60);
+              resolve(p);
+            } catch (err) {
+              reject(err);
+            }
+          };
+        });
+      });
+      try {
+        assert.strictEqual(sketch.pixelDensity(), 3);
+        assert.strictEqual(sketch.canvas.width, 80 * 3);
+        assert.strictEqual(sketch.canvas.height, 60 * 3);
+      } finally {
+        sketch.remove();
+      }
+    });
+
+    test('WEBGL createCanvas keeps a pixelDensity set beforehand', async function () {
+      const sketch = await new Promise(function (resolve, reject) {
+        new p5(function (p) {
+          p.setup = function () {
+            try {
+              p.pixelDensity(2);
+              p.createCanvas(40, 30, p.WEBGL);
+              resolve(p);
+            } catch (err) {
+              reject(err);
+            }
+          };
+        });
+      });
+      try {
+        assert.strictEqual(sketch.pixelDensity(), 2);
+        assert.strictEqual(sketch.canvas.width, 40 * 2);
+        assert.strictEqual(sketch.canvas.height, 30 * 2);
+      } finally {
+        sketch.remove();
+      }
+    });
   });
 
   suite('p5.prototype.displayDensity', function () {
