@@ -37,7 +37,7 @@ p5.js 프로젝트의 핵심적인 저장소들은 아래와 같습니다:
 
 # 깃허브 이슈 흐름
 
-- 알려진 버그와 추가되었으면 하는 새로운 기능들은 [깃허브 이슈](https://github.com/processing/p5.js/issues)들을 통해 추적됩니다. 이슈 [레이블](./issue_labels.md)들은 이슈들을 카테고리별로 분류하는 데에 사용되는데, 예를 들면 [초보자에게 적합한 이슈들](https://github.com/processing/p5.js/labels/level%3Abeginner)을 레이블링 하는 식입니다.
+- 알려진 버그와 추가되었으면 하는 새로운 기능들은 [깃허브 이슈](https://github.com/processing/p5.js/issues)들을 통해 추적됩니다. 이슈 [레이블](archive/issue_labels.md)들은 이슈들을 카테고리별로 분류하는 데에 사용되는데, 예를 들면 [초보자에게 적합한 이슈들](https://github.com/processing/p5.js/labels/level%3Abeginner)을 레이블링 하는 식입니다.
 
 - 이미 제기된 이슈 중에 작업을 시작하고 싶은 게 있다면, 다른 컨트리뷰터들이 진행 사항을 파악하고 도움을 줄 수 있도록 해당 이슈에 댓글을 달아주시기 바랍니다.
 
@@ -173,4 +173,4 @@ $ npm run dev
 - [코딩 트레인의 이 동영상](https://youtu.be/Rr3vLyP1Ods)🚋🌈에서는 p5.js에 기술적 기여를 시작하는 것에 대한 개요를 제공합니다.
 - p5.js [도커(Docker) 이미지](https://github.com/toolness/p5.js-docker)는 [도커](https://www.docker.com/)에 마운트 될 수 있는데, 이는 [Node](https://nodejs.org/) 같은 필수 요소들을 수동으로 설치할 필요 없이, 그리고 도커 설치를 제외하고는 어떤 방식으로든지 호스트 운영 체제에 영향을 주지 않고도 p5.js를 개발하는데에 사용될 수 있습니다.
 - p5.js 라이브러리의 빌드 과정은 [json 데이터 파일](https://p5js.org/reference/data.json)을 생성하는데, 이는 p5.js의 공개 API를 담고 있으며, 이는 에디터에서 p5.js 메서드를 자동으로 완성하는 등의 자동화된 툴링에 사용될 수 있습니다. 이 파일은 p5.js 웹사이트에서 호스트 되지만, 저장소의 일부로 포함되어 있지는 않습니다.
-- p5.js는 최근에 [ES6](https://en.wikipedia.org/wiki/ECMAScript#6th_Edition_-_ECMAScript_2015)로 마이그레이션 됐습니다. 이 변화가 여러분의 기여에 어떤 영향을 미칠지를 보기 위해선 [ES6 채택](./es6-adoption.md)을 방문해주십시오.
+- p5.js는 최근에 [ES6](https://en.wikipedia.org/wiki/ECMAScript#6th_Edition_-_ECMAScript_2015)로 마이그레이션 됐습니다. 이 변화가 여러분의 기여에 어떤 영향을 미칠지를 보기 위해선 [ES6 채택](archive/es6-adoption.md)을 방문해주십시오.

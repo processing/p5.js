@@ -25,7 +25,7 @@ Reconhecemos todos os tipos de contribuições. Este projeto segue a especifica�
 Além do código em si, também pode ser necessário fornecer alguma combinação do seguinte.
 
 - [documentação embutida](./inline_documentation.md) na forma de comentários de código, que explicam o código para outros desenvolvedores e usuários. Muitos desses comentários devem estar em conformidade com a sintaxe [JSDoc](https://usejsdoc.org) e serão publicados no site p5.js como parte do [manual de referência on-line](https://p5js.org/reference/)
-- [testes de unidade](./unit_testing.md), pequenos pedaços de código que são separados da biblioteca e são usados para verificar seu comportamento
+- [testes de unidade](../unit_testing.md), pequenos pedaços de código que são separados da biblioteca e são usados para verificar seu comportamento
 
 ## Exemplos
 
@@ -33,7 +33,7 @@ O site p5.js. inclui [exemplos integrados](https://p5js.org/examples/). Você po
 
 ## ES6
 
-O p5.js foi recentemente migrado para o [ES6](https://en.wikipedia.org/wiki/ECMAScript#6th_Edition_-_ECMAScript_2015). Para ver como essa transição poderia afetar sua contribuição, visite a [adoção do ES6](./es6-adoption.md).
+O p5.js foi recentemente migrado para o [ES6](https://en.wikipedia.org/wiki/ECMAScript#6th_Edition_-_ECMAScript_2015). Para ver como essa transição poderia afetar sua contribuição, visite a [adoção do ES6](../archive/es6-adoption.md).
 
 ## Outras Ideas
 

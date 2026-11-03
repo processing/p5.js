@@ -84,7 +84,7 @@ The easiest way to do this is to add your language code (like "de" for German, "
 
 This will generate you a fresh translations file in `translations/{LANGUAGE_CODE}/`! Now you can begin populating it with your fresh translations! 🥖
 
-You'll also need to add an entry for it in [`translations/index.js`](../translations/index.js) and [`translations/dev.js`](../translations/dev.js). You can follow the pattern used in that file for `en` and `es`.
+You'll also need to add an entry for it in [`translations/index.js`](../../translations/index.js) and [`translations/dev.js`](../../translations/dev.js). You can follow the pattern used in that file for `en` and `es`.
 
 ### Testing changes
 

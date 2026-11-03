@@ -32,7 +32,7 @@ p5.js 리포지토리(repository) 외부에서 기여하려는 경우(튜토리�
     - [단위 테스트](unit-tests)
     - [인라인 문서화](inline-documentation)
     - [국제화](https://github.com/processing/p5.js/blob/main/contributor_docs/contributor_guidelines.md#internationalization)
-    - [접근성](accessibility)
+    - [접근성](../../src/accessibility/outputs.js)
   - [코드 표준](code-standard)
   - [소프트웨어 디자인 원칙](software-design-principles)
 - [풀 리퀘스트](pull-requests)

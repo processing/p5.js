@@ -12,7 +12,7 @@ Ahoj! Ďakujeme za tvoj záujem prispieť do projektu p5.js! Rôzne spôsoby ak�
 
 # Ako Prispieť
 
-Známe chyby a zamýšľané nové funkcie sú zaznamenané pomocou [GitHub issues](https://github.com/processing/p5.js/issues). Problémoé [štítky](./issue_labels.md) sa používajú na kategorizovanie problémov, ako napríklad tie, ktoré sú [vhodné pre začiatočníkov](https://github.com/processing/p5.js/labels/level%3Abeginner). Ak by si chcel začať pracovať na existujúcom probléme, pridaj komentár k problému a tým pádom upozornil ostatných o svojom úmysle prispieť. Zároveň ti môže byť poskytnutá pomoc. Ak si dokončil svoju prácu na konkrétnom probléme, [predlož pull request (PR)](./preparing_a_pull_request.md) proti main vetve repozitára p5.js. Do políčka s popisom PR uveď vetu "resolves #XXXX", pričom namiesto #XXXX zadaj problém, ktorý si vyriešil. Ak PR adresuje problém, ale nevyriešil ho úplne (teda problém ostáva nevyriešený po prijatí tvojich zmien), napíš "addresses #XXXX".
+Známe chyby a zamýšľané nové funkcie sú zaznamenané pomocou [GitHub issues](https://github.com/processing/p5.js/issues). Problémoé [štítky](../archive/issue_labels.md) sa používajú na kategorizovanie problémov, ako napríklad tie, ktoré sú [vhodné pre začiatočníkov](https://github.com/processing/p5.js/labels/level%3Abeginner). Ak by si chcel začať pracovať na existujúcom probléme, pridaj komentár k problému a tým pádom upozornil ostatných o svojom úmysle prispieť. Zároveň ti môže byť poskytnutá pomoc. Ak si dokončil svoju prácu na konkrétnom probléme, [predlož pull request (PR)](./preparing_a_pull_request.md) proti main vetve repozitára p5.js. Do políčka s popisom PR uveď vetu "resolves #XXXX", pričom namiesto #XXXX zadaj problém, ktorý si vyriešil. Ak PR adresuje problém, ale nevyriešil ho úplne (teda problém ostáva nevyriešený po prijatí tvojich zmien), napíš "addresses #XXXX".
 
 Ak si objavil chybu alebo ťa napadla nejaká nová funkionalita, ktorú by si rád pridal, začni s predložením problému. Nepredkladaj jednoducho pull request obsahujúci kód, ktorý rieši chyby alebo prináša novú funkcionalitu bez toho, aby si najskôr predložil problém, pretože nebudeme schopný tvoj kód akceptovať. Akonáhle obdržíš spätnú väzbu na svoj problém a povolenie na jeho riešenie, môžeš začať s procesom prispievania.
 
@@ -25,7 +25,7 @@ Rozpoznávame všetky druhy príspevkov. Tento projekt sa riadi podľa [all-cont
 Mimo samotného kódu je potrebné aby si dodal aj kombináciu z nasledovných.
 
 - [inline dokumentácia](./inline_documentation.md) vo forme komentárov kódu, ktoré vysvetľujú kód vývojárom a používateľom. Mnohé z týchto komentárom musia podliehať syntaxi [JSDoc](https://jsdoc.app) a budú publikované na stránke p5.js ako súčasť [online referenčnej príručky](https://p5js.org/reference/)
-- [unit testy](./unit_testing.md), malé časti kódu, ktoré sú oddelené od knižnice a použite na overenie správnosti správanie
+- [unit testy](../unit_testing.md), malé časti kódu, ktoré sú oddelené od knižnice a použite na overenie správnosti správanie
 
 ## Príklady
 
@@ -33,7 +33,7 @@ Stránka p5.js obsahujé [integrované príklady](https://p5js.org/examples/). M
 
 ## ES6
 
-p5.js nedávno migrovalo na [ES6](https://en.wikipedia.org/wiki/ECMAScript#6th_Edition_-_ECMAScript_2015). Ak chceš vidieť ako táto zmena ovplyňuje tvoj príspevok, navštív prosím stránku [adaptácia ES6](./es6-adoption.md).
+p5.js nedávno migrovalo na [ES6](https://en.wikipedia.org/wiki/ECMAScript#6th_Edition_-_ECMAScript_2015). Ak chceš vidieť ako táto zmena ovplyňuje tvoj príspevok, navštív prosím stránku [adaptácia ES6](../archive/es6-adoption.md).
 
 ## Iné Nápady
 
