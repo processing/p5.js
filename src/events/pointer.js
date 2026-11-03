@@ -1381,21 +1381,21 @@ function pointer(p5, fn, lifecycles) {
    * }
    */
   fn._onpointerup = function (e) {
-    let executeDefault;
+  let executeDefault;
+  this._activePointers.delete(e.pointerId);
+  if (this._activePointers.size === 0) {
     this.mouseIsPressed = false;
+  }
+  this._setMouseButton(e);
+  this._updatePointerCoords(e);
 
-    this._activePointers.delete(e.pointerId);
-    this._setMouseButton(e);
-
-    this._updatePointerCoords(e);
-
-    if (typeof this._customActions.mouseReleased === 'function') {
-      executeDefault = this._customActions.mouseReleased(e);
-      if (executeDefault === false) {
-        e.preventDefault();
-      }
+  if (typeof this._customActions.mouseReleased === 'function') {
+    executeDefault = this._customActions.mouseReleased(e);
+    if (executeDefault === false) {
+      e.preventDefault();
     }
-  };
+  }
+};
 
   fn._ondragend = fn._onpointerup;
   fn._ondragover = fn._onpointermove;
