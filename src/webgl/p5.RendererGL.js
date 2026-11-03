@@ -1376,6 +1376,36 @@ class RendererGL extends Renderer3D {
     tex.bindTexture();
     tex.update();
     gl.uniform1i(uniform.location, uniform.samplerIndex);
+
+    if (tex._isCpuStorageTexture) {
+      this._setCpuStorageLayoutUniforms(uniform, tex);
+    }
+  }
+  // Sets the `stride` (and `count`, for lists) uniforms that accompany a CPU
+  // storage data texture.
+  _setCpuStorageLayoutUniforms(uniform, tex) {
+    const gl = this.GL;
+    const program = this._curShader?._glProgram;
+    if (!program || !tex._layout) return;
+    let locs = tex._programLocs.get(program);
+    if (!locs) {
+      locs = {
+        stride: gl.getUniformLocation(program, `${uniform.name}_stride`),
+        count: gl.getUniformLocation(program, `${uniform.name}_count`)
+      };
+      tex._programLocs.set(program, locs);
+    }
+    if (locs.stride) gl.uniform1i(locs.stride, tex._layout.stride);
+    if (locs.count) gl.uniform1i(locs.count, tex._layout.count);
+  }
+
+  // Routes CPU storage buffers to data textures so render shaders can read
+  // `uniformStorage()` data on WebGL.
+  getTexture(input) {
+    if (input?._isCpuStorage) {
+      return cpuStorageTextureFor(this, input);
+    }
+    return super.getTexture(input);
   }
 
   bindTexture(tex) {
