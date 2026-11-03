@@ -22,7 +22,7 @@ The `structure.js` module is best thought of as a collection of ways to make _mo
 
 The `constants.js` module provides various default values mostly related to math and web standards using clear semantic names to increase syntax clarity when they are used in other algorithms. These values are attached to the `p5` object prototype as properties by the constructor function so they can be more easily accessed by other parts of the p5.js library or by user code.
 
-## [friendly_errors/fes_core.js](./friendly_errors/fes_core.js)
+## [friendly_errors/fes_core.js](../friendly_errors/fes_core.js)
 
 This is the main file for the Friendly Error System (FES). The Friendly Error System (FES) is a system designed to help new programmers with common user errors as they get started learning. It catches common beginning errors and provides clear language and links to help a user resolve the error. FES is only applied to functions that are ones a user might encounter when they are just starting. You can learn more about the FES in the comment section at the top of this file, or in the [contributors_docs/friendly_error_system.md](https://github.com/processing/p5.js/blob/main/contributor_docs/friendly_error_system.md) file.
 
@@ -42,7 +42,7 @@ The `environment.js` module detects and semantically reassigns various features 
 
 Sometimes p5.js needs to use new browser APIs or other features which haven't yet been completely standardized; for example, a feature that still uses [vendor prefixes](https://developer.mozilla.org/en-US/docs/Glossary/Vendor_Prefix). In any such cases where it is necessary to handle multiple versions of the same functionality, the `shim.js` module juggles the available variants and assigns the results of that evaluation to a standardized property on the `p5` object. The rest of the p5.js library can then use that functionality without needing to constantly reconsider the specific browser implementation details.
 
-## [p5.Element.js](./p5.Element.js)
+## [p5.Element.js](../dom/p5.Element.js)
 
 Although p5.js is a general toolkit for all sorts of interactive art projects, in practice many p5.js sketches focus on rendering two dimensional graphics into a `<canvas>` element. The `p5.Element.js` module is a wrapper around the browser's DOM API which is focused on the `<canvas>` element and also handles user input events like clicks and mouse movements. Conceptually, p5.js considers the sketch to be _the entire web page_. It's useful to separate `<canvas>` from the more general DOM because so many p5.js projects focus on `<canvas>` and this enables smaller [custom builds](https://github.com/processing/p5.js/blob/main/contributor_docs/custom_p5_build.md).
 
@@ -74,18 +74,18 @@ _lines, shapes, and visual styles_
 
 The `transform.js` module implements logic for scaling, rotation, and matrix transformations.
 
-## [shape/attributes.js](./shape/attributes.js)
+## [shape/attributes.js](../shape/attributes.js)
 
 Attributes are an important part of the general API for the web, but the `attributes.js` module defines and handles miscellaneous _graphical_ attributes that can be consider a set of active parameters for the current drawing style. Think of this as a grab bag of all the remaining drawing parameters that were not moved out into separate dedicated modules as with [color](../color/) and [typography](../typography/).
 
-## [shape/2d_primitives.js](./shape/2d_primitives.js)
+## [shape/2d_primitives.js](../shape/2d_primitives.js)
 
 The `2d_primitives.js` module provides helper functions for drawing common shapes. The resulting drawing commands are sent to the currently active [renderer](./rendering.js).
 
-## [shape/vertex.js](./shape/vertex.js)
+## [shape/vertex.js](../shape/vertex.js)
 
 The `vertex.js` module handles points and coordinates for drawing curves and shapes.
 
-## [shape/curves.js](./shape/curves.js)
+## [shape/curves.js](../shape/curves.js)
 
 The `curves.js` module draws curves based on a set of vertices.

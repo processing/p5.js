@@ -105,7 +105,7 @@ Los _issues_ de informes de errores deberían utilizar la plantilla de _Issue_ "
      - De lo contrario, deje un comentario sobre dónde debería presentarse el informe de error (con un enlace directo proporcionado) y cierre el _issue_.
    - El primer paso para revisar un informe de error es verificar si se proporciona suficiente información para replicar el error, y si es así, se debe intentar replicar el error según lo descrito.
 2. Si el error se puede replicar:
-   - Puede ser necesario realizar alguna discusión para determinar la mejor manera de solucionar un error particular. Puede ser necesario realizar alguna discusión para determinar la mejor manera de solucionar un error particular. A veces, puede ser directo;otras veces, puede ser complicado. Por favor, consulte los [principios de diseño de p5.js](design_principles.md) al tomar esta decisión caso por caso.
+   - Puede ser necesario realizar alguna discusión para determinar la mejor manera de solucionar un error particular. Puede ser necesario realizar alguna discusión para determinar la mejor manera de solucionar un error particular. A veces, puede ser directo;otras veces, puede ser complicado. Por favor, consulte los [principios de diseño de p5.js](../hi/archive/design_principles.md) al tomar esta decisión caso por caso.
    - Si el autor del _issue_ indicó en el _issue_ que está dispuesto a contribuir con una solución:
      - Apruebe el _issue_ para su solución por parte del autor del _issue_ dejando un comentario y asignándoles el _issue_. Utilice el botón de engranaje en el lado derecho junto a "Assignee".
    - Si el autor del _issue_ no desea contribuir con una solución:
@@ -130,7 +130,7 @@ Los _issues_ para solicitar funcionalidades deberían utilizar la plantilla "New
    - Si una solicitud de funcionalidad no tiene suficientemente completado el campo "Increasing Access" ("Aumento de Acceso"), puedes preguntar al autor del _issue_ cómo la funcionalidad aumenta el acceso.
    - La declaración de acceso de una funcionalidad puede ser proporcionada por un miembro diferente de la comunidad, incluidos los revisores de _issue_.
 2. Una nueva solicitud de funcionalidad puede ser evaluada para su inclusión en base a los siguientes criterios:
-   - ¿La función encaja en el alcance del proyecto y los principios de diseño [principios de diseño](design_principles.md) de p5.js?
+   - ¿La función encaja en el alcance del proyecto y los principios de diseño [principios de diseño](../hi/archive/design_principles.md) de p5.js?
      - Por ejemplo, una solicitud para agregar una nueva forma primitiva de dibujo puede ser considerada, pero una solicitud para adoptar un protocolo de Internet de las cosas basado en el navegador probablemente estará fuera de alcance.
      - En general, el alcance de p5.js debería ser relativamente estrecho para evitar un exceso de características poco utilizadas.
      - Si una función no encaja en el alcance de p5.js, sugiere al autor del _issue_ que implemente la función como una biblioteca complementaria.
@@ -291,7 +291,7 @@ Nota: El proceso de compilación de Browserify/Grunt (por ejemplo, `browserify`,
 
 ## Proceso de Lanzamiento
 
-Consulta [release\_process.md](release_process.md).
+Consulta [release\_process.md](../release_process.md).
 
 ---
 
@@ -329,7 +329,7 @@ A continuación, se muestran algunas de las Respuestas Guardadas que están sien
 
 ##### Cerrando: Complemento
 
-> Creo que esta función está fuera del alcance de la API de p5.js (intentamos mantenerla lo más minimalista posible), pero podría ser un gran punto de partida para una biblioteca complementaria. Consulta la documentación aquí sobre cómo crear un complemento: [https://github.com/processing/p5.js/blob/main/contributor\_docs/creating\_libraries.md](creating_libraries.md)
+> Creo que esta función está fuera del alcance de la API de p5.js (intentamos mantenerla lo más minimalista posible), pero podría ser un gran punto de partida para una biblioteca complementaria. Consulta la documentación aquí sobre cómo crear un complemento: [https://github.com/processing/p5.js/blob/main/contributor\_docs/creating\_libraries.md](../creating_libraries.md)
 
 ##### Cerrando PR: Primero Necesita <em>Issue</em>
 

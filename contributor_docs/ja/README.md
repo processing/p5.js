@@ -37,7 +37,7 @@ p5.jsプロジェクトには、このコードリポジトリ以外にもいく
 
 # GitHub Issue プロセス
 
-- 私たちは[GitHub issue](https://github.com/processing/p5.js/issues)を使用して、既知のバグと予想される新機能を追跡しています。[Issue labels](./issue_labels.md)は、問題を分類するために使用されます。例えば、[初心者向け](https://github.com/processing/p5.js/labels/level%3Abeginner)の問題です。
+- 私たちは[GitHub issue](https://github.com/processing/p5.js/issues)を使用して、既知のバグと予想される新機能を追跡しています。[Issue labels](../archive/issue_labels.md)は、問題を分類するために使用されます。例えば、[初心者向け](https://github.com/processing/p5.js/labels/level%3Abeginner)の問題です。
 
 - 既存の問題に取り組みたい場合は、取り組もうとしている問題にコメントしてください。そうすることで、他の貢献者がその問題が処理中であることを知り、支援を提供することができます。
 
@@ -171,4 +171,4 @@ $ npm run dev
 - [The Coding Trainのビデオ](https://youtu.be/Rr3vLyP1Ods) :train::rainbow: は、p5.jsへの技術的な貢献を始めるための概要を提供します。
 - p5.js [Dockerイメージ](https://github.com/toolness/p5.js-docker)は[Docker](https://www.docker.com/)にインストールでき、[Node](https://nodejs.org/)などの要件を手動でインストールすることなく、またホストオペレーティングシステムに他の方法で影響を与えることなく（Dockerをインストールする以外は）、p5.jsの開発に使用できます。
 - p5.jsライブラリのビルドプロセスは、p5.jsの公開APIを含む[jsonデータファイル](https://p5js.org/reference/data.json)を生成します。これは、エディタでのp5.js構文の自動補完など、自動化ツールで使用できます。このファイルはp5.jsウェブサイトでホストされていますが、コードリポジトリには含まれていません。
-- p5.jsの言語は最近、[ES6](https://en.wikipedia.org/wiki/ECMAScript#6th_Edition_-_ECMAScript_2015)に移行しました。この動きがあなたの貢献にどのように影響するかについては、[ES6 adoption](../es6-adoption.md)を参照してください。
+- p5.jsの言語は最近、[ES6](https://en.wikipedia.org/wiki/ECMAScript#6th_Edition_-_ECMAScript_2015)に移行しました。この動きがあなたの貢献にどのように影響するかについては、[ES6 adoption](../archive/es6-adoption.md)を参照してください。

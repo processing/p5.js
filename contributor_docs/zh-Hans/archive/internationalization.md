@@ -82,7 +82,7 @@ console.log(translator('fileLoading.notFound', { fileName: file.name }));
 
 这将在 `translations/{LANGUAGE_CODE}/` 中为您生成一个全新的翻译文件！现在，您可以开始填充它的翻译内容了！🥖
 
-您还需要在 [`translations/index.js`](../translations/index.js) 和 [`translations/dev.js`](../translations/dev.js) 中添加一个条目。您可以按照该文件中对 `en` 和 `es` 使用的模式进行操作。
+您还需要在 [`translations/index.js`](../../../translations/index.js) 和 [`translations/dev.js`](../../../translations/dev.js) 中添加一个条目。您可以按照该文件中对 `en` 和 `es` 使用的模式进行操作。
 
 ### 测试更改
 

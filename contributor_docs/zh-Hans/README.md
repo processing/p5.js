@@ -37,7 +37,7 @@ p5.js 项目除了这个代码库外还包括了以下几个其他的代码库�
 
 # GitHub Issue 流程
 
-- 我们使用 [GitHub issue](https://github.com/processing/p5.js/issues) 跟踪已知的错误和预期的新功能。[Issue lables](./issue_labels.md) 用于将问题分类，例如[适合初学者](https://github.com/processing/p5.js/labels/level%3Abeginner)的问题。
+- 我们使用 [GitHub issue](https://github.com/processing/p5.js/issues) 跟踪已知的错误和预期的新功能。[Issue lables](archive/issue_labels.md) 用于将问题分类，例如[适合初学者](https://github.com/processing/p5.js/labels/level%3Abeginner)的问题。
 
 - 如果您想开始处理现有问题，请对你打算探查的问题发表评论，以便其他贡献者知道该问题正在处理中并可以提供帮助。
 
@@ -171,4 +171,4 @@ $ npm run dev
 - [来自 The Coding Train 的视频](https://youtu.be/Rr3vLyP1Ods) :train::rainbow: 概述了对 p5.js 的技术贡献入门。
 - p5.js [Docker 映像](https://github.com/toolness/p5.js-docker)可以安装在 [Docker](https://www.docker.com/) 中，并用于开发p5 .js，无需手动安装诸如 [Node](https://nodejs.org/) 之类的要求，也无需以其他方式影响主机操作系统（除了安装 Docker 外）。
 - p5.js 库的构建过程会生成一个 [json 数据文件](https://p5js.org/reference/data.json)，其中包含了 p5.js 的公共 API，可用于自动化工具中，例如在编辑器中自动完成 p5.js 语法。该文件托管在 p5.js 网站上，但不包含在代码库中。
-- p5.js 的语言最近已改版到 [ES6](https://en.wikipedia.org/wiki/ECMAScript#6th_Edition_-__ECMAScript_2015)。要查看此举措如何影响您的贡献，请参考 [ES6 adoption](../es6-adoption.md) 。
+- p5.js 的语言最近已改版到 [ES6](https://en.wikipedia.org/wiki/ECMAScript#6th_Edition_-__ECMAScript_2015)。要查看此举措如何影响您的贡献，请参考 [ES6 adoption](../archive/es6-adoption.md) 。
