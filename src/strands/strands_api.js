@@ -408,8 +408,9 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
       );
     }
   }
-  augmentFn(fn, p5, 'break', function () {
+  augmentFn(fn, p5, 'break', function (carriedValues = {}) {
     rejectLoopExitWithHelpers('break');
+    strandsContext.activeLoop?.commitCarriedValues(carriedValues);
     build.statementNode(strandsContext, StatementType.BREAK);
   });
   p5.break = fn.break;
@@ -1178,8 +1179,11 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
     );
     return createStrandsNode(id, dimension, strandsContext);
   });
+  const originalPaletteLerp = fn.paletteLerp;
   augmentFn(fn, p5, 'paletteLerp', function(stopsNode, tNode) {
-    if (!strandsContext.active) return;
+    if (!strandsContext.active) {
+      return originalPaletteLerp.apply(this, arguments);
+    }
 
     if (!Array.isArray(stopsNode)) {
       throw new Error(
