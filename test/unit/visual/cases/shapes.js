@@ -430,37 +430,110 @@ visualSuite('Shape drawing', function () {
           screenshot();
         });
 
-        visualTest('Texture coordinates', async function (p5, screenshot) {
-          const tex = await p5.loadImage('test/unit/assets/cat.jpg');
-          setup(p5);
-          p5.texture(tex);
-          p5.beginShape(p5.QUAD_STRIP);
-          p5.vertex(10, 10, 0, 0, 0);
-          p5.vertex(45, 5, 0, tex.width, 0);
-          p5.vertex(15, 35, 0, 0, tex.height);
-          p5.vertex(40, 45, 0, tex.width, tex.height);
-          p5.endShape();
-
-          screenshot();
-        });
-
-        visualTest(
-          'Normalized texture coordinates',
-          async function (p5, screenshot) {
+        visualSuite('Texturing', () => {
+          visualTest('Texture coordinates', async function (p5, screenshot) {
             const tex = await p5.loadImage('test/unit/assets/cat.jpg');
             setup(p5);
             p5.texture(tex);
-            p5.textureMode(p5.NORMAL);
             p5.beginShape(p5.QUAD_STRIP);
             p5.vertex(10, 10, 0, 0, 0);
-            p5.vertex(45, 5, 0, 1, 0);
-            p5.vertex(15, 35, 0, 0, 1);
-            p5.vertex(40, 45, 0, 1, 1);
+            p5.vertex(45, 5, 0, tex.width, 0);
+            p5.vertex(15, 35, 0, 0, tex.height);
+            p5.vertex(40, 45, 0, tex.width, tex.height);
             p5.endShape();
 
             screenshot();
-          }
-        );
+          });
+
+          visualTest(
+            'Normalized texture coordinates',
+            async function (p5, screenshot) {
+              const tex = await p5.loadImage('test/unit/assets/cat.jpg');
+              setup(p5);
+              p5.texture(tex);
+              p5.textureMode(p5.NORMAL);
+              p5.beginShape(p5.QUAD_STRIP);
+              p5.vertex(10, 10, 0, 0, 0);
+              p5.vertex(45, 5, 0, 1, 0);
+              p5.vertex(15, 35, 0, 0, 1);
+              p5.vertex(40, 45, 0, 1, 1);
+              p5.endShape();
+
+              screenshot();
+            }
+          );
+
+          visualTest('2D bezierVertex()', async function (p5, screenshot) {
+            // Make a circle with the texture.
+            const tex = await p5.loadImage('test/unit/assets/cat.jpg');
+            setup(p5);
+            p5.textureMode(p5.NORMAL)
+            p5.texture(tex)
+            p5.beginShape();
+            p5.bezierVertex(50,25,1,0);
+            for (let i = 0; i <= 20; i++) {
+              const angle = (i / 20) * p5.TWO_PI;
+              let x = 25 * p5.cos(angle)
+              let y = 25 * p5.sin(angle)
+              let u = x / 50 + .5
+              let v = y / 50 + .5
+              p5.bezierVertex(x+25,y+25,u,v);
+            }
+            p5.endShape()
+
+            screenshot();
+          });
+
+          visualTest('3D bezierVertex()', async function (p5, screenshot) {
+            // Make a circle with the texture.
+            const tex = await p5.loadImage('test/unit/assets/cat.jpg');
+            setup(p5);
+            p5.textureMode(p5.NORMAL)
+            p5.texture(tex)
+            p5.beginShape();
+            p5.bezierVertex(50,25,0,1,0);
+            for (let i = 0; i <= 20; i++) {
+              const angle = (i / 20) * p5.TWO_PI;
+              let x = 25 * p5.cos(angle)
+              let y = 25 * p5.sin(angle)
+              let u = x / 50 + .5
+              let v = y / 50 + .5
+              p5.bezierVertex(x+25,y+25,0,u,v);
+            }
+            p5.endShape()
+
+            screenshot();
+          });
+
+          visualTest('2D splineVertex()', async function (p5, screenshot) {
+            const tex = await p5.loadImage('test/unit/assets/cat.jpg');
+            setup(p5);
+            p5.textureMode(p5.NORMAL)
+            p5.texture(tex)
+            p5.beginShape();
+            p5.splineVertex(10,10,0,0);
+            p5.splineVertex(10,40,0,1);
+            p5.splineVertex(40,40,1,1);
+            p5.splineVertex(40,10,1,0);
+            p5.endShape(p5.CLOSE);
+
+            screenshot();
+          });
+          visualTest('3D splineVertex()', async function (p5, screenshot) {
+            const tex = await p5.loadImage('test/unit/assets/cat.jpg');
+            setup(p5);
+            p5.textureMode(p5.NORMAL)
+            p5.texture(tex)
+            p5.beginShape();
+            p5.splineVertex(10,10,0,0,0);
+            p5.splineVertex(10,40,0,0,1);
+            p5.splineVertex(40,40,0,1,1);
+            p5.splineVertex(40,10,0,1,0);
+            p5.endShape(p5.CLOSE)
+
+            screenshot();
+          });
+        });
 
         visualTest('Per-vertex fills', function (p5, screenshot) {
           setup(p5);
