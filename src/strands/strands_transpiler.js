@@ -187,6 +187,96 @@ function throwIfLoopProtectionInserted(ast) {
     );
   }
 }
+function isUnusedResultControlFlow(expr) {
+  return (
+    expr.type === 'ConditionalExpression' ||
+    (expr.type === 'LogicalExpression' &&
+      (expr.operator === '&&' || expr.operator === '||'))
+  );
+}
+
+function toBlock(statements) {
+  return { type: 'BlockStatement', body: statements };
+}
+
+// Minifiers turn `if (c) body` into `c && body;`. When the result is thrown
+// away, it's control flow rather than a bool expression, so it is rewritten
+// back into an if statement. Returns the statements that replace `stmt`.
+function restoreConditionalStatement(stmt) {
+  if (stmt.type !== 'ExpressionStatement') return [stmt];
+  const expr = stmt.expression;
+  const asStatement = expression => ({ type: 'ExpressionStatement', expression });
+
+  if (expr.type === 'SequenceExpression') {
+    if (!expr.expressions.some(isUnusedResultControlFlow)) return [stmt];
+    return expr.expressions.flatMap(e =>
+      restoreConditionalStatement(asStatement(e))
+    );
+  }
+  if (expr.type === 'LogicalExpression' && isUnusedResultControlFlow(expr)) {
+    const test =
+      expr.operator === '&&'
+        ? expr.left
+        : {
+            type: 'UnaryExpression',
+            operator: '!',
+            prefix: true,
+            argument: expr.left
+          };
+    return [
+      {
+        type: 'IfStatement',
+        test,
+        consequent: toBlock(restoreConditionalStatement(asStatement(expr.right))),
+        alternate: null
+      }
+    ];
+  }
+  if (expr.type === 'ConditionalExpression') {
+    return [
+      {
+        type: 'IfStatement',
+        test: expr.test,
+        consequent: toBlock(
+          restoreConditionalStatement(asStatement(expr.consequent))
+        ),
+        alternate: toBlock(
+          restoreConditionalStatement(asStatement(expr.alternate))
+        )
+      }
+    ];
+  }
+  return [stmt];
+}
+
+function restoreMinifiedConditionals(ast, uniformCallbackNames) {
+  const inUniform = ancestors =>
+    ancestors.some(
+      a => nodeIsUniform(a) || nodeIsUniformCallbackFn(a, uniformCallbackNames)
+    );
+  const restoreBlockBody = (node, state, ancestors) => {
+    if (inUniform(ancestors)) return;
+    node.body = node.body.flatMap(restoreConditionalStatement);
+  };
+  // Bodies without braces, e.g. `if (x) a && b;`
+  const restoreUnbracedBodies = (node, state, ancestors) => {
+    if (inUniform(ancestors)) return;
+    for (const key of ['consequent', 'alternate', 'body']) {
+      const child = node[key];
+      if (child?.type === 'ExpressionStatement') {
+        node[key] = toBlock(restoreConditionalStatement(child));
+      }
+    }
+  };
+  ancestor(ast, {
+    Program: restoreBlockBody,
+    BlockStatement: restoreBlockBody,
+    IfStatement: restoreUnbracedBodies,
+    ForStatement: restoreUnbracedBodies,
+    WhileStatement: restoreUnbracedBodies
+  });
+}
+
 // Helper function to check if a statement is a variable declaration with strands control flow init
 function statementContainsStrandsControlFlow(stmt) {
   // Check for variable declarations with strands control flow init
@@ -2013,23 +2103,27 @@ function transformHelperFunctionEarlyReturns(ast, names) {
  *
  * Pipeline stages:
  *
- * 1. Collect uniform callback names
- *    - Identifies functions passed into uniform() so they are excluded from transformation
+ * Collect uniform callback names
+ *   - Identifies functions passed into uniform() so they are excluded from transformation
  *
- * 2. transformSetCallsInControlFlow
- *    - Rewrites `.set()` calls inside control flow into intermediate variable assignments
+ * restoreMinifiedConditionals
+ *   - Turns `cond && action;`, `cond || action;` and `cond ? a : b;` statements, whose
+ *     results are unused, back into if statements
  *
- * 3. Non-control-flow transformations
- *    - Applies ASTCallbacks to transform expressions, assignments, etc.
- *    - Skips IfStatement and ForStatement (handled later)
+ * transformSetCallsInControlFlow
+ *   - Rewrites `.set()` calls inside control flow into intermediate variable assignments
  *
- * 4. transformHelperFunctionEarlyReturns
- *    - Converts early returns in helper functions into a single return value pattern
+ * Non-control-flow transformations
+ *   - Applies ASTCallbacks to transform expressions, assignments, etc.
+ *   - Skips IfStatement and ForStatement (handled later)
  *
- * 5. Control flow transformation (post-order)
- *    - Transforms IfStatement → __p5.strandsIf
- *    - Transforms ForStatement → __p5.strandsFor
- *    - Handles variable propagation across branches/loops
+ * transformHelperFunctionEarlyReturns
+ *   - Converts early returns in helper functions into a single return value pattern
+ *
+ * Control flow transformation (post-order)
+ *   - Transforms IfStatement → __p5.strandsIf
+ *   - Transforms ForStatement → __p5.strandsFor
+ *   - Handles variable propagation across branches/loops
  *
  * This staged approach ensures correct ordering and avoids transformation conflicts.
  */
@@ -2202,10 +2296,13 @@ export function transpileStrandsToJS(
   // Pre-pass: collect names of functions passed by reference as uniform callbacks
   const uniformCallbackNames = collectUniformCallbackNames(ast);
 
-  // Pass 1: transform .set() calls in control flow to use intermediate variables
+  // Turn minifier-style `cond && action;` statements back into ifs
+  restoreMinifiedConditionals(ast, uniformCallbackNames);
+
+  // Transform .set() calls in control flow to use intermediate variables
   transformSetCallsInControlFlow(ast, uniformCallbackNames);
 
-  // Pass 2: transform non-control-flow nodes (operators, varyings, uniforms, arrays)
+  // Transform non-control-flow nodes (operators, varyings, uniforms, arrays)
   const { shaderNameMap, shaderNameState } = runNonControlFlowPass(
     ast,
     uniformCallbackNames,
@@ -2213,10 +2310,10 @@ export function transpileStrandsToJS(
     p5
   );
 
-  // Pass 3: transform helper functions with early returns to use __returnValue pattern
+  // Transform helper functions with early returns to use __returnValue pattern
   transformHelperFunctionEarlyReturns(ast, uniformCallbackNames);
 
-  // Pass 4: transform if/for statements post-order into strandsIf/strandsFor calls
+  // Transform if/for statements post-order into strandsIf/strandsFor calls
   runControlFlowPass(ast, uniformCallbackNames);
 
   const callback = buildStrandsCallback(p5, ast, scope);

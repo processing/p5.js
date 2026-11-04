@@ -1787,6 +1787,24 @@ function rendererWebGPU(p5, fn) {
       return false;
     }
 
+    supportsVideoUpload() {
+      return this._supportsVideoUpload !== false;
+    }
+
+    // GPU textures have a fixed size, so a source that has changed size
+    // needs a new texture instead of being reuploaded into the old one
+    textureNeedsRecreating(texture) {
+      if (texture.isFramebufferTexture) return false;
+      const gpuTexture = texture.textureHandle.gpuTexture;
+      const data = texture._getTextureDataFromSource();
+      // Compare against the GPU texture itself: Texture.update() overwrites
+      // texture.width/height before the GPU texture has been replaced
+      if (!data || !data.width || !data.height) return false;
+      return (
+        data.width !== gpuTexture.width || data.height !== gpuTexture.height
+      );
+    }
+
     viewport() {}
 
     zClipRange() {
@@ -3113,7 +3131,14 @@ function rendererWebGPU(p5, fn) {
       shader.buffersDirty.add(uniform.group * 1000 + uniform.binding);
     }
 
-    _updateTexture(uniform, tex) {
+    _updateTexture(uniform, tex, shader) {
+      // The uniform keeps pointing at the texture it was first given, so
+      // swap in the replacement here and rebuild the bind group around it
+      if (this.textureNeedsRecreating(tex)) {
+        tex = this.getTexture(tex.src);
+        uniform.texture = tex;
+        shader.buffersDirty.add(uniform.group * 1000 + uniform.binding);
+      }
       tex.update();
     }
 
@@ -3123,7 +3148,9 @@ function rendererWebGPU(p5, fn) {
 
     createTexture({ width, height, format = 'rgba8unorm', usage }) {
       const gpuTexture = this.device.createTexture({
-        size: [width, height],
+        // Sources like videos report 0 until their metadata loads, and
+        // zero-sized textures are invalid
+        size: [Math.max(1, width), Math.max(1, height)],
         format,
         usage:
           usage ||
@@ -3135,11 +3162,25 @@ function rendererWebGPU(p5, fn) {
     }
 
     uploadTextureFromSource({ gpuTexture }, source) {
-      this.queue.copyExternalImageToTexture(
-        { source },
-        { texture: gpuTexture },
-        [source.width, source.height]
-      );
+      const isVideo = source instanceof HTMLVideoElement;
+      // Chrome throws if a video has no decoded frame yet
+      if (isVideo && source.readyState < 2) return;
+
+      try {
+        this.queue.copyExternalImageToTexture(
+          { source },
+          { texture: gpuTexture },
+          [source.videoWidth || source.width, source.videoHeight || source.height]
+        );
+      } catch (e) {
+        // As of 10/30/2026, Firefox doesn't accept video elements as a copy
+        // source. Texture will hand us a canvas from the next update onward.
+        if (isVideo && e instanceof TypeError) {
+          this._supportsVideoUpload = false;
+          return;
+        }
+        throw e;
+      }
 
       // Force submission to ensure texture upload completes before usage
       this._hasPendingDraws = true;

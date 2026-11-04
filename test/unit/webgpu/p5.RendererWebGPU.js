@@ -146,6 +146,117 @@ suite('WebGPU p5.RendererWebGPU', function () {
     });
   });
 
+  suite('uploadTextureFromSource() with video', function () {
+    let copySpy;
+
+    const makeVideo = readyState => {
+      const video = document.createElement('video');
+      Object.defineProperties(video, {
+        readyState: { value: readyState },
+        videoWidth: { value: 640 },
+        videoHeight: { value: 480 }
+      });
+      return video;
+    };
+
+    beforeEach(function () {
+      copySpy = vi
+        .spyOn(myp5._renderer.queue, 'copyExternalImageToTexture')
+        .mockImplementation(() => {});
+    });
+
+    afterEach(function () {
+      copySpy.mockRestore();
+    });
+
+    test('skips videos that have no decoded frame yet', function () {
+      const handle = { gpuTexture: {} };
+      myp5._renderer.uploadTextureFromSource(handle, makeVideo(1));
+      expect(copySpy).not.toHaveBeenCalled();
+      expect(myp5._renderer.supportsVideoUpload()).to.equal(true);
+    });
+
+    test('copies using the real video size', function () {
+      const handle = { gpuTexture: {} };
+      const video = makeVideo(4);
+      myp5._renderer.uploadTextureFromSource(handle, video);
+      expect(copySpy).toHaveBeenCalledWith(
+        { source: video },
+        { texture: handle.gpuTexture },
+        [640, 480]
+      );
+    });
+
+    test('stops uploading video directly if the browser rejects it', function () {
+      const handle = { gpuTexture: {} };
+      copySpy.mockImplementation(() => {
+        throw new TypeError('source could not be converted');
+      });
+      myp5._renderer.uploadTextureFromSource(handle, makeVideo(4));
+      expect(myp5._renderer.supportsVideoUpload()).to.equal(false);
+    });
+
+    test('rethrows errors that are not about the source type', function () {
+      const handle = { gpuTexture: {} };
+      copySpy.mockImplementation(() => {
+        throw new Error('device lost');
+      });
+      expect(() => {
+        myp5._renderer.uploadTextureFromSource(handle, makeVideo(4));
+      }).toThrow('device lost');
+      expect(myp5._renderer.supportsVideoUpload()).to.equal(true);
+    });
+  });
+
+  suite('texture recreation', function () {
+    afterEach(function () {
+      vi.restoreAllMocks();
+    });
+
+    test('getTexture returns a new texture after the source is resized', function () {
+      const img = myp5.createImage(10, 10);
+      const before = myp5._renderer.getTexture(img);
+      img.resize(20, 20);
+      const after = myp5._renderer.getTexture(img);
+      expect(after).not.to.equal(before);
+      expect(after.textureHandle.gpuTexture.width).to.equal(20);
+      expect(after.textureHandle.gpuTexture.height).to.equal(20);
+    });
+
+    test('getTexture reuses the texture when the source is unchanged', function () {
+      const img = myp5.createImage(10, 10);
+      const before = myp5._renderer.getTexture(img);
+      expect(myp5._renderer.getTexture(img)).to.equal(before);
+    });
+
+    test('does not recreate textures for sources with no size yet', function () {
+      const video = myp5.createVideo('');
+      const tex = myp5._renderer.getTexture(video);
+      expect(myp5._renderer.textureNeedsRecreating(tex)).to.equal(false);
+      expect(tex.textureHandle.gpuTexture.width).to.equal(1);
+      expect(tex.textureHandle.gpuTexture.height).to.equal(1);
+    });
+
+    test('_updateTexture swaps in the new texture and dirties the bind group', function () {
+      const img = myp5.createImage(10, 10);
+      const tex = myp5._renderer.getTexture(img);
+      const uniform = { group: 0, binding: 2, texture: tex };
+      const shader = { buffersDirty: new Set() };
+      img.resize(20, 20);
+      myp5._renderer._updateTexture(uniform, tex, shader);
+      expect(uniform.texture).not.to.equal(tex);
+      expect(uniform.texture.textureHandle.gpuTexture.width).to.equal(20);
+      expect(shader.buffersDirty.has(2)).to.equal(true);
+    });
+
+    test('placeholder upload for an unloaded source is a full pixel', function () {
+      const writeSpy = vi.spyOn(myp5._renderer.queue, 'writeTexture');
+      myp5._renderer.getTexture(myp5.createVideo(''));
+      expect(writeSpy).toHaveBeenCalled();
+      expect(writeSpy.mock.calls[0][1].byteLength).to.equal(4);
+    });
+  });
+
   suite('Stability', function () {
     test('pixelDensity() after setAttributes() should not crash', async function () {
       // This test simulates the issue where a synchronous call (pixelDensity)
