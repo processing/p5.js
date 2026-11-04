@@ -571,9 +571,24 @@ export class Renderer3D extends Renderer {
       if (this.geometryBuilder) {
         this.geometryBuilder.addRetained(model);
       } else {
-        if (!this.geometryInHash(model.gid)) {
-          model._edgesToVertices();
-          this._getOrMakeCachedBuffers(model);
+        if (model.parts.length === 1 && model.parts[0] === model) {
+          if (!this.geometryInHash(model.gid)) {
+            model._edgesToVertices(this);
+            this._getOrMakeCachedBuffers(model);
+          }
+        } else {
+          if (!this.geometryInHash(model.gid)) {
+            this._getOrMakeCachedBuffers(model);
+          }
+
+          for (const part of model.parts) {
+            if (!this.geometryInHash(part.gid)) {
+              if (part.edges.length > 0) {
+                part._edgesToVertices(this);
+              }
+              this._getOrMakeCachedBuffers(part);
+            }
+          }
         }
 
         this._drawGeometry(model, { count });
@@ -638,8 +653,12 @@ export class Renderer3D extends Renderer {
       }
     }
 
-    if (this.states.strokeColor && geometry.lineVertices.length >= 1) {
-      this._drawStrokes(geometry, { count });
+    if (this.states.strokeColor) {
+      for (const part of geometry.parts) {
+        if (part.lineVertices.length > 0) {
+          this._drawStrokes(part, { count });
+        }
+      }
     }
 
     this.buffers.user = [];
