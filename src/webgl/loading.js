@@ -240,6 +240,7 @@ function buildMaterialParts(model, faceMaterials, materials) {
       });
       part.faces.push(localFace);
     }
+    part._makeTriangleEdges();
     parts.push(part);
   }
 

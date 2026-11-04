@@ -567,13 +567,28 @@ export class Renderer3D extends Renderer {
 
   model(model, count) {
     count = count ?? this._instanceCount ?? 1;
-    if (model.vertices.length > 0) {
+    if (model.vertices.length > 0 ||  model.parts.some(part => part.vertices.length > 0)) {
       if (this.geometryBuilder) {
         this.geometryBuilder.addRetained(model);
       } else {
-        if (!this.geometryInHash(model.gid)) {
-          model._edgesToVertices();
-          this._getOrMakeCachedBuffers(model);
+        if (model.parts.length === 1 && model.parts[0] === model) {
+          if (!this.geometryInHash(model.gid)) {
+            model._edgesToVertices(this);
+            this._getOrMakeCachedBuffers(model);
+          }
+        } else {
+          if (!this.geometryInHash(model.gid)) {
+            this._getOrMakeCachedBuffers(model);
+          }
+
+          for (const part of model.parts) {
+            if (!this.geometryInHash(part.gid)) {
+              if (part.edges.length > 0) {
+                part._edgesToVertices(this);
+              }
+              this._getOrMakeCachedBuffers(part);
+            }
+          }
         }
 
         this._drawGeometry(model, { count });
@@ -605,7 +620,6 @@ export class Renderer3D extends Renderer {
 
     if (
       this.states.fillColor &&
-      geometry.vertices.length >= 3 &&
       ![constants.LINES, constants.POINTS].includes(mode)
     ) {
       // draw every part. a geometry always has at least one part (the
@@ -613,6 +627,7 @@ export class Renderer3D extends Renderer {
       // fallback is needed. a part with no material state draws straight;
       // multi-material parts apply their own material around the draw.
       for (const part of geometry.parts) {
+        if (part.vertices.length < 3) continue;
         const state = part.partState;
         // fill/ambientColor/specularColor are arrays and texture is a p5.Image,
         // so they're truthy when set; shininess is a number where 0 is valid.
@@ -638,8 +653,12 @@ export class Renderer3D extends Renderer {
       }
     }
 
-    if (this.states.strokeColor && geometry.lineVertices.length >= 1) {
-      this._drawStrokes(geometry, { count });
+    if (this.states.strokeColor) {
+      for (const part of geometry.parts) {
+        if (part.lineVertices.length > 0) {
+          this._drawStrokes(part, { count });
+        }
+      }
     }
 
     this.buffers.user = [];
