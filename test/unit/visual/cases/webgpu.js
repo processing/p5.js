@@ -289,6 +289,33 @@ visualSuite('WebGPU', function () {
     });
 
     visualTest(
+      'minifier-style && and || statements act as conditionals',
+      async function (p5, screenshot) {
+        await p5.createCanvas(50, 50, p5.WEBGPU);
+        const shader = p5.baseFilterShader().modify(
+          () => {
+            p5.getColor(inputs => {
+              let value = 0;
+              let red = 0;
+              // Minifiers write `if (cond) action` as `cond && action`
+              inputs.texCoord.x > 0.5 && (value = 0.5);
+              inputs.texCoord.y > 0.5 || (value = value + 0.25);
+              // ...and `if (cond) a; else b` as `cond ? a : b`
+              inputs.texCoord.x > 0.75 && inputs.texCoord.y > 0.75
+                ? (red = 1, value = 0)
+                : (red = value);
+              return [red, value, value, 1];
+            });
+          },
+          { p5 }
+        );
+        p5.background(0);
+        p5.filter(shader);
+        await screenshot();
+      }
+    );
+
+    visualTest(
       'filter shaders can sample a texture inside a conditional branch',
       async function (p5, screenshot) {
         await p5.createCanvas(50, 50, p5.WEBGPU);
@@ -836,6 +863,63 @@ visualSuite('WebGPU', function () {
       );
     });
   });
+
+  visualTest(
+    'paletteLerp() maps texCoord through a multi-stop gradient in a filter (WebGPU)',
+    async function (p5, screenshot) {
+      await p5.createCanvas(50, 50, p5.WEBGPU);
+      const shader = p5.baseFilterShader().modify(
+        () => {
+          p5.filterColor.begin();
+          p5.filterColor.set(
+            p5.paletteLerp(
+              [
+                [[1, 0, 0, 1], 0.0],
+                [[1, 1, 0, 1], 0.33],
+                [[0, 1, 0, 1], 0.66],
+                [[0, 0, 1, 1], 1.0]
+              ],
+              p5.filterColor.texCoord.x
+            )
+          );
+          p5.filterColor.end();
+        },
+        { p5 }
+      );
+      p5.background(220);
+      p5.filter(shader);
+      await screenshot();
+    }
+  );
+
+  visualTest(
+    'paletteLerp() handles uneven stop positions and more than 4 stops (WebGPU)',
+    async function (p5, screenshot) {
+      await p5.createCanvas(50, 50, p5.WEBGPU);
+      const shader = p5.baseFilterShader().modify(
+        () => {
+          p5.filterColor.begin();
+          p5.filterColor.set(
+            p5.paletteLerp(
+              [
+                [[0, 0, 0, 1], 0.2],
+                [[1, 0, 0, 1], 0.4],
+                [[1, 0.5, 0, 1], 0.55],
+                [[1, 1, 0, 1], 0.65],
+                [[1, 1, 1, 1], 0.8]
+              ],
+              p5.filterColor.texCoord.x
+            )
+          );
+          p5.filterColor.end();
+        },
+        { p5 }
+      );
+      p5.background(220);
+      p5.filter(shader);
+      await screenshot();
+    }
+  );
 
   visualTest(
     'randomGaussian() colors a basic shader (WebGPU)',

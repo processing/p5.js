@@ -62,19 +62,7 @@ const cfgHandlers = {
     for (const nodeID of blockInstructions) {
       const node = getNodeDataFromID(dag, nodeID);
       if (node.nodeType === NodeType.PHI) {
-        // Check if the phi node's first dependency already has a temp name
-        const dependsOn = node.dependsOn || [];
-        if (dependsOn.length > 0) {
-          const firstDependency = dependsOn[0];
-          const existingTempName = generationContext.tempNames[firstDependency];
-          if (existingTempName) {
-            // Reuse the existing temp name instead of creating a new one
-            generationContext.tempNames[nodeID] = existingTempName;
-            continue; // Skip declaration, just alias to existing variable
-          }
-        }
-
-        // Otherwise, create a new temp variable for the phi node
+        // Phi nodes need their own variables to avoid aliasing inputs.
         const tmp = `T${generationContext.nextTempID++}`;
         generationContext.tempNames[nodeID] = tmp;
         const T = extractNodeTypeInfo(dag, nodeID);
@@ -83,6 +71,9 @@ const cfgHandlers = {
         let defaultValue;
         if (T.dimension === 1) {
           defaultValue = this.defaultScalarValue(T.baseType);
+        } else if (T.baseType === BaseType.MAT) {
+          // Matrices can't be built from N scalars; use the zero matrix.
+          defaultValue = `${typeName}()`;
         } else {
           // For vector types, use constructor with repeated scalar values
           const scalarDefault = this.defaultScalarValue(T.baseType);

@@ -39,6 +39,16 @@ suite('Validate Params', function () {
 
   afterAll(function () {});
 
+  suite('validateParams: loadModel', function () {
+    test('loadModel(): Boolean normalize argument', function () {
+      const result = mockP5Prototype._validate('p5.loadModel', [
+        'modellTest.obj',
+        true
+      ]);
+
+      assert.isTrue(result.success);
+    });
+  });
   suite(
     'validateParams: multiple types allowed for single parameter',
     function () {
@@ -183,6 +193,35 @@ suite('Validate Params', function () {
       const result = mockP5Prototype._validate('p5.endShape', [
         'fake-constant',
         60
+      ]);
+      assert.isFalse(result.success);
+    });
+  });
+
+    suite('validateParams: modes object for textureWrap()', function () {
+    test('textureWrap(): two constants', () => {
+      const result = mockP5Prototype._validate('p5.textureWrap', [
+        constants.REPEAT,
+        constants.MIRROR
+      ]);
+      assert.isTrue(result.success);
+    });
+
+    test('textureWrap(): modes object from the getter', () => {
+      const result = mockP5Prototype._validate('p5.textureWrap', [
+        { x: constants.REPEAT, y: constants.MIRROR }
+      ]);
+      assert.isTrue(result.success);
+    });
+
+    test('textureWrap(): no args', () => {
+      const result = mockP5Prototype._validate('p5.textureWrap', []);
+      assert.isTrue(result.success);
+    });
+
+    test('textureWrap(): invalid constant', () => {
+      const result = mockP5Prototype._validate('p5.textureWrap', [
+        'fake-constant'
       ]);
       assert.isFalse(result.success);
     });

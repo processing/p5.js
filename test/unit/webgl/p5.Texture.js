@@ -299,6 +299,11 @@ suite('p5.Texture', function () {
       expect(tex.width).to.equal(texImg2.width);
       expect(tex.height).to.equal(texImg2.height);
     });
+    test('Keeps the same texture when the p5.Image size changes', function () {
+      const tex = myp5._renderer.getTexture(texImg2);
+      texImg2.resize(texImg2.width * 2, texImg2.height * 2);
+      expect(myp5._renderer.getTexture(texImg2)).to.equal(tex);
+    });
     test('Handles changes to p5.Graphics size', function () {
       const tex = myp5._renderer.getTexture(texImg1);
       expect(tex.width).to.equal(texImg1.width);
@@ -308,6 +313,17 @@ suite('p5.Texture', function () {
       expect(tex.width).to.equal(texImg1.width);
       expect(tex.height).to.equal(texImg1.height);
     });
+    test('Reads from the video element when video upload is supported', function () {
+      const video = myp5.createVideo('');
+      const tex = myp5._renderer.getTexture(video);
+      expect(tex._getTextureDataFromSource()).to.equal(video.elt);
+    });
+    test('Reads from a canvas when video upload is not supported', function () {
+      const video = myp5.createVideo('');
+      const tex = myp5._renderer.getTexture(video);
+      vi.spyOn(myp5._renderer, 'supportsVideoUpload').mockReturnValue(false);
+      expect(tex._getTextureDataFromSource()).to.equal(video.canvas);
+    });
     test('Handles changes to p5.Renderer size', function () {
       const tex = texImg1._renderer.getTexture(canvas);
       expect(tex.width).to.equal(canvas.width);
@@ -316,6 +332,71 @@ suite('p5.Texture', function () {
       tex.update();
       expect(tex.width).to.equal(canvas.width);
       expect(tex.height).to.equal(canvas.height);
+    });
+  
+    suite('textureWrap() object setter (#9164)', function () {
+      test('getter returns the current modes as {x, y}', function () {
+        myp5.textureWrap(myp5.REPEAT, myp5.MIRROR);
+        assert.deepEqual(myp5.textureWrap(), {
+          x: myp5.REPEAT,
+          y: myp5.MIRROR
+        });
+      });
+
+      test('passing the getter result back preserves both modes', function () {
+        myp5.textureWrap(myp5.REPEAT, myp5.MIRROR);
+        myp5.textureWrap(myp5.textureWrap());
+        assert.deepEqual(myp5.textureWrap(), {
+          x: myp5.REPEAT,
+          y: myp5.MIRROR
+        });
+      });
+
+      test('a supplied object sets the two directions independently', function () {
+        myp5.textureWrap({ x: myp5.REPEAT, y: myp5.MIRROR });
+        assert.equal(myp5._renderer.states.textureWrapX, myp5.REPEAT);
+        assert.equal(myp5._renderer.states.textureWrapY, myp5.MIRROR);
+      });
+
+      test('accepts an object with no prototype', function () {
+        // The FES param validator throws on a null-prototype object because
+        // buildTypeMismatchMessage() calls toString() on the argument. Disable
+        // it here so this test exercises textureWrap() rather than the FES.
+        const prev = p5.disableFriendlyErrors;
+        p5.disableFriendlyErrors = true;
+        try {
+          const modes = Object.create(null);
+          modes.x = myp5.REPEAT;
+          modes.y = myp5.MIRROR;
+          myp5.textureWrap(modes);
+          assert.equal(myp5._renderer.states.textureWrapY, myp5.MIRROR);
+        } finally {
+          p5.disableFriendlyErrors = prev;
+        }
+      });
+
+      test('textureWrap(null) does not throw', function () {
+        assert.doesNotThrow(() => myp5.textureWrap(null));
+      });
+
+      test('the y mode reaches WebGL after a round trip', function () {
+        myp5.textureWrap(myp5.REPEAT, myp5.MIRROR);
+        myp5.textureWrap(myp5.textureWrap());
+        myp5._renderer.getTexture(texImg1);
+        expect(texParamSpy).toHaveBeenCalledWith(
+          myp5._renderer.GL.TEXTURE_2D,
+          myp5._renderer.GL.TEXTURE_WRAP_T,
+          myp5._renderer.GL.MIRRORED_REPEAT
+        );
+      });
+
+      test('warns once for an unrecognised wrap mode', function () {
+        const fesSpy = vi.spyOn(p5, '_friendlyError');
+        myp5.textureWrap('not-a-mode');
+        myp5.textureWrap('also-not-a-mode');
+        expect(fesSpy).toHaveBeenCalledTimes(1);
+        fesSpy.mockRestore();
+      });
     });
   });
 });

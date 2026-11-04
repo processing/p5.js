@@ -30,6 +30,7 @@ import * as constants from './constants';
  * @return {p5}                 a p5 instance
  */
 class p5 {
+  static loadingAnimation = true;
   static VERSION = constants.VERSION;
   // This is a pointer to our global mode p5 instance, if we're in
   // global mode.
@@ -227,7 +228,17 @@ class p5 {
       }
     }
 
-    await this.#_setup();
+    try {
+      await this.#_setup();
+    } 
+    catch (error) {
+      // Ensure loading indicator is cleaned up if setup rejects before
+      // the normal postsetup lifecycle hook completes
+      if (this._isSketchLoading) {
+        await this._runLifecycleHook('postsetup');
+      }
+      throw error;
+    }
     if (this.hitCriticalError) return;
     if (!this._recording) {
       this._draw();
@@ -251,8 +262,14 @@ class p5 {
     this._millisStart = globalThis.performance.now();
 
     const context = this._isGlobal ? window : this;
-    if (typeof context.setup === 'function') {
-      await context.setup();
+    try {
+      if (typeof context.setup === 'function') {
+        await context.setup();
+      }
+    } 
+    catch (error) {
+      await this._runLifecycleHook('postsetup');
+      throw error;
     }
     if (this.hitCriticalError) return;
 
@@ -394,7 +411,10 @@ class p5 {
       this._removeAbortController.abort();
 
       // remove DOM elements created by p5
-      this._elements.slice().forEach(e => e.remove());
+      const elementsToRemove = this._elements.slice();
+      for (const e of elementsToRemove) {
+        e.remove();
+      }
 
       // Run `remove` hooks
       await this._runLifecycleHook('remove');
@@ -540,6 +560,25 @@ function createBindGlobal(instance) {
   };
 }
 
+// Decorators return a new function, which would otherwise drop any
+// properties attached to the original (for example the `argTypes` that
+// p5.strands functions declare for the transpiler). Carry those over so
+// decorating a function does not strip its metadata.
+function copyFunctionProperties(original, decorated) {
+  if (
+    typeof original !== 'function' ||
+    typeof decorated !== 'function' ||
+    original === decorated
+  ) {
+    return;
+  }
+  for (const key of Object.keys(original)) {
+    if (!(key in decorated)) {
+      decorated[key] = original[key];
+    }
+  }
+}
+
 // Generic function to decorate classes
 function decorateClass(Target, decorations, path) {
   // Static properties
@@ -555,6 +594,7 @@ function decorateClass(Target, decorations, path) {
               static: true
             });
             if (result) {
+              copyFunctionProperties(Target[key], result);
               Object.defineProperty(Target, key, {
                 enumerable: true,
                 writable: true,
@@ -593,6 +633,7 @@ function decorateClass(Target, decorations, path) {
               static: false
             });
             if (result) {
+              copyFunctionProperties(Target.prototype[member], result);
               Object.defineProperty(Target.prototype, member, {
                 enumerable: true,
                 writable: true,
@@ -659,7 +700,9 @@ p5.registerAddon(rendering);
 p5.registerAddon(renderer);
 p5.registerAddon(renderer2D);
 p5.registerAddon(graphics);
-p5.registerAddon(loading);
+if (typeof window !== 'undefined') {
+  p5.registerAddon(loading);
+}
 
 export default p5;
 

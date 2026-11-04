@@ -887,7 +887,7 @@ class Shader {
         // so we supply a default texture instead.
         uniform.texture = tex = empty;
       }
-      this._renderer._updateTexture(uniform, tex);
+      this._renderer._updateTexture(uniform, tex, this);
     }
   }
 

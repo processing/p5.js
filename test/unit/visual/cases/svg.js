@@ -723,6 +723,16 @@ visualSuite('svg', function () {
       await screenshot();
     });
 
+    visualTest('symbol preserveAspectRatio meet alignments', async (p, screenshot) => {
+      setupDefault(p);
+      const shape = await loadFixture(
+        p,
+        'defs-symbol-preserve-aspect-ratio-meet'
+      );
+      p.shape(shape);
+      await screenshot();
+    });
+
     visualTest('x and y', async (p, screenshot) => {
       setupDefault(p);
       const shape = await loadFixture(p, 'defs-use-xy');

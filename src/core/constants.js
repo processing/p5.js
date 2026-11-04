@@ -1154,6 +1154,12 @@ export const FLAT = KEEP_CONNECTIONS;
  */
 export const SMOOTH = 'smooth';
 
+/**
+ * @typedef {'segmented'} SEGMENTED
+ * @property {SEGMENTED} SEGMENTED
+ * @final
+ */
+export const SEGMENTED = 'segmented';
 // DEVICE-ORIENTATION
 /**
  * @typedef {'landscape'} LANDSCAPE

@@ -300,7 +300,7 @@ function conversion(p5, fn) {
    */
   fn.str = function (n) {
     if (n instanceof Array) {
-      return n.map(fn.str);
+      return n.map(fn.str, this);
     } else {
       return String(n);
     }
@@ -419,7 +419,7 @@ function conversion(p5, fn) {
     } else if (typeof n === 'boolean') {
       return n;
     } else if (n instanceof Array) {
-      return n.map(fn.boolean);
+      return n.map(fn.boolean, this);
     }
   };
 
@@ -550,7 +550,7 @@ function conversion(p5, fn) {
     if (typeof nn === 'number') {
       return ((nn + 128) % 256) - 128;
     } else if (nn instanceof Array) {
-      return nn.map(fn.byte);
+      return nn.map(fn.byte, this);
     }
   };
 
@@ -657,7 +657,7 @@ function conversion(p5, fn) {
     if (typeof n === 'number' && !isNaN(n)) {
       return String.fromCharCode(n);
     } else if (n instanceof Array) {
-      return n.map(fn.char);
+      return n.map(fn.char, this);
     } else if (typeof n === 'string') {
       return fn.char(parseInt(n, 10));
     }
@@ -739,7 +739,7 @@ function conversion(p5, fn) {
     if (typeof n === 'string' && n.length === 1) {
       return n.charCodeAt(0);
     } else if (n instanceof Array) {
-      return n.map(fn.unchar);
+      return n.map(fn.unchar, this);
     }
   };
 
@@ -946,7 +946,7 @@ function conversion(p5, fn) {
    */
   fn.unhex = function (n) {
     if (n instanceof Array) {
-      return n.map(fn.unhex);
+      return n.map(fn.unhex, this);
     } else {
       return parseInt(`0x${n}`, 16);
     }
