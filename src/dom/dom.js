@@ -1529,12 +1529,10 @@ function dom(p5, fn) {
         // setting any one as checked.
         self._getOptionsArray().forEach(option => {
           option.checked = false;
-          option.removeAttribute('checked');
         });
 
         for (const option of self._getOptionsArray()) {
           if (option.value === value) {
-            option.setAttribute('checked', true);
             option.checked = true;
             result = option;
           }
@@ -1545,7 +1543,7 @@ function dom(p5, fn) {
 
     self.disable = function (shouldDisable = true) {
       for (const radioInput of self._getOptionsArray()) {
-        radioInput.setAttribute('disabled', shouldDisable);
+        radioInput.disabled = shouldDisable;
       }
     };
 
