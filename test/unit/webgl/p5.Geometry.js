@@ -570,7 +570,7 @@ suite('p5.Geometry', function () {
         myp5.createVector(100, 0)
       );
       geom.edges.push([0, 1], [1, 2], [2, 3]);
-      geom._edgesToVertices();
+      geom._edgesToVertices(myp5._renderer);
 
       expect(geom._addSegment).toHaveBeenCalledTimes(3);
       expect(geom._addCap).toHaveBeenCalledTimes(2);
@@ -584,7 +584,7 @@ suite('p5.Geometry', function () {
         myp5.createVector(0, 200)
       );
       geom.edges.push([0, 1], [1, 2]);
-      geom._edgesToVertices();
+      geom._edgesToVertices(myp5._renderer);
 
       expect(geom._addSegment).toHaveBeenCalledTimes(2);
       expect(geom._addCap).toHaveBeenCalledTimes(2);
@@ -600,7 +600,7 @@ suite('p5.Geometry', function () {
         myp5.createVector(100, 0)
       );
       geom.edges.push([0, 1], [2, 3]);
-      geom._edgesToVertices();
+      geom._edgesToVertices(myp5._renderer);
 
       expect(geom._addSegment).toHaveBeenCalledTimes(2);
       expect(geom._addCap).toHaveBeenCalledTimes(4);
@@ -615,7 +615,7 @@ suite('p5.Geometry', function () {
         myp5.createVector(100, 0)
       );
       geom.edges.push([0, 1], [1, 2], [2, 3], [3, 0]);
-      geom._edgesToVertices();
+      geom._edgesToVertices(myp5._renderer);
 
       expect(geom._addSegment).toHaveBeenCalledTimes(4);
       expect(geom._addCap).toHaveBeenCalledTimes(0);
@@ -644,7 +644,7 @@ suite('p5.Geometry', function () {
         myp5.createVector(100, 0)
       );
       geom.edges.push([0, 1], [1, 2], [2, 3], [3, 4]);
-      geom._edgesToVertices();
+      geom._edgesToVertices(myp5._renderer);
 
       // The degenerate edge should be skipped without breaking the
       // polyline into multiple pieces
@@ -662,7 +662,7 @@ suite('p5.Geometry', function () {
         myp5.createVector(100, 0)
       );
       geom.edges.push([0, 1], [1, 2], [2, 3], [3, 4]);
-      geom._edgesToVertices();
+      geom._edgesToVertices(myp5._renderer);
 
       // The degenerate edge should be skipped and caps should still be added
       // from the previous non degenerate edge
@@ -680,7 +680,7 @@ suite('p5.Geometry', function () {
         myp5.createVector(100, 0)
       );
       geom.edges.push([0, 1], [1, 2], [3, 4]);
-      geom._edgesToVertices();
+      geom._edgesToVertices(myp5._renderer);
 
       expect(geom._addSegment).toHaveBeenCalledTimes(2);
       expect(geom._addCap).toHaveBeenCalledTimes(4);

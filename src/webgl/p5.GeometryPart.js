@@ -330,7 +330,7 @@ class GeometryPart {
    * @private
    * @chainable
    */
-  _edgesToVertices(renderer = this.renderer) {
+  _edgesToVertices(renderer) {
     this.lineVertices.clear();
     this.lineTangentsIn.clear();
     this.lineTangentsOut.clear();
@@ -474,7 +474,7 @@ class GeometryPart {
    * @private
    * @chainable
    */
-  _addSegment(begin, end, fromColor, toColor, dir,renderer = this.renderer) {
+  _addSegment(begin, end, fromColor, toColor, dir, renderer) {
     const a = begin.array();
     const b = end.array();
     const dirArr = dir.array();
