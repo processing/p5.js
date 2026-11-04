@@ -299,6 +299,11 @@ suite('p5.Texture', function () {
       expect(tex.width).to.equal(texImg2.width);
       expect(tex.height).to.equal(texImg2.height);
     });
+    test('Keeps the same texture when the p5.Image size changes', function () {
+      const tex = myp5._renderer.getTexture(texImg2);
+      texImg2.resize(texImg2.width * 2, texImg2.height * 2);
+      expect(myp5._renderer.getTexture(texImg2)).to.equal(tex);
+    });
     test('Handles changes to p5.Graphics size', function () {
       const tex = myp5._renderer.getTexture(texImg1);
       expect(tex.width).to.equal(texImg1.width);
@@ -307,6 +312,17 @@ suite('p5.Texture', function () {
       tex.update();
       expect(tex.width).to.equal(texImg1.width);
       expect(tex.height).to.equal(texImg1.height);
+    });
+    test('Reads from the video element when video upload is supported', function () {
+      const video = myp5.createVideo('');
+      const tex = myp5._renderer.getTexture(video);
+      expect(tex._getTextureDataFromSource()).to.equal(video.elt);
+    });
+    test('Reads from a canvas when video upload is not supported', function () {
+      const video = myp5.createVideo('');
+      const tex = myp5._renderer.getTexture(video);
+      vi.spyOn(myp5._renderer, 'supportsVideoUpload').mockReturnValue(false);
+      expect(tex._getTextureDataFromSource()).to.equal(video.canvas);
     });
     test('Handles changes to p5.Renderer size', function () {
       const tex = texImg1._renderer.getTexture(canvas);
