@@ -888,6 +888,136 @@ suite('p5.Geometry', function () {
         .not.toEqual(geom.parts[1].partState.texture);
     });
 
+    test('single-part geometry keeps its edges without duplication', function () {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+
+      const geom = myp5.buildGeometry(() => {
+        myp5.noFill();
+        myp5.stroke(255);
+        myp5.beginShape(myp5.LINES);
+        myp5.vertex(0, 0);
+        myp5.vertex(10, 0);
+        myp5.endShape();
+      });
+
+      expect(geom.parts).toHaveLength(1);
+      expect(geom.parts[0]).toBe(geom);
+      expect(geom.edges).toEqual([[0, 1]]);
+      expect(geom.parts[0].edges).toBe(geom.edges);
+    });
+
+    test('material parts own edges with local vertex indices', function () {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+
+      const texA = myp5.createGraphics(10, 10);
+      const texB = myp5.createGraphics(10, 10);
+
+      const geom = myp5.buildGeometry(() => {
+        myp5.stroke(255);
+
+        myp5.texture(texA);
+        myp5.box(8);
+
+        myp5.texture(texB);
+        myp5.box(8);
+      });
+
+      expect(geom.parts).toHaveLength(2);
+
+      const [partA, partB] = geom.parts;
+
+      expect(partA.edges.length).toBeGreaterThan(0);
+      expect(partB.edges.length).toBeGreaterThan(0);
+
+      // Each part's indices start within its own vertex array.
+      for (const part of geom.parts) {
+        for (const [a, b] of part.edges) {
+          expect(a).toBeGreaterThanOrEqual(0);
+          expect(b).toBeGreaterThanOrEqual(0);
+          expect(a).toBeLessThan(part.vertices.length);
+          expect(b).toBeLessThan(part.vertices.length);
+        }
+      }
+
+      // The second part starts indexing its own vertices from zero.
+      expect(partB.edges[0]).toEqual(geom.edges[partA.edges.length].map(
+        index => index - partA.vertices.length
+      ));
+
+      // Aggregate edges are retained until per-part rendering is implemented.
+      expect(geom.edges.length).toBe(
+        partA.edges.length + partB.edges.length
+      );
+    });
+
+    test('stroke-only geometry is preserved in a multipart build', function () {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+
+      const texA = myp5.createGraphics(10, 10);
+      const texB = myp5.createGraphics(10, 10);
+
+      const geom = myp5.buildGeometry(() => {
+        myp5.stroke(255);
+
+        myp5.texture(texA);
+        myp5.box(8);
+
+        myp5.noFill();
+        myp5.beginShape(myp5.LINES);
+        myp5.vertex(0, 0);
+        myp5.vertex(10, 0);
+        myp5.endShape();
+
+        myp5.fill(255);
+        myp5.texture(texB);
+        myp5.box(8);
+      });
+
+      expect(geom.parts).toHaveLength(2);
+
+      const [partA, partB] = geom.parts;
+
+      // The stroke-only line belongs to the existing first part.
+      expect(partA.vertices.length).toBeGreaterThan(0);
+      expect(partA.edges.length).toBeGreaterThan(0);
+
+      // The line adds two vertices but no faces.
+      expect(partA.vertices.length).toBeGreaterThan(partA.faces.length);
+
+      // The second material remains a separate part.
+      expect(partB.faces.length).toBeGreaterThan(0);
+
+      for (const part of geom.parts) {
+        for (const [a, b] of part.edges) {
+          expect(a).toBeGreaterThanOrEqual(0);
+          expect(b).toBeGreaterThanOrEqual(0);
+          expect(a).toBeLessThan(part.vertices.length);
+          expect(b).toBeLessThan(part.vertices.length);
+        }
+      }
+    });
+
+    test('stroke-only shapes are assigned to a part', function () {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+
+      const geom = myp5.buildGeometry(() => {
+        myp5.fill(255);
+        myp5.stroke(255);
+        myp5.box(8);
+
+        myp5.noFill();
+        myp5.beginShape(myp5.LINES);
+        myp5.vertex(0, 0);
+        myp5.vertex(10, 0);
+        myp5.endShape();
+      });
+
+      expect(geom.parts).toHaveLength(1);
+      expect(geom.parts[0]).toBe(geom);
+      expect(geom.edges.length).toBeGreaterThan(0);
+      expect(geom.parts[0].edges).toBe(geom.edges);
+    });
+
     test('custom vertex attributes survive the multi-material part split',
       function() {
         myp5.createCanvas(50, 50, myp5.WEBGL);
