@@ -997,6 +997,52 @@ suite('p5.Geometry', function () {
       }
     });
 
+    test('freeGeometry releases multipart geometry buffers', function () {
+      const renderer = myp5.createCanvas(50, 50, myp5.WEBGL);
+      const texA = myp5.createGraphics(10, 10);
+      const texB = myp5.createGraphics(10, 10);
+
+      const geom = myp5.buildGeometry(() => {
+        myp5.stroke(255);
+
+        myp5.texture(texA);
+        myp5.box(8);
+
+        myp5.texture(texB);
+        myp5.box(8);
+      });
+
+      expect(geom.parts).toHaveLength(2);
+
+      const cache = renderer.geometryBufferCache;
+      const ids = [geom.gid, ...geom.parts.map(part => part.gid)];
+
+      myp5.model(geom);
+
+      for (const id of ids) {
+        expect(cache.isCached(id)).toBe(true);
+      }
+
+      const lineBuffers = geom.parts.map(part => part.lineVertices.length);
+      expect(lineBuffers.every(length => length > 0)).toBe(true);
+
+      myp5.freeGeometry(geom);
+
+      for (const id of ids) {
+        expect(cache.isCached(id)).toBe(false);
+      }
+
+      myp5.model(geom);
+
+      for (const id of ids) {
+        expect(cache.isCached(id)).toBe(true);
+      }
+
+      expect(geom.parts.map(part => part.lineVertices.length)).toEqual(
+        lineBuffers
+      );
+    });
+
     test('stroke-only shapes are assigned to a part', function () {
       myp5.createCanvas(50, 50, myp5.WEBGL);
 

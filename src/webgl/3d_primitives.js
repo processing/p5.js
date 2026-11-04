@@ -393,7 +393,18 @@ function primitives3D(p5, fn) {
    * }
    */
   fn.freeGeometry = function (geometry) {
-    this._renderer.geometryBufferCache.freeBuffers(geometry.gid);
+    const renderer = this._renderer;
+    const cache = renderer.geometryBufferCache;
+
+    cache.freeBuffers(geometry.gid);
+
+    for (const part of geometry.parts) {
+      if (part !== geometry) {
+        cache.freeBuffers(part.gid);
+      }
+    }
+
+    renderer._scheduleRetiredBufferDestruction?.();
   };
 
   /**

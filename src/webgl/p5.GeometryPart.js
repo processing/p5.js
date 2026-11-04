@@ -336,6 +336,15 @@ class GeometryPart {
     this.lineTangentsOut.clear();
     this.lineSides.clear();
     this.lineVertexColors.clear();
+    for (const name of [
+      'lineVertices',
+      'lineTangentsIn',
+      'lineTangentsOut',
+      'lineSides',
+      'lineVertexColors'
+    ]) {
+      this.dirtyFlags[name] = true;
+    }
     this._hasStrokeTransparency = undefined;
 
     const potentialCaps = new Map();

@@ -1250,24 +1250,72 @@ function rendererWebGPU(p5, fn) {
     }
 
     _freeBuffers(buffers) {
-      const destroyIfExists = buf => {
-        if (buf && buf.destroy) {
-          buf.destroy();
+      const geometry = buffers.geometry;
+      const retired = new Set();
+
+      // Retire cached buffers, rather than immediately destroying buffers
+      // that may still be referenced by pending GPU work.
+      const retire = buffer => {
+        if (buffer && typeof buffer.destroy === 'function') {
+          retired.add(buffer);
         }
       };
 
-      destroyIfExists(buffers.indexBuffer);
+      retire(buffers.indexBuffer);
+      buffers.indexBuffer = null;
 
-      const freeDefs = defs => {
-        for (const def of defs) {
-          destroyIfExists(buffers[def.dst]);
-          buffers[def.dst] = null;
+      for (const def of [
+        ...this.buffers.stroke,
+        ...this.buffers.fill,
+        ...this.buffers.user
+      ]) {
+        retire(buffers[def.dst]);
+        buffers[def.dst] = null;
+      }
+
+      // Cached vertex buffers may also be tracked by this geometry's pool.
+      // Detach all records so they cannot be reused after freeGeometry().
+      if (geometry?._vertexBufferPools) {
+        for (const groups of [
+          geometry._vertexBufferPools,
+          geometry._vertexBuffersInUse,
+          geometry._vertexBuffersToReturn
+        ]) {
+          for (const records of Object.values(groups || {})) {
+            for (const info of records) {
+              retire(info.buffer);
+              info.dataCopy = null;
+            }
+          }
         }
-      };
 
-      freeDefs(this.buffers.stroke);
-      freeDefs(this.buffers.fill);
-      freeDefs(this.buffers.user);
+        const index = this._geometriesWithPools.indexOf(geometry);
+        if (index !== -1) {
+          this._geometriesWithPools.splice(index, 1);
+        }
+
+        delete geometry._vertexBufferPools;
+        delete geometry._vertexBuffersInUse;
+        delete geometry._vertexBuffersToReturn;
+      }
+
+      this._retiredBuffers.push(...retired);
+    }
+
+    _scheduleRetiredBufferDestruction() {
+      if (this._retiredBuffers.length === 0) return;
+
+      // Submit any commands that might still reference these buffers.
+      this.flushDraw();
+
+      const retired = [...new Set(this._retiredBuffers)];
+      this._retiredBuffers = [];
+
+      this.queue.onSubmittedWorkDone().then(() => {
+        for (const buffer of retired) {
+          buffer.destroy();
+        }
+      });
     }
 
     _getValidSampleCount(requestedCount) {
@@ -2308,17 +2356,8 @@ function rendererWebGPU(p5, fn) {
 
       // Return all vertex buffers to their pools
       this._returnVertexBuffersToPool();
-
-      // Destroy all retired buffers
-      const retired = this._retiredBuffers;
-      this._postSubmitCallbacks.push(() => {
-        for (const buffer of retired) {
-          if (buffer && buffer.destroy) {
-            buffer.destroy();
-          }
-        }
-      });
-      this._retiredBuffers = [];
+      // Retire buffers after their GPU work has completed.
+      this._scheduleRetiredBufferDestruction();
 
       if (this._frameState === FRAME_STATE.PROMOTED) {
         for (const { fbo, diff } of states) {
