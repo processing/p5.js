@@ -1047,3 +1047,126 @@ suite('buildSVG — serialization', function () {
     assert.include(svgStr, 'height="600"');
   });
 });
+
+suite('currentColor export and playback', function () {
+  test('colorToSVG converts currentColor to "currentColor" string', function () {
+    const pInst = createPInst();
+    const visitor = createVisitor(pInst);
+
+    assert.strictEqual(visitor.colorToSVG('currentColor'), 'currentColor');
+    assert.strictEqual(visitor.colorToSVG('currentcolor'), 'currentColor');
+  });
+
+  test('_applyStyle sets currentColor attribute on SVG elements', function () {
+    const pInst = createPInst();
+    const visitor = createVisitor(pInst);
+    visitor.currentState = {
+      fill: 'currentColor',
+      stroke: 'currentColor',
+      strokeWeight: 2,
+      transform: new DOMMatrix()
+    };
+
+    const el = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    visitor._applyStyle(el);
+
+    assert.strictEqual(el.getAttribute('fill'), 'currentColor');
+    assert.strictEqual(el.getAttribute('stroke'), 'currentColor');
+    assert.strictEqual(el.getAttribute('stroke-width'), '2');
+  });
+
+  test('CanvasReplay applyState skips fill and stroke when set to currentColor', function () {
+    const pInst = createPInst();
+    let fillCalls = 0;
+    let noFillCalls = 0;
+    let strokeCalls = 0;
+    let noStrokeCalls = 0;
+
+    pInst.fill = () => { fillCalls++; };
+    pInst.noFill = () => { noFillCalls++; };
+    pInst.stroke = () => { strokeCalls++; };
+    pInst.noStroke = () => { noStrokeCalls++; };
+
+    const mockRecord = {
+      children: [
+        {
+          type: 'shape',
+          shape: { accept() {} },
+          state: {
+            fill: 'currentColor',
+            stroke: 'currentColor'
+          }
+        }
+      ]
+    };
+
+    pInst.shape(mockRecord);
+
+    assert.strictEqual(fillCalls, 0, 'fill() must not be called for currentColor');
+    assert.strictEqual(noFillCalls, 0, 'noFill() must not be called for currentColor');
+    assert.strictEqual(strokeCalls, 0, 'stroke() must not be called for currentColor');
+    assert.strictEqual(noStrokeCalls, 0, 'noStroke() must not be called for currentColor');
+  });
+
+  test('CanvasReplay applyState applies concrete colors and handles null colors', function () {
+    const pInst = createPInst();
+    const fillCalls = [];
+    let noFillCalls = 0;
+    const strokeCalls = [];
+    let noStrokeCalls = 0;
+
+    pInst.fill = (...args) => { fillCalls.push(args); };
+    pInst.noFill = () => { noFillCalls++; };
+    pInst.stroke = (...args) => { strokeCalls.push(args); };
+    pInst.noStroke = () => { noStrokeCalls++; };
+
+    const mockRecord = {
+      children: [
+        {
+          type: 'shape',
+          shape: { accept() {} },
+          state: {
+            fill: createMockColor(255, 0, 0, 255),
+            stroke: null
+          }
+        },
+        {
+          type: 'shape',
+          shape: { accept() {} },
+          state: {
+            fill: null,
+            stroke: createMockColor(0, 0, 255, 255)
+          }
+        }
+      ]
+    };
+
+    pInst.shape(mockRecord);
+
+    assert.strictEqual(fillCalls.length, 1);
+    assert.deepEqual(fillCalls[0], [255, 0, 0, 255]);
+    assert.strictEqual(noStrokeCalls, 1);
+
+    assert.strictEqual(noFillCalls, 1);
+    assert.strictEqual(strokeCalls.length, 1);
+    assert.deepEqual(strokeCalls[0], [0, 0, 255, 255]);
+  });
+
+  test('recorded shapes with active p5 styles export concrete colors', function () {
+    const pInst = createPInst();
+    pInst._renderer.strokeCap = () => 'butt';
+    pInst._renderer.states.fillColor = createMockColor(255, 100, 50, 255, '#ff6432');
+    pInst._renderer.states.strokeColor = createMockColor(10, 20, 30, 255, '#0a141e');
+
+    const state = pInst._svgCaptureState();
+    const visitor = createVisitor(pInst);
+    visitor.currentState = state;
+
+    const el = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+    visitor._applyStyle(el);
+
+    assert.strictEqual(el.getAttribute('fill'), '#ff6432');
+    assert.strictEqual(el.getAttribute('stroke'), '#0a141e');
+  });
+});
+
