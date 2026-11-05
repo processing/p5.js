@@ -273,5 +273,56 @@ suite('SVG currentColor End-to-End Rendering', function () {
     assert.include(exportedSVG, 'fill="#ff0000"');
     assert.include(exportedSVG, 'stroke="#0000ff"');
   });
+
+  test('currentColor with fill-opacity, stroke-opacity, and opacity applies transparency in rendering and export', function () {
+    const p = myp5;
+    p.createCanvas(100, 100);
+    p.background(255, 255, 255);
+
+    const svgIcon = p.createSVG(`
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+        <circle cx="50" cy="50" r="40" fill="currentColor" fill-opacity="0.5" stroke="none" />
+      </svg>
+    `);
+
+    p.fill(0, 0, 0);
+    p.noStroke();
+    p.shape(svgIcon);
+
+    const fillPixel = p.get(50, 50);
+    assert.closeTo(fillPixel[0], 128, 5);
+    assert.closeTo(fillPixel[1], 128, 5);
+    assert.closeTo(fillPixel[2], 128, 5);
+
+    delete svgIcon.sourceSVG;
+    const exportedSVG = p.getSVG(svgIcon);
+    assert.include(exportedSVG, 'fill="currentColor"');
+    assert.include(exportedSVG, 'fill-opacity="0.5000"');
+  });
+
+  test('currentColor stroke with stroke-opacity applies transparency in rendering and export', function () {
+    const p = myp5;
+    p.createCanvas(100, 100);
+    p.background(255, 255, 255);
+
+    const svgIcon = p.createSVG(`
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+        <line x1="10" y1="50" x2="90" y2="50" stroke="currentColor" stroke-opacity="0.5" stroke-width="20" />
+      </svg>
+    `);
+
+    p.stroke(0, 0, 0);
+    p.shape(svgIcon);
+
+    const strokePixel = p.get(50, 50);
+    assert.closeTo(strokePixel[0], 128, 5);
+    assert.closeTo(strokePixel[1], 128, 5);
+    assert.closeTo(strokePixel[2], 128, 5);
+
+    delete svgIcon.sourceSVG;
+    const exportedSVG = p.getSVG(svgIcon);
+    assert.include(exportedSVG, 'stroke="currentColor"');
+    assert.include(exportedSVG, 'stroke-opacity="0.5000"');
+  });
 });
 

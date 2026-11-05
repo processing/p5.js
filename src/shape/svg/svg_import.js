@@ -426,8 +426,8 @@ export function SVGImportAddon(p5, fn, lifecycles) {
         strokeWeight: context.strokeWidth,
         strokeCap: context.strokeCap,
         renderContext: context.clone(),
-        fillOpacity: context.fillOpacity,
-        strokeOpacity: context.strokeOpacity,
+        fillOpacity: context.opacity * context.fillOpacity,
+        strokeOpacity: context.opacity * context.strokeOpacity,
       };
     }
 
