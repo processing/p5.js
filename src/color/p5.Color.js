@@ -88,7 +88,13 @@ class Color {
     Color.#grayscaleMap[mode] = definition.fromGray;
   }
 
-  constructor(vals, colorMode, colorMaxes, { clamp = false } = {}) {
+  // Holds the sketch (or graphics) that created this color so that the
+  // setters can read its colorMode() ranges. See the `color` addon below.
+  #owner;
+
+  constructor(vals, colorMode, colorMaxes, { clamp = false, owner } = {}) {
+    this.#owner = owner;
+
     // This changes with the color object
     this._cachedMode = colorMode || RGB;
 
@@ -332,7 +338,13 @@ class Color {
       space: Color.colorMap[lerpMode]
     })(amt);
 
-    return new Color(obj, mode || this.mode);
+    return new Color(obj, mode || this.mode, undefined, { owner: this.#owner });
+  }
+
+  // The colorMode() ranges of the sketch that created this color, or undefined
+  // if there is none or it has been removed.
+  _getOwnerMaxes() {
+    return this.#owner?.pInst?._renderer?.states?.colorMaxes;
   }
 
   /**
@@ -1097,82 +1109,28 @@ function color(p5, fn, lifecycles) {
   p5.Color.addColorMode(OKLAB, OKLab);
   p5.Color.addColorMode(OKLCH, OKLCHSpace);
 
-  lifecycles.presetup = function () {
-    const pInst = this;
+  // The setters take values in the range of the sketch's colorMode(), so they
+  // look up the ranges of the sketch that created the color. Red, green and
+  // blue use the RGB ranges. Alpha uses the ranges of the color's own mode, like
+  // alpha() does. This is done once for the shared prototype, not once per
+  // sketch.
+  const setRangeFor = channel => setter =>
+    function (value, max) {
+      const mode = channel === 3 ? this.mode : RGB;
+      const range = this._getOwnerMaxes()?.[mode]?.[channel];
+      return setter.call(this, value, max || range);
+    };
+  p5.registerDecorator('p5.Color.prototype.setRed', setRangeFor(0));
+  p5.registerDecorator('p5.Color.prototype.setGreen', setRangeFor(1));
+  p5.registerDecorator('p5.Color.prototype.setBlue', setRangeFor(2));
+  p5.registerDecorator('p5.Color.prototype.setAlpha', setRangeFor(3));
 
-    // Decorate set methods
-    const setMethods = ['Red', 'Green', 'Blue', 'Alpha'];
-    for (let i in setMethods) {
-      const method = setMethods[i];
-      const setCopy = p5.Color.prototype['set' + method];
-      p5.Color.prototype['set' + method] = function (newval, max) {
-        max = max || pInst?._renderer?.states?.colorMaxes?.[RGB][i];
-        return setCopy.call(this, newval, max);
-      };
+  // Colors only reach their sketch through a holder, which is cleared here so
+  // that a removed sketch isn't kept in memory by its colors.
+  lifecycles.remove = function () {
+    if (this._colorOwner) {
+      this._colorOwner.pInst = null;
     }
-
-    // Decorate get methods
-    function decorateGet(channel, modes) {
-      const getCopy = p5.Color.prototype['_get' + channel];
-      p5.Color.prototype['_get' + channel] = function (max) {
-        if (Object.keys(modes).includes(this.mode)) {
-          max =
-            max ||
-            pInst?._renderer?.states?.colorMaxes?.[this.mode][modes[this.mode]];
-        } else {
-          const defaultMode = Object.keys(modes)[0];
-          max =
-            max ||
-            pInst?._renderer?.states?.colorMaxes?.[defaultMode][
-              modes[defaultMode]
-            ];
-        }
-
-        return getCopy.call(this, max);
-      };
-    }
-
-    decorateGet('Red', {
-      [RGB]: 0,
-      [RGBP3]: 0
-    });
-    decorateGet('Green', {
-      [RGB]: 1,
-      [RGBP3]: 1
-    });
-    decorateGet('Blue', {
-      [RGB]: 2,
-      [RGBP3]: 2
-    });
-    decorateGet('Alpha', {
-      [RGB]: 3,
-      [RGBP3]: 3,
-      [HSB]: 3,
-      [HSL]: 3,
-      [HWB]: 3,
-      [LAB]: 3,
-      [LCH]: 3,
-      [OKLAB]: 3,
-      [OKLCH]: 3
-    });
-
-    decorateGet('Hue', {
-      [HSL]: 0,
-      [HSB]: 0,
-      [HWB]: 0,
-      [LCH]: 2,
-      [OKLCH]: 2
-    });
-    decorateGet('Saturation', {
-      [HSL]: 1,
-      [HSB]: 1
-    });
-    decorateGet('Brightness', {
-      [HSB]: 2
-    });
-    decorateGet('Lightness', {
-      [HSL]: 2
-    });
   };
 }
 
