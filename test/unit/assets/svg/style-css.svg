@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200">
+  <style>
+    .red-shape    { fill: #e74c3c; stroke: #c0392b; stroke-width: 2; }
+    .blue-shape   { fill: #3498db; stroke: #1b4f72; stroke-width: 6; }
+    .green-shape  { fill: #2ecc71; stroke: #145a32; stroke-width: 8; }
+    .purple-shape { fill: #9b59b6; stroke: none; stroke-width: 0; }
+  </style>
+  <rect x="0" y="0" width="200" height="200" fill="#c8c8c8"/>
+  <!-- shapes styled via CSS class rules in a <style> block -->
+  <circle  cx="60"  cy="60"  r="35" class="red-shape"/>
+  <rect    x="115"  y="20"   width="65" height="75" class="blue-shape"/>
+  <polygon points="100,125 175,185 25,185" class="green-shape"/>
+  <ellipse cx="60"  cy="135" rx="30" ry="20" class="purple-shape"/>
+</svg>

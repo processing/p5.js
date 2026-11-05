@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200">
+  <rect x="0" y="0" width="200" height="200" fill="#c8c8c8"/>
+  <!-- layered shapes with different opacity values -->
+  <rect   x="20"  y="20"  width="100" height="100" fill="#e74c3c"/>
+  <rect   x="80"  y="80"  width="100" height="100" fill="#3498db" opacity="0.6"/>
+  <circle cx="100" cy="100" r="50"                 fill="#2ecc71" opacity="0.4"/>
+</svg>

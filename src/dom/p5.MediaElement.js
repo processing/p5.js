@@ -891,7 +891,7 @@ class MediaElement extends Element {
    *
    * // Set isDone when playback ends.
    * function handleEnd() {
-   *   isDone = false;
+   *   isDone = true;
    * }
    */
   onended(callback) {
@@ -1630,9 +1630,14 @@ function media(p5, fn) {
     const domElement = document.createElement(VIDEO);
     // required to work in iOS 11 & up:
     domElement.setAttribute('playsinline', '');
+    const signal = this._removeSignal;
     navigator.mediaDevices
       .getUserMedia(constraints)
       .then(function (stream) {
+        if (signal.aborted) {
+          stream.getTracks().forEach(track => track.stop());
+          return;
+        }
         try {
           if ('srcObject' in domElement) {
             domElement.srcObject = stream;

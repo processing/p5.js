@@ -8,6 +8,20 @@ import {
   createStrandsShaderNameState,
   getOrCreateInternalShaderName
 } from './strands_names';
+
+// Strands functions opt out of array-to-vector conversion by declaring
+// `argTypes` on themselves (see strands_api.js's `paletteLerp` for an
+// example), rather than being special-cased here. A descriptor of
+// `{ type: 'Array', subtype: { type: 'any' } }` marks an argument as an
+// opaque array: the ArrayExpression visitor leaves it (and anything
+// nested inside it, to any depth) untouched instead of converting it to
+// a vector/strandsNode call. This lets any current or future function —
+// including ones added by addons — take raw array arguments without
+// touching this file again.
+function getArgTypes(fnName, p5) {
+  return p5?.prototype?.[fnName]?.argTypes;
+}
+
 let blockVarCounter = 0;
 let loopVarCounter = 0;
 function replaceBinaryOperator(codeSource) {
@@ -173,6 +187,96 @@ function throwIfLoopProtectionInserted(ast) {
     );
   }
 }
+function isUnusedResultControlFlow(expr) {
+  return (
+    expr.type === 'ConditionalExpression' ||
+    (expr.type === 'LogicalExpression' &&
+      (expr.operator === '&&' || expr.operator === '||'))
+  );
+}
+
+function toBlock(statements) {
+  return { type: 'BlockStatement', body: statements };
+}
+
+// Minifiers turn `if (c) body` into `c && body;`. When the result is thrown
+// away, it's control flow rather than a bool expression, so it is rewritten
+// back into an if statement. Returns the statements that replace `stmt`.
+function restoreConditionalStatement(stmt) {
+  if (stmt.type !== 'ExpressionStatement') return [stmt];
+  const expr = stmt.expression;
+  const asStatement = expression => ({ type: 'ExpressionStatement', expression });
+
+  if (expr.type === 'SequenceExpression') {
+    if (!expr.expressions.some(isUnusedResultControlFlow)) return [stmt];
+    return expr.expressions.flatMap(e =>
+      restoreConditionalStatement(asStatement(e))
+    );
+  }
+  if (expr.type === 'LogicalExpression' && isUnusedResultControlFlow(expr)) {
+    const test =
+      expr.operator === '&&'
+        ? expr.left
+        : {
+            type: 'UnaryExpression',
+            operator: '!',
+            prefix: true,
+            argument: expr.left
+          };
+    return [
+      {
+        type: 'IfStatement',
+        test,
+        consequent: toBlock(restoreConditionalStatement(asStatement(expr.right))),
+        alternate: null
+      }
+    ];
+  }
+  if (expr.type === 'ConditionalExpression') {
+    return [
+      {
+        type: 'IfStatement',
+        test: expr.test,
+        consequent: toBlock(
+          restoreConditionalStatement(asStatement(expr.consequent))
+        ),
+        alternate: toBlock(
+          restoreConditionalStatement(asStatement(expr.alternate))
+        )
+      }
+    ];
+  }
+  return [stmt];
+}
+
+function restoreMinifiedConditionals(ast, uniformCallbackNames) {
+  const inUniform = ancestors =>
+    ancestors.some(
+      a => nodeIsUniform(a) || nodeIsUniformCallbackFn(a, uniformCallbackNames)
+    );
+  const restoreBlockBody = (node, state, ancestors) => {
+    if (inUniform(ancestors)) return;
+    node.body = node.body.flatMap(restoreConditionalStatement);
+  };
+  // Bodies without braces, e.g. `if (x) a && b;`
+  const restoreUnbracedBodies = (node, state, ancestors) => {
+    if (inUniform(ancestors)) return;
+    for (const key of ['consequent', 'alternate', 'body']) {
+      const child = node[key];
+      if (child?.type === 'ExpressionStatement') {
+        node[key] = toBlock(restoreConditionalStatement(child));
+      }
+    }
+  };
+  ancestor(ast, {
+    Program: restoreBlockBody,
+    BlockStatement: restoreBlockBody,
+    IfStatement: restoreUnbracedBodies,
+    ForStatement: restoreUnbracedBodies,
+    WhileStatement: restoreUnbracedBodies
+  });
+}
+
 // Helper function to check if a statement is a variable declaration with strands control flow init
 function statementContainsStrandsControlFlow(stmt) {
   // Check for variable declarations with strands control flow init
@@ -335,6 +439,26 @@ function replaceIdentifierReferences(node, oldName, newName) {
   return replaceInNode(node);
 }
 
+// Track the operand while evaluating it once in its original order.
+function wrapExpressionOperand(operator, expression) {
+  return {
+    type: 'CallExpression',
+    callee: { type: 'Identifier', name: '__p5.strandsOperand' },
+    arguments: [
+      { type: 'Literal', value: operator },
+      {
+        type: 'ArrowFunctionExpression',
+        id: null,
+        params: [],
+        body: expression,
+        expression: true,
+        generator: false,
+        async: false
+      }
+    ]
+  };
+}
+
 // Shared handler for both BinaryExpression and LogicalExpression —
 // both follow the same operator-to-method-call transformation pattern.
 function transformBinaryOrLogical(node, state, ancestors) {
@@ -346,6 +470,13 @@ function transformBinaryOrLogical(node, state, ancestors) {
     )
   ) {
     return;
+  }
+  if (
+    node.type === 'LogicalExpression' &&
+    (node.operator === '&&' || node.operator === '||')
+  ) {
+    node.left = wrapExpressionOperand(node.operator, node.left);
+    node.right = wrapExpressionOperand(node.operator, node.right);
   }
   node.left = {
     type: 'CallExpression',
@@ -383,13 +514,18 @@ function addCopyingAndReturn(functionBody, varsToReturn, sourcePrefix = null) {
     const tempName = `__copy_${parts.join('_')}_${blockVarCounter++}`;
     tempVarMap.set(varPath, tempName);
 
-    // If sourcePrefix is set (loop case), read from vars.x.y
-    // Otherwise (if-branch case), read directly from x.y
+    // In loop cases, read the flat state key from vars.
+    // Otherwise, read the original member path.
     let sourceExpr = sourcePrefix
-      ? { type: 'Identifier', name: sourcePrefix }
+      ? {
+          type: 'MemberExpression',
+          object: { type: 'Identifier', name: sourcePrefix },
+          property: { type: 'Literal', value: varPath },
+          computed: true
+        }
       : { type: 'Identifier', name: parts[0] };
 
-    const pathParts = sourcePrefix ? parts : parts.slice(1);
+    const pathParts = sourcePrefix ? [] : parts.slice(1);
     for (const part of pathParts) {
       sourceExpr = {
         type: 'MemberExpression',
@@ -660,8 +796,11 @@ const ASTCallbacks = {
       node.arguments = [];
     }
   },
+  
   // The callbacks for AssignmentExpression and BinaryExpression handle
   // operator overloading including +=, *= assignment expressions
+
+
   ArrayExpression(node, state, ancestors) {
     if (
       ancestors.some(
@@ -671,6 +810,52 @@ const ASTCallbacks = {
       )
     ) {
       return;
+    }
+    // Don't wrap arrays that are (or are nested inside) an argument a
+    // function has declared as opaque via argTypes. We look this up
+    // structurally — via the nearest enclosing CallExpression and which
+    // of its arguments node descends from — rather than depending on
+    // that CallExpression's own visitor having already run, since
+    // acorn-walk's ancestor() calls child callbacks before parent ones.
+    //
+    // Opacity is depth-scoped, not blanket: argType descriptors nest via
+    // `.subtype`, one level per ArrayExpression descended through from
+    // the top-level argument down to this node. We walk that chain in
+    // lockstep with the descriptor so a function can mark the outer
+    // array and some number of inner levels as opaque (`type: 'Array'`)
+    // while still letting arrays beyond that depth resume normal
+    // vectorization — signaled by the descriptor bottoming out at the
+    // bare string `'any'` (or running out) before reaching this node's
+    // depth.
+    for (let i = ancestors.length - 1; i >= 0; i--) {
+      const a = ancestors[i];
+      if (a.type === 'CallExpression') {
+        const fnName = a.callee?.type === 'Identifier'
+          ? a.callee.name
+          : a.callee?.type === 'MemberExpression' && a.callee.property?.type === 'Identifier'
+            ? a.callee.property.name
+            : undefined;
+        const argTypes = fnName && getArgTypes(fnName, state.p5);
+        if (argTypes) {
+          // The chain of nodes from the top-level argument down to (and
+          // including) this array.
+          // ancestors already ends with `node` itself (acorn-walk, in
+          // this codebase, includes the current node as its own last
+          // ancestor entry) — so slicing from i + 1 already gives the
+          // full chain from the top-level argument down to and
+          // including `node`, with no need to append it again.
+          const path = ancestors.slice(i + 1);
+          const argIndex = a.arguments.indexOf(path[0]);
+          let argType = argIndex !== -1 ? argTypes[argIndex] : undefined;
+          for (let depth = 1; depth < path.length && argType; depth++) {
+            argType = argType.subtype;
+          }
+          if (argType?.type === 'Array') {
+            return;
+          }
+        }
+        break; // only consider the nearest enclosing call
+      }
     }
 
     if (node.elements.length < 2 || node.elements.length > 4) {
@@ -701,6 +886,11 @@ const ASTCallbacks = {
     const unsafeTypes = ['Literal', 'ArrayExpression', 'Identifier'];
     if (node.operator !== '=') {
       const methodName = replaceBinaryOperator(node.operator.replace('=', ''));
+      // Guard the RHS of logical assignments without wrapping the target.
+      const right =
+        node.operator === '&&=' || node.operator === '||='
+          ? wrapExpressionOperand(node.operator, node.right)
+          : node.right;
       const rightReplacementNode = {
         type: 'CallExpression',
         callee: {
@@ -720,7 +910,7 @@ const ASTCallbacks = {
             name: methodName
           }
         },
-        arguments: [node.right]
+        arguments: [right]
       };
       node.operator = '=';
       node.right = rightReplacementNode;
@@ -789,11 +979,10 @@ const ASTCallbacks = {
     ) {
       return;
     }
-    // Transform condition ? consequent : alternate
-    // into __p5.strandsTernary(condition, consequent, alternate)
+    // Lower ?: to strandsTernary, guarding branches but not the condition.
     const test = node.test;
-    const consequent = node.consequent;
-    const alternate = node.alternate;
+    const consequent = wrapExpressionOperand('?:', node.consequent);
+    const alternate = wrapExpressionOperand('?:', node.alternate);
     node.type = 'CallExpression';
     node.callee = { type: 'Identifier', name: '__p5.strandsTernary' };
     node.arguments = [test, consequent, alternate];
@@ -992,7 +1181,6 @@ const ASTCallbacks = {
           };
         }
 
-        // Build right side: __block_2['inputs.color'] or __block_2['x']
         const rightExpr = {
           type: 'MemberExpression',
           object: { type: 'Identifier', name: blockVar },
@@ -1228,46 +1416,7 @@ const ASTCallbacks = {
     };
 
     // Analyze which outer scope variables are assigned in the loop body
-    const assignedVars = new Set();
-
-    // First pass: collect all variable declarations in the body
-    const localVars = new Set();
-    ancestor(bodyFunction.body, {
-      VariableDeclarator(node, ancestors) {
-        // Skip if we're inside a block that contains strands control flow
-        if (ancestors.some(statementContainsStrandsControlFlow)) return;
-        if (node.id.type === 'Identifier') {
-          localVars.add(node.id.name);
-        }
-      }
-    });
-
-    // Second pass: find assignments to non-local variables using acorn-walk
-    ancestor(bodyFunction.body, {
-      AssignmentExpression(node, ancestors) {
-        // Skip if we're inside a block that contains strands control flow
-        if (ancestors.some(statementContainsStrandsControlFlow)) {
-          return;
-        }
-
-        const left = node.left;
-        if (left.type === 'Identifier') {
-          // Direct variable assignment: x = value
-          if (!localVars.has(left.name)) {
-            assignedVars.add(left.name);
-          }
-        } else if (left.type === 'MemberExpression') {
-          // Property assignment: obj.prop = value or obj.a.b = value
-          const propertyPath = buildPropertyPath(left);
-          if (propertyPath) {
-            const baseName = propertyPath.split('.')[0];
-            if (!localVars.has(baseName)) {
-              assignedVars.add(propertyPath);
-            }
-          }
-        }
-      }
-    });
+    const assignedVars = findLoopCarriedVars(bodyFunction.body);
 
     if (assignedVars.size > 0) {
       addCopyingAndReturn(bodyFunction.body, assignedVars, 'vars');
@@ -1348,16 +1497,12 @@ const ASTCallbacks = {
           };
         }
 
-        // Build right side: __block_2.inputs.color or __block_2.x
-        let rightExpr = { type: 'Identifier', name: blockVar };
-        for (const part of parts) {
-          rightExpr = {
-            type: 'MemberExpression',
-            object: rightExpr,
-            property: { type: 'Identifier', name: part },
-            computed: false
-          };
-        }
+        const rightExpr = {
+          type: 'MemberExpression',
+          object: { type: 'Identifier', name: blockVar },
+          property: { type: 'Literal', value: varPath },
+          computed: true
+        };
 
         statements.push({
           type: 'ExpressionStatement',
@@ -1399,6 +1544,90 @@ const ASTCallbacks = {
     delete node.update;
   }
 };
+
+function findLoopCarriedVars(loopBody) {
+  const assignedVars = new Set();
+
+  // First pass: collect all variable declarations in the body
+  const localVars = new Set();
+  ancestor(loopBody, {
+    VariableDeclarator(node, ancestors) {
+      // Skip if we're inside a block that contains strands control flow
+      if (ancestors.some(statementContainsStrandsControlFlow)) return;
+      if (node.id.type === 'Identifier') {
+        localVars.add(node.id.name);
+      }
+    }
+  });
+
+  // Second pass: find assignments to non-local variables using acorn-walk
+  ancestor(loopBody, {
+    AssignmentExpression(node, ancestors) {
+      // Skip if we're inside a block that contains strands control flow
+      if (ancestors.some(statementContainsStrandsControlFlow)) {
+        return;
+      }
+
+      const left = node.left;
+      if (left.type === 'Identifier') {
+        // Direct variable assignment: x = value
+        if (!localVars.has(left.name)) {
+          assignedVars.add(left.name);
+        }
+      } else if (left.type === 'MemberExpression') {
+        // Property assignment: obj.prop = value or obj.a.b = value
+        const propertyPath = buildPropertyPath(left);
+        if (propertyPath) {
+          const baseName = propertyPath.split('.')[0];
+          if (!localVars.has(baseName)) {
+            assignedVars.add(propertyPath);
+          }
+        }
+      }
+    }
+  });
+
+  return assignedVars;
+}
+
+// A break skips the end-of-body writes, so it passes along the loop's
+// current values. This runs before nested control flow is transformed, so
+// the later renaming points each name at its live value at the break.
+function addCarriedValuesToBreaks(loopBody) {
+  const carriedVars = findLoopCarriedVars(loopBody);
+  ancestor(loopBody, {
+    CallExpression(node, ancestors) {
+      if (node.callee.name !== '__p5.break') return;
+      // Breaks in a nested loop belong to that loop
+      if (ancestors.some(a => a.type === 'ForStatement')) return;
+      node.arguments = [
+        {
+          type: 'ObjectExpression',
+          properties: Array.from(carriedVars).map(varPath => {
+            const parts = varPath.split('.');
+            let expr = { type: 'Identifier', name: parts[0] };
+            for (let i = 1; i < parts.length; i++) {
+              expr = {
+                type: 'MemberExpression',
+                object: expr,
+                property: { type: 'Identifier', name: parts[i] },
+                computed: false
+              };
+            }
+            return {
+              type: 'Property',
+              key: { type: 'Literal', value: varPath },
+              value: expr,
+              kind: 'init',
+              computed: false,
+              shorthand: false
+            };
+          })
+        }
+      ];
+    }
+  });
+}
 
 // Helper function to check if a function body contains return statements in control flow
 function functionHasEarlyReturns(functionNode) {
@@ -1874,23 +2103,27 @@ function transformHelperFunctionEarlyReturns(ast, names) {
  *
  * Pipeline stages:
  *
- * 1. Collect uniform callback names
- *    - Identifies functions passed into uniform() so they are excluded from transformation
+ * Collect uniform callback names
+ *   - Identifies functions passed into uniform() so they are excluded from transformation
  *
- * 2. transformSetCallsInControlFlow
- *    - Rewrites `.set()` calls inside control flow into intermediate variable assignments
+ * restoreMinifiedConditionals
+ *   - Turns `cond && action;`, `cond || action;` and `cond ? a : b;` statements, whose
+ *     results are unused, back into if statements
  *
- * 3. Non-control-flow transformations
- *    - Applies ASTCallbacks to transform expressions, assignments, etc.
- *    - Skips IfStatement and ForStatement (handled later)
+ * transformSetCallsInControlFlow
+ *   - Rewrites `.set()` calls inside control flow into intermediate variable assignments
  *
- * 4. transformHelperFunctionEarlyReturns
- *    - Converts early returns in helper functions into a single return value pattern
+ * Non-control-flow transformations
+ *   - Applies ASTCallbacks to transform expressions, assignments, etc.
+ *   - Skips IfStatement and ForStatement (handled later)
  *
- * 5. Control flow transformation (post-order)
- *    - Transforms IfStatement → __p5.strandsIf
- *    - Transforms ForStatement → __p5.strandsFor
- *    - Handles variable propagation across branches/loops
+ * transformHelperFunctionEarlyReturns
+ *   - Converts early returns in helper functions into a single return value pattern
+ *
+ * Control flow transformation (post-order)
+ *   - Transforms IfStatement → __p5.strandsIf
+ *   - Transforms ForStatement → __p5.strandsFor
+ *   - Handles variable propagation across branches/loops
  *
  * This staged approach ensures correct ordering and avoids transformation conflicts.
  */
@@ -1919,7 +2152,8 @@ function makeGuardedCallbacks(callbacks) {
 function runNonControlFlowPass(
   ast,
   uniformCallbackNames,
-  initialShaderNameState
+  initialShaderNameState,
+  p5
 ) {
   const nonControlFlowCallbacks = { ...ASTCallbacks };
   delete nonControlFlowCallbacks.IfStatement;
@@ -1930,7 +2164,8 @@ function runNonControlFlowPass(
     shaderNameMap: createStrandsShaderNameMap(),
     shaderNameState: createStrandsShaderNameState(
       initialShaderNameState?.nextSuffix || 0
-    )
+    ),
+    p5
   };
   ancestor(ast, nonControlFlowCallbacks, undefined, state);
   return {
@@ -1975,7 +2210,10 @@ function runControlFlowPass(ast, uniformCallbackNames) {
       if (node.init) c(node.init, state);
       if (node.test) c(node.test, state);
       if (node.update) c(node.update, state);
-      if (node.body) c(node.body, state);
+      if (node.body) {
+        addCarriedValuesToBreaks(node.body);
+        c(node.body, state);
+      }
       ASTCallbacks.ForStatement(node, state, []);
       state.inControlFlow--;
     },
@@ -2058,20 +2296,24 @@ export function transpileStrandsToJS(
   // Pre-pass: collect names of functions passed by reference as uniform callbacks
   const uniformCallbackNames = collectUniformCallbackNames(ast);
 
-  // Pass 1: transform .set() calls in control flow to use intermediate variables
+  // Turn minifier-style `cond && action;` statements back into ifs
+  restoreMinifiedConditionals(ast, uniformCallbackNames);
+
+  // Transform .set() calls in control flow to use intermediate variables
   transformSetCallsInControlFlow(ast, uniformCallbackNames);
 
-  // Pass 2: transform non-control-flow nodes (operators, varyings, uniforms, arrays)
+  // Transform non-control-flow nodes (operators, varyings, uniforms, arrays)
   const { shaderNameMap, shaderNameState } = runNonControlFlowPass(
     ast,
     uniformCallbackNames,
-    initialShaderNameState
+    initialShaderNameState,
+    p5
   );
 
-  // Pass 3: transform helper functions with early returns to use __returnValue pattern
+  // Transform helper functions with early returns to use __returnValue pattern
   transformHelperFunctionEarlyReturns(ast, uniformCallbackNames);
 
-  // Pass 4: transform if/for statements post-order into strandsIf/strandsFor calls
+  // Transform if/for statements post-order into strandsIf/strandsFor calls
   runControlFlowPass(ast, uniformCallbackNames);
 
   const callback = buildStrandsCallback(p5, ast, scope);

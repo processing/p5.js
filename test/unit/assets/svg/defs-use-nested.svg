@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200">
+  <rect x="0" y="0" width="200" height="200" fill="#c8c8c8"/>
+  <defs>
+    <!-- base element -->
+    <circle id="dot" cx="0" cy="0" r="10" fill="white" stroke="black" stroke-width="1"/>
+    <!-- group that itself uses the base element -->
+    <g id="pair">
+      <use href="#dot" x="-20" y="0"/>
+      <use href="#dot" x="20"  y="0"/>
+    </g>
+  </defs>
+  <!-- stamp the pair group twice via use -->
+  <use href="#pair" x="100" y="70"/>
+  <use href="#pair" x="100" y="130"/>
+</svg>

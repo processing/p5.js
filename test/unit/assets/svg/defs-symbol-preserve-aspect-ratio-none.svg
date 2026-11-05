@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200">
+  <rect width="200" height="200" fill="#c8c8c8"/>
+
+  <defs>
+    <symbol id="default" viewBox="0 0 100 100">
+      <polygon points="50,5 95,95 50,75 5,95"
+               fill="#ffffff" stroke="#000000" stroke-width="2"/>
+    </symbol>
+
+    <symbol id="stretched" viewBox="0 0 100 100"
+            preserveAspectRatio="none">
+      <polygon points="50,5 95,95 50,75 5,95"
+               fill="#ffffff" stroke="#000000" stroke-width="2"/>
+    </symbol>
+  </defs>
+
+  <use href="#default" x="10" y="10" width="180" height="80"/>
+  <use href="#stretched" x="10" y="110" width="180" height="80"/>
+</svg>

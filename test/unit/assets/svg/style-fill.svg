@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200">
+  <rect x="0" y="0" width="200" height="200" fill="#c8c8c8"/>
+  <!-- solid fill colors on basic shapes -->
+  <circle cx="55"  cy="70"  r="40" fill="#e74c3c"/>
+  <rect   x="110" y="30"   width="60" height="60" fill="#3498db"/>
+  <polygon points="100,120 160,185 40,185" fill="#2ecc71"/>
+</svg>

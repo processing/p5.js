@@ -23,6 +23,9 @@ if (typeof Float32Array !== 'undefined') {
 export class Matrix extends MatrixInterface {
   matrix;
   #sqDimention;
+  // Duck-typing flag (like isVector / isColor) so code such as
+  // p5.Shader.setUniform can recognize a p5.Matrix without instanceof
+  isMatrix = true;
 
   constructor(...args) {
     super(...args);
@@ -246,7 +249,7 @@ export class Matrix extends MatrixInterface {
       refArray = GLMAT_ARRAY_TYPE.from(inMatrix);
     }
     if (refArray.length !== this.matrix.length) {
-      p5._friendlyError(
+      this._friendlyError(
         `Expected same dimensions values but received different ${refArray.length}.`,
         'p5.Matrix.set'
       );

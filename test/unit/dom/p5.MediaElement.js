@@ -1,5 +1,6 @@
 import { vi } from 'vitest';
 import { mockP5, mockP5Prototype } from '../../js/mocks';
+import dom from '../../../src/dom/dom';
 import {
   default as media,
   MediaElement
@@ -10,6 +11,7 @@ import { default as pixels } from '../../../src/image/pixels';
 suite('p5.MediaElement', () => {
   beforeAll(() => {
     media(mockP5, mockP5Prototype);
+    dom(mockP5, mockP5Prototype);
     pixels(mockP5, mockP5Prototype);
     navigator.mediaDevices.getUserMedia = vi
       .fn()
@@ -96,11 +98,11 @@ suite('p5.MediaElement', () => {
       });
     });
 
-    test.todo('should work with updatePixels()', function (done) {
+    test('should work with updatePixels()', function (done) {
       let loaded = false;
       let prevElt;
-      const imgElt = myp5.createImg('/test/unit/assets/cat.jpg', '');
-      const testElement = myp5.createVideo('/test/unit/assets/cat.webm', () => {
+      const imgElt = mockP5Prototype.createImg('/test/unit/assets/cat.jpg', '');
+      const testElement = mockP5Prototype.createVideo('/test/unit/assets/cat.webm', () => {
         loaded = true;
         // Workaround for headless tests, where the video data isn't loading
         // correctly: mock the video element using an image for this test
@@ -109,9 +111,9 @@ suite('p5.MediaElement', () => {
       });
 
       let drewUpdatedPixels = false;
-      myp5.draw = function () {
+      mockP5Prototype.draw = function () {
         if (!loaded) return;
-        myp5.background(255);
+        mockP5Prototype.background(255);
 
         if (!drewUpdatedPixels) {
           // First, update pixels and check that it draws the updated
@@ -125,11 +127,11 @@ suite('p5.MediaElement', () => {
             testElement.pixels[i + 3] = 255;
           }
           testElement.updatePixels();
-          myp5.image(testElement, 0, 0);
+          mockP5Prototype.image(testElement, 0, 0);
 
           // The element should have drawn using the updated red pixels
-          myp5.loadPixels();
-          assert.deepEqual([...myp5.pixels.slice(0, 4)], [255, 0, 0, 255]);
+          mockP5Prototype.loadPixels();
+          assert.deepEqual([...mockP5Prototype.pixels.slice(0, 4)], [255, 0, 0, 255]);
 
           // Mark that we've done the first check so we can see whether
           // the video still updates on the next frame
@@ -137,15 +139,15 @@ suite('p5.MediaElement', () => {
         } else {
           // Next, make sure it still updates with the real pixels from
           // the next frame of the video on the next frame of animation
-          myp5.image(testElement, 0, 0);
+          mockP5Prototype.image(testElement, 0, 0);
 
-          myp5.loadPixels();
+          mockP5Prototype.loadPixels();
           testElement.loadPixels();
           expect([...testElement.pixels.slice(0, 4)]).to.not.deep.equal([
             255, 0, 0, 255
           ]);
           assert.deepEqual(
-            [...myp5.pixels.slice(0, 4)],
+            [...mockP5Prototype.pixels.slice(0, 4)],
             [...testElement.pixels.slice(0, 4)]
           );
           testElement.elt = prevElt;

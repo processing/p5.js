@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200">
+  <rect x="0" y="0" width="200" height="200" fill="#c8c8c8"/>
+  <!-- outer group: translate to centre -->
+  <g transform="translate(100,100)">
+    <!-- middle group: rotate 30 degrees -->
+    <g transform="rotate(30)">
+      <!-- inner group: scale down -->
+      <g transform="scale(0.9)">
+        <rect x="-40" y="-40" width="80" height="80" fill="white" stroke="black" stroke-width="1"/>
+        <!-- small marker at top-left of inner rect to make orientation visible -->
+        <circle cx="-40" cy="-40" r="6" fill="black"/>
+      </g>
+    </g>
+  </g>
+</svg>

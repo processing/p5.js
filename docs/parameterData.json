@@ -233,15 +233,6 @@
         []
       ]
     },
-    "loading": {
-      "overloads": [
-        [
-          null,
-          null,
-          null
-        ]
-      ]
-    },
     "fromAxisAngle": {
       "overloads": [
         [
@@ -255,6 +246,13 @@
     "day": {
       "overloads": [
         []
+      ]
+    },
+    "loadingAnimation": {
+      "overloads": [
+        [
+          "Function?"
+        ]
       ]
     },
     "multiply": {
@@ -892,6 +890,116 @@
         ]
       ]
     },
+    "year": {
+      "overloads": [
+        []
+      ]
+    },
+    "transform2D": {
+      "overloads": [
+        [
+          "...Number?[]"
+        ]
+      ]
+    },
+    "transform3D": {
+      "overloads": [
+        [
+          "...Number?[]"
+        ]
+      ]
+    },
+    "mat2": {
+      "overloads": [
+        [
+          "...Number?[]"
+        ]
+      ]
+    },
+    "mat2x2": {
+      "overloads": [
+        [
+          "...Number?[]"
+        ]
+      ]
+    },
+    "mat3": {
+      "overloads": [
+        [
+          "...Number?[]"
+        ]
+      ]
+    },
+    "mat3x3": {
+      "overloads": [
+        [
+          "...Number?[]"
+        ]
+      ]
+    },
+    "mat4": {
+      "overloads": [
+        [
+          "...Number?[]"
+        ]
+      ]
+    },
+    "mat4x4": {
+      "overloads": [
+        [
+          "...Number?[]"
+        ]
+      ]
+    },
+    "removeElements": {
+      "overloads": [
+        []
+      ]
+    },
+    "smooth": {
+      "overloads": [
+        []
+      ]
+    },
+    "nfp": {
+      "overloads": [
+        [
+          "Number",
+          "Integer?",
+          "Integer?"
+        ],
+        [
+          "Number[]",
+          "Integer?",
+          "Integer?"
+        ]
+      ]
+    },
+    "clearStorage": {
+      "overloads": [
+        []
+      ]
+    },
+    "beginShape": {
+      "overloads": [
+        [
+          "POINTS|LINES|TRIANGLES|TRIANGLE_FAN|TRIANGLE_STRIP|QUADS|QUAD_STRIP|PATH?"
+        ]
+      ]
+    },
+    "randomGaussian": {
+      "overloads": [
+        [
+          "Number?",
+          "Number?"
+        ]
+      ]
+    },
+    "addElement": {
+      "overloads": [
+        []
+      ]
+    },
     "instanceID": {
       "overloads": [
         []
@@ -974,60 +1082,6 @@
           "Number|p5.Vector",
           "Number|Boolean"
         ]
-      ]
-    },
-    "year": {
-      "overloads": [
-        []
-      ]
-    },
-    "removeElements": {
-      "overloads": [
-        []
-      ]
-    },
-    "smooth": {
-      "overloads": [
-        []
-      ]
-    },
-    "nfp": {
-      "overloads": [
-        [
-          "Number",
-          "Integer?",
-          "Integer?"
-        ],
-        [
-          "Number[]",
-          "Integer?",
-          "Integer?"
-        ]
-      ]
-    },
-    "clearStorage": {
-      "overloads": [
-        []
-      ]
-    },
-    "beginShape": {
-      "overloads": [
-        [
-          "POINTS|LINES|TRIANGLES|TRIANGLE_FAN|TRIANGLE_STRIP|QUADS|QUAD_STRIP|PATH?"
-        ]
-      ]
-    },
-    "randomGaussian": {
-      "overloads": [
-        [
-          "Number?",
-          "Number?"
-        ]
-      ]
-    },
-    "addElement": {
-      "overloads": [
-        []
       ]
     },
     "clip": {
@@ -1183,14 +1237,6 @@
         ]
       ]
     },
-    "rotate": {
-      "overloads": [
-        [
-          "Number",
-          "p5.Vector|Number[]?"
-        ]
-      ]
-    },
     "removeItem": {
       "overloads": [
         [
@@ -1310,6 +1356,18 @@
         []
       ]
     },
+    "rotate": {
+      "overloads": [
+        [
+          "Number",
+          "p5.Vector|Number[]?"
+        ],
+        [
+          null,
+          "Number"
+        ]
+      ]
+    },
     "noCursor": {
       "overloads": [
         []
@@ -1330,6 +1388,15 @@
           "String?",
           "Function?",
           "Function?"
+        ]
+      ]
+    },
+    "rotateAxisAngle": {
+      "overloads": [
+        [
+          null,
+          null,
+          "Number"
         ]
       ]
     },
@@ -1387,10 +1454,24 @@
         ]
       ]
     },
-    "rotateX": {
+    "createFramebuffer": {
       "overloads": [
         [
-          "Number"
+          "Object?"
+        ]
+      ]
+    },
+    "createImg": {
+      "overloads": [
+        [
+          "String",
+          "String"
+        ],
+        [
+          "String",
+          "String",
+          "String?",
+          "Function?"
         ]
       ]
     },
@@ -1411,28 +1492,13 @@
         ],
         [
           "String|Request",
-          "Object?"
-        ]
-      ]
-    },
-    "createFramebuffer": {
-      "overloads": [
-        [
-          "Object?"
-        ]
-      ]
-    },
-    "createImg": {
-      "overloads": [
-        [
-          "String",
-          "String"
+          "Boolean",
+          "function(p5.Geometry)?",
+          "function(Event)?"
         ],
         [
-          "String",
-          "String",
-          "String?",
-          "Function?"
+          "String|Request",
+          "Object?"
         ]
       ]
     },
@@ -1553,6 +1619,14 @@
         ]
       ]
     },
+    "transformPoint": {
+      "overloads": [
+        [
+          null,
+          null
+        ]
+      ]
+    },
     "box": {
       "overloads": [
         [
@@ -1626,6 +1700,17 @@
         ]
       ]
     },
+    "rotateX": {
+      "overloads": [
+        [
+          "Number"
+        ],
+        [
+          null,
+          "Number"
+        ]
+      ]
+    },
     "char": {
       "overloads": [
         [
@@ -1633,30 +1718,6 @@
         ],
         [
           "Array"
-        ]
-      ]
-    },
-    "rotateY": {
-      "overloads": [
-        [
-          "Number"
-        ]
-      ]
-    },
-    "setup": {
-      "overloads": [
-        []
-      ]
-    },
-    "draw": {
-      "overloads": [
-        []
-      ]
-    },
-    "registerAddon": {
-      "overloads": [
-        [
-          "Function"
         ]
       ]
     },
@@ -1737,6 +1798,14 @@
         ]
       ]
     },
+    "transformNormal": {
+      "overloads": [
+        [
+          null,
+          null
+        ]
+      ]
+    },
     "sin": {
       "overloads": [
         [
@@ -1757,6 +1826,23 @@
       "overloads": [
         [
           "Number"
+        ]
+      ]
+    },
+    "setup": {
+      "overloads": [
+        []
+      ]
+    },
+    "draw": {
+      "overloads": [
+        []
+      ]
+    },
+    "registerAddon": {
+      "overloads": [
+        [
+          "Function"
         ]
       ]
     },
@@ -1820,16 +1906,6 @@
         ]
       ]
     },
-    "createSlider": {
-      "overloads": [
-        [
-          "Number",
-          "Number",
-          "Number?",
-          "Number?"
-        ]
-      ]
-    },
     "buildFilterShader": {
       "overloads": [
         [
@@ -1839,6 +1915,16 @@
         [
           "Object",
           "Object?"
+        ]
+      ]
+    },
+    "createSlider": {
+      "overloads": [
+        [
+          "Number",
+          "Number",
+          "Number?",
+          "Number?"
         ]
       ]
     },
@@ -1868,13 +1954,6 @@
       "overloads": [
         [
           "KeyboardEvent?"
-        ]
-      ]
-    },
-    "rotateZ": {
-      "overloads": [
-        [
-          "Number"
         ]
       ]
     },
@@ -1939,6 +2018,17 @@
         [
           "String",
           "String?"
+        ]
+      ]
+    },
+    "rotateY": {
+      "overloads": [
+        [
+          "Number"
+        ],
+        [
+          null,
+          "Number"
         ]
       ]
     },
@@ -2096,18 +2186,6 @@
         []
       ]
     },
-    "scale": {
-      "overloads": [
-        [
-          "Number|p5.Vector|Number[]",
-          "Number?",
-          "Number?"
-        ],
-        [
-          "p5.Vector|Number[]"
-        ]
-      ]
-    },
     "unhex": {
       "overloads": [
         [
@@ -2212,16 +2290,20 @@
         ]
       ]
     },
-    "getURLPath": {
-      "overloads": [
-        []
-      ]
-    },
-    "shearX": {
+    "rotateZ": {
       "overloads": [
         [
           "Number"
+        ],
+        [
+          null,
+          "Number"
         ]
+      ]
+    },
+    "getURLPath": {
+      "overloads": [
+        []
       ]
     },
     "normal": {
@@ -2234,6 +2316,11 @@
           "Number",
           "Number"
         ]
+      ]
+    },
+    "createShape": {
+      "overloads": [
+        []
       ]
     },
     "colorMode": {
@@ -2334,13 +2421,6 @@
         []
       ]
     },
-    "shearY": {
-      "overloads": [
-        [
-          "Number"
-        ]
-      ]
-    },
     "rect": {
       "overloads": [
         [
@@ -2392,6 +2472,14 @@
         ]
       ]
     },
+    "buildShape": {
+      "overloads": [
+        [
+          "Function",
+          "Object?"
+        ]
+      ]
+    },
     "createSelect": {
       "overloads": [
         [
@@ -2426,6 +2514,13 @@
           "Number",
           "Number",
           "Number"
+        ]
+      ]
+    },
+    "getSVG": {
+      "overloads": [
+        [
+          "p5.ShapeCollection"
         ]
       ]
     },
@@ -2468,6 +2563,24 @@
         ]
       ]
     },
+    "scale": {
+      "overloads": [
+        [
+          "Number|p5.Vector|Number[]",
+          "Number?",
+          "Number?"
+        ],
+        [
+          "p5.Vector|Number[]"
+        ],
+        [
+          null,
+          "Number",
+          "Number?",
+          "Number?"
+        ]
+      ]
+    },
     "mousePressed": {
       "overloads": [
         [
@@ -2487,18 +2600,6 @@
         [
           "Number",
           "Number"
-        ]
-      ]
-    },
-    "translate": {
-      "overloads": [
-        [
-          "Number",
-          "Number",
-          "Number?"
-        ],
-        [
-          "p5.Vector"
         ]
       ]
     },
@@ -2838,14 +2939,6 @@
         ]
       ]
     },
-    "model": {
-      "overloads": [
-        [
-          "p5.Geometry",
-          "Number?"
-        ]
-      ]
-    },
     "noLights": {
       "overloads": [
         []
@@ -2854,6 +2947,25 @@
     "noTint": {
       "overloads": [
         []
+      ]
+    },
+    "model": {
+      "overloads": [
+        [
+          "p5.Geometry",
+          "Number?"
+        ]
+      ]
+    },
+    "shearX": {
+      "overloads": [
+        [
+          "Number"
+        ],
+        [
+          null,
+          "Number"
+        ]
       ]
     },
     "imageShader": {
@@ -2972,6 +3084,17 @@
         []
       ]
     },
+    "shearY": {
+      "overloads": [
+        [
+          "Number"
+        ],
+        [
+          null,
+          "Number"
+        ]
+      ]
+    },
     "brightness": {
       "overloads": [
         [
@@ -2995,6 +3118,23 @@
       "overloads": [
         [
           "MouseEvent?"
+        ]
+      ]
+    },
+    "createSVG": {
+      "overloads": [
+        [
+          "String|SVGElement"
+        ]
+      ]
+    },
+    "shape": {
+      "overloads": [
+        [
+          "p5.ShapeCollection",
+          "Number?",
+          "Number?",
+          "Object?"
         ]
       ]
     },
@@ -3022,6 +3162,15 @@
         [
           "AUDIO|VIDEO|Object?",
           "Object?",
+          "Function?"
+        ]
+      ]
+    },
+    "loadSVG": {
+      "overloads": [
+        [
+          "String",
+          "Function?",
           "Function?"
         ]
       ]
@@ -3057,6 +3206,14 @@
         []
       ]
     },
+    "saveSVG": {
+      "overloads": [
+        [
+          "p5.ShapeCollection|String?",
+          "String?"
+        ]
+      ]
+    },
     "loadMaterialShader": {
       "overloads": [
         [
@@ -3075,6 +3232,11 @@
         ]
       ]
     },
+    "baseMaterialShader": {
+      "overloads": [
+        []
+      ]
+    },
     "lightness": {
       "overloads": [
         [
@@ -3082,16 +3244,16 @@
         ]
       ]
     },
-    "baseMaterialShader": {
-      "overloads": [
-        []
-      ]
-    },
     "doubleClicked": {
       "overloads": [
         [
           "MouseEvent?"
         ]
+      ]
+    },
+    "baseFilterShader": {
+      "overloads": [
+        []
       ]
     },
     "erase": {
@@ -3102,11 +3264,6 @@
         ]
       ]
     },
-    "baseFilterShader": {
-      "overloads": [
-        []
-      ]
-    },
     "createInput": {
       "overloads": [
         [
@@ -3115,6 +3272,24 @@
         ],
         [
           "String?"
+        ]
+      ]
+    },
+    "translate": {
+      "overloads": [
+        [
+          "Number",
+          "Number",
+          "Number?"
+        ],
+        [
+          "p5.Vector"
+        ],
+        [
+          null,
+          "Number",
+          "Number?",
+          "Number?"
         ]
       ]
     },
@@ -3142,11 +3317,6 @@
           "String",
           "Boolean?"
         ]
-      ]
-    },
-    "pop": {
-      "overloads": [
-        []
       ]
     },
     "mouseWheel": {
@@ -3309,6 +3479,11 @@
         ]
       ]
     },
+    "pop": {
+      "overloads": [
+        []
+      ]
+    },
     "loadStrokeShader": {
       "overloads": [
         [
@@ -3448,7 +3623,12 @@
     "buildComputeShader": {
       "overloads": [
         [
-          "Function"
+          "Function",
+          "Object?"
+        ],
+        [
+          "Object",
+          "Object?"
         ]
       ]
     },
@@ -3490,6 +3670,13 @@
         ]
       ]
     },
+    "splineProperties": {
+      "overloads": [
+        [
+          "Object"
+        ]
+      ]
+    },
     "compute": {
       "overloads": [
         [
@@ -3497,13 +3684,6 @@
           "Number",
           "Number?",
           "Number?"
-        ]
-      ]
-    },
-    "splineProperties": {
-      "overloads": [
-        [
-          "Object"
         ]
       ]
     },
@@ -3567,6 +3747,9 @@
         [
           "CLAMP|REPEAT|MIRROR",
           "CLAMP|REPEAT|MIRROR?"
+        ],
+        [
+          "Object"
         ],
         []
       ]
@@ -3882,6 +4065,20 @@
         [
           "p5.Element?"
         ]
+      ]
+    }
+  },
+  "p5.ShapeCollection": {
+    "begin": {
+      "overloads": [
+        [
+          "Object?"
+        ]
+      ]
+    },
+    "end": {
+      "overloads": [
+        []
       ]
     }
   },
@@ -4935,7 +5132,7 @@
     "computeNormals": {
       "overloads": [
         [
-          "FLAT|SMOOTH?",
+          "KEEP_CONNECTIONS|SMOOTH|SEGMENTED?",
           "Object?"
         ]
       ]
