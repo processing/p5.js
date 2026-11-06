@@ -54,8 +54,15 @@ function replaceBinaryOperator(codeSource) {
       return 'and';
     case '||':
       return 'or';
-    // TODO: handle ** --> pow, but make it stay pow in
-    // GLSL instead of turning it back into **
+    case '**':
+      // Becomes a pow() function call (see StrandsNode.prototype.pow),
+      // since GLSL and WGSL have no ** operator.
+      return 'pow';
+    default:
+      FES.userError(
+        'unsupported operator',
+        `The ${codeSource} operator isn't supported in p5.strands shaders.`
+      );
   }
 }
 function nodeIsUniform(ancestor) {
