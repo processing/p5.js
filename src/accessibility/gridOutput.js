@@ -71,7 +71,9 @@ function gridOutput(p5, fn) {
 
         // Check if shape is in canvas, skip if not
         if (
+          ingredients[x][y].loc.locY >= 0 &&
           ingredients[x][y].loc.locY < cells.length &&
+          ingredients[x][y].loc.locX >= 0 &&
           ingredients[x][y].loc.locX < cells[ingredients[x][y].loc.locY].length
         ) {
           //if empty cell of location of shape is undefined

@@ -4,6 +4,8 @@
  * @for p5
  */
 
+import * as constants from '../core/constants';
+
 function outputs(p5, fn) {
   /**
    * Creates a screen reader-accessible description of shapes on the canvas.
@@ -444,7 +446,7 @@ function outputs(p5, fn) {
     }
     let include = {};
     let add = true;
-    let middle = _getMiddle(f, args);
+    let middle = this._getMiddle(f, args);
     if (f === 'line') {
       //make color stroke
       include.color = this.ingredients.colors.stroke;
@@ -461,6 +463,20 @@ function outputs(p5, fn) {
       } else {
         include.pos = `from ${p1} to ${p2}`;
       }
+    } else if (f === 'bezier' || f === 'spline') {
+      // Curves use stroke color if no fill, otherwise fill color
+      if (this._renderer.states.fillColor) {
+        include.color = this.ingredients.colors.fill;
+        include.area = this._getArea(f, args);
+      } else {
+        include.color = this.ingredients.colors.stroke;
+        include.area = 0;
+      }
+      //get middle of shapes
+      //calculate position using middle of shape
+      include.pos = this._getPos(...middle);
+      //calculate location using middle of shape
+      include.loc = _canvasLocator(middle, this.width, this.height);
     } else {
       if (f === 'point') {
         //make color stroke
@@ -499,8 +515,7 @@ function outputs(p5, fn) {
     }
   };
 
-  //gets middle point / centroid of shape
-  function _getMiddle(f, args) {
+  fn._getMiddle = function (f, args) {
     let x, y;
     if (
       f === 'rectangle' ||
@@ -520,11 +535,80 @@ function outputs(p5, fn) {
     } else if (f === 'line') {
       x = (args[0] + args[2]) / 2;
       y = (args[1] + args[3]) / 2;
+    } else if (f === 'bezier') {
+      [x, y] = _curveCenter(_sampleBezier(args, this));
+    } else if (f === 'spline') {
+      [x, y] = _curveCenter(_sampleSpline(args, this));
     } else {
       x = args[0];
       y = args[1];
     }
     return [x, y];
+  };
+
+  function _sampleBezier(args, p5Instance) {
+    const [x1, y1, x2, y2, x3, y3, x4, y4] =
+      args.length === 12
+        ? [args[0], args[1], args[3], args[4], args[6], args[7], args[9], args[10]]
+        : args;
+    const samples = 20;
+    const points = [];
+    for (let i = 0; i <= samples; i++) {
+      const t = i / samples;
+      points.push({
+        x: p5Instance.bezierPoint(x1, x2, x3, x4, t),
+        y: p5Instance.bezierPoint(y1, y2, y3, y4, t)
+      });
+    }
+    return points;
+  }
+
+  function _sampleSpline(args, p5Instance) {
+    const ends = p5Instance._renderer.states.splineProperties.ends;
+    const [x1, y1, x2, y2, x3, y3, x4, y4] =
+      args.length === 12
+        ? [args[0], args[1], args[3], args[4], args[6], args[7], args[9], args[10]]
+        : args;
+    const samples = 20;
+    const segments =
+      ends === constants.EXCLUDE
+        ? [[x1, x2, x3, x4, y1, y2, y3, y4]]
+        : [
+            [x1, x1, x2, x3, y1, y1, y2, y3],
+            [x1, x2, x3, x4, y1, y2, y3, y4],
+            [x2, x3, x4, x4, y2, y3, y4, y4]
+          ];
+
+    const points = [];
+    for (const [ax, bx, cx, dx, ay, by, cy, dy] of segments) {
+      for (let i = points.length === 0 ? 0 : 1; i <= samples; i++) {
+        const t = i / samples;
+        points.push({
+          x: p5Instance.splinePoint(ax, bx, cx, dx, t),
+          y: p5Instance.splinePoint(ay, by, cy, dy, t)
+        });
+      }
+    }
+    return points;
+  }
+
+  function _curveCenter(points) {
+    let sumX = 0;
+    let sumY = 0;
+    for (const p of points) {
+      sumX += p.x;
+      sumY += p.y;
+    }
+    return [sumX / points.length, sumY / points.length];
+  }
+
+  function _polygonArea(points) {
+    let area = 0;
+    for (let i = 0; i < points.length; i++) {
+      const j = (i + 1) % points.length;
+      area += points[i].x * points[j].y - points[j].x * points[i].y;
+    }
+    return Math.abs(area) / 2;
   }
 
   //gets position of shape in the canvas
@@ -636,6 +720,10 @@ function outputs(p5, fn) {
             shapeArgs[4] * (shapeArgs[1] - shapeArgs[3])
         ) / 2;
       // (Ax( By −  Cy) + Bx(Cy − Ay) + Cx(Ay − By ))/2
+    } else if (objectType === 'bezier') {
+      objectArea = _polygonArea(_sampleBezier(shapeArgs, this));
+    } else if (objectType === 'spline') {
+      objectArea = _polygonArea(_sampleSpline(shapeArgs, this));
     }
     //  Store the positions of the canvas corners
     const canvasWidth = this.width * this._renderer._pixelDensity;
