@@ -6,7 +6,7 @@ Please report security vulnerabilities by emailing: responsible.disclosure@proce
 
 ### Reporting Channels
 
-1. Security Advisories in a specific repository are received by p5.js admins/maintainers
+1. Security Advisories in this repository are received by p5.js admins/maintainers. To open one, go to https://github.com/processing/p5.js/security/advisories/new
 2. Responsible Disclosure email reports are received by Processing Foundation staff
 
 ## What to Expect
@@ -24,6 +24,10 @@ Please report security vulnerabilities by emailing: responsible.disclosure@proce
 ## Scope
 
 You can use the above email to report vulnerabilities in p5.js and related repositories managed by the processing org, including the reference website.
+
+## Threat Model
+
+The [Security Handbook](https://p5js.org/contribute/security_handbook/) documents the threat model shared by the p5.js library, website, and editor, including security advice for users and sketch authors. Its source is in [contributor_docs/security_handbook.md](https://github.com/processing/p5.js/blob/main/contributor_docs/security_handbook.md).
 
 ## Accidental Disclosure: Never Share Vulnerabilities Publicly!
 
