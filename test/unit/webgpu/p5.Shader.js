@@ -1704,6 +1704,38 @@ suite('WebGPU p5.Shader', function () {
         assert.approximately(pixelColor[0], 127, 5);
         assert.approximately(pixelColor[1], 191, 5);
       });
+
+      test('preserves loop-carried variables when swapping or updating sequentially', async () => {
+        await myp5.createCanvas(50, 50, myp5.WEBGPU);
+
+        const testShader = myp5.baseMaterialShader().modify(
+          () => {
+            myp5.getPixelInputs(inputs => {
+              let a = 0.25;
+              let b = 0.75;
+
+              for (let i = 0; i < 1; i++) {
+                const t = a;
+                a = b;
+                b = t;
+              }
+
+              inputs.color = [a, b, 0, 1];
+              return inputs;
+            });
+          },
+          { myp5 }
+        );
+
+        myp5.noStroke();
+        myp5.shader(testShader);
+        myp5.plane(myp5.width, myp5.height);
+
+        const pixelColor = await myp5.get(25, 25);
+        assert.approximately(pixelColor[0], 191, 5);
+        assert.approximately(pixelColor[1], 64, 5);
+        assert.approximately(pixelColor[2], 0, 5);
+      });
     });
 
     suite('passing data between shaders', () => {

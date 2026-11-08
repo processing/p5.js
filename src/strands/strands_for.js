@@ -35,6 +35,7 @@ export class StrandsFor {
 
     // Create a BRANCH block to handle phi node declarations
     const branchBlock = CFG.createBasicBlock(cfg, BlockType.BRANCH);
+    this.branchBlock = branchBlock;
     CFG.addEdge(cfg, cfg.currentBlock, branchBlock);
     CFG.addEdge(cfg, branchBlock, mergeBlock);
 
@@ -152,42 +153,35 @@ export class StrandsFor {
     }
     CFG.popBlock(cfg);
 
-    // Create assignment nodes in the final block after body execution (following conditionals pattern)
-    // After executing the body callback, cfg.currentBlock should be the final block in the control flow
-    CFG.pushBlockForModification(cfg, this.finalBodyBlock);
+    // Create assignment nodes in the final block after body execution.
+    // Collect all loop-carried updates for user variables and helper states.
+    const loopUpdates = [];
     for (const [varName, resultNode] of Object.entries(this.bodyResults)) {
       if (varName !== 'loopVar' && finalPhiNodes[varName]) {
-        // Create an assignment statement: phiNode = bodyResult[varName]
-        const phiNodeID = finalPhiNodes[varName].id;
-        const sourceNodeID = resultNode.id;
-        // Create an assignment operation node
-        // Use dependsOn[0] for phiNodeID and dependsOn[1] for sourceNodeID
-        // This represents: dependsOn[0] = dependsOn[1] (phiNode = sourceNode)
-        const assignmentNode = DAG.createNodeData({
-          nodeType: NodeType.ASSIGNMENT,
-          dependsOn: [phiNodeID, sourceNodeID],
-          phiBlocks: []
-        });
-        const assignmentID = DAG.getOrCreateNode(
-          this.strandsContext.dag,
-          assignmentNode
-        );
-        CFG.recordInBasicBlock(cfg, this.finalBodyBlock, assignmentID);
+        const phiNode = finalPhiNodes[varName];
+        if (phiNode.id !== resultNode.id) {
+          loopUpdates.push({
+            targetId: phiNode.id,
+            sourceId: resultNode.id,
+            targetNode: phiNode,
+            name: varName
+          });
+        }
       }
     }
-    // Each iteration ends by storing the body's final helper values.
     for (const [slot, updatedId] of this.stateUpdatedIds) {
-      const assignmentID = DAG.getOrCreateNode(
-        this.strandsContext.dag,
-        DAG.createNodeData({
-          nodeType: NodeType.ASSIGNMENT,
-          dependsOn: [this.statePhis.get(slot).id, updatedId],
-          phiBlocks: []
-        })
-      );
-      CFG.recordInBasicBlock(cfg, this.finalBodyBlock, assignmentID);
+      const phi = this.statePhis.get(slot);
+      if (phi && phi.id !== updatedId) {
+        loopUpdates.push({
+          targetId: phi.id,
+          sourceId: updatedId,
+          targetNode: phi,
+          name: slot.name || 'helper'
+        });
+      }
     }
-    CFG.popBlock(cfg);
+
+    this.recordLoopStateAssignments(this.finalBodyBlock, loopUpdates);
 
     // Convert phi nodes to StrandsNodes for the final result
     const finalBodyResults = {};
@@ -610,22 +604,118 @@ export class StrandsFor {
 
   // Called by break, which skips the end-of-body writes.
   commitCarriedValues(values) {
-    const cfg = this.strandsContext.cfg;
+    const updates = [];
     for (const [varName, value] of Object.entries(values)) {
-      const phiNode = this.phiNodesForBody[varName];
+      const phiNode = this.phiNodesForBody?.[varName];
       if (!phiNode) continue;
-      const assignmentID = DAG.getOrCreateNode(
-        this.strandsContext.dag,
-        DAG.createNodeData({
-          nodeType: NodeType.ASSIGNMENT,
-          dependsOn: [
-            phiNode.id,
-            this.strandsContext.p5.strandsNode(value).id
+      const sourceId = this.strandsContext.p5.strandsNode(value).id;
+      if (phiNode.id !== sourceId) {
+        updates.push({
+          targetId: phiNode.id,
+          sourceId,
+          targetNode: phiNode,
+          name: varName
+        });
+      }
+    }
+    this.recordLoopStateAssignments(
+      this.strandsContext.cfg.currentBlock,
+      updates
+    );
+  }
+
+  recordLoopStateAssignments(targetBlock, updates) {
+    if (updates.length === 0) return;
+
+    const cfg = this.strandsContext.cfg;
+    const dag = this.strandsContext.dag;
+
+    // Check if any update reads a target phi variable written by another update.
+    // If so, the updates must be buffered through temporary variables so earlier
+    // assignments do not overwrite values read later in the same iteration.
+    const targetIds = new Set(updates.map(u => u.targetId));
+    let hasInterDependency = false;
+    for (const update of updates) {
+      for (const otherTargetId of targetIds) {
+        if (otherTargetId !== update.targetId) {
+          if (nodeDependsOnTarget(dag, update.sourceId, otherTargetId)) {
+            hasInterDependency = true;
+            break;
+          }
+        }
+      }
+      if (hasInterDependency) break;
+    }
+
+    if (hasInterDependency && this.branchBlock !== undefined) {
+      // Allocate temporary phi variables in the branch block to buffer the new values
+      CFG.pushBlockForModification(cfg, this.branchBlock);
+      const tempPhis = new Map();
+      for (const update of updates) {
+        const dim =
+          update.targetNode.dimension ??
+          DAG.getNodeDataFromID(dag, update.targetId).dimension;
+        const tempPhi = createPhiNode(
+          this.strandsContext,
+          [
+            {
+              value: createStrandsNode(
+                update.targetId,
+                dim,
+                this.strandsContext
+              ),
+              blockId: this.branchBlock
+            }
           ],
-          phiBlocks: []
-        })
-      );
-      CFG.recordInBasicBlock(cfg, cfg.currentBlock, assignmentID);
+          `temp_${update.name}`
+        );
+        tempPhis.set(update, tempPhi);
+      }
+      CFG.popBlock(cfg);
+
+      CFG.pushBlockForModification(cfg, targetBlock);
+      // Phase 1: evaluate and store the new values into the temporary variables
+      for (const update of updates) {
+        const tempPhi = tempPhis.get(update);
+        const assignmentID = DAG.getOrCreateNode(
+          dag,
+          DAG.createNodeData({
+            nodeType: NodeType.ASSIGNMENT,
+            dependsOn: [tempPhi.id, update.sourceId],
+            phiBlocks: []
+          })
+        );
+        CFG.recordInBasicBlock(cfg, targetBlock, assignmentID);
+      }
+      // Phase 2: assign the buffered values from temporaries into the target phi nodes
+      for (const update of updates) {
+        const tempPhi = tempPhis.get(update);
+        const assignmentID = DAG.getOrCreateNode(
+          dag,
+          DAG.createNodeData({
+            nodeType: NodeType.ASSIGNMENT,
+            dependsOn: [update.targetId, tempPhi.id],
+            phiBlocks: []
+          })
+        );
+        CFG.recordInBasicBlock(cfg, targetBlock, assignmentID);
+      }
+      CFG.popBlock(cfg);
+    } else {
+      // No inter-dependencies; assign directly to target phi nodes
+      CFG.pushBlockForModification(cfg, targetBlock);
+      for (const update of updates) {
+        const assignmentID = DAG.getOrCreateNode(
+          dag,
+          DAG.createNodeData({
+            nodeType: NodeType.ASSIGNMENT,
+            dependsOn: [update.targetId, update.sourceId],
+            phiBlocks: []
+          })
+        );
+        CFG.recordInBasicBlock(cfg, targetBlock, assignmentID);
+      }
+      CFG.popBlock(cfg);
     }
   }
 
@@ -705,4 +795,23 @@ export class StrandsFor {
         return false;
     }
   }
+}
+
+function nodeDependsOnTarget(dag, startId, targetId, visited = new Set()) {
+  if (startId === targetId) {
+    return true;
+  }
+  if (visited.has(startId)) {
+    return false;
+  }
+  visited.add(startId);
+  const deps = dag.dependsOn[startId];
+  if (deps) {
+    for (let i = 0; i < deps.length; i++) {
+      if (nodeDependsOnTarget(dag, deps[i], targetId, visited)) {
+        return true;
+      }
+    }
+  }
+  return false;
 }

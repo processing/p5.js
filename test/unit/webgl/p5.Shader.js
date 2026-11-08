@@ -5690,6 +5690,68 @@ suite('p5.Shader', function () {
       assert.approximately(pixelColor[2], 0, 5);
     });
 
+    test('preserves loop-carried variables when swapping or updating sequentially', () => {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+
+      const testShader = myp5.baseFilterShader().modify(
+        () => {
+          myp5.filterColor.begin();
+
+          let a = 0.25;
+          let b = 0.75;
+
+          for (let i = 0; i < 1; i++) {
+            const t = a;
+            a = b;
+            b = t;
+          }
+
+          myp5.filterColor.set([a, b, 0, 1]);
+          myp5.filterColor.end();
+        },
+        { myp5 }
+      );
+
+      myp5.background(255, 255, 255);
+      myp5.filter(testShader);
+
+      const pixelColor = myp5.get(25, 25);
+      assert.approximately(pixelColor[0], 191, 5);
+      assert.approximately(pixelColor[1], 64, 5);
+      assert.approximately(pixelColor[2], 0, 5);
+    });
+
+    test('preserves loop-carried variables with sequential updates', () => {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+
+      const testShader = myp5.baseFilterShader().modify(
+        () => {
+          myp5.filterColor.begin();
+
+          let a = 0.1;
+          let b = 0.1;
+
+          for (let i = 0; i < 2; i++) {
+            const next = a + b;
+            a = b;
+            b = next;
+          }
+
+          myp5.filterColor.set([a, b, 0, 1]);
+          myp5.filterColor.end();
+        },
+        { myp5 }
+      );
+
+      myp5.background(255, 255, 255);
+      myp5.filter(testShader);
+
+      const pixelColor = myp5.get(25, 25);
+      assert.approximately(pixelColor[0], 51, 5);
+      assert.approximately(pixelColor[1], 76, 5);
+      assert.approximately(pixelColor[2], 0, 5);
+    });
+
     test('handle uniformFloat with control flow in callback', () => {
       myp5.createCanvas(50, 50, myp5.WEBGL);
 
