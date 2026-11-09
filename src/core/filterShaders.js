@@ -115,8 +115,13 @@ export function makeFilterShader(renderer, operation, p5) {
               numSamples = maxSamples;
             }
 
+            // If we sample less densely than we have physical pixels, then we'll
+            // see some banding. Add jitter in those cases to create a more visually
+            // distraction-free result. On a 1x display, devicePixel will be 1 here, and
+            // on a 2x display, it'll be 1/2, etc.
+            const devicePixel = inputs.texelSize.x * inputs.canvasSize.x;
             const randomOffset =
-              (spacing - 1.0) *
+              p5.max(spacing - devicePixel, 0.0) *
               p5.mix(-0.5, 0.5, random(uv * inputs.canvasSize));
             for (let i = 0; i < numSamples; i++) {
               const sample =
