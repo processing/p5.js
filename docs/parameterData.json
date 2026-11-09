@@ -699,7 +699,7 @@
     "saveCanvas": {
       "overloads": [
         [
-          "p5.Framebuffer|p5.Element|HTMLCanvasElement",
+          "p5.Framebuffer|p5.Renderer|p5.Graphics|p5.Element|HTMLCanvasElement",
           "String?",
           "String?"
         ],

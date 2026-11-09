@@ -1,5 +1,6 @@
 import { mockP5, mockP5Prototype } from '../../js/mocks';
 import { vi } from 'vitest';
+import p5 from '../../../src/app.js';
 import image from '../../../src/image/image';
 import files from '../../../src/io/files';
 import loading from '../../../src/image/loading_displaying';
@@ -151,6 +152,71 @@ suite('Downloading', () => {
       expect(document.createElement).toHaveBeenCalledTimes(1);
       expect(mockAnchorElement.click).toHaveBeenCalledTimes(1);
       assert.equal(mockAnchorElement.download, 'filename.jpg');
+    });
+
+    // https://github.com/processing/p5.js/issues/9381
+    suite('with a canvas or graphics object', function () {
+      let myp5;
+
+      beforeAll(function () {
+        myp5 = new p5(function (p) {
+          p.setup = function () {};
+          p.draw = function () {};
+        });
+      });
+
+      afterAll(function () {
+        myp5.remove();
+      });
+
+      test('should save the canvas returned by createCanvas()', async () => {
+        const cnv = myp5.createCanvas(100, 100);
+        const toBlob = vi.spyOn(cnv.canvas, 'toBlob');
+
+        const downloaded = downloadHappened();
+        myp5.saveCanvas(cnv);
+        await downloaded;
+
+        expect(toBlob).toHaveBeenCalledTimes(1);
+        assert.equal(mockAnchorElement.download, 'untitled.png');
+      });
+
+      test('should use the filename and extension', async () => {
+        const cnv = myp5.createCanvas(100, 100);
+        const toBlob = vi.spyOn(cnv.canvas, 'toBlob');
+
+        const downloaded = downloadHappened();
+        myp5.saveCanvas(cnv, 'myCanvas', 'jpg');
+        await downloaded;
+
+        expect(toBlob).toHaveBeenCalledWith(expect.any(Function), 'image/jpeg');
+        assert.equal(mockAnchorElement.download, 'myCanvas.jpg');
+      });
+
+      test('should save the canvas of a WEBGL renderer', async () => {
+        const cnv = myp5.createCanvas(100, 100, myp5.WEBGL);
+        const toBlob = vi.spyOn(cnv.canvas, 'toBlob');
+
+        const downloaded = downloadHappened();
+        myp5.saveCanvas(cnv, 'myCanvas.jpg');
+        await downloaded;
+
+        expect(toBlob).toHaveBeenCalledTimes(1);
+        assert.equal(mockAnchorElement.download, 'myCanvas.jpg');
+      });
+
+      test('should save a p5.Graphics', async () => {
+        myp5.createCanvas(100, 100);
+        const pg = myp5.createGraphics(20, 20);
+        const toBlob = vi.spyOn(pg.canvas, 'toBlob');
+
+        const downloaded = downloadHappened();
+        myp5.saveCanvas(pg, 'buffer', 'png');
+        await downloaded;
+
+        expect(toBlob).toHaveBeenCalledTimes(1);
+        assert.equal(mockAnchorElement.download, 'buffer.png');
+      });
     });
   });
 
