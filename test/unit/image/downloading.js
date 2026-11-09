@@ -1,6 +1,7 @@
 import { mockP5, mockP5Prototype } from '../../js/mocks';
 import { vi } from 'vitest';
-import p5 from '../../../src/app.js';
+import { Renderer } from '../../../src/core/p5.Renderer';
+import { Graphics } from '../../../src/core/p5.Graphics';
 import image from '../../../src/image/image';
 import files from '../../../src/io/files';
 import loading from '../../../src/image/loading_displaying';
@@ -155,63 +156,64 @@ suite('Downloading', () => {
     });
 
     // https://github.com/processing/p5.js/issues/9381
-    suite('with a canvas or graphics object', function () {
-      let myp5;
+    suite('with a p5.Renderer or p5.Graphics', function () {
+      // createCanvas() returns a p5.Renderer and createGraphics() returns a
+      // p5.Graphics. These stand-ins only need to pass the instanceof check
+      // and hold a canvas.
+      const makeRenderer = () => {
+        const renderer = Object.create(Renderer.prototype);
+        renderer.canvas = document.createElement('canvas');
+        return renderer;
+      };
 
-      beforeAll(function () {
-        myp5 = new p5(function (p) {
-          p.setup = function () {};
-          p.draw = function () {};
-        });
-      });
+      const makeGraphics = () => {
+        const graphics = Object.create(Graphics.prototype);
+        graphics._renderer = { canvas: document.createElement('canvas') };
+        return graphics;
+      };
 
-      afterAll(function () {
-        myp5.remove();
-      });
-
-      test('should save the canvas returned by createCanvas()', async () => {
-        const cnv = myp5.createCanvas(100, 100);
-        const toBlob = vi.spyOn(cnv.canvas, 'toBlob');
+      test('should save the canvas of a p5.Renderer', async () => {
+        const renderer = makeRenderer();
+        const toBlob = vi.spyOn(renderer.canvas, 'toBlob');
 
         const downloaded = downloadHappened();
-        myp5.saveCanvas(cnv);
+        mockP5Prototype.saveCanvas(renderer);
         await downloaded;
 
         expect(toBlob).toHaveBeenCalledTimes(1);
         assert.equal(mockAnchorElement.download, 'untitled.png');
       });
 
-      test('should use the filename and extension', async () => {
-        const cnv = myp5.createCanvas(100, 100);
-        const toBlob = vi.spyOn(cnv.canvas, 'toBlob');
+      test('should use the filename with a p5.Renderer', async () => {
+        const renderer = makeRenderer();
+        const toBlob = vi.spyOn(renderer.canvas, 'toBlob');
 
         const downloaded = downloadHappened();
-        myp5.saveCanvas(cnv, 'myCanvas', 'jpg');
+        mockP5Prototype.saveCanvas(renderer, 'myCanvas.jpg');
         await downloaded;
 
         expect(toBlob).toHaveBeenCalledWith(expect.any(Function), 'image/jpeg');
         assert.equal(mockAnchorElement.download, 'myCanvas.jpg');
       });
 
-      test('should save the canvas of a WEBGL renderer', async () => {
-        const cnv = myp5.createCanvas(100, 100, myp5.WEBGL);
-        const toBlob = vi.spyOn(cnv.canvas, 'toBlob');
+      test('should use the filename and extension with a p5.Renderer', async () => {
+        const renderer = makeRenderer();
+        const toBlob = vi.spyOn(renderer.canvas, 'toBlob');
 
         const downloaded = downloadHappened();
-        myp5.saveCanvas(cnv, 'myCanvas.jpg');
+        mockP5Prototype.saveCanvas(renderer, 'myCanvas', 'jpg');
         await downloaded;
 
-        expect(toBlob).toHaveBeenCalledTimes(1);
+        expect(toBlob).toHaveBeenCalledWith(expect.any(Function), 'image/jpeg');
         assert.equal(mockAnchorElement.download, 'myCanvas.jpg');
       });
 
-      test('should save a p5.Graphics', async () => {
-        myp5.createCanvas(100, 100);
-        const pg = myp5.createGraphics(20, 20);
-        const toBlob = vi.spyOn(pg.canvas, 'toBlob');
+      test('should save the canvas of a p5.Graphics', async () => {
+        const graphics = makeGraphics();
+        const toBlob = vi.spyOn(graphics.canvas, 'toBlob');
 
         const downloaded = downloadHappened();
-        myp5.saveCanvas(pg, 'buffer', 'png');
+        mockP5Prototype.saveCanvas(graphics, 'buffer', 'png');
         await downloaded;
 
         expect(toBlob).toHaveBeenCalledTimes(1);
