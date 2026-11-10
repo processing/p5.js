@@ -21,7 +21,7 @@
     "test/**/*.js": "oxlint",
     "utils/**/*.{js,mjs}": "oxlint"
   },
-  "version": "2.4.0-rc.4",
+  "version": "2.4.0-rc.6",
   "dependencies": {
     "@davepagurek/bezier-path": "^0.0.7",
     "@japont/unicode-range": "^1.0.0",
@@ -45,7 +45,7 @@
     "concurrently": "^8.2.2",
     "documentation": "^14.0.3",
     "esrap": "^2.3.7",
-    "glob": "^13.0.6",
+    "glob": "^14.0.3",
     "globals": "^16.2.0",
     "husky": "^4.2.3",
     "lint-staged": "^15.1.0",
