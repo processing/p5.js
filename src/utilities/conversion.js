@@ -891,7 +891,7 @@ function conversion(p5, fn) {
    *
    *   background(200);
    *
-   *   // Create a a hex string variable
+   *   // Create a hex string variable.
    *   let original = 'FF';
    *
    *   // Convert the hex string to a number.
@@ -913,12 +913,11 @@ function conversion(p5, fn) {
    *
    *   background(200);
    *
-   *   // Create an array of numbers.
+   *   // Create an array of hex strings.
    *   let original = ['00', '80', 'FF'];
    *
-   *   // Convert the numbers to hex strings.
-   *   // Only use two hex digits.
-   *   let converted = unhex(original, 2);
+   *   // Convert the hex strings to numbers.
+   *   let converted = unhex(original);
    *
    *   // Style the text.
    *   textAlign(RIGHT, CENTER);
@@ -948,7 +947,12 @@ function conversion(p5, fn) {
     if (n instanceof Array) {
       return n.map(fn.unhex, this);
     } else {
-      return parseInt(`0x${n}`, 16);
+      if (typeof n === 'string') {
+        const trimmed = n.trim();
+        const cleaned = trimmed.startsWith('#') ? trimmed.slice(1) : trimmed;
+        return parseInt(cleaned, 16);
+      }
+      return parseInt(n, 16);
     }
   };
 }
