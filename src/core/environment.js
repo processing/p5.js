@@ -19,20 +19,18 @@ function environment(p5, fn, lifecycles) {
   const windowPrint = isBrowser ? window.print : null;
   let windowPrintDisabled = false;
 
-  if (lifecycles) {
-    lifecycles.presetup = function () {
-      const events = ['resize'];
+  lifecycles.presetup = function () {
+    const events = ['resize'];
 
-      if (isBrowser) {
-        for (const event of events) {
-          window.addEventListener(event, this[`_on${event}`].bind(this), {
-            passive: false,
-            signal: this._removeSignal
-          });
-        }
+    if (isBrowser) {
+      for (const event of events) {
+        window.addEventListener(event, this[`_on${event}`].bind(this), {
+          passive: false,
+          signal: this._removeSignal
+        });
       }
-    };
-  }
+    }
+  };
 
   /**
    * Displays text in the web browser's console.
@@ -1371,5 +1369,5 @@ function environment(p5, fn, lifecycles) {
 export default environment;
 
 if (typeof p5 !== 'undefined') {
-  environment(p5, p5.prototype);
+  p5.registerAddon(environment);
 }
