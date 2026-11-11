@@ -117,12 +117,14 @@ function storage(p5, fn) {
         `The argument that you passed to storeItem() - ${key} is not a string.`,
         'storeItem'
       );
+      return;
     }
     if (key.endsWith('p5TypeID')) {
       p5._friendlyError(
         `The argument that you passed to storeItem() - ${key} must not end with 'p5TypeID'.`,
         'storeItem'
       );
+      return;
     }
 
     if (typeof value === 'undefined') {
@@ -130,6 +132,7 @@ function storage(p5, fn) {
         'You cannot store undefined variables using storeItem().',
         'storeItem'
       );
+      return;
     }
     let type = typeof value;
     switch (type) {
@@ -427,6 +430,7 @@ function storage(p5, fn) {
         `The argument that you passed to removeItem() - ${key} is not a string.`,
         'removeItem'
       );
+      return;
     }
     localStorage.removeItem(key);
     localStorage.removeItem(`${key}p5TypeID`);
