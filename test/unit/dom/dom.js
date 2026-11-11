@@ -702,6 +702,7 @@ suite('DOM', function () {
       assert.isTrue(testElement.elt.options[disabledIndex].disabled);
       assert.isFalse(testElement.elt.options[disabledIndex].selected);
     });
+
   });
 
   suite('p5.prototype.createRadio', function () {
@@ -875,6 +876,47 @@ suite('DOM', function () {
       testElement.disable();
       for (const option of options) {
         assert.isTrue(testElement.option(option).disabled);
+      }
+    });
+
+    test('calling disable(false) should disable all the radio inputs', function () {
+      const options = ['Monday', 'Friday', 'Saturday', 'Sunday'];
+      const testElement = mockP5Prototype.createRadio();
+      for (const option of options) testElement.option(option);
+
+      testElement.disable();
+      testElement.disable(false);
+      for (const option of options) {
+        assert.isFalse(testElement.option(option).disabled);
+      }
+    });
+
+    test('calling disable() should be toggleable per input', function () {
+      const options = ['Monday', 'Friday'];
+      const testElement = mockP5Prototype.createRadio();
+      for (const option of options) testElement.option(option);
+
+      testElement.disable(true);
+      assert.isTrue(getChildren(testElement.elt).every(input => input.disabled));
+
+      testElement.disable(false);
+      assert.isFalse(getChildren(testElement.elt).some(input => input.disabled));
+    });
+
+    test('calling selected(value) should uncheck all other options', function () {
+      const options = ['Monday', 'Friday', 'Saturday'];
+      const testElement = mockP5Prototype.createRadio();
+      for (const option of options) testElement.option(option);
+
+      testElement.selected('Monday');
+      const inputs = getChildren(testElement.elt);
+      for (const input of inputs) {
+        assert.deepEqual(input.checked, input.value === 'Monday');
+      }
+
+      testElement.selected('Friday');
+      for (const input of inputs) {
+        assert.deepEqual(input.checked, input.value === 'Friday');
       }
     });
   });
