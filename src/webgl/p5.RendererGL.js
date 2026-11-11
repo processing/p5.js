@@ -18,6 +18,7 @@ import { Image } from '../image/p5.Image';
 import { glslBackend } from './strands_glslBackend';
 import { getShaderHookTypes } from './shaderHookUtils';
 import { cpuStorageTextureFor } from './cpuStorageTexture';
+import { runCpuCompute } from './strands_jsBackend';
 
 import filterBaseVert from './shaders/filters/base.vert';
 import lightingShader from './shaders/lighting.glsl';
@@ -2346,6 +2347,7 @@ class RendererGL extends Renderer3D {
     if (shader.shaderType !== 'compute') {
       throw new Error('compute() can only be called with a compute shader');
     }
+    runCpuCompute(shader, x, y, z);
   }
 }
 
