@@ -265,6 +265,20 @@ visualSuite('WebGPU', function () {
       await screenshot();
     });
 
+    visualTest('colorField on the main canvas', async function (p5, screenshot) {
+      await p5.createCanvas(50, 50, p5.WEBGPU);
+      const field = p5.buildColorFieldShader(
+        () => {
+          p5.fieldColor.begin();
+          p5.fieldColor.set([p5.fieldColor.texCoord, 0, 1]);
+          p5.fieldColor.end();
+        },
+        { p5 }
+      );
+      p5.colorField(field);
+      await screenshot();
+    });
+
     visualTest('filter shaders with flat API', async function (p5, screenshot) {
       await p5.createCanvas(50, 50, p5.WEBGPU);
       p5.background(255);
