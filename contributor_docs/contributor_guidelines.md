@@ -12,6 +12,23 @@ This is a relatively long and comprehensive document but we will try to signpost
 
 Please note that consistently violating the contributor guidelines, the AI usage policy, and/or the code of conduct may result in temporary or permanent suspension of user accounts. We expect contributors to respond to feedback: even if you do not implement something someone asks, we expect you to reply to the comments.
 
+> ### Before you open a pull request
+>
+> - **You need an approved issue first.** Open an issue, get it reviewed and approved by a steward or maintainer, *then* start work.
+> - **A PR filed without an approved issue will be closed**, even if the fix itself is good. The issue step exists because the proposed approach might not be the right one, or the problem might be somewhere else entirely.
+> - **One issue at a time per contributor** is the norm. Don't start a second before wrapping up the first, and don't file a PR for an issue someone else is already assigned to.
+>
+> This is the single most important rule in this document. It's repeated at the end of each issue-template section below, but if you read nothing else on this page, read this box.
+
+### Contribution flow at a glance
+
+```
+Open an issue → get it approved by a steward/maintainer → get assigned →
+do the work → open a PR referencing the issue → review → merge
+```
+
+The sections below walk through each of those steps in detail. If you already know the shape of the process and just need the specifics for your situation, jump straight to the relevant section using the table of contents.
+
 # Table of Contents
 
 - [All about issues](#all-about-issues)
@@ -57,17 +74,26 @@ The majority of the activity on p5.js' GitHub repositories (repo for short) happ
 
 ![A cropped screenshot of the p5.js library GitHub repository, only showing contents of the top right corner. A red box is drawn on top of the screenshot surrounding the Issues tab.](images/issues-tab.png)
 
-“Issue” is the generic name for a post on GitHub that aims to describe, well, an issue. This issue can be a bug report, a request to add a new feature, a discussion, or anything that works as a post related to p5.js library development. Comments can be added below each issue by anyone with a GitHub account, including bots! It is the place where contributors discuss topics related to the development of the project in the repo.
+"Issue" is the generic name for a post on GitHub that aims to describe, well, an issue. This issue can be a bug report, a request to add a new feature, a discussion, or anything that works as a post related to p5.js library development. Comments can be added below each issue by anyone with a GitHub account, including bots! It is the place where contributors discuss topics related to the development of the project in the repo.
 
-While an issue can be opened for a wide variety of reasons, we usually only use issues to discuss the development of p5.js source code. Topics such as debugging your own code, inviting collaborators to your project, or other unrelated topics should be discussed
-
-either on the [forum](https://discourse.processing.com) or on other platforms such as [Discord](https://discord.p5js.org).
+While an issue can be opened for a wide variety of reasons, we usually only use issues to discuss the development of p5.js source code. Topics such as debugging your own code, inviting collaborators to your project, or other unrelated topics should be discussed either on the [forum](https://discourse.processing.com) or on other platforms such as [Discord](https://discord.p5js.org).
 
 We have created easy-to-use issue templates to aid you in deciding whether a topic should be a GitHub issue or posted elsewhere!
 
 ## Issue templates
 
-p5.js's issue templates make it easier for stewards and maintainers to understand and review issues. They also make it easier for you to file the relevant issue and receive a reply faster. 
+p5.js's issue templates make it easier for stewards and maintainers to understand and review issues. They also make it easier for you to file the relevant issue and receive a reply faster.
+
+**At a glance, which template, and how many approvals before you can start a PR:**
+
+| Template | Use it for | Approvals needed before a PR |
+|---|---|---|
+| [Found a bug](#found-a-bug) | Something behaves incorrectly, or doesn't match the docs | 1 steward or maintainer |
+| [Existing Feature Enhancement](#existing-feature-enhancement) | Changing or extending something that already exists | 1 steward or maintainer |
+| [New Feature Request](#new-feature-request) | Proposing something entirely new | 2 stewards or maintainers |
+| [Discussion](#discussion) | Doesn't fit the other three | No approval gate, it's not a proposal for code |
+
+The sections below cover each template's specific fields in detail.
 
 ![Screenshot of an example of what an issue looks like on GitHub. The title of the issue in the screenshot is "Warning being logged in Safari when using a filter shader in 2D mode #6597"](images/github-issue.png)
 
@@ -86,68 +112,33 @@ There are a few fields for you to fill in for this template:
 3. _Web browser and version_ - This helps us isolate different behaviors between browsers. To find the browser version number, follow the instructions in the table below for the browser you are using.
 
 <table>
-
 <tr>
-
-<td>
-
-Chrome
-
-</td>
-
-<td>
-
-Firefox
-
-</td>
-
-<td>
-
-Safari
-
-</td>
-
+<td>Chrome</td>
+<td>Firefox</td>
+<td>Safari</td>
 </tr>
-
 <tr>
-
-<td>
-
-In the address bar, navigate to `chrome://version`
-
-</td>
-
-<td>
-
-In the address bar, navigate to  `about:support`
-
-</td>
-
-<td>
-
-Under the top bar “Safari” menu item, choose “About Safari”
-
-</td>
-
+<td>In the address bar, navigate to `chrome://version`</td>
+<td>In the address bar, navigate to `about:support`</td>
+<td>Under the top bar "Safari" menu item, choose "About Safari"</td>
 </tr>
-
 </table>
 
 4. _Operating System_ - You should include the OS version number if possible, e.g., `macOS 12.5`. Some bugs can stem from OS behaviors.
 5. _Steps to reproduce this_ - This is arguably the most important information to share. You should list out detailed steps for replicating the bug you are seeing. Sharing a basic sample code that demonstrates the issue can go a long way for anyone looking to replicate the bug you are facing and start formulating a solution.
 
-**Replication is key!** Many of the fields in this template are aimed at replicating the bug. The more information you can provide us about your sketch's environment and how others can replicate what you are seeing, the easier it is for anyone to understand your issue and start looking into solutions. 
+**Replication is key!** Many of the fields in this template are aimed at replicating the bug. The more information you can provide us about your sketch's environment and how others can replicate what you are seeing, the easier it is for anyone to understand your issue and start looking into solutions.
 
-**Be as detailed as you can and avoid generic statements**, e.g., do not say "image() function does not work" but rather be more specific, such as "image() function does not display the loaded GIF image at the right size." A helpful way to describe the bug you are facing is to describe two things: 
+**Be as detailed as you can and avoid generic statements**, e.g., do not say "image() function does not work" but rather be more specific, such as "image() function does not display the loaded GIF image at the right size." A helpful way to describe the bug you are facing is to describe two things:
 
 1. What you expect the sample code you share to do (expected behavior).
 2. What the sample code is actually doing (actual behavior).
 
 If you wish to contribute a fix to the bug you just reported, you can indicate so in the description. You may provide a simple suggestion as to how you would fix the bug you just described, this will let us know how much support you may need to contribute to the fix.
 
-**You should not file a pull request (or start working on code changes) without a corresponding issue or before an issue has been approved for implementation**; that is because the proposed fix may not be accepted, need a different approach entirely, or the actual problem is somewhere else. Any pull requests filed before the issue has been approved for fixing will be closed until approval is given to the issue.
-
 For bug reports to be accepted for fixing, they must be approved by at least one [area steward or maintainer](https://github.com/processing/p5.js#stewards) before work can begin on a pull request.
+
+> ⚠️ **Don't start a PR until this issue is approved.**
 
 ### ["Existing Feature Enhancement"](https://github.com/processing/p5.js/issues/new?assignees=&labels=Enhancement&projects=&template=existing-feature-enhancement.yml)
 
@@ -159,9 +150,9 @@ There are a few fields for this template that you should fill in.
 2. _Most appropriate sub-area of p5.js?_ - This helps us identify and respond to your issue. This will automatically tag the issue with the relevant [labels](https://github.com/processing/p5.js/labels).
 3. _Feature enhancement details_ - This is where you describe your proposal for the feature enhancement. A good feature enhancement proposal often includes a clear use case: what, when, how, and why this feature enhancement is needed.
 
-For feature enhancement proposals to be accepted they must be approved by at least 1 [area steward or maintainer](https://github.com/processing/p5.js#stewards) before work can begin on a pull request. 
+For feature enhancement proposals to be accepted they must be approved by at least 1 [area steward or maintainer](https://github.com/processing/p5.js#stewards) before work can begin on a pull request.
 
-**You should not file a pull request (or start working on code changes) without a corresponding issue or before an issue has been approved for implementation**, because there is no guarantee that the proposal will be accepted. Any pull requests filed before a proposal has been approved will be closed until approval is given to the issue.
+> ⚠️ **Don't start a PR until this issue is approved.** There is no guarantee a proposal will be accepted, and a PR filed before approval will be closed until the issue is.
 
 ### ["New Feature Request"](https://github.com/processing/p5.js/issues/new?assignees=&labels=Feature+Request&projects=&template=feature-request.yml)
 
@@ -169,13 +160,13 @@ This template should be used if you wish to propose a new feature to be added to
 
 Accordingly, the template form fields are nearly identical to the field of the "Existing Feature Enhancement." As such please see the [previous section](#existing-feature-enhancement) for details about how to fill in each field.
 
-For new feature request proposals to be accepted, they must be approved by at least 2 [area stewards or maintainers](https://github.com/processing/p5.js#stewards) before work can begin on a pull request. 
+For new feature request proposals to be accepted, they must be approved by at least 2 [area stewards or maintainers](https://github.com/processing/p5.js#stewards) before work can begin on a pull request.
 
-**You should not file a pull request (or start working on code changes) without a corresponding issue or before an issue has been approved for implementation**, that is because there is no guarantee that the proposal will be accepted. Any pull requests filed before a proposal has been approved will be closed until approval is given to the issue.
+> ⚠️ **Don't start a PR until this issue is approved.** There is no guarantee a proposal will be accepted, and a PR filed before approval will be closed until the issue is.
 
 ### ["Discussion"](https://github.com/processing/p5.js/issues/new?assignees=&labels=Discussion&projects=&template=discussion.yml)
 
-This template is used when the issue you are filing does not fit into any of the above in any way. An issue not fitting into any of the above templates should be relatively rare in practice. For example, a discussion about whether to adopt a specific Web API feature in p5.js should be filed as a [new feature request](#new-feature-request); a discussion about adding an additional color mode to the various color functions should be filed as a [feature enchancement](#existing-feature-enchancement); an announcement about a local creative coding event that you are organizing should be posted on the forum and contacting the Processing Foundation if you are looking for support or publicity; etc.
+This template is used when the issue you are filing does not fit into any of the above in any way. An issue not fitting into any of the above templates should be relatively rare in practice. For example, a discussion about whether to adopt a specific Web API feature in p5.js should be filed as a [new feature request](#new-feature-request); a discussion about adding an additional color mode to the various color functions should be filed as a [feature enhancement](#existing-feature-enhancement); an announcement about a local creative coding event that you are organizing should be posted on the forum and contacting the Processing Foundation if you are looking for support or publicity; etc.
 
 When opening a discussion issue, you can use the "Labels" panel on the side panels to add additional relevant labels so you can signpost your issue to the relevant area. The template itself is just the bare minimum text field. You can see [this link](https://github.com/processing/p5.js/issues/6517) for an example discussion issue.
 
@@ -191,15 +182,13 @@ To proceed you should be minimally familiar with working with the command line, 
 
 ## Introduction
 
-Now that your issue has been discussed, an implementation approved, and you are willing to make the code changes, you are ready to start working on the codebase.
+Now that your issue has been discussed, an implementation approved, and you are willing to make the code changes, you are ready to start working on the codebase. If you've come across an issue that's been approved but no one, not even the original author, has indicated they're working on it, you may volunteer and have the stewards assign it to you.
 
-Similarly, if you have come across an issue or joined in discussions of an issue and an implementation has been approved by stewards, but neither the original issue author nor other members of the community have indicated they are willing to work on the issue, you may volunteer for submit a contribution here and have the stewards assign the issue to you.
+**A few ground rules while you work:**
 
-**You should not "jump the queue"** by filing a PR for an issue that either someone else has indicated willingness to submit a contribution or has already been assigned to someone else. We will always prioritize the "first assigned, first serve" order for accepting code contributions for an issue. 
-
-If you file a PR for an issue while someone else is still working on the same issue, your PR will be closed. If you see that it has been a few months since the last activity on an issue with an assigned individual, you can check in with them by leaving a polite comment on the issue asking for progress and if they need help with the implementation. We generally allow for a reasonably long time frame for people to work on their contributions as we understand that most people will often be working on a volunteer basis, or it simply takes more time for them to work on the feature. 
-
-Similarly, you should work at your own pace and be confident that there is no hard time limit on how long you can spend working on something. That being said, if you are having trouble with any aspect of your code contribution, do not hesitate to ask for help in the issue, the stewards and maintainers, as well as members of our community, will do our best to guide you!
+- **Don't "jump the queue."** If someone else has indicated they're working on an issue, or has already been assigned it, filing a PR for it anyway will get that PR closed. Contribution order is first assigned, first served.
+- **Stalled issues get a check-in, not a takeover.** If it's been a few months with no activity on an issue someone's assigned to, leave a polite comment asking about progress and whether they need help, don't just file a competing PR. Most contributors are working on a volunteer basis, so a generous timeline is normal.
+- **There's no hard deadline on your own work, either.** Work at your own pace. If you get stuck on any part of it, ask for help in the issue, stewards, maintainers, and the wider community are there to help you get unstuck, not to rush you.
 
 ## Quick Get Started For Developers
 
@@ -225,7 +214,7 @@ node -v
 npm ci
 ```
 
-6. Create a git branch of the `main` branch having a descriptive branch name using: 
+6. Create a git branch of the `main` branch having a descriptive branch name using:
 
 ```
 git checkout -b [branch_name]
@@ -244,7 +233,7 @@ npm test
 
 When viewing a file on the GitHub web interface, near the top of the content of the file you are viewing will be a pencil icon button. This button is a convenient edit feature provided by GitHub that simplifies many of the processes we will be covering below and can be used to make quick and simple edits to the file you are viewing.
 
-![Cropped screenshot of a file view in GitHub of the p5.js repository, "src/color/color\_conversion.js" file. A red arrow pointing to a pencil icon button on the right side of the image.](images/edit-file.png)
+![Cropped screenshot of a file view in GitHub of the p5.js repository, "src/color/color_conversion.js" file. A red arrow pointing to a pencil icon button on the right side of the image.](images/edit-file.png)
 
 However, it is not recommended to use this feature other than for very simple changes. One of the main reasons for this is that for more complex changes to the source code, it should be built and tested locally before being filed as a PR. Using a local development environment is also often much more fluent for most as compared to the basic editing environment provided by this edit functionality.
 
@@ -325,11 +314,11 @@ In GitHub Desktop, this can be done by clicking the Current Branch button in the
 
 ![A screenshot of the GitHub Desktop branch selection menu. After entering a new branch name that does not yet exist, a "Create New Branch" button appears.](images/github-desktop-create-branch.png)
 
-From the terminal, run `git checkout -b branch_name` while you are on the `main` branch, replacing `branch_name` with something descriptive, and you will be on a separate branch now. 
+From the terminal, run `git checkout -b branch_name` while you are on the `main` branch, replacing `branch_name` with something descriptive, and you will be on a separate branch now.
 
 As you make your changes, we recommend running `npm test` frequently, especially if you are working on the source code. Running this will take some time, but it ensures that the changes you make are not breaking existing behaviors. You should run `npm test` before moving on to committing the changes as described below.
 
-Once you have made your changes to the codebase, you will need to commit it to git. A commit is a collection of changes saved in the git repository; it essentially records the current state of the files in the repo at the time of commit. 
+Once you have made your changes to the codebase, you will need to commit it to git. A commit is a collection of changes saved in the git repository; it essentially records the current state of the files in the repo at the time of commit.
 
 A question that may arise is how often should you commit to git? In general it is preferred that you aim to commit often rather than lump multiple big changes into one commit. A good guideline is to commit whenever you have completed a subtask that can be described in a sentence.
 
@@ -339,13 +328,13 @@ To commit all current changes from GitHub Desktop, open the app after making you
 
 To commit all current changes from the terminal, run the following:
 
-1. Check that it only lists files you have changed with the following command. 
+1. Check that it only lists files you have changed with the following command.
 
 ```
 git status
 ```
 
-If there are files listed that you have not changed, you will need to either [restore](https://git-scm.com/docs/git-restore) them to the original or make sure they are intended changes. To show more detailed changes for each file use the following command. 
+If there are files listed that you have not changed, you will need to either [restore](https://git-scm.com/docs/git-restore) them to the original or make sure they are intended changes. To show more detailed changes for each file use the following command.
 
 ```
 git diff
@@ -377,7 +366,7 @@ Repeat the above steps for all commits you will be making while making sure to r
 
 If you are going to work on the source code, a good place to start, if you know which of p5.js features you are going to work on, is to visit the documentation and at the bottom of each documented functionality of p5.js will be a link to its source code.
 
-![Cropped screenshot of a reference page on the p5.js website containing the sentence "Notice any errors or typos? Please let us know. Please feel free to edit src/core/shape/2d\_primitives.js and issue a pull request!". Part of the above sentence where it says "src/core/shape/2d\_primitives.js" is highlighted with a red underline and arrow pointing to it.](images/reference-code-link.png)
+![Cropped screenshot of a reference page on the p5.js website containing the sentence "Notice any errors or typos? Please let us know. Please feel free to edit src/core/shape/2d_primitives.js and issue a pull request!". Part of the above sentence where it says "src/core/shape/2d_primitives.js" is highlighted with a red underline and arrow pointing to it.](images/reference-code-link.png)
 
 ### Unit tests
 
@@ -393,7 +382,7 @@ If you are going to work on accessibility features, please see [here](./web_acce
 
 ## Code standard
 
-p5.js' code standard or code style is enforced by [ESLlint](https://eslint.org/). Any git commit and pull request must pass linting before it will be accepted. The easiest way for you to follow the right coding standard is to use the ESLint plugin available for your text editor with linting error highlighting (available for most popular text editors).
+p5.js' code standard or code style is enforced by [ESLint](https://eslint.org/). Any git commit and pull request must pass linting before it will be accepted. The easiest way for you to follow the right coding standard is to use the ESLint plugin available for your text editor with linting error highlighting (available for most popular text editors).
 
 ## Software Design principles
 
@@ -417,7 +406,9 @@ Now that you have made the changes you need to make, including unit tests if app
 
 The first step here is to push your new commits to your fork of p5.js; think of it as uploading the changes to your fork.
 
-From GitHub Desktop, just to the right of the button to change branches in the header is a button to push your changes to GitHub. Click this to push your changes.![A view of GitHub Desktop after committing changes. The button to push the changes online is circled in red.](images/publish-branch.png)
+From GitHub Desktop, just to the right of the button to change branches in the header is a button to push your changes to GitHub. Click this to push your changes.
+
+![A view of GitHub Desktop after committing changes. The button to push the changes online is circled in red.](images/publish-branch.png)
 
 Once your code is uploaded, it will show a button prompting you to create a pull request. Clicking the button once will show a preview with another button to actually create the request. Press the "Create Pull Request" button to begin the process.
 
@@ -441,7 +432,19 @@ You may also see a button to open a pull request when you visit the p5.js Github
 
 ![Screenshot of an "Open a pull request" page on GitHub that is prepopulated with p5.js's pull request template.](images/new-pr.png)
 
-Before filing the pull request, you will need to fill out the pull request template. 
+Before filing the pull request, you will need to fill out the pull request template.
+
+**At a glance, the fields you'll fill in:**
+
+| Field | What goes there |
+|---|---|
+| [Title](#title) | A brief, specific description of the change, not a generic label |
+| [Resolves](#resolves) | The issue number this PR fixes (`Resolves #1234`), or `Addresses #1234` if it doesn't fully close the issue |
+| [Changes](#changes) | What you changed and why, including any implementation decisions worth flagging to a reviewer |
+| [Screenshots of the change](#screenshots-of-the-change) | Optional, include when the change affects canvas rendering |
+| [PR Checklist](#pr-checklist) | Check off whichever items apply to your change |
+
+The subsections below cover each field in more detail.
 
 ### Title
 
@@ -477,7 +480,9 @@ You should now inspect the opened pull request and pay attention to a few things
 
 If any of the above is not true (there are more commits than you expected or there are conflicts), you may need to [rebase](https://git-scm.com/book/en/v2/Git-Branching-Rebasing) or help resolve conflicts. Conflicts here mean that you have made changes to a file that also recently had changes applied to it, and git is not sure which set of changes to keep or leave out. If you are not confident in resolving these issues, let us know and we'll guide you through the process. Basic instruction is as below.
 
-Sometimes, Github lets you resolve conflicts directly in the browser by showing you a Resolve Conflicts button:![A screenshot of a GitHub pull request with merge conflicts. The conflicting filenames are listed, and there is a "Resolve conflicts" button highlighted.](images/resolve-conflicts.png)
+Sometimes, Github lets you resolve conflicts directly in the browser by showing you a Resolve Conflicts button:
+
+![A screenshot of a GitHub pull request with merge conflicts. The conflicting filenames are listed, and there is a "Resolve conflicts" button highlighted.](images/resolve-conflicts.png)
 
 Conflicts are shown between `<<<<<<<` and `>>>>>>>`, separated by `=======`. One section shows your code, and the other section shows what has changed in the main branch.
 
@@ -496,7 +501,7 @@ Sometimes, the conflicts are too complicated for Github to show on the web. In t
 1. Run `git remote add upstream https://github.com/processing/p5.js`
 2. Run `git fetch upstream`
 3. Run `git rebase upstream/main`
-4. You may have some conflicts! If it’s just lib/p5.js and lib/p5.min.js, it’s easy to fix; just build the project again. If you have conflicts in other files & you're not sure how to resolve them, ask for help!
+4. You may have some conflicts! If it's just lib/p5.js and lib/p5.min.js, it's easy to fix; just build the project again. If you have conflicts in other files & you're not sure how to resolve them, ask for help!
 
 ```
 npm test
