@@ -108,15 +108,26 @@ function keyboard(p5, fn, lifecycles) {
   fn.keyIsPressed = false;
 
   /**
-   * A `String` system variable that contains the value of the last key typed.
+   * A `String` system variable that contains the value of the last pressed key that remains active.
    *
-   * The key variable is helpful for checking whether an
-   * <a href="https://en.wikipedia.org/wiki/ASCII#Printable_characters" target="_blank">ASCII</a>
-   * key has been typed. For example, the expression `key === "a"` evaluates to
-   * `true` if the `a` key was typed and `false` if not. `key` doesn’t update
-   * for special keys such as `LEFT_ARROW` and `ENTER`. Use keyCode instead for
-   * special keys. The <a href="#/p5/keyIsDown">keyIsDown()</a> function should
-   * be used to check for multiple different key presses at the same time.
+   * The `key` variable identifies the most recently pressed key that is still held down.
+   * It supports regular characters and special keys, such as `Enter` and `ArrowDown`.
+   *
+   * For example, the expression `key === 'ArrowDown'` evaluates to `true` if the down arrow was the last key pressed
+   * and is still being held at that moment, and `false` if another key becomes active or the down arrow is released.
+   *
+   * Since `key` stores only one value at a time, it cannot represent
+   * all the keys that are currently pressed. Use the <a href="#/p5/keyIsDown">keyIsDown()</a> function to check whether
+   * a specific key remains pressed, even when multiple keys are pressed simultaneously.
+   *
+   * <strong>Note</strong>: When multiple keys are held down, `key` does not always follow the order in which they were pressed.
+   * When a key is released, another active key may be selected regardless of which one was pressed most recently.
+   *
+   * In p5.js 2.x, `key` is reset to an empty string represented by `''` when all keys are released.
+   * In p5.js 1.x, it retained the value of the last pressed key.
+   *
+   * See <a href="#/p5/code">code</a> for more information about keyboard input
+   * and the differences between p5.js 1.x and 2.x.
    *
    * @property {String} key
    * @readOnly
@@ -128,7 +139,7 @@ function keyboard(p5, fn, lifecycles) {
    *   createCanvas(100, 100);
    *
    *   describe(
-   *     'A gray square. The last key pressed is displayed at the center.'
+   *     'A gray square. The last pressed key appears at the center while it remains active.'
    *   );
    * }
    *
@@ -139,7 +150,8 @@ function keyboard(p5, fn, lifecycles) {
    *   textAlign(CENTER);
    *   textSize(16);
    *
-   *   // Display the last key pressed.
+   *   // Display the latest key that is still being held.
+   *   // The value is an empty string when all keys are released.
    *   text(key, 50, 50);
    * }
    *
@@ -155,22 +167,24 @@ function keyboard(p5, fn, lifecycles) {
    *   background(200);
    *
    *   describe(
-   *     'A gray square with a black circle at its center. The circle moves when the user presses the keys "w", "a", "s", or "d". It leaves a trail as it moves.'
+   *     'A gray square with a black circle at its center. The circle moves when the user presses or holds the keys "w", "a", "s", or "d". It leaves a trail as it moves.'
    *   );
    * }
    *
    * function draw() {
-   *   // Update x and y if a key is pressed.
-   *   if (keyIsPressed === true) {
-   *     if (key === 'w') {
-   *       y -= 1;
-   *     } else if (key === 's') {
-   *       y += 1;
-   *     } else if (key === 'a') {
-   *       x -= 1;
-   *     } else if (key === 'd') {
-   *       x += 1;
-   *     }
+   *   // Update x and y while keys are pressed, even briefly.
+   *   // The circle can move diagonally because keyIsDown() can return true for multiple keys held at the same time.
+   *   if (keyIsDown('w')) {
+   *     y -= 1;
+   *   }
+   *   if (keyIsDown('s')) {
+   *     y += 1;
+   *   }
+   *   if (keyIsDown('a')) {
+   *     x -= 1;
+   *   }
+   *   if (keyIsDown('d')) {
+   *     x += 1;
    *   }
    *
    *   // Style the circle.
