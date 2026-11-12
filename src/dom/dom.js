@@ -1246,19 +1246,19 @@ function dom(p5, fn) {
    * Creates a radio button element.
    *
    * The parameter is optional. If a string is passed, as in
-   * `let myRadio = createSelect('food')`, then each radio option will
+   * `let myRadio = createRadio('food')`, then each radio option will
    * have `"food"` as its `name` parameter: `<input name="food"></input>`.
    * If an existing `<div></div>` or `<span></span>`
-   * element is passed, as in `let myRadio = createSelect(container)`, it will
+   * element is passed, as in `let myRadio = createRadio(container)`, it will
    * become the radio button's parent element.
    *
    * Radio buttons extend the <a href="#/p5.Element">p5.Element</a> class with a few
    * helpful methods for managing options:
-   * - `myRadio.option(value, [label])` adds an option to the menu. The first paremeter, `value`, is a string that sets the option's value and label. The second parameter, `label`, is optional. If provided, it sets the label displayed for the `value`. If an option with `value` already exists, its label is changed and its value is returned.
+   * - `myRadio.option(value, [label])` adds an option to the menu. The first parameter, `value`, is a string that sets the option's value and label. The second parameter, `label`, is optional. If provided, it sets the label displayed for the `value`. If an option with `value` already exists, its label is changed and its value is returned.
    * - `myRadio.value()` returns the currently-selected option's value.
    * - `myRadio.selected()` returns the currently-selected option.
    * - `myRadio.selected(value)` selects the given option and returns it as an <a href="https://developer.mozilla.org/en-US/docs/Web/API/HTMLInputElement" target="_blank">`HTMLInputElement`</a>.
-   * - `myRadio.disable(shouldDisable)` enables the entire radio button if `true` is passed and disables it if `false` is passed.
+   * - `myRadio.disable(shouldDisable)` disables the entire radio button if `true` is passed and enables it if `false` is passed.
    *
    * @method createRadio
    * @param  {Object} [containerElement] container HTML Element, either a `<div></div>`
