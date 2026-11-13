@@ -484,4 +484,53 @@ suite('Environment', function () {
       assert.closeTo(worldPos.z, origWorldPos.z, 0.1);
     });
   });
+    suite('p5.getURLParams', function () {
+    let initialLocation;
+
+    beforeEach(function () {
+      initialLocation = window.location.href;
+    });
+
+    afterEach(function () {
+      window.history.replaceState(null, '', initialLocation);
+    });
+
+    test('returns empty object when query string is absent', function () {
+      window.history.replaceState(null, '', window.location.pathname);
+      assert.deepEqual(myp5.getURLParams(), {});
+    });
+
+    test('correctly parses standard key-value pairs', function () {
+      window.history.replaceState(null, '', '?year=2026&month=Oct&day=11');
+      assert.deepEqual(myp5.getURLParams(), {
+        year: '2026',
+        month: 'Oct',
+        day: '11'
+      });
+    });
+
+    test('parses valueless parameters without corrupting adjacent parameters', function () {
+      window.history.replaceState(null, '', '?debug&x=1');
+      assert.deepEqual(myp5.getURLParams(), {
+        debug: '',
+        x: '1'
+      });
+    });
+
+    test('parses trailing valueless parameter', function () {
+      window.history.replaceState(null, '', '?a=1&b');
+      assert.deepEqual(myp5.getURLParams(), {
+        a: '1',
+        b: ''
+      });
+    });
+
+    test('decodes percent-encoded values and plus characters as spaces', function () {
+      window.history.replaceState(null, '', '?name=Hello%20World&q=a+b');
+      assert.deepEqual(myp5.getURLParams(), {
+        name: 'Hello World',
+        q: 'a b'
+      });
+    });
+  });
 });
