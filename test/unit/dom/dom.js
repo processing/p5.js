@@ -702,6 +702,31 @@ suite('DOM', function () {
       assert.isTrue(testElement.elt.options[disabledIndex].disabled);
       assert.isFalse(testElement.elt.options[disabledIndex].selected);
     });
+        test('calling enable() should not change the selected option', function () {
+      const testElement = mockP5Prototype.createSelect();
+      const options = ['red', 'yellow', 'blue'];
+      for (const optionName of options) testElement.option(optionName);
+
+      testElement.selected('blue');
+      testElement.disable();
+      testElement.enable();
+
+      assert.isFalse(testElement.elt.disabled);
+      assert.equal(testElement.value(), 'blue');
+      assert.equal(testElement.selected(), 'blue');
+    });
+
+    test('calling enable(option) should not change the selected option', function () {
+      const testElement = mockP5Prototype.createSelect();
+      const options = ['red', 'yellow', 'blue'];
+      for (const optionName of options) testElement.option(optionName);
+
+      testElement.selected('blue');
+      testElement.enable('blue');
+
+      assert.isFalse(testElement.elt.options[2].disabled);
+      assert.equal(testElement.value(), 'blue');
+    });
   });
 
   suite('p5.prototype.createRadio', function () {
