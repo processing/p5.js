@@ -183,7 +183,9 @@ export const OpCode = {
     LOGICAL_NOT: 100,
     NEGATE: 101,
     PLUS: 102,
-    SWIZZLE: 103
+    SWIZZLE: 103,
+    // Captures the source value at this point in the graph.
+    SNAPSHOT: 104
   },
   Nary: {
     FUNCTION_CALL: 200,

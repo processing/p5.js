@@ -12,6 +12,8 @@ function shouldCreateTemp(dag, nodeID) {
   const nodeType = dag.nodeTypes[nodeID];
   if (nodeType !== NodeType.OPERATION) return false;
   if (dag.baseTypes[nodeID] === BaseType.SAMPLER2D) return false;
+  // A snapshot must be read where it is recorded, even if used only once.
+  if (dag.opCodes[nodeID] === OpCode.Unary.SNAPSHOT) return true;
   const uses = dag.usedBy[nodeID] || [];
   return uses.length > 1;
 }
@@ -737,6 +739,13 @@ export const wgslBackend = {
           const lName = this.generateExpression(generationContext, dag, lID);
           const rName = this.generateExpression(generationContext, dag, rID);
           return `${lName}.${rName}`;
+        }
+        if (node.opCode === OpCode.Unary.SNAPSHOT) {
+          return this.generateExpression(
+            generationContext,
+            dag,
+            node.dependsOn[0]
+          );
         }
         if (node.opCode === OpCode.Unary.SWIZZLE) {
           const parentID = node.dependsOn[0];
