@@ -511,9 +511,10 @@ function files(p5, fn) {
         });
 
         if (header) {
-          ret.columns = data.shift();
+          ret.columns = data.shift() || [];
         } else {
-          ret.columns = Array(data[0].length).fill(null);
+          // An empty file parses to no rows at all.
+          ret.columns = Array(data.length ? data[0].length : 0).fill(null);
         }
 
         data.forEach(line => {

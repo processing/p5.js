@@ -72,6 +72,30 @@ suite('loadTable', function () {
     assert.strictEqual(table.getRow(1).getNum(1), 31);
   });
 
+  test('keeps the last row of a one-column file without a trailing newline', async () => {
+    const table = await mockP5Prototype.loadTable('/test/unit/assets/csv_one_column.csv');
+    assert.equal(table.getRowCount(), 3);
+    assert.strictEqual(table.getRow(2).getString(0), 'carol');
+  });
+
+  test('loads a file holding a single value', async () => {
+    const table = await mockP5Prototype.loadTable('/test/unit/assets/csv_one_value.csv');
+    assert.equal(table.getRowCount(), 1);
+    assert.strictEqual(table.getRow(0).getNum(0), 42);
+  });
+
+  test('loads an empty file as an empty table', async () => {
+    const table = await mockP5Prototype.loadTable('/test/unit/assets/csv_empty.csv');
+    assert.equal(table.getRowCount(), 0);
+  });
+
+  test('loads an empty file with the header option as an empty table', async () => {
+    // With no rows to take the header from, the columns fall back to [].
+    const table = await mockP5Prototype.loadTable('/test/unit/assets/csv_empty.csv', ',', true);
+    assert.equal(table.getRowCount(), 0);
+    assert.deepEqual(table.columns, []);
+  });
+
   test('using the header option works', async () => {
     const table = await mockP5Prototype.loadTable(validFile, ',', true);
     assert.equal(table.getRowCount(), 3);
