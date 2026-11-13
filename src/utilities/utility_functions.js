@@ -223,24 +223,17 @@ function utilityFunctions(p5, fn) {
     }
   };
   function doNfc(num, right) {
-    num = num.toString();
-    const dec = num.indexOf('.');
-    let rem = dec !== -1 ? num.substring(dec) : '';
-    let n = dec !== -1 ? num.substring(0, dec) : num;
-    n = n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-    if (right === 0) {
-      rem = '';
-    } else if (typeof right !== 'undefined') {
-      if (right > rem.length) {
-        rem += dec === -1 ? '.' : '';
-        const len = right - rem.length + 1;
-        for (let i = 0; i < len; i++) {
-          rem += '0';
-        }
-      } else {
-        rem = rem.substring(0, right + 1);
-      }
-    }
+    // toFixed both rounds and pads to `right` places, which is what the
+    // documented examples ask for. Slicing the decimals off the string
+    // instead truncated them, and because the slice length counted the
+    // decimal point it also skipped the padding whenever `right` was no
+    // larger than the number of decimals already present.
+    let str =
+      typeof right === 'undefined' ? num.toString() : Number(num).toFixed(right);
+    const dec = str.indexOf('.');
+    const rem = dec !== -1 ? str.substring(dec) : '';
+    let n = dec !== -1 ? str.substring(0, dec) : str;
+    n = n.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
     return n + rem;
   }
 
