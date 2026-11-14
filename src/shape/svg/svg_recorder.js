@@ -175,7 +175,13 @@ export class ShapeRecorder {
         this.leaveScope();
       },
       translate: (args) => {
-        this.tStack.translate(args[0] || 0, args[1] || 0);
+        let x = args[0];
+        let y = args[1];
+        if (typeof x === 'object' && x !== null && 'x' in x && 'y' in x) {
+          y = x.y;
+          x = x.x;
+        }
+        this.tStack.translate(x || 0, y || 0);
       },
       rotate: (args) => {
         this.tStack.rotate(args[0] || 0);
@@ -188,6 +194,10 @@ export class ShapeRecorder {
         this.tStack.current.multiplySelf(
           new DOMMatrix([a, b, c, d, e, f])
         );
+      },
+      resetMatrix: () => {
+        const stack = this.tStack.stack;
+        stack[stack.length - 1] = new DOMMatrix();
       }
     };
 

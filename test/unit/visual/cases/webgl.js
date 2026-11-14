@@ -743,6 +743,48 @@ visualSuite('WebGL', function () {
       p5.filter(filterShader);
       screenshot();
     });
+
+    visualTest('loadNormalShader', async (p5, screenshot) => {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      const normalShader = await p5.loadNormalShader(
+        '/test/unit/assets/testNormal.js'
+      );
+
+      // The shader should shift the plane to the right
+      p5.noStroke();
+      p5.shader(normalShader);
+      p5.plane(20, 20);
+      screenshot();
+    });
+
+    visualTest('loadColorShader', async (p5, screenshot) => {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      const colorShader = await p5.loadColorShader(
+        '/test/unit/assets/testColor.js'
+      );
+
+      // The shader should swap red and green, so the plane appears green
+      p5.noStroke();
+      p5.fill(255, 0, 0);
+      p5.shader(colorShader);
+      p5.plane(20, 20);
+      screenshot();
+    });
+
+    visualTest('loadStrokeShader', async (p5, screenshot) => {
+      p5.createCanvas(50, 50, p5.WEBGL);
+      const strokeShader = await p5.loadStrokeShader(
+        '/test/unit/assets/testStroke.js'
+      );
+
+      // The shader should make the line three times as thick
+      p5.background(255);
+      p5.stroke(0);
+      p5.strokeWeight(4);
+      p5.strokeShader(strokeShader);
+      p5.line(-20, 0, 20, 0);
+      screenshot();
+    });
   });
 
   visualSuite('Strokes', function () {
@@ -1828,6 +1870,33 @@ visualSuite('WebGL', function () {
       p5.plane(20, 20);
       screenshot();
     });
+
+    visualTest(
+      'minifier-style && and || statements act as conditionals',
+      (p5, screenshot) => {
+        p5.createCanvas(50, 50, p5.WEBGL);
+        const shader = p5.baseFilterShader().modify(
+          () => {
+            p5.getColor(inputs => {
+              let value = 0;
+              let red = 0;
+              // Minifiers write `if (cond) action` as `cond && action`
+              inputs.texCoord.x > 0.5 && (value = 0.5);
+              inputs.texCoord.y > 0.5 || (value = value + 0.25);
+              // ...and `if (cond) a; else b` as `cond ? a : b`
+              inputs.texCoord.x > 0.75 && inputs.texCoord.y > 0.75
+                ? (red = 1, value = 0)
+                : (red = value);
+              return [red, value, value, 1];
+            });
+          },
+          { p5 }
+        );
+        p5.background(0);
+        p5.filter(shader);
+        screenshot();
+      }
+    );
 
     visualTest('lerp maps to mix in strands context', (p5, screenshot) => {
       p5.createCanvas(50, 50, p5.WEBGL);

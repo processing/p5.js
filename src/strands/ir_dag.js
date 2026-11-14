@@ -2,7 +2,8 @@ import {
   NodeTypeRequiredFields,
   NodeTypeToName,
   BasePriority,
-  BaseType
+  BaseType,
+  OpCode
 } from './ir_types';
 import * as FES from './strands_FES';
 
@@ -86,7 +87,7 @@ export function extractNodeTypeInfo(dag, nodeID) {
   };
 }
 
-// Propagate a known type to an ASSIGN_ON_USE node and all its ASSIGN_ON_USE dependencies
+// Propagate a resolved type through ASSIGN_ON_USE nodes and their snapshots.
 export function propagateTypeToAssignOnUse(
   dag,
   nodeId,
@@ -118,6 +119,13 @@ export function propagateTypeToAssignOnUse(
       if (dep.baseType === BaseType.ASSIGN_ON_USE) {
         propagateTypeToAssignOnUse(dag, depId, baseType, dimension, visited);
       }
+    }
+  }
+
+  // Snapshots follow the resolved type of their source.
+  for (const userId of node.usedBy ?? []) {
+    if (dag.opCodes[userId] === OpCode.Unary.SNAPSHOT) {
+      propagateTypeToAssignOnUse(dag, userId, baseType, dimension, visited);
     }
   }
 }
