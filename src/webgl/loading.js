@@ -8,6 +8,12 @@ import { Geometry } from './p5.Geometry';
 import { GeometryPart, createPartState } from './p5.GeometryPart';
 import { Vector } from '../math/p5.Vector';
 import { request } from '../io/files';
+import {
+  parseGLB,
+  parseGLTF,
+  gltfMaterialToMtl,
+  checkRequiredExtensions
+} from './gltf';
 
 async function fileExists(url) {
   try {
@@ -149,27 +155,27 @@ const MATERIAL_TEXTURE_MAPS = [
   ['normalTexturePath', 'normalTexture'] // norm (tangent-space normal)
 ];
 
+// windows exporters can write backslashes, which mean nothing in a url
+function resolveNextTo(modelPath, file) {
+  const path = file.replace(/\\/g, '/');
+  if (/^([a-z][a-z0-9+.-]*:|\/)/i.test(path)) return path;
+  const url = pathUrl(modelPath).split(/[?#]/)[0];
+  const slash = url.lastIndexOf('/');
+  return slash >= 0 ? `${url.slice(0, slash)}/${path}` : path;
+}
+
 // load each material's texture maps and hang them on the material so they land
 // on the part state. paths resolve relative to the model file, a texture that
 // fails just gets skipped. no-op if there's no loadImage.
 async function loadMaterialTextures(materials, modelPath, instance) {
   if (!instance || typeof instance.loadImage !== 'function') return;
 
-  const slash = modelPath.lastIndexOf('/');
-  const folder = slash >= 0 ? modelPath.slice(0, slash) : '';
-  // mtl files exported on windows can use backslashes, which mean nothing to a
-  // url, so swap them for the separator the fetch actually needs
-  const resolve = file => {
-    const path = file.replace(/\\/g, '/');
-    return folder ? `${folder}/${path}` : path;
-  };
-
   const jobs = [];
   for (const name in materials) {
     const material = materials[name];
     for (const [pathField, imageField] of MATERIAL_TEXTURE_MAPS) {
       if (!material[pathField]) continue;
-      const url = resolve(material[pathField]);
+      const url = resolveNextTo(modelPath, material[pathField]);
       jobs.push(
         instance
           .loadImage(url)
@@ -184,6 +190,99 @@ async function loadMaterialTextures(materials, modelPath, instance) {
   }
 
   await Promise.all(jobs);
+}
+
+function loadGLTFBuffers(gltf, bin, modelPath) {
+  return Promise.all(
+    (gltf.buffers || []).map(async buffer => {
+      if (buffer.uri === undefined) return bin;
+      if (buffer.uri.startsWith('data:')) {
+        return (await fetch(buffer.uri)).arrayBuffer();
+      }
+      const { data } = await request(
+        resolveNextTo(modelPath, buffer.uri),
+        'arrayBuffer'
+      );
+      return data;
+    })
+  );
+}
+
+async function loadGLTFImage(gltf, buffers, source, modelPath, instance) {
+  const image = gltf.images?.[source] || {};
+  let objectUrl;
+  try {
+    let url;
+    if (image.uri !== undefined) {
+      url = resolveNextTo(modelPath, image.uri);
+    } else {
+      const view = gltf.bufferViews[image.bufferView];
+      const bytes = new Uint8Array(
+        buffers[view.buffer],
+        view.byteOffset || 0,
+        view.byteLength
+      );
+      objectUrl = URL.createObjectURL(
+        new Blob([bytes], { type: image.mimeType })
+      );
+      url = objectUrl;
+    }
+    return await instance.loadImage(url);
+  } catch {
+    console.warn(`Texture not found, skipping: ${image.uri || `image ${source}`}`);
+    return null;
+  } finally {
+    if (objectUrl) URL.revokeObjectURL(objectUrl);
+  }
+}
+
+async function loadGLTFMaterials(gltf, buffers, modelPath, instance) {
+  const materials = {};
+  (gltf.materials || []).forEach((material, i) => {
+    materials[i] = gltfMaterialToMtl(material);
+  });
+  if (!instance || typeof instance.loadImage !== 'function') return materials;
+
+  const images = new Map();
+  const loadTexture = textureIndex => {
+    const source = gltf.textures?.[textureIndex]?.source;
+    if (source === undefined) return Promise.resolve(null);
+    if (!images.has(source)) {
+      images.set(
+        source,
+        loadGLTFImage(gltf, buffers, source, modelPath, instance)
+      );
+    }
+    return images.get(source);
+  };
+
+  const jobs = [];
+  for (const material of Object.values(materials)) {
+    for (const [indexField, imageField] of [
+      ['textureIndex', 'texture'],
+      ['specularTextureIndex', 'specularTexture'],
+      ['normalTextureIndex', 'normalTexture']
+    ]) {
+      if (material[indexField] === undefined) continue;
+      jobs.push(
+        loadTexture(material[indexField]).then(img => {
+          if (img) material[imageField] = img;
+        })
+      );
+    }
+  }
+  await Promise.all(jobs);
+  return materials;
+}
+
+function pathUrl(path) {
+  return typeof path === 'string' ? path : path.url;
+}
+
+function guessFileType(path) {
+  const url = pathUrl(path);
+  const match = url.split(/[?#]/)[0].match(/\.(obj|stl|gltf|glb)$/i);
+  return match ? `.${match[1].toLowerCase()}` : url.slice(-4);
 }
 
 // split the model's faces into one part per material. the combined arrays stay
@@ -251,7 +350,7 @@ function loading(p5, fn) {
    * Loads a 3D model to create a
    * <a href="#/p5.Geometry">`p5.Geometry`</a> object.
    *
-   * `loadModel()` can load 3D models from OBJ and STL files. Once the model is
+   * `loadModel()` can load 3D models from OBJ, STL and glTF files. Once the model is
    * loaded, it can be displayed with the
    * <a href="#/p5/model">`model()`</a> function, as in `model(shape)`.
    *
@@ -271,6 +370,18 @@ function loading(p5, fn) {
    * `norm` is read as a tangent-space normal map. Keep the `.mtl` file and its
    * images alongside the `.obj` file so their paths resolve. A texture that
    * fails to load is skipped with a warning instead of failing the whole model.
+   *
+   * glTF models (`.gltf` and `.glb`) load the same way. Each material keeps
+   * its normal map, and its colour texture or, without one, its base colour.
+   * Roughness becomes shininess and metallic tints the highlight, since p5.js
+   * materials have no metallic or roughness yet. Parts without a material use
+   * the current `fill()`. Metallic-roughness, emissive and occlusion maps,
+   * vertex colours, a second set of texture coordinates, texture transforms,
+   * skins and animations are not read. Buffers and images can be packed inside
+   * the file or sit next to it. Files compressed with Draco or meshopt are not
+   * supported. glTF models are y-up, like most `.obj` files, so they may need
+   * flipping with `scale(1, -1, 1)`. Textures that repeat need
+   * `textureWrap(REPEAT)`.
    *
    * The first way to call `loadModel()` has three optional parameters after the
    * file path. The first optional parameter, `successCallback`, is a function
@@ -329,7 +440,7 @@ function loading(p5, fn) {
    *
    * @method loadModel
    * @param  {String|Request} path      path of the model to be loaded.
-   * @param  {String} [fileType]          model’s file extension. Either `'.obj'` or `'.stl'`.
+   * @param  {String} [fileType]          model’s file extension. One of `'.obj'`, `'.stl'`, `'.gltf'` or `'.glb'`.
    * @param  {Boolean} [normalize]        if `true`, scale the model to fit the canvas.
    * @param  {function(p5.Geometry)} [successCallback] function to call once the model is loaded. Will be passed
    *                                                   the <a href="#/p5.Geometry">`p5.Geometry`</a> object.
@@ -572,12 +683,13 @@ function loading(p5, fn) {
 
     if (typeof fileType === 'object') {
       // Passing in options object
-      normalize = fileType.normalize || false;
-      successCallback = fileType.successCallback;
-      failureCallback = fileType.failureCallback;
-      fileType = fileType.fileType || fileType;
-      flipU = fileType.flipU || false;
-      flipV = fileType.flipV || false;
+      const options = fileType;
+      normalize = options.normalize || false;
+      successCallback = options.successCallback;
+      failureCallback = options.failureCallback;
+      flipU = options.flipU || false;
+      flipV = options.flipV || false;
+      fileType = options.fileType || guessFileType(path);
     } else {
       // Passing in individual parameters
       if (typeof arguments[arguments.length - 1] === 'function') {
@@ -593,22 +705,19 @@ function loading(p5, fn) {
         if (typeof normalize !== 'boolean') normalize = false;
       } else if (typeof fileType === 'boolean') {
         normalize = fileType;
-        fileType = path.slice(-4);
+        fileType = guessFileType(path);
       } else {
-        fileType = path.slice(-4);
+        fileType = guessFileType(path);
         normalize = false;
       }
     }
 
-    if (
-      fileType.toLowerCase() !== '.obj' &&
-      fileType.toLowerCase() !== '.stl'
-    ) {
+    if (!['.obj', '.stl', '.gltf', '.glb'].includes(fileType.toLowerCase())) {
       fileType = '.obj';
     }
 
     const model = new Geometry(undefined, undefined, undefined, this._renderer);
-    model.gid = `${path}|${normalize}`;
+    model.gid = `${pathUrl(path)}|${normalize}|${flipU}|${flipV}`;
 
     async function getMaterials(lines) {
       const parsedMaterialPromises = [];
@@ -692,6 +801,51 @@ function loading(p5, fn) {
         await loadMaterialTextures(parsedMaterials, path, this);
         const cb = () => {
           parseObj(model, lines, parsedMaterials);
+
+          if (normalize) {
+            model.normalize();
+          }
+          if (flipU) {
+            model.flipU();
+          }
+          if (flipV) {
+            model.flipV();
+          }
+          model._makeTriangleEdges();
+
+          if (successCallback) {
+            return successCallback(model);
+          } else {
+            return model;
+          }
+        };
+        return this._internal ? this._internal(cb) : cb();
+      } else if (fileType.match(/\.(gltf|glb)$/i)) {
+        let gltf;
+        let bin;
+        if (fileType.match(/\.glb$/i)) {
+          const { data } = await request(path, 'arrayBuffer');
+          ({ json: gltf, bin } = parseGLB(data));
+        } else {
+          ({ data: gltf } = await request(path, 'json'));
+        }
+        checkRequiredExtensions(gltf);
+        const buffers = await loadGLTFBuffers(gltf, bin, path);
+        const materials = await loadGLTFMaterials(gltf, buffers, path, this);
+        const cb = () => {
+          let faceMaterials = parseGLTF(model, gltf, buffers);
+          // buildMaterialParts drops a lone material next to faces without one
+          if (
+            faceMaterials.includes(null) &&
+            faceMaterials.some(m => m !== null)
+          ) {
+            materials.none = {};
+            faceMaterials = faceMaterials.map(m => m ?? 'none');
+          }
+          if (Object.values(materials).some(m => m.normalTexture)) {
+            model.computeTangents();
+          }
+          buildMaterialParts(model, faceMaterials, materials);
 
           if (normalize) {
             model.normalize();
