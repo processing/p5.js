@@ -71,6 +71,10 @@ export const OKLCH = 'oklch';
  */
 export const RGBA = 'rgba';
 
+// red(), green() and blue() use the display-p3 ranges for display-p3 colors and
+// the RGB ranges for every other color.
+const rgbMode = color => (color.mode === RGBP3 ? RGBP3 : RGB);
+
 function creatingReading(p5, fn) {
   fn.RGB = RGB;
   fn.RGBP3 = RGBP3;
@@ -410,12 +414,16 @@ function creatingReading(p5, fn) {
       return args[0]; // Do nothing if argument is already a color object.
     }
 
+    // Colors reach their sketch through a holder that is cleared when the
+    // sketch is removed, so they don't keep a removed sketch alive.
+    this._colorOwner ??= { pInst: this };
+
     const arg = Array.isArray(args[0]) ? args[0] : args;
     return new Color(
       arg,
       this._renderer.states.colorMode,
       this._renderer.states.colorMaxes[this._renderer.states.colorMode],
-      { clamp: true }
+      { clamp: true, owner: this._colorOwner }
     );
   };
 
@@ -568,8 +576,8 @@ function creatingReading(p5, fn) {
    */
   fn.red = function (c) {
     // p5._validateParameters('red', arguments);
-    // Get current red max
-    return this.color(c)._getRed();
+    const color = this.color(c);
+    return color._getRed(this._renderer.states.colorMaxes[rgbMode(color)][0]);
   };
 
   /**
@@ -721,8 +729,8 @@ function creatingReading(p5, fn) {
    */
   fn.green = function (c) {
     // p5._validateParameters('green', arguments);
-    // Get current green max
-    return this.color(c)._getGreen();
+    const color = this.color(c);
+    return color._getGreen(this._renderer.states.colorMaxes[rgbMode(color)][1]);
   };
 
   /**
@@ -874,8 +882,8 @@ function creatingReading(p5, fn) {
    */
   fn.blue = function (c) {
     // p5._validateParameters('blue', arguments);
-    // Get current blue max
-    return this.color(c)._getBlue();
+    const color = this.color(c);
+    return color._getBlue(this._renderer.states.colorMaxes[rgbMode(color)][2]);
   };
 
   /**
@@ -995,8 +1003,8 @@ function creatingReading(p5, fn) {
    */
   fn.alpha = function (c) {
     // p5._validateParameters('alpha', arguments);
-    // Get current alpha max
-    return this.color(c)._getAlpha();
+    const color = this.color(c);
+    return color._getAlpha(this._renderer.states.colorMaxes[color.mode][3]);
   };
 
   /**
