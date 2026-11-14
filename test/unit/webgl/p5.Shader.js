@@ -5976,7 +5976,7 @@ suite('p5.Shader', function () {
       }).not.toThrow();
     });
 
-    suite('exponentiation operator (#9252)', () => {
+    suite('exponentiation operator', () => {
       test('** gives the same result as pow()', () => {
         myp5.createCanvas(50, 50, myp5.WEBGL);
         const testShader = myp5.baseFilterShader().modify(
