@@ -148,6 +148,18 @@ suite('color/Instances', function () {
       assert.approximately(mixed.array()[0], 0.25, 1e-6);
     });
 
+    test('setters still work after their p5.Graphics is removed', async function () {
+      const sketch = await createSketch();
+      const g = sketch.createGraphics(10, 10);
+      g.colorMode(g.RGB, 1);
+      const c = g.color(0, 0, 0);
+      g.remove();
+
+      // Without a graphics buffer the setters use the default 0 to 1 range.
+      c.setRed(1);
+      assert.approximately(c.array()[0], 1, 1e-6);
+    });
+
     test('setters accept an explicit range', async function () {
       const sketch = await createSketch();
 

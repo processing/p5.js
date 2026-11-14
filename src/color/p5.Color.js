@@ -344,7 +344,8 @@ class Color {
   // The colorMode() ranges of the sketch that created this color, or undefined
   // if there is none or it has been removed.
   _getOwnerMaxes() {
-    return this.#owner?.pInst?._renderer?.states?.colorMaxes;
+    // A removed p5.Graphics has no renderer anymore.
+    return this.#owner?.pInst?._renderer?.states.colorMaxes;
   }
 
   /**
@@ -1116,10 +1117,15 @@ function color(p5, fn, lifecycles) {
   // sketch.
   const setRangeFor = channel => setter =>
     function (value, max) {
+      if (max !== undefined) {
+        return setter.call(this, value, max);
+      }
       const mode = channel === 3 ? this.mode : RGB;
-      const range = this._getOwnerMaxes()?.[mode]?.[channel];
-      return setter.call(this, value, max || range);
+      const range = this._getOwnerMaxes()?.[mode][channel];
+      return setter.call(this, value, range);
     };
+  // Only the setters need decorating. The getters get their ranges from red(),
+  // green(), hue() and the other functions that call them.
   p5.registerDecorator('p5.Color.prototype.setRed', setRangeFor(0));
   p5.registerDecorator('p5.Color.prototype.setGreen', setRangeFor(1));
   p5.registerDecorator('p5.Color.prototype.setBlue', setRangeFor(2));
