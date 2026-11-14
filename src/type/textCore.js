@@ -1500,6 +1500,14 @@ function textCore(p5, fn) {
 
     // horizontal value as separate argument
     if (typeof h === 'string' || h instanceof String) {
+      // unknown values fall back to LEFT, so both renderers stay in sync
+      const validHorizontal = [
+        fn.LEFT, fn.CENTER, fn.RIGHT,
+        textCoreConstants.START, textCoreConstants.END
+      ];
+      if (!validHorizontal.includes(h)) {
+        h = fn.LEFT;
+      }
       this.states.setValue('textAlign', h);
     }
 
@@ -1507,6 +1515,15 @@ function textCore(p5, fn) {
     if (typeof v === 'string' || v instanceof String) {
       if (v === fn.CENTER) {
         v = textCoreConstants._CTX_MIDDLE;
+      }
+      // unknown values fall back to BASELINE, so both renderers stay in sync
+      const validVertical = [
+        fn.TOP, fn.BOTTOM, fn.BASELINE,
+        textCoreConstants._CTX_MIDDLE,
+        textCoreConstants.HANGING, textCoreConstants.IDEOGRAPHIC
+      ];
+      if (!validVertical.includes(v)) {
+        v = fn.BASELINE;
       }
       this.states.setValue('textBaseline', v);
     }
