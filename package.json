@@ -40,8 +40,8 @@
   "devDependencies": {
     "@playwright/browser-chromium": "^1.62.0",
     "@rollup/plugin-alias": "^6.0.0",
-    "@vitest/browser": "^4.1.10",
-    "@vitest/browser-playwright": "^4.1.10",
+    "@vitest/browser": "^4.1.12",
+    "@vitest/browser-playwright": "^4.1.12",
     "concurrently": "^8.2.2",
     "documentation": "^14.0.3",
     "esrap": "^2.3.7",
@@ -60,7 +60,7 @@
     "rollup-plugin-string": "^3.0.0",
     "typescript": "^5.9.2",
     "vite": "^8.1.5",
-    "vitest": "^4.1.10"
+    "vitest": "^4.1.12"
   },
   "license": "LGPL-2.1",
   "browser": "./lib/p5.min.js",
