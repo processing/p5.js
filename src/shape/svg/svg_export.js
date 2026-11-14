@@ -287,12 +287,16 @@ export function SVGExportAddon(p5, fn, lifecycles) {
         this._currentOpacity = 1;
         return 'none';
       }
+      if (color === 'currentColor' || (typeof color === 'string' && color.toLowerCase() === 'currentcolor')) {
+        this._currentOpacity = 1;
+        return 'currentColor';
+      }
       const [, , , alpha] = color._getRGBA([255, 255, 255, 255]);
 
       this._currentOpacity = alpha / 255;
 
-          return color.toString('#rrggbb');
-      }
+      return color.toString('#rrggbb');
+    }
 
     _applyStyle(el) {
       const state = this.currentState;
@@ -303,11 +307,11 @@ export function SVGExportAddon(p5, fn, lifecycles) {
 
       this._currentOpacity = 1;
       const fill = this.colorToSVG(state.fill);
-      const fillOpacity = this._currentOpacity;
+      const fillOpacity = fill === 'currentColor' && state.fillOpacity != null ? state.fillOpacity : this._currentOpacity;
 
       this._currentOpacity = 1;
       const stroke = this.colorToSVG(state.stroke);
-      const strokeOpacity = this._currentOpacity;
+      const strokeOpacity = stroke === 'currentColor' && state.strokeOpacity != null ? state.strokeOpacity : this._currentOpacity;
 
       el.setAttribute('fill', fill);
       el.setAttribute('stroke', stroke);
@@ -941,14 +945,24 @@ export function SVGExportAddon(p5, fn, lifecycles) {
         p.applyMatrix(m.a, m.b, m.c, m.d, m.e, m.f);
       }
 
-      if (state.fill) {
+      if (state.fill === 'currentColor' || (typeof state.fill === 'string' && state.fill.toLowerCase() === 'currentcolor')) {
+        if (state.fillOpacity != null && state.fillOpacity < 1 && p._renderer.states.fillColor) {
+          const [r, g, b, a] = p._renderer.states.fillColor._getRGBA([255, 255, 255, 255]);
+          p.fill(r, g, b, a * state.fillOpacity);
+        }
+      } else if (state.fill) {
         const [r, g, b, a] = state.fill._getRGBA([255, 255, 255, 255]);
         p.fill(r, g, b, a);
       } else {
         p.noFill();
       }
 
-      if (state.stroke) {
+      if (state.stroke === 'currentColor' || (typeof state.stroke === 'string' && state.stroke.toLowerCase() === 'currentcolor')) {
+        if (state.strokeOpacity != null && state.strokeOpacity < 1 && p._renderer.states.strokeColor) {
+          const [r, g, b, a] = p._renderer.states.strokeColor._getRGBA([255, 255, 255, 255]);
+          p.stroke(r, g, b, a * state.strokeOpacity);
+        }
+      } else if (state.stroke) {
         const [r, g, b, a] = state.stroke._getRGBA([255, 255, 255, 255]);
         p.stroke(r, g, b, a);
       } else {
