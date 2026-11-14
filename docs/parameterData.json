@@ -471,7 +471,14 @@
           "Number?",
           "Number?",
           "Number?",
-          "Object?"
+          {
+            "type": "Object",
+            "optional": 1,
+            "properties": {
+              "disableTouchActions": "Boolean?",
+              "freeRotation": "Boolean?"
+            }
+          }
         ]
       ]
     },
@@ -513,7 +520,13 @@
     "beginClip": {
       "overloads": [
         [
-          "Object?"
+          {
+            "type": "Object",
+            "optional": 1,
+            "properties": {
+              "invert": "Boolean?"
+            }
+          }
         ]
       ]
     },
@@ -782,7 +795,17 @@
         [
           "String",
           "Number",
-          "Object?"
+          {
+            "type": "Object",
+            "optional": 1,
+            "properties": {
+              "delay": "Number?",
+              "notificationDuration": "Number?",
+              "notificationID": "String?",
+              "silent": "Boolean?",
+              "units": "'seconds'|'frames'?"
+            }
+          }
         ]
       ]
     },
@@ -1088,7 +1111,13 @@
       "overloads": [
         [
           "Function",
-          "Object?"
+          {
+            "type": "Object",
+            "optional": 1,
+            "properties": {
+              "invert": "Boolean?"
+            }
+          }
         ]
       ]
     },
@@ -1291,7 +1320,14 @@
         [
           "String",
           "String",
-          "Object?"
+          {
+            "type": "Object",
+            "optional": 1,
+            "properties": {
+              "fragment": "Object?",
+              "vertex": "Object?"
+            }
+          }
         ]
       ]
     },
@@ -1441,7 +1477,13 @@
       "overloads": [
         [
           "String?",
-          "Object?"
+          {
+            "type": "Object",
+            "optional": 1,
+            "properties": {
+              "binary": "Boolean?"
+            }
+          }
         ]
       ]
     },
@@ -1457,7 +1499,22 @@
     "createFramebuffer": {
       "overloads": [
         [
-          "Object?"
+          {
+            "type": "Object",
+            "optional": 1,
+            "properties": {
+              "antialias": "Boolean|Number?",
+              "channels": "RGB|RGBA?",
+              "density": "Number?",
+              "depth": "Boolean?",
+              "depthFormat": "UNSIGNED_INT|FLOAT?",
+              "format": "UNSIGNED_BYTE|FLOAT|HALF_FLOAT?",
+              "height": "Number?",
+              "stencil": "Boolean?",
+              "textureFiltering": "LINEAR|NEAREST?",
+              "width": "Number?"
+            }
+          }
         ]
       ]
     },
@@ -1498,7 +1555,18 @@
         ],
         [
           "String|Request",
-          "Object?"
+          {
+            "type": "Object",
+            "optional": 1,
+            "properties": {
+              "failureCallback": "function(Event)?",
+              "fileType": "String?",
+              "flipU": "Boolean?",
+              "flipV": "Boolean?",
+              "normalize": "Boolean?",
+              "successCallback": "function(p5.Geometry)?"
+            }
+          }
         ]
       ]
     },
@@ -2476,7 +2544,13 @@
       "overloads": [
         [
           "Function",
-          "Object?"
+          {
+            "type": "Object",
+            "optional": 1,
+            "properties": {
+              "draw": "Boolean?"
+            }
+          }
         ]
       ]
     },
@@ -3025,7 +3099,13 @@
         [
           "String",
           "String?",
-          "Object?",
+          {
+            "type": "Object",
+            "optional": 1,
+            "properties": {
+              "sets": "String|String[]?"
+            }
+          },
           "Function?",
           "Function?"
         ],
@@ -3054,7 +3134,17 @@
         [
           "String",
           "String?",
-          "Object?"
+          {
+            "type": "Object",
+            "optional": 1,
+            "properties": {
+              "failureCallback": "function(Event)?",
+              "flipU": "boolean?",
+              "flipV": "boolean?",
+              "normalize": "boolean?",
+              "successCallback": "function(p5.Geometry)?"
+            }
+          }
         ]
       ]
     },
@@ -3134,7 +3224,14 @@
           "p5.ShapeCollection",
           "Number?",
           "Number?",
-          "Object?"
+          {
+            "type": "Object",
+            "optional": 1,
+            "properties": {
+              "align": "String?",
+              "scale": "Number|Object?"
+            }
+          }
         ]
       ]
     },
@@ -3344,7 +3441,14 @@
         [
           "p5.Color",
           "p5.Color",
-          "Object"
+          {
+            "type": "Object",
+            "properties": {
+              "amount": "number?",
+              "lerpMode": "RGB|HSB|HSL|RGBP3|HWB|LAB|LCH|OKLAB|OKLCH?",
+              "outputMode": "RGB|HSB|HSL|RGBP3|HWB|LAB|LCH|OKLAB|OKLCH?"
+            }
+          }
         ]
       ]
     },
@@ -4072,7 +4176,13 @@
     "begin": {
       "overloads": [
         [
-          "Object?"
+          {
+            "type": "Object",
+            "optional": 1,
+            "properties": {
+              "draw": "Boolean?"
+            }
+          }
         ]
       ]
     },
@@ -4530,7 +4640,14 @@
           "String",
           "Number",
           "Number",
-          "Object?"
+          {
+            "type": "Object",
+            "optional": 1,
+            "properties": {
+              "sampleFactor": "Number?",
+              "simplifyThreshold": "Number?"
+            }
+          }
         ]
       ]
     },
@@ -4540,7 +4657,14 @@
           "String",
           "Number",
           "Number",
-          "Object?"
+          {
+            "type": "Object",
+            "optional": 1,
+            "properties": {
+              "sampleFactor": "Number?",
+              "simplifyThreshold": "Number?"
+            }
+          }
         ]
       ]
     },
@@ -4552,7 +4676,14 @@
           "Number",
           "Number",
           "Number",
-          "Object?"
+          {
+            "type": "Object",
+            "optional": 1,
+            "properties": {
+              "extrude": "Number?",
+              "sampleFactor": "Number?"
+            }
+          }
         ]
       ]
     }
@@ -5133,7 +5264,13 @@
       "overloads": [
         [
           "KEEP_CONNECTIONS|SMOOTH|SEGMENTED?",
-          "Object?"
+          {
+            "type": "Object",
+            "optional": 1,
+            "properties": {
+              "roundToPrecision": "Any?"
+            }
+          }
         ]
       ]
     },
@@ -5176,7 +5313,22 @@
     "createFramebuffer": {
       "overloads": [
         [
-          "Object?"
+          {
+            "type": "Object",
+            "optional": 1,
+            "properties": {
+              "antialias": "Boolean|Number?",
+              "channels": "RGB|RGBA?",
+              "density": "Number?",
+              "depth": "Boolean?",
+              "depthFormat": "UNSIGNED_INT|FLOAT?",
+              "format": "UNSIGNED_BYTE|FLOAT|HALF_FLOAT?",
+              "height": "Number?",
+              "stencil": "Boolean?",
+              "textureFiltering": "LINEAR|NEAREST?",
+              "width": "Number?"
+            }
+          }
         ]
       ]
     }
