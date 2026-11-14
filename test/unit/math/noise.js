@@ -16,7 +16,7 @@ suite('Noise', function () {
   // This could use some better  testing!
   // Just checking that we get an actual number now
   // 1D noise only
-  // ALso need test for noiseSeed and noiseDetail
+
   var result;
   var results = [];
 
@@ -60,6 +60,50 @@ suite('Noise', function () {
       for (var i = 0; i < 5; i++) {
         assert.isTrue(results[i] === results[i + 5]);
       }
+    });
+  });
+
+  
+  suite('p5.prototype.noiseDetail', function () {
+    afterEach(function () {
+      // restore defaults so state doesn't leak into other tests
+      mockP5Prototype.noiseDetail(4, 0.5);
+    });
+
+    test('defaults to 4 octaves and 0.5 falloff', function () {
+      assert.equal(mockP5Prototype._getNoiseOctaves(), 4);
+      assert.equal(mockP5Prototype._getNoiseAmpFalloff(), 0.5);
+    });
+
+    test('sets octaves and falloff', function () {
+      mockP5Prototype.noiseDetail(8, 0.25);
+      assert.equal(mockP5Prototype._getNoiseOctaves(), 8);
+      assert.equal(mockP5Prototype._getNoiseAmpFalloff(), 0.25);
+    });
+
+    test('ignores zero and negative values', function () {
+      mockP5Prototype.noiseDetail(6, 0.3);
+      mockP5Prototype.noiseDetail(0, 0);
+      mockP5Prototype.noiseDetail(-1, -0.2);
+      assert.equal(mockP5Prototype._getNoiseOctaves(), 6);
+      assert.equal(mockP5Prototype._getNoiseAmpFalloff(), 0.3);
+    });
+
+    test('resets falloff to 0.5 when it is omitted', function () {
+      mockP5Prototype.noiseDetail(6, 0.25);
+      mockP5Prototype.noiseDetail(8);
+      assert.equal(mockP5Prototype._getNoiseOctaves(), 8);
+      assert.equal(mockP5Prototype._getNoiseAmpFalloff(), 0.5);
+    });
+
+    test('changes the values returned by noise()', function () {
+      mockP5Prototype.noiseSeed(99);
+      mockP5Prototype.noiseDetail(1, 0.5);
+      const smooth = mockP5Prototype.noise(0.37);
+      mockP5Prototype.noiseSeed(99);
+      mockP5Prototype.noiseDetail(8, 0.65);
+      const detailed = mockP5Prototype.noise(0.37);
+      assert.notEqual(smooth, detailed);
     });
   });
 });
