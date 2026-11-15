@@ -3,6 +3,7 @@ import { visualSuite, visualTest } from '../visualTest';
 import rendererWebGPU from '../../../../src/webgpu/p5.RendererWebGPU';
 
 p5.registerAddon(rendererWebGPU);
+p5.disableWebGLFallback = true;
 
 visualSuite('WebGPU', function () {
   visualSuite('Shaders', function () {

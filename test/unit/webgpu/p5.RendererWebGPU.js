@@ -3,6 +3,7 @@ import rendererWebGPU from '../../../src/webgpu/p5.RendererWebGPU';
 import { vi } from 'vitest';
 
 p5.registerAddon(rendererWebGPU);
+p5.disableWebGLFallback = true;
 
 suite('WebGPU p5.RendererWebGPU', function () {
   let myp5;
