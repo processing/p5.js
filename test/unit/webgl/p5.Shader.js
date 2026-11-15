@@ -2227,6 +2227,24 @@ suite('p5.Shader', function () {
         assertRGB(right, [223, 223, 0]);
       });
 
+      test('a loop reads helper and variable values from the start of the iteration', () => {
+        render(() => {
+          myp5.getPixelInputs(inputs => {
+            let a = 0.2;
+            const h = myp5.testValue(myp5.float(0.8));
+            for (let i = 0; i < 2; i++) {
+              const old = a;
+              a = h.value() * 0.5;
+              h.put(old + 0.25);
+            }
+            inputs.color = [a, h.value(), 0, 1];
+            return inputs;
+          });
+        });
+        // (0.2, 0.8) -> (0.4, 0.45) -> (0.225, 0.65)
+        assertRGB(sample(25)[0], [57, 166, 0]);
+      });
+
       test('pop() restores scoped fields and keeps global ones', () => {
         render(() => {
           myp5.getPixelInputs(inputs => {
@@ -4709,6 +4727,153 @@ suite('p5.Shader', function () {
         assert.approximately(pixelColor[0], 204, 5); // 0.8 * 255 ≈ 204
         assert.approximately(pixelColor[1], 204, 5);
         assert.approximately(pixelColor[2], 204, 5);
+      });
+
+      // Each iteration reads the values it started with.
+      suite('values carried between iterations', () => {
+        const renderRG = callback => {
+          myp5.createCanvas(50, 50, myp5.WEBGL);
+          const testShader = myp5.baseMaterialShader().modify(callback, { myp5 });
+          myp5.noStroke();
+          myp5.shader(testShader);
+          myp5.plane(myp5.width, myp5.height);
+          return myp5.get(25, 25).slice(0, 2);
+        };
+        const assertRG = (actual, expected) => {
+          assert.approximately(actual[0], expected[0], 5);
+          assert.approximately(actual[1], expected[1], 5);
+        };
+
+        test('swap two values', () => {
+          const rg = renderRG(() => {
+            myp5.getPixelInputs(inputs => {
+              let a = 0.25;
+              let b = 0.75;
+              for (let i = 0; i < 1; i++) {
+                const t = a;
+                a = b;
+                b = t;
+              }
+              inputs.color = [a, b, 0, 1];
+              return inputs;
+            });
+          });
+          // a = 0.75, b = 0.25
+          assertRG(rg, [191, 64]);
+        });
+
+        test('compute a recurrence from the previous values', () => {
+          const rg = renderRG(() => {
+            myp5.getPixelInputs(inputs => {
+              let a = 0;
+              let b = 0.0625;
+              for (let i = 0; i < 5; i++) {
+                const t = a + b;
+                a = b;
+                b = t;
+              }
+              inputs.color = [a, b, 0, 1];
+              return inputs;
+            });
+          });
+          // Fibonacci in sixteenths: a = 5/16, b = 8/16
+          assertRG(rg, [80, 128]);
+        });
+
+        test('give the same result whichever order the values are assigned in', () => {
+          const aFirst = renderRG(() => {
+            myp5.getPixelInputs(inputs => {
+              let a = 0.2;
+              let b = 0.6;
+              for (let i = 0; i < 2; i++) {
+                const nextA = b * 0.5;
+                const nextB = a + 0.25;
+                a = nextA;
+                b = nextB;
+              }
+              inputs.color = [a, b, 0, 1];
+              return inputs;
+            });
+          });
+          const bFirst = renderRG(() => {
+            myp5.getPixelInputs(inputs => {
+              let a = 0.2;
+              let b = 0.6;
+              for (let i = 0; i < 2; i++) {
+                const nextB = a + 0.25;
+                const nextA = b * 0.5;
+                b = nextB;
+                a = nextA;
+              }
+              inputs.color = [a, b, 0, 1];
+              return inputs;
+            });
+          });
+          // (0.2, 0.6) -> (0.3, 0.45) -> (0.225, 0.55)
+          assertRG(aFirst, [57, 140]);
+          assertRG(bFirst, [57, 140]);
+        });
+
+        test('keep swapped values when breaking after the swap', () => {
+          const rg = renderRG(() => {
+            myp5.getPixelInputs(inputs => {
+              let a = 0.2;
+              let b = 0.6;
+              for (let i = 0; i < 10; i++) {
+                const t = a;
+                a = b;
+                b = t;
+                if (i >= 2) break;
+              }
+              inputs.color = [a, b, 0, 1];
+              return inputs;
+            });
+          });
+          // Three swaps: a = 0.6, b = 0.2
+          assertRG(rg, [153, 51]);
+        });
+
+        test('read outer values from the start of the outer iteration around an inner loop', () => {
+          const rg = renderRG(() => {
+            myp5.getPixelInputs(inputs => {
+              let a = 0.1;
+              let b = 0.3;
+              for (let i = 0; i < 2; i++) {
+                for (let j = 0; j < 3; j++) {
+                  const t = a;
+                  a = b;
+                  b = t + 0.05;
+                }
+                const u = a;
+                a = b + 0.1;
+                b = u;
+              }
+              inputs.color = [a, b, 0, 1];
+              return inputs;
+            });
+          });
+          // i = 0: inner gives (0.35, 0.2), then (0.3, 0.35)
+          // i = 1: inner gives (0.4, 0.4), then (0.5, 0.4)
+          assertRG(rg, [128, 102]);
+        });
+
+        test('take the type of a variable that is first assigned in the loop', () => {
+          const rg = renderRG(() => {
+            myp5.getPixelInputs(inputs => {
+              let a = 0.1;
+              let last;
+              for (let i = 0; i < 3; i++) {
+                last = a;
+                a = a + 0.1;
+              }
+              const doubled = last * 2;
+              inputs.color = [doubled, a, 0, 1];
+              return inputs;
+            });
+          });
+          // last = 0.3, a = 0.4
+          assertRG(rg, [153, 102]);
+        });
       });
     });
 
