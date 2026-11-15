@@ -89,5 +89,5 @@ jobs:
         env:
           CI: true
       - name: fail job if tests failed
-        if: steps.test.outcome == 'failure' || steps.test-webgpu.outcome == 'failure'
+        if: steps.test.outcome != 'success' || steps.test-webgpu.outcome != 'success'
         run: exit 1
