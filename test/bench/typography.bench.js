@@ -40,6 +40,13 @@ const TO_CONTOURS_CASES = TO_POINTS_CASES.map((c, i) => ({
   contours: EXPECTED_CONTOURS[i],
 }));
 
+const TO_PATHS_CASES = [
+  {label: "textToPaths() single word", str: strs.single, textSize: 20, commands: 253, variance: 0, render: false},
+  {label: "textToPaths() single word, 150pt", str: strs.single, textSize: 150, commands: 253, variance: 0, render: false},
+  {label: "textToPaths() 10 words", str: strs.ten, textSize: 20, commands: 1157, variance: 0, render: false},
+  {label: "textToPaths() paragraph", str: strs.paragraph, textSize: 20, commands: 16716, variance: 0, render: false},
+];
+
 const TO_MODEL_CASES = [
   {label: "textToModel() single word", str: strs.single, textSize: 20, sampleFactor: 0.5, render: false},
   {label: "textToModel() single word, 150pt", str: strs.single, textSize: 150, sampleFactor: 0.5, render: false},
@@ -134,6 +141,24 @@ describe("Typography: bench 2D", function() {
     );
   }
 
+  for (let testCase of TO_PATHS_CASES) {
+    bench(
+      testCase.label,
+      async () => {
+        const paths = font.textToPaths(testCase.str, 10, 20);
+        assert.closeTo(paths.length, testCase.commands, testCase.variance);
+      },
+      {
+        ...options,
+        setup: async () => {
+          ({myp5, font} = await bootstrap());
+          myp5.textSize(testCase.textSize);
+        },
+        teardown: () => myp5.remove()
+      }
+    );
+  }
+
 });
 
 describe("Typography: bench WebGL", function() {
@@ -171,6 +196,24 @@ describe("Typography: bench WebGL", function() {
         if (testCase.render) {
           drawContours(myp5, contours);
         }
+      },
+      {
+        ...options,
+        setup: async () => {
+          ({myp5, font} = await bootstrap(400, 400, WEBGL));
+          myp5.textSize(testCase.textSize);
+        },
+        teardown: () => myp5.remove()
+      }
+    );
+  }
+
+  for (let testCase of TO_PATHS_CASES) {
+    bench(
+      testCase.label,
+      async () => {
+        const paths = font.textToPaths(testCase.str, 10, 20);
+        assert.closeTo(paths.length, testCase.commands, testCase.variance);
       },
       {
         ...options,
@@ -242,6 +285,24 @@ describe("Typography: bench WebGPU", function() {
         if (testCase.render) {
           drawContours(myp5, contours);
         }
+      },
+      {
+        ...options,
+        setup: async () => {
+          ({myp5, font} = await bootstrap(400, 400, WEBGPU));
+          myp5.textSize(testCase.textSize);
+        },
+        teardown: () => myp5.remove()
+      }
+    );
+  }
+
+  for (let testCase of TO_PATHS_CASES) {
+    bench(
+      testCase.label,
+      async () => {
+        const paths = font.textToPaths(testCase.str, 10, 20);
+        assert.closeTo(paths.length, testCase.commands, testCase.variance);
       },
       {
         ...options,
