@@ -577,10 +577,6 @@ export class Renderer3D extends Renderer {
             this._getOrMakeCachedBuffers(model);
           }
         } else {
-          if (!this.geometryInHash(model.gid)) {
-            this._getOrMakeCachedBuffers(model);
-          }
-
           for (const part of model.parts) {
             if (!this.geometryInHash(part.gid)) {
               if (part.edges.length > 0) {

@@ -1015,7 +1015,7 @@ suite('p5.Geometry', function () {
       expect(geom.parts).toHaveLength(2);
 
       const cache = renderer.geometryBufferCache;
-      const ids = [geom.gid, ...geom.parts.map(part => part.gid)];
+      const ids = geom.parts.map(part => part.gid);
 
       myp5.model(geom);
 
