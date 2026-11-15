@@ -2,6 +2,9 @@
 
 .nyc_output/*
 # .vscode/settings.json
+# optional local preferences for vscode
+local.code-workspace
+
 node_modules/*
 
 analyzer/
@@ -24,8 +27,18 @@ __screenshots__/
 *.d.ts
 p5.zip
 yarn.lock
+
+docs/data.json
+analyzer/
+preview/
+__screenshots__/
+actual-screenshots/
+visual-report.html
+test/unit/visual/test-results.json
+
 todo.md
 
 *.DS_Store
 .idea
 .project
+

@@ -1,6 +1,6 @@
 precision highp float;
-varying vec3 localPos;
-varying vec2 vTexCoord;
+IN vec3 localPos;
+IN vec2 vTexCoord;
 
 // our texture
 uniform sampler2D environmentMap;
@@ -61,13 +61,13 @@ void main(){
     float NdotL = max(dot(N, L), 0.0);
     if (NdotL > 0.0)
     {
-      prefilteredColor += texture2D(environmentMap, nTOE(L)).xyz * NdotL;
+      prefilteredColor += TEXTURE(environmentMap, nTOE(L)).xyz * NdotL;
       totalWeight += NdotL;
     }
   }
   prefilteredColor = prefilteredColor / totalWeight;
 
-  gl_FragColor = vec4(prefilteredColor, 1.0);
+ OUT_COLOR  = vec4(prefilteredColor, 1.0);
 }
 
 vec3 ImportanceSampleGGX(vec2 Xi, vec3 N, float roughness){

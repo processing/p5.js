@@ -307,7 +307,6 @@ Con todo lo anterior, deberías tener la mayoría de las herramientas necesarias
 
 Puedes usar la etiqueta `@private` si una propiedad o variable es una función o variable privada. Si una característica está marcada como `@private`, no se renderizará como parte de la referencia en el sitio web. La razón para usar la etiqueta `@private` para marcar un bloque de comentarios de referencia como privado es documentar características internas de la propia biblioteca. Por ejemplo, consulta los comentarios de referencia para `_start` a continuación:
 
-
 ```
 /**
  * _start calls preload() setup() and draw()
@@ -341,7 +340,7 @@ La convención que sigue p5.js es que cada subcarpeta en la carpeta `src/` será
 ### Etiqueta `@class`
 
 Los constructores de clases se definen con la etiqueta `@class`y la etiqueta `@constructor`. El formato para este bloque es similar a cómo se define una función con el bloque `@method`; el nombre de la clase debe definirse con la etiqueta `@class` y la etiqueta `@constructor` indicará que la clase tiene una función constructora. Mira el ejemplo de la clase `p5.Color` a continuación:
- 
+
 ```
 /**
  * A class to describe a color. Each `p5.Color` object stores the color mode

@@ -1,0 +1,17 @@
+mtllib normal_mapped.mtl
+v 0 0 0
+v 1 0 0
+v 0 1 0
+v 1 1 0
+vt 0 0
+vt 1 0
+vt 0 1
+vt 1 1
+vn 0 0 1
+vn 0 0 1
+vn 0 0 1
+vn 0 0 1
+usemtl m0
+f 1/1/1 2/2/2 3/3/3
+usemtl m1
+f 2/2/2 4/4/4 3/3/3

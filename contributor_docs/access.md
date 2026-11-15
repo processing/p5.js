@@ -11,7 +11,7 @@ Increasing access is not focused on expanding the raw number of people in the p5
 Access here means making p5.js equitable for:
 
 - People who speak languages other than English
-- Black, Indigenous, People of Color, and people of marginalized ethnicities 
+- Black, Indigenous, People of Color, and people of marginalized ethnicities
 - Lesbian, gay, bisexual, queer, questioning, pansexual, and asexual people
 - Trans, genderfluid, agender, intersex, and two-spirit people, women, and others with marginalized genders
 - People who are blind, d/Deaf[^2] or hard of hearing, disabled/have a disability, neurodivergent, and chronically ill[^3]
@@ -26,8 +26,8 @@ Access here means making p5.js equitable for:
 
 We recognize the complexity of the terms used to describe our respective identities. Language is nuanced, evolving, and contested. This is not an exhaustive list. We provide an attempt to name and be accountable to our commitments and to the diverse needs of the p5.js community.
 
-
 ### Examples
+
 These are examples of efforts we believe increase access:
 
 - Translating documentation and other materials into more languages, decentering linguistic imperialism[^4] (e.g., Rolando Vargas’ [Processing in Kuna Language](https://medium.com/@ProcessingOrg/culture-as-translation-processing-in-kuna-language-with-rolando-vargas-and-edinson-izquierdo-8079f14851f7), Felipe Santos Gomes, Julia Brasil, Katherine Finn Zander, and Marcela Mancino’s [Pê Cinco: Internationalization and Popularization for Portuguese Speakers](https://medium.com/processing-foundation/translating-p5-js-into-portuguese-for-the-brazilian-community-14b969e77ab1))
@@ -39,20 +39,22 @@ These are examples of efforts we believe increase access:
 - Supporting the creation of educational resources (e.g., Adekemi Sijuwade-Ukadike’s [A11y Syllabus](http://a11ysyllabus.site/))
 - Publishing documentation and reports of our work that follow WCAG guidelines, use plain language, and focus on beginners from diverse experiences (e.g., [OSACC p5.js Access Report](https://github.com/processing/OSACC-p5.js-Access-Report))
 
-
-
 ## Maintenance
+
 We are not accepting feature requests that do not support our effort to increase access. You'll see this criteria reflected in our issue and pull request templates. We also affirm our intention to maintain the existing feature set of p5.js. We'd like to fix bugs regardless of which area of the codebase they're in. We believe consistency of the tool makes it more accessible for beginners. Examples of feature requests that improve accessibility include:
 Performance increases for people using less powerful hardware (e.g., Support for drawing to/reading from framebuffers)
 Consistency in the API (e.g, Add arcVertex() for creating arcs with beginShape()/endShape())
 
-___
+---
 
 Please consider this a ‘living document.' We will continue the conversation about what it means to prioritize access. We invite our community to engage with this document and the values it describes. If you have ideas or suggestions, we invite you to share them as an issue on Github or by emailing hello@p5js.org.
 
-This version of the p5.js Access Statement was revised in collaboration with Evelyn Masso, Nat Decker, Bobby Joe Smith III, Sammie Veeler, Sonia (Suhyun) Choi, Xin Xin, Kate Hollenbach, Lauren Lee McCarthy, Caroline Sinders, Qianqian Ye, Tristan Jovani Magno Espinoza, Tanvi Sharma, Tsige Tafesse, and Sarah Ciston at the 2023 Open Source Arts Contributors Conference. It was finalized and published by Bobby Joe Smith III and Nat Decker through the support of the Processing Foundation Fellowship. 
+This version of the p5.js Access Statement was revised in collaboration with Evelyn Masso, Nat Decker, Bobby Joe Smith III, Sammie Veeler, Sonia (Suhyun) Choi, Xin Xin, Kate Hollenbach, Lauren Lee McCarthy, Caroline Sinders, Qianqian Ye, Tristan Jovani Magno Espinoza, Tanvi Sharma, Tsige Tafesse, and Sarah Ciston at the 2023 Open Source Arts Contributors Conference. It was finalized and published by Bobby Joe Smith III and Nat Decker through the support of the Processing Foundation Fellowship.
 
 [^1]: Crenshaw, Kimberlé (1989). "Demarginalizing the intersection of race and sex: a black feminist critique of antidiscrimination doctrine, feminist theory and antiracist politics". University of Chicago Legal Forum. 1989 (1): 139–167. ISSN 0892-5593. Full text at Archive.org.
-[^2]: Capital ‘D’ Deaf refers to people who are culturally Deaf or part of the Deaf community while lower case ‘d’ deaf is an audiological term that can describe people not associated with Deaf identity. 
+
+[^2]: Capital ‘D’ Deaf refers to people who are culturally Deaf or part of the Deaf community while lower case ‘d’ deaf is an audiological term that can describe people not associated with Deaf identity.
+
 [^3]: There are differing preferences between ‘person-first’ vs. ‘identity-first’ language within the disability community. Read [Unpacking the debate over person-first vs. identity-first language in the autism community](https://news.northeastern.edu/2018/07/12/unpacking-the-debate-over-person-first-vs-identity-first-language-in-the-autism-community/), [Disability-Affirming Language: Person-First versus Identity-First Language](https://editorstorontoblog.com/2024/02/23/disability-affirming-language-person-first-versus-identity-first-language/), and [Person-First and Identity-First Language Glossary](https://ogs.ny.gov/system/files/documents/2024/02/person-first-and-identity-first-glossary_english_final.pdf).
-[^4]: Linguistic Imperialism, or Language Imperialism, refers to the ongoing domination/prioritization/imposition of certain languages such as English at the expense of native languages due to imperial expansion and globalization. 
+
+[^4]: Linguistic Imperialism, or Language Imperialism, refers to the ongoing domination/prioritization/imposition of certain languages such as English at the expense of native languages due to imperial expansion and globalization.

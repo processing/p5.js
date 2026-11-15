@@ -33,13 +33,13 @@ import { translator } from './internationalization';
 국제화를 하지 않고, 텍스트 인라인 메시지를 기록 할 수 있습니다.
 
 ```js
-console.log('Loading your sketch right now!')
+console.log('Loading your sketch right now!');
 ```
 
 대신에, `translator`를 사용 하세요:
 
 ```js
-console.log(translator('sketch.loading'))
+console.log(translator('sketch.loading'));
 ```
 
 translator에게 사용자가 선호하는 언어로 "sketch.loading" 메시지를 받도록 말해줍니다.
@@ -51,10 +51,11 @@ translator에게 사용자가 선호하는 언어로 "sketch.loading" 메시지�
 ```js
 console.log('I couldnt find ' + file.name + '. Are you sure it's there?')
 ```
+
 다음과 같은 모습을 가지게 될 것입니다.
 
 ```js
-console.log(translator('fileLoading.notFound', { fileName: file.name }))
+console.log(translator('fileLoading.notFound', { fileName: file.name }));
 ```
 
 이와 같은 번역에서는 특정 이름을 사용하는 변수가 필요하므로 반드시 해당 이름을 사용해야 합니다. 변수명을 확인하기 위해 번역파일 (`translations/{YOUR_LANGUAGE}`)을 확인해 보세요. 번역은 번역키 안에 오브젝트 경로 아래에서 찾아볼 수 있습니다.

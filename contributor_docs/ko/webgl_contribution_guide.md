@@ -8,7 +8,7 @@
 
 - p5.js의 WebGL 모드가 기반으로 하고 있는 WebGL 모드가 2D 모드와 어떻게 다른지 이해하려면 [p5.js WebGL 모드 아키텍쳐](webgl_mode_architecture.md)를 읽어보세요. 셰이더, 선 등에 대한 몇 가지 구현 세부 사항에 대한 가치 있는 자료가 됩니다.
 - 문제 생성, 코드베이스(codebase, 원천 코드 모음) 설정, 변경 사항 테스트에 대한 정보가 필요하다면 [기여자 가이드라인](https://p5js.org/contributor-docs/#/./contributor_guidelines)을 읽어보세요.
-- 브라우저의 WebGL API에 대해 조금 알아두면 도움이 될 수 있는데, 
+- 브라우저의 WebGL API에 대해 조금 알아두면 도움이 될 수 있는데,
   - [WebGL fundamentals](https://webglfundamentals.org/)에서 많은 핵심 렌더링 개념에 대해 검토할 수 있습니다.
   - [The Book of Shaders](https://thebookofshaders.com/)에 WebGL 셰이더에서 사용되는 많은 기술들이 설명되어 있습니다.
 
@@ -33,16 +33,13 @@ WebGL과 관련된 모든 것은 `src/webgl` 하위 디렉토리에 있습니다
 
 `p5.RendererGL`은 많은 동작을 처리하는 대형 클래스입니다. 이 때문에 하나의 대형 클래스 파일이 있는 것이 아닌, 어떤 주제 영역인지에 따라 여러 개의 파일로 나누었습니다. `p5.RendererGL`을 분할한 파일과, 각 파일에 무엇이 있는지는 다음과 같습니다.
 
-
 #### `p5.RendererGL.js`
 
 초기화 및 핵심 기능
 
-
 #### `p5.RendererGL.Immediate.js`
 
-**즉시 모드 (immediate mode)** 드로잉(`beginShape()`나 `endShape()`와 같은, 보관 및 재사용되지 않을 모양)과 관련된 기능 
-
+**즉시 모드 (immediate mode)** 드로잉(`beginShape()`나 `endShape()`와 같은, 보관 및 재사용되지 않을 모양)과 관련된 기능
 
 #### `p5.RendererGL.Retained.js`
 
@@ -60,7 +57,6 @@ WebGL과 관련된 모든 것은 `src/webgl` 하위 디렉토리에 있습니다
 
 글자 렌더링을 위한 기능 및 보조 기능 클래스
 
-
 ## WebGL 변경사항 테스트
 
 ### 일관성 테스트
@@ -69,17 +65,16 @@ p5.js의 함수를 사용할 수 있는 방법은 여러 가지가 있습니다.
 
 새 테스트를 추가할 때, 기능이 2D 모드에서도 작동하는 경우 일관성을 확인하는 최고의 방법 중 하나는 픽셀 결과물이 두 모드에서 동일한지를 확인하는 것입니다. 다음은 단위 테스트의 예시 중 하나입니다.
 
-
 ```js
-test('coplanar strokes match 2D', function() {
-  const getColors = function(mode) {
+test('coplanar strokes match 2D', function () {
+  const getColors = function (mode) {
     myp5.createCanvas(20, 20, mode);
     myp5.pixelDensity(1);
     myp5.background(255);
     myp5.strokeCap(myp5.SQUARE);
     myp5.strokeJoin(myp5.MITER);
     if (mode === myp5.WEBGL) {
-      myp5.translate(-myp5.width/2, -myp5.height/2);
+      myp5.translate(-myp5.width / 2, -myp5.height / 2);
     }
     myp5.stroke('black');
     myp5.strokeWeight(4);
@@ -99,7 +94,7 @@ test('coplanar strokes match 2D', function() {
 만약 어떤 기능이 WebGL 전용이라면 2D 모드와 픽셀 결과물을 비교하기보다는 몇 가지 픽셀을 확인해서 그 색상이 예상한 색상인지 확인하는 경우가 많습니다. 언젠가는 이를 몇 가지 픽셀이 아닌 예상 결과물의 전체 이미지 스냅샷을 비교하는 보다 강력한 시스템으로 전환할 수도 있겠지만, 현재로서는 픽셀 색상을 확인하는 예시가 있습니다.
 
 ```js
-test('color interpolation', function() {
+test('color interpolation', function () {
   const renderer = myp5.createCanvas(256, 256, myp5.WEBGL);
   // upper color: (200, 0, 0, 255);
   // lower color: (0, 0, 200, 255);
@@ -118,7 +113,6 @@ test('color interpolation', function() {
   assert.deepEqual(myp5.get(128, 128), [100, 0, 100, 255]);
 });
 ```
-
 
 ### 성능 테스트
 

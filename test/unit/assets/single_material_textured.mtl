@@ -1,0 +1,5 @@
+newmtl only
+Kd 1.000 1.000 1.000
+Ks 0.500 0.500 0.500
+Ns 60
+map_Kd cat.jpg

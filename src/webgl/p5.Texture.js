@@ -3,7 +3,6 @@
  * @module 3D
  * @submodule Material
  * @for p5
- * @requires core
  */
 
 import * as constants from '../core/constants';
@@ -15,7 +14,7 @@ import { Graphics } from '../core/p5.Graphics';
 import { FramebufferTexture } from './p5.Framebuffer';
 
 class Texture {
-  constructor (renderer, obj, settings = {}) {
+  constructor(renderer, obj, settings = {}) {
     this._renderer = renderer;
 
     this.src = obj;
@@ -73,7 +72,8 @@ class Texture {
     this.isSrcP5Image = obj instanceof Image;
     this.isSrcP5Graphics = obj instanceof Graphics;
     this.isSrcP5Renderer = obj instanceof Renderer;
-    this.isImageData = typeof ImageData !== 'undefined' && obj instanceof ImageData;
+    this.isImageData =
+      typeof ImageData !== 'undefined' && obj instanceof ImageData;
     this.isSrcMediaElement =
       typeof MediaElement !== 'undefined' && obj instanceof MediaElement;
     this.isSrcHTMLElement =
@@ -91,22 +91,30 @@ class Texture {
     }
   }
 
-  _getTextureDataFromSource () {
+  _getTextureDataFromSource() {
     let textureData;
     if (this.isFramebufferTexture) {
       textureData = this.src.rawTexture();
     } else if (this.isSrcP5Image) {
-    // param is a p5.Image
+      // param is a p5.Image
       textureData = this.src.canvas;
-    } else if (
-      this.isSrcMediaElement ||
-      this.isSrcHTMLElement
-    ) {
-      // if param is a video HTML element
-      if (this.src._ensureCanvas) {
+    } else if (this.isSrcMediaElement || this.isSrcHTMLElement) {
+      // createCapture elements that are flipped need
+      // to go through a canvas, as do all videos when the renderer can't
+      // upload from a video element directly
+      if (
+        this.isSrcMediaElement &&
+        (this.src.flipped || !this._renderer.supportsVideoUpload())
+      ) {
         this.src._ensureCanvas();
+        textureData = this.src.canvas;
+      } else {
+        // if param is a video HTML element
+        if (this.src._checkIfTextureNeedsUpdate) {
+          this.src._checkIfTextureNeedsUpdate();
+        }
+        textureData = this.src.elt;
       }
-      textureData = this.src.elt;
     } else if (this.isSrcP5Graphics || this.isSrcP5Renderer) {
       textureData = this.src.canvas;
     } else if (this.isImageData) {
@@ -126,10 +134,12 @@ class Texture {
         format: this.format,
         dataType: this.dataType,
         width: textureData.width,
-        height: textureData.height,
+        height: textureData.height
       });
     } else {
-      this.textureHandle = this._renderer.createFramebufferTextureHandle(this.src);
+      this.textureHandle = this._renderer.createFramebufferTextureHandle(
+        this.src
+      );
     }
 
     this._renderer.setTextureParams(this, {
@@ -144,15 +154,13 @@ class Texture {
     if (this._shouldDeferUpload()) {
       this._renderer.uploadTextureFromData(
         this.textureHandle,
-        new Uint8Array(1, 1, 1, 1),
+        new Uint8Array(4),
         1,
         1
       );
     } else if (!this.isFramebufferTexture) {
-      this._renderer.uploadTextureFromSource(
-        this.textureHandle,
-        textureData
-      );
+      // this.update()
+      this._renderer.uploadTextureFromSource(this.textureHandle, textureData);
     }
 
     this.unbindTexture();
@@ -224,6 +232,9 @@ class Texture {
         data.setModified && data.setModified(true);
       }
     } else if (this.isSrcP5Image) {
+      if (data.gifProperties) {
+        data._animateGif(this._renderer._pInst);
+      }
       // for an image, we only update if the modified field has been set,
       // for example, by a call to p5.Image.set
       if (data.isModified()) {
@@ -273,7 +284,7 @@ class Texture {
     return this;
   }
 
-  unbindTexture () {
+  unbindTexture() {
     this._renderer.unbindTexture();
   }
 
@@ -303,18 +314,16 @@ class Texture {
 }
 
 class MipmapTexture extends Texture {
-  constructor(renderer, levels, settings) {
-    super(renderer, levels, settings);
-    const gl = this._renderer.GL;
-    if (this.glMinFilter === gl.LINEAR) {
-      this.glMinFilter = gl.LINEAR_MIPMAP_LINEAR;
-    }
-  }
+  constructor(renderer, levels, settings = {}) {
+    // Set default mipmap filtering
+    const mipmapSettings = {
+      minFilter: constants.LINEAR,
+      magFilter: constants.LINEAR,
+      ...settings
+    };
 
-  glFilter(_filter) {
-    const gl = this._renderer.GL;
-    // TODO: support others
-    return gl.LINEAR_MIPMAP_LINEAR;
+    super(renderer, levels, mipmapSettings);
+    this.levels = levels;
   }
 
   _getTextureDataFromSource() {
@@ -322,32 +331,48 @@ class MipmapTexture extends Texture {
   }
 
   init(levels) {
-    const gl = this._renderer.GL;
-    this.glTex = gl.createTexture();
+    // Handle both ImageData array (WebGL) and WebGPU texture object
+    if (Array.isArray(levels)) {
+      // WebGL path: levels is array of ImageData
+      const firstLevel = levels[0];
+      this.width = firstLevel.width;
+      this.height = firstLevel.height;
 
-    this.bindTexture();
-    for (let level = 0; level < levels.length; level++) {
-      gl.texImage2D(
-        this.glTarget,
-        level,
-        this.glFormat,
-        this.glFormat,
-        this.glDataType,
-        levels[level]
-      );
+      // Let renderer create the mipmap texture handle
+      this.textureHandle = this._renderer.createMipmapTextureHandle({
+        levels: levels,
+        format: this.format,
+        dataType: this.dataType,
+        width: this.width,
+        height: this.height
+      });
+    } else {
+      // WebGPU path: levels is a mipmapData object with pre-built GPU texture
+      this.width = levels.size;
+      this.height = levels.size;
+
+      // Let renderer create the texture handle from the GPU texture
+      this.textureHandle = this._renderer.createMipmapTextureHandle({
+        gpuTexture: levels.gpuTexture,
+        format: levels.format,
+        dataType: 'uint8',
+        width: this.width,
+        height: this.height
+      });
     }
 
-    this.glMinFilter = gl.LINEAR_MIPMAP_LINEAR;
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, this.glMagFilter);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, this.glMinFilter);
-
-    this.unbindTexture();
+    this._renderer.setTextureParams(this, {
+      minFilter: this.minFilter,
+      magFilter: this.magFilter,
+      wrapS: this.wrapS,
+      wrapT: this.wrapT
+    });
   }
 
   update() {}
 }
 
-function texture(p5, fn){
+function texture(p5, fn) {
   /**
    * Texture class for WEBGL Mode
    * @private
@@ -387,6 +412,6 @@ function texture(p5, fn){
 export default texture;
 export { Texture, MipmapTexture };
 
-if(typeof p5 !== 'undefined'){
+if (typeof p5 !== 'undefined') {
   texture(p5, p5.prototype);
 }

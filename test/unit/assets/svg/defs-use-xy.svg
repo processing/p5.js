@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200">
+  <rect x="0" y="0" width="200" height="200" fill="#c8c8c8"/>
+  <defs>
+    <rect id="tile" x="0" y="0" width="30" height="30"
+          fill="white" stroke="black" stroke-width="1"/>
+  </defs>
+  <!-- 3x3 grid — each <use> has a distinct x/y to test positional offset -->
+  <use href="#tile" x="20"  y="20"/>
+  <use href="#tile" x="85"  y="20"/>
+  <use href="#tile" x="150" y="20"/>
+  <use href="#tile" x="20"  y="85"/>
+  <use href="#tile" x="85"  y="85"/>
+  <use href="#tile" x="150" y="85"/>
+  <use href="#tile" x="20"  y="150"/>
+  <use href="#tile" x="85"  y="150"/>
+  <use href="#tile" x="150" y="150"/>
+</svg>

@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200">
+  <rect x="0" y="0" width="200" height="200" fill="#c8c8c8"/>
+  <!-- varying stroke widths and colors -->
+  <circle  cx="55"  cy="70"  r="38" fill="white" stroke="#e74c3c" stroke-width="1"/>
+  <circle  cx="145" cy="70"  r="38" fill="white" stroke="#3498db" stroke-width="3"/>
+  <rect    x="25"   y="125"  width="70" height="50" fill="white" stroke="#2ecc71" stroke-width="1"/>
+  <rect    x="105"  y="125"  width="70" height="50" fill="white" stroke="#9b59b6" stroke-width="5"/>
+</svg>

@@ -25,8 +25,6 @@ class Element {
    * callback functions.
    *
    * @example
-   * <div>
-   * <code>
    * let p;
    *
    * function setup() {
@@ -45,14 +43,12 @@ class Element {
    * function doubleClicked() {
    *   p.remove();
    * }
-   * </code>
-   * </div>
    */
   remove() {
     // stop all audios/videos and detach all devices like microphone/camera etc
     // used as input/output for audios/videos.
     // if (this instanceof p5.MediaElement) {
-    if(this.stop){
+    if (this.stop) {
       this.stop();
       const sources = this.elt.srcObject;
       if (sources !== null) {
@@ -67,23 +63,23 @@ class Element {
     // `_elements` array.  But when an element lives inside an off-screen
     // `p5.Graphics` layer, `this._pInst` is that wrapper Graphics object
     // instead.  The wrapper keeps a back–pointer (`_pInst`) to the real
-    // sketch but has no `_elements` array of its own. 
-   
-   let sketch = this._pInst;
-  
+    // sketch but has no `_elements` array of its own.
+
+    let sketch = this._pInst;
+
     // If `sketch` doesn’t own an `_elements` array it means
-    // we’re still at the graphics-layer “wrapper”.  
+    // we’re still at the graphics-layer “wrapper”.
     // Jump one level up to the real p5 sketch stored in sketch._pInst.
 
     if (sketch && !sketch._elements && sketch._pInst) {
-          sketch = sketch._pInst;          // climb one level up
+      sketch = sketch._pInst; // climb one level up
     }
-    
-    if (sketch && sketch._elements) {  // only if the array exists
+
+    if (sketch && sketch._elements) {
+      // only if the array exists
       const i = sketch._elements.indexOf(this);
       if (i !== -1) sketch._elements.splice(i, 1);
     }
-     
 
     // deregister events
     for (let ev in this._events) {
@@ -97,9 +93,9 @@ class Element {
   /**
    * Attaches the element to a parent element.
    *
-   * For example, a `&lt;div&gt;&lt;/div&gt;` element may be used as a box to
+   * For example, a `<div></div>` element may be used as a box to
    * hold two pieces of text, a header and a paragraph. The
-   * `&lt;div&gt;&lt;/div&gt;` is the parent element of both the header and
+   * `<div></div>` is the parent element of both the header and
    * paragraph.
    *
    * The parameter `parent` can have one of three types. `parent` can be a
@@ -117,8 +113,6 @@ class Element {
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
    * function setup()  {
    *   background(200);
    *
@@ -149,11 +143,8 @@ class Element {
    *
    *   describe('The text "p5*js" written in black at the center of a white rectangle. The rectangle is inside a gray square.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup()  {
    *   background(200);
    *
@@ -179,11 +170,8 @@ class Element {
    *
    *   describe('The text "p5*js" written in black at the center of a white rectangle. The rectangle is inside a gray square.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup()  {
    *   background(200);
    *
@@ -211,8 +199,6 @@ class Element {
    *
    *   describe('The text "p5*js" written in black at the center of a white rectangle. The rectangle is inside a gray square.');
    * }
-   * </code>
-   * </div>
    */
   /**
    * @return {p5.Element}
@@ -245,8 +231,7 @@ class Element {
    * @returns {Node[]} an array of child nodes.
    *
    * @example
-   * <div class='norender'>
-   * <code>
+   * // META:norender
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -262,11 +247,9 @@ class Element {
    *
    *   describe('A gray square with the words "Parent" and "Child" written beneath it.');
    * }
-   * </code>
-   * </div>
    *
-   * <div class='norender'>
-   * <code>
+   * @example
+   * // META:norender
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -285,11 +268,9 @@ class Element {
    *
    *   describe('A gray square with the words "Parent" and "Child" written beneath it.');
    * }
-   * </code>
-   * </div>
    *
-   * <div class='norender notest'>
-   * <code>
+   * @example
+   * // META:norender
    * // This example assumes there is a div already on the page
    * // with id "myChildDiv".
    *
@@ -310,8 +291,6 @@ class Element {
    *
    *   describe('A gray square with the words "Parent" and "Child" written beneath it.');
    * }
-   * </code>
-   * </div>
    */
   /**
    * @param  {String|p5.Element} [child] the ID, DOM node, or <a href="#/p5.Element">p5.Element</a>
@@ -351,8 +330,7 @@ class Element {
    * @returns {String} the inner HTML of the element
    *
    * @example
-   * <div class='norender'>
-   * <code>
+   * // META:norender
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -365,11 +343,9 @@ class Element {
    *
    *   describe('A gray square with the word "hi" written beneath it.');
    * }
-   * </code>
-   * </div>
    *
-   * <div class='norender'>
-   * <code>
+   * @example
+   * // META:norender
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -384,11 +360,9 @@ class Element {
    *
    *   describe('A gray square with the text "Hello World" written beneath it.');
    * }
-   * </code>
-   * </div>
    *
-   * <div class='norender'>
-   * <code>
+   * @example
+   * // META:norender
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -402,8 +376,6 @@ class Element {
    *
    *   describe('A gray square with the word "Hello!" written beneath it.');
    * }
-   * </code>
-   * </div>
    */
   /**
    * @param  {String} [html] the HTML to be placed inside the element
@@ -431,8 +403,6 @@ class Element {
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   // Create a canvas element and
    *   // assign it to cnv.
@@ -450,8 +420,6 @@ class Element {
    *
    *   describe('The text "mycanvas" written in black on a gray background.');
    * }
-   * </code>
-   * </div>
    */
   /**
    * @return {String} ID of the element.
@@ -478,8 +446,6 @@ class Element {
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   // Create a canvas element and
    *   // assign it to cnv.
@@ -499,8 +465,6 @@ class Element {
    *   describe('The word "small" written in black on a gray canvas.');
    *
    * }
-   * </code>
-   * </div>
    */
   /**
    * @return {String} element's classes, if any.
@@ -523,8 +487,7 @@ class Element {
    * @chainable
    *
    * @example
-   * <div class='norender'>
-   * <code>
+   * // META:norender
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -538,8 +501,6 @@ class Element {
    *
    *   describe('A gray square.');
    * }
-   * </code>
-   * </div>
    */
   addClass(c) {
     if (this.elt.className) {
@@ -559,8 +520,7 @@ class Element {
    * @chainable
    *
    * @example
-   * <div class='norender'>
-   * <code>
+   * // META:norender
    * // In this example, a class is set when the div is created
    * // and removed when mouse is pressed. This could link up
    * // with a CSS style rule to toggle style properties.
@@ -585,8 +545,6 @@ class Element {
    * function mousePressed() {
    *   div.removeClass('myClass');
    * }
-   * </code>
-   * </div>
    */
   removeClass(c) {
     // Note: Removing a class that does not exist does NOT throw an error in classList.remove method
@@ -601,8 +559,7 @@ class Element {
    * @param c {String} name of class to check.
    *
    * @example
-   * <div class='norender'>
-   * <code>
+   * // META:norender
    * let div;
    *
    * function setup() {
@@ -627,8 +584,6 @@ class Element {
    *     div.removeClass('show');
    *   }
    * }
-   * </code>
-   * </div>
    */
   hasClass(c) {
     return this.elt.classList.contains(c);
@@ -641,8 +596,7 @@ class Element {
    * @chainable
    *
    * @example
-   * <div class='norender'>
-   * <code>
+   * // META:norender
    * let div;
    *
    * function setup() {
@@ -663,8 +617,6 @@ class Element {
    * function mousePressed() {
    *   div.toggleClass('show');
    * }
-   * </code>
-   * </div>
    */
   toggleClass(c) {
     // classList also has a toggle() method, but we cannot use that yet as support is unclear.
@@ -691,8 +643,6 @@ class Element {
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -708,8 +658,6 @@ class Element {
    *
    *   describe('A gray square and an orange rectangle. The rectangle is at the center of the page.');
    * }
-   * </code>
-   * </div>
    */
   center(align) {
     const style = this.elt.style.display;
@@ -723,7 +671,9 @@ class Element {
 
     this.position(0, 0);
     const wOffset = Math.abs(this.parent().offsetWidth - this.elt.offsetWidth);
-    const hOffset = Math.abs(this.parent().offsetHeight - this.elt.offsetHeight);
+    const hOffset = Math.abs(
+      this.parent().offsetHeight - this.elt.offsetHeight
+    );
 
     if (align === 'both' || align === undefined) {
       this.position(
@@ -761,8 +711,7 @@ class Element {
    * @returns {Object} object of form `{ x: 0, y: 0 }` containing the element's position.
    *
    * @example
-   * <div>
-   * <code class='norender'>
+   * // META:norender
    * function setup() {
    *   let cnv = createCanvas(100, 100);
    *
@@ -774,11 +723,9 @@ class Element {
    *
    *   describe('A gray square that is 50 pixels to the right and 100 pixels down from the top-left corner of the web page.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code class='norender'>
+   * @example
+   * // META:norender
    * function setup() {
    *   let cnv = createCanvas(100, 100);
    *
@@ -790,8 +737,6 @@ class Element {
    *
    *   describe('A gray square in the top-left corner of the web page.');
    * }
-   * </code>
-   * </div>
    */
   /**
    * @param  {Number} [x] x-position relative to top-left of window (optional)
@@ -829,8 +774,6 @@ class Element {
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
    * let p;
    *
    * function setup() {
@@ -850,8 +793,6 @@ class Element {
    * function doubleClicked() {
    *   p.show();
    * }
-   * </code>
-   * </div>
    */
   show() {
     this.elt.style.display = 'block';
@@ -882,8 +823,6 @@ class Element {
    * function doubleClicked() {
    *   p.hide();
    * }
-   * </code>
-   * </div>
    */
   hide() {
     this.elt.style.display = 'none';
@@ -917,8 +856,6 @@ class Element {
    * @return {Object} width and height of the element in an object.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -934,11 +871,8 @@ class Element {
    *
    *   describe('A gray square with a pink rectangle near its top.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -960,11 +894,8 @@ class Element {
    *
    *   describe('A gray square with a pink rectangle near its top. The text "80 x 40" is written within the rectangle.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let img1;
    * let img2;
    *
@@ -1000,8 +931,6 @@ class Element {
    * function resizeImage() {
    *   img2.size(50, AUTO);
    * }
-   * </code>
-   * </div>
    */
   /**
    * @param  {(Number|AUTO)} [w]   width of the element, either AUTO, or a number.
@@ -1017,9 +946,9 @@ class Element {
       const AUTO = constants.AUTO;
       if (aW !== AUTO || aH !== AUTO) {
         if (aW === AUTO) {
-          aW = h * this.width / this.height;
+          aW = (h * this.width) / this.height;
         } else if (aH === AUTO) {
-          aH = w * this.height / this.width;
+          aH = (w * this.height) / this.width;
         }
         // set diff for cnv vs normal div
         if (this.elt instanceof HTMLCanvasElement) {
@@ -1033,7 +962,10 @@ class Element {
           this.elt.setAttribute('height', aH * this._pInst._pixelDensity);
           this.elt.style.width = aW + 'px';
           this.elt.style.height = aH + 'px';
-          this._pInst.scale(this._pInst._pixelDensity, this._pInst._pixelDensity);
+          this._pInst.scale(
+            this._pInst._pixelDensity,
+            this._pInst._pixelDensity
+          );
           for (prop in j) {
             this.elt.getContext('2d')[prop] = j[prop];
           }
@@ -1078,8 +1010,6 @@ class Element {
    * @returns {String} value of the property.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1092,11 +1022,8 @@ class Element {
    *
    *   describe('The text p5*js written in pink on a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1112,11 +1039,8 @@ class Element {
    *
    *   describe('The text p5*js written in pink on a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1130,11 +1054,8 @@ class Element {
    *
    *   describe('The text p5*js written in pink on a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1153,8 +1074,6 @@ class Element {
    *
    *   describe('The text "rgb(255, 20, 147)" written in pink on a gray background.');
    * }
-   * </code>
-   * </div>
    */
   /**
    * @param  {String} property
@@ -1217,13 +1136,7 @@ class Element {
         'translate(' + args[0] + 'px, ' + args[1] + 'px)';
     } else if (args.length > 2) {
       this.elt.style.transform =
-        'translate3d(' +
-        args[0] +
-        'px,' +
-        args[1] +
-        'px,' +
-        args[2] +
-        'px)';
+        'translate3d(' + args[0] + 'px,' + args[1] + 'px,' + args[2] + 'px)';
       if (args.length === 3) {
         this.elt.parentElement.style.perspective = '1000px';
       } else {
@@ -1281,8 +1194,6 @@ class Element {
    * @return {String} value of the attribute.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1310,8 +1221,6 @@ class Element {
    *
    *   describe('A gray square with the text "hi" written on three separate lines, each placed further to the right.');
    * }
-   * </code>
-   * </div>
    */
   /**
    * @param  {String} attr       attribute to set.
@@ -1352,8 +1261,6 @@ class Element {
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
    * let p;
    *
    * function setup() {
@@ -1374,8 +1281,6 @@ class Element {
    * function doubleClicked() {
    *   p.removeAttribute('align');
    * }
-   * </code>
-   * </div>
    */
   removeAttribute(attr) {
     if (
@@ -1402,8 +1307,6 @@ class Element {
    * @return {String|Number} value of the element.
    *
    * @example
-   * <div>
-   * <code>
    * let input;
    *
    * function setup() {
@@ -1424,11 +1327,8 @@ class Element {
    *   let msg = input.value();
    *   text(msg, 0, 55);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let input;
    *
    * function setup() {
@@ -1454,8 +1354,6 @@ class Element {
    * function doubleClicked() {
    *   input.value('hello');
    * }
-   * </code>
-   * </div>
    */
   /**
    * @param  {String|Number}     value
@@ -1486,8 +1384,6 @@ class Element {
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   // Create a canvas element and
    *   // assign it to cnv.
@@ -1508,8 +1404,6 @@ class Element {
    *   let c = random(['red', 'yellow', 'blue', 'green']);
    *   background(c);
    * }
-   * </code>
-   * </div>
    */
   mousePressed(fxn) {
     // Prepend the mouse property setters to the event-listener.
@@ -1539,8 +1433,6 @@ class Element {
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   // Create a canvas element and
    *   // assign it to cnv.
@@ -1561,8 +1453,6 @@ class Element {
    *   let c = random(['red', 'yellow', 'blue', 'green']);
    *   background(c);
    * }
-   * </code>
-   * </div>
    */
   doubleClicked(fxn) {
     Element._adjustListener('dblclick', fxn, this);
@@ -1587,8 +1477,6 @@ class Element {
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   // Create a canvas element and
    *   // assign it to cnv.
@@ -1609,11 +1497,8 @@ class Element {
    *   let c = random(['red', 'yellow', 'blue', 'green']);
    *   background(c);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   // Create a canvas element and
    *   // assign it to cnv.
@@ -1646,8 +1531,6 @@ class Element {
    *     square(40, 40, 20);
    *   }
    * }
-   * </code>
-   * </div>
    */
   mouseWheel(fxn) {
     Element._adjustListener('wheel', fxn, this);
@@ -1668,8 +1551,6 @@ class Element {
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   // Create a canvas element and
    *   // assign it to cnv.
@@ -1690,8 +1571,6 @@ class Element {
    *   let c = random(['red', 'yellow', 'blue', 'green']);
    *   background(c);
    * }
-   * </code>
-   * </div>
    */
   mouseReleased(fxn) {
     Element._adjustListener('pointerup', fxn, this);
@@ -1712,8 +1591,6 @@ class Element {
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   // Create a canvas element and
    *   // assign it to cnv.
@@ -1734,8 +1611,6 @@ class Element {
    *   let c = random(['red', 'yellow', 'blue', 'green']);
    *   background(c);
    * }
-   * </code>
-   * </div>
    */
   mouseClicked(fxn) {
     Element._adjustListener('click', fxn, this);
@@ -1753,8 +1628,6 @@ class Element {
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   // Create a canvas element and
    *   // assign it to cnv.
@@ -1775,8 +1648,6 @@ class Element {
    *   let c = random(['red', 'yellow', 'blue', 'green']);
    *   background(c);
    * }
-   * </code>
-   * </div>
    */
   mouseMoved(fxn) {
     Element._adjustListener('pointermove', fxn, this);
@@ -1794,8 +1665,6 @@ class Element {
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   // Create a canvas element and
    *   // assign it to cnv.
@@ -1816,8 +1685,6 @@ class Element {
    *   let c = random(['red', 'yellow', 'blue', 'green']);
    *   background(c);
    * }
-   * </code>
-   * </div>
    */
   mouseOver(fxn) {
     Element._adjustListener('pointerover', fxn, this);
@@ -1835,8 +1702,6 @@ class Element {
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   // Create a canvas element and
    *   // assign it to cnv.
@@ -1857,15 +1722,13 @@ class Element {
    *   let c = random(['red', 'yellow', 'blue', 'green']);
    *   background(c);
    * }
-   * </code>
-   * </div>
    */
   mouseOut(fxn) {
     Element._adjustListener('pointerout', fxn, this);
     return this;
   }
 
-    /**
+  /**
    * Calls a function when a file is dragged over the element.
    *
    * Calling `myElement.dragOver(false)` disables the function.
@@ -1876,8 +1739,6 @@ class Element {
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
    * // Drag a file over the canvas to test.
    *
    * function setup() {
@@ -1898,8 +1759,6 @@ class Element {
    * function helloFile() {
    *   text('hello, file', 50, 50);
    * }
-   * </code>
-   * </div>
    */
   dragOver(fxn) {
     Element._adjustListener('dragover', fxn, this);
@@ -1916,8 +1775,6 @@ class Element {
    *                                `false` disables the function.
    * @chainable
    * @example
-   * <div>
-   * <code>
    * // Drag a file over, then off
    * // the canvas to test.
    *
@@ -1939,8 +1796,6 @@ class Element {
    * function byeFile() {
    *   text('bye, file', 50, 50);
    * }
-   * </code>
-   * </div>
    */
   dragLeave(fxn) {
     Element._adjustListener('dragleave', fxn, this);
@@ -1957,8 +1812,6 @@ class Element {
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
    * let dropdown;
    *
    * function setup() {
@@ -1984,11 +1837,8 @@ class Element {
    *   let c = dropdown.value();
    *   background(c);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let checkbox;
    *
    * function setup() {
@@ -2013,8 +1863,6 @@ class Element {
    *     circle(50, 50, 30);
    *   }
    * }
-   * </code>
-   * </div>
    */
   changed(fxn) {
     Element._adjustListener('change', fxn, this);
@@ -2033,8 +1881,6 @@ class Element {
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
    * let slider;
    *
    * function setup() {
@@ -2057,11 +1903,8 @@ class Element {
    *   let g = slider.value();
    *   background(g);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let input;
    *
    * function setup() {
@@ -2085,8 +1928,6 @@ class Element {
    *   let msg = input.value();
    *   text(msg, 5, 50);
    * }
-   * </code>
-   * </div>
    */
   input(fxn) {
     Element._adjustListener('input', fxn, this);
@@ -2111,8 +1952,6 @@ class Element {
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
    * // Drop an image on the canvas to view
    * // this example.
    * let img;
@@ -2143,11 +1982,8 @@ class Element {
    *   // Draw the image.
    *   image(img, 0, 0, width, height);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * // Drop an image on the canvas to view
    * // this example.
    * let img;
@@ -2199,8 +2035,6 @@ class Element {
    *   msg.style('color', c);
    *   msg.style('font-size', '12px');
    * }
-   * </code>
-   * </div>
    */
   drop(callback, fxn) {
     // Is the file stuff supported?
@@ -2222,6 +2056,15 @@ class Element {
       }
 
       // Deal with the files
+      const trackBlobFile = callback => file => {
+        if (file._isBlobUrl) {
+          if (!this._pInst._blobFiles) {
+            this._pInst._blobFiles = new Set();
+          }
+          this._pInst._blobFiles.add(file);
+        }
+        callback(file);
+      };
       Element._attachListener(
         'drop',
         function (evt) {
@@ -2235,7 +2078,7 @@ class Element {
 
           // Load each one and trigger the callback
           for (const f of files) {
-            File._load(f, callback);
+            File._load(f, trackBlobFile(callback));
           }
         },
         this
@@ -2258,8 +2101,6 @@ class Element {
    * @chainable
    *
    * @example
-   * <div>
-   * <code>
    * let stickyNote;
    * let textInput;
    *
@@ -2311,8 +2152,6 @@ class Element {
    * function handleInput() {
    *   stickyNote.html(textInput.value());
    * }
-   * </code>
-   * </div>
    */
   draggable(elmMove) {
     let isTouch = 'ontouchstart' in window;
@@ -2375,7 +2214,11 @@ class Element {
     }
 
     function closeDragElement() {
-      document.removeEventListener(closeDragElementEvt, closeDragElement, false);
+      document.removeEventListener(
+        closeDragElementEvt,
+        closeDragElement,
+        false
+      );
       document.removeEventListener(elementDragEvt, elementDrag, false);
     }
 
@@ -2416,7 +2259,10 @@ class Element {
       Element._detachListener(ev, ctx);
     }
     const f = fxn.bind(ctx);
-    ctx.elt.addEventListener(ev, f, false);
+    ctx.elt.addEventListener(ev, f, {
+      capture: false,
+      signal: ctx._pInst._removeSignal
+    });
     ctx._events[ev] = f;
   }
 
@@ -2432,9 +2278,9 @@ class Element {
     ctx.elt.removeEventListener(ev, f, false);
     ctx._events[ev] = null;
   }
-};
+}
 
-function element(p5, fn){
+function element(p5, fn) {
   /**
    * A class to describe an
    * <a href="https://developer.mozilla.org/en-US/docs/Learn/HTML/Introduction_to_HTML/Getting_started" target="_blank">HTML element</a>.
@@ -2451,8 +2297,6 @@ function element(p5, fn){
    * @param {p5} [pInst] pointer to p5 instance.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -2476,8 +2320,6 @@ function element(p5, fn){
    *   let c = random(['red', 'yellow', 'blue', 'green']);
    *   background(c);
    * }
-   * </code>
-   * </div>
    */
   p5.Element = Element;
 
@@ -2505,8 +2347,6 @@ function element(p5, fn){
    * object's properties and methods can be used directly.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   // Create a canvas element and
    *   // assign it to cnv.
@@ -2520,9 +2360,8 @@ function element(p5, fn){
    *
    *   describe('A gray square with a pink border drawn with dashed lines.');
    * }
-   * </code>
-   * </div>
    *
+   * @type {HTMLElement}
    * @property elt
    * @for p5.Element
    * @name elt
@@ -2533,6 +2372,6 @@ function element(p5, fn){
 export default element;
 export { Element };
 
-if(typeof p5 !== 'undefined'){
+if (typeof p5 !== 'undefined') {
   element(p5, p5.prototype);
 }

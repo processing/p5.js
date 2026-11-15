@@ -1,5 +1,6 @@
-name: 🐛 Found a Bug
-description: This template is for reporting bugs (broken or incorrect behaviour). If you have questions about your own code, please visit our forum discourse.processing.org instead.
+name: 📃 p5.js 1.x Bug Report
+description: This template is for reporting bugs (broken or incorrect behaviour) on p5.js versions 1.11 or earlier. Please note there is no active development on p5.js version 1.x.
+title: "[p5.js 1.x Bug Report]: "
 labels: [Bug]
 body:
 - type: checkboxes
@@ -20,6 +21,8 @@ body:
         - label: Typography
         - label: Utilities
         - label: WebGL
+        - label: WebGPU
+        - label: p5.strands
         - label: Build process
         - label: Unit testing
         - label: Internationalization

@@ -3,7 +3,7 @@
   #### Mentors: Rachel Lim and Claire Kearney-Volpe
   
   ### Overview
-  For my Google Summer of Code project, I added alt text to the visual elements of the p5.js website, specfically to all of the examples. With the help of my mentors Rachel and Claire,  I was able to improve the accessibility of the p5.js website for users with visually impairment.
+  For my Google Summer of Code project, I added alt text to the visual elements of the p5.js website, specifically to all of the examples. With the help of my mentors Rachel and Claire,  I was able to improve the accessibility of the p5.js website for users with visually impairment.
   
   ### Process
   To begin, I did a lot of research on best alt text practices. I read about web accessibility through sources such as articles from WebAIM and the Web Content Accessibility Guidelines from W3C. I also familiarized myself with navigating and using the built-in screen reader on my Mac. 

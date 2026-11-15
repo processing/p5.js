@@ -8,7 +8,6 @@ FES包含多个负责生成不同类型错误的友好错误消息的函数。�
 
 本文档首先概述了FES的主要函数及其位置。在随后的参考部分，您将找到有关这些单独函数的完整信息（描述、语法、参数、位置）。在文档的最后部分，您将找到我们以前的贡献者的笔记（开发笔记），概述了FES的已知限制和可能的未来方向。如果您正在考虑为FES做贡献，请查看[开发笔记](#-开发笔记)！
 
-
 ## 概述
 
 生成友好错误消息的主要函数是：
@@ -30,7 +29,6 @@ FES包含多个负责生成不同类型错误的友好错误消息的函数。�
 - `browser_errors.js`：包含将使用FES全局错误类（`fes.globalErrors`）生成的浏览器错误列表。
 - `stacktrace.js`：包含解析错误堆栈的代码（借用自[stacktrace.js](https://github.com/stacktracejs/stacktrace.js)）。
 
-
 ## 📚 参考：FES函数
 
 ### `_report()`
@@ -41,7 +39,6 @@ FES包含多个负责生成不同类型错误的友好错误消息的函数。�
 
 **注意：**如果设置了`p5._fesLogger`（即，我们正在运行测试），则将使用它代替`console.log`。这在我们通过Mocha运行测试时非常有用。在这种情况下，`_fesLogger`将让`_report`将错误消息作为字符串传递给Mocha，该字符串将与断言的字符串进行测试。
 
-
 #### 语法
 
 ```js
@@ -51,7 +48,6 @@ _report(message, func);
 
 _report(message, func, color);
 ```
-
 
 #### 参数
 
@@ -64,7 +60,6 @@ _report(message, func, color);
 `[func]`输入用于在错误消息末尾附加参考链接。
 
 `[color]`输入用于设置错误消息的颜色属性。这在当前版本的友好错误消息中未使用。
-
 
 #### 位置
 
@@ -93,13 +88,11 @@ _friendlyFileLoadError
   _report
 ```
 
-
 #### 语法
 
 ```js
 _friendlyFileLoadError(errorType, filePath);
 ```
-
 
 #### 参数
 
@@ -109,7 +102,6 @@ _friendlyFileLoadError(errorType, filePath);
 ```
 
 `errorType`输入指的是`core/friendly_errors/file_errors.js`中枚举的特定类型的文件加载错误。p5.js中的文件加载错误被分为各种不同的情况。这种分类旨在便于提供与不同错误场景相对应的精确和信息丰富的错误消息。例如，当它无法读取字体文件中的数据时，它可以显示与尝试加载过大无法读取的文件时不同的错误。
-
 
 #### 示例
 
@@ -138,11 +130,9 @@ function draw() {}
 + 更多信息：https://github.com/processing/p5.js/wiki/Local-server
 ```
 
-
 #### 位置
 
 /friendly\_errors/file\_errors.js
-
 
 ### `_friendlyAutoplayError()`
 
@@ -152,11 +142,9 @@ function draw() {}
 
 它调用`translator()`使用键`fes.autoplay`生成并打印友好错误消息。您可以在`translations/en/translation.json`中查看所有可用的键。
 
-
 #### 位置
 
 core/friendly\_errors/fes\_core.js
-
 
 ### `_validateParameters()`
 
@@ -218,13 +206,11 @@ validateParameters
         friendlyWelcome
 ```
 
-
 #### 语法
 
 ```js
 _validateParameters(func, args);
 ```
-
 
 #### 参数
 
@@ -232,7 +218,6 @@ _validateParameters(func, args);
 @param  {String}  func    被调用的函数的名称
 @param  {Array}   args    用户输入参数
 ```
-
 
 #### 示例
 
@@ -260,11 +245,9 @@ FES将在控制台中生成以下消息：
 🌸 p5.js says: [sketch.js, line 14] arc()的第一个参数需要Number类型，但收到了string类型。 (https://p5js.org/reference/p5/arc)
 ```
 
-
 #### 位置
 
 core/friendly\_errors/validate\_params.js
-
 
 ### `fesErrorMonitor()`
 
@@ -284,7 +267,11 @@ core/friendly\_errors/validate\_params.js
 `_fesErrorMonitor()`由`window`上的`error`事件和未处理的承诺拒绝（`unhandledrejection`事件）自动触发。但是，可以在catch块中手动调用，如下所示：
 
 ```js
-try { someCode(); } catch(err) { p5._fesErrorMonitor(err); }
+try {
+  someCode();
+} catch (err) {
+  p5._fesErrorMonitor(err);
+}
 ```
 
 该函数目前适用于`ReferenceError`、`SyntaxError`和`TypeError`的子集。您可以在`browser_errors.js`中找到支持的错误的完整列表。
@@ -306,20 +293,17 @@ try { someCode(); } catch(err) { p5._fesErrorMonitor(err); }
        printFriendlyStack
 ```
 
-
 #### 语法
 
 ```js
 fesErrorMonitor(event);
 ```
 
-
 #### 参数
 
 ```
 @param {*}  e     错误事件
 ```
-
 
 #### 示例
 
@@ -389,11 +373,9 @@ FES将在控制台中生成以下消息：
 🌸 p5.js says: [sketch.js, line 2] 您可能不小心写了"xolor"而不是"color"。如果您希望使用p5.js中的函数，请将其更正为color。 (https://p5js.org/reference/p5/color)
 ```
 
-
 #### 位置
 
 core/friendly\_errors/fes\_core.js
-
 
 ### `checkForUserDefinedFunctions()`
 
@@ -403,13 +385,11 @@ core/friendly\_errors/fes\_core.js
 
 它调用`translator()`使用键`fes.checkUserDefinedFns`生成并打印友好错误消息。您可以在`translations/en/translation.json`中查看所有可用的键。
 
-
 #### 语法
 
 ```js
 checkForUserDefinedFunctions(context);
 ```
-
 
 #### 参数
 
@@ -418,7 +398,6 @@ checkForUserDefinedFunctions(context);
                     在"全局模式"下设置为window，
                     在"实例模式"下设置为p5实例
 ```
-
 
 #### 示例
 
@@ -434,11 +413,9 @@ FES将在控制台中生成以下消息：
 🌸 p5.js says: 您可能不小心写了preLoad而不是preload。如果这不是有意的，请更正它。 (https://p5js.org/reference/p5/preload)
 ```
 
-
 #### 位置
 
 /friendly\_errors/fes\_core.js
-
 
 ### `helpForMisusedAtTopLevelCode()`
 
@@ -448,7 +425,6 @@ FES将在控制台中生成以下消息：
 
 它调用`translator()`使用键`fes.misusedTopLevel`生成并打印友好错误消息。您可以在`translations/en/translation.json`中查看所有可用的键。
 
-
 #### 参数
 
 ```
@@ -456,11 +432,9 @@ FES将在控制台中生成以下消息：
 @param {Boolean}  log    false
 ```
 
-
 #### 位置
 
 /friendly\_errors/fes\_core.js
-
 
 ## 💌 开发笔记
 
@@ -474,13 +448,11 @@ FES将在控制台中生成以下消息：
 
 在某些不理想的情况下，错误处理的设计可能需要选择消除假阳性或假阴性。如果必须选择，通常最好消除假阳性。这样，您可以避免生成可能分散注意力或误导用户的不正确警告。
 
-
 #### 与`fes.GlobalErrors`相关的限制
 
 FES只能检测到使用`const`或`var`声明的被覆盖的全局变量。使用let声明的变量不会被检测到。这个限制是由于`let`处理变量实例化的特定方式导致的，目前无法解决。
 
 `fesErrorMonitor()`下描述的功能目前仅在Web编辑器上或在本地服务器上运行时有效。有关更多详情，请参见 pull request \[[#4730](https://github.com/processing/p5.js/pull/4730)]。
-
 
 ### FES的性能问题
 
@@ -500,7 +472,6 @@ function draw() {
 
 请注意，此操作将禁用已知会降低性能的FES某些功能，例如参数检查。但是，不影响性能的友好错误消息仍将启用。这包括在文件加载失败时提供详细的错误消息，或者在您尝试覆盖全局空间中的p5.js函数时显示警告。
 
-
 ### 未来工作的想法
 
 - 解耦FES \[[#5629](https://github.com/processing/p5.js/issues/5629)]
@@ -509,7 +480,6 @@ function draw() {
 - 添加更多单元测试以获得全面的测试覆盖
 - 更直观、清晰且可翻译的消息。关于友好错误国际化的更多讨论，请查看[友好错误i18n手册](https://almchung.github.io/p5-fes-i18n-book/en/)。
 - 识别更多常见错误类型并使用FES进行泛化（例如 `bezierVertex()`、`quadraticVertex()` - 必需对象未初始化；检查 `nf()`、`nfc()`、`nfp()`、`nfs()` 的Number参数是否为正）
-
 
 ## 结论
 
@@ -523,4 +493,4 @@ function draw() {
 - [21-22 FES调查完整报告](https://observablehq.com/@almchung/p5-fes-21-survey)。
 
 <!-- TODO: 当我们发布下面的文章时取消注释 -->
-<!-- 如果您正在寻找向方法添加友好错误消息的方法，我们建议查看[如何添加友好错误消息](#)。它将一步步引导您完成向方法添加这些错误消息的过程。 --> 
+<!-- 如果您正在寻找向方法添加友好错误消息的方法，我们建议查看[如何添加友好错误消息](#)。它将一步步引导您完成向方法添加这些错误消息的过程。 -->

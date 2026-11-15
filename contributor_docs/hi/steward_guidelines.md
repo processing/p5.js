@@ -63,7 +63,7 @@
    - यदि प्रतिरूपण बाद में संभव है, तो कदम 2 पर वापस जाएं।
 4. यदि बग उपयोगकर्ता द्वारा प्रदान किए गए कोड से आता है और p5.js के व्यवहार से नहीं:
    - यह निर्धारित करें कि क्या p5.js दस्तावेज़ीकरण, कोड कार्यान्वयन, या मित्रसंपर्क त्रुटि प्रणाली को सुधारा जा सकता है ताकि वही गलती फिर से न हो।
-   - कृपया आगे किसी भी परिवर्तन के लिए [मंच](https://discourse.processing.org/) या [डिस्कॉर्ड](https://discord.com/invite/SHQ8dH25r9) पर और अधिक प्रश्न अद्यतन करें और यदि p5.js में कोई अधिक परिवर्तन नहीं करना है, तो समस्या को बंद करें।
+   - कृपया आगे किसी भी परिवर्तन के लिए [मंच](https://discourse.processing.org/) या [डिस्कॉर्ड](https://discord.p5js.org) पर और अधिक प्रश्न अद्यतन करें और यदि p5.js में कोई अधिक परिवर्तन नहीं करना है, तो समस्या को बंद करें।
 
 ### सुविधा अनुरोध
 
@@ -199,13 +199,24 @@ grunt.registerTask('lint', ['lint:source', 'lint:samples']);
 #### `test` कार्य
 
 ```js
-grunt.registerTask("test", ["build", "connect:server", "mochaChrome", "mochaTest", "nyc:report"]);
+grunt.registerTask('test', [
+  'build',
+  'connect:server',
+  'mochaChrome',
+  'mochaTest',
+  'nyc:report'
+]);
 ```
 
 सबसे पहले `test` तहत `build` कार्य को देखते हैं।
 
 ```js
-grunt.registerTask("build", ["browserify", "browserify:min", "uglify", "browserify:test"]);
+grunt.registerTask('build', [
+  'browserify',
+  'browserify:min',
+  'uglify',
+  'browserify:test'
+]);
 ```
 
 `browserify` से शुरू होने वाले कार्य [tasks/build/browserify.js](../tasks/build/browserify.js) में परिभाषित होते हैं। इनमें सभी मुख्य कदम होते हैं जो बहुत से उपयोगकर्ता कोड फ़ाइलों को संग्रहीत और एक में बनाने के लिए हैं:

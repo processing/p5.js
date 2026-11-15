@@ -2,10 +2,9 @@
  * @module Math
  * @submodule Random
  * @for p5
- * @requires core
  */
 
-function random(p5, fn){
+function random(p5, fn) {
   // variables used for random number generators
   const randomStateProp = '_lcg_random_state';
   // Set to values from http://en.wikipedia.org/wiki/Numerical_Recipes
@@ -19,7 +18,7 @@ function random(p5, fn){
   let y2 = 0;
 
   // Linear Congruential Generator that stores its state at instance[stateProperty]
-  fn._lcg = function(stateProperty) {
+  fn._lcg = function (stateProperty) {
     // define the recurrence relationship
     this[stateProperty] = (a * this[stateProperty] + c) % m;
     // return a float in [0, 1)
@@ -27,7 +26,7 @@ function random(p5, fn){
     return this[stateProperty] / m;
   };
 
-  fn._lcgSetSeed = function(stateProperty, val) {
+  fn._lcgSetSeed = function (stateProperty, val) {
     // pick a random seed if val is undefined or null
     // the >>> 0 casts the seed to an unsigned 32-bit integer
     this[stateProperty] = (val == null ? Math.random() * m : val) >>> 0;
@@ -47,8 +46,6 @@ function random(p5, fn){
    * @param {Number} seed   seed value.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -74,10 +71,8 @@ function random(p5, fn){
    *
    *   describe('A white circle appears at a random position. A black circle appears at (27.4, 25.8).');
    * }
-   * </code>
-   * </div>
    */
-  fn.randomSeed = function(seed) {
+  fn.randomSeed = function (seed) {
     this._lcgSetSeed(randomStateProp, seed);
     this._gaussian_previous = false;
   };
@@ -110,14 +105,7 @@ function random(p5, fn){
    * For example, calling `random(-5, 10.2)` returns values from -5 up to but
    * not including 10.2.
    *
-   * @method random
-   * @param  {Number} [min]   lower bound (inclusive).
-   * @param  {Number} [max]   upper bound (exclusive).
-   * @return {Number} random number.
-   *
-   * @example
-   * <div>
-   * <code>
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -133,11 +121,9 @@ function random(p5, fn){
    *
    *   describe('A black dot appears in a random position on a gray square.');
    * }
-   * </code>
-   * </div>
+   * ```
    *
-   * <div>
-   * <code>
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -153,11 +139,9 @@ function random(p5, fn){
    *
    *   describe('A black dot appears in a random position on a gray square.');
    * }
-   * </code>
-   * </div>
+   * ```
    *
-   * <div>
-   * <code>
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -178,11 +162,9 @@ function random(p5, fn){
    *
    *   describe('An animal face is displayed at random. Either a lion, tiger, or bear.');
    * }
-   * </code>
-   * </div>
+   * ```
    *
-   * <div>
-   * <code>
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -203,11 +185,9 @@ function random(p5, fn){
    *   strokeWeight(5);
    *   point(x, y);
    * }
-   * </code>
-   * </div>
+   * ```
    *
-   * <div>
-   * <code>
+   * ```js example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -228,11 +208,9 @@ function random(p5, fn){
    *   strokeWeight(5);
    *   point(x, y);
    * }
-   * </code>
-   * </div>
+   * ```
    *
-   * <div>
-   * <code>
+   * ```js example
    * let x = 50;
    * let y = 50;
    *
@@ -252,15 +230,48 @@ function random(p5, fn){
    *   // Draw the point.
    *   point(x, y);
    * }
-   * </code>
-   * </div>
+   * ```
+   *
+   * `random()` can also be used in shaders with p5.strands. The following example
+   * uses `random()` to create varying colors on a shape.
+   *
+   * ```js example
+   * let myShader;
+   *
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *   myShader = buildColorShader(shaderCallback);
+   *   describe('A sphere with randomly varying colors.');
+   * }
+   *
+   * function shaderCallback() {
+   *   let r = random();
+   *   let g = random();
+   *   let b = random();
+   *   finalColor.begin();
+   *   finalColor.set([r, g, b, 1]);
+   *   finalColor.end();
+   * }
+   *
+   * function draw() {
+   *   background(220);
+   *   shader(myShader);
+   *   noStroke();
+   *   sphere(30);
+   * }
+   * ```
+   *
+   * @method random
+   * @param  {Number} [min]   lower bound (inclusive).
+   * @param  {Number} [max]   upper bound (exclusive).
+   * @return {Number} random number.
    */
   /**
    * @method random
    * @param  {Array} choices   array to choose from.
    * @return {*} random element from the array.
    */
-  fn.random = function(min, max) {
+  fn.random = function (min, max) {
     // p5._validateParameters('random', arguments);
     let rand;
 
@@ -317,8 +328,6 @@ function random(p5, fn){
    * @param  {Number} [sd]    standard deviation.
    * @return {Number} random number.
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -347,10 +356,8 @@ function random(p5, fn){
    *   y = 75;
    *   circle(x, y, 5);
    * }
-   * </code>
-   * </div>
    */
-  fn.randomGaussian = function(mean, sd = 1) {
+  fn.randomGaussian = function (mean, sd = 1) {
     let y1, x1, x2, w;
     if (this._gaussian_previous) {
       y1 = y2;
@@ -361,7 +368,7 @@ function random(p5, fn){
         x2 = this.random(2) - 1;
         w = x1 * x1 + x2 * x2;
       } while (w >= 1);
-      w = Math.sqrt(-2 * Math.log(w) / w);
+      w = Math.sqrt((-2 * Math.log(w)) / w);
       y1 = x1 * w;
       y2 = x2 * w;
       this._gaussian_previous = true;
@@ -374,6 +381,6 @@ function random(p5, fn){
 
 export default random;
 
-if(typeof p5 !== 'undefined'){
+if (typeof p5 !== 'undefined') {
   random(p5, p5.prototype);
 }

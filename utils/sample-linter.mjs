@@ -1,7 +1,7 @@
 'use strict';
 const EOL = '\n';
 import { ESLint } from 'eslint';
-import dataDoc from '../docs/reference/data.min.json' assert {type: 'json'};
+import dataDoc from '../docs/reference/data.min.json' assert { type: 'json' };
 // envs: ['eslint-samples/p5'],
 
 const itemtypes = ['method', 'property'];
@@ -9,9 +9,7 @@ const classes = ['p5'];
 const globals = {};
 
 dataDoc.classitems
-  .filter(
-    ci => classes.includes(ci.class) && itemtypes.includes(ci.itemtype)
-  )
+  .filter(ci => classes.includes(ci.class) && itemtypes.includes(ci.itemtype))
   .forEach(ci => {
     globals[ci.name] = true;
   });
@@ -63,7 +61,7 @@ const plugin = {
   processors: {
     '.js': {
       supportsAutofix: true,
-      preprocess: function(text) {
+      preprocess: function (text) {
         globalLines = splitLines(text);
 
         let m;
@@ -101,7 +99,7 @@ const plugin = {
         return globalSamples.map(s => s.code + userFunctionTrailer);
       },
 
-      postprocess: function(sampleMessages, filename) {
+      postprocess: function (sampleMessages, filename) {
         const problems = [];
 
         for (let i = 0; i < sampleMessages.length; i++) {
@@ -177,7 +175,7 @@ async function eslintFiles(opts, filesSrc) {
       'eslint-samples': plugin
     },
     overrideConfig: {
-      'plugins': ['eslint-samples']
+      plugins: ['eslint-samples']
     },
     fix: opts.fix
   });
@@ -194,18 +192,21 @@ async function eslintFiles(opts, filesSrc) {
   }
 
   let results = await eslint.lintFiles(filesSrc);
-  const report = results.reduce((acc, result) => {
-    acc.errorCount += result.errorCount;
-    acc.warningCount += result.warningCount;
-    acc.fixableErrorCount += result.fixableErrorCount;
-    acc.fixableWarningCount += result.fixableWarningCount;
-    return acc;
-  }, {
-    errorCount: 0,
-    warningCount: 0,
-    fixableErrorCount: 0,
-    fixableWarningCount: 0
-  });
+  const report = results.reduce(
+    (acc, result) => {
+      acc.errorCount += result.errorCount;
+      acc.warningCount += result.warningCount;
+      acc.fixableErrorCount += result.fixableErrorCount;
+      acc.fixableWarningCount += result.fixableWarningCount;
+      return acc;
+    },
+    {
+      errorCount: 0,
+      warningCount: 0,
+      fixableErrorCount: 0,
+      fixableWarningCount: 0
+    }
+  );
 
   if (opts.quiet) {
     results = ESLint.getErrorResults(results);
@@ -220,7 +221,7 @@ async function eslintFiles(opts, filesSrc) {
 function splitLines(text) {
   const lines = [];
 
-  lines.lineFromIndex = function(index) {
+  lines.lineFromIndex = function (index) {
     const lines = this;
     const lineCount = lines.length;
     for (let i = 0; i < lineCount; i++) {
@@ -246,9 +247,8 @@ function splitLines(text) {
   return lines;
 }
 
-eslintFiles(null, process.argv.slice(2))
-  .then(result => {
-    if(result === true) process.exit(0);
-    console.log(result.output);
-    process.exit(result.report.errorCount === 0 ? 0 : 1);
-  });
+eslintFiles(null, process.argv.slice(2)).then(result => {
+  if (result === true) process.exit(0);
+  console.log(result.output);
+  process.exit(result.report.errorCount === 0 ? 0 : 1);
+});

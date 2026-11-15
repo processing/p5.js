@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200">
+  <!--
+    SVG element-level transform: translate
+    An ellipse translated to (50,50) then drawn at (50,50,80,50)
+  -->
+  <rect x="0" y="0" width="200" height="200" fill="rgb(200,200,200)"/>
+  <g transform="translate(50,50)">
+    <ellipse cx="50" cy="50" rx="40" ry="25" fill="white" stroke="black" stroke-width="1"/>
+  </g>
+</svg>

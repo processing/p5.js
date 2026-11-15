@@ -6,8 +6,8 @@ import { Texture } from './p5.Texture';
  * @param {Uint8Array|Float32Array|undefined} pixels An existing pixels array to reuse if the size is the same
  * @param {WebGLRenderingContext} gl The WebGL context
  * @param {WebGLFramebuffer|null} framebuffer The Framebuffer to read
- * @param {Number} x The x coordiante to read, premultiplied by pixel density
- * @param {Number} y The y coordiante to read, premultiplied by pixel density
+ * @param {Number} x The x coordinate to read, premultiplied by pixel density
+ * @param {Number} y The y coordinate to read, premultiplied by pixel density
  * @param {Number} width The width in pixels to be read (factoring in pixel density)
  * @param {Number} height The height in pixels to be read (factoring in pixel density)
  * @param {GLEnum} format Either RGB or RGBA depending on how many channels to read
@@ -103,8 +103,14 @@ export function readPixelWebGL(gl, framebuffer, x, y, format, type, flipY) {
 
 export function setWebGLTextureParams(texture, gl, webglVersion) {
   texture.bindTexture();
-  const glMinFilter = texture.minFilter === constants.NEAREST ? gl.NEAREST : gl.LINEAR;
-  const glMagFilter = texture.magFilter === constants.NEAREST ? gl.NEAREST : gl.LINEAR;
+  const glMinFilter =
+    texture.minFilter === constants.NEAREST
+      ? gl.NEAREST
+      : texture.minFilter === constants.LINEAR_MIPMAP
+        ? gl.LINEAR_MIPMAP_LINEAR
+        : gl.LINEAR;
+  const glMagFilter =
+    texture.magFilter === constants.NEAREST ? gl.NEAREST : gl.LINEAR;
 
   // for webgl 1 we need to check if the texture is power of two
   // if it isn't we will set the wrap mode to CLAMP
@@ -218,6 +224,9 @@ export function setWebGLUniformValue(shader, uniform, data, getTexture, gl) {
         gl.uniform1f(location, data);
       }
       break;
+    case gl.FLOAT_MAT2:
+      gl.uniformMatrix2fv(location, false, data);
+      break;
     case gl.FLOAT_MAT3:
       gl.uniformMatrix3fv(location, false, data);
       break;
@@ -278,18 +287,14 @@ export function setWebGLUniformValue(shader, uniform, data, getTexture, gl) {
               "You're trying to use a number as the data for a texture." +
               'Please use a texture.'
           );
-          return this;
+          return;
         }
         gl.activeTexture(data);
         gl.uniform1i(location, data);
       } else {
         gl.activeTexture(gl.TEXTURE0 + uniform.samplerIndex);
-        uniform.texture =
-          data instanceof Texture ? data : getTexture(data);
+        uniform.texture = data instanceof Texture ? data : getTexture(data);
         gl.uniform1i(location, uniform.samplerIndex);
-        if (uniform.texture.src.gifProperties) {
-          uniform.texture.src._animateGif(this._pInst);
-        }
       }
       break;
     case gl.SAMPLER_CUBE:
@@ -339,10 +344,7 @@ export function getWebGLUniformMetadata(shader, gl) {
   for (let i = 0; i < numUniforms; ++i) {
     const uniformInfo = gl.getActiveUniform(program, i);
     const uniform = {};
-    uniform.location = gl.getUniformLocation(
-      program,
-      uniformInfo.name
-    );
+    uniform.location = gl.getUniformLocation(program, uniformInfo.name);
     uniform.size = uniformInfo.size;
     let uniformName = uniformInfo.name;
     //uniforms that are arrays have their name returned as
@@ -363,6 +365,7 @@ export function getWebGLUniformMetadata(shader, gl) {
 
     uniform.isArray =
       uniformInfo.size > 1 ||
+      uniform.type === gl.FLOAT_MAT2 ||
       uniform.type === gl.FLOAT_MAT3 ||
       uniform.type === gl.FLOAT_MAT4 ||
       uniform.type === gl.FLOAT_VEC2 ||
@@ -418,6 +421,39 @@ export function populateGLSLHooks(shader, src, shaderType) {
   if (shader.hooks[shaderType].declarations) {
     hooks += shader.hooks[shaderType].declarations + '\n';
   }
+
+  // Handle varying variables from p5.strands
+  if (
+    shader.hooks.varyingVariables &&
+    shader.hooks.varyingVariables.length > 0
+  ) {
+    for (const varyingVar of shader.hooks.varyingVariables) {
+      // Generate OUT declaration for vertex shader, IN declaration for fragment shader
+      if (shaderType === 'vertex') {
+        hooks += `OUT ${varyingVar};\n`;
+      } else if (shaderType === 'fragment') {
+        hooks += `IN ${varyingVar};\n`;
+      }
+    }
+  }
+
+  // Handle instanceID varying for fragment access
+  if (shader.hooks.instanceIDVarying) {
+    const { declaration, source, interpolation } =
+      shader.hooks.instanceIDVarying;
+    const qualifier = interpolation ? `${interpolation} ` : '';
+    if (shaderType === 'vertex') {
+      // Emit flat out declaration and inject assignment into main() body
+      hooks += `${qualifier}OUT ${declaration};\n`;
+      postMain = postMain.replace(
+        /\{/,
+        `{\n  ${declaration.split(' ').pop()} = ${source};`
+      );
+    } else if (shaderType === 'fragment') {
+      hooks += `${qualifier}IN ${declaration};\n`;
+    }
+  }
+
   for (const hookDef in shader.hooks.helpers) {
     hooks += `${hookDef}${shader.hooks.helpers[hookDef]}\n`;
   }
@@ -451,17 +487,19 @@ export function populateGLSLHooks(shader, src, shaderType) {
 
 export function checkWebGLCapabilities({ GL, webglVersion }) {
   const gl = GL;
-  const supportsFloat = webglVersion === constants.WEBGL2
-    ? (gl.getExtension('EXT_color_buffer_float') &&
-        gl.getExtension('EXT_float_blend'))
-    : gl.getExtension('OES_texture_float');
-  const supportsFloatLinear = supportsFloat &&
-    gl.getExtension('OES_texture_float_linear');
-  const supportsHalfFloat = webglVersion === constants.WEBGL2
-    ? gl.getExtension('EXT_color_buffer_float')
-    : gl.getExtension('OES_texture_half_float');
-  const supportsHalfFloatLinear = supportsHalfFloat &&
-    gl.getExtension('OES_texture_half_float_linear');
+  const supportsFloat =
+    webglVersion === constants.WEBGL2
+      ? gl.getExtension('EXT_color_buffer_float') &&
+        gl.getExtension('EXT_float_blend')
+      : gl.getExtension('OES_texture_float');
+  const supportsFloatLinear =
+    supportsFloat && gl.getExtension('OES_texture_float_linear');
+  const supportsHalfFloat =
+    webglVersion === constants.WEBGL2
+      ? gl.getExtension('EXT_color_buffer_float')
+      : gl.getExtension('OES_texture_half_float');
+  const supportsHalfFloatLinear =
+    supportsHalfFloat && gl.getExtension('OES_texture_half_float_linear');
   return {
     float: supportsFloat,
     floatLinear: supportsFloatLinear,

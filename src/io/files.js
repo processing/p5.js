@@ -2,13 +2,13 @@
  * @module IO
  * @submodule Input
  * @for p5
- * @requires core
  */
 
 import { Renderer } from '../core/p5.Renderer';
 import { Graphics } from '../core/p5.Graphics';
 import { parse } from './csv';
 import { downloadFile, _checkFileExtension } from './utilities';
+import { FES, TL } from '../friendly_errors/fes';
 
 class HTTPError extends Error {
   status;
@@ -16,17 +16,20 @@ class HTTPError extends Error {
   ok;
 }
 
-export async function request(path, type){
+export async function request(path, type) {
+  let errorFileType = TL.tl`file`;
   try {
     const res = await fetch(path);
 
     if (res.ok) {
       let data;
-      switch(type) {
+      switch (type) {
         case 'json':
+          errorFileType = TL.tl`JSON file`;
           data = await res.json();
           break;
         case 'text':
+          errorFileType = TL.tl`text file`;
           data = await res.text();
           break;
         case 'arrayBuffer':
@@ -36,20 +39,13 @@ export async function request(path, type){
           data = await res.blob();
           break;
         case 'bytes':
-          // TODO: Chrome does not implement res.bytes() yet
-          if(res.bytes){
-            data = await res.bytes();
-          }else{
-            const d = await res.arrayBuffer();
-            data = new Uint8Array(d);
-          }
+          data = await res.bytes();
           break;
         default:
           throw new Error('Unsupported response type');
       }
 
       return { data, headers: res.headers };
-
     } else {
       const err = new HTTPError(res.statusText);
       err.status = res.status;
@@ -58,22 +54,26 @@ export async function request(path, type){
 
       throw err;
     }
-
-  } catch(err) {
+  } catch (err) {
     // Handle both fetch error and HTTP error
     if (err instanceof TypeError) {
       console.log('You may have encountered a CORS error');
     } else if (err instanceof HTTPError) {
-      console.log('You have encountered a HTTP error');
+      const infoURL = 'https://github.com/processing/p5.js/wiki/Local-server';
+      FES.log`It looks like there was a problem loading your ${errorFileType}. Try checking if the file path (${path}) is correct, hosting the file online, or running a local server.
+
++ More info: ${infoURL}`();
     } else if (err instanceof SyntaxError) {
-      console.log('There is an error parsing the response to requested data structure');
+      console.log(
+        'There is an error parsing the response to requested data structure'
+      );
     }
 
     throw err;
   }
 }
 
-function files(p5, fn){
+function files(p5, fn) {
   /**
    * Loads a JSON file to create an `Object`.
    *
@@ -115,9 +115,6 @@ function files(p5, fn){
    * @return {Promise<Object>} object containing the loaded data.
    *
    * @example
-   *
-   * <div>
-   * <code>
    * let myData;
    *
    * async function setup() {
@@ -135,11 +132,8 @@ function files(p5, fn){
    *
    *   describe('A pink circle on a gray background.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let myData;
    *
    * async function setup() {
@@ -164,11 +158,8 @@ function files(p5, fn){
    *
    *   describe('Several pink bubbles floating in a blue sky.');
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let myData;
    *
    * async function setup() {
@@ -193,11 +184,8 @@ function files(p5, fn){
    *
    *   describe(`A white circle on a gray background. The text "${quake.place}" is written beneath the circle.`);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let bigQuake;
    *
    * // Load the GeoJSON and preprocess it.
@@ -237,11 +225,8 @@ function files(p5, fn){
    *     }
    *   }
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let bigQuake;
    *
    * // Load the GeoJSON and preprocess it.
@@ -287,19 +272,18 @@ function files(p5, fn){
    * function handleError(error) {
    *   console.log('Oops!', error);
    * }
-   * </code>
-   * </div>
    */
   fn.loadJSON = async function (path, successCallback, errorCallback) {
-    // p5._validateParameters('loadJSON', arguments);
-
-    try{
+    try {
       const { data } = await request(path, 'json');
-      if (successCallback) return successCallback(data);
-      return data;
-    } catch(err) {
-      p5._friendlyFileLoadError(5, path);
-      if(errorCallback) {
+      const cb = () => {
+        if (successCallback) return successCallback(data);
+        return data;
+      };
+      return this._internal ? this._internal(cb) : cb();
+    } catch (err) {
+      // p5._friendlyFileLoadError(5, path);
+      if (errorCallback) {
         return errorCallback(err);
       } else {
         throw err;
@@ -344,9 +328,6 @@ function files(p5, fn){
    * @return {Promise<String[]>} new array containing the loaded text.
    *
    * @example
-   *
-   * <div>
-   * <code>
    * let myData;
    *
    * async function setup() {
@@ -369,11 +350,8 @@ function files(p5, fn){
    *
    *   describe(`The text "${phrase}" written in black on a gray background.`);
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let lastLine;
    *
    * // Load the text and preprocess it.
@@ -399,11 +377,8 @@ function files(p5, fn){
    * function handleData(data) {
    *   lastLine = data[data.length - 1];
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let lastLine;
    *
    * // Load the text and preprocess it.
@@ -434,21 +409,21 @@ function files(p5, fn){
    * function handleError(error) {
    *   console.error('Oops!', error);
    * }
-   * </code>
-   * </div>
    */
   fn.loadStrings = async function (path, successCallback, errorCallback) {
     // p5._validateParameters('loadStrings', arguments);
 
-    try{
+    try {
       let { data } = await request(path, 'text');
-      data = data.split(/\r?\n/);
-
-      if (successCallback) return successCallback(data);
-      return data;
-    } catch(err) {
-      p5._friendlyFileLoadError(3, path);
-      if(errorCallback) {
+      const cb = () => {
+        data = data.split(/\r?\n/);
+        if (successCallback) return successCallback(data);
+        return data;
+      };
+      return this._internal ? this._internal(cb) : cb();
+    } catch (err) {
+      // p5._friendlyFileLoadError(3, path);
+      if (errorCallback) {
         return errorCallback(err);
       } else {
         throw err;
@@ -484,8 +459,7 @@ function files(p5, fn){
    * @return {Promise<Object>}            <a href="#/p5.Table">Table</a> object containing data
    *
    * @example
-   * <div class='norender'>
-   * <code>
+   * // META:norender
    * let table;
    *
    * async function setup() {
@@ -508,49 +482,55 @@ function files(p5, fn){
    *     text(row.getString(c), 10, 30 + c * 20);
    *   }
    * }
-   * </code>
-   * </div>
    */
-  fn.loadTable = async function (path, separator, header, successCallback, errorCallback) {
-    if(typeof arguments[arguments.length-1] === 'function'){
-      if(typeof arguments[arguments.length-2] === 'function'){
-        successCallback = arguments[arguments.length-2];
-        errorCallback = arguments[arguments.length-1];
-      }else{
-        successCallback = arguments[arguments.length-1];
+  fn.loadTable = async function (
+    path,
+    separator,
+    header,
+    successCallback,
+    errorCallback
+  ) {
+    if (typeof arguments[arguments.length - 1] === 'function') {
+      if (typeof arguments[arguments.length - 2] === 'function') {
+        successCallback = arguments[arguments.length - 2];
+        errorCallback = arguments[arguments.length - 1];
+      } else {
+        successCallback = arguments[arguments.length - 1];
       }
     }
 
-    if(typeof separator !== 'string') separator = ',';
-    if(typeof header === 'function') header = false;
+    if (typeof separator !== 'string') separator = ',';
+    if (typeof header === 'function') header = false;
 
-    try{
+    try {
       let { data } = await request(path, 'text');
+      const cb = () => {
+        let ret = new p5.Table();
+        data = parse(data, {
+          separator
+        });
 
-      let ret = new p5.Table();
-      data = parse(data, {
-        separator
-      });
+        if (header) {
+          ret.columns = data.shift();
+        } else {
+          ret.columns = Array(data[0].length).fill(null);
+        }
 
-      if(header){
-        ret.columns = data.shift();
-      }else{
-        ret.columns = Array(data[0].length).fill(null);
-      }
+        data.forEach(line => {
+          const row = new p5.TableRow(line);
+          ret.addRow(row);
+        });
 
-      data.forEach((line) => {
-        const row = new p5.TableRow(line);
-        ret.addRow(row);
-      });
-
-      if (successCallback) {
-        return successCallback(ret);
-      } else {
-        return ret;
-      }
-    } catch(err) {
-      p5._friendlyFileLoadError(2, path);
-      if(errorCallback) {
+        if (successCallback) {
+          return successCallback(ret);
+        } else {
+          return ret;
+        }
+      };
+      return this._internal ? this._internal(cb) : cb();
+    } catch (err) {
+      // p5._friendlyFileLoadError(2, path);
+      if (errorCallback) {
         return errorCallback(err);
       } else {
         throw err;
@@ -565,7 +545,7 @@ function files(p5, fn){
    * (<a href="https://developer.mozilla.org/en-US/docs/Web/XML/XML_introduction" target="_blank">XML</a>)
    * is a standard format for sending data between applications. Like HTML, the
    * XML format is based on tags and attributes, as in
-   * `&lt;time units="s"&gt;1234&lt;/time&gt;`.
+   * `<time units="s">1234</time>`.
    *
    * The first parameter, `path`, is always a string with the path to the file.
    * Paths to local files should be relative, as in
@@ -603,8 +583,6 @@ function files(p5, fn){
    *                  object.
    *
    * @example
-   * <div>
-   * <code>
    * let myXML;
    *
    * // Load the XML and create a p5.XML object.
@@ -640,11 +618,8 @@ function files(p5, fn){
    *     'The words "Goat", "Leopard", and "Zebra" written on three separate lines. The text is black on a gray background.'
    *   );
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let lastMammal;
    *
    * // Load the XML and create a p5.XML object.
@@ -674,11 +649,8 @@ function files(p5, fn){
    *   // Get the content of the last mammal.
    *   lastMammal = mammals[mammals.length - 1].getContent();
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * let lastMammal;
    *
    * // Load the XML and preprocess it.
@@ -713,22 +685,22 @@ function files(p5, fn){
    * function handleError(error) {
    *   console.error('Oops!', error);
    * }
-   * </code>
-   * </div>
    */
   fn.loadXML = async function (path, successCallback, errorCallback) {
-    try{
+    try {
       const parser = new DOMParser();
 
       let { data } = await request(path, 'text');
-      const parsedDOM = parser.parseFromString(data, 'application/xml');
-      data = new p5.XML(parsedDOM);
-
-      if (successCallback) return successCallback(data);
-      return data;
-    } catch(err) {
-      p5._friendlyFileLoadError(1, path);
-      if(errorCallback) {
+      const cb = () => {
+        const parsedDOM = parser.parseFromString(data, 'application/xml');
+        data = new p5.XML(parsedDOM);
+        if (successCallback) return successCallback(data);
+        return data;
+      };
+      return this._internal ? this._internal(cb) : cb();
+    } catch (err) {
+      // p5._friendlyFileLoadError(1, path);
+      if (errorCallback) {
         return errorCallback(err);
       } else {
         throw err;
@@ -748,39 +720,36 @@ function files(p5, fn){
    * @returns {Promise<Uint8Array>} a Uint8Array containing the loaded buffer
    *
    * @example
-   *
-   * <div>
-   * <code>
    * let data;
    *
    * async function setup() {
-   * createCanvas(100, 100); // Create a canvas
-   * data = await loadBytes('assets/mammals.xml'); // Load the bytes from the XML file
+   *   createCanvas(100, 100); // Create a canvas
+   *   data = await loadBytes('assets/mammals.xml'); // Load the bytes from the XML file
    *
-   * background(255); // Set a white background
-   * fill(0);       // Set text color to black
+   *   background(255); // Set a white background
+   *   fill(0);       // Set text color to black
    *
-   * // Display the first 5 byte values on the canvas in hexadecimal format
-   * for (let i = 0; i < 5; i++) {
-   * let byteHex = data[i].toString(16);
-   * text(byteHex, 10, 18 * (i + 1)); // Adjust spacing as needed
+   *   // Display the first 5 byte values on the canvas in hexadecimal format
+   *   for (let i = 0; i < 5; i++) {
+   *     let byteHex = data[i].toString(16);
+   *     text(byteHex, 10, 18 * (i + 1)); // Adjust spacing as needed
+   *   }
+   *
+   *   describe('no image displayed, displays first 5 bytes of mammals.xml in hexadecimal format');
    * }
-   *
-   * describe('no image displayed, displays first 5 bytes of mammals.xml in hexadecimal format');
-   * }
-   * </code>
-   * </div>
    */
-
   fn.loadBytes = async function (path, successCallback, errorCallback) {
-    try{
+    try {
       let { data } = await request(path, 'arrayBuffer');
-      data = new Uint8Array(data);
-      if (successCallback) return successCallback(data);
-      return data;
-    } catch(err) {
-      p5._friendlyFileLoadError(6, path);
-      if(errorCallback) {
+      const cb = () => {
+        data = new Uint8Array(data);
+        if (successCallback) return successCallback(data);
+        return data;
+      };
+      return this._internal ? this._internal(cb) : cb();
+    } catch (err) {
+      // p5._friendlyFileLoadError(6, path);
+      if (errorCallback) {
         return errorCallback(err);
       } else {
         throw err;
@@ -805,8 +774,6 @@ function files(p5, fn){
    * @returns {Promise<Blob>} A promise that resolves with the loaded Blob.
    *
    * @example
-   * <div>
-   * <code>
    * let myBlob;
    *
    * async function setup() {
@@ -828,16 +795,17 @@ function files(p5, fn){
    *     console.error('Error loading blob:', err);
    *   }
    * }
-   * </code>
-   * </div>
    */
-  fn.loadBlob = async function(path, successCallback, errorCallback) {
-    try{
+  fn.loadBlob = async function (path, successCallback, errorCallback) {
+    try {
       const { data } = await request(path, 'blob');
-      if (successCallback) return successCallback(data);
-      return data;
-    } catch(err) {
-      if(errorCallback) {
+      const cb = () => {
+        if (successCallback) return successCallback(data);
+        return data;
+      };
+      return this._internal ? this._internal(cb) : cb();
+    } catch (err) {
+      if (errorCallback) {
         return errorCallback(err);
       } else {
         throw err;
@@ -866,14 +834,14 @@ function files(p5, fn){
    *                   completes successfully or rejects with the error after
    *                   one occurs.
    * @example
-   * <div class='norender'><code>
+   * // META:norender
    * // Examples use USGS Earthquake API:
    * //   https://earthquake.usgs.gov/fdsnws/event/1/#methods
    * let earthquakes;
    * async function setup() {
    *   // Get the most recent earthquake in the database
    *   let url =
-      'https://earthquake.usgs.gov/fdsnws/event/1/query?' +
+   * 'https://earthquake.usgs.gov/fdsnws/event/1/query?' +
    *     'format=geojson&limit=1&orderby=time';
    *   earthquakes = await httpGet(url, 'json');
    * }
@@ -892,7 +860,6 @@ function files(p5, fn){
    *   text(earthquakeName, 0, height - 30, width, 30);
    *   noLoop();
    * }
-   * </code></div>
    */
   /**
    * @method httpGet
@@ -901,7 +868,12 @@ function files(p5, fn){
    * @param  {Function}        [errorCallback]
    * @return {Promise}
    */
-  fn.httpGet = async function (path, datatype='text', successCallback, errorCallback) {
+  fn.httpGet = async function (
+    path,
+    datatype = 'text',
+    successCallback,
+    errorCallback
+  ) {
     // p5._validateParameters('httpGet', arguments);
 
     if (typeof datatype === 'function') {
@@ -937,8 +909,6 @@ function files(p5, fn){
    *                   one occurs.
    *
    * @example
-   * <div>
-   * <code>
    * // Examples use jsonplaceholder.typicode.com for a Mock Data API
    *
    * let url = 'https://jsonplaceholder.typicode.com/posts';
@@ -955,10 +925,8 @@ function files(p5, fn){
    *     text(result.body, mouseX, mouseY);
    *   });
    * }
-   * </code>
-   * </div>
    *
-   * <div><code>
+   * @example
    * let url = 'ttps://invalidURL'; // A bad URL that will cause errors
    * let postData = { title: 'p5 Clicked!', body: 'p5.js is very cool.' };
    *
@@ -981,7 +949,6 @@ function files(p5, fn){
    *     }
    *   );
    * }
-   * </code></div>
    */
   /**
    * @method httpPost
@@ -998,7 +965,13 @@ function files(p5, fn){
    * @param  {Function}         [errorCallback]
    * @return {Promise}
    */
-  fn.httpPost = async function (path, data, datatype='text', successCallback, errorCallback) {
+  fn.httpPost = async function (
+    path,
+    data,
+    datatype = 'text',
+    successCallback,
+    errorCallback
+  ) {
     // p5._validateParameters('httpPost', arguments);
 
     // This behave similarly to httpGet and additional options should be passed
@@ -1011,7 +984,6 @@ function files(p5, fn){
       errorCallback = datatype;
       data = undefined;
       datatype = 'text';
-
     } else if (typeof datatype === 'function') {
       // Data is provided but not datatype\
       errorCallback = successCallback;
@@ -1022,14 +994,12 @@ function files(p5, fn){
     let reqData = data;
     let contentType = 'text/plain';
     // Normalize data
-    if(data instanceof p5.XML) {
+    if (data instanceof p5.XML) {
       reqData = data.serialize();
       contentType = 'application/xml';
-
-    } else if(data instanceof p5.Image) {
+    } else if (data instanceof p5.Image) {
       reqData = await data.toBlob();
       contentType = 'image/png';
-
     } else if (typeof data === 'object') {
       reqData = JSON.stringify(data);
       contentType = 'application/json';
@@ -1079,8 +1049,6 @@ function files(p5, fn){
    *                   one occurs.
    *
    * @example
-   * <div>
-   * <code>
    * // Examples use USGS Earthquake API:
    * // https://earthquake.usgs.gov/fdsnws/event/1/#methods
    *
@@ -1090,15 +1058,15 @@ function files(p5, fn){
    *
    * function setup() {
    *  createCanvas(100,100);
-   * 
+   *
    *   let url = 'https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson';
-   * 
+   *
    *   const req = new Request(url, {
    *    method: 'GET',
    *    headers: {authorization: 'Bearer secretKey'}
    *  });
-   *  // httpDo(path, method, datatype, success, error) 
-   * 
+   *  // httpDo(path, method, datatype, success, error)
+   *
    *   httpDo(
    *     req,
    *     'GET',
@@ -1111,7 +1079,7 @@ function files(p5, fn){
    *    }
    *  );
    * }
-   * 
+   *
    * function draw() {
    *   // wait until the data is loaded
    *   if (!earthquakes || !earthquakes.features[eqFeatureIndex]) {
@@ -1131,8 +1099,6 @@ function files(p5, fn){
    *     eqFeatureIndex += 1;
    *   }
    * }
-   * </code>
-   * </div>
    */
   /**
    * @method httpDo
@@ -1141,23 +1107,30 @@ function files(p5, fn){
    * @param  {Function}         [errorCallback]
    * @return {Promise}
    */
-  fn.httpDo = async function (path, method, datatype, successCallback, errorCallback) {
+  fn.httpDo = async function (
+    path,
+    method,
+    datatype,
+    successCallback,
+    errorCallback
+  ) {
     // This behave similarly to httpGet but even more primitive. The user
     // will most likely want to pass in a Request to path, the only convenience
     // is that datatype will be taken into account to parse the response.
 
-    if(typeof datatype === 'function'){
+    if (typeof datatype === 'function') {
       errorCallback = successCallback;
       successCallback = datatype;
       datatype = undefined;
     }
 
     // Try to infer data type if it is defined
-    if(!datatype){
-      const extension = typeof path === 'string' ?
-        path.split(".").pop() :
-        path.url.split(".").pop();
-      switch(extension) {
+    if (!datatype) {
+      const extension =
+        typeof path === 'string'
+          ? path.split('.').pop()
+          : path.url.split('.').pop();
+      switch (extension) {
         case 'json':
           datatype = 'json';
           break;
@@ -1171,8 +1144,9 @@ function files(p5, fn){
           break;
 
         case 'xml':
-          // NOTE: still need to normalize type handling/mapping
-          // datatype = 'xml';
+        // NOTE: still need to normalize type handling/mapping
+        // datatype = 'xml';
+        // falls through
         case 'txt':
         default:
           datatype = 'text';
@@ -1183,15 +1157,15 @@ function files(p5, fn){
       method
     });
 
-    try{
+    try {
       const { data } = await request(req, datatype);
       if (successCallback) {
         return successCallback(data);
       } else {
         return data;
       }
-    } catch(err) {
-      if(errorCallback) {
+    } catch (err) {
+      if (errorCallback) {
         return errorCallback(err);
       } else {
         throw err;
@@ -1233,8 +1207,6 @@ function files(p5, fn){
    * @return {p5.PrintWriter} stream for writing data.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1266,11 +1238,8 @@ function files(p5, fn){
    *     myWriter.close();
    *   }
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1307,8 +1276,6 @@ function files(p5, fn){
    *     myWriter.close();
    *   }
    * }
-   * </code>
-   * </div>
    */
   fn.createWriter = function (name, extension) {
     let newPW;
@@ -1346,8 +1313,6 @@ function files(p5, fn){
    * @param  {String} [extension] format to use for the file.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1377,8 +1342,6 @@ function files(p5, fn){
    *   // Save the file and close the print stream.
    *   myWriter.close();
    * }
-   * </code>
-   * </div>
    */
   p5.PrintWriter = function (filename, extension) {
     let self = this;
@@ -1398,8 +1361,6 @@ function files(p5, fn){
      *                                   or array of strings and numbers.
      *
      * @example
-     * <div>
-     * <code>
      * function setup() {
      *   createCanvas(100, 100);
      *
@@ -1428,8 +1389,6 @@ function files(p5, fn){
      *   // Save the file and close the print stream.
      *   myWriter.close();
      * }
-     * </code>
-     * </div>
      */
     this.write = function (data) {
       this.content += data;
@@ -1448,8 +1407,6 @@ function files(p5, fn){
      *                                   or array of strings and numbers.
      *
      * @example
-     * <div>
-     * <code>
      * function setup() {
      *   createCanvas(100, 100);
      *
@@ -1478,8 +1435,6 @@ function files(p5, fn){
      *   // Save the file and close the print stream.
      *   myWriter.close();
      * }
-     * </code>
-     * </div>
      */
     this.print = function (data) {
       this.content += `${data}\n`;
@@ -1491,8 +1446,6 @@ function files(p5, fn){
      * @method clear
      *
      * @example
-     * <div>
-     * <code>
      * function setup() {
      *   createCanvas(100, 100);
      *
@@ -1523,8 +1476,6 @@ function files(p5, fn){
      *   // Save the file and close the print stream.
      *   myWriter.close();
      * }
-     * </code>
-     * </div>
      */
     this.clear = function () {
       this.content = '';
@@ -1536,8 +1487,6 @@ function files(p5, fn){
      * @method close
      *
      * @example
-     * <div>
-     * <code>
      * function setup() {
      *   createCanvas(100, 100);
      *
@@ -1569,8 +1518,6 @@ function files(p5, fn){
      *   // Save the file and close the print stream.
      *   myWriter.close();
      * }
-     * </code>
-     * </div>
      */
     this.close = function () {
       // convert String to Array for the writeFile Blob
@@ -1635,7 +1582,7 @@ function files(p5, fn){
    *                            rather than readability.
    *
    * @example
-   * <div class="norender"><code>
+   * // META:norender
    * // Saves the canvas as an image
    * cnv = createCanvas(300, 300);
    * save(cnv, 'myCanvas.jpg');
@@ -1643,23 +1590,23 @@ function files(p5, fn){
    * // Saves the canvas as an image by default
    * save('myCanvas.jpg');
    * describe('An example for saving a canvas as an image.');
-   * </code></div>
    *
-   * <div class="norender"><code>
+   * @example
+   * // META:norender
    * // Saves p5.Image as an image
    * img = createImage(10, 10);
    * save(img, 'myImage.png');
    * describe('An example for saving a p5.Image element as an image.');
-   * </code></div>
    *
-   * <div class="norender"><code>
+   * @example
+   * // META:norender
    * // Saves p5.Renderer object as an image
    * obj = createGraphics(100, 100);
    * save(obj, 'myObject.png');
    * describe('An example for saving a p5.Renderer element.');
-   * </code></div>
    *
-   * <div class="norender"><code>
+   * @example
+   * // META:norender
    * let myTable = new p5.Table();
    * // Saves table as html file
    * save(myTable, 'myTable.html');
@@ -1672,9 +1619,9 @@ function files(p5, fn){
    *
    * describe(`An example showing how to save a table in formats of
    *   HTML, CSV and TSV.`);
-   * </code></div>
    *
-   * <div class="norender"><code>
+   * @example
+   * // META:norender
    * let myJSON = { a: 1, b: true };
    *
    * // Saves pretty JSON
@@ -1684,15 +1631,14 @@ function files(p5, fn){
    * save(myJSON, 'my.json', true);
    *
    * describe('An example for saving JSON to a txt file with some extra arguments.');
-   * </code></div>
    *
-   * <div class="norender"><code>
+   * @example
+   * // META:norender
    * // Saves array of strings to text file with line breaks after each item
    * let arrayOfStrings = ['a', 'b'];
    * save(arrayOfStrings, 'my.txt');
    * describe(`An example for saving an array of strings to text file
    *   with line breaks.`);
-   * </code></div>
    */
   fn.save = function (object, _filename, _options) {
     // TODO: parameters is not used correctly
@@ -1706,17 +1652,14 @@ function files(p5, fn){
     if (args.length === 0) {
       fn.saveCanvas(cnv);
       return;
-
     } else if (args[0] instanceof Renderer || args[0] instanceof Graphics) {
       // otherwise, parse the arguments
       // if first param is a p5Graphics, then saveCanvas
       fn.saveCanvas(args[0].canvas, args[1], args[2]);
       return;
-
     } else if (args.length === 1 && typeof args[0] === 'string') {
       // if 1st param is String and only one arg, assume it is canvas filename
       fn.saveCanvas(cnv, args[0]);
-
     } else {
       // =================================================
       // OPTION 2: extension clarifies saveStrings vs. saveJSON
@@ -1726,13 +1669,13 @@ function files(p5, fn){
           fn.saveJSON(args[0], args[1], args[2]);
           return;
         case 'txt':
-          fn.saveStrings(args[0], args[1], args[2]);
+          fn.saveStrings(args[0], args[1], 'txt', args[2]);
           return;
         // =================================================
         // OPTION 3: decide based on object...
         default:
           if (args[0] instanceof Array) {
-            fn.saveStrings(args[0], args[1], args[2]);
+            fn.saveStrings(args[0], args[1], undefined, args[2]);
           } else if (args[0] instanceof p5.Table) {
             fn.saveTable(args[0], args[1], args[2]);
           } else if (args[0] instanceof p5.Image) {
@@ -1776,8 +1719,6 @@ function files(p5, fn){
    *                              to `true`.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1804,11 +1745,8 @@ function files(p5, fn){
    *     saveJSON(data, 'numbers.json');
    *   }
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1835,11 +1773,8 @@ function files(p5, fn){
    *     saveJSON(data, 'state.json');
    *   }
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1866,8 +1801,6 @@ function files(p5, fn){
    *     saveJSON(data, 'state.json', true);
    *   }
    * }
-   * </code>
-   * </div>
    */
   fn.saveJSON = function (json, filename, optimize) {
     // p5._validateParameters('saveJSON', arguments);
@@ -1912,8 +1845,6 @@ function files(p5, fn){
    *                             string. Defaults to `false`.
    *
    * @example
-   * <div>
-   * <code>
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1940,11 +1871,8 @@ function files(p5, fn){
    *     saveStrings(data, 'data.txt');
    *   }
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -1973,11 +1901,8 @@ function files(p5, fn){
    *     saveStrings(data, 'cat', 'txt');
    *   }
    * }
-   * </code>
-   * </div>
    *
-   * <div>
-   * <code>
+   * @example
    * function setup() {
    *   createCanvas(100, 100);
    *
@@ -2010,8 +1935,6 @@ function files(p5, fn){
    *     saveStrings(data, 'box', 'txt', true);
    *   }
    * }
-   * </code>
-   * </div>
    */
   fn.saveStrings = function (list, filename, extension, isCRLF) {
     // p5._validateParameters('saveStrings', arguments);
@@ -2038,19 +1961,18 @@ function files(p5, fn){
   }
 
   /**
-   *  Writes the contents of a <a href="#/p5.Table">Table</a> object to a file. Defaults to a
-   *  text file with comma-separated-values ('csv') but can also
-   *  use tab separation ('tsv'), or generate an HTML table ('html').
-   *  The file saving process and location of the saved file will
-   *  vary between web browsers.
+   * Writes the contents of a <a href="#/p5.Table">Table</a> object to a file. Defaults to a
+   * text file with comma-separated-values ('csv') but can also
+   * use tab separation ('tsv'), or generate an HTML table ('html').
+   * The file saving process and location of the saved file will
+   * vary between web browsers.
    *
-   *  @method saveTable
+   * @method saveTable
    * @deprecated p5.Table will be removed in a future version of p5.js to make way for a new, friendlier version :)
-   *  @param  {p5.Table} Table  the <a href="#/p5.Table">Table</a> object to save to a file
-   *  @param  {String} filename the filename to which the Table should be saved
-   *  @param  {String} [options]  can be one of "tsv", "csv", or "html"
-   *  @example
-   *  <div><code>
+   * @param  {p5.Table} Table  the <a href="#/p5.Table">Table</a> object to save to a file
+   * @param  {String} filename the filename to which the Table should be saved
+   * @param  {String} [options]  can be one of "tsv", "csv", or "html"
+   * @example
    * let table;
    *
    * function setup() {
@@ -2074,14 +1996,13 @@ function files(p5, fn){
    * // Saves the following to a file called 'new.csv':
    * // id,species,name
    * // 0,Panthera leo,Lion
-   * </code></div>
    */
   fn.saveTable = function (table, filename, options) {
     // p5._validateParameters('saveTable', arguments);
     let ext;
     if (options === undefined) {
       ext = filename.substring(filename.lastIndexOf('.') + 1, filename.length);
-      if(ext === filename) ext = 'csv';
+      if (ext === filename) ext = 'csv';
     } else {
       ext = options;
     }
@@ -2207,6 +2128,7 @@ function files(p5, fn){
    *
    *  @private
    */
+  /* oxlint-disable-next-line no-unused-vars */
   function destroyClickedElement(event) {
     document.body.removeChild(event.target);
   }
@@ -2214,6 +2136,6 @@ function files(p5, fn){
 
 export default files;
 
-if(typeof p5 !== 'undefined'){
+if (typeof p5 !== 'undefined') {
   files(p5, p5.prototype);
 }

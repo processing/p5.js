@@ -1,5 +1,5 @@
 // In this example, we want to load JSON (a JavaScript Object)
-// from a URL at openweathermap.org, and display it in setup().
+// from a URL at wttr.in, and display it in setup().
 //
 // Since setup() happens faster than you can load a website, the
 // data does not have time to properly load before setup() is done.
@@ -13,7 +13,7 @@ var result;
 
 function preload() {
   result = loadJSON(
-    'http://api.openweathermap.org/data/2.5/weather?id=5128581&units=imperial'
+    'https://wttr.in/Berlin?format=j1'
   );
   console.log('In preload(), the result has not finished loading: ');
   console.log(result);
@@ -29,10 +29,10 @@ function setup() {
   console.log('In setup(), here is the result: ');
   console.log(result);
 
-  var location = result.name;
-  var currentTemp = result.main.temp;
+  var location = result.nearest_area[0].areaName[0].value;
+  var avgTemp = result.weather[0].avgtempC;
   text(
-    'Current temperature in ' + location + ' is ' + currentTemp + 'F',
+    'Today\'s average temperature in ' + location + ' is ' + avgTemp + ' celsius',
     width / 2,
     height / 2
   );

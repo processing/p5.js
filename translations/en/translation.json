@@ -47,7 +47,7 @@
     "misspelling": "{{location}} It seems that you may have accidentally written \"{{name}}\" instead of \"{{actualName}}\". Please correct it to {{actualName}} if you wish to use the {{type}} from p5.js.",
     "misspelling_plural": "{{location}} It seems that you may have accidentally written \"{{name}}\".\nYou may have meant one of the following: \n{{suggestions}}",
     "misusedTopLevel": "Did you just try to use p5.js's {{symbolName}} {{symbolType}}? If so, you may want to move it into your sketch's setup() function.\n\n+ More info: {{url}}",
-    "preloadDisabled": "The preload() function has been removed in p5.js 2.0. Please load assets in setup() using async / await keywords or callbacks instead. See https://dev.to/limzykenneth/asynchronous-p5js-20-458f for more information.",
+    "preloadDisabled": "The preload() function has been removed in p5.js 2.0. Please load assets in setup() using async / await keywords or callbacks instead. See https://github.com/processing/p5.js-compatibility for more information about 2.0 and compatibility, or https://dev.to/limzykenneth/asynchronous-p5js-20-458f for more information about promises and async/await.",
     "positions": {
       "p_1": "first",
       "p_10": "tenth",

@@ -52,7 +52,7 @@ export default new ColorSpace({
       }
     }
 
-    return [hue / 6 * 360, sat * 100, val * 100];
+    return [(hue / 6) * 360, sat * 100, val * 100];
   },
   toBase,
 
@@ -61,13 +61,9 @@ export default new ColorSpace({
       type: 'custom',
       serialize: (coords, alpha) => {
         const rgb = toBase(coords);
-        let ret = `rgb(${
-          Math.round(rgb[0] * 100 * 100) / 100
-        }% ${
+        let ret = `rgb(${Math.round(rgb[0] * 100 * 100) / 100}% ${
           Math.round(rgb[1] * 100 * 100) / 100
-        }% ${
-          Math.round(rgb[2] * 100 * 100) / 100
-        }%`;
+        }% ${Math.round(rgb[2] * 100 * 100) / 100}%`;
 
         if (alpha < 1) {
           ret += ` / ${alpha}`;
@@ -78,10 +74,10 @@ export default new ColorSpace({
         return ret;
       }
     },
-    'hsb': {
+    hsb: {
       coords: ['<number> | <angle>', '<percentage>', '<percentage>']
     },
-    'hsba': {
+    hsba: {
       coords: ['<number> | <angle>', '<percentage>', '<percentage>'],
       commans: true,
       lastAlpha: true
@@ -89,8 +85,8 @@ export default new ColorSpace({
   }
 });
 
-function toBase(hsb){
-  const hue = hsb[0] / 360 * 6; // We will split hue into 6 sectors.
+function toBase(hsb) {
+  const hue = (hsb[0] / 360) * 6; // We will split hue into 6 sectors.
   const sat = hsb[1] / 100;
   const val = hsb[2] / 100;
 

@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200">
+  <!--
+    arc(95, 95, 130, 130, 0, PI + HALF_PI)
+    Centre: (95, 95), rx=ry=65, from 0° to 270° (4.712... rad)
+    Start point at 0°: (95+65, 95) = (160, 95)
+    End point at 270°: (95, 95-65) = (95, 30)
+    large-arc-flag=1 (sweep > 180°), sweep-flag=1 (clockwise in SVG)
+  -->
+  <path d="M 160 95 A 65 65 0 1 1 95 30 L 95 95 Z"
+        fill="white" stroke="black" stroke-width="1"/>
+</svg>

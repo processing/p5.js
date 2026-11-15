@@ -1,0 +1,12 @@
+mtllib single_material_textured.mtl
+v 0 0 0
+v 1 0 0
+v 1 1 0
+v 0 1 0
+vt 0 0
+vt 1 0
+vt 1 1
+vt 0 1
+usemtl only
+f 1/1 2/2 3/3
+f 1/1 3/3 4/4

@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0.5 1.5 99 99" width="200" height="200">
+  <!-- viewBox with fractional x/y/w/h — tests that float parsing doesn't truncate to 0 -->
+  <rect x="0.5" y="1.5" width="99" height="99" fill="#d0d0d0"/>
+  <rect x="0.5"  y="1.5"  width="49.5" height="49.5" fill="#e74c3c" opacity="0.9"/>
+  <rect x="50"   y="1.5"  width="49.5" height="49.5" fill="#3498db" opacity="0.9"/>
+  <rect x="0.5"  y="51"   width="49.5" height="49.5" fill="#2ecc71" opacity="0.9"/>
+  <rect x="50"   y="51"   width="49.5" height="49.5" fill="#f39c12" opacity="0.9"/>
+  <!-- Cross at geometric centre of viewBox (50, 51) -->
+  <line x1="50" y1="38" x2="50" y2="64" stroke="white" stroke-width="1.5"/>
+  <line x1="37" y1="51" x2="63" y2="51" stroke="white" stroke-width="1.5"/>
+  <rect x="0.5" y="1.5" width="99" height="99" fill="none" stroke="black" stroke-width="1"/>
+</svg>

@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200">
+  <rect x="0" y="0" width="200" height="200" fill="#c8c8c8"/>
+  <defs>
+    <symbol id="icon">
+      <circle cx="25" cy="25" r="22" fill="white" stroke="black" stroke-width="1"/>
+    </symbol>
+  </defs>
+  <!-- four instances of the symbol placed on a 2x2 grid -->
+  <use href="#icon" x="15"  y="15"/>
+  <use href="#icon" x="110" y="15"/>
+  <use href="#icon" x="15"  y="110"/>
+  <use href="#icon" x="110" y="110"/>
+</svg>

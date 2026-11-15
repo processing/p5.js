@@ -78,9 +78,9 @@ class DataArray {
       this.data = newData;
     }
   }
-};
+}
 
-function dataArray(p5, fn){
+function dataArray(p5, fn) {
   /**
    * An internal class to store data that will be sent to a p5.RenderBuffer.
    * Those need to eventually go into a Float32Array, so this class provides a
@@ -91,8 +91,6 @@ function dataArray(p5, fn){
    * double in size when it goes over its capacity.
    *
    * @example
-   * <div>
-   * <code>
    * // Initialize storage with a capacity of 4
    * const storage = new DataArray(4);
    * console.log(storage.data.length); // 4
@@ -103,15 +101,13 @@ function dataArray(p5, fn){
    * console.log(storage.data.length); // 8
    * console.log(storage.length); // 6
    * console.log(storage.dataArray()); // Float32Array{1, 2, 3, 4, 5, 6}
-   * </code>
-   * </div>
    */
   p5.DataArray = DataArray;
 }
 
 export default dataArray;
-export { DataArray }
+export { DataArray };
 
-if(typeof p5 !== 'undefined'){
+if (typeof p5 !== 'undefined') {
   dataArray(p5, p5.prototype);
 }
