@@ -188,8 +188,8 @@ suite('loadModel', function () {
     assert.equal(totalFaces, model.faces.length);
   });
 
-  test('parts get computed normals when the OBJ has none', async function () {
-    // textured.obj has no vn lines, so normals are computed before the split
+  test('parts get one normal per vertex when the OBJ has none', async function () {
+    // textured.obj has no vn lines, so every vertex gets a (0, 0, 0) normal
     const model = await mockP5Prototype.loadModel(
       '/test/unit/assets/textured.obj'
     );
@@ -198,7 +198,7 @@ suite('loadModel', function () {
       assert.equal(
         part.vertexNormals.length,
         part.vertices.length,
-        'each part has one computed normal per vertex'
+        'each part has one normal per vertex'
       );
     }
   });
@@ -366,7 +366,7 @@ suite('loadModel', function () {
       assert.equal(total, model.faces.length);
     });
 
-    test('an OBJ with no vn lines gets normals computed per part', async function () {
+    test('an OBJ with no vn lines gets one normal per vertex in each part', async function () {
       const model = await mockP5Prototype.loadModel(
         '/test/unit/assets/no_normals.obj'
       );
