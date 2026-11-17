@@ -85,6 +85,22 @@ export function unaryOpNode(strandsContext, nodeOrValue, opCode) {
   return { id, dimension: node.dimension };
 }
 
+// Captures the current value of a reassignable node at this point in the CFG.
+export function snapshotNode(strandsContext, sourceID) {
+  const { dag, cfg } = strandsContext;
+  const { baseType, dimension } = DAG.extractNodeTypeInfo(dag, sourceID);
+  const nodeData = DAG.createNodeData({
+    nodeType: NodeType.OPERATION,
+    opCode: OpCode.Unary.SNAPSHOT,
+    dependsOn: [sourceID],
+    baseType,
+    dimension
+  });
+  const id = DAG.getOrCreateNode(dag, nodeData);
+  CFG.recordInBasicBlock(cfg, cfg.currentBlock, id);
+  return { id, dimension };
+}
+
 function isMatrixArithmeticOp(opCode) {
   return (
     opCode === OpCode.Binary.ADD ||

@@ -953,6 +953,9 @@ class Renderer2D extends Renderer {
           break;
         case textCoreConstants.END:
           throw new Error('textBounds: END not yet supported for textAlign');
+        default:
+          adjustedX = x;
+          break;
       }
       lineData[i] = { text: lines[i], x: adjustedX, y: y + i * textLeading };
     }
