@@ -2627,8 +2627,7 @@ suite('WebGPU p5.Shader', function () {
       });
     });
 
-
-        suite('exponentiation operator', () => {
+    suite('exponentiation operator', () => {
       test('** gives the same result as pow()', async () => {
         await myp5.createCanvas(50, 50, myp5.WEBGPU);
         myp5.pixelDensity(1);
