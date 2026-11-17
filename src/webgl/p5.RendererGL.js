@@ -482,9 +482,11 @@ class RendererGL extends Renderer3D {
 
   _beforeDrawText() {
     this.GL.pixelStorei(this.GL.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
+    this._unpackPremultiplyAlpha = false;
   }
   _afterDrawText() {
     this.GL.pixelStorei(this.GL.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
+    this._unpackPremultiplyAlpha = true;
   }
 
   //////////////////////////////////////////////
@@ -590,6 +592,7 @@ class RendererGL extends Renderer3D {
       // they match the way we render colors. This will make framebuffer textures
       // be encoded the same way as textures from everything else.
       gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
+      this._unpackPremultiplyAlpha = true;
       this._viewport = this.drawingContext.getParameter(
         this.drawingContext.VIEWPORT
       );

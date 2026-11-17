@@ -109,7 +109,7 @@ export class CpuStorageTexture {
     // Data textures must not be alpha-premultiplied on upload (p5 leaves
     // premultiplying on outside text drawing, which would zero RGB wherever
     // alpha is 0, e.g. a scalar list holding 1.0 in red).
-    const previousPremultiply = gl.getParameter(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL);
+    const previousPremultiply = this._renderer._unpackPremultiplyAlpha;
     gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
     gl.texImage2D(
       gl.TEXTURE_2D,

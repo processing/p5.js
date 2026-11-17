@@ -470,7 +470,7 @@ export function compileCpuComputeHook(cpuIR) {
     fields: fieldsOf(cpuIR)
   };
 
-  const { hookType } = computehook;
+  const { hookType } = computeHook;
   let returnType = null;
   if (hookType.returnType?.typeName?.trim() !== 'void') {
     returnType = hookType.returnType;
