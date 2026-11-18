@@ -585,6 +585,12 @@ suite('DOM', function() {
       testElement = myp5.createSlider(20, 80, 10, 5);
       assert.deepEqual(testElement.elt.step, '5');
     });
+
+    test('should return logaritmic value when logValue() is called', function() {
+      testElement = myp5.createSlider(1, 100, 1, 1);
+      testElement.elt.value = 10;
+      assert.equal(testElement.logValue(), 1.5199110829529336);
+    });
   });
 
   suite('p5.prototype.createButton', function() {
