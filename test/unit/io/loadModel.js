@@ -401,4 +401,69 @@ suite('loadModel', function () {
       }
     });
   });
+
+  suite('options object', function () {
+    const texturedCube = '/test/unit/assets/cube-textures.obj';
+
+    test('loads without fileType in options', async function () {
+      const model = await mockP5Prototype.loadModel(validFile, {});
+      assert.instanceOf(model, Geometry);
+    });
+
+    test('loads with only normalize in options', async function () {
+      const model = await mockP5Prototype.loadModel(validFile, {
+        normalize: true
+      });
+      assert.instanceOf(model, Geometry);
+    });
+
+    test('infers STL from the path when fileType is omitted', async function () {
+      const model = await mockP5Prototype.loadModel(validSTLfile, {});
+      assert.instanceOf(model, Geometry);
+      assert.isAbove(model.vertices.length, 0);
+    });
+
+    test('still honors an explicit fileType', async function () {
+      const model = await mockP5Prototype.loadModel(
+        validSTLfileWithoutExtension,
+        { fileType: '.stl' }
+      );
+      assert.isAbove(model.vertices.length, 0);
+    });
+
+    test('applies flipU without fileType', async function () {
+      const expected = await mockP5Prototype.loadModel(texturedCube);
+      expected.flipU();
+      const model = await mockP5Prototype.loadModel(texturedCube, {
+        flipU: true
+      });
+      assert.deepEqual(model.uvs, expected.uvs);
+    });
+
+    test('applies flipU and flipV with fileType', async function () {
+      const expected = await mockP5Prototype.loadModel(texturedCube);
+      expected.flipU();
+      expected.flipV();
+      const model = await mockP5Prototype.loadModel(texturedCube, {
+        fileType: '.obj',
+        flipU: true,
+        flipV: true
+      });
+      assert.deepEqual(model.uvs, expected.uvs);
+    });
+
+    test('does not flip when flip options are absent', async function () {
+      const plain = await mockP5Prototype.loadModel(texturedCube);
+      const model = await mockP5Prototype.loadModel(texturedCube, {
+        fileType: '.obj'
+      });
+      assert.deepEqual(model.uvs, plain.uvs);
+    });
+
+    test('calls successCallback from options', async function () {
+      const successCallback = vi.fn();
+      await mockP5Prototype.loadModel(validFile, { successCallback });
+      expect(successCallback).toHaveBeenCalledOnce();
+    });
+  });
 });
