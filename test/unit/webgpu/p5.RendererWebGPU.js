@@ -5,6 +5,27 @@ import { vi } from 'vitest';
 p5.registerAddon(rendererWebGPU);
 p5.disableWebGLFallback = true;
 
+const originalRequestAdapter = navigator.gpu.requestAdapter.bind(navigator.gpu);
+let adapterLogged = false;
+navigator.gpu.requestAdapter = async (options) => {
+  const adapter = await originalRequestAdapter(options);
+  console.log('requestAdapter', JSON.stringify(options), adapter ? 'ok' : 'NULL', new Date().toISOString());
+  if (adapter && !adapterLogged) {
+    adapterLogged = true;
+    const info = adapter.info;
+    console.log('ADAPTER', JSON.stringify({
+      vendor: info.vendor,
+      architecture: info.architecture,
+      device: info.device,
+      description: info.description,
+      // Older spec versions have this on the adapter, newer ones on the info object
+      isFallbackAdapter: adapter.isFallbackAdapter ?? info.isFallbackAdapter,
+      features: [...adapter.features]
+    }));
+  }
+  return adapter;
+};
+
 suite('WebGPU p5.RendererWebGPU', function () {
   let myp5;
   let prevPixelRatio;
@@ -142,7 +163,6 @@ suite('WebGPU p5.RendererWebGPU', function () {
 
   suite('noSmooth()', function () {
     test('disables antialiasing on the main canvas framebuffer', async function () {
-      console.log((await navigator.gpu.requestAdapter()).info);
       await myp5.noSmooth();
       expect(myp5._renderer.mainFramebuffer.antialias).to.equal(false);
     });
@@ -1000,10 +1020,6 @@ suite('WebGPU p5.RendererWebGPU', function () {
     function bareRenderer() {
       const renderer = Object.create(p5.RendererWebGPU.prototype);
       renderer._pInst = myp5;
-      renderer._webgpuAttributes = {
-        forceFallbackAdapter: false,
-        powerPreference: 'high-performance'
-      };
       renderer.canvas = document.createElement('canvas');
       return renderer;
     }
@@ -1022,6 +1038,21 @@ suite('WebGPU p5.RendererWebGPU', function () {
         }
       };
     }
+
+    test('passes the default adapter options to requestAdapter', async function () {
+      const spy = vi.spyOn(navigator.gpu, 'requestAdapter');
+      try {
+        await myp5.createCanvas(50, 50, myp5.WEBGPU);
+        expect(spy).toHaveBeenCalledWith(
+          expect.objectContaining({
+            forceFallbackAdapter: false,
+            powerPreference: 'high-performance'
+          })
+        );
+      } finally {
+        spy.mockRestore();
+      }
+    });
 
     test('throws a friendly error when WebGPU is not supported', async function () {
       const restore = stubGpu(undefined);
