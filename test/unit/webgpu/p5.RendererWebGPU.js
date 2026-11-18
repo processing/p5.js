@@ -5,27 +5,6 @@ import { vi } from 'vitest';
 p5.registerAddon(rendererWebGPU);
 p5.disableWebGLFallback = true;
 
-const originalRequestAdapter = navigator.gpu.requestAdapter.bind(navigator.gpu);
-let adapterLogged = false;
-navigator.gpu.requestAdapter = async (options) => {
-  const adapter = await originalRequestAdapter(options);
-  console.log('requestAdapter', JSON.stringify(options), adapter ? 'ok' : 'NULL', new Date().toISOString());
-  if (adapter && !adapterLogged) {
-    adapterLogged = true;
-    const info = adapter.info;
-    console.log('ADAPTER', JSON.stringify({
-      vendor: info.vendor,
-      architecture: info.architecture,
-      device: info.device,
-      description: info.description,
-      // Older spec versions have this on the adapter, newer ones on the info object
-      isFallbackAdapter: adapter.isFallbackAdapter ?? info.isFallbackAdapter,
-      features: [...adapter.features]
-    }));
-  }
-  return adapter;
-};
-
 suite('WebGPU p5.RendererWebGPU', function () {
   let myp5;
   let prevPixelRatio;
