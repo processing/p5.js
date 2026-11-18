@@ -1,7 +1,45 @@
 import { sortCFG } from '../strands/ir_cfg';
-import { BaseType, OpCode } from '../strands/ir_types';
+import {
+  BlockType,
+  NodeType,
+  OpCode,
+  BaseType,
+  StatementType,
+  HOOK_PARAM_PREFIX
+} from '../strands/ir_types';
+import { getNodeDataFromID } from '../strands/ir_dag';
 import * as FES from '../strands/strands_FES';
 
+const INDEX_PARAM = `${HOOK_PARAM_PREFIX}index`;
+const TEMP_PREFIX = '__t';
+
+
+
+function shouldCreateTemp(dag, nodeID) {
+  const nodeType = dag.nodeTypes[nodeID];
+  if (nodeType !== NodeType.OPERATION) return false;
+  if (dag.baseTypes[nodeID] === BaseType.SAMPLER2D) return false;
+  const uses = dag.usedBy[nodeID] || [];
+  return uses.length > 1;
+}
+
+// GLSL type names this backend may see for value conversions. Casts are
+// recorded with the active backend's type names, so a shader built under
+// WebGL uses these while one built under WebGPU would use WGSL spellings.
+const GLSL_TYPE_TO_INFO = {
+  float: ['float', 1],
+  vec2: ['float', 2],
+  vec3: ['float', 3],
+  vec4: ['float', 4],
+  int: ['int', 1],
+  ivec2: ['int', 2],
+  ivec3: ['int', 3],
+  ivec4: ['int', 4],
+  bool: ['bool', 1],
+  bvec2: ['bool', 2],
+  bvec3: ['bool', 3],
+  bvec4: ['bool', 4]
+};
 
 function channelIndex(channel) {
   if ('xyzw'.includes(channel)) return 'xyzw'.indexOf(channel);
@@ -181,6 +219,46 @@ export function createCpuHelpers(pInst) {
       parts[1] * maxes[1],
       parts[2] * maxes[2],
       (parts[3] ?? 1) * maxes[3]
+    );
+  };
+
+  const writeSwiz = (buffer, index, field, pattern, value) => {
+    const i = truncIndex(index);
+    if (field === null) {
+      if (!Array.isArray(buffer.data[i])) {
+        FES.userError(
+          'type error',
+          `Cannot assign to "${pattern}" on a scalar storage value in the CPU compute fallback.`
+        );
+      }
+      buffer.data[i] = swizSet(buffer.data[i], pattern, value);
+      return;
+    }
+    const current = buffer.data[i][field.name];
+    if (current?.isVector) {
+      const channels = ['x', 'y', 'z', 'w'];
+      const parts = Array.from({ length: field.dim }, (_, k) => current[channels[k]]);
+      const next = swizSet(parts, pattern, value);
+      for (let k = 0; k < field.dim; k++) {
+        current[channels[k]] = Number(next[k]);
+      }
+      return;
+    }
+    if (current?.isColor) {
+      buffer.data[i][field.name] = makeColor(
+        swizSet(current._getRGBA(), pattern, value)
+      );
+      return;
+    }
+    if (Array.isArray(current)) {
+      const next = swizSet(current, pattern, value);
+      while (next.length < field.dim) next.push(0);
+      buffer.data[i][field.name] = next.slice(0, field.dim);
+      return;
+    }
+    FES.userError(
+      'type error',
+      `Cannot assign to "${pattern}" on scalar field "${field.name}" in the CPU compute fallback.`
     );
   };
 
@@ -413,6 +491,7 @@ export function createCpuHelpers(pInst) {
     truncIndex,
     readFieldValue,
     writeFieldValue,
+    writeSwiz,
     call: callBuiltin
   };
 }
@@ -443,6 +522,434 @@ function fieldsOf(cpuIR) {
     }
   }
   return fields;
+}
+
+function fieldLiteral(g, bufferName, fieldName) {
+  const field = (g.fields[bufferName] || []).find(f => f.name === fieldName);
+  if (!field) {
+    throw new Error(
+      `Internal error: "${bufferName}" has no field "${fieldName}" in the CPU backend.`
+    );
+  }
+  return JSON.stringify(field);
+}
+
+function emitExpression(g, dag, nodeID) {
+  if (g.tempNames[nodeID] !== undefined) return g.tempNames[nodeID];
+  const node = getNodeDataFromID(dag, nodeID);
+  switch (node.nodeType) {
+    case NodeType.LITERAL:
+    case NodeType.CONSTANT:
+      if (node.baseType === BaseType.BOOL) return node.value ? 'true' : 'false';
+      return Number(node.value).toString();
+    case NodeType.VARIABLE: {
+      if (node.identifier === INDEX_PARAM) return '__idx';
+      if (g.stores.has(node.identifier)) return `__s[${JSON.stringify(node.identifier)}]`;
+      if (g.scalars.has(node.identifier)) return `__u[${JSON.stringify(node.identifier)}]`;
+      if (
+        node.identifier === 'instanceID' ||
+        node.identifier === 'gl_InstanceID'
+      ) {
+        throw new Error(
+          'Use `index` (not `instanceIndex`) inside `buildComputeShader`.'
+        );
+      }
+      return `__v[${JSON.stringify(node.identifier)}]`;
+    }
+    case NodeType.OPERATION: {
+      if (node.opCode === OpCode.Nary.CONSTRUCTOR) {
+        if (node.baseType === BaseType.SAMPLER2D || node.baseType === BaseType.SAMPLER) {
+          throw new Error(
+            'Textures cannot be sampled in the CPU compute fallback. Use the WebGPU renderer for shaders that read textures.'
+          );
+        }
+        if (
+          node.baseType !== BaseType.FLOAT &&
+          node.baseType !== BaseType.INT &&
+          node.baseType !== BaseType.BOOL
+        ) {
+          throw new Error(
+            `Cannot construct "${node.baseType}" in the CPU compute fallback.`
+          );
+        }
+        const deps = (node.dependsOn || []).map(dep => emitExpression(g, dag, dep));
+        return `H.vec(${JSON.stringify(node.baseType)}, ${node.dimension}, [${deps.join(', ')}])`;
+      }
+      if (node.opCode === OpCode.Nary.FUNCTION_CALL) {
+        return emitFunctionCall(g, dag, node);
+      }
+      if (node.opCode === OpCode.Nary.TERNARY) {
+        const [condID, trueID, falseID] = node.dependsOn;
+        return `(${emitExpression(g, dag, condID)} ? ${emitExpression(g, dag, trueID)} : ${emitExpression(g, dag, falseID)})`;
+      }
+      if (node.opCode === OpCode.Binary.MEMBER_ACCESS) {
+        const [parentID, memberID] = node.dependsOn;
+        const member = getNodeDataFromID(dag, memberID);
+        if (member.nodeType === NodeType.VARIABLE && member.identifier) {
+          return `H.member(${emitExpression(g, dag, parentID)}, ${JSON.stringify(member.identifier)})`;
+        }
+        throw new Error(
+          'Unsupported member access in the CPU compute fallback.'
+        );
+      }
+      if (node.opCode === OpCode.Unary.SWIZZLE) {
+        const parent = emitExpression(g, dag, node.dependsOn[0]);
+        return `H.swiz(${parent}, ${JSON.stringify(node.swizzle)})`;
+      }
+      if (node.opCode === OpCode.Binary.ARRAY_ACCESS) {
+        return emitArrayRead(g, dag, node);
+      }
+      if (
+        node.opCode === OpCode.Unary.LOGICAL_NOT ||
+        node.opCode === OpCode.Unary.NEGATE ||
+        node.opCode === OpCode.Unary.PLUS
+      ) {
+        return `H.unop(${node.opCode}, ${emitExpression(g, dag, node.dependsOn[0])})`;
+      }
+      if (typeof node.opCode === 'number') {
+        const [leftID, rightID] = node.dependsOn;
+        const base = node.baseType === 'storage' ? BaseType.FLOAT : node.baseType;
+        return `H.binop(${node.opCode}, ${emitExpression(g, dag, leftID)}, ${emitExpression(g, dag, rightID)}, ${JSON.stringify(base)}, ${node.dimension})`;
+      }
+      throw new Error(
+        `Unsupported operation (${node.opCode}) in the CPU compute fallback.`
+      );
+    }
+    case NodeType.PHI: {
+      if (g.tempNames[nodeID] !== undefined) return g.tempNames[nodeID];
+      const inputs = (node.dependsOn || []).filter(id => id !== null);
+      if (inputs.length > 0) return emitExpression(g, dag, inputs[0]);
+      throw new Error('Cannot evaluate an empty phi node in the CPU compute fallback.');
+    }
+    default:
+      throw new Error(
+        `Cannot evaluate node type "${node.nodeType}" in the CPU compute fallback.`
+      );
+  }
+}
+
+function bufferNameOf(dag, bufferID, g) {
+  const buffer = getNodeDataFromID(dag, bufferID);
+  if (buffer.nodeType !== NodeType.VARIABLE || !g.stores.has(buffer.identifier)) {
+    throw new Error(
+      'Storage access must use a buffer from `uniformStorage()` in the CPU compute fallback.'
+    );
+  }
+  return buffer.identifier;
+}
+
+function emitArrayRead(g, dag, node) {
+  const [bufferID, indexID] = node.dependsOn;
+  const name = bufferNameOf(dag, bufferID, g);
+  const index = emitExpression(g, dag, indexID);
+  if (node.identifier) {
+    return `H.readFieldValue(__s[${JSON.stringify(name)}], ${index}, ${fieldLiteral(g, name, node.identifier)})`;
+  }
+  return `__s[${JSON.stringify(name)}].data[H.truncIndex(${index})]`;
+}
+
+function emitFunctionCall(g, dag, node) {
+  const args = (node.dependsOn || []).map(dep => emitExpression(g, dag, dep));
+  const name = node.identifier;
+  if (name === 'mod' && args.length === 2) {
+    return `H.call("mod", [${args.join(', ')}])`;
+  }
+  if (name === 'atan' && args.length === 2) {
+    return `H.call("atan", [${args.join(', ')}])`;
+  }
+  if (name.startsWith('_p5_push_')) {
+    const listName = name.slice('_p5_push_'.length);
+    return `H.pushList(__s[${JSON.stringify(listName)}], ${args[0]})`;
+  }
+  if (name.startsWith('_p5_length_')) {
+    const listName = name.slice('_p5_length_'.length);
+    return `H.lenList(__s[${JSON.stringify(listName)}])`;
+  }
+  if (name.startsWith('_p5_pop_')) {
+    const listName = name.slice('_p5_pop_'.length);
+    return `H.popList(__s[${JSON.stringify(listName)}])`;
+  }
+  const listBase = name.endsWith('Element') ? name.slice(0, -'Element'.length) : null;
+  if (listBase && g.stores.has(listBase)) {
+    const fields = g.fields[listBase] || [];
+    return `H.makeStruct([${fields.map(f => JSON.stringify(f.name)).join(', ')}], [${args.join(', ')}])`;
+  }
+  if (GLSL_TYPE_TO_INFO[name]) {
+    const [base, dim] = GLSL_TYPE_TO_INFO[name];
+    return `H.vec(${JSON.stringify(base)}, ${dim}, [${args.join(', ')}])`;
+  }
+  return `H.call(${JSON.stringify(name)}, [${args.join(', ')}])`;
+}
+
+function emitDeclaration(g, dag, nodeID) {
+  // NOTE: the name is recorded only after the expression is emitted, so the
+  // expression can never resolve to its own temporary (`let t = t`).
+  const code = emitExpression(g, dag, nodeID);
+  const tmp = `${TEMP_PREFIX}${g.nextTempID++}`;
+  g.tempNames[nodeID] = tmp;
+  return `let ${tmp} = ${code};`;
+}
+
+function emitAssignStatement(g, dag, nodeID) {
+  const node = getNodeDataFromID(dag, nodeID);
+  const targetID = node.dependsOn[0];
+  const sourceID = node.dependsOn[1];
+  const source = emitExpression(g, dag, sourceID);
+  const target = getNodeDataFromID(dag, targetID);
+  if (target.nodeType === NodeType.VARIABLE) {
+    return `__v[${JSON.stringify(target.identifier)}] = ${source};`;
+  }
+  if (target.nodeType === NodeType.PHI) {
+    if (g.tempNames[targetID] === undefined) {
+      throw new Error('Internal error: phi target has no temporary in the CPU backend.');
+    }
+    return `${g.tempNames[targetID]} = ${source};`;
+  }
+  if (
+    target.nodeType === NodeType.OPERATION &&
+    target.opCode === OpCode.Binary.ARRAY_ACCESS
+  ) {
+    const [bufferID, indexID] = target.dependsOn;
+    const name = bufferNameOf(dag, bufferID, g);
+    const index = emitExpression(g, dag, indexID);
+    if (target.identifier) {
+      return `H.writeFieldValue(__s[${JSON.stringify(name)}], ${index}, ${fieldLiteral(g, name, target.identifier)}, ${source});`;
+    }
+    return `__s[${JSON.stringify(name)}].data[H.truncIndex(${index})] = ${source};`;
+  }
+  if (
+    target.nodeType === NodeType.OPERATION &&
+    target.opCode === OpCode.Unary.SWIZZLE
+  ) {
+    return emitSwizzleAssign(g, dag, target, source);
+  }
+  throw new Error(
+    `Cannot assign to node type "${target.nodeType}" in the CPU compute fallback.`
+  );
+}
+
+function emitSwizzleAssign(g, dag, target, source) {
+  const parentID = target.dependsOn[0];
+  const parent = getNodeDataFromID(dag, parentID);
+  const pattern = JSON.stringify(target.swizzle);
+  if (parent.nodeType === NodeType.VARIABLE) {
+    const name = JSON.stringify(parent.identifier);
+    return `__v[${name}] = H.swizSet(__v[${name}], ${pattern}, ${source});`;
+  }
+  if (
+    parent.nodeType === NodeType.OPERATION &&
+    parent.opCode === OpCode.Binary.ARRAY_ACCESS
+  ) {
+    const [bufferID, indexID] = parent.dependsOn;
+    const bufferName = bufferNameOf(dag, bufferID, g);
+    const index = emitExpression(g, dag, indexID);
+    const field = parent.identifier
+      ? fieldLiteral(g, bufferName, parent.identifier)
+      : 'null';
+    return `H.writeSwiz(__s[${JSON.stringify(bufferName)}], ${index}, ${field}, ${pattern}, ${source});`;
+  }
+  throw new Error(
+    'Cannot assign to a swizzle of a temporary value in the CPU compute fallback.'
+  );
+}
+
+function emitStatement(g, dag, nodeID) {
+  const node = getNodeDataFromID(dag, nodeID);
+  const suffix = g.suppressSemicolon ? '' : ';';
+  if (node.statementType === StatementType.BREAK) return `break${suffix}`;
+  if (node.statementType === StatementType.EMPTY) return suffix;
+  if (node.statementType === StatementType.DISCARD) {
+    throw new Error('`discard` cannot be used inside a compute shader.');
+  }
+  if (node.statementType === StatementType.EARLY_RETURN) {
+    if (node.dependsOn && node.dependsOn.length > 0) {
+      return `return ${emitExpression(g, dag, node.dependsOn[0])}${suffix}`;
+    }
+    return `return${suffix}`;
+  }
+  if (node.statementType === StatementType.EXPRESSION) {
+    return `${emitExpression(g, dag, node.dependsOn[0])}${suffix}`;
+  }
+  throw new Error(
+    `Unsupported statement type "${node.statementType}" in the CPU compute fallback.`
+  );
+}
+
+function emitBlockInstructions(g, cpuIR, blockID) {
+  const { dag, cfg } = cpuIR;
+  for (const nodeID of cfg.blockInstructions[blockID] || []) {
+    const nodeType = dag.nodeTypes[nodeID];
+    if (shouldCreateTemp(dag, nodeID)) {
+      g.write(emitDeclaration(g, dag, nodeID));
+    }
+    if (nodeType === NodeType.STATEMENT) {
+      g.write(emitStatement(g, dag, nodeID));
+    }
+    if (nodeType === NodeType.ASSIGNMENT) {
+      g.write(emitAssignStatement(g, dag, nodeID));
+    }
+  }
+}
+
+function assignPhiNodeValues(g, cpuIR, blockID) {
+  const { dag, cfg } = cpuIR;
+  for (const successorID of cfg.outgoingEdges[blockID] || []) {
+    for (const nodeID of cfg.blockInstructions[successorID] || []) {
+      const node = getNodeDataFromID(dag, nodeID);
+      if (node.nodeType !== NodeType.PHI) continue;
+      const branchIndex = (node.phiBlocks || []).indexOf(blockID);
+      if (branchIndex !== -1 && branchIndex < (node.dependsOn || []).length) {
+        const sourceID = node.dependsOn[branchIndex];
+        const tempName = g.tempNames[nodeID];
+        if (tempName && sourceID !== null) {
+          g.write(`${tempName} = ${emitExpression(g, dag, sourceID)};`);
+        }
+      }
+    }
+  }
+}
+
+function matchScopeEnd(sorted, from) {
+  let depth = 0;
+  for (let i = from; i < sorted.blocks.length; i++) {
+    const type = sorted.types[i];
+    if (type === BlockType.SCOPE_START) depth += 1;
+    if (type === BlockType.SCOPE_END) {
+      depth -= 1;
+      if (depth === 0) return i;
+    }
+  }
+  throw new Error('Internal error: unterminated scope in the CPU backend.');
+}
+
+// Collect `if`/`else if`/`else` branches starting at `at`: each entry holds
+// the condition block (or null for `else`) and the [start, end] range of its
+// scoped body within the sorted block list.
+function collectBranches(sorted, at) {
+  const branches = [];
+  let i = at;
+  while (i < sorted.blocks.length) {
+    const type = sorted.types[i];
+    if (type !== BlockType.IF_COND && type !== BlockType.ELSE_COND) break;
+    if (sorted.blocks[i + 1] === undefined || sorted.types[i + 1] !== BlockType.SCOPE_START) {
+      throw new Error('Internal error: expected a scope after a condition in the CPU backend.');
+    }
+    const end = matchScopeEnd(sorted, i + 1);
+    branches.push({ cond: i, start: i + 1, end });
+    i = end + 1;
+  }
+  return branches;
+}
+
+function emitRange(g, cpuIR, sorted, at, end) {
+  let i = at;
+  while (i < end) {
+    const blockID = sorted.blocks[i];
+    const type = sorted.types[i];
+    if (type === BlockType.IF_COND || type === BlockType.ELSE_COND) {
+      const branches = collectBranches(sorted, i);
+      // Emit `if`/`else if`/`else` exactly like the GLSL backend structures them.
+      branches.forEach((branch, index) => {
+        if (sorted.types[branch.cond] === BlockType.IF_COND) {
+          const condID = cpuIR.cfg.blockConditions[sorted.blocks[branch.cond]];
+          const prefix = index === 0 ? 'if' : '} else if';
+          g.write(`${prefix} (${emitExpression(g, cpuIR.dag, condID)}) {`);
+        } else {
+          g.write('} else {');
+        }
+        g.indent += 1;
+        emitRange(g, cpuIR, sorted, branch.start, branch.end + 1);
+        g.indent -= 1;
+      });
+      g.write('}');
+      i = branches[branches.length - 1].end + 1;
+      continue;
+    }
+    if (type === BlockType.FOR) {
+      i = emitFor(g, cpuIR, sorted, i);
+      continue;
+    }
+    emitBlock(g, cpuIR, sorted, blockID);
+    i += 1;
+  }
+  return i;
+}
+
+function emitBlock(g, cpuIR, sorted, blockID) {
+  const { dag, cfg } = cpuIR;
+  const type = cfg.blockTypes[blockID];
+  if (type === BlockType.SCOPE_START) {
+    g.write('{');
+    g.indent += 1;
+    return;
+  }
+  if (type === BlockType.SCOPE_END) {
+    g.indent -= 1;
+    g.write('}');
+    return;
+  }
+  if (type === BlockType.BRANCH) {
+    for (const nodeID of cfg.blockInstructions[blockID] || []) {
+      const node = getNodeDataFromID(dag, nodeID);
+      if (node.nodeType !== NodeType.PHI) continue;
+      const dependsOn = node.dependsOn || [];
+      if (dependsOn.length > 0) {
+        const existing = g.tempNames[dependsOn[0]];
+        if (existing) {
+          g.tempNames[nodeID] = existing;
+          continue;
+        }
+      }
+      const tmp = `${TEMP_PREFIX}${g.nextTempID++}`;
+      g.tempNames[nodeID] = tmp;
+      g.write(`let ${tmp};`);
+    }
+  }
+  emitBlockInstructions(g, cpuIR, blockID);
+  if (type === BlockType.IF_BODY) {
+    assignPhiNodeValues(g, cpuIR, blockID);
+  }
+}
+
+function emitFor(g, cpuIR, sorted, at) {
+  const { dag, cfg } = cpuIR;
+  const blockID = sorted.blocks[at];
+  const instructions = cfg.blockInstructions[blockID] || [];
+  const parts = instructions.map(nodeID => {
+    const node = getNodeDataFromID(dag, nodeID);
+    if (node.nodeType === NodeType.STATEMENT && node.statementType === StatementType.EMPTY) {
+      return '';
+    }
+    if (node.nodeType === NodeType.STATEMENT) {
+      return emitExpression(g, dag, node.dependsOn[0]);
+    }
+    const target = getNodeDataFromID(dag, node.dependsOn[0]);
+    const source = emitExpression(g, dag, node.dependsOn[1]);
+    if (target.nodeType === NodeType.VARIABLE) {
+      return `__v[${JSON.stringify(target.identifier)}] = ${source}`;
+    }
+    if (target.nodeType === NodeType.PHI) {
+      if (g.tempNames[node.dependsOn[0]] === undefined) {
+        throw new Error('Internal error: phi target has no temporary in the CPU backend.');
+      }
+      return `${g.tempNames[node.dependsOn[0]]} = ${source}`;
+    }
+    throw new Error(
+      'Only variable assignments are supported in loop headers of the CPU compute fallback.'
+    );
+  });
+  while (parts.length < 3) parts.push('');
+  g.write(`for (${parts[0]}; ${parts[1]}; ${parts[2]}) {`);
+  g.indent += 1;
+  // The loop body is the scoped range right after the FOR block.
+  if (sorted.types[at + 1] !== BlockType.SCOPE_START) {
+    throw new Error('Internal error: expected a scope after a loop in the CPU backend.');
+  }
+  const end = matchScopeEnd(sorted, at + 1);
+  emitRange(g, cpuIR, sorted, at + 1, end + 1);
+  g.indent -= 1;
+  g.write('}');
+  return end + 1;
 }
 
 export function compileCpuComputeHook(cpuIR) {
