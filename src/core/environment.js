@@ -1369,5 +1369,5 @@ function environment(p5, fn, lifecycles) {
 export default environment;
 
 if (typeof p5 !== 'undefined') {
-  environment(p5, p5.prototype);
+  p5.registerAddon(environment);
 }
