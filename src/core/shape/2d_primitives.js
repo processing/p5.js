@@ -315,6 +315,44 @@ p5.prototype._normalizeArcAngles = (
  */
 p5.prototype.arc = function(x, y, w, h, start, stop, mode, detail) {
   p5._validateParameters('arc', arguments);
+  // Skip validation when Friendly Errors are disabled
+  if (p5.disableFriendlyErrors || typeof IS_MINIFIED !== 'undefined') {
+    // Validate that numeric parameters are finite numbers
+    if (!Number.isFinite(x)) {
+      console.warn('arc(): x parameter should be a finite number. Received: ' + x);
+      return this;
+    }
+    if (!Number.isFinite(y)) {
+      console.warn('arc(): y parameter should be a finite number. Received: ' + y);
+      return this;
+    }
+    if (!Number.isFinite(w)) {
+      console.warn('arc(): w parameter should be a finite number. Received: ' + w);
+      return this;
+    }
+    if (!Number.isFinite(h)) {
+      console.warn('arc(): h parameter should be a finite number. Received: ' + h);
+      return this;
+    }
+    if (!Number.isFinite(start)) {
+      console.warn('arc(): start angle should be a finite number. Received: ' + start);
+      return this;
+    }
+    if (!Number.isFinite(stop)) {
+      console.warn('arc(): stop angle should be a finite number. Received: ' + stop);
+      return this;
+    }
+
+    // Validate that width and height are positive
+    if (w <= 0) {
+      console.warn('arc(): width (w) should be a positive number. Received: ' + w);
+      return this;
+    }
+    if (h <= 0) {
+      console.warn('arc(): height (h) should be a positive number. Received: ' + h);
+      return this;
+    }
+  }
 
   // if the current stroke and fill settings wouldn't result in something
   // visible, exit immediately
@@ -335,7 +373,7 @@ p5.prototype.arc = function(x, y, w, h, start, stop, mode, detail) {
   if (angles.correspondToSamePoint) {
     // If the arc starts and ends at (near enough) the same place, we choose to
     // draw an ellipse instead.  This is preferable to faking an ellipse (by
-    // making stop ever-so-slightly less than start + TWO_PI) because the ends
+    // making stop ever so-slightly less than start + TWO_PI) because the ends
     // join up to each other rather than at a vertex at the centre (leaving
     // an unwanted spike in the stroke/fill).
     this._renderer.ellipse([vals.x, vals.y, vals.w, vals.h, detail]);
@@ -367,7 +405,6 @@ p5.prototype.arc = function(x, y, w, h, start, stop, mode, detail) {
 
   return this;
 };
-
 /**
  * Draws an ellipse (oval).
  *
