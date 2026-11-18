@@ -2,7 +2,6 @@ import { sortCFG } from '../strands/ir_cfg';
 import { BaseType, OpCode } from '../strands/ir_types';
 import * as FES from '../strands/strands_FES';
 
-const CPU_COMPUTE_WARN_ITEMS = 4096;
 
 function channelIndex(channel) {
   if ('xyzw'.includes(channel)) return 'xyzw'.indexOf(channel);
@@ -470,22 +469,26 @@ export function compileCpuComputeHook(cpuIR) {
     fields: fieldsOf(cpuIR)
   };
 
-  const { hookType } = computeHook;
-  let returnType = null;
-  if (hookType.returnType?.typeName?.trim() !== 'void') {
-    returnType = hookType.returnType;
-  }
-  const sortedIDs = sortCFG(cpuIR.cfg.outgoingEdges, computeHook.entryBlockID)
+  const sortedIDs = sortCFG(cpuIR.cfg.outgoingEdges, computeHook.entryBlockID);
   const sorted = {
     blocks: sortedIDs,
     types: sortedIDs.map(id => cpuIR.cfg.blockTypes[id])
   };
   emitRange(g, cpuIR, sorted, 0, sortedIDs.length);
+  const { hookType } = computeHook;
+  let returnType = null;
+  if (hookType.returnType?.typeName?.trim() !== 'void') {
+    returnType = hookType.returnType;
+  }
+  if (returnType) {
+    g.write(`return ${emitExpression(g, cpuIR.dag, computeHook.rootNodeID)};`);
+  }
   const factory = new Function(
     '__idx',
     '__s',
     '__u',
     '__v',
+    'H',
     g.codeLines.join('\n')
   );
   return factory;
@@ -503,6 +506,15 @@ function resolveStores(shader) {
       );
     }
     stores[name] = value;
+  }
+  // `setUniform()` overrides resolved initializers, mirroring the GPU path.
+  for (const [name, uniform] of Object.entries(shader.uniforms || {})) {
+    const data = uniform._cachedData;
+    if (data?._isStorageBuffer || data?._isStorageList) {
+      if (data?._isStorageBuffer || data?._isStorageList) {
+        stores[name] = data;
+      }
+    }
   }
   return stores;
 }
@@ -535,12 +547,9 @@ export function runCpuCompute(shader, x, y=1, z=1) {
   }
   const total = x*y*z;
   if (!Number.isInteger(total) || total < 0) {
-    throw new Error(`compute() counts must be non-negative integers. Got (${x}, ${y}, ${z}).`);
-  }
-  if (total > CPU_COMPUTE_WARN_ITEMS) {
-    console.warn(
-      `[p5.strands] compute() dispatched ${total} iterations on the CPU fallback, ` +
-        `which will be slow. Consider fewer items when running without WebGPU.`
+    FES.userError(
+      'type error',
+      `compute() counts must be non-negative integers. Got (${x}, ${y}, ${z}).`
     );
   }
   if (!shader._cpuComputeFn) {
@@ -559,7 +568,7 @@ export function runCpuCompute(shader, x, y=1, z=1) {
     if (object !== null && typeof object === 'object' && key in object) {
       return object[key];
     }
-    throw new Error(
+    FES.internalError(
       `Cannot read property "${key}" in the CPU compute fallback.`
     );
   };
@@ -571,7 +580,7 @@ export function runCpuCompute(shader, x, y=1, z=1) {
     ];
     helpers.state.flat = flat;
     helpers.state.randomCalls = 0;
-    shader._cpuComputeFn(index, stores, scalars, {});
+    shader._cpuComputeFn(index, stores, scalars, {}, helpers);
   }
 
   // Mark every bound store mutated so render-path data textures re-upload.
@@ -580,4 +589,86 @@ export function runCpuCompute(shader, x, y=1, z=1) {
       store._cpuVersion = (store._cpuVersion | 0) + 1;
     }
   }
+}
+
+function listLength(list) {
+  if (list === null || typeof list !== 'object' || !list._isStorageList) {
+    FES.userError(
+      'type error',
+      '`length` can only be read on a `createStorageList()` list.'
+    );
+  }
+  return list.items.length;
+}
+
+function listPush(list, value, pInst) {
+  if (list === null || typeof list !== 'object' || !list._isStorageList) {
+    FES.userError(
+      'type error',
+      '`push()` can only be used on a `createStorageList()` list.'
+    );
+  }
+  list.push(convertPushedValue(list, value, pInst));
+}
+
+function listPop(list) {
+  if (list === null || typeof list !== 'object' || !list._isStorageList) {
+    FES.userError(
+      'type error',
+      '`pop()` can only be used on a `createStorageList()` list.'
+    );
+  }
+  if (list.items.length === 0) {
+    FES.userError(
+      'type error',
+      '`pop()` called on an empty storage list.'
+    );
+  }
+  return list.items.pop();
+}
+
+function convertPushedValue(list, value, pInst) {
+  if (!list._schema) {
+    if (typeof value !== 'number') {
+      FES.userError(
+        'type error',
+        'Float StorageList.push() expects a number'
+      );
+    }
+    return value;
+  }
+  if (value === null || typeof value !== 'object' || Array.isArray(value)) {
+    FES.userError(
+      'type error',
+      'StorageList.push() expects a plain object matching the list schema.'
+    );
+  }
+  const out = {};
+  for (const field of list._schema.fields) {
+    const fieldValue = value[field.name];
+    if (fieldValue === undefined) {
+      FES.userError(
+        'type error',
+        `StorageList.push() is missing field "${field.name}".`
+      );
+    }
+    out[field.name] = convertFieldForStore(field, fieldValue, pInst);
+  }
+  return out;
+}
+
+function convertFieldForStore(field, value, pInst) {
+  if (field.kind === 'vector') {
+    if (value?.isVector) return value;
+    const parts = Array.isArray(value) ? value : [value];
+    return pInst.createVector(parts[0] ?? 0, parts[1] ?? 0, parts[2] ?? 0);
+  }
+  if (field.kind === 'color') {
+    if (value?.isColor) return value;
+    return pInst.color(value[0], value[1], value[2], value[3]);
+  }
+  if (field.dim > 1) {
+    return Array.isArray(value) ? value.slice(0, field.dim) : [value];
+  }
+  return Number(value);
 }
