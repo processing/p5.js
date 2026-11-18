@@ -164,6 +164,12 @@ function resolveNextTo(modelPath, file) {
   return slash >= 0 ? `${url.slice(0, slash)}/${path}` : path;
 }
 
+// after an await FES can't tell our own calls from the sketch's, so mark them
+function loadImageInternally(instance, url) {
+  const load = () => instance.loadImage(url);
+  return instance._internal ? instance._internal(load) : load();
+}
+
 // load each material's texture maps and hang them on the material so they land
 // on the part state. paths resolve relative to the model file, a texture that
 // fails just gets skipped. no-op if there's no loadImage.
@@ -177,8 +183,7 @@ async function loadMaterialTextures(materials, modelPath, instance) {
       if (!material[pathField]) continue;
       const url = resolveNextTo(modelPath, material[pathField]);
       jobs.push(
-        instance
-          .loadImage(url)
+        loadImageInternally(instance, url)
           .then(img => {
             material[imageField] = img;
           })
@@ -227,7 +232,7 @@ async function loadGLTFImage(gltf, buffers, source, modelPath, instance) {
       );
       url = objectUrl;
     }
-    return await instance.loadImage(url);
+    return await loadImageInternally(instance, url);
   } catch {
     console.warn(`Texture not found, skipping: ${image.uri || `image ${source}`}`);
     return null;
@@ -375,13 +380,15 @@ function loading(p5, fn) {
    * its normal map, and its colour texture or, without one, its base colour.
    * Roughness becomes shininess and metallic tints the highlight, since p5.js
    * materials have no metallic or roughness yet. Parts without a material use
-   * the current `fill()`. Metallic-roughness, emissive and occlusion maps,
-   * vertex colours, a second set of texture coordinates, texture transforms,
-   * skins and animations are not read. Buffers and images can be packed inside
-   * the file or sit next to it. Files compressed with Draco or meshopt are not
-   * supported. glTF models are y-up, like most `.obj` files, so they may need
-   * flipping with `scale(1, -1, 1)`. Textures that repeat need
-   * `textureWrap(REPEAT)`.
+   * the current `fill()`. p5.js models have one set of texture coordinates,
+   * so they follow the colour texture (or the normal map without one), along
+   * with its texture transform.
+   * Metallic-roughness, emissive and occlusion maps, vertex colours, skins and
+   * animations are not read. Buffers and images can be packed inside the file
+   * or sit next to it. Quantized files work, but files compressed with Draco
+   * or meshopt are not supported. glTF models are y-up, like most `.obj`
+   * files, so they may need flipping with `scale(1, -1, 1)`. Textures that
+   * repeat need `textureWrap(REPEAT)`.
    *
    * The first way to call `loadModel()` has three optional parameters after the
    * file path. The first optional parameter, `successCallback`, is a function

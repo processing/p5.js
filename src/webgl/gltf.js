@@ -1,5 +1,9 @@
 import { Vector } from '../math/p5.Vector';
+import { Geometry } from './p5.Geometry';
+import { SEGMENTED } from '../core/constants';
 
+// a .glb starts with "glTF" in ascii, then chunks tagged "JSON" and "BIN\0"
+// https://registry.khronos.org/glTF/specs/2.0/glTF-2.0.html#binary-gltf-layout
 const GLB_MAGIC = 0x46546c67;
 const GLB_CHUNK_JSON = 0x4e4f534a;
 const GLB_CHUNK_BIN = 0x004e4942;
@@ -17,8 +21,12 @@ const TYPE_SIZES = { SCALAR: 1, VEC2: 2, VEC3: 3, VEC4: 4, MAT4: 16 };
 
 const NORMALIZED_DIVISORS = { 5120: 127, 5121: 255, 5122: 32767, 5123: 65535 };
 
-// extensions that only change data p5.js already reads
-const SUPPORTED_EXTENSIONS = ['KHR_mesh_quantization'];
+// quantized files store positions, normals and uvs as 8 or 16 bit ints, which
+// readFlat already reads
+const SUPPORTED_EXTENSIONS = [
+  'KHR_mesh_quantization',
+  'KHR_texture_transform'
+];
 
 const TRIANGLES = 4;
 const TRIANGLE_STRIP = 5;
@@ -62,7 +70,8 @@ function checkRequiredExtensions(gltf) {
   );
   if (required.length > 0) {
     throw new Error(
-      `This glTF file needs ${required.join(', ')}, which p5.js does not support yet`
+      `This glTF file needs ${required.join(', ')}, ` +
+        'which p5.js does not support yet'
     );
   }
 }
@@ -167,7 +176,11 @@ function multiply(a, b) {
   return out;
 }
 
-function fromTRS(t = [0, 0, 0], r = [0, 0, 0, 1], s = [1, 1, 1]) {
+function fromTranslationRotationScale(
+  t = [0, 0, 0],
+  r = [0, 0, 0, 1],
+  s = [1, 1, 1]
+) {
   const [x, y, z, w] = r;
   return [
     (1 - 2 * (y * y + z * z)) * s[0],
@@ -189,11 +202,15 @@ function fromTRS(t = [0, 0, 0], r = [0, 0, 0, 1], s = [1, 1, 1]) {
   ];
 }
 
-const IDENTITY = fromTRS();
+const IDENTITY = fromTranslationRotationScale();
 
 function nodeMatrix(node) {
   if (node.matrix) return node.matrix;
-  return fromTRS(node.translation, node.rotation, node.scale);
+  return fromTranslationRotationScale(
+    node.translation,
+    node.rotation,
+    node.scale
+  );
 }
 
 // inverse transpose, so non-uniform scale keeps normals perpendicular
@@ -233,19 +250,6 @@ function transformNormals({ rows }, { data, count }) {
     for (let c = 0; c < 3; c++) out[i * 3 + c] = n[c] / length;
   }
   return out;
-}
-
-function faceNormal(p, a, b, c) {
-  const at = (i, k) => p[i * 3 + k];
-  const u = [0, 1, 2].map(k => at(b, k) - at(a, k));
-  const v = [0, 1, 2].map(k => at(c, k) - at(a, k));
-  const n = [
-    u[1] * v[2] - u[2] * v[1],
-    u[2] * v[0] - u[0] * v[2],
-    u[0] * v[1] - u[1] * v[0]
-  ];
-  const length = Math.hypot(...n) || 1;
-  return n.map(k => k / length);
 }
 
 function toTriangles(mode, indices) {
@@ -301,6 +305,49 @@ function gltfMaterialToMtl(material = {}) {
   return result;
 }
 
+// p5 has one set of uvs, so they follow the colour map (or the normal map):
+// its texCoord picks the set and its KHR_texture_transform is baked in
+function uvKey(info) {
+  const t = info.extensions?.KHR_texture_transform || {};
+  return [
+    t.texCoord ?? info.texCoord ?? 0,
+    ...(t.offset || [0, 0]),
+    ...(t.scale || [1, 1]),
+    t.rotation || 0
+  ].join();
+}
+
+function uvMapping(gltf, materialIndex) {
+  const material = gltf.materials?.[materialIndex];
+  const colour = material?.pbrMetallicRoughness?.baseColorTexture;
+  const normal = material?.normalTexture;
+  const info = colour || normal;
+  const transform = info?.extensions?.KHR_texture_transform;
+  const mismatch =
+    !!colour && !!normal && uvKey(colour) !== uvKey(normal);
+  const set = transform?.texCoord ?? info?.texCoord ?? 0;
+  if (!transform) return { set, mismatch, apply: null };
+  const [ox, oy] = transform.offset || [0, 0];
+  const [sx, sy] = transform.scale || [1, 1];
+  const cos = Math.cos(transform.rotation || 0);
+  const sin = Math.sin(transform.rotation || 0);
+  const apply = (u, v) => [
+    cos * sx * u + sin * sy * v + ox,
+    cos * sy * v - sin * sx * u + oy
+  ];
+  return { set, mismatch, apply };
+}
+
+function hasArea(p, a, b, c) {
+  const u = [0, 1, 2].map(k => p[b * 3 + k] - p[a * 3 + k]);
+  const v = [0, 1, 2].map(k => p[c * 3 + k] - p[a * 3 + k]);
+  return (
+    u[1] * v[2] - u[2] * v[1] !== 0 ||
+    u[2] * v[0] - u[0] * v[2] !== 0 ||
+    u[0] * v[1] - u[1] * v[0] !== 0
+  );
+}
+
 function sceneRoots(gltf) {
   const scenes = gltf.scenes || [];
   const scene = scenes[gltf.scene ?? 0];
@@ -315,16 +362,17 @@ function sceneRoots(gltf) {
 function parseGLTF(model, gltf, buffers) {
   const faceMaterials = [];
   let skippedModes = false;
+  let mixedTransforms = false;
 
-  const pushVertex = (p, pi, n, ni, uvs, ui) => {
-    model.vertices.push(new Vector(p[pi * 3], p[pi * 3 + 1], p[pi * 3 + 2]));
-    model.vertexNormals.push(
-      ni === undefined
-        ? new Vector(...n)
-        : new Vector(n[ni * 3], n[ni * 3 + 1], n[ni * 3 + 2])
-    );
-    model.uvs.push(uvs ? [uvs.data[ui * uvs.size], uvs.data[ui * uvs.size + 1]] : [0, 0]);
-    return model.vertices.length - 1;
+  const append = part => {
+    const base = model.vertices.length;
+    const uvs = part.uvs.flat();
+    for (let i = 0; i < part.vertices.length; i++) {
+      model.vertices.push(part.vertices[i]);
+      model.vertexNormals.push(part.vertexNormals[i]);
+      model.uvs.push([uvs[i * 2] ?? 0, uvs[i * 2 + 1] ?? 0]);
+    }
+    for (const face of part.faces) model.faces.push(face.map(i => base + i));
   };
 
   const addPrimitive = (primitive, matrix) => {
@@ -350,7 +398,10 @@ function parseGLTF(model, gltf, buffers) {
     };
     const normal = readAttribute('NORMAL');
     const normals = normal ? transformNormals(normalMat, normal) : null;
-    const uvs = readAttribute('TEXCOORD_0');
+    const mapping = uvMapping(gltf, primitive.material);
+    if (mapping.mismatch) mixedTransforms = true;
+    const uvs =
+      readAttribute(`TEXCOORD_${mapping.set}`) || readAttribute('TEXCOORD_0');
     let indices;
     if (primitive.indices !== undefined) {
       indices = readFlat(gltf, buffers, primitive.indices).data;
@@ -367,39 +418,48 @@ function parseGLTF(model, gltf, buffers) {
     // a mirrored transform flips the winding, so swap it back
     const flip = normalMat.det < 0;
 
-    if (normals) {
-      const base = model.vertices.length;
-      for (let i = 0; i < vertexCount; i++) {
-        pushVertex(positions, i, normals, i, uvs, i);
-      }
-      for (let i = 0; i + 2 < indices.length; i += 3) {
-        const [a, b, c] = [indices[i], indices[i + 1], indices[i + 2]];
-        if (a === b || b === c || a === c) continue;
-        model.faces.push(
-          flip ? [base + a, base + c, base + b] : [base + a, base + b, base + c]
+    const target = normals ? model : new Geometry();
+    const local = new Map();
+    const vertexAt = i => {
+      if (!local.has(i)) {
+        local.set(i, target.vertices.length);
+        target.vertices.push(
+          new Vector(
+            positions[i * 3],
+            positions[i * 3 + 1],
+            positions[i * 3 + 2]
+          )
         );
-        faceMaterials.push(material);
+        target.vertexNormals.push(
+          normals
+            ? new Vector(normals[i * 3], normals[i * 3 + 1], normals[i * 3 + 2])
+            : new Vector(0, 0, 0)
+        );
+        const [u, v] = uvs
+          ? [uvs.data[i * uvs.size], uvs.data[i * uvs.size + 1]]
+          : [0, 0];
+        target.uvs.push(mapping.apply ? mapping.apply(u, v) : [u, v]);
       }
-      return;
-    }
-
-    // without normals the spec asks for flat shading
+      return local.get(i);
+    };
     for (let i = 0; i + 2 < indices.length; i += 3) {
-      let [a, b, c] = [indices[i], indices[i + 1], indices[i + 2]];
+      const [a, b, c] = [indices[i], indices[i + 1], indices[i + 2]];
       if (a === b || b === c || a === c) continue;
-      if (flip) [b, c] = [c, b];
-      const n = faceNormal(positions, a, b, c);
-      model.faces.push(
-        [a, b, c].map(v => pushVertex(positions, v, n, undefined, uvs, v))
-      );
+      if (!normals && !hasArea(positions, a, b, c)) continue;
+      const face = [vertexAt(a), vertexAt(b), vertexAt(c)];
+      target.faces.push(flip ? [face[0], face[2], face[1]] : face);
       faceMaterials.push(material);
     }
+    // the spec asks for flat normals when a primitive has none
+    if (!normals) append(target.computeNormals(SEGMENTED));
   };
 
   const addMesh = (meshIndex, matrix) => {
     const mesh = gltf.meshes?.[meshIndex];
     if (!mesh) throw invalid(`mesh ${meshIndex} is missing`);
-    (mesh.primitives || []).forEach(primitive => addPrimitive(primitive, matrix));
+    for (const primitive of mesh.primitives || []) {
+      addPrimitive(primitive, matrix);
+    }
   };
 
   const visiting = new Set();
@@ -424,6 +484,12 @@ function parseGLTF(model, gltf, buffers) {
 
   if (skippedModes) {
     console.warn('glTF: points and lines are not drawn yet, they were skipped');
+  }
+  if (mixedTransforms) {
+    console.warn(
+      "glTF: a normal map with its own texture coordinates or transform " +
+        "uses the colour map's instead"
+    );
   }
   return faceMaterials;
 }

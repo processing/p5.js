@@ -1,4 +1,5 @@
 import p5 from '../../../src/app.js';
+import { vi } from 'vitest';
 import {
   parseGLB,
   checkRequiredExtensions,
@@ -265,6 +266,236 @@ suite('glTF parsing', function () {
       parseGLTF(model, gltf, buffers);
       assert.deepEqual(model.faces[0], [0, 2, 1]);
       assert.closeTo(model.vertexNormals[0].z, 1, 1e-6);
+    });
+
+    function quadGltf(positions, indices) {
+      const bytes = new Uint8Array(positions.byteLength + indices.byteLength);
+      bytes.set(new Uint8Array(positions.buffer), 0);
+      bytes.set(new Uint8Array(indices.buffer), positions.byteLength);
+      return {
+        gltf: {
+          meshes: [
+            { primitives: [{ attributes: { POSITION: 0 }, indices: 1 }] }
+          ],
+          accessors: [
+            {
+              bufferView: 0,
+              componentType: 5126,
+              count: positions.length / 3,
+              type: 'VEC3'
+            },
+            {
+              bufferView: 1,
+              componentType: 5125,
+              count: indices.length,
+              type: 'SCALAR'
+            }
+          ],
+          bufferViews: [
+            { buffer: 0, byteOffset: 0, byteLength: positions.byteLength },
+            {
+              buffer: 0,
+              byteOffset: positions.byteLength,
+              byteLength: indices.byteLength
+            }
+          ]
+        },
+        buffers: [bytes.buffer]
+      };
+    }
+
+    test('flat normals come from computeNormals(SEGMENTED)', function () {
+      const { gltf, buffers } = quadGltf(
+        new Float32Array([0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 1, 0]),
+        new Uint32Array([0, 1, 2, 2, 1, 3])
+      );
+      const spy = vi.spyOn(p5.Geometry.prototype, 'computeNormals');
+      try {
+        const model = new p5.Geometry();
+        parseGLTF(model, gltf, buffers);
+        const types = spy.mock.calls.map(([type]) => type);
+        assert.deepEqual(types, [p5.prototype.SEGMENTED]);
+        const used = model.faces.flat();
+        assert.equal(new Set(used).size, used.length);
+        used.forEach(i => assert.closeTo(model.vertexNormals[i].z, 1, 1e-6));
+      } finally {
+        spy.mockRestore();
+      }
+    });
+
+    test('leaves out vertices no face uses', function () {
+      const { gltf, buffers } = quadGltf(
+        new Float32Array([0, 0, 0, 1, 0, 0, 0, 1, 0, 9, 9, 9]),
+        new Uint32Array([0, 1, 2])
+      );
+      const model = new p5.Geometry();
+      parseGLTF(model, gltf, buffers);
+      assert.equal(model.vertices.length, 3);
+    });
+
+    test('skips faces with no area without a warning', function () {
+      const { gltf, buffers } = quadGltf(
+        new Float32Array([0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0]),
+        new Uint32Array([0, 1, 2, 0, 3, 1])
+      );
+      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+      try {
+        const model = new p5.Geometry();
+        parseGLTF(model, gltf, buffers);
+        assert.equal(model.faces.length, 1);
+        assert.equal(warn.mock.calls.length, 0);
+      } finally {
+        warn.mockRestore();
+      }
+    });
+
+    test('loads a large primitive without normals', function () {
+      const size = 180;
+      const positions = new Float32Array(size * size * 3);
+      for (let i = 0; i < size * size; i++) {
+        positions.set([i % size, Math.floor(i / size), 0], i * 3);
+      }
+      const indices = [];
+      for (let y = 0; y + 1 < size; y++) {
+        for (let x = 0; x + 1 < size; x++) {
+          const i = y * size + x;
+          indices.push(i, i + 1, i + size, i + size, i + 1, i + size + 1);
+        }
+      }
+      const { gltf, buffers } = quadGltf(positions, new Uint32Array(indices));
+      const model = new p5.Geometry();
+      parseGLTF(model, gltf, buffers);
+      assert.equal(model.faces.length, indices.length / 3);
+    });
+
+    test('reads quantized positions through the node scale', function () {
+      const data = new Int16Array([0, 0, 0, 100, 0, 0, 0, 100, 0]);
+      const gltf = {
+        extensionsRequired: ['KHR_mesh_quantization'],
+        nodes: [{ mesh: 0, scale: [0.01, 0.01, 0.01] }],
+        scenes: [{ nodes: [0] }],
+        meshes: [{ primitives: [{ attributes: { POSITION: 0 } }] }],
+        accessors: [
+          { bufferView: 0, componentType: 5122, count: 3, type: 'VEC3' }
+        ],
+        bufferViews: [{ buffer: 0, byteLength: 18 }]
+      };
+      assert.doesNotThrow(() => checkRequiredExtensions(gltf));
+      const model = new p5.Geometry();
+      parseGLTF(model, gltf, [data.buffer]);
+      assert.closeTo(model.vertices[1].x, 1, 1e-6);
+      assert.closeTo(model.vertices[2].y, 1, 1e-6);
+    });
+
+    test('bakes the colour map texture transform into the uvs', function () {
+      const { gltf, buffers } = triangleGltf([{ mesh: 0 }]);
+      const uvs = new Float32Array([0, 0, 1, 0, 0, 1]);
+      buffers.push(uvs.buffer);
+      gltf.accessors.push({
+        bufferView: 2,
+        componentType: 5126,
+        count: 3,
+        type: 'VEC2'
+      });
+      gltf.bufferViews.push({ buffer: 1, byteLength: 24 });
+      gltf.meshes[0].primitives[0].attributes.TEXCOORD_0 = 2;
+      gltf.meshes[0].primitives[0].material = 0;
+      gltf.materials = [
+        {
+          pbrMetallicRoughness: {
+            baseColorTexture: {
+              index: 0,
+              extensions: {
+                KHR_texture_transform: {
+                  offset: [0.5, 0],
+                  scale: [2, 3],
+                  rotation: Math.PI / 2
+                }
+              }
+            }
+          }
+        }
+      ];
+      const model = new p5.Geometry();
+      parseGLTF(model, gltf, buffers);
+      const flat = model.uvs.flat();
+      [0.5, 0, 0.5, -2, 3.5, 0].forEach((v, i) =>
+        assert.closeTo(flat[i], v, 1e-6)
+      );
+    });
+
+    function twoUvSets() {
+      const { gltf, buffers } = triangleGltf([{ mesh: 0 }]);
+      const uvs = new Float32Array([0, 0, 1, 0, 0, 1, 0, 0, 0.5, 0, 0, 0.5]);
+      buffers.push(uvs.buffer);
+      gltf.accessors.push(
+        { bufferView: 2, componentType: 5126, count: 3, type: 'VEC2' },
+        { bufferView: 3, componentType: 5126, count: 3, type: 'VEC2' }
+      );
+      gltf.bufferViews.push(
+        { buffer: 1, byteOffset: 0, byteLength: 24 },
+        { buffer: 1, byteOffset: 24, byteLength: 24 }
+      );
+      const primitive = gltf.meshes[0].primitives[0];
+      primitive.attributes.TEXCOORD_0 = 2;
+      primitive.attributes.TEXCOORD_1 = 3;
+      primitive.material = 0;
+      return { gltf, buffers };
+    }
+
+    test('no warning when both maps mean the same transform', function () {
+      const { gltf, buffers } = twoUvSets();
+      gltf.materials = [
+        {
+          pbrMetallicRoughness: {
+            baseColorTexture: {
+              index: 0,
+              extensions: { KHR_texture_transform: { offset: [0, 0] } }
+            }
+          },
+          normalTexture: { index: 1, texCoord: 0 }
+        }
+      ];
+      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+      try {
+        parseGLTF(new p5.Geometry(), gltf, buffers);
+        assert.equal(warn.mock.calls.length, 0);
+      } finally {
+        warn.mockRestore();
+      }
+    });
+
+    test('uses the uv set the colour map asks for', function () {
+      const { gltf, buffers } = twoUvSets();
+      gltf.materials = [
+        {
+          pbrMetallicRoughness: { baseColorTexture: { index: 0, texCoord: 1 } }
+        }
+      ];
+      const model = new p5.Geometry();
+      parseGLTF(model, gltf, buffers);
+      assert.deepEqual(model.uvs[1], [0.5, 0]);
+    });
+
+    test('warns when the normal map has its own texture transform', function () {
+      const { gltf, buffers } = twoUvSets();
+      gltf.materials = [
+        {
+          pbrMetallicRoughness: { baseColorTexture: { index: 0 } },
+          normalTexture: {
+            index: 1,
+            extensions: { KHR_texture_transform: { scale: [2, 2] } }
+          }
+        }
+      ];
+      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+      try {
+        parseGLTF(new p5.Geometry(), gltf, buffers);
+        const messages = warn.mock.calls.map(([msg]) => msg);
+        assert.ok(messages.some(msg => /colour map's/.test(msg)));
+      } finally {
+        warn.mockRestore();
+      }
     });
 
     test('keeps flat normals facing out under a mirrored node', function () {

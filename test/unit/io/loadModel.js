@@ -563,6 +563,32 @@ suite('loadModel', function () {
       );
     });
 
+    test('textures load inside _internal so FES skips them', async function () {
+      let internal = false;
+      const calls = [];
+      mockP5Prototype._internal = callback => {
+        internal = true;
+        try {
+          return callback();
+        } finally {
+          internal = false;
+        }
+      };
+      mockP5Prototype.loadImage = async () => {
+        calls.push(internal);
+        return { width: 1, height: 1 };
+      };
+      try {
+        await mockP5Prototype.loadModel('/test/unit/assets/textured.glb');
+        await mockP5Prototype.loadModel('/test/unit/assets/textured.obj');
+        assert.isAtLeast(calls.length, 2);
+        assert.ok(calls.every(Boolean));
+      } finally {
+        delete mockP5Prototype._internal;
+        delete mockP5Prototype.loadImage;
+      }
+    });
+
     test('a texture that fails to load is skipped without failing the model', async function () {
       mockP5Prototype.loadImage = async () => {
         throw new Error('Not Found');
