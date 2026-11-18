@@ -33,7 +33,7 @@ function texelCountForDim(dim) {
 
 // Computes the texture layout for a buffer
 export function cpuStorageLayout(buffer) {
-  const count = buffer.length;
+  const count = buffer._isStorageList ? buffer.items.length : buffer.length;
   let fields = null;
   let stride = 1;
   if (buffer._schema) {
@@ -59,19 +59,21 @@ export function cpuStorageLayout(buffer) {
 export function packCpuStorage(buffer, layout) {
   const pixels = new Float32Array(layout.width * layout.height * 4);
   if (!buffer._schema) {
-    const data = buffer.data;
+    const data = buffer._isStorageList ? buffer.items : buffer.data;
     for (let i = 0; i < layout.count; i++) {
       pixels[i * 4] = Number(data[i]);
     }
     return pixels;
   }
-  const items = buffer.data;
+  const items = buffer._isStorageList ? buffer.items : buffer.data;
   for (let e = 0; e < layout.count; e++) {
     const item = items[e];
     for (const field of layout.fields) {
       const comps = fieldComponents(field, item[field.name]);
       for (let k = 0; k < field.dim; k++) {
-        pixels[(e * layout.stride + field.offset) * 4 + k] = Number(comps[k] ?? 0);
+        pixels[(e * layout.stride + field.offset) * 4 + k] = Number(
+          comps[k] ?? 0
+        );
       }
     }
   }

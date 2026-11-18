@@ -364,6 +364,11 @@ export const glslBackend = {
           return `${T}(${deps.join(', ')})`;
         }
         if (node.opCode === OpCode.Nary.FUNCTION_CALL) {
+          const storageListCall = this.generateStorageListCall(
+            generationContext,
+            node
+          );
+          if (storageListCall !== null) return storageListCall;
           const functionArgs = node.dependsOn.map(arg =>
             this.generateExpression(generationContext, dag, arg)
           );
@@ -581,6 +586,27 @@ export const glslBackend = {
     return `${this.getTypeName(BaseType.FLOAT, field.dim)}(${parts.join(', ')})`;
   },
 
+  // List length reads become a uniform in render shaders; appending from a
+  // render shader makes no sense and fails with a clear message instead.
+  generateStorageListCall(generationContext, node) {
+    if (generationContext.shaderContext === 'compute') return null;
+    if (node.identifier.startsWith('_p5_length_')) {
+      const listName = node.identifier.slice('_p5_length_'.length);
+      return `(${listName}_count)`;
+    }
+    if (
+      node.identifier.startsWith('_p5_push_') ||
+      node.identifier.startsWith('_p5_pop_')
+    ) {
+      return FES.userError(
+        'unsupported feature',
+        'Storage lists can only be appended to from compute shaders, not from ' +
+          'material or filter shaders.'
+      );
+    }
+    return null;
+  },
+
   instanceIdReference() {
     return 'gl_InstanceID';
   },
@@ -600,26 +626,22 @@ export const glslBackend = {
   addStorageBufferBindingsToDeclarations(strandsContext) {
     if (!strandsContext.renderer || !strandsContext.baseShader) return;
 
-    const isComputeShader = strandsContext.baseShader.shaderType === 'compute';
-
     for (const { name, typeInfo } of strandsContext.uniforms) {
       if (typeInfo.baseType === 'storage') {
-        // if (typeInfo.isStorageList) {
-        //   this._addStorageListBindings(
-        //     strandsContext,
-        //     name,
-        //     typeInfo,
-        //     bindingIndex,
-        //     isComputeShader
-        //   );
-        //   bindingIndex += 1;
-        // } else {
+        if (typeInfo.isStorageList) {
+          const declaration =
+            `uniform sampler2D ${name};\n` +
+            `uniform int ${name}_stride;` +
+            `\nuniform int ${name}_count;`;
+          strandsContext.vertexDeclarations.add(declaration);
+          strandsContext.fragmentDeclarations.add(declaration);
+        } else {
           const declaration =
             `uniform sampler2D ${name};\n` +
             `uniform int ${name}_stride;`;
           strandsContext.vertexDeclarations.add(declaration);
           strandsContext.fragmentDeclarations.add(declaration);
-        // }
+        }
       }
     }
   },

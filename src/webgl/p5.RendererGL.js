@@ -183,6 +183,86 @@ class CpuStorageBuffer {
   }
 
 /**
+ * CPU counterpart of the WebGPU `StorageList`: a variable-length list that
+ * compute shaders can `push()` to. Backed by a plain JS array.
+ */
+class CpuStorageList {
+  constructor(maxCapacity, schema = null, initialItems = []) {
+    this._isStorageList = true;
+    this._isCpuStorage = true;
+    this.maxCapacity = maxCapacity;
+    this._schema = schema;
+    this.items = initialItems.slice();
+    this._cpuVersion = 0;
+  }
+
+  get length() {
+    return this.items.length;
+  }
+
+  clear() {
+    this.items.length = 0;
+    this._cpuVersion += 1;
+  }
+
+  push(element) {
+    if (this.items.length >= this.maxCapacity) {
+      throw new Error(
+        `StorageList is full (maxCapacity: ${this.maxCapacity})`
+      );
+    }
+    if (this._schema) {
+      if (typeof element !== 'object' || element === null || Array.isArray(element)) {
+        throw new Error(
+          'StorageList.push() expects a plain object matching the list schema.'
+        );
+      }
+      checkCpuStructShape(this._schema, [element], 'push');
+      this.items.push({ ...element });
+      this._cpuVersion += 1;
+    } else {
+      if (typeof element !== 'number') {
+        throw new Error('Float StorageList.push() expects a number');
+      }
+      this.items.push(element);
+      this._cpuVersion += 1;
+    }
+  }
+
+  update(data) {
+    if (this._schema) {
+      if (!Array.isArray(data) || data.length === 0 || typeof data[0] !== 'object') {
+        throw new Error('update() expects an array of objects matching the list schema');
+      }
+      if (data.length > this.maxCapacity) {
+        throw new Error(
+          `update() data length ${data.length} exceeds maxCapacity ${this.maxCapacity}`
+        );
+      }
+      checkCpuStructShape(this._schema, data, 'update');
+      this.items = data.map(item => ({ ...item }));
+      this._cpuVersion += 1;
+    } else {
+      const items = Array.from(data);
+      if (items.length > this.maxCapacity) {
+        throw new Error(
+          `update() data length ${items.length} exceeds maxCapacity ${this.maxCapacity}`
+        );
+      }
+      this.items = items;
+      this._cpuVersion += 1;
+    }
+  }
+
+  async read() {
+    if (this._schema) {
+      return this.items.map(item => ({ ...item }));
+    }
+    return new Float32Array(this.items);
+  }
+}
+
+/**
  * 3D graphics class
  * @private
  * @class p5.RendererGL
@@ -2343,6 +2423,32 @@ class RendererGL extends Renderer3D {
       this._storageBuffers.add(storageBuffer);
 
       return storageBuffer;
+  }
+  /**
+   * Creates a CPU-backed variable-length list for the compute fallback.
+   * Mirrors `RendererWebGPU.createStorageList` without any GPU buffers.
+   */
+  createStorageList(maxCapacity, schemaOrData) {
+    let schema = null;
+    let initialData = null;
+
+    if (
+      Array.isArray(schemaOrData) &&
+      schemaOrData.length > 0 &&
+      typeof schemaOrData[0] === 'object' &&
+      !Array.isArray(schemaOrData[0])
+    ) {
+      schema = this._inferStructSchema(schemaOrData[0]);
+      initialData = schemaOrData.slice();
+    } else if (
+      schemaOrData !== undefined &&
+      typeof schemaOrData === 'object' &&
+      !Array.isArray(schemaOrData)
+    ) {
+      // Plain schema template object -- only used to infer layout
+      schema = this._inferStructSchema(schemaOrData);
+    }
+    return new CpuStorageList(maxCapacity, schema, initialData);
   }
 
   // Runs a compute shader on the CPU fallback path.
