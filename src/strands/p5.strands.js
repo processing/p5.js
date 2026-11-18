@@ -318,14 +318,15 @@ function strands(p5, fn) {
         const hooksObject = generateShaderCode(strandsContext);
 
         // The CPU compute fallback (`RendererGL.compute`) executes this same IR as JavaScript
-        const cpuIR = this.shaderType === 'compute'
-          ? {
-            dag: strandsContext.dag,
-            cfg: strandsContext.cfg,
-            uniforms: [...strandsContext.uniforms],
-            hooks: [...strandsContext.hooks]
-            }
-          : undefined;
+        const cpuIR =
+          this.shaderType === 'compute'
+            ? {
+                dag: strandsContext.dag,
+                cfg: strandsContext.cfg,
+                uniforms: [...strandsContext.uniforms],
+                hooks: [...strandsContext.hooks]
+              }
+            : undefined;
 
         // Call modify with the generated hooks object
         const modified = oldModify.call(this, hooksObject);
@@ -347,7 +348,9 @@ function strands(p5, fn) {
       // FES is switched off while the callback runs, so experimental features
       // used inside it can't warn on the spot. They record their subject area
       // instead, and we warn once FES has been restored by deinit below.
-      const experimentalFeaturesUsed = [...strandsContext.experimentalFeaturesUsed];
+      const experimentalFeaturesUsed = [
+        ...strandsContext.experimentalFeaturesUsed
+      ];
       // Reset the strands runtime context
       deinitStrandsContext(strandsContext);
       for (const subjectArea of experimentalFeaturesUsed) {

@@ -13,8 +13,6 @@ import * as FES from '../strands/strands_FES';
 const INDEX_PARAM = `${HOOK_PARAM_PREFIX}index`;
 const TEMP_PREFIX = '__t';
 
-
-
 function shouldCreateTemp(dag, nodeID) {
   const nodeType = dag.nodeTypes[nodeID];
   if (nodeType !== NodeType.OPERATION) return false;
@@ -67,9 +65,7 @@ export function createCpuHelpers(pInst) {
       else flat.push(part);
     }
     const source = flat.length === 1 ? Array(dim).fill(flat[0]) : flat;
-    return source
-      .slice(0, dim)
-      .map(v => convertScalar(base, v));
+    return source.slice(0, dim).map(v => convertScalar(base, v));
   };
 
   const binop = (op, left, right, base, dim) => {
@@ -149,7 +145,8 @@ export function createCpuHelpers(pInst) {
     const out = asComponents(value).slice();
     const updateParts = asComponents(update);
     [...pattern].forEach((c, i) => {
-      out[channelIndex(c)] = updateParts.length === 1 ? updateParts[0] : updateParts[i];
+      out[channelIndex(c)] =
+        updateParts.length === 1 ? updateParts[0] : updateParts[i];
     });
     return Array.isArray(value) ? out : out[0];
   };
@@ -171,7 +168,9 @@ export function createCpuHelpers(pInst) {
     const value = item[field.name];
     if (value?.isVector) {
       return Array.from({ length: field.dim }, (_, i) =>
-        ['x', 'y', 'z', 'w'][i] !== undefined ? value[['x', 'y', 'z', 'w'][i]] : 0
+        ['x', 'y', 'z', 'w'][i] !== undefined
+          ? value[['x', 'y', 'z', 'w'][i]]
+          : 0
       );
     }
     if (value?.isColor) return value._getRGBA().slice();
@@ -237,7 +236,10 @@ export function createCpuHelpers(pInst) {
     const current = buffer.data[i][field.name];
     if (current?.isVector) {
       const channels = ['x', 'y', 'z', 'w'];
-      const parts = Array.from({ length: field.dim }, (_, k) => current[channels[k]]);
+      const parts = Array.from(
+        { length: field.dim },
+        (_, k) => current[channels[k]]
+      );
       const next = swizSet(parts, pattern, value);
       for (let k = 0; k < field.dim; k++) {
         current[channels[k]] = Number(next[k]);
@@ -265,13 +267,14 @@ export function createCpuHelpers(pInst) {
   const randomValue = seed => {
     const callIndex = state.randomCalls++;
     const s = fract(seed * 0.7548776662);
-    return hash(vec3(
-      flat + s,
-      /* y */ callIndex * 0.5698402910,
-      /* z */ s + callIndex * 0.6180339887
-    ));
+    return hash(
+      vec3(
+        flat + s,
+        /* y */ callIndex * 0.569840291,
+        /* z */ s + callIndex * 0.6180339887
+      )
+    );
   };
-
 
   const noiseValue = args => {
     const input = asComponents(args[0]);
@@ -297,13 +300,17 @@ export function createCpuHelpers(pInst) {
     const nums = args.map(a => (Array.isArray(a) ? a : Number(a)));
     switch (name) {
       case 'abs':
-        return Array.isArray(args[0]) ? args[0].map(Math.abs) : Math.abs(args[0]);
+        return Array.isArray(args[0])
+          ? args[0].map(Math.abs)
+          : Math.abs(args[0]);
       case 'floor':
         return Array.isArray(args[0])
           ? args[0].map(Math.floor)
           : Math.floor(args[0]);
       case 'ceil':
-        return Array.isArray(args[0]) ? args[0].map(Math.ceil) : Math.ceil(args[0]);
+        return Array.isArray(args[0])
+          ? args[0].map(Math.ceil)
+          : Math.ceil(args[0]);
       case 'fract':
         return Array.isArray(args[0])
           ? args[0].map(v => v - Math.floor(v))
@@ -313,47 +320,75 @@ export function createCpuHelpers(pInst) {
           ? args[0].map(Math.sign)
           : Math.sign(args[0]);
       case 'sqrt':
-        return Array.isArray(args[0]) ? args[0].map(Math.sqrt) : Math.sqrt(args[0]);
+        return Array.isArray(args[0])
+          ? args[0].map(Math.sqrt)
+          : Math.sqrt(args[0]);
       case 'inversesqrt':
         return Array.isArray(args[0])
           ? args[0].map(v => 1 / Math.sqrt(v))
           : 1 / Math.sqrt(args[0]);
       case 'exp':
-        return Array.isArray(args[0]) ? args[0].map(Math.exp) : Math.exp(args[0]);
-      case 'exp2':
         return Array.isArray(args[0])
-          ? args[0].map(v => 2 ** v)
-          : 2 ** args[0];
+          ? args[0].map(Math.exp)
+          : Math.exp(args[0]);
+      case 'exp2':
+        return Array.isArray(args[0]) ? args[0].map(v => 2 ** v) : 2 ** args[0];
       case 'log':
-        return Array.isArray(args[0]) ? args[0].map(Math.log) : Math.log(args[0]);
+        return Array.isArray(args[0])
+          ? args[0].map(Math.log)
+          : Math.log(args[0]);
       case 'log2':
         return Array.isArray(args[0])
           ? args[0].map(Math.log2)
           : Math.log2(args[0]);
       case 'sin':
-        return Array.isArray(args[0]) ? args[0].map(Math.sin) : Math.sin(args[0]);
+        return Array.isArray(args[0])
+          ? args[0].map(Math.sin)
+          : Math.sin(args[0]);
       case 'cos':
-        return Array.isArray(args[0]) ? args[0].map(Math.cos) : Math.cos(args[0]);
+        return Array.isArray(args[0])
+          ? args[0].map(Math.cos)
+          : Math.cos(args[0]);
       case 'tan':
-        return Array.isArray(args[0]) ? args[0].map(Math.tan) : Math.tan(args[0]);
+        return Array.isArray(args[0])
+          ? args[0].map(Math.tan)
+          : Math.tan(args[0]);
       case 'asin':
-        return Array.isArray(args[0]) ? args[0].map(Math.asin) : Math.asin(args[0]);
+        return Array.isArray(args[0])
+          ? args[0].map(Math.asin)
+          : Math.asin(args[0]);
       case 'acos':
-        return Array.isArray(args[0]) ? args[0].map(Math.acos) : Math.acos(args[0]);
+        return Array.isArray(args[0])
+          ? args[0].map(Math.acos)
+          : Math.acos(args[0]);
       case 'atan':
-        return args.length === 2 ? Math.atan2(args[0], args[1]) : Math.atan(args[0]);
+        return args.length === 2
+          ? Math.atan2(args[0], args[1])
+          : Math.atan(args[0]);
       case 'sinh':
-        return Array.isArray(args[0]) ? args[0].map(Math.sinh) : Math.sinh(args[0]);
+        return Array.isArray(args[0])
+          ? args[0].map(Math.sinh)
+          : Math.sinh(args[0]);
       case 'cosh':
-        return Array.isArray(args[0]) ? args[0].map(Math.cosh) : Math.cosh(args[0]);
+        return Array.isArray(args[0])
+          ? args[0].map(Math.cosh)
+          : Math.cosh(args[0]);
       case 'tanh':
-        return Array.isArray(args[0]) ? args[0].map(Math.tanh) : Math.tanh(args[0]);
+        return Array.isArray(args[0])
+          ? args[0].map(Math.tanh)
+          : Math.tanh(args[0]);
       case 'asinh':
-        return Array.isArray(args[0]) ? args[0].map(Math.asinh) : Math.asinh(args[0]);
+        return Array.isArray(args[0])
+          ? args[0].map(Math.asinh)
+          : Math.asinh(args[0]);
       case 'acosh':
-        return Array.isArray(args[0]) ? args[0].map(Math.acosh) : Math.acosh(args[0]);
+        return Array.isArray(args[0])
+          ? args[0].map(Math.acosh)
+          : Math.acosh(args[0]);
       case 'atanh':
-        return Array.isArray(args[0]) ? args[0].map(Math.atanh) : Math.atanh(args[0]);
+        return Array.isArray(args[0])
+          ? args[0].map(Math.atanh)
+          : Math.atanh(args[0]);
       case 'pow': {
         const [base, exponent] = args;
         if (Array.isArray(base) || Array.isArray(exponent)) {
@@ -471,7 +506,7 @@ export function createCpuHelpers(pInst) {
         return FES.userError(
           'type error',
           'Textures cannot be sampled in the CPU compute fallback. ' +
-          'Use the WebGPU renderer for shaders that read textures.'
+            'Use the WebGPU renderer for shaders that read textures.'
         );
       default:
         FES.userError(
@@ -518,7 +553,10 @@ function fieldsOf(cpuIR) {
   const fields = {};
   for (const { name, typeInfo } of cpuIR.uniforms) {
     if (typeInfo.schema) {
-      fields[name] = typeInfo.schema.fields.map(f => ({ name: f.name, dim: f.dim }));
+      fields[name] = typeInfo.schema.fields.map(f => ({
+        name: f.name,
+        dim: f.dim
+      }));
     }
   }
   return fields;
@@ -544,8 +582,10 @@ function emitExpression(g, dag, nodeID) {
       return Number(node.value).toString();
     case NodeType.VARIABLE: {
       if (node.identifier === INDEX_PARAM) return '__idx';
-      if (g.stores.has(node.identifier)) return `__s[${JSON.stringify(node.identifier)}]`;
-      if (g.scalars.has(node.identifier)) return `__u[${JSON.stringify(node.identifier)}]`;
+      if (g.stores.has(node.identifier))
+        return `__s[${JSON.stringify(node.identifier)}]`;
+      if (g.scalars.has(node.identifier))
+        return `__u[${JSON.stringify(node.identifier)}]`;
       if (
         node.identifier === 'instanceID' ||
         node.identifier === 'gl_InstanceID'
@@ -558,7 +598,10 @@ function emitExpression(g, dag, nodeID) {
     }
     case NodeType.OPERATION: {
       if (node.opCode === OpCode.Nary.CONSTRUCTOR) {
-        if (node.baseType === BaseType.SAMPLER2D || node.baseType === BaseType.SAMPLER) {
+        if (
+          node.baseType === BaseType.SAMPLER2D ||
+          node.baseType === BaseType.SAMPLER
+        ) {
           throw new Error(
             'Textures cannot be sampled in the CPU compute fallback. Use the WebGPU renderer for shaders that read textures.'
           );
@@ -572,7 +615,9 @@ function emitExpression(g, dag, nodeID) {
             `Cannot construct "${node.baseType}" in the CPU compute fallback.`
           );
         }
-        const deps = (node.dependsOn || []).map(dep => emitExpression(g, dag, dep));
+        const deps = (node.dependsOn || []).map(dep =>
+          emitExpression(g, dag, dep)
+        );
         return `H.vec(${JSON.stringify(node.baseType)}, ${node.dimension}, [${deps.join(', ')}])`;
       }
       if (node.opCode === OpCode.Nary.FUNCTION_CALL) {
@@ -608,7 +653,8 @@ function emitExpression(g, dag, nodeID) {
       }
       if (typeof node.opCode === 'number') {
         const [leftID, rightID] = node.dependsOn;
-        const base = node.baseType === 'storage' ? BaseType.FLOAT : node.baseType;
+        const base =
+          node.baseType === 'storage' ? BaseType.FLOAT : node.baseType;
         return `H.binop(${node.opCode}, ${emitExpression(g, dag, leftID)}, ${emitExpression(g, dag, rightID)}, ${JSON.stringify(base)}, ${node.dimension})`;
       }
       throw new Error(
@@ -619,7 +665,9 @@ function emitExpression(g, dag, nodeID) {
       if (g.tempNames[nodeID] !== undefined) return g.tempNames[nodeID];
       const inputs = (node.dependsOn || []).filter(id => id !== null);
       if (inputs.length > 0) return emitExpression(g, dag, inputs[0]);
-      throw new Error('Cannot evaluate an empty phi node in the CPU compute fallback.');
+      throw new Error(
+        'Cannot evaluate an empty phi node in the CPU compute fallback.'
+      );
     }
     default:
       throw new Error(
@@ -630,7 +678,10 @@ function emitExpression(g, dag, nodeID) {
 
 function bufferNameOf(dag, bufferID, g) {
   const buffer = getNodeDataFromID(dag, bufferID);
-  if (buffer.nodeType !== NodeType.VARIABLE || !g.stores.has(buffer.identifier)) {
+  if (
+    buffer.nodeType !== NodeType.VARIABLE ||
+    !g.stores.has(buffer.identifier)
+  ) {
     throw new Error(
       'Storage access must use a buffer from `uniformStorage()` in the CPU compute fallback.'
     );
@@ -669,7 +720,9 @@ function emitFunctionCall(g, dag, node) {
     const listName = name.slice('_p5_pop_'.length);
     return `H.popList(__s[${JSON.stringify(listName)}])`;
   }
-  const listBase = name.endsWith('Element') ? name.slice(0, -'Element'.length) : null;
+  const listBase = name.endsWith('Element')
+    ? name.slice(0, -'Element'.length)
+    : null;
   if (listBase && g.stores.has(listBase)) {
     const fields = g.fields[listBase] || [];
     return `H.makeStruct([${fields.map(f => JSON.stringify(f.name)).join(', ')}], [${args.join(', ')}])`;
@@ -701,7 +754,9 @@ function emitAssignStatement(g, dag, nodeID) {
   }
   if (target.nodeType === NodeType.PHI) {
     if (g.tempNames[targetID] === undefined) {
-      throw new Error('Internal error: phi target has no temporary in the CPU backend.');
+      throw new Error(
+        'Internal error: phi target has no temporary in the CPU backend.'
+      );
     }
     return `${g.tempNames[targetID]} = ${source};`;
   }
@@ -831,8 +886,13 @@ function collectBranches(sorted, at) {
   while (i < sorted.blocks.length) {
     const type = sorted.types[i];
     if (type !== BlockType.IF_COND && type !== BlockType.ELSE_COND) break;
-    if (sorted.blocks[i + 1] === undefined || sorted.types[i + 1] !== BlockType.SCOPE_START) {
-      throw new Error('Internal error: expected a scope after a condition in the CPU backend.');
+    if (
+      sorted.blocks[i + 1] === undefined ||
+      sorted.types[i + 1] !== BlockType.SCOPE_START
+    ) {
+      throw new Error(
+        'Internal error: expected a scope after a condition in the CPU backend.'
+      );
     }
     const end = matchScopeEnd(sorted, i + 1);
     branches.push({ cond: i, start: i + 1, end });
@@ -917,7 +977,10 @@ function emitFor(g, cpuIR, sorted, at) {
   const instructions = cfg.blockInstructions[blockID] || [];
   const parts = instructions.map(nodeID => {
     const node = getNodeDataFromID(dag, nodeID);
-    if (node.nodeType === NodeType.STATEMENT && node.statementType === StatementType.EMPTY) {
+    if (
+      node.nodeType === NodeType.STATEMENT &&
+      node.statementType === StatementType.EMPTY
+    ) {
       return '';
     }
     if (node.nodeType === NodeType.STATEMENT) {
@@ -930,7 +993,9 @@ function emitFor(g, cpuIR, sorted, at) {
     }
     if (target.nodeType === NodeType.PHI) {
       if (g.tempNames[node.dependsOn[0]] === undefined) {
-        throw new Error('Internal error: phi target has no temporary in the CPU backend.');
+        throw new Error(
+          'Internal error: phi target has no temporary in the CPU backend.'
+        );
       }
       return `${g.tempNames[node.dependsOn[0]]} = ${source}`;
     }
@@ -943,7 +1008,9 @@ function emitFor(g, cpuIR, sorted, at) {
   g.indent += 1;
   // The loop body is the scoped range right after the FOR block.
   if (sorted.types[at + 1] !== BlockType.SCOPE_START) {
-    throw new Error('Internal error: expected a scope after a loop in the CPU backend.');
+    throw new Error(
+      'Internal error: expected a scope after a loop in the CPU backend.'
+    );
   }
   const end = matchScopeEnd(sorted, at + 1);
   emitRange(g, cpuIR, sorted, at + 1, end + 1);
@@ -1003,7 +1070,9 @@ export function compileCpuComputeHook(cpuIR) {
 
 function resolveStores(shader) {
   const stores = {};
-  for (const [name, initializer] of Object.entries(shader.hooks.storageUniforms)) {
+  for (const [name, initializer] of Object.entries(
+    shader.hooks.storageUniforms
+  )) {
     const value = initializer instanceof Function ? initializer() : initializer;
     if (value === undefined || value === null) {
       FES.userError(
@@ -1034,10 +1103,11 @@ function resolveScalars(cpuIR) {
       FES.userError(
         'type error',
         'Textures cannot be sampled in the CPU compute fallback. ' +
-        'Use the WebGPU renderer for shaders that read textures.'
+          'Use the WebGPU renderer for shaders that read textures.'
       );
     }
-    const value = defaultValue instanceof Function ? defaultValue() : defaultValue;
+    const value =
+      defaultValue instanceof Function ? defaultValue() : defaultValue;
     scalars[name] = toPlainValue(value);
   }
   return scalars;
@@ -1045,14 +1115,12 @@ function resolveScalars(cpuIR) {
 
 // Run a compute shader on the CPU: resolve buffers and uniforms once, then
 // execute the compiled iteration function for every index.
-export function runCpuCompute(shader, x, y=1, z=1) {
+export function runCpuCompute(shader, x, y = 1, z = 1) {
   const cpuIR = shader._cpuIR;
-  if(!cpuIR){
-    FES.internalError(
-      'Missing recorded program for the CPU compute fallback.'
-    );
+  if (!cpuIR) {
+    FES.internalError('Missing recorded program for the CPU compute fallback.');
   }
-  const total = x*y*z;
+  const total = x * y * z;
   if (!Number.isInteger(total) || total < 0) {
     FES.userError(
       'type error',
@@ -1070,7 +1138,8 @@ export function runCpuCompute(shader, x, y=1, z=1) {
   helpers.pushList = (list, value) => listPush(list, value, pInst);
   helpers.popList = list => listPop(list);
   helpers.lenList = list => listLength(list);
-  helpers.makeStruct = (fields, args) => Object.fromEntries(fields.map((f, i) => [f, args[i]]));
+  helpers.makeStruct = (fields, args) =>
+    Object.fromEntries(fields.map((f, i) => [f, args[i]]));
   helpers.member = (object, key) => {
     if (object !== null && typeof object === 'object' && key in object) {
       return object[key];
@@ -1126,10 +1195,7 @@ function listPop(list) {
     );
   }
   if (list.items.length === 0) {
-    FES.userError(
-      'type error',
-      '`pop()` called on an empty storage list.'
-    );
+    FES.userError('type error', '`pop()` called on an empty storage list.');
   }
   return list.items.pop();
 }
@@ -1137,10 +1203,7 @@ function listPop(list) {
 function convertPushedValue(list, value, pInst) {
   if (!list._schema) {
     if (typeof value !== 'number') {
-      FES.userError(
-        'type error',
-        'Float StorageList.push() expects a number'
-      );
+      FES.userError('type error', 'Float StorageList.push() expects a number');
     }
     return value;
   }

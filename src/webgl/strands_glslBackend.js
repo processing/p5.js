@@ -200,7 +200,7 @@ export const glslBackend = {
   getRandomVertexShaderSnippet() {
     return randomVertGLSL;
   },
-  
+
   getTypeName(baseType, dimension) {
     const primitiveTypeName = TypeNames[baseType + dimension];
     if (!primitiveTypeName) {
@@ -524,7 +524,7 @@ export const glslBackend = {
     return { id, dimension };
   },
 
-    // Looks up the storage uniform behind an array access, if any.
+  // Looks up the storage uniform behind an array access, if any.
   storageInfoOf(generationContext, dag, bufferID) {
     const buffer = getNodeDataFromID(dag, bufferID);
     if (buffer.nodeType !== NodeType.VARIABLE || !buffer.identifier) {
@@ -637,12 +637,11 @@ export const glslBackend = {
           strandsContext.fragmentDeclarations.add(declaration);
         } else {
           const declaration =
-            `uniform sampler2D ${name};\n` +
-            `uniform int ${name}_stride;`;
+            `uniform sampler2D ${name};\n` + `uniform int ${name}_stride;`;
           strandsContext.vertexDeclarations.add(declaration);
           strandsContext.fragmentDeclarations.add(declaration);
         }
       }
     }
-  },
+  }
 };
