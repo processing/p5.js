@@ -89,5 +89,7 @@ jobs:
         env:
           CI: true
       - name: fail job if tests failed
-        if: steps.test.outcome != 'success' || steps.test-webgpu.outcome != 'success'
+        if: >-
+          (matrix.os == 'ubuntu-26.04' && steps.test.outcome != 'success') ||
+          (matrix.os == 'self-hosted' && steps.test-webgpu.outcome != 'success')
         run: exit 1
