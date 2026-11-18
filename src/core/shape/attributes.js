@@ -176,7 +176,10 @@ p5.prototype.noSmooth = function() {
       this.drawingContext.imageSmoothingEnabled = false;
     }
   } else {
-    this.setAttributes('antialias', false);
+      // Only change if necessary to prevent canvas recreation
+      if (this._renderer.attributes.antialias !== false) {
+        this.setAttributes('antialias', false);
+      }
   }
   return this;
 };
