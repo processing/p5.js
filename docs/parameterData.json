@@ -1918,6 +1918,21 @@
         ]
       ]
     },
+    "buildColorFieldShader": {
+      "overloads": [
+        [
+          "Function",
+          "Object?"
+        ]
+      ]
+    },
+    "colorField": {
+      "overloads": [
+        [
+          "p5.Shader"
+        ]
+      ]
+    },
     "createSlider": {
       "overloads": [
         [
