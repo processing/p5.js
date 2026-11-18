@@ -158,6 +158,8 @@ class FontInfo {
 
     // the cached information for each glyph
     this.glyphInfos = {};
+    // cache for variable font data
+    this.variableFontCache = new Map();
   }
   /**
      * @method getGlyphInfo
@@ -167,9 +169,13 @@ class FontInfo {
      * calculates rendering info for a glyph, including the curve information,
      * row & column stripes compiled into textures.
      */
-  getGlyphInfo (glyph) {
+  getGlyphInfo (glyph, variableValues) {
     // check the cache
-    let gi = this.glyphInfos[glyph.index];
+    let cacheKey = glyph.index;
+    if (variableValues) {
+      cacheKey += JSON.stringify(variableValues);
+    }
+    let gi = this.glyphInfos[cacheKey];
     if (gi) return gi;
 
     // get the bounding box of the glyph from opentype.js
@@ -181,7 +187,7 @@ class FontInfo {
     const cmds = glyph.path.commands;
     // don't bother rendering invisible glyphs
     if (gWidth === 0 || gHeight === 0 || !cmds.length) {
-      return (this.glyphInfos[glyph.index] = {});
+      return (this.glyphInfos[cacheKey] = {});
     }
 
     let i;
@@ -204,13 +210,13 @@ class FontInfo {
       strokes.push(v); // add this stroke to the list
 
       /**
-         * @function minMax
-         * @param {Number[]} rg the list of values to compare
-         * @param {Number} min the initial minimum value
-         * @param {Number} max the initial maximum value
-         *
-         * find the minimum & maximum value in a list of values
-         */
+          * @function minMax
+          * @param {Number[]} rg the list of values to compare
+          * @param {Number} min the initial minimum value
+          * @param {Number} max the initial maximum value
+          *
+          * find the minimum & maximum value in a list of values
+          */
       function minMax(rg, min, max) {
         for (let i = rg.length; i-- > 0; ) {
           const v = rg[i];
@@ -628,7 +634,7 @@ class FontInfo {
     }
 
     // initialize the info for this glyph
-    gi = this.glyphInfos[glyph.index] = {
+    gi = this.glyphInfos[cacheKey] = {
       glyph,
       uGlyphRect: [bb.x1, -bb.y1, bb.x2, -bb.y2],
       strokeImageInfo,
