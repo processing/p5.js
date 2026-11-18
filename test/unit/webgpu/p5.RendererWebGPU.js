@@ -142,6 +142,7 @@ suite('WebGPU p5.RendererWebGPU', function () {
 
   suite('noSmooth()', function () {
     test('disables antialiasing on the main canvas framebuffer', async function () {
+      console.log((await navigator.gpu.requestAdapter()).info);
       await myp5.noSmooth();
       expect(myp5._renderer.mainFramebuffer.antialias).to.equal(false);
     });
