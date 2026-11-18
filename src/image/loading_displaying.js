@@ -1070,6 +1070,108 @@ function _sAssign(sVal, iVal) {
  * }
  * </code>
  * </div>
+ * <div>
+ * <code>
+ * let img;
+ *
+ * function preload() {
+ *   img = loadImage('assets/moonwalk.jpg');
+ * }
+ *
+ * function setup() {
+ *   // Create a 3D canvas
+ *   background(200);
+ *   createCanvas(400, 400, WEBGL);
+ * }
+ * function draw() {
+ *   image(img, 0, 0, -100);
+ *   describe('An image at the center 100 units away from the camera');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * let img;
+ * function preload() {
+ *   img = loadImage('assets/moonwalk.jpg');
+ * }
+ *
+ * function setup() {
+ *   // Create a 3D canvas
+ *   createCanvas(400, 400, WEBGL);
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *   image(img, 0, 0, 400 , 300 , 300);
+ *   describe('Scale image 300 by 300 and zoomin 400 units');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * let img;
+ * function preload() {
+ *   img = loadImage('assets/moonwalk.jpg');
+ * }
+ *
+ * function setup() {
+ *   // Create a 3D canvas
+ *   createCanvas(400, 400, WEBGL);
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *   image(img, 0, 0, -400 , 300 , 300);
+ *   describe('Scale image 300 by 300 and zoomout 400 units');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * let img;
+ * function preload() {
+ *   img = loadImage('assets/moonwalk.jpg');
+ * }
+ *
+ * function setup() {
+ *   // Create a 3D canvas
+ *   createCanvas(400, 400, WEBGL);
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *   image(img, 0, 0, 0, 400, 400,500, 100, 200, 200);
+ *   describe('Draw a subsection of the image from 500 by 100 units position at the center with size 400x400');
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * let img;
+ * function preload() {
+ *   img = loadImage('assets/moonwalk.jpg');
+ * }
+ *
+ * function setup() {
+ *   // Create a 3D canvas
+ *   createCanvas(400, 400, WEBGL);
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *   image(img, 0, 0, -200, 400, 400,500, 100, 200, 200);
+ *   describe('Draw a subsection of the image from 500 by 100 units position at the center with size 400x400 and zoomedout by 200 units');
+ * }
+ *
+ * </code>
+ * </div>
+ *
+ *
  */
 /**
  * @method image
@@ -1097,6 +1199,7 @@ p5.prototype.image = function(
   img,
   dx,
   dy,
+  dz,
   dWidth,
   dHeight,
   sx,
@@ -1110,7 +1213,20 @@ p5.prototype.image = function(
   // set defaults per spec: https://goo.gl/3ykfOq
 
   p5._validateParameters('image', arguments);
-
+  // If dz is not specified.
+  if (arguments.length % 2 === 1 ||  typeof arguments[9]  === 'string'){
+    // From the 3rd arguement shift the assingment one position to the right.
+    yAlign = xAlign;
+    xAlign = fit;
+    fit = sHeight;
+    sHeight = sWidth;
+    sWidth = sy;
+    sy = sx;
+    sx = dHeight;
+    dHeight = dWidth;
+    dWidth = dz;
+    dz = 0;
+  }
   let defW = img.width;
   let defH = img.height;
   yAlign = yAlign || constants.CENTER;
@@ -1185,7 +1301,8 @@ p5.prototype.image = function(
     vals.dx,
     vals.dy,
     vals.dw,
-    vals.dh
+    vals.dh,
+    dz
   );
 };
 

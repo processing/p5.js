@@ -3400,47 +3400,50 @@ p5.RendererGL.prototype.image = function(
   dx,
   dy,
   dWidth,
-  dHeight
+  dHeight,
+  dz
 ) {
   if (this._isErasing) {
     this.blendMode(this._cachedBlendMode);
   }
+  /*
+  // check for P5 Graphics instance
+  let isP5G = img instanceof p5.Graphics ? true : false;
+  // check for P5 Framebuffer instance
+  let isP5Fbo = img instanceof p5.Framebuffer ? true : false;
 
+  const viewport = this.GL.getParameter(this.GL.VIEWPORT);
+  const width = viewport[2];
+  const height = viewport[3];
+
+  if (!isP5G && !isP5Fbo){
+    dx = (-width / 2) + dx;
+    dy = (-height / 2) + dy;
+  }
+  */
   this._pInst.push();
-
   this._pInst.noLights();
   this._pInst.noStroke();
-
   this._pInst.texture(img);
   this._pInst.textureMode(constants.NORMAL);
 
-  let u0 = 0;
-  if (sx <= img.width) {
-    u0 = sx / img.width;
-  }
+  // Calculate texture coordinates for subsection
+  let u0 = sx / img.width;
+  let u1 = (sx + sWidth) / img.width;
+  let v0 = sy / img.height;
+  let v1 = (sy + sHeight) / img.height;
 
-  let u1 = 1;
-  if (sx + sWidth <= img.width) {
-    u1 = (sx + sWidth) / img.width;
-  }
-
-  let v0 = 0;
-  if (sy <= img.height) {
-    v0 = sy / img.height;
-  }
-
-  let v1 = 1;
-  if (sy + sHeight <= img.height) {
-    v1 = (sy + sHeight) / img.height;
-  }
-
+  // Draw a textured rectangle (plane) with the texture coordinates
   this.beginShape();
-  this.vertex(dx, dy, 0, u0, v0);
-  this.vertex(dx + dWidth, dy, 0, u1, v0);
-  this.vertex(dx + dWidth, dy + dHeight, 0, u1, v1);
-  this.vertex(dx, dy + dHeight, 0, u0, v1);
+  // Top-left corner
+  this.vertex(dx, dy, dz, u0, v0);
+  // Top-right corner
+  this.vertex(dx + dWidth, dy, dz, u1, v0);
+  // Bottom-right corner
+  this.vertex(dx + dWidth, dy + dHeight, dz, u1, u1);
+  // Bottom-left corner
+  this.vertex(dx, dy + dHeight, dz, u0, v1);
   this.endShape(constants.CLOSE);
-
   this._pInst.pop();
 
   if (this._isErasing) {
