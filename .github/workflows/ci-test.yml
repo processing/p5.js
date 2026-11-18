@@ -19,8 +19,6 @@ jobs:
         include:
           - os: ubuntu-26.04
             browser: chrome
-          - os: self-hosted
-            browser: chrome
           # - os: windows-latest
           #   browser: chrome
 
@@ -51,9 +49,9 @@ jobs:
         env:
           CI: true
 
-      - name: Build and test WebGPU (self-hosted)
+      - name: Build and test WebGPU (Ubuntu)
         id: test-webgpu
-        if: matrix.os == 'self-hosted'
+        if: matrix.os == 'ubuntu-26.04'
         run: |
           xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" bash -c 'CI=true npm run test -- --project=unit-tests-webgpu'
         continue-on-error: true
@@ -90,6 +88,6 @@ jobs:
           CI: true
       - name: fail job if tests failed
         if: >-
-          (matrix.os == 'ubuntu-26.04' && steps.test.outcome != 'success') ||
-          (matrix.os == 'self-hosted' && steps.test-webgpu.outcome != 'success')
+          (matrix.os == 'ubuntu-26.04' &&
+            (steps.test.outcome != 'success' || steps.test-webgpu.outcome != 'success'))
         run: exit 1
