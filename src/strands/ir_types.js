@@ -327,3 +327,11 @@ export const BlockType = {
 export const BlockTypeToName = Object.fromEntries(
   Object.entries(BlockType).map(([key, val]) => [val, key])
 );
+
+// Serializes a float literal for GLSL/WGSL. Keeps the value's full precision
+// and always emits float form: integer values get a ".0" so they aren't read
+// as int literals. toFixed() and String() switch to exponent form (e.g. 1e-8,
+// 1e+21) at extreme magnitudes, which both shading languages accept.
+export function formatFloatLiteral(value) {
+  return Number.isInteger(value) ? value.toFixed(1) : String(value);
+}

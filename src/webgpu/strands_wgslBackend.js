@@ -3,7 +3,7 @@ import randomWGSL from './shaders/functions/randomWGSL';
 import randomVertWGSL from './shaders/functions/randomVertWGSL';
 import randomComputeWGSL from './shaders/functions/randomComputeWGSL';
 import inverseWGSL from './shaders/functions/inverseWGSL';
-import { NodeType, OpCodeToSymbol, BlockType, OpCode, NodeTypeToName, isStructType, BaseType, StatementType, DataType, INSTANCE_ID_VARYING_NAME, HOOK_PARAM_PREFIX } from "../strands/ir_types";
+import { NodeType, OpCodeToSymbol, BlockType, OpCode, NodeTypeToName, isStructType, BaseType, StatementType, DataType, INSTANCE_ID_VARYING_NAME, HOOK_PARAM_PREFIX, formatFloatLiteral } from "../strands/ir_types";
 import { getNodeDataFromID, extractNodeTypeInfo } from "../strands/ir_dag";
 import * as FES from '../strands/strands_FES';
 import * as build from '../strands/ir_builders';
@@ -585,7 +585,7 @@ export const wgslBackend = {
     switch (node.nodeType) {
       case NodeType.LITERAL:
         if (node.baseType === BaseType.FLOAT) {
-          return node.value.toFixed(4);
+          return formatFloatLiteral(node.value);
         } else {
           return node.value;
         }
