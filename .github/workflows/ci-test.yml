@@ -59,6 +59,7 @@ jobs:
         continue-on-error: true
         env:
           CI: true
+          WEBGPU_HARDWARE: true
 
       - name: Build and test (Ubuntu)
         id: test
