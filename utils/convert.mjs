@@ -46,7 +46,10 @@ const htmlStrategy = {
 
   processDescription: desc => descriptionString(desc),
 
-  processType: type => typeObject(type)
+  processType: (type, param) => ({
+    ...typeObject(type),
+    ...(param?.properties?.length ? { properties: param.properties } : {})
+  })
 };
 
 const processed = processData(data, htmlStrategy);
@@ -117,12 +120,13 @@ for (const key in constUsage) {
 
 function cleanUpClassItems(data) {
   for (const classItem in data) {
-    if (typeof data[classItem] === 'object') {
+    if (typeof data[classItem] === 'object' && data[classItem] !== null) {
       if (data[classItem].overloads) {
         delete data[classItem].name;
         delete data[classItem].class;
+      } else {
+        cleanUpClassItems(data[classItem]);
       }
-      cleanUpClassItems(data[classItem]);
     }
   }
 
@@ -142,6 +146,30 @@ function cleanUpClassItems(data) {
     // optional parameters, we'll add a ? to the end of parameter type to
     // indicate that it's optional.
     const processParam = param => {
+      if (param.properties && param.properties.length > 0) {
+        const rawProps = {};
+        for (const prop of param.properties) {
+          const propName = prop.name.replace(/^.*\./, '');
+          const propTypeObj = typeObject(prop.type);
+          let typeStr = propTypeObj.type || 'Any';
+          if ((propTypeObj.optional || prop.optional || prop.default !== undefined) && !typeStr.endsWith('?')) {
+            typeStr += '?';
+          }
+          rawProps[propName] = typeStr;
+        }
+
+        const sortedProperties = {};
+        for (const key of Object.keys(rawProps).sort()) {
+          sortedProperties[key] = rawProps[key];
+        }
+
+        return {
+          type: 'Object',
+          optional: param.optional ? 1 : undefined,
+          properties: sortedProperties
+        };
+      }
+
       let type = param.type;
       if (param.optional) {
         type += '?';
@@ -184,7 +212,7 @@ function cleanUpClassItems(data) {
   };
 
   for (const classItem in data) {
-    if (typeof data[classItem] === 'object') {
+    if (typeof data[classItem] === 'object' && data[classItem] !== null) {
       data[classItem] = flattenOverloads(data[classItem]);
     }
   }

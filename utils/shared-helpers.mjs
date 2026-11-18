@@ -133,6 +133,10 @@ export function typeObject(node) {
     };
   } else if (node.type === 'RestType') {
     return { type: typeObject(node.expression).type, rest: true };
+  } else if (node.type === 'StringLiteralType') {
+    return { type: `'${node.value}'` };
+  } else if (node.type === 'NumericLiteralType') {
+    return { type: `${node.value}` };
   } else {
     // TODO
     // - handle record types
