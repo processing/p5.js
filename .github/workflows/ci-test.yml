@@ -55,7 +55,7 @@ jobs:
         id: test-webgpu
         if: matrix.os == 'self-hosted'
         run: |
-          xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" bash -c 'CI=true npm run test -- --project=unit-tests-webgpu'
+          xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" bash -c 'CI=true npm run test -- --project=unit-tests-webgpu --no-file-parallelism'
         continue-on-error: true
         env:
           CI: true
