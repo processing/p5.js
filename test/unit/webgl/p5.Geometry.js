@@ -906,6 +906,53 @@ suite('p5.Geometry', function () {
       expect(geom.parts[0].edges).toBe(geom.edges);
     });
 
+    test('model processes single-part edges through the owning part', function () {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+
+      const geom = myp5.buildGeometry(() => {
+        myp5.noFill();
+        myp5.stroke(255);
+        myp5.beginShape(myp5.LINES);
+        myp5.vertex(0, 0);
+        myp5.vertex(10, 0);
+        myp5.endShape();
+      });
+
+      const edgesSpy = vi.spyOn(geom.parts[0], '_edgesToVertices');
+      myp5.model(geom);
+
+      expect(edgesSpy).toHaveBeenCalledTimes(1);
+      expect(edgesSpy).toHaveBeenCalledWith(myp5._renderer);
+      edgesSpy.mockRestore();
+    });
+
+    test('model processes multipart edges through each owning part', function () {
+      myp5.createCanvas(50, 50, myp5.WEBGL);
+
+      const texA = myp5.createGraphics(10, 10);
+      const texB = myp5.createGraphics(10, 10);
+      const geom = myp5.buildGeometry(() => {
+        myp5.stroke(255);
+        myp5.texture(texA);
+        myp5.box(8);
+        myp5.texture(texB);
+        myp5.box(8);
+      });
+
+      expect(geom.parts).toHaveLength(2);
+
+      const edgesSpies = geom.parts.map(part =>
+        vi.spyOn(part, '_edgesToVertices')
+      );
+      myp5.model(geom);
+
+      for (const edgesSpy of edgesSpies) {
+        expect(edgesSpy).toHaveBeenCalledTimes(1);
+        expect(edgesSpy).toHaveBeenCalledWith(myp5._renderer);
+        edgesSpy.mockRestore();
+      }
+    });
+
     test('material parts own edges with local vertex indices', function () {
       myp5.createCanvas(50, 50, myp5.WEBGL);
 

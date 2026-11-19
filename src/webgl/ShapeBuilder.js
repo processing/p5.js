@@ -149,7 +149,7 @@ export class ShapeBuilder {
       );
     }
     if (shouldProcessEdges && !this.renderer.geometryBuilder) {
-      this.geometry._edgesToVertices(this.renderer);
+      this.geometry.parts[0]._edgesToVertices(this.renderer);
     }
 
     if (this.shapeMode === constants.PATH) {

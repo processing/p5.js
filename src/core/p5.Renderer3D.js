@@ -571,19 +571,12 @@ export class Renderer3D extends Renderer {
       if (this.geometryBuilder) {
         this.geometryBuilder.addRetained(model);
       } else {
-        if (model.parts.length === 1 && model.parts[0] === model) {
-          if (!this.geometryInHash(model.gid)) {
-            model._edgesToVertices(this);
-            this._getOrMakeCachedBuffers(model);
-          }
-        } else {
-          for (const part of model.parts) {
-            if (!this.geometryInHash(part.gid)) {
-              if (part.edges.length > 0) {
-                part._edgesToVertices(this);
-              }
-              this._getOrMakeCachedBuffers(part);
+        for (const part of model.parts) {
+          if (!this.geometryInHash(part.gid)) {
+            if (part.edges.length > 0) {
+              part._edgesToVertices(this);
             }
+            this._getOrMakeCachedBuffers(part);
           }
         }
 
