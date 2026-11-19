@@ -1922,12 +1922,12 @@ function primitives3D(p5, fn) {
         }
       }
       quadGeom.computeNormals();
-      quadGeom.edges.length = 0;
+      quadGeom.parts[0].edges.length = 0;
       const vertexOrder = [0, 2, 3, 1];
       for (let i = 0; i < vertexOrder.length; i++) {
         const startVertex = vertexOrder[i];
         const endVertex = vertexOrder[(i + 1) % vertexOrder.length];
-        quadGeom.edges.push([startVertex, endVertex]);
+        quadGeom.parts[0].edges.push([startVertex, endVertex]);
       }
       quadGeom._edgesToVertices(this);
       quadGeom.gid = gid;
