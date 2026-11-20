@@ -447,6 +447,40 @@ visualSuite('WebGL', function () {
     );
 
     visualTest(
+      'a multi-material glTF renders each material',
+      async function (p5, screenshot) {
+        p5.createCanvas(50, 50, p5.WEBGL);
+        const model = await new Promise(resolve =>
+          p5.loadModel('test/unit/assets/two-materials.gltf', resolve)
+        );
+        model.normalize();
+        p5.background(255);
+        p5.scale(0.2);
+        p5.noStroke();
+        p5.model(model);
+        screenshot();
+      }
+    );
+
+    visualTest(
+      'a glTF with a separate buffer draws its texture and normal map',
+      async function (p5, screenshot) {
+        p5.createCanvas(50, 50, p5.WEBGL);
+        const model = await new Promise(resolve =>
+          p5.loadModel('test/unit/assets/external.gltf', resolve)
+        );
+        model.normalize();
+        p5.background(255);
+        p5.scale(0.2);
+        p5.pointLight(255, 255, 255, 50, -50, 200);
+        p5.ambientLight(80);
+        p5.noStroke();
+        p5.model(model);
+        screenshot();
+      }
+    );
+
+    visualTest(
       'normalTexture() adds surface detail to a built shape',
       function (p5, screenshot) {
         p5.createCanvas(50, 50, p5.WEBGL);

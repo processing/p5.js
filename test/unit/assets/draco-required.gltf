@@ -1,0 +1,7 @@
+{
+  "asset": { "version": "2.0" },
+  "extensionsUsed": ["KHR_draco_mesh_compression"],
+  "extensionsRequired": ["KHR_draco_mesh_compression"],
+  "meshes": [{ "primitives": [{ "attributes": { "POSITION": 0 } }] }],
+  "accessors": [{ "componentType": 5126, "count": 3, "type": "VEC3" }]
+}
