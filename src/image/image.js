@@ -11,6 +11,8 @@
 import * as omggif from 'omggif';
 import { Element } from '../dom/p5.Element';
 import { Framebuffer } from '../webgl/p5.Framebuffer';
+import { Renderer } from '../core/p5.Renderer';
+import { Graphics } from '../core/p5.Graphics';
 
 function image(p5, fn) {
   /**
@@ -160,7 +162,7 @@ function image(p5, fn) {
    * with a dialogue window.
    *
    *  @method saveCanvas
-   *  @param  {p5.Framebuffer|p5.Element|HTMLCanvasElement} selectedCanvas   reference to a
+   *  @param  {p5.Framebuffer|p5.Renderer|p5.Graphics|p5.Element|HTMLCanvasElement} selectedCanvas   reference to a
    *                                                          specific HTML5 canvas element.
    *  @param  {String} [filename]  file name. Defaults to 'untitled'.
    *  @param  {String} [extension] file extension, either 'png', 'webp', or 'jpg'. Defaults to 'png'.
@@ -256,6 +258,11 @@ function image(p5, fn) {
       args.shift();
     } else if (args[0] instanceof Element) {
       htmlCanvas = args[0].elt;
+      args.shift();
+    } else if (args[0] instanceof Renderer || args[0] instanceof Graphics) {
+      // createCanvas() returns a p5.Renderer and createGraphics() returns a
+      // p5.Graphics. Neither is a p5.Element in 2.x, so handle them here.
+      htmlCanvas = args[0].canvas;
       args.shift();
     } else if (args[0] instanceof Framebuffer) {
       const framebuffer = args[0];
