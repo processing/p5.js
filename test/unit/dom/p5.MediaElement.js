@@ -245,6 +245,22 @@ suite('p5.MediaElement', () => {
     });
   });
 
+  suite('p5.MediaElement.autoplay', function () {
+    afterEach(function () {
+      document.body.innerHTML = '';
+    });
+
+    test('should remove autoplay attribute when called with false', function () {
+      const testElement = mockP5Prototype.createVideo('');
+
+      testElement.autoplay(true);
+      assert.isTrue(testElement.elt.hasAttribute('autoplay'));
+
+      testElement.autoplay(false);
+      assert.isFalse(testElement.elt.hasAttribute('autoplay'));
+    });
+  });
+
   suite('p5.MediaElement.copy', function () {
     beforeAll(() => {
       globalThis.p5 = { prototype: mockP5Prototype };

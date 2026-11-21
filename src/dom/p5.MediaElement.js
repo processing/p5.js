@@ -434,8 +434,12 @@ class MediaElement extends Element {
    * }
    */
   autoplay(val) {
-    const oldVal = this.elt.getAttribute('autoplay');
-    this.elt.setAttribute('autoplay', val);
+    const oldVal = this.elt.hasAttribute('autoplay');
+    if (val === false) {
+      this.elt.removeAttribute('autoplay');
+    } else {
+      this.elt.setAttribute('autoplay', '');
+    }
     // if we turned on autoplay
     if (val && !oldVal) {
       // bind method to this scope
