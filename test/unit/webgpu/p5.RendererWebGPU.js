@@ -29,6 +29,211 @@ suite('WebGPU p5.RendererWebGPU', function () {
   });
 
   suite('Buffer Pooling', function () {
+    const getGeometryBuffers = (renderer, geometry) => {
+      const buffers = new Set();
+      const cacheEntry = renderer.geometryBufferCache.getCached(geometry);
+
+      if (cacheEntry) {
+        if (cacheEntry.indexBuffer) buffers.add(cacheEntry.indexBuffer);
+        for (const def of [
+          ...renderer.buffers.stroke,
+          ...renderer.buffers.fill,
+          ...renderer.buffers.user
+        ]) {
+          if (cacheEntry[def.dst]) buffers.add(cacheEntry[def.dst]);
+        }
+      }
+
+      for (const groups of [
+        geometry._vertexBufferPools,
+        geometry._vertexBuffersInUse,
+        geometry._vertexBuffersToReturn
+      ]) {
+        for (const records of Object.values(groups || {})) {
+          for (const info of records) {
+            if (info.buffer) buffers.add(info.buffer);
+          }
+        }
+      }
+
+      return buffers;
+    };
+
+    const spyOnBufferDestruction = buffers => {
+      return [...buffers].map(buffer => {
+        const originalDestroy = buffer.destroy.bind(buffer);
+        return vi.spyOn(buffer, 'destroy').mockImplementation(() => {
+          originalDestroy();
+        });
+      });
+    };
+
+    test('retired geometry buffers destroy after queue completion across frames',
+      async function () {
+        const renderer = myp5._renderer;
+        const geom = myp5.buildGeometry(() => {
+          myp5.triangle(0, 0, 10, 0, 5, 10);
+        });
+        const previousDraw = myp5.draw;
+        let workDoneSpy;
+        let destroySpies = [];
+        let resolveQueueCompletion;
+        let drawCount = 0;
+
+        try {
+          myp5.noLoop();
+          myp5.draw = () => {
+            drawCount++;
+            myp5.model(geom);
+          };
+          await myp5.redraw(3);
+          expect(drawCount).toBe(3);
+
+          const oldBuffers = getGeometryBuffers(renderer, geom);
+          expect(oldBuffers.size).toBeGreaterThan(0);
+          destroySpies = spyOnBufferDestruction(oldBuffers);
+
+          const queueCompletion = new Promise(resolve => {
+            resolveQueueCompletion = resolve;
+          });
+          workDoneSpy = vi
+            .spyOn(renderer.queue, 'onSubmittedWorkDone')
+            .mockImplementation(() => queueCompletion);
+
+          myp5.freeGeometry(geom);
+
+          for (const destroySpy of destroySpies) {
+            expect(destroySpy).not.toHaveBeenCalled();
+          }
+
+          resolveQueueCompletion();
+          await queueCompletion;
+          await vi.waitFor(() => {
+            for (const destroySpy of destroySpies) {
+              expect(destroySpy).toHaveBeenCalledTimes(1);
+            }
+          });
+        } finally {
+          resolveQueueCompletion?.();
+          workDoneSpy?.mockRestore();
+          for (const destroySpy of destroySpies) {
+            destroySpy.mockRestore();
+          }
+          myp5.draw = previousDraw;
+          myp5.noLoop();
+        }
+      }
+    );
+
+    test('freeGeometry submits pending draws before destroying retired buffers',
+      async function () {
+        const renderer = myp5._renderer;
+        const geom = myp5.buildGeometry(() => {
+          myp5.triangle(0, 0, 10, 0, 5, 10);
+        });
+        let submitSpy;
+        let workDoneSpy;
+        let destroySpies = [];
+        let resolveQueueCompletion;
+
+        try {
+          myp5.model(geom);
+
+          const oldBuffers = getGeometryBuffers(renderer, geom);
+          expect(oldBuffers.size).toBeGreaterThan(0);
+
+          destroySpies = spyOnBufferDestruction(oldBuffers);
+
+          const queueCompletion = new Promise(resolve => {
+            resolveQueueCompletion = resolve;
+          });
+          workDoneSpy = vi
+            .spyOn(renderer.queue, 'onSubmittedWorkDone')
+            .mockImplementation(() => queueCompletion);
+          submitSpy = vi.spyOn(renderer.queue, 'submit');
+
+          myp5.freeGeometry(geom);
+
+          expect(submitSpy).toHaveBeenCalled();
+          for (const destroySpy of destroySpies) {
+            expect(destroySpy).not.toHaveBeenCalled();
+          }
+
+          resolveQueueCompletion();
+          await queueCompletion;
+          await vi.waitFor(() => {
+            for (const destroySpy of destroySpies) {
+              expect(destroySpy).toHaveBeenCalledTimes(1);
+            }
+          });
+        } finally {
+          resolveQueueCompletion?.();
+          submitSpy?.mockRestore();
+          workDoneSpy?.mockRestore();
+          for (const destroySpy of destroySpies) {
+            destroySpy.mockRestore();
+          }
+        }
+      }
+    );
+
+    test('free and redraw uses fresh buffers while old buffers await queue completion',
+      async function () {
+        const renderer = myp5._renderer;
+        const geom = myp5.buildGeometry(() => {
+          myp5.triangle(0, 0, 10, 0, 5, 10);
+        });
+        let workDoneSpy;
+        let destroySpies = [];
+        let resolveQueueCompletion;
+
+        try {
+          myp5.model(geom);
+          await renderer.finishDraw();
+
+          const oldBuffers = getGeometryBuffers(renderer, geom);
+          expect(oldBuffers.size).toBeGreaterThan(0);
+
+          destroySpies = spyOnBufferDestruction(oldBuffers);
+
+          const queueCompletion = new Promise(resolve => {
+            resolveQueueCompletion = resolve;
+          });
+          workDoneSpy = vi
+            .spyOn(renderer.queue, 'onSubmittedWorkDone')
+            .mockImplementation(() => queueCompletion);
+
+          myp5.freeGeometry(geom);
+          myp5.model(geom);
+
+          const newBuffers = getGeometryBuffers(renderer, geom);
+          expect(newBuffers.size).toBeGreaterThan(0);
+          for (const oldBuffer of oldBuffers) {
+            expect(newBuffers).not.toContain(oldBuffer);
+          }
+          for (const destroySpy of destroySpies) {
+            expect(destroySpy).not.toHaveBeenCalled();
+          }
+
+          resolveQueueCompletion();
+          await queueCompletion;
+          await vi.waitFor(() => {
+            for (const destroySpy of destroySpies) {
+              expect(destroySpy).toHaveBeenCalledTimes(1);
+            }
+          });
+
+          await renderer.finishDraw();
+        } finally {
+          resolveQueueCompletion?.();
+          workDoneSpy?.mockRestore();
+          for (const destroySpy of destroySpies) {
+            destroySpy.mockRestore();
+          }
+        }
+      }
+    );
+
     test('drawing geometry twice reuses vertex buffers', async function () {
       // Create a simple geometry
       const geom = myp5.buildGeometry(() => {
@@ -95,7 +300,7 @@ suite('WebGPU p5.RendererWebGPU', function () {
       myp5.model(geom);
 
       const cache = renderer.geometryBufferCache;
-      const ids = [geom.gid, ...geom.parts.map(part => part.gid)];
+      const ids = geom.parts.map(part => part.gid);
 
       for (const id of ids) {
         expect(cache.isCached(id)).toBe(true);
@@ -138,6 +343,65 @@ suite('WebGPU p5.RendererWebGPU', function () {
         }
       });
     });
+
+    test('freeGeometry destroys multipart part buffers exactly once',
+      async function () {
+        const renderer = myp5._renderer;
+        const texA = myp5.createGraphics(10, 10);
+        const texB = myp5.createGraphics(10, 10);
+        const geom = myp5.buildGeometry(() => {
+          myp5.texture(texA);
+          myp5.box(10);
+          myp5.texture(texB);
+          myp5.box(10);
+        });
+        let workDoneSpy;
+        let destroySpies = [];
+        let resolveQueueCompletion;
+
+        try {
+          myp5.model(geom);
+          await renderer.finishDraw();
+
+          const oldBuffers = new Set();
+          for (const part of geom.parts) {
+            for (const buffer of getGeometryBuffers(renderer, part)) {
+              oldBuffers.add(buffer);
+            }
+          }
+          expect(oldBuffers.size).toBeGreaterThan(0);
+
+          destroySpies = spyOnBufferDestruction(oldBuffers);
+
+          const queueCompletion = new Promise(resolve => {
+            resolveQueueCompletion = resolve;
+          });
+          workDoneSpy = vi
+            .spyOn(renderer.queue, 'onSubmittedWorkDone')
+            .mockImplementation(() => queueCompletion);
+
+          myp5.freeGeometry(geom);
+
+          for (const destroySpy of destroySpies) {
+            expect(destroySpy).not.toHaveBeenCalled();
+          }
+
+          resolveQueueCompletion();
+          await queueCompletion;
+          await vi.waitFor(() => {
+            for (const destroySpy of destroySpies) {
+              expect(destroySpy).toHaveBeenCalledTimes(1);
+            }
+          });
+        } finally {
+          resolveQueueCompletion?.();
+          workDoneSpy?.mockRestore();
+          for (const destroySpy of destroySpies) {
+            destroySpy.mockRestore();
+          }
+        }
+      }
+    );
 
     test('freeGeometry causes new buffer allocation on next draw', async function () {
       const geom = myp5.buildGeometry(() => {
