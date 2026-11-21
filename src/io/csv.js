@@ -133,8 +133,9 @@ export function parse(csv, options, reviver = v => v) {
     }
   }
 
-  // flush the last value
-  if (ctx.entry.length !== 0) {
+  // flush the last value. In a one-column row, the pending value is still in
+  // ctx.value with ctx.entry empty, so checking the entry alone drops it.
+  if (state !== 0 || ctx.entry.length !== 0) {
     valueEnd(ctx);
     entryEnd(ctx);
   }
