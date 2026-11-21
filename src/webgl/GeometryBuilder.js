@@ -176,19 +176,34 @@ class GeometryBuilder {
    * part stays aligned whatever shape the uvs are.
    */
   _addToCurrentPart(input, vertices, normals, vertexColors) {
-    // parts are made of fills; a stroke-only draw contributes no faces
-    if (!this.renderer.states.fillColor) return;
+    const hasFill = Boolean(
+      this.renderer.states.fillColor && input.faces.length
+    );
+    const hasStroke = Boolean(
+      this.renderer.states.strokeColor && input.edges.length
+    );
+
+    if (!hasFill && !hasStroke) return;
 
     const state = this._snapshotPartState();
-    if (
-      !this.currentPart ||
-      !this._sameMaterial(state, this.currentPart.partState)
-    ) {
+
+    if (!this.currentPart) {
       this.currentPart = new GeometryPart(
         `${this.geometry.gid}|part${this.parts.length}`,
         state
       );
       this.parts.push(this.currentPart);
+    } else if (hasFill) {
+      if (this.currentPart.faces.length === 0) {
+        // A stroke-only part can adopt the material of its first fill.
+        this.currentPart.partState = state;
+      } else if (!this._sameMaterial(state, this.currentPart.partState)) {
+        this.currentPart = new GeometryPart(
+          `${this.geometry.gid}|part${this.parts.length}`,
+          state
+        );
+        this.parts.push(this.currentPart);
+      }
     }
 
     const part = this.currentPart;
@@ -205,8 +220,17 @@ class GeometryBuilder {
     for (const c of vertexColors) {
       part.vertexColors.push(c);
     }
-    for (const f of input.faces) {
-      part.faces.push(f.map(idx => idx + startIdx));
+
+    if (hasFill) {
+      for (const f of input.faces) {
+        part.faces.push(f.map(idx => idx + startIdx));
+      }
+    }
+
+    if (hasStroke) {
+      for (const edge of input.edges) {
+        part.edges.push(edge.map(idx => idx + startIdx));
+      }
     }
 
     // carry custom per-vertex attributes into the part too, the same way the

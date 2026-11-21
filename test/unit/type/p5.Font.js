@@ -71,6 +71,18 @@ suite('p5.Font', function () {
       expect(pts.length).toBeGreaterThan(simplifiedPts.length);
     });
   });
+
+  test('extruded textToModel uses single-part edge ownership', async () => {
+    myp5.createCanvas(10, 10, myp5.WEBGL);
+    const pFont = await myp5.loadFont(fontFile);
+    const geom = pFont.textToModel('p5', 0, 0, {
+      extrude: 5,
+      sampleFactor: 2
+    });
+
+    expect(geom.parts).toHaveLength(1);
+    expect(geom.edges.length).toBeGreaterThan(0);
+  });
 });
 
 suite('sanitizeFontName', function () {
