@@ -995,6 +995,7 @@ function dom(p5, fn) {
    * - `mySelect.disable(option)` marks a given option as disabled.
    * - `mySelect.enable()` marks the whole dropdown element as enabled.
    * - `mySelect.enable(option)` marks a given option as enabled.
+   * - Enabling a dropdown or an option doesn't change which option is selected.
    *
    * @method createSelect
    * @param {Boolean} [multiple] support multiple selections.
@@ -1226,14 +1227,12 @@ function dom(p5, fn) {
         for (let i = 0; i < this.elt.length; i++) {
           if (this.elt[i].value.toString() === value) {
             this.elt[i].disabled = false;
-            this.elt[i].selected = false;
           }
         }
       } else {
         this.elt.disabled = false;
         for (let i = 0; i < this.elt.length; i++) {
           this.elt[i].disabled = false;
-          this.elt[i].selected = false;
         }
       }
       return this;
