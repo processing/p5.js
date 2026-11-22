@@ -1762,5 +1762,5 @@ export default media;
 export { MediaElement };
 
 if (typeof p5 !== 'undefined') {
-  media(p5, p5.prototype);
+  p5.registerAddon(media);
 }

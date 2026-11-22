@@ -1472,5 +1472,5 @@ function loadingDisplaying(p5, fn) {
 export default loadingDisplaying;
 
 if (typeof p5 !== 'undefined') {
-  loadingDisplaying(p5, p5.prototype);
+  p5.registerAddon(loadingDisplaying);
 }

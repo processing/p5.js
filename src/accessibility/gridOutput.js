@@ -162,5 +162,5 @@ function gridOutput(p5, fn) {
 export default gridOutput;
 
 if (typeof p5 !== 'undefined') {
-  gridOutput(p5, p5.prototype);
+  p5.registerAddon(gridOutput);
 }

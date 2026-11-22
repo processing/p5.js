@@ -3348,5 +3348,5 @@ export {
 };
 
 if (typeof p5 !== 'undefined') {
-  customShapes(p5, p5.prototype);
+  p5.registerAddon(customShapes);
 }

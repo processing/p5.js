@@ -1421,5 +1421,5 @@ export default framebuffer;
 export { FramebufferTexture, FramebufferCamera, Framebuffer };
 
 if (typeof p5 !== 'undefined') {
-  framebuffer(p5, p5.prototype);
+  p5.registerAddon(framebuffer);
 }

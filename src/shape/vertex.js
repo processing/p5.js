@@ -1208,5 +1208,5 @@ function vertex(p5, fn) {
 export default vertex;
 
 if (typeof p5 !== 'undefined') {
-  vertex(p5, p5.prototype);
+  p5.registerAddon(vertex);
 }

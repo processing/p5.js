@@ -2640,5 +2640,5 @@ export default geometry;
 export { Geometry };
 
 if (typeof p5 !== 'undefined') {
-  geometry(p5, p5.prototype);
+  p5.registerAddon(geometry);
 }

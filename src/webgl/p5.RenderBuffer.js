@@ -33,5 +33,5 @@ export default renderBuffer;
 export { RenderBuffer };
 
 if (typeof p5 !== 'undefined') {
-  renderBuffer(p5, p5.prototype);
+  p5.registerAddon(renderBuffer);
 }

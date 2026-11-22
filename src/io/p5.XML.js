@@ -1200,5 +1200,5 @@ export default xml;
 export { XML };
 
 if (typeof p5 !== 'undefined') {
-  xml(p5, p5.prototype);
+  p5.registerAddon(xml);
 }

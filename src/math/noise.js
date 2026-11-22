@@ -506,5 +506,5 @@ function noise(p5, fn) {
 export default noise;
 
 if (typeof p5 !== 'undefined') {
-  noise(p5, p5.prototype);
+  p5.registerAddon(noise);
 }

@@ -2209,5 +2209,5 @@ export default rendererGL;
 export { RendererGL };
 
 if (typeof p5 !== 'undefined') {
-  rendererGL(p5, p5.prototype);
+  p5.registerAddon(rendererGL);
 }

@@ -3804,5 +3804,5 @@ export default vector;
 export { Vector };
 
 if (typeof p5 !== 'undefined') {
-  vector(p5, p5.prototype);
+  p5.registerAddon(vector);
 }

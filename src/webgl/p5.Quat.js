@@ -113,5 +113,5 @@ export default quat;
 export { Quat };
 
 if (typeof p5 !== 'undefined') {
-  quat(p5, p5.prototype);
+  p5.registerAddon(quat);
 }

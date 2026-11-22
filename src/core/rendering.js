@@ -697,5 +697,5 @@ export default rendering;
 export { renderers };
 
 if (typeof p5 !== 'undefined') {
-  rendering(p5, p5.prototype);
+  p5.registerAddon(rendering);
 }

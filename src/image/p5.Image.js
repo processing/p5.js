@@ -2263,5 +2263,5 @@ export default image;
 export { Image };
 
 if (typeof p5 !== 'undefined') {
-  image(p5, p5.prototype);
+  p5.registerAddon(image);
 }

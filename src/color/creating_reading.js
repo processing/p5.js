@@ -1853,5 +1853,5 @@ function creatingReading(p5, fn) {
 export default creatingReading;
 
 if (typeof p5 !== 'undefined') {
-  creatingReading(p5, p5.prototype);
+  p5.registerAddon(creatingReading);
 }

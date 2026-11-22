@@ -2395,5 +2395,5 @@ function textCore(p5, fn) {
 export default textCore;
 
 if (typeof p5 !== 'undefined') {
-  textCore(p5, p5.prototype);
+  p5.registerAddon(textCore);
 }

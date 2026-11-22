@@ -2166,5 +2166,5 @@ function setting(p5, fn) {
 export default setting;
 
 if (typeof p5 !== 'undefined') {
-  setting(p5, p5.prototype);
+  p5.registerAddon(setting);
 }

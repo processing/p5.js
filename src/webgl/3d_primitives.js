@@ -2769,5 +2769,5 @@ function primitives3D(p5, fn) {
 export default primitives3D;
 
 if (typeof p5 !== 'undefined') {
-  primitives3D(p5, p5.prototype);
+  p5.registerAddon(primitives3D);
 }

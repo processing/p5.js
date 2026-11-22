@@ -5249,5 +5249,5 @@ ${hookUniformFields}}
 export default rendererWebGPU;
 
 if (typeof p5 !== 'undefined') {
-  rendererWebGPU(p5, p5.prototype);
+  p5.registerAddon(rendererWebGPU);
 }
