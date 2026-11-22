@@ -3,7 +3,7 @@
  */
 
 import * as constants from '../core/constants';
-import { RGB, RGBA } from '../color/creating_reading';
+import { RGB, RGBA } from '../color/color_constants';
 import { checkWebGLCapabilities } from './utils';
 import { Camera } from './p5.Camera';
 import { Texture } from './p5.Texture';

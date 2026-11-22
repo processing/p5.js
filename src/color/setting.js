@@ -15,7 +15,7 @@ import {
   LCH,
   OKLAB,
   OKLCH
-} from './creating_reading';
+} from './color_constants';
 
 function setting(p5, fn) {
   /**

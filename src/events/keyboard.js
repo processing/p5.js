@@ -1082,5 +1082,5 @@ function keyboard(p5, fn, lifecycles) {
 export default keyboard;
 
 if (typeof p5 !== 'undefined') {
-  keyboard(p5, p5.prototype);
+  p5.registerAddon(keyboard);
 }
