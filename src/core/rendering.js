@@ -16,6 +16,43 @@ function rendering(p5, fn) {
   renderers = p5.renderers;
 
   /**
+   * Allows a WEBGPU sketch to run with the WEBGL renderer when WebGPU isn't
+   * available.
+   *
+   * By default, a sketch that requests the WEBGPU renderer stops with an error
+   * in browsers without WebGPU support. Calling `enableWebGLFallback()` in
+   * <a href="#/p5/setup">`setup()`</a> before
+   * <a href="#/p5/createCanvas">`createCanvas()`</a> tells p5.js that the
+   * sketch can also run in WebGL mode, so it switches to the WEBGL renderer
+   * instead of stopping.
+   *
+   * WebGL mode is usually slower for compute-heavy sketches. Use the
+   * <a href="#/p5/rendererType">`rendererType`</a> variable to choose a lower
+   * iteration count when the fallback is active. `rendererType` is `WEBGL`
+   * after the fallback and `WEBGPU` when WebGPU is available.
+   *
+   * @method enableWebGLFallback
+   *
+   * @example
+   * let particleCount;
+   *
+   * async function setup() {
+   *   // Allow the sketch to run in browsers without WebGPU.
+   *   enableWebGLFallback();
+   *
+   *   await createCanvas(200, 200, WEBGPU);
+   *
+   *   // Use fewer particles when the WEBGL fallback is active.
+   *   particleCount = rendererType === WEBGL ? 100 : 10000;
+   *
+   *   describe('White particles moving across a dark background.');
+   * }
+   */
+  fn.enableWebGLFallback = function () {
+    this._webglFallbackEnabled = true;
+  };
+
+  /**
    * Creates a canvas element on the web page.
    *
    * `createCanvas()` creates the main drawing canvas for a sketch. It should
@@ -46,6 +83,10 @@ function rendering(p5, fn) {
    * `setAttributes({ version: 1 })` to create a WebGL1 context.
    *
    * Note: In WebGPU mode, you must `await` this function.
+   *
+   * Note: If WebGPU isn't available, the sketch stops with an error unless
+   * <a href="#/p5/enableWebGLFallback">`enableWebGLFallback()`</a> was called
+   * before `createCanvas()`.
    *
    * @method createCanvas
    * @param  {Number} [width] width of the canvas. Defaults to 100.
@@ -138,10 +179,19 @@ function rendering(p5, fn) {
     if (!renderers[renderer] && typeof renderer === 'string') {
       if (renderer === constants.WEBGPU) {
         p5.FES.log`To create a WEBGPU canvas, add the WebGPU add-on to your project.`();
-        if (renderers[constants.WEBGL]) {
-          p5.FES.log`Falling back to WebGL renderer.`();
-          selectedRenderer = constants.WEBGL;
+        if (!this._webglFallbackEnabled) {
+          p5.FES.log`WebGPU is not available. To fallback to WebGL call enableWebGLFallback() in setup() before createCanvas(), then use rendererType to choose a lower iteration count for the WEBGL renderer.`(
+            { reference: 'enableWebGLFallback' }
+          );
+          throw new Error('Failed to create canvas.');
         }
+        if (!renderers[constants.WEBGL]) {
+          throw new Error('The WEBGL renderer is not available.');
+        }
+        p5.FES.log`Falling back to WEBGL renderer. Use rendererType to choose a lower iteration count for the WEBGL renderer.`(
+          { reference: 'enableWebGLFallback' }
+        );
+        selectedRenderer = constants.WEBGL;
         args.shift();
       } else {
         p5.FES
@@ -149,14 +199,18 @@ function rendering(p5, fn) {
       }
     }
 
-    // Init our graphics renderer
-    if (this._renderer) {
+    const removeRenderer = () => {
+      if (!this._renderer) return;
       this._renderer.remove();
       const index = this._elements.indexOf(this._renderer);
       if (index !== -1) {
         this._elements.splice(index, 1);
       }
-    }
+      this._renderer = undefined;
+    };
+
+    // Init our graphics renderer
+    removeRenderer();
     this._renderer = new renderers[selectedRenderer](this, w, h, true, ...args);
     this._defaultGraphicsCreated = true;
     this._elements.push(this._renderer);
@@ -172,13 +226,35 @@ function rendering(p5, fn) {
     }
 
     if (this._renderer.contextReady) {
-      return this._renderer.contextReady.then(() => this._renderer).catch((e) => {
-        if (selectedRenderer !== constants.WEBGPU) {
-          throw new Error('Failed to create canvas.');
-        }
-        p5.FES.log`${e.message} Falling back to WebGL renderer.`();
-        return this.createCanvas(w, h, constants.WEBGL, ...args);
-      });
+      return this._renderer.contextReady
+        .then(() => {
+          if (
+            selectedRenderer === constants.WEBGPU &&
+            !this._webglFallbackEnabled
+          ) {
+            p5.FES.log`This sketch is running with the WEBGPU renderer. To make it accessible to browsers without WebGPU, call enableWebGLFallback() in setup() before createCanvas(), then use rendererType to choose a lower iteration count for the WEBGL renderer.`(
+              { reference: 'enableWebGLFallback' }
+            );
+          }
+          return this._renderer;
+        })
+        .catch((e) => {
+          if (selectedRenderer !== constants.WEBGPU) {
+            throw new Error('Failed to create canvas.');
+          }
+          if (!this._webglFallbackEnabled) {
+            p5.FES.log`${e.message} To fallback to WebGL call enableWebGLFallback() in setup() before createCanvas(), then use rendererType to choose a lower iteration count for the WEBGL renderer.`(
+              { reference: 'enableWebGLFallback' }
+            );
+            removeRenderer();
+            this._defaultGraphicsCreated = false;
+            throw new Error('Failed to create canvas.');
+          }
+          p5.FES.log`${e.message} Falling back to WEBGL renderer. Use rendererType to choose a lower iteration count for the WEBGL renderer.`(
+            { reference: 'enableWebGLFallback' }
+          );
+          return this.createCanvas(w, h, constants.WEBGL, ...args);
+        });
     } else {
       return this._renderer;
     }

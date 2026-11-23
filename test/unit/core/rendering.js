@@ -447,20 +447,97 @@ suite('Rendering', function () {
       assert.equal(myp5._renderer.rendererType, myp5.WEBGL);
     });
 
+    test('does not fall back when the WEBGPU addon is missing unless enabled', function () {
+      const saved = p5.renderers[myp5.WEBGPU];
+      delete p5.renderers[myp5.WEBGPU];
+      const fesSpy = vi.spyOn(p5.FES, 'log');
+      myp5._webglFallbackEnabled = false;
+      try {
+        myp5.createCanvas(10, 10);
+        let error = null;
+        try {
+          myp5.createCanvas(10, 10, myp5.WEBGPU);
+        } catch (e) {
+          error = e;
+        }
+        expect(error).to.exist;
+        expect(error.message).to.match(/Failed to create canvas/);
+        assert.equal(myp5.rendererType, myp5.P2D);
+        const messages = fesMessages(fesSpy).join('\n');
+        assert.isTrue(messages.includes('enableWebGLFallback'));
+        assert.isTrue(messages.includes('rendererType'));
+        assert.isFalse(messages.includes('Falling back to WEBGL'));
+      } finally {
+        if (saved) {
+          p5.renderers[myp5.WEBGPU] = saved;
+        }
+        fesSpy.mockRestore();
+      }
+    });
+
     test('falls back to WEBGL when the WEBGPU addon is missing', function () {
       const saved = p5.renderers[myp5.WEBGPU];
       delete p5.renderers[myp5.WEBGPU];
       const fesSpy = vi.spyOn(p5.FES, 'log');
+      myp5._webglFallbackEnabled = false;
+      myp5.enableWebGLFallback();
       try {
         const renderer = myp5.createCanvas(10, 10, myp5.WEBGPU);
         assert.equal(renderer.rendererType, myp5.WEBGL);
         assert.equal(myp5.rendererType, myp5.WEBGL);
         const messages = fesMessages(fesSpy).join('\n');
         assert.isTrue(messages.includes('add-on'));
-        assert.isTrue(messages.includes('Falling back to WebGL'));
+        assert.isTrue(messages.includes('Falling back to WEBGL'));
+        assert.isTrue(messages.includes('rendererType'));
       } finally {
         if (saved) {
           p5.renderers[myp5.WEBGPU] = saved;
+        }
+        fesSpy.mockRestore();
+      }
+    });
+
+    test('does not fall back when WEBGPU context creation fails unless enabled', async function () {
+      const failureReason =
+        'No compatible GPU could be found for WebGPU on this device, so p5 cannot start it here.';
+      class FailingWebGPU {
+        constructor(pInst) {
+          this._pInst = pInst;
+          this.canvas = document.createElement('canvas');
+          this.elt = this.canvas;
+          this.contextReady = Promise.reject(new Error(failureReason));
+        }
+        remove() {}
+        _applyDefaults() {}
+      }
+      const saved = p5.renderers[myp5.WEBGPU];
+      p5.renderers[myp5.WEBGPU] = FailingWebGPU;
+      const fesSpy = vi.spyOn(p5.FES, 'log');
+      myp5._webglFallbackEnabled = false;
+      try {
+        myp5.createCanvas(10, 10);
+        let error = null;
+        try {
+          await myp5.createCanvas(10, 10, myp5.WEBGPU);
+        } catch (e) {
+          error = e;
+        }
+        expect(error).to.exist;
+        expect(error.message).to.match(/Failed to create canvas/);
+        assert.equal(myp5.rendererType, myp5.P2D);
+        assert.isUndefined(myp5._renderer);
+        assert.isFalse(
+          myp5._elements.some(element => element instanceof FailingWebGPU)
+        );
+        const messages = fesMessages(fesSpy).join('\n');
+        assert.isTrue(messages.includes(failureReason));
+        assert.isTrue(messages.includes('enableWebGLFallback'));
+        assert.isTrue(messages.includes('rendererType'));
+      } finally {
+        if (saved) {
+          p5.renderers[myp5.WEBGPU] = saved;
+        } else {
+          delete p5.renderers[myp5.WEBGPU];
         }
         fesSpy.mockRestore();
       }
@@ -482,6 +559,8 @@ suite('Rendering', function () {
       const saved = p5.renderers[myp5.WEBGPU];
       p5.renderers[myp5.WEBGPU] = FailingWebGPU;
       const fesSpy = vi.spyOn(p5.FES, 'log');
+      myp5._webglFallbackEnabled = false;
+      myp5.enableWebGLFallback();
       try {
         const renderer = await myp5.createCanvas(10, 10, myp5.WEBGPU);
         assert.instanceOf(renderer, p5.RendererGL);
@@ -490,8 +569,9 @@ suite('Rendering', function () {
           myp5._elements.some(element => element instanceof FailingWebGPU)
         );
         const messages = fesMessages(fesSpy).join('\n');
-        assert.isTrue(messages.includes('Falling back to WebGL'));
+        assert.isTrue(messages.includes('Falling back to WEBGL'));
         assert.isTrue(messages.includes('No compatible GPU'));
+        assert.isTrue(messages.includes('rendererType'));
       } finally {
         if (saved) {
           p5.renderers[myp5.WEBGPU] = saved;

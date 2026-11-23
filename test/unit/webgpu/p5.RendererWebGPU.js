@@ -746,6 +746,40 @@ suite('WebGPU p5.RendererWebGPU', function () {
       expect(myp5._renderer.rendererType).to.equal(myp5.WEBGPU);
     });
 
+    function fesMessages(fesSpy) {
+      return fesSpy.mock.calls.map(args => {
+        const [strings, ...values] = args;
+        return strings.reduce((acc, s, i) => acc + s + (values[i] ?? ''), '');
+      });
+    }
+
+    test('logs the WebGL fallback hint when not opted in', async function () {
+      myp5._webglFallbackEnabled = false;
+      const fesSpy = vi.spyOn(p5.FES, 'log');
+      try {
+        await myp5.createCanvas(50, 50, myp5.WEBGPU);
+        const messages = fesMessages(fesSpy).join('\n');
+        expect(messages).to.include('enableWebGLFallback');
+        expect(messages).to.include('rendererType');
+      } finally {
+        fesSpy.mockRestore();
+      }
+    });
+
+    test('does not log the fallback hint when opted in', async function () {
+      myp5._webglFallbackEnabled = false;
+      myp5.enableWebGLFallback();
+      const fesSpy = vi.spyOn(p5.FES, 'log');
+      try {
+        await myp5.createCanvas(50, 50, myp5.WEBGPU);
+        const messages = fesMessages(fesSpy).join('\n');
+        expect(messages).to.not.include('enableWebGLFallback');
+      } finally {
+        myp5._webglFallbackEnabled = false;
+        fesSpy.mockRestore();
+      }
+    });
+
     test('reports WEBGPU synchronously before context init resolves', function () {
       const initStub = vi
         .spyOn(p5.RendererWebGPU.prototype, '_initContext')
