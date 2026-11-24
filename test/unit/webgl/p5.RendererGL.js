@@ -3444,4 +3444,320 @@ void main() {
       expect(myp5._renderer.states._shininessTex).toBeNull();
     });
   });
+  suite('CPU compute fallback', function () {
+    suite('createStorage', function () {
+      test('creates a zero-filled buffer from a count', async function () {
+        myp5.createCanvas(10, 10, myp5.WEBGL);
+        const buf = myp5.createStorage(4);
+        expect(buf.length).to.equal(4);
+        const result = await buf.read();
+        expect(Array.from(result)).to.deep.equal([0, 0, 0, 0]);
+      });
+
+      test('copies float arrays instead of aliasing them', async function () {
+        myp5.createCanvas(10, 10, myp5.WEBGL);
+        const input = [1, 2, 3];
+        const buf = myp5.createStorage(input);
+        input[0] = 99;
+        const result = await buf.read();
+        expect(Array.from(result)).to.deep.equal([1, 2, 3]);
+      });
+
+      test('keeps the typed array type', async function () {
+        myp5.createCanvas(10, 10, myp5.WEBGL);
+        const buf = myp5.createStorage(new Float32Array([1, 2]));
+        const result = await buf.read();
+        expect(result).to.be.instanceOf(Float32Array);
+      });
+
+      test('update replaces contents and set writes one element', async function () {
+        myp5.createCanvas(10, 10, myp5.WEBGL);
+        const buf = myp5.createStorage(new Float32Array([1, 2, 3]));
+        buf.update(new Float32Array([4, 5, 6]));
+        buf.set(0, 7);
+        expect(Array.from(await buf.read())).to.deep.equal([7, 5, 6]);
+      });
+
+      test('set out of bounds throws', function () {
+        myp5.createCanvas(10, 10, myp5.WEBGL);
+        const buf = myp5.createStorage(2);
+        expect(() => buf.set(2, 1)).to.throw();
+      });
+
+      test('struct arrays keep objects and vector fields', async function () {
+        myp5.createCanvas(10, 10, myp5.WEBGL);
+        const buf = myp5.createStorage([
+          { position: myp5.createVector(1, 2), speed: 5 }
+        ]);
+        expect(buf.length).to.equal(1);
+        const result = await buf.read();
+        expect(result[0].position.isVector).to.be.true;
+        expect(result[0].position.x).to.be.closeTo(1, 0.001);
+        expect(result[0].speed).to.be.closeTo(5, 0.001);
+      });
+    });
+
+    suite('createStorageList', function () {
+      test('float lists push, read and clear', async function () {
+        myp5.createCanvas(10, 10, myp5.WEBGL);
+        const list = myp5.createStorageList(4);
+        list.push(1);
+        list.push(2);
+        expect(list.length).to.equal(2);
+        expect(Array.from(await list.read())).to.deep.equal([1, 2]);
+        list.clear();
+        expect(list.length).to.equal(0);
+      });
+
+      test('pushing past maxCapacity throws', function () {
+        myp5.createCanvas(10, 10, myp5.WEBGL);
+        const list = myp5.createStorageList(1);
+        list.push(1);
+        expect(() => list.push(2)).to.throw();
+      });
+
+      test('struct lists keep a schema from a template object', async function () {
+        myp5.createCanvas(10, 10, myp5.WEBGL);
+        const list = myp5.createStorageList(4, {
+          position: myp5.createVector(0, 0),
+          life: 0
+        });
+        list.push({ position: myp5.createVector(1, 2), life: 0.5 });
+        const result = await list.read();
+        expect(result.length).to.equal(1);
+        expect(result[0].life).to.be.closeTo(0.5, 0.001);
+      });
+    });
+
+    suite('compute', function () {
+      test('runs the same doubling example as the docs', async function () {
+        myp5.createCanvas(10, 10, myp5.WEBGL);
+        const buf = myp5.createStorage(new Float32Array([1, 2, 3, 4]));
+        const shader = myp5.buildComputeShader(
+          () => {
+          const d = myp5.uniformStorage(buf);
+          const idx = myp5.index.x;
+          d[idx] = d[idx] * 2;
+        }, { myp5, buf });
+        myp5.compute(shader, 4);
+        expect(Array.from(await buf.read())).to.deep.equal([2, 4, 6, 8]);
+      });
+
+      test('sees the invocation index', async function () {
+        myp5.createCanvas(10, 10, myp5.WEBGL);
+        const buf = myp5.createStorage(new Float32Array(3));
+        const shader = myp5.buildComputeShader(
+          () => {
+          const d = myp5.uniformStorage(buf);
+          d[myp5.index.x] = myp5.index.x;
+        }, { myp5, buf });
+        myp5.compute(shader, 3);
+        expect(Array.from(await buf.read())).to.deep.equal([0, 1, 2]);
+      });
+
+      test('supports function uniforms and 2D dispatches', async function () {
+        myp5.createCanvas(10, 10, myp5.WEBGL);
+        const cells = myp5.createStorage(new Float32Array([0, 1, 0, 1]));
+        const next = myp5.createStorage(4);
+        const W = 2;
+        const H = 2;
+        const shader = myp5.buildComputeShader(
+          () => {
+          const current = myp5.uniformStorage(() => cells);
+          const following = myp5.uniformStorage(() => next);
+          const w = myp5.uniformInt(() => W);
+          const h = myp5.uniformInt(() => H);
+          const x = myp5.index.x;
+          const y = myp5.index.y;
+          following[y * w + x] = current[y * w + x] + w + h;
+        }, { myp5, cells, next, W, H });
+        myp5.compute(shader, W, H);
+        expect(Array.from(await next.read())).to.deep.equal([4, 5, 4, 5]);
+      });
+
+      test('runs branches', async function () {
+        myp5.createCanvas(10, 10, myp5.WEBGL);
+        const src = myp5.createStorage(new Float32Array([0, 0.8, 0.2]));
+        const dst = myp5.createStorage(3);
+        const shader = myp5.buildComputeShader(
+          () => {
+          const cur = myp5.uniformStorage(() => src);
+          const nxt = myp5.uniformStorage(() => dst);
+          const i = myp5.index.x;
+          if (cur[i] > 0.5) {
+            nxt[i] = 1;
+          } else {
+            nxt[i] = 0;
+          }
+        }, { myp5, src, dst });
+        myp5.compute(shader, 3);
+        expect(Array.from(await dst.read())).to.deep.equal([0, 1, 0]);
+      });
+
+      test('runs loops with a Game of Life blinker step', async function () {
+        myp5.createCanvas(10, 10, myp5.WEBGL);
+        const W = 4;
+        const H = 4;
+        const initial = new Float32Array(W * H);
+        // Horizontal blinker on row 1.
+        initial[1 * W + 0] = 1;
+        initial[1 * W + 1] = 1;
+        initial[1 * W + 2] = 1;
+        const cells = myp5.createStorage(initial);
+        const following = myp5.createStorage(W * H);
+        const shader = myp5.buildComputeShader(
+          () => {
+          const current = myp5.uniformStorage(() => cells);
+          const next = myp5.uniformStorage(() => following);
+          const w = myp5.uniformInt(() => W);
+          const h = myp5.uniformInt(() => H);
+          const x = myp5.index.x;
+          const y = myp5.index.y;
+          let n = 0;
+          for (let dy = -1; dy <= 1; dy++) {
+            for (let dx = -1; dx <= 1; dx++) {
+              if (dx !== 0 || dy !== 0) {
+                const nx = (x + dx + w) % w;
+                const ny = (y + dy + h) % h;
+                n += current[ny * w + nx];
+              }
+            }
+          }
+          const alive = current[y * w + x];
+          let out = 0;
+          if (alive === 1) {
+            if (n === 2 || n === 3) out = 1;
+          } else {
+            if (n === 3) out = 1;
+          }
+          next[y * w + x] = out;
+        }, { myp5, cells, following, W, H });
+        myp5.compute(shader, W, H);
+        const result = await following.read();
+        // Vertical blinker in column 1.
+        const expected = new Float32Array(W * H);
+        expected[0 * W + 1] = 1;
+        expected[1 * W + 1] = 1;
+        expected[2 * W + 1] = 1;
+        expect(Array.from(result)).to.deep.equal(Array.from(expected));
+      });
+
+      test('updates struct fields like the particle example', async function () {
+        myp5.createCanvas(10, 10, myp5.WEBGL);
+        const particles = myp5.createStorage([
+          { position: myp5.createVector(0, 0), velocity: myp5.createVector(1, 2) }
+        ]);
+        const shader = myp5.buildComputeShader(
+          () => {
+          const d = myp5.uniformStorage(particles);
+          const i = myp5.index.x;
+          d[i].position = d[i].position + d[i].velocity;
+        }, { myp5, particles });
+        myp5.compute(shader, 1);
+        const result = await particles.read();
+        expect(result[0].position.x).to.be.closeTo(1, 0.001);
+        expect(result[0].position.y).to.be.closeTo(2, 0.001);
+      });
+
+      test('pushes to storage lists from the shader', async function () {
+        myp5.createCanvas(10, 10, myp5.WEBGL);
+        const list = myp5.createStorageList(4);
+        const shader = myp5.buildComputeShader(
+          () => {
+          const dst = myp5.uniformStorage(list);
+          dst.push(myp5.index.x * 10);
+        }, { myp5, list });
+        myp5.compute(shader, 3);
+        expect(Array.from(await list.read())).to.deep.equal([0, 10, 20]);
+      });
+
+      test('rejects non-compute shaders', function () {
+        myp5.createCanvas(10, 10, myp5.WEBGL);
+        const material = myp5.baseMaterialShader();
+        expect(() => myp5.compute(material, 4)).to.throw();
+      });
+    });
+
+    suite('render shaders reading CPU storage', function () {
+      test('filter shaders read storage (Game of Life display pattern)', function () {
+        myp5.createCanvas(10, 10, myp5.WEBGL);
+        myp5.pixelDensity(1);
+        const W = 4;
+        const H = 4;
+        const initial = new Float32Array(W * H);
+        initial[5] = 1;
+        const cells = myp5.createStorage(initial);
+        const display = myp5.buildFilterShader(
+          () => {
+            const data = myp5.uniformStorage(() => cells);
+            const w = myp5.uniformInt(() => W);
+            const h = myp5.uniformInt(() => H);
+            myp5.filterColor.begin();
+            const x = myp5.floor(myp5.filterColor.texCoord.x * w);
+            const y = myp5.floor(myp5.filterColor.texCoord.y * h);
+            const alive = data[y * w + x];
+            myp5.filterColor.set([alive, alive, alive, 1]);
+            myp5.filterColor.end();
+          },
+          { myp5, cells, W, H }
+        );
+        myp5.background(0);
+        myp5.filter(display);
+        myp5.loadPixels();
+        let white = 0;
+        let black = 0;
+        for (let i = 0; i < myp5.pixels.length; i += 4) {
+          if (myp5.pixels[i] > 200) white += 1;
+          else if (myp5.pixels[i] < 50) black += 1;
+        }
+        expect(white).to.be.greaterThan(0);
+        expect(black).to.be.greaterThan(0);
+      });
+
+      test('material shaders read struct storage per instance', function () {
+        myp5.createCanvas(10, 10, myp5.WEBGL);
+        myp5.pixelDensity(1);
+        const particles = myp5.createStorage([
+          { position: myp5.createVector(2, 0), velocity: myp5.createVector(0, 0) },
+          { position: myp5.createVector(-2, 0), velocity: myp5.createVector(0, 0) }
+        ]);
+        const display = myp5.buildMaterialShader(
+          () => {
+            const data = myp5.uniformStorage(particles);
+            myp5.worldInputs.begin();
+            const pos = data[myp5.instanceIndex].position;
+            myp5.worldInputs.position.xy += pos;
+            myp5.worldInputs.end();
+            myp5.finalColor.begin();
+            myp5.finalColor.set([1, 0, 0, 1]);
+            myp5.finalColor.end();
+          },
+          { myp5, particles }
+        );
+        myp5.background(30);
+        myp5.noStroke();
+        myp5.shader(display);
+        myp5.instances(2).sphere(3);
+        myp5.loadPixels();
+        let red = 0;
+        for (let i = 0; i < myp5.pixels.length; i += 4) {
+          if (myp5.pixels[i] > 200 && myp5.pixels[i + 1] < 50) red += 1;
+        }
+        expect(red).to.be.greaterThan(0);
+      });
+
+      test('instances() accepts CPU storage lists', function () {
+        myp5.createCanvas(10, 10, myp5.WEBGL);
+        const list = myp5.createStorageList(4, {
+          position: myp5.createVector(0, 0)
+        });
+        list.push({ position: myp5.createVector(0, 0) });
+        myp5.background(30);
+        myp5.noStroke();
+        expect(() => myp5.instances(list).sphere(2)).to.not.throw();
+      });
+
+    });
+  });
+
 });

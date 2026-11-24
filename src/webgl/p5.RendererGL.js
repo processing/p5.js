@@ -63,6 +63,32 @@ for (const key in defaultShaders) {
   defaultShaders[key] = webgl2CompatibilityShader + defaultShaders[key];
 }
 
+function checkCpuStructShape(schema, data, method) {
+  const expected = schema.fields.map(f => `${f.name}:${f.dim}`).join(',');
+  data.forEach((item, i) => {
+    const actual = Object.entries(item)
+      .map(([name, value]) => {
+        const dim = Array.isArray(value)
+          ? value.length
+          : value?.isVector
+            ? (value.dimensions ?? 3)
+            : value?.isColor
+              ? 4
+              : 1;
+        return `${name}:${dim}`;
+      })
+      .join(',');
+    if (actual !== expected) {
+      throw new Error(
+        `${method}() data structure doesn't match the original.\n` +
+          `  Expected: ${expected}\n` +
+          `  Got (element ${i}): ${actual}`
+      );
+    }
+  });
+}
+
+
 /**
  * CPU counterpart of the WebGPU `StorageBuffer`: holds data as plain JS
  * values (typed arrays for number lists, arrays of objects for structs) so
@@ -83,6 +109,9 @@ class CpuStorageBuffer {
     this._schema = schema;
     // Struct buffers are always packed as floats
     this._arrayType = schema !== null ? Float32Array : arrayType;
+
+    // Bumped on every mutation so data textures re-upload.
+    this._cpuVersion = 0;
   }
 
   update(data) {
@@ -141,6 +170,7 @@ class CpuStorageBuffer {
         );
       }
       this.data = typedData;
+      this._cpuVersion += 1;
     }
   }
 
@@ -152,6 +182,11 @@ class CpuStorageBuffer {
   }
 
   set(index, value) {
+    if (index < 0 || index >= this.length) {
+      throw new Error(
+        `set() index ${index} is out of bounds for this buffer (length ${this.length})`
+      );
+    }
     if (this._schema !== null) {
       // buffer was created with an array of structs
       if (typeof value !== 'object' || value === null || Array.isArray(value)) {
@@ -159,21 +194,16 @@ class CpuStorageBuffer {
           'set() expects a plain object matching the original struct format for this buffer'
         );
       }
-
-      if (index < 0 || index >= this.length) {
-        throw new Error(
-          `set() index ${index} is out of bounds for this buffer (length ${this.length})`
-        );
-      }
-
+      checkCpuStructShape(this._schema, [value], 'set');
       this.data[index] = value;
+      this._cpuVersion += 1;
     } else {
       // buffer was created with a float array
       if (typeof value !== 'number') {
         throw new Error('set() expects a number for this float buffer');
       }
-
       this.data[index] = value;
+      this._cpuVersion += 1;
     }
   }
 }
@@ -2390,7 +2420,6 @@ class RendererGL extends Renderer3D {
           if (warned) break;
         }
       }
-      // to here; basically this is to check that struct array is uniform and appropriate.
       const schema = this._inferStructSchema(dataOrCount[0]);
       const storageBuffer = new CpuStorageBuffer(
         dataOrCount.slice(),
@@ -2423,7 +2452,6 @@ class RendererGL extends Renderer3D {
       }
     }
     const ArrayType = initialData.constructor;
-
     const storageBuffer = new CpuStorageBuffer(
       initialData.slice(),
       this,
@@ -2443,8 +2471,7 @@ class RendererGL extends Renderer3D {
    */
   createStorageList(maxCapacity, schemaOrData) {
     let schema = null;
-    let initialData = null;
-
+    let initialData = [];
     if (
       Array.isArray(schemaOrData) &&
       schemaOrData.length > 0 &&
