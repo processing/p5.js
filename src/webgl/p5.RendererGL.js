@@ -2354,7 +2354,10 @@ class RendererGL extends Renderer3D {
       typeof dataOrCount[0] === 'object' &&
       !Array.isArray(dataOrCount[0])
     ) {
-      if (!p5.disableFriendlyErrors && dataOrCount.length > 1) {
+      if (
+        !this._pInst.constructor.disableFriendlyErrors &&
+        dataOrCount.length > 1
+      ) {
         const firstKeys = Object.keys(dataOrCount[0]);
         let warned = false;
         for (let i = 1; i < dataOrCount.length; i++) {
@@ -2364,7 +2367,7 @@ class RendererGL extends Renderer3D {
             firstKeys.length === elKeys.length &&
             firstKeys.every((k, j) => k === elKeys[j]);
           if (!sameKeys) {
-            p5._friendlyError(
+            this._pInst.constructor._friendlyError(
               `Element ${i} has different fields than element 0. ` +
                 `All elements should have the same properties.`,
               'createStorage'
@@ -2375,7 +2378,7 @@ class RendererGL extends Renderer3D {
             const firstType = this._jsValueToWgslType(dataOrCount[0][key]);
             const elType = this._jsValueToWgslType(el[key]);
             if (firstType !== elType) {
-              p5._friendlyError(
+              this._pInst.constructor._friendlyError(
                 `The "${key}" property of element ${i} has type ${elType} ` +
                   `but element 0 has type ${firstType}. Properties should have the same type across all elements.`,
                 'createStorage'

@@ -1095,6 +1095,16 @@ function resolveStores(shader) {
   return stores;
 }
 
+function toPlainValue(value, dimension) {
+  if (value?.isVector) {
+    const parts = [value.x, value.y, value.z ?? 0];
+    return dimension ? parts.slice(0, dimension) : parts;
+  }
+  if (value?.isColor) return value._getRGBA();
+  if (Array.isArray(value)) return value.map(v => toPlainValue(v));
+  return value;
+}
+
 function resolveScalars(cpuIR) {
   const scalars = {};
   for (const { name, typeInfo, defaultValue } of cpuIR.uniforms) {
@@ -1108,7 +1118,7 @@ function resolveScalars(cpuIR) {
     }
     const value =
       defaultValue instanceof Function ? defaultValue() : defaultValue;
-    scalars[name] = toPlainValue(value);
+    scalars[name] = toPlainValue(value, typeInfo.dimension);
   }
   return scalars;
 }
