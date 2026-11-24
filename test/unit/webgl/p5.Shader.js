@@ -6141,6 +6141,57 @@ suite('p5.Shader', function () {
       }).not.toThrow();
     });
 
+    suite('exponentiation operator', () => {
+      test('** gives the same result as pow()', () => {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+        const testShader = myp5.baseFilterShader().modify(
+          () => {
+            myp5.getColor(() => {
+              let v = 0.5;
+              return [v ** 2, 0, 0, 1];
+            });
+          },
+          { myp5 }
+        );
+        myp5.background(0);
+        myp5.filter(testShader);
+        const c = myp5.get(25, 25);
+        assert.approximately(c[0], 64, 5); // 0.5 ** 2 = 0.25 -> ~64
+      });
+
+      test('**= works', () => {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+        const testShader = myp5.baseFilterShader().modify(
+          () => {
+            myp5.getColor(() => {
+              let v = 0.5;
+              v **= 2;
+              return [v, 0, 0, 1];
+            });
+          },
+          { myp5 }
+        );
+        myp5.background(0);
+        myp5.filter(testShader);
+        const c = myp5.get(25, 25);
+        assert.approximately(c[0], 64, 5);
+      });
+
+      test('unsupported operators throw a clear error', () => {
+        myp5.createCanvas(5, 5, myp5.WEBGL);
+        expect(() => {
+          myp5.baseFilterShader().modify(
+            () => {
+              myp5.getColor(() => {
+                let v = 1;
+                return [v & 1, 0, 0, 1];
+              });
+            },
+            { myp5 }
+          );
+        }).toThrow(/unsupported operator/);
+      });
+    });
 
     suite('matrix uniforms (#8992)', () => {
       test('short aliases declare the same uniforms as the NxN names', () => {
