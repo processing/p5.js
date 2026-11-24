@@ -63,6 +63,16 @@ suite('p5.MediaElement', () => {
       }
     });
 
+    test('should disable autoplay when passed false', function () {
+      const testElement = mockP5Prototype.createVideo('');
+
+      testElement.autoplay(true);
+      assert.isTrue(testElement.elt.hasAttribute('autoplay'));
+
+      testElement.autoplay(false);
+      assert.isFalse(testElement.elt.hasAttribute('autoplay'));
+    });
+
     // testSketchWithPromise(
     //   'should trigger callback on canplaythrough event',
     //   function(sketch, resolve, reject) {
