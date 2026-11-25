@@ -2190,6 +2190,296 @@ function customShapes(p5, fn) {
     return this._renderer.bezierOrder(order);
   };
 
+    /**
+   * Adds a Bézier curve segment to a custom shape.
+   *
+   * `bezierVertex()` adds a curved segment to custom shapes. The Bézier curves
+   * it creates are defined like those made by the
+   * <a href="#/p5/bezier">bezier()</a> function. `bezierVertex()` must be
+   * called between the
+   * <a href="#/p5/beginShape">beginShape()</a> and
+   * <a href="#/p5/endShape">endShape()</a> functions.
+   * Bézier need a starting point. Building a shape
+   * only with Bézier curves needs one initial
+   * call to <a href="#/p5/vertex">bezierVertex()</a>, before
+   * a number of `bezierVertex()` calls that is a multiple of the parameter
+   * set by <a href="#/p5/bezierOrder">bezierOrder(...)</a> (default 3).
+   * But shapes can mix different types of vertices, so if there
+   * are some previous vertices, then the initial anchor is not needed,
+   * only the multiples of 3 (or the Bézier order) calls to
+   *  `bezierVertex` for each curve.
+   *
+   * Each curve of order 3 requires three calls to `bezierVertex`, so
+   * 2 curves would need 7 calls to `bezierVertex()`:
+   * (1 one initial anchor point, two sets of 3 curves describing the curves)
+   * With `bezierOrder(2)`, two curves would need 5 calls: 1 + 2 + 2.
+   *
+   * Bézier curves can also be drawn in 3D using WebGL mode.
+   *
+   * Note: `bezierVertex()` won’t work when an argument is passed to
+   * <a href="#/p5/beginShape">beginShape()</a>.
+   *
+   * @method bezierVertex
+   * @param  {Number} x x-coordinate of the first control point.
+   * @param  {Number} y y-coordinate of the first control point.
+   * @param  {Number} [u]
+   * @param  {Number} [v]
+   *
+   * @example
+   * function setup() {
+   *   createCanvas(100, 100);
+   *
+   *   background(200);
+   *
+   *   // Style the shape.
+   *   noFill();
+   *
+   *   // Start drawing the shape.
+   *   beginShape();
+   *
+   *   // Add the first anchor point.
+   *   bezierVertex(30, 20);
+   *
+   *   // Add the Bézier vertex.
+   *   bezierVertex(80, 0);
+   *   bezierVertex(80, 75);
+   *   bezierVertex(30, 75);
+   *
+   *   // Stop drawing the shape.
+   *   endShape();
+   *
+   *   describe('A black C curve on a gray background.');
+   * }
+   *
+   * @example
+   * function setup() {
+   *   createCanvas(100, 100);
+   *
+   *   background(200);
+   *
+   *   // Draw the anchor points in black.
+   *   stroke(0);
+   *   strokeWeight(5);
+   *   point(30, 20);
+   *   point(30, 75);
+   *
+   *   // Draw the control points in red.
+   *   stroke(255, 0, 0);
+   *   point(80, 0);
+   *   point(80, 75);
+   *
+   *   // Style the shape.
+   *   noFill();
+   *   stroke(0);
+   *   strokeWeight(1);
+   *
+   *   // Start drawing the shape.
+   *   beginShape();
+   *
+   *   // Add the first anchor point.
+   *   bezierVertex(30, 20);
+   *
+   *   // Add the Bézier vertex.
+   *   bezierVertex(80, 0);
+   *   bezierVertex(80, 75);
+   *   bezierVertex(30, 75);
+   *
+   *   // Stop drawing the shape.
+   *   endShape();
+   *
+   *   // Draw red lines from the anchor points to the control points.
+   *   stroke(255, 0, 0);
+   *   line(30, 20, 80, 0);
+   *   line(30, 75, 80, 75);
+   *
+   *   describe(
+   *     'A gray square with three curves. A black curve has two straight, red lines that extend from its ends. The endpoints of all the curves are marked with dots.'
+   *   );
+   * }
+   *
+   * @example
+   * // Click the mouse near the red dot in the top-right corner
+   * // and drag to change the curve's shape.
+   *
+   * let x2 = 80;
+   * let y2 = 0;
+   * let isChanging = false;
+   *
+   * function setup() {
+   *   createCanvas(100, 100);
+   *
+   *   describe(
+   *     'A gray square with three curves. A black curve has two straight, red lines that extend from its ends. The endpoints of all the curves are marked with dots.'
+   *   );
+   * }
+   *
+   * function draw() {
+   *   background(200);
+   *
+   *   // Draw the anchor points in black.
+   *   stroke(0);
+   *   strokeWeight(5);
+   *   point(30, 20);
+   *   point(30, 75);
+   *
+   *   // Draw the control points in red.
+   *   stroke(255, 0, 0);
+   *   point(x2, y2);
+   *   point(80, 75);
+   *
+   *   // Style the shape.
+   *   noFill();
+   *   stroke(0);
+   *   strokeWeight(1);
+   *
+   *   // Start drawing the shape.
+   *   beginShape();
+   *
+   *   // Add the first anchor point.
+   *   bezierVertex(30, 20);
+   *
+   *   // Add the Bézier vertex.
+   *   bezierVertex(x2, y2);
+   *   bezierVertex(80, 75);
+   *   bezierVertex(30, 75);
+   *
+   *   // Stop drawing the shape.
+   *   endShape();
+   *
+   *   // Draw red lines from the anchor points to the control points.
+   *   stroke(255, 0, 0);
+   *   line(30, 20, x2, y2);
+   *   line(30, 75, 80, 75);
+   * }
+   *
+   * // Start changing the first control point if the user clicks near it.
+   * function mousePressed() {
+   *   if (dist(mouseX, mouseY, x2, y2) < 20) {
+   *     isChanging = true;
+   *   }
+   * }
+   *
+   * // Stop changing the first control point when the user releases the mouse.
+   * function mouseReleased() {
+   *   isChanging = false;
+   * }
+   *
+   * // Update the first control point while the user drags the mouse.
+   * function mouseDragged() {
+   *   if (isChanging === true) {
+   *     x2 = mouseX;
+   *     y2 = mouseY;
+   *   }
+   * }
+   *
+   * @example
+   * function setup() {
+   *   createCanvas(100, 100);
+   *
+   *   background(200);
+   *
+   *   // Start drawing the shape.
+   *   beginShape();
+   *
+   *   // Add the first anchor point.
+   *   bezierVertex(30, 20);
+   *
+   *   // Add the Bézier vertices.
+   *   bezierVertex(80, 0);
+   *   bezierVertex(80, 75);
+   *   bezierVertex(30, 75);
+   *
+   *   bezierVertex(50, 80);
+   *   bezierVertex(60, 25);
+   *   bezierVertex(30, 20);
+   *
+   *   // Stop drawing the shape.
+   *   endShape();
+   *
+   *   describe('A crescent moon shape drawn in white on a gray background.');
+   * }
+   *
+   * @example
+   * // Click and drag the mouse to view the scene from different angles.
+   *
+   * function setup() {
+   *   createCanvas(100, 100, WEBGL);
+   *
+   *   describe('A crescent moon shape drawn in white on a blue background. When the user drags the mouse, the scene rotates and a second moon is revealed.');
+   * }
+   *
+   * function draw() {
+   *   background('midnightblue');
+   *
+   *   // Enable orbiting with the mouse.
+   *   orbitControl();
+   *
+   *   // Style the moons.
+   *   noStroke();
+   *   fill('lemonchiffon');
+   *
+   *   // Draw the first moon.
+   *   beginShape();
+   *   bezierVertex(-20, -30, 0);
+   *
+   *   bezierVertex(30, -50, 0);
+   *   bezierVertex(30, 25, 0);
+   *   bezierVertex(-20, 25, 0);
+   *
+   *   bezierVertex(0, 30, 0);
+   *   bezierVertex(10, -25, 0);
+   *   bezierVertex(-20, -30, 0);
+   *   endShape();
+   *
+   *   // Draw the second moon.
+   *   beginShape();
+   *
+   *   bezierVertex(-20, -30, -20);
+   *
+   *   bezierVertex(30, -50, -20);
+   *   bezierVertex(30, 25, -20);
+   *   bezierVertex(-20, 25, -20);
+   *
+   *   bezierVertex(0, 30, -20);
+   *   bezierVertex(10, -25, -20);
+   *   bezierVertex(-20, -30, -20);
+   *
+   *   endShape();
+   * }
+   */
+  /**
+   * @method bezierVertex
+   * @param  {Number} x
+   * @param  {Number} y
+   * @param  {Number} [u=0]
+   * @param  {Number} [v=0]
+   */
+  /**
+   * @method bezierVertex
+   * @param  {Number} x
+   * @param  {Number} y
+   * @param  {Number} z
+   * @param  {Number} [u]
+   * @param  {Number} [v]
+   */
+  fn.bezierVertex = function (...args) {
+    let x = 0,
+      y = 0,
+      z = 0,
+      u = 0,
+      v = 0;
+    if (args.length === 2) {
+      [x, y] = args;
+    } else if (args.length === 4) {
+      [x, y, u, v] = args;
+    } else if (args.length === 3) {
+      [x, y, z] = args;
+    } else if (args.length === 5) {
+      [x, y, z, u, v] = args;
+    }
+    this._renderer.bezierVertex(x, y, z, u, v);
+  };
+
   /**
    * Connects points with a smooth curve (a spline).
    *
