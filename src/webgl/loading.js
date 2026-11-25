@@ -271,6 +271,10 @@ function loading(p5, fn) {
    * `norm` is read as a tangent-space normal map. Keep the `.mtl` file and its
    * images alongside the `.obj` file so their paths resolve. A texture that
    * fails to load is skipped with a warning instead of failing the whole model.
+   * If a `.obj` file has no vertex normals (`vn` lines), the model won't react
+   * to lights. Call
+   * <a href="#/p5.Geometry/computeNormals">`model.computeNormals()`</a> after
+   * it loads to calculate them.
    *
    * The first way to call `loadModel()` has three optional parameters after the
    * file path. The first optional parameter, `successCallback`, is a function
@@ -860,16 +864,12 @@ function loading(p5, fn) {
         }
       }
     }
-    // If the model doesn't have normals, compute the normals
-    if (model.vertexNormals.length === 0) {
-      model.computeNormals();
-    }
     if (!hasColoredVertices) {
       model.vertexColors = [];
     }
 
     // normal maps need per-vertex tangents; compute them once on the aggregate
-    // (normals are ready above) so buildMaterialParts hands each part its slice.
+    // (from the normals in the file) so buildMaterialParts hands each part its slice.
     // only done when a material actually uses one, so plain models pay nothing
     const needsTangents = Object.values(materials).some(
       m => m && (m.normalTexture || m.bumpTexture)
