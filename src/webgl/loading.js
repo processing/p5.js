@@ -570,14 +570,17 @@ function loading(p5, fn) {
     let flipU = false;
     let flipV = false;
 
-    if (typeof fileType === 'object') {
-      // Passing in options object
-      normalize = fileType.normalize || false;
-      successCallback = fileType.successCallback;
-      failureCallback = fileType.failureCallback;
-      fileType = fileType.fileType || fileType;
-      flipU = fileType.flipU || false;
-      flipV = fileType.flipV || false;
+    if (typeof fileType === 'object' && fileType !== null) {
+      // Passing in options object. Read every option before reassigning
+      // fileType, since fileType currently holds the options object.
+      const options = fileType;
+      normalize = options.normalize || false;
+      successCallback = options.successCallback;
+      failureCallback = options.failureCallback;
+      flipU = options.flipU || false;
+      flipV = options.flipV || false;
+      // Fall back to the path's extension when no fileType is given
+      fileType = options.fileType || path.slice(-4);
     } else {
       // Passing in individual parameters
       if (typeof arguments[arguments.length - 1] === 'function') {
