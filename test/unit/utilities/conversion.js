@@ -314,6 +314,19 @@ suite('Conversion', function () {
       assert.strictEqual(result, 65);
     });
 
+    test('should handle hex strings with 0x, 0X, and # prefixes', function () {
+      assert.strictEqual(mockP5Prototype.unhex('0xFF'), 255);
+      assert.strictEqual(mockP5Prototype.unhex('0XFF'), 255);
+      assert.strictEqual(mockP5Prototype.unhex('0x41'), 65);
+      assert.strictEqual(mockP5Prototype.unhex('#FF'), 255);
+      assert.strictEqual(mockP5Prototype.unhex('#AABBCC'), 11189196);
+    });
+
+    test('should handle negative hex strings', function () {
+      assert.strictEqual(mockP5Prototype.unhex('-FF'), -255);
+      assert.strictEqual(mockP5Prototype.unhex('-0xFF'), -255);
+    });
+
     test('should return the NaN for empty string', function () {
       const result = mockP5Prototype.unhex('');
       assert.isNaN(result);
@@ -327,11 +340,12 @@ suite('Conversion', function () {
     test('should return array of numbers', function () {
       const result = mockP5Prototype.unhex([
         '00000041',
-        '00000042',
-        '00000043'
+        '0x42',
+        '#43',
+        '-0x44'
       ]);
       assert.typeOf(result, 'Array');
-      assert.deepEqual(result, [65, 66, 67]);
+      assert.deepEqual(result, [65, 66, 67, -68]);
     });
   });
 });
