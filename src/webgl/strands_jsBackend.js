@@ -952,14 +952,7 @@ function emitBlock(g, cpuIR, sorted, blockID) {
     for (const nodeID of cfg.blockInstructions[blockID] || []) {
       const node = getNodeDataFromID(dag, nodeID);
       if (node.nodeType !== NodeType.PHI) continue;
-      const dependsOn = node.dependsOn || [];
-      if (dependsOn.length > 0) {
-        const existing = g.tempNames[dependsOn[0]];
-        if (existing) {
-          g.tempNames[nodeID] = existing;
-          continue;
-        }
-      }
+      // Phi nodes need their own variables to avoid aliasing inputs.
       const tmp = `${TEMP_PREFIX}${g.nextTempID++}`;
       g.tempNames[nodeID] = tmp;
       g.write(`let ${tmp};`);

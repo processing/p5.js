@@ -3642,6 +3642,27 @@ void main() {
         expect(Array.from(result)).to.deep.equal(Array.from(expected));
       });
 
+      test('keeps a value saved before a loop separate from the loop variable', async function () {
+        myp5.createCanvas(10, 10, myp5.WEBGL);
+        const out = myp5.createStorage(new Float32Array(1));
+        const shader = myp5.buildComputeShader(
+          () => {
+          const dst = myp5.uniformStorage(out);
+          // `start` is read three times: as the loop's starting value, inside
+          // the loop, and after it. That makes the backend give it a temporary,
+          // which the phi must not reuse as its own storage.
+          const start = myp5.index.x + 10;
+          let acc = start;
+          for (let i = 0; i < 3; i++) {
+            acc = acc + start;
+          }
+          dst[0] = acc + start;
+        }, { myp5, out });
+        myp5.compute(shader, 1);
+        // start = 10, acc climbs 20, 30, 40, then 40 + 10.
+        expect(Array.from(await out.read())).to.deep.equal([50]);
+      });
+
       test('updates struct fields like the particle example', async function () {
         myp5.createCanvas(10, 10, myp5.WEBGL);
         const particles = myp5.createStorage([
