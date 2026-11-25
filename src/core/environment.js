@@ -1055,17 +1055,48 @@ function environment(p5, fn, lifecycles) {
    * @alt
    * This example does not render anything.
    */
+  /**
+   * Returns the current
+   * <a href="https://developer.mozilla.org/en-US/docs/Learn/Common_questions/Web_mechanics/What_is_a_URL#parameters" target="_blank">URL parameters</a>
+   * in an `Object`. Percent-encoded values are automatically decoded, and parameters without an explicit value are mapped to empty strings.
+   *
+   * For example, calling `getURLParams()` in a sketch hosted at the URL
+   * `https://p5js.org?year=2014&month=May&day=15` returns
+   * `{ year: '2014', month: 'May', day: '15' }`.
+   *
+   * @method getURLParams
+   * @return {Object} URL params
+   * @example
+   * // META:norender
+   * // Imagine this sketch is hosted at the following URL:
+   * // https://p5js.org?year=2014&month=May&day=15
+   *
+   * function setup() {
+   *   background(200);
+   *
+   *   // Get the sketch's URL
+   *   // parameters and display
+   *   // them.
+   *   let params = getURLParams();
+   *   text(params.day, 10, 20);
+   *   text(params.month, 10, 40);
+   *   text(params.year, 10, 60);
+   *
+   *   describe('The text "15", "May", and "2014" written in black on separate lines.');
+   * }
+   *
+   * @alt
+   * This example does not render anything.
+   */
   fn.getURLParams = function () {
-    const re = /[?&]([^&=]+)(?:[&=])([^&=]+)/gim;
-    let m;
-    const v = {};
-    while ((m = re.exec(location.search)) != null) {
-      if (m.index === re.lastIndex) {
-        re.lastIndex++;
+    const params = {};
+    if (typeof location !== 'undefined' && location.search) {
+      const searchParams = new URLSearchParams(location.search);
+      for (const [key, value] of searchParams.entries()) {
+        params[key] = value;
       }
-      v[m[1]] = m[2];
     }
-    return v;
+    return params;
   };
 
   /**
