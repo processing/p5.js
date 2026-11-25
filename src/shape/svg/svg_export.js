@@ -257,6 +257,7 @@ export function SVGExportAddon(p5, fn, lifecycles) {
 
       // Initialize root SVG DOM element with the standard namespace
       this.svgElement = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      this.currentParent = this.svgElement;
       this.svgElement.setAttribute('width', this.width);
       this.svgElement.setAttribute('height', this.height);
       this.svgElement.setAttribute('viewBox', `0 0 ${this.width} ${this.height}`);
@@ -339,16 +340,56 @@ export function SVGExportAddon(p5, fn, lifecycles) {
         const g = this._createElement('g');
         g.setAttribute('transform', `matrix(${m.a} ${m.b} ${m.c} ${m.d} ${m.e} ${m.f})`);
         g.appendChild(el);
-        this.svgElement.appendChild(g);
+        this.currentParent.appendChild(g);
         return;
       }
 
-      this.svgElement.appendChild(el);
+      this.currentParent.appendChild(el);
     }
 
     visitScope(scope) {
-      for (const child of scope.children) {
-        child.toSVGElement(this);
+      const previousParent = this.currentParent;
+      const clip = scope.viewportClip;
+
+      if (clip) {
+        const defs = this._getDefs();
+        let id = `viewport-clip-${defs.children.length}`;
+
+        while (this.svgElement.querySelector(`#${id}`)) {
+          id += '-next';
+        }
+
+        const clipPath = this._createElement('clipPath');
+        clipPath.setAttribute('id', id);
+        clipPath.setAttribute('clipPathUnits', 'userSpaceOnUse');
+
+        const rect = this._createElement('rect');
+        rect.setAttribute('x', clip.x);
+        rect.setAttribute('y', clip.y);
+        rect.setAttribute('width', clip.width);
+        rect.setAttribute('height', clip.height);
+
+        const m = clip.transform;
+        rect.setAttribute(
+          'transform',
+          `matrix(${m.a} ${m.b} ${m.c} ${m.d} ${m.e} ${m.f})`
+        );
+
+        clipPath.appendChild(rect);
+        defs.appendChild(clipPath);
+
+        const group = this._createElement('g');
+        group.setAttribute('clip-path', `url(#${id})`);
+        previousParent.appendChild(group);
+        this.currentParent = group;
+      }
+
+      try {
+        for (const child of scope.children) {
+          child.toSVGElement(this);
+        }
+      } finally {
+        this.currentParent = previousParent;
       }
     }
 
@@ -369,13 +410,14 @@ export function SVGExportAddon(p5, fn, lifecycles) {
         rect.setAttribute('fill-opacity', opacity.toFixed(4));
       }
 
-      this.svgElement.appendChild(rect);
+      this.currentParent.appendChild(rect);
     }
 
     clear() {
       while (this.svgElement.firstChild) {
         this.svgElement.removeChild(this.svgElement.firstChild);
       }
+      this.defsElement = null;
     }
 
     // Next is primitive visitor methods for geometry paths, curves, and 2D primitives.
@@ -874,46 +916,74 @@ export function SVGExportAddon(p5, fn, lifecycles) {
     }
 
     replayScope(scope) {
-      for (const child of scope.children) {
-        switch(child.type) {
-          case 'scope':
-            this.replayScope(child);
-            break;
+      const clip = scope.viewportClip;
+      const ctx = this.p5.drawingContext;
 
-          case 'shape':
-            this.replayShape(child);
-            break;
+      if (clip && typeof ctx.clip !== 'function') {
+        throw new Error('SVG viewport clipping currently requires the 2D renderer.');
+      }
 
-          case 'background':
-            this.replayBackground(child);
-            break;
+      if (clip) ctx.save();
 
-          case 'clear':
-            this.replayClear(child);
-            break;
+      try {
+        if (clip) {
+          const rectangle = new Path2D();
+          rectangle.rect(clip.x, clip.y, clip.width, clip.height);
 
-          case 'image':
-            this.replayImage(child);
-            break;
+          const transformedClip = new Path2D();
+          transformedClip.addPath(rectangle, clip.transform);
+          ctx.clip(transformedClip);
+        }
+
+        for (const child of scope.children) {
+          switch (child.type) {
+            case 'scope':
+              this.replayScope(child);
+              break;
+
+            case 'shape':
+              this.replayShape(child);
+              break;
+
+            case 'background':
+              this.replayBackground(child);
+              break;
+
+            case 'clear':
+              this.replayClear(child);
+              break;
+
+            case 'image':
+              this.replayImage(child);
+              break;
           }
         }
+      } finally {
+        if (clip) ctx.restore();
+      }
     }
 
     replayImage(node) {
       const p = this.p5;
       p.push();
-      this.applyState(node.state);
-      const [sx, sy, sw, sh, dx, dy, dw, dh] = node.args;
-      p.image(node.img, dx, dy, dw, dh, sx, sy, sw, sh);
-      p.pop();
+      try {
+        this.applyState(node.state);
+        const [sx, sy, sw, sh, dx, dy, dw, dh] = node.args;
+        p.image(node.img, dx, dy, dw, dh, sx, sy, sw, sh);
+      } finally {
+        p.pop();
+      }
     }
 
     replayShape(shapeNode) {
       const p = this.p5;
       p.push();
-      this.applyState(shapeNode.state);
-      p._renderer.drawShape(shapeNode.shape);
-      p.pop();
+      try {
+        this.applyState(shapeNode.state);
+        p._renderer.drawShape(shapeNode.shape);
+      } finally {
+        p.pop();
+      }
     }
 
     replayClear() {
@@ -1562,9 +1632,12 @@ export function SVGExportAddon(p5, fn, lifecycles) {
 
     if (placement.hasTransform) {
       if (typeof this.push === 'function') this.push();
-      applyShapePlacement(this, placement);
-      replay.replay(record);
-      if (typeof this.pop === 'function') this.pop();
+      try {
+        applyShapePlacement(this, placement);
+        replay.replay(record);
+      } finally {
+        if (typeof this.pop === 'function') this.pop();
+      }
     } else {
       replay.replay(record);
     }

@@ -687,6 +687,7 @@ export function SVGImportAddon(p5, fn, lifecycles) {
       this.withRefGuard(refId, () => {
         const x = this.num(node, "x");
         const y = this.num(node, "y");
+        let viewportClip = null;
         if (x !== 0 || y !== 0) {
           this.tStack.current.translateSelf(x, y);
         }
@@ -698,7 +699,19 @@ export function SVGImportAddon(p5, fn, lifecycles) {
           const h = node.hasAttribute("height")
             ? this.num(node, "height")
             : (referenced.height?.baseVal?.value || vb.height);
+          if (referenced.localName === "symbol") {
+            const overflow = window.getComputedStyle(referenced).overflow;
 
+            if (["hidden", "scroll", "clip"].includes(overflow)) {
+              viewportClip = {
+                x: 0,
+                y: 0,
+                width: w,
+                height: h,
+                transform: new DOMMatrix(this.tStack.current)
+              };
+            }
+          }
           const preserveAspectRatio = referenced.getAttribute("preserveAspectRatio");
 
           if (preserveAspectRatio?.trim() === "none") {
@@ -711,7 +724,11 @@ export function SVGImportAddon(p5, fn, lifecycles) {
             );
             this.tStack.current.scaleSelf(scaleX, scaleY);
           } else {
-            const scale = Math.min(w / vb.width, h / vb.height);
+            const mode = preserveAspectRatio?.trim().split(/\s+/)[1] || "meet";
+
+            const scale = mode === "slice"
+              ? Math.max(w / vb.width, h / vb.height)
+              : Math.min(w / vb.width, h / vb.height);
 
             // Default SVG alignment is xMidYMid meet.
             const alignment = preserveAspectRatio?.trim().split(/\s+/)[0] || "xMidYMid";
@@ -729,7 +746,16 @@ export function SVGImportAddon(p5, fn, lifecycles) {
             this.tStack.current.scaleSelf(scale, scale);
           }
         }
-        this.visit(referenced);
+        if (viewportClip) {
+          this.recorder.enterScope(viewportClip);
+          try {
+            this.visit(referenced);
+          } finally {
+            this.recorder.leaveScope();
+          }
+        } else {
+          this.visit(referenced);
+        }
       });
     }
 

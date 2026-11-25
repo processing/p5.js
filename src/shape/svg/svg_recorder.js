@@ -16,6 +16,8 @@ export class ScopeNode extends NodeBase {
   constructor() {
     super();
     this.type = 'scope';
+    // Optional viewport rectangle and transform in recorded coordinates.
+    this.viewportClip = null;
   }
 
   toSVGElement(visitor) {
@@ -149,8 +151,9 @@ export class ShapeRecorder {
       this.scopeStack.length - 1
     ].add(node);
   }
-  enterScope() {
+  enterScope(viewportClip = null) {
     const scope = new ScopeNode();
+    scope.viewportClip = viewportClip;
     this.addNode(scope);
     this.scopeStack.push(scope);
     return scope;
