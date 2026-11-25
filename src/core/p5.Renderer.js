@@ -74,7 +74,9 @@ class Renderer {
     const defaultRatio =
       typeof window !== 'undefined' ? Math.ceil(window.devicePixelRatio) : 1;
     if (isMainCanvas) {
-      this._pixelDensity = defaultRatio;
+      // Keep pixelDensity() set on the previous main canvas so sequences
+      // like `pixelDensity(1); createCanvas(100, 100)` match the docs.
+      this._pixelDensity = pInst._renderer?._pixelDensity ?? defaultRatio;
     } else {
       const parentDensity = pInst._pInst?._renderer?._pixelDensity;
       this._pixelDensity = parentDensity || defaultRatio;
