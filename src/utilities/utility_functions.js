@@ -223,24 +223,14 @@ function utilityFunctions(p5, fn) {
     }
   };
   function doNfc(num, right) {
-    num = num.toString();
+    num =
+      typeof right === 'undefined'
+        ? num.toString()
+        : Number(num).toFixed(right);
     const dec = num.indexOf('.');
-    let rem = dec !== -1 ? num.substring(dec) : '';
+    const rem = dec !== -1 ? num.substring(dec) : '';
     let n = dec !== -1 ? num.substring(0, dec) : num;
     n = n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-    if (right === 0) {
-      rem = '';
-    } else if (typeof right !== 'undefined') {
-      if (right > rem.length) {
-        rem += dec === -1 ? '.' : '';
-        const len = right - rem.length + 1;
-        for (let i = 0; i < len; i++) {
-          rem += '0';
-        }
-      } else {
-        rem = rem.substring(0, right + 1);
-      }
-    }
     return n + rem;
   }
 
