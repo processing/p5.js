@@ -260,6 +260,128 @@ suite('Addon Integration', function() {
     assert.strictEqual(strokeCapValue, 'round', 'strokeCap should be replayed');
   });
 
+  test('shape restores placement state when viewport clipping throws', function() {
+    const fn = {};
+    const mockP5 = {
+      PrimitiveVisitor: class {},
+      registerAddon() {}
+    };
+    SVGExportAddon(mockP5, fn);
+
+    const events = [];
+    const clipError = new Error('Test clipping failure');
+
+    const pInst = {
+      width: 600,
+      height: 600,
+      push() { events.push('push'); },
+      pop() { events.push('pop'); },
+      translate() {},
+      scale() {},
+      drawingContext: {
+        save() { events.push('save'); },
+        restore() { events.push('restore'); },
+        clip() {
+          events.push('clip');
+          throw clipError;
+        }
+      }
+    };
+    Object.setPrototypeOf(pInst, fn);
+
+    const record = {
+      type: 'scope',
+      viewportClip: {
+        x: 0,
+        y: 0,
+        width: 200,
+        height: 100,
+        transform: new DOMMatrix()
+      },
+      children: []
+    };
+
+    let caughtError;
+    try {
+      pInst.shape(record, 10, 20);
+    } catch (error) {
+      caughtError = error;
+    }
+
+    assert.strictEqual(caughtError, clipError);
+    assert.deepEqual(events, [
+      'push', 'save', 'clip', 'restore', 'pop'
+    ]);
+  });
+
+  for (const type of ['shape', 'image']) {
+    test(`shape restores state when replaying ${type} throws`, function() {
+      const fn = {};
+      SVGExportAddon({
+        PrimitiveVisitor: class {},
+        registerAddon() {}
+      }, fn);
+
+      const events = [];
+      const drawError = new Error('Test drawing failure');
+      const fail = () => {
+        events.push('draw');
+        throw drawError;
+      };
+
+      const pInst = {
+        width: 600,
+        height: 600,
+        push() { events.push('push'); },
+        pop() { events.push('pop'); },
+        translate() {},
+        scale() {},
+        _renderer: { drawShape: fail },
+        image: fail,
+        drawingContext: {
+          save() { events.push('save'); },
+          restore() { events.push('restore'); },
+          clip() { events.push('clip'); }
+        }
+      };
+      Object.setPrototypeOf(pInst, fn);
+
+      const child = type === 'shape'
+        ? { type, shape: {}, state: null }
+        : {
+          type,
+          img: {},
+          args: [0, 0, 10, 10, 0, 0, 10, 10],
+          state: null
+        };
+
+      const record = {
+        type: 'scope',
+        viewportClip: {
+          x: 0,
+          y: 0,
+          width: 200,
+          height: 100,
+          transform: new DOMMatrix()
+        },
+        children: [child]
+      };
+
+      let caughtError;
+      try {
+        pInst.shape(record, 10, 20);
+      } catch (error) {
+        caughtError = error;
+      }
+
+      assert.strictEqual(caughtError, drawError);
+      assert.deepEqual(events, [
+        'push', 'save', 'clip', 'push',
+        'draw', 'pop', 'restore', 'pop'
+      ]);
+    });
+  }
+
   test('should warn on invalid scale option in shape placement', function() {
     const fn = {};
     const mockP5 = {

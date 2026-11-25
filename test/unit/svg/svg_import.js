@@ -1181,8 +1181,12 @@ suite('<defs> and <use> elements', function () {
         <use href="#stretch" width="200" height="100" />
       </svg>
     `);
-    const scope = firstChild(record);
-    const node = scope.children[0];
+    const clipScope = firstChild(record);
+    assert.exists(clipScope.viewportClip);
+
+    const symbolScope = clipScope.children[0];
+    const node = symbolScope.children[0];
+    assert.equal(node.type, 'shape');
     assert.closeTo(node.state.transform.a, 2, 0.001);
     assert.closeTo(node.state.transform.d, 1, 0.001);
   });
@@ -1200,8 +1204,12 @@ suite('<defs> and <use> elements', function () {
     </svg>
   `);
 
-    const scope = firstChild(record);
-    const node = scope.children[0];
+    const clipScope = firstChild(record);
+    assert.exists(clipScope.viewportClip);
+
+    const symbolScope = clipScope.children[0];
+    const node = symbolScope.children[0];
+    assert.equal(node.type, 'shape');
 
     assert.closeTo(node.state.transform.a, 1, 0.001);
     assert.closeTo(node.state.transform.d, 1, 0.001);
@@ -1236,7 +1244,12 @@ suite('<defs> and <use> elements', function () {
         </svg>
       `);
 
-        const node = firstChild(record).children[0];
+        const clipScope = firstChild(record);
+        assert.exists(clipScope.viewportClip);
+
+        const symbolScope = clipScope.children[0];
+        const node = symbolScope.children[0];
+        assert.equal(node.type, 'shape');
         const scale = Math.min(width / 100, height / 100);
 
         assert.closeTo(node.state.transform.a, scale, 0.001);
@@ -1268,7 +1281,12 @@ suite('<defs> and <use> elements', function () {
     </svg>
   `);
 
-    const node = firstChild(record).children[0];
+    const clipScope = firstChild(record);
+    assert.exists(clipScope.viewportClip);
+
+    const symbolScope = clipScope.children[0];
+    const node = symbolScope.children[0];
+    assert.equal(node.type, 'shape');
 
     assert.closeTo(node.state.transform.a, 1, 0.001);
     assert.closeTo(node.state.transform.d, 1, 0.001);
@@ -1287,13 +1305,83 @@ suite('<defs> and <use> elements', function () {
         <use href="#stretch-offset" width="200" height="100" />
       </svg>
     `);
-    const scope = firstChild(record);
-    const node = scope.children[0];
+    const clipScope = firstChild(record);
+    assert.exists(clipScope.viewportClip);
+
+    const symbolScope = clipScope.children[0];
+    const node = symbolScope.children[0];
+    assert.equal(node.type, 'shape');
 
     assert.closeTo(node.state.transform.a, 2, 0.001);
     assert.closeTo(node.state.transform.d, 1, 0.001);
     assert.closeTo(node.state.transform.e, -20, 0.001);
     assert.closeTo(node.state.transform.f, -20, 0.001);
+  });
+
+  test('use with preserveAspectRatio=slice scales to fill viewport', function () {
+    const record = createSVG(`
+    <svg xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <symbol id="slice-test"
+                viewBox="0 0 100 100"
+                preserveAspectRatio="xMidYMid slice">
+          <rect x="0" y="0" width="100" height="100" />
+        </symbol>
+      </defs>
+      <use href="#slice-test" width="200" height="100" />
+    </svg>
+  `);
+
+    const clipScope = firstChild(record);
+    assert.exists(clipScope.viewportClip);
+    const clip = clipScope.viewportClip;
+    assert.equal(clip.x, 0);
+    assert.equal(clip.y, 0);
+    assert.equal(clip.width, 200);
+    assert.equal(clip.height, 100);
+
+    const m = clip.transform;
+    assert.closeTo(m.a, 1, 0.001);
+    assert.closeTo(m.b, 0, 0.001);
+    assert.closeTo(m.c, 0, 0.001);
+    assert.closeTo(m.d, 1, 0.001);
+    assert.closeTo(m.e, 0, 0.001);
+    assert.closeTo(m.f, 0, 0.001);
+
+    const symbolScope = clipScope.children[0];
+    const node = symbolScope.children[0];
+    assert.equal(node.type, 'shape');
+
+    assert.closeTo(node.state.transform.a, 2, 0.001);
+    assert.closeTo(node.state.transform.d, 2, 0.001);
+    assert.closeTo(node.state.transform.e, 0, 0.001);
+    assert.closeTo(node.state.transform.f, -50, 0.001);
+  });
+
+  test('use with slice and overflow=visible does not create a viewport clip', function () {
+    const record = createSVG(`
+    <svg xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <symbol id="visible-slice"
+                viewBox="0 0 100 100"
+                preserveAspectRatio="xMidYMid slice"
+                overflow="visible">
+          <rect width="100" height="100" />
+        </symbol>
+      </defs>
+      <use href="#visible-slice" width="200" height="100" />
+    </svg>
+  `);
+
+    const symbolScope = firstChild(record);
+    assert.isNull(symbolScope.viewportClip);
+
+    const node = symbolScope.children[0];
+    assert.equal(node.type, 'shape');
+    assert.closeTo(node.state.transform.a, 2, 0.001);
+    assert.closeTo(node.state.transform.d, 2, 0.001);
+    assert.closeTo(node.state.transform.e, 0, 0.001);
+    assert.closeTo(node.state.transform.f, -50, 0.001);
   });
 
   test('handles missing references gracefully', function () {

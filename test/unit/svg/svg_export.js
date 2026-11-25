@@ -161,7 +161,7 @@ suite('SVGVisitor', function() {
     const visitor = createVisitor(pInst);
 
     const circleEl = visitor._createElement('circle', { r: 10 });
-    
+
     // Test with identity transform (no group wrapper)
     visitor.currentState = {
       transform: new DOMMatrix()
@@ -854,6 +854,30 @@ suite('_getDefs — idempotency', function () {
     assert.strictEqual(visitor.svgElement.querySelectorAll('defs').length, 1);
     assert.strictEqual(visitor.svgElement.firstChild.tagName.toLowerCase(), 'defs');
   });
+
+  test('recreates attached definitions after clear()', function () {
+    const pInst = createPInst();
+    const visitor = createVisitor(pInst);
+
+    const oldDefs = visitor._getDefs();
+    oldDefs.appendChild(visitor._createElement('clipPath'));
+
+    visitor.clear();
+
+    assert.strictEqual(visitor.svgElement.childNodes.length, 0);
+
+    const newDefs = visitor._getDefs();
+
+    assert.notStrictEqual(newDefs, oldDefs);
+    assert.strictEqual(newDefs.parentNode, visitor.svgElement);
+    assert.strictEqual(visitor.svgElement.firstChild, newDefs);
+    assert.strictEqual(newDefs.childNodes.length, 0);
+    assert.strictEqual(visitor._getDefs(), newDefs);
+    assert.strictEqual(
+      visitor.svgElement.querySelectorAll('defs').length,
+      1
+    );
+  });
 });
 
 // 5. visitArcPrimitive — all four modes
@@ -1045,5 +1069,86 @@ suite('buildSVG — serialization', function () {
     const svgStr = visitor.buildSVG();
     assert.include(svgStr, 'width="600"');
     assert.include(svgStr, 'height="600"');
+  });
+});
+
+suite('SVGVisitor — viewport clipping', function () {
+  test('exports a viewport clip without clipping a following sibling', function () {
+    const visitor = createVisitor(createPInst());
+
+    visitor.visitScope({
+      viewportClip: {
+        x: 0,
+        y: 0,
+        width: 200,
+        height: 100,
+        transform: new DOMMatrix().translate(50, 50)
+      },
+      children: [{
+        toSVGElement(v) {
+          v.currentState = {
+            fill: createMockColor(0, 0, 255, 255, '#0000ff'),
+            stroke: null,
+            transform: new DOMMatrix([2, 0, 0, 2, 50, 0])
+          };
+          v.visitRectPrimitive({
+            x: 0, y: 0, w: 100, h: 100
+          });
+        }
+      }]
+    });
+
+    // Draw a sibling after leaving the clipped scope.
+    visitor.currentState = {
+      fill: createMockColor(255, 0, 0, 255, '#ff0000'),
+      stroke: null,
+      transform: new DOMMatrix()
+    };
+    visitor.visitRectPrimitive({
+      x: 10, y: 170, w: 30, h: 20
+    });
+
+    const svg = new DOMParser().parseFromString(
+      visitor.buildSVG(),
+      'image/svg+xml'
+    ).documentElement;
+
+    const clipPath = svg.querySelector('defs > clipPath');
+    assert.isNotNull(clipPath);
+    assert.strictEqual(
+      clipPath.getAttribute('clipPathUnits'),
+      'userSpaceOnUse'
+    );
+
+    const clipRect = clipPath.querySelector('rect');
+    assert.isNotNull(clipRect);
+    assert.strictEqual(clipRect.getAttribute('x'), '0');
+    assert.strictEqual(clipRect.getAttribute('y'), '0');
+    assert.strictEqual(clipRect.getAttribute('width'), '200');
+    assert.strictEqual(clipRect.getAttribute('height'), '100');
+    assert.strictEqual(
+      clipRect.getAttribute('transform'),
+      'matrix(1 0 0 1 50 50)'
+    );
+
+    const clippedGroup = svg.querySelector('g[clip-path]');
+    assert.isNotNull(clippedGroup);
+    assert.strictEqual(
+      clippedGroup.getAttribute('clip-path'),
+      `url(#${clipPath.getAttribute('id')})`
+    );
+    assert.strictEqual(clippedGroup.parentNode, svg);
+
+    const blueRect = clippedGroup.querySelector('rect[fill="#0000ff"]');
+    assert.isNotNull(blueRect);
+    assert.strictEqual(
+      blueRect.parentNode.getAttribute('transform'),
+      'matrix(2 0 0 2 50 0)'
+    );
+
+    const redRect = svg.querySelector('rect[fill="#ff0000"]');
+    assert.isNotNull(redRect);
+    assert.strictEqual(redRect.parentNode, svg);
+    assert.isFalse(clippedGroup.contains(redRect));
   });
 });
