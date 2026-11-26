@@ -105,13 +105,15 @@ export class Font {
    *
    * The first two parameters, `x` and `y`, specify the baseline origin for the text.
    * Optionally, you can provide a `width` and `height` for text wrapping; if you don't need
-   * wrapping, you can omit them and directly pass `options` as the fourth parameter.
+   * wrapping, you can omit them. The `options` parameter is also optional. It
+   * can be passed as the fourth, fifth, or sixth parameter.
    *
    * @param  {String} str            The text to convert into path commands.
    * @param  {Number} x              x‐coordinate of the text baseline.
    * @param  {Number} y              y‐coordinate of the text baseline.
    * @param  {Number} [width]        Optional width for text wrapping.
    * @param  {Number} [height]       Optional height for text wrapping.
+   * @param  {Object} [options]      Configuration options.
    * @return {Array<Array>}          A flat array of path commands.
    *
    * @example
@@ -226,7 +228,12 @@ export class Font {
    * coordinates of the bounding box's bottom-left corner. See
    * <a href="#/p5/textAlign">textAlign()</a> for more ways to align text.
    *
-   * The fourth parameter, `options`, is also optional. `font.textToPoints()`
+   * The fourth and fifth parameters, `width` and `height`, are optional. They
+   * set the size of a box to wrap the text in. If you don't need wrapping, you
+   * can omit them.
+   *
+   * The `options` parameter is also optional. It can be passed as the fourth,
+   * fifth, or sixth parameter. `font.textToPoints()`
    * expects an object with the following properties:
    *
    * `sampleFactor` is the ratio of the text's path length to the number of
@@ -240,6 +247,8 @@ export class Font {
    * @param  {String} str        string of text.
    * @param  {Number} x          x-coordinate of the text.
    * @param  {Number} y          y-coordinate of the text.
+   * @param  {Number} [width]    Optional width for text wrapping.
+   * @param  {Number} [height]   Optional height for text wrapping.
    * @param  {Object} [options]  Configuration:
    * @param  {Number} [options.sampleFactor=0.1] The ratio of the text's path length to the number of samples.
    * @param  {Number} [options.simplifyThreshold=0] A minmum angle in radian sbetween two segments. Segments with a shallower angle will be merged.
@@ -296,7 +305,12 @@ export class Font {
    * coordinates of the bounding box's bottom-left corner. See
    * <a href="#/p5/textAlign">textAlign()</a> for more ways to align text.
    *
-   * The fourth parameter, `options`, is also optional. `font.textToContours()`
+   * The fourth and fifth parameters, `width` and `height`, are optional. They
+   * set the size of a box to wrap the text in. If you don't need wrapping, you
+   * can omit them.
+   *
+   * The `options` parameter is also optional. It can be passed as the fourth,
+   * fifth, or sixth parameter. `font.textToContours()`
    * expects an object with the following properties:
    *
    * `sampleFactor` is the ratio of the text's path length to the number of
@@ -310,6 +324,8 @@ export class Font {
    * @param  {String} str        string of text.
    * @param  {Number} x          x-coordinate of the text.
    * @param  {Number} y          y-coordinate of the text.
+   * @param  {Number} [width]    Optional width for text wrapping.
+   * @param  {Number} [height]   Optional height for text wrapping.
    * @param  {Object} [options]  Configuration options:
    * @param  {Number} [options.sampleFactor=0.1] The ratio of the text's path length to the number of samples.
    * @param  {Number} [options.simplifyThreshold=0] A minmum angle in radians between two segments. Segments with a shallower angle will be merged.
@@ -380,7 +396,12 @@ export class Font {
    * The generated model (a Geometry object) can be manipulated further—rotated, scaled,
    * or styled with shaders—to create engaging, interactive visual art.
    *
-   * The `options` parameter is also optional. `font.textToModel()` expects an object
+   * The fourth and fifth parameters, `width` and `height`, are optional. They
+   * set the size of a box to wrap the text in. If you don't need wrapping, you
+   * can omit them.
+   *
+   * The `options` parameter is also optional. It can be passed as the fourth,
+   * fifth, or sixth parameter. `font.textToModel()` expects an object
    * with the following properties:
    *
    * `extrude` is the depth to extrude the text. It defaults to 0. A value of 0 produces
@@ -392,8 +413,8 @@ export class Font {
    * @param {String} str The text string to convert into a 3D model.
    * @param {Number} x The x-coordinate for the starting position of the text.
    * @param {Number} y The y-coordinate for the starting position of the text.
-   * @param {Number} width Maximum width of the text block (wraps text if exceeded).
-   * @param {Number} height Maximum height of the text block.
+   * @param {Number} [width] Maximum width of the text block (wraps text if exceeded).
+   * @param {Number} [height] Maximum height of the text block.
    * @param {Object} [options] Configuration options for the 3D text:
    * @param {Number} [options.extrude=0] The depth to extrude the text. A value of 0 produces
    * flat text; higher values create thicker, 3D models.
