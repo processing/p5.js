@@ -643,13 +643,7 @@ class Geometry {
    * }
    */
   flipU() {
-    this.uvs = this.uvs.flat().map((val, index) => {
-      if (index % 2 === 0) {
-        return 1 - val;
-      } else {
-        return val;
-      }
-    });
+    this._flipUvs(0);
   }
 
   /**
@@ -731,13 +725,17 @@ class Geometry {
    * }
    */
   flipV() {
-    this.uvs = this.uvs.flat().map((val, index) => {
-      if (index % 2 === 0) {
-        return val;
-      } else {
-        return 1 - val;
-      }
-    });
+    this._flipUvs(1);
+  }
+
+  // a multi-material model is drawn from its parts' own uvs
+  _flipUvs(axis) {
+    const flip = uvs =>
+      uvs.flat().map((val, index) => (index % 2 === axis ? 1 - val : val));
+    this.uvs = flip(this.uvs);
+    for (const part of this.parts) {
+      if (part !== this) part.uvs = flip(part.uvs);
+    }
   }
 
   /**

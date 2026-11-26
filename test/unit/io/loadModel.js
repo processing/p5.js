@@ -401,4 +401,259 @@ suite('loadModel', function () {
       }
     });
   });
+
+  suite('glTF', function () {
+    test('rejects a file that needs an unsupported extension', async function () {
+      await expect(
+        mockP5Prototype.loadModel('/test/unit/assets/draco-required.gltf')
+      ).rejects.toThrow('KHR_draco_mesh_compression');
+    });
+
+    test('a primitive without a material keeps the fill() next to one that has one', async function () {
+      const model = await mockP5Prototype.loadModel(
+        '/test/unit/assets/one-material-and-none.gltf'
+      );
+      assert.equal(model.parts.length, 2);
+      assert.deepEqual(model.parts[0].partState.fill, [1, 0, 0, 1]);
+      assert.equal(model.parts[1].partState.fill, null);
+      assert.equal(model.parts[1].partState.specularColor, null);
+    });
+
+    test('absolute buffer and image links are used as they are', async function () {
+      const urls = [];
+      mockP5Prototype.loadImage = async url => {
+        urls.push(url);
+        return { width: 1, height: 1 };
+      };
+      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+      try {
+        const model = await mockP5Prototype.loadModel(
+          '/test/unit/assets/absolute-uris.gltf'
+        );
+        assert.deepEqual(urls, ['https://example.com/textures/cat.jpg']);
+        assert.equal(model.faces.length, 1);
+      } finally {
+        warn.mockRestore();
+        delete mockP5Prototype.loadImage;
+      }
+    });
+
+    test('a slash in the query string does not move the folder', async function () {
+      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+      try {
+        const model = await mockP5Prototype.loadModel(
+          '/test/unit/assets/external.gltf?from=a/b'
+        );
+        assert.deepEqual(
+          model.vertices.map(v => [v.x, v.y, v.z]),
+          [
+            [0, 0, 5],
+            [2, 0, 5],
+            [0, 2, 5]
+          ]
+        );
+      } finally {
+        warn.mockRestore();
+      }
+    });
+
+    test('models from different requests or flips get their own buffers', async function () {
+      const a = await mockP5Prototype.loadModel(
+        new Request('/test/unit/assets/two-materials.gltf')
+      );
+      const b = await mockP5Prototype.loadModel(
+        new Request('/test/unit/assets/one-material-and-none.gltf')
+      );
+      const flipped = await mockP5Prototype.loadModel(
+        new Request('/test/unit/assets/two-materials.gltf'),
+        { flipU: true }
+      );
+      assert.notEqual(a.gid, b.gid);
+      assert.notEqual(a.gid, flipped.gid);
+    });
+
+    test('loads from a Request object', async function () {
+      const model = await mockP5Prototype.loadModel(
+        new Request('/test/unit/assets/two-materials.gltf')
+      );
+      assert.equal(model.parts.length, 2);
+    });
+
+    test('loads a .gltf with one part per material', async function () {
+      const model = await mockP5Prototype.loadModel(
+        '/test/unit/assets/two-materials.gltf'
+      );
+      assert.equal(model.parts.length, 2);
+      const fills = model.parts.map(p => p.partState.fill);
+      assert.deepEqual(fills, [
+        [1, 0, 0, 1],
+        [0, 0, 1, 1]
+      ]);
+      const blue = model.parts[1];
+      assert.deepEqual(
+        blue.vertices.map(v => v.x),
+        [2, 3, 2],
+        'the node translation moves the second triangle'
+      );
+    });
+
+    test('loads a .glb and its embedded texture', async function () {
+      const fakeImage = { width: 1, height: 1 };
+      let loadedUrl;
+      mockP5Prototype.loadImage = async url => {
+        loadedUrl = url;
+        return fakeImage;
+      };
+      try {
+        const model = await mockP5Prototype.loadModel(
+          '/test/unit/assets/textured.glb'
+        );
+        assert.ok(loadedUrl.startsWith('blob:'));
+        assert.equal(model.partState.texture, fakeImage);
+        assert.equal(model.faces.length, 2);
+        assert.equal(model.uvs.length, model.vertices.length);
+      } finally {
+        delete mockP5Prototype.loadImage;
+      }
+    });
+
+    test('loads a .bin buffer and textures that sit next to the .gltf', async function () {
+      const fakeImage = { width: 1, height: 1 };
+      const urls = [];
+      mockP5Prototype.loadImage = async url => {
+        urls.push(url);
+        return fakeImage;
+      };
+      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+      try {
+        const model = await mockP5Prototype.loadModel(
+          '/test/unit/assets/external.gltf'
+        );
+        assert.deepEqual(urls, ['/test/unit/assets/cat.jpg']);
+        assert.equal(model.partState.texture, fakeImage);
+        assert.equal(model.partState.normalTexture, fakeImage);
+        assert.equal(model.partState.normalScale, 0.25);
+        assert.equal(model.partState.normalMapMode, 0);
+        assert.equal(model.vertexTangents.length, 3 * 4);
+        assert.equal(model.faces.length, 1);
+        assert.ok(warn.mock.calls.some(([msg]) => /lines/.test(msg)));
+      } finally {
+        warn.mockRestore();
+        delete mockP5Prototype.loadImage;
+      }
+    });
+
+    test('applies parent and child node transforms in order', async function () {
+      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+      let model;
+      try {
+        model = await mockP5Prototype.loadModel(
+          '/test/unit/assets/external.gltf'
+        );
+      } finally {
+        warn.mockRestore();
+      }
+      assert.deepEqual(
+        model.vertices.map(v => [v.x, v.y, v.z]),
+        [
+          [0, 0, 5],
+          [2, 0, 5],
+          [0, 2, 5]
+        ]
+      );
+    });
+
+    test('textures load inside _internal so FES skips them', async function () {
+      let internal = false;
+      const calls = [];
+      mockP5Prototype._internal = callback => {
+        internal = true;
+        try {
+          return callback();
+        } finally {
+          internal = false;
+        }
+      };
+      mockP5Prototype.loadImage = async () => {
+        calls.push(internal);
+        return { width: 1, height: 1 };
+      };
+      try {
+        await mockP5Prototype.loadModel('/test/unit/assets/textured.glb');
+        await mockP5Prototype.loadModel('/test/unit/assets/textured.obj');
+        assert.isAtLeast(calls.length, 2);
+        assert.ok(calls.every(Boolean));
+      } finally {
+        delete mockP5Prototype._internal;
+        delete mockP5Prototype.loadImage;
+      }
+    });
+
+    test('a texture that fails to load is skipped without failing the model', async function () {
+      mockP5Prototype.loadImage = async () => {
+        throw new Error('Not Found');
+      };
+      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+      try {
+        const model = await mockP5Prototype.loadModel(
+          '/test/unit/assets/textured.glb'
+        );
+        assert.equal(model.faces.length, 2);
+        assert.equal(model.partState.texture, null);
+      } finally {
+        warn.mockRestore();
+        delete mockP5Prototype.loadImage;
+      }
+    });
+
+    test('an options object without fileType still picks the loader from the path', async function () {
+      const model = await mockP5Prototype.loadModel(
+        '/test/unit/assets/two-materials.gltf',
+        { normalize: true }
+      );
+      assert.equal(model.parts.length, 2);
+    });
+
+    test('flipU in an options object is applied', async function () {
+      const plain = await mockP5Prototype.loadModel(
+        '/test/unit/assets/two-materials.gltf'
+      );
+      const flipped = await mockP5Prototype.loadModel(
+        '/test/unit/assets/two-materials.gltf',
+        { fileType: '.gltf', flipU: true }
+      );
+      assert.deepEqual(plain.uvs.flat().slice(0, 2), [0, 0]);
+      assert.deepEqual(flipped.uvs.flat().slice(0, 2), [1, 0]);
+      assert.deepEqual(flipped.parts[0].uvs.slice(0, 2), [1, 0]);
+    });
+
+    test('flipV reaches the parts of a multi-material OBJ too', async function () {
+      mockP5Prototype.loadImage = async () => ({ width: 1, height: 1 });
+      try {
+        const plain = await mockP5Prototype.loadModel(
+          '/test/unit/assets/textured.obj'
+        );
+        const flipped = await mockP5Prototype.loadModel(
+          '/test/unit/assets/textured.obj',
+          { flipV: true }
+        );
+        assert.equal(flipped.parts.length, 2);
+        flipped.parts.forEach((part, i) => {
+          const before = plain.parts[i].uvs.flat();
+          part.uvs.forEach((v, j) =>
+            assert.closeTo(v, j % 2 ? 1 - before[j] : before[j], 1e-9)
+          );
+        });
+      } finally {
+        delete mockP5Prototype.loadImage;
+      }
+    });
+
+    test('picks the glTF loader when the path has a query string', async function () {
+      const model = await mockP5Prototype.loadModel(
+        '/test/unit/assets/two-materials.gltf?v=1'
+      );
+      assert.equal(model.parts.length, 2);
+    });
+  });
 });
