@@ -317,6 +317,8 @@ class GeometryBuilder {
     // part, so nothing changes for them (zero regression).
     if (this.parts.length >= 2) {
       this.geometry.parts = this.parts;
+    } else if (this.parts.length === 1) {
+      this.geometry.partState = this.parts[0].partState;
     }
     return this.geometry;
   }

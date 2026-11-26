@@ -888,6 +888,68 @@ suite('p5.Geometry', function () {
         .not.toEqual(geom.parts[1].partState.texture);
     });
 
+    test('line before textured geometry keeps the texture in buildGeometry',
+      function() {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+        myp5.pixelDensity(1);
+        myp5.setAttributes({ antialias: false });
+
+        const texture = myp5.createGraphics(8, 8);
+        texture.background(220, 30, 30);
+        const drawScene = () => {
+          myp5.stroke(0);
+          myp5.strokeWeight(2);
+          myp5.line(-15, 0, -5, 0);
+          myp5.noStroke();
+          myp5.texture(texture);
+          myp5.box(20);
+        };
+
+        myp5.background(255);
+        drawScene();
+        const expectedCenterColor = myp5.get(25, 25);
+
+        const geom = myp5.buildGeometry(drawScene);
+
+        myp5.background(255);
+        myp5.noStroke();
+        myp5.model(geom);
+
+        assert.deepEqual(myp5.get(25, 25), expectedCenterColor);
+      }
+    );
+
+    test('point before textured geometry keeps the texture in buildGeometry',
+      function() {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+        myp5.pixelDensity(1);
+        myp5.setAttributes({ antialias: false });
+
+        const texture = myp5.createGraphics(8, 8);
+        texture.background(30, 80, 220);
+        const drawScene = () => {
+          myp5.stroke(0);
+          myp5.strokeWeight(4);
+          myp5.point(-15, 0);
+          myp5.noStroke();
+          myp5.texture(texture);
+          myp5.box(20);
+        };
+
+        myp5.background(255);
+        drawScene();
+        const expectedCenterColor = myp5.get(25, 25);
+
+        const geom = myp5.buildGeometry(drawScene);
+
+        myp5.background(255);
+        myp5.noStroke();
+        myp5.model(geom);
+
+        assert.deepEqual(myp5.get(25, 25), expectedCenterColor);
+      }
+    );
+
     test('single-part geometry keeps its edges without duplication', function () {
       myp5.createCanvas(50, 50, myp5.WEBGL);
 
@@ -996,6 +1058,56 @@ suite('p5.Geometry', function () {
         partA.edges.length + partB.edges.length
       );
     });
+
+    test('makeEdgesFromFaces generates rendered edges for multipart geometry',
+      function() {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+        myp5.pixelDensity(1);
+        myp5.setAttributes({ antialias: false });
+
+        const texA = myp5.createGraphics(10, 10);
+        texA.background(255, 0, 0);
+        const texB = myp5.createGraphics(10, 10);
+        texB.background(0, 0, 255);
+        const drawTriangles = () => {
+          myp5.push();
+          myp5.translate(-10, 0);
+          myp5.texture(texA);
+          myp5.triangle(-5, -8, 5, -8, 0, 8);
+          myp5.pop();
+
+          myp5.push();
+          myp5.translate(10, 0);
+          myp5.texture(texB);
+          myp5.triangle(-5, -8, 5, -8, 0, 8);
+          myp5.pop();
+        };
+
+        myp5.background(255);
+        myp5.stroke(0);
+        myp5.strokeWeight(2);
+        drawTriangles();
+        const expectedImage = myp5._renderer.canvas.toDataURL();
+
+        const geom = myp5.buildGeometry(() => {
+          myp5.noStroke();
+          drawTriangles();
+        });
+        expect(geom.parts).toHaveLength(2);
+
+        geom.makeEdgesFromFaces();
+
+        myp5.background(255);
+        myp5.stroke(0);
+        myp5.strokeWeight(2);
+        myp5.model(geom);
+
+        assert.equal(
+          myp5._renderer.canvas.toDataURL(),
+          expectedImage
+        );
+      }
+    );
 
     test('stroke-only geometry is preserved in a multipart build', function () {
       myp5.createCanvas(50, 50, myp5.WEBGL);

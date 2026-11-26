@@ -49,6 +49,16 @@ class Geometry extends GeometryPart {
     this.parts = [this];
   }
 
+  makeEdgesFromFaces() {
+    super.makeEdgesFromFaces();
+
+    for (const part of this.parts) {
+      if (part !== this && part.faces.length > 0) {
+        part.makeEdgesFromFaces();
+      }
+    }
+  }
+
   /**
    * Calculates the position and size of the smallest box that contains the geometry.
    *
