@@ -1311,11 +1311,9 @@ function rendererWebGPU(p5, fn) {
       const retired = [...new Set(this._retiredBuffers)];
       this._retiredBuffers = [];
 
-      this.queue.onSubmittedWorkDone().then(() => {
-        for (const buffer of retired) {
-          buffer.destroy();
-        }
-      });
+      for (const buffer of retired) {
+        buffer.destroy();
+      }
     }
 
     _getValidSampleCount(requestedCount) {

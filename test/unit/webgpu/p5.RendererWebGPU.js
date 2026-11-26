@@ -68,16 +68,14 @@ suite('WebGPU p5.RendererWebGPU', function () {
       });
     };
 
-    test('retired geometry buffers destroy after queue completion across frames',
+    test('retired geometry buffers destroy after freeing across frames',
       async function () {
         const renderer = myp5._renderer;
         const geom = myp5.buildGeometry(() => {
           myp5.triangle(0, 0, 10, 0, 5, 10);
         });
         const previousDraw = myp5.draw;
-        let workDoneSpy;
         let destroySpies = [];
-        let resolveQueueCompletion;
         let drawCount = 0;
 
         try {
@@ -93,29 +91,13 @@ suite('WebGPU p5.RendererWebGPU', function () {
           expect(oldBuffers.size).toBeGreaterThan(0);
           destroySpies = spyOnBufferDestruction(oldBuffers);
 
-          const queueCompletion = new Promise(resolve => {
-            resolveQueueCompletion = resolve;
-          });
-          workDoneSpy = vi
-            .spyOn(renderer.queue, 'onSubmittedWorkDone')
-            .mockImplementation(() => queueCompletion);
-
           myp5.freeGeometry(geom);
 
+          expect(drawCount).toBe(3);
           for (const destroySpy of destroySpies) {
-            expect(destroySpy).not.toHaveBeenCalled();
+            expect(destroySpy).toHaveBeenCalledTimes(1);
           }
-
-          resolveQueueCompletion();
-          await queueCompletion;
-          await vi.waitFor(() => {
-            for (const destroySpy of destroySpies) {
-              expect(destroySpy).toHaveBeenCalledTimes(1);
-            }
-          });
         } finally {
-          resolveQueueCompletion?.();
-          workDoneSpy?.mockRestore();
           for (const destroySpy of destroySpies) {
             destroySpy.mockRestore();
           }
@@ -132,9 +114,7 @@ suite('WebGPU p5.RendererWebGPU', function () {
           myp5.triangle(0, 0, 10, 0, 5, 10);
         });
         let submitSpy;
-        let workDoneSpy;
         let destroySpies = [];
-        let resolveQueueCompletion;
 
         try {
           myp5.model(geom);
@@ -144,32 +124,19 @@ suite('WebGPU p5.RendererWebGPU', function () {
 
           destroySpies = spyOnBufferDestruction(oldBuffers);
 
-          const queueCompletion = new Promise(resolve => {
-            resolveQueueCompletion = resolve;
-          });
-          workDoneSpy = vi
-            .spyOn(renderer.queue, 'onSubmittedWorkDone')
-            .mockImplementation(() => queueCompletion);
           submitSpy = vi.spyOn(renderer.queue, 'submit');
 
           myp5.freeGeometry(geom);
 
           expect(submitSpy).toHaveBeenCalled();
           for (const destroySpy of destroySpies) {
-            expect(destroySpy).not.toHaveBeenCalled();
+            expect(destroySpy).toHaveBeenCalledTimes(1);
+            expect(submitSpy.mock.invocationCallOrder[0]).toBeLessThan(
+              destroySpy.mock.invocationCallOrder[0]
+            );
           }
-
-          resolveQueueCompletion();
-          await queueCompletion;
-          await vi.waitFor(() => {
-            for (const destroySpy of destroySpies) {
-              expect(destroySpy).toHaveBeenCalledTimes(1);
-            }
-          });
         } finally {
-          resolveQueueCompletion?.();
           submitSpy?.mockRestore();
-          workDoneSpy?.mockRestore();
           for (const destroySpy of destroySpies) {
             destroySpy.mockRestore();
           }
@@ -183,9 +150,7 @@ suite('WebGPU p5.RendererWebGPU', function () {
         const geom = myp5.buildGeometry(() => {
           myp5.triangle(0, 0, 10, 0, 5, 10);
         });
-        let workDoneSpy;
         let destroySpies = [];
-        let resolveQueueCompletion;
 
         try {
           myp5.model(geom);
@@ -196,13 +161,6 @@ suite('WebGPU p5.RendererWebGPU', function () {
 
           destroySpies = spyOnBufferDestruction(oldBuffers);
 
-          const queueCompletion = new Promise(resolve => {
-            resolveQueueCompletion = resolve;
-          });
-          workDoneSpy = vi
-            .spyOn(renderer.queue, 'onSubmittedWorkDone')
-            .mockImplementation(() => queueCompletion);
-
           myp5.freeGeometry(geom);
           myp5.model(geom);
 
@@ -212,21 +170,11 @@ suite('WebGPU p5.RendererWebGPU', function () {
             expect(newBuffers).not.toContain(oldBuffer);
           }
           for (const destroySpy of destroySpies) {
-            expect(destroySpy).not.toHaveBeenCalled();
+            expect(destroySpy).toHaveBeenCalledTimes(1);
           }
-
-          resolveQueueCompletion();
-          await queueCompletion;
-          await vi.waitFor(() => {
-            for (const destroySpy of destroySpies) {
-              expect(destroySpy).toHaveBeenCalledTimes(1);
-            }
-          });
 
           await renderer.finishDraw();
         } finally {
-          resolveQueueCompletion?.();
-          workDoneSpy?.mockRestore();
           for (const destroySpy of destroySpies) {
             destroySpy.mockRestore();
           }
@@ -355,9 +303,7 @@ suite('WebGPU p5.RendererWebGPU', function () {
           myp5.texture(texB);
           myp5.box(10);
         });
-        let workDoneSpy;
         let destroySpies = [];
-        let resolveQueueCompletion;
 
         try {
           myp5.model(geom);
@@ -373,29 +319,12 @@ suite('WebGPU p5.RendererWebGPU', function () {
 
           destroySpies = spyOnBufferDestruction(oldBuffers);
 
-          const queueCompletion = new Promise(resolve => {
-            resolveQueueCompletion = resolve;
-          });
-          workDoneSpy = vi
-            .spyOn(renderer.queue, 'onSubmittedWorkDone')
-            .mockImplementation(() => queueCompletion);
-
           myp5.freeGeometry(geom);
 
           for (const destroySpy of destroySpies) {
-            expect(destroySpy).not.toHaveBeenCalled();
+            expect(destroySpy).toHaveBeenCalledTimes(1);
           }
-
-          resolveQueueCompletion();
-          await queueCompletion;
-          await vi.waitFor(() => {
-            for (const destroySpy of destroySpies) {
-              expect(destroySpy).toHaveBeenCalledTimes(1);
-            }
-          });
         } finally {
-          resolveQueueCompletion?.();
-          workDoneSpy?.mockRestore();
           for (const destroySpy of destroySpies) {
             destroySpy.mockRestore();
           }
