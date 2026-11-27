@@ -6245,6 +6245,26 @@ suite('p5.Shader', function () {
         assert.approximately(pixelColor[2], 64, 5); // uM[2][2] = 0.25
       });
   });
+
+    suite('float literals (#8884)', () => {
+      test('keep full precision instead of rounding to 4 decimals', () => {
+        myp5.createCanvas(5, 5, myp5.WEBGL);
+        const testShader = myp5.baseFilterShader().modify(
+          () => {
+            myp5.getColor(() => {
+              return [0.00001, 0.123456, 1, 1];
+            });
+          },
+          { myp5 }
+        );
+        myp5.filter(testShader);
+
+        const src = testShader.fragSrc();
+        assert.include(src, '0.00001');
+        assert.include(src, '0.123456');
+        assert.notInclude(src, '0.1235');
+      });
+    });
   });
 
   suite('p5.strands error messages', () => {
