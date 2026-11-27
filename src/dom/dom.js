@@ -1075,8 +1075,8 @@ function dom(p5, fn) {
    *   mySelect.option('three', 'blue');
    *   mySelect.option('four', 'yellow');
    *
-   *   // Set the selected option to "one".
-   *   mySelect.selected('one');
+   *   // Select the option with the value "red".
+   *   mySelect.selected('red');
    *
    *   describe('A red square with a dropdown menu beneath it. The square changes color when a new color is selected.');
    * }
