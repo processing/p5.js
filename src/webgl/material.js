@@ -814,7 +814,7 @@ function material(p5, fn) {
    * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *   myField = buildColorFieldShader(gradient);
-   *   describe('A gradient that fades from black at the top left to blue and yellow.');
+   *   describe('A gradient that is black at the top left, red at the top right, green at the bottom left and yellow at the bottom right.')
    * }
    *
    * function gradient() {
