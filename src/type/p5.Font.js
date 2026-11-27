@@ -609,7 +609,7 @@ export class Font {
     const half = extrude * 0.5;
     extruded.vertices = [];
     extruded.faces = [];
-    extruded.edges = []; // INITIALIZE EDGES ARRAY
+    extruded.parts[0].edges = []; // INITIALIZE EDGES ARRAY
 
     // Add side face vertices (separate for each edge for flat shading)
     for (const [a, b] of validEdges) {
@@ -637,10 +637,10 @@ export class Font {
 
       extruded.faces.push([frontA, backA, backB]);
       extruded.faces.push([frontA, backB, frontB]);
-      extruded.edges.push([frontA, frontB]);
-      extruded.edges.push([backA, backB]);
-      extruded.edges.push([frontA, backA]);
-      extruded.edges.push([frontB, backB]);
+      extruded.parts[0].edges.push([frontA, frontB]);
+      extruded.parts[0].edges.push([backA, backB]);
+      extruded.parts[0].edges.push([frontA, backA]);
+      extruded.parts[0].edges.push([frontB, backB]);
     }
 
     // Add front face (with unshared vertices for flat shading)
@@ -656,7 +656,7 @@ export class Font {
       // ADD EDGES FOR FRONT FACE
       for (let i = 0; i < mappedFace.length; i++) {
         const nextIndex = (i + 1) % mappedFace.length;
-        extruded.edges.push([mappedFace[i], mappedFace[nextIndex]]);
+        extruded.parts[0].edges.push([mappedFace[i], mappedFace[nextIndex]]);
       }
     }
 
@@ -674,7 +674,7 @@ export class Font {
       // ADD EDGES FOR BACK FACE
       for (let i = 0; i < mappedFace.length; i++) {
         const nextIndex = (i + 1) % mappedFace.length;
-        extruded.edges.push([mappedFace[i], mappedFace[nextIndex]]);
+        extruded.parts[0].edges.push([mappedFace[i], mappedFace[nextIndex]]);
       }
     }
 

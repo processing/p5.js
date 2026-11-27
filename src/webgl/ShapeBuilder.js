@@ -143,13 +143,13 @@ export class ShapeBuilder {
     }
 
     if (shouldProcessEdges) {
-      this.geometry.edges = this._calculateEdges(
+      this.geometry.parts[0].edges = this._calculateEdges(
         this.shapeMode,
         this.geometry.vertices
       );
     }
     if (shouldProcessEdges && !this.renderer.geometryBuilder) {
-      this.geometry._edgesToVertices();
+      this.geometry.parts[0]._edgesToVertices(this.renderer);
     }
 
     if (this.shapeMode === constants.PATH) {
@@ -461,7 +461,7 @@ export class ShapeBuilder {
       // We record index mappings in a Map so that once we have found a
       // corresponding vertex, we don't need to loop to find it again.
       const newIndex = new Map();
-      this.geometry.edges = this.geometry.edges.map(edge =>
+      this.geometry.parts[0].edges = this.geometry.parts[0].edges.map(edge =>
         edge.map(origIdx => {
           if (!newIndex.has(origIdx)) {
             const orig = originalVertices[origIdx];

@@ -2367,7 +2367,7 @@ void main() {
             0,
             1
           );
-          this._edgesToVertices();
+          this._edgesToVertices(myp5._renderer);
         },
         myp5._renderer
       );
