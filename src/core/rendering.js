@@ -137,6 +137,9 @@ function rendering(p5, fn) {
 
     if (!renderers[renderer] && typeof renderer === 'string') {
       if (renderer === constants.WEBGPU) {
+        if (p5.disableWebGLFallback) {
+          throw new Error('To create a WEBGPU canvas, add the WebGPU add-on to your project.');
+        }
         p5.FES.log`To create a WEBGPU canvas, add the WebGPU add-on to your project.`();
         if (renderers[constants.WEBGL]) {
           p5.FES.log`Falling back to WebGL renderer.`();
@@ -175,6 +178,9 @@ function rendering(p5, fn) {
       return this._renderer.contextReady.then(() => this._renderer).catch((e) => {
         if (selectedRenderer !== constants.WEBGPU) {
           throw new Error('Failed to create canvas.');
+        }
+        if (p5.disableWebGLFallback) {
+          throw e;
         }
         p5.FES.log`${e.message} Falling back to WebGL renderer.`();
         return this.createCanvas(w, h, constants.WEBGL, ...args);

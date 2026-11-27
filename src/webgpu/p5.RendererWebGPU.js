@@ -864,7 +864,7 @@ function rendererWebGPU(p5, fn) {
         );
       }
       this.adapter = await navigator.gpu.requestAdapter(
-        this._webgpuAttributes
+        this._pInst._webgpuAttributes
       );
       if (!this.adapter) {
         throw new Error(

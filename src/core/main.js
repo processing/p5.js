@@ -915,6 +915,18 @@ export default p5;
  */
 
 /**
+ * Makes `createCanvas(w, h, WEBGPU)` throw an error instead of falling back
+ * to WebGL when WebGPU isn't available. The default is `false`.
+ *
+ * ```js
+ * p5.disableWebGLFallback = true;
+ * ```
+ *
+ * @static
+ * @property {Boolean} disableWebGLFallback
+ */
+
+/**
  * Loads a p5.js library.
  *
  * A library is a function that adds functionality to p5.js by adding methods
