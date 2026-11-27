@@ -3784,6 +3784,14 @@ function vector(p5, fn) {
    */
 
   /**
+   * The w component of the vector
+   * @type {Number}
+   * @for p5.Vector
+   * @property w
+   * @name w
+   */
+
+  /**
    * The dimensions of the vector
    * @type {Number}
    * @for p5.Vector
@@ -3796,5 +3804,5 @@ export default vector;
 export { Vector };
 
 if (typeof p5 !== 'undefined') {
-  vector(p5, p5.prototype);
+  p5.registerAddon(vector);
 }

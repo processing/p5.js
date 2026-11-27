@@ -2957,5 +2957,5 @@ function renderer3D(p5, fn) {
 export default renderer3D;
 
 if (typeof p5 !== 'undefined') {
-  renderer3D(p5, p5.prototype);
+  p5.registerAddon(renderer3D);
 }

@@ -545,5 +545,5 @@ function structure(p5, fn) {
 export default structure;
 
 if (typeof p5 !== 'undefined') {
-  structure(p5, p5.prototype);
+  p5.registerAddon(structure);
 }

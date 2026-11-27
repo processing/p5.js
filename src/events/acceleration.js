@@ -707,5 +707,5 @@ function acceleration(p5, fn, lifecycles) {
 export default acceleration;
 
 if (typeof p5 !== 'undefined') {
-  acceleration(p5, p5.prototype);
+  p5.registerAddon(acceleration);
 }

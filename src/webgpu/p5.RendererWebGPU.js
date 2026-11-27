@@ -868,7 +868,7 @@ function rendererWebGPU(p5, fn) {
         );
       }
       this.adapter = await navigator.gpu.requestAdapter(
-        this._webgpuAttributes
+        this._pInst._webgpuAttributes
       );
       if (!this.adapter) {
         throw new Error(
@@ -5275,5 +5275,5 @@ ${hookUniformFields}}
 export default rendererWebGPU;
 
 if (typeof p5 !== 'undefined') {
-  rendererWebGPU(p5, p5.prototype);
+  p5.registerAddon(rendererWebGPU);
 }

@@ -1945,5 +1945,5 @@ function pointer(p5, fn, lifecycles) {
 export default pointer;
 
 if (typeof p5 !== 'undefined') {
-  pointer(p5, p5.prototype);
+  p5.registerAddon(pointer);
 }

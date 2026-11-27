@@ -96,6 +96,9 @@ function _createLoadingOverlay(pInst) {
 
       const currentCanvas = pInst.canvas?.elt || pInst.canvas;
       if (currentCanvas) {
+        if (currentCanvas.parentNode && overlay.parentNode !== currentCanvas.parentNode) {
+          currentCanvas.parentNode.insertBefore(overlay, currentCanvas.nextSibling);
+        }
         _positionCanvas(overlay, currentCanvas);
       }
       
@@ -124,13 +127,13 @@ function _createLoadingOverlay(pInst) {
 
     animate();
   }
-
-  // Positions the loading indicator to overlay the sketch canvas
-  _positionCanvas(overlay, actualCanvas);
-
+  
   if (overlay.parentNode !== actualCanvas.parentNode) {
     actualCanvas.parentNode.insertBefore(overlay, actualCanvas.nextSibling);
   }
+
+  // Positions the loading indicator to overlay the sketch canvas
+  _positionCanvas(overlay, actualCanvas);
 }
 
 /**

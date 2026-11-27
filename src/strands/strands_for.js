@@ -8,7 +8,7 @@ import {
   OpCode
 } from './ir_types';
 import { createStrandsNode } from './strands_node';
-import { primitiveConstructorNode } from './ir_builders';
+import { primitiveConstructorNode, snapshotNode } from './ir_builders';
 import { createPhiNode } from './strands_phi_utils';
 import * as FES from './strands_FES';
 
@@ -507,8 +507,7 @@ export class StrandsFor {
   executeBodyCallback(cfg, branchBlock, bodyBlock, phiNode) {
     CFG.pushBlock(cfg, bodyBlock);
 
-    // Create phi node references to pass to the body callback
-    const phiVars = {};
+    // Create phi nodes for values carried through the loop.
     const phiNodesForBody = {};
     CFG.pushBlockForModification(cfg, branchBlock);
     for (const [varName, initialValueNode] of Object.entries(
@@ -525,11 +524,6 @@ export class StrandsFor {
           varName
         );
         phiNodesForBody[varName] = varPhiNode;
-        phiVars[varName] = createStrandsNode(
-          varPhiNode.id,
-          varPhiNode.dimension,
-          this.strandsContext
-        );
       }
     }
     // Keep helper loop phis separate from user variables.
@@ -559,15 +553,24 @@ export class StrandsFor {
     }
     CFG.popBlock(cfg);
 
+    // Snapshot carried values before running the body.
+    const phiVars = {};
+    for (const [varName, phi] of Object.entries(phiNodesForBody)) {
+      const { id, dimension } = snapshotNode(this.strandsContext, phi.id);
+      phiVars[varName] = createStrandsNode(id, dimension, this.strandsContext);
+    }
+    const iterationStartIds = new Map();
+    for (const [slot, phi] of this.statePhis) {
+      slot.valueId = snapshotNode(this.strandsContext, phi.id).id;
+      iterationStartIds.set(slot, slot.valueId);
+    }
+
     const loopVarNode = createStrandsNode(
       phiNode.id,
       phiNode.dimension,
       this.strandsContext
     );
-    // Read helper fields through their loop phis and limit pops to this body.
-    for (const [slot, phi] of this.statePhis) {
-      slot.valueId = phi.id;
-    }
+    // Limit pops to this body.
     const stackDepth = stateScope?.stack.length ?? 0;
     const previousFloor = stateScope?.stackFloor;
     if (stateScope) {
@@ -593,8 +596,8 @@ export class StrandsFor {
       );
     }
     this.stateUpdatedIds = new Map();
-    for (const [slot, phi] of this.statePhis) {
-      if (slot.valueId !== phi.id) {
+    for (const [slot, startId] of iterationStartIds) {
+      if (slot.valueId !== startId) {
         this.stateUpdatedIds.set(slot, slot.valueId);
       }
     }

@@ -382,5 +382,5 @@ function random(p5, fn) {
 export default random;
 
 if (typeof p5 !== 'undefined') {
-  random(p5, p5.prototype);
+  p5.registerAddon(random);
 }

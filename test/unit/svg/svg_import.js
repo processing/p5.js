@@ -1080,6 +1080,42 @@ suite('<defs> and <use> elements', function () {
     assert.strictEqual(record.children.length, 1);
   });
 
+  test('top-level <symbol> is only rendered through <use>', function () {
+    const record = createSVG(`
+      <svg xmlns="http://www.w3.org/2000/svg">
+        <symbol id="sym" viewBox="0 0 10 10">
+          <rect width="10" height="10" />
+        </symbol>
+        <use href="#sym" x="50" y="50" width="20" height="20" />
+      </svg>
+    `);
+    assert.strictEqual(record.children.length, 1);
+  });
+
+  test('<symbol> without <use> is not rendered', function () {
+    const record = createSVG(`
+      <svg xmlns="http://www.w3.org/2000/svg">
+        <symbol id="unused" viewBox="0 0 10 10">
+          <rect width="10" height="10" />
+        </symbol>
+      </svg>
+    `);
+    assert.strictEqual(record.children.length, 0);
+  });
+
+  test('<symbol> inside a <g> is not rendered directly', function () {
+    const record = createSVG(`
+      <svg xmlns="http://www.w3.org/2000/svg">
+        <g>
+          <symbol id="nested" viewBox="0 0 10 10">
+            <rect width="10" height="10" />
+          </symbol>
+        </g>
+      </svg>
+    `);
+    assert.strictEqual(firstChild(record).children.length, 0);
+  });
+
   test('style inheritance: <use> style overrides defaults, but overridden by referenced element', function () {
     const record = createSVG(`
       <svg xmlns="http://www.w3.org/2000/svg">

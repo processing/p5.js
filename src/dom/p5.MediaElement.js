@@ -891,7 +891,7 @@ class MediaElement extends Element {
    *
    * // Set isDone when playback ends.
    * function handleEnd() {
-   *   isDone = false;
+   *   isDone = true;
    * }
    */
   onended(callback) {
@@ -1762,5 +1762,5 @@ export default media;
 export { MediaElement };
 
 if (typeof p5 !== 'undefined') {
-  media(p5, p5.prototype);
+  p5.registerAddon(media);
 }

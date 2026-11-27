@@ -338,5 +338,5 @@ function timeDate(p5, fn) {
 export default timeDate;
 
 if (typeof p5 !== 'undefined') {
-  timeDate(p5, p5.prototype);
+  p5.registerAddon(timeDate);
 }

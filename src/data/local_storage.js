@@ -436,5 +436,5 @@ function storage(p5, fn) {
 export default storage;
 
 if (typeof p5 !== 'undefined') {
-  storage(p5, p5.prototype);
+  p5.registerAddon(storage);
 }

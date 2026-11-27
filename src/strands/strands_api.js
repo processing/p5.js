@@ -389,6 +389,17 @@ export function initGlobalStrandsAPI(p5, fn, strandsContext) {
       };
     }
   }
+
+  // `a ** b` is transpiled to `a.pow(b)`. Build a pow() function call rather
+  // than a binary operator, since GLSL and WGSL have no ** operator.
+  StrandsNode.prototype.pow = function (exponent) {
+    const { id, dimension } = build.functionCallNode(
+      strandsContext,
+      'pow',
+      [this, exponent]
+    );
+    return createStrandsNode(id, dimension, strandsContext);
+  };
   //////////////////////////////////////////////
   // Unique Functions
   //////////////////////////////////////////////

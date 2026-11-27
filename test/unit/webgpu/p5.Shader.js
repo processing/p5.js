@@ -2,6 +2,7 @@ import p5 from '../../../src/app.js';
 import rendererWebGPU from '../../../src/webgpu/p5.RendererWebGPU';
 
 p5.registerAddon(rendererWebGPU);
+p5.disableWebGLFallback = true;
 
 suite('WebGPU p5.Shader', function () {
   var myp5;
@@ -361,8 +362,15 @@ suite('WebGPU p5.Shader', function () {
           update: { put: (state, config, on) => ({ scoped: {}, global: { on } }) },
           read: { on: state => state.global.on }
         });
+        fn.testValue = p5.registerStrandsState('testValue', {
+          init(value) {
+            return { config: {}, state: { scoped: {}, global: { value } } };
+          },
+          update: { put: (state, config, value) => ({ scoped: {}, global: { value } }) },
+          read: { value: state => state.global.value }
+        });
       }
-      const addedNames = ['testLight', 'testMeter', 'testMatrix', 'testFlag'];
+      const addedNames = ['testLight', 'testMeter', 'testMatrix', 'testFlag', 'testValue'];
       let savedDescriptors;
       let registeredAddons;
       beforeAll(() => {
@@ -457,6 +465,24 @@ suite('WebGPU p5.Shader', function () {
         });
         assertRGB(left, [0, 0, 0]);
         assertRGB(right, [223, 223, 0]);
+      });
+
+      test('a loop reads helper and variable values from the start of the iteration', async () => {
+        const [left] = await render(() => {
+          myp5.getPixelInputs(inputs => {
+            let a = 0.2;
+            const h = myp5.testValue(myp5.float(0.8));
+            for (let i = 0; i < 2; i++) {
+              const old = a;
+              a = h.value() * 0.5;
+              h.put(old + 0.25);
+            }
+            inputs.color = [a, h.value(), 0, 1];
+            return inputs;
+          });
+        });
+        // (0.2, 0.8) -> (0.4, 0.45) -> (0.225, 0.65)
+        assertRGB(left, [57, 166, 0]);
       });
 
       test('pop() restores scoped fields and keeps global ones', async () => {
@@ -1704,6 +1730,155 @@ suite('WebGPU p5.Shader', function () {
         assert.approximately(pixelColor[0], 127, 5);
         assert.approximately(pixelColor[1], 191, 5);
       });
+
+      // Each iteration reads the values it started with.
+      suite('values carried between iterations', () => {
+        const renderRG = async callback => {
+          await myp5.createCanvas(50, 50, myp5.WEBGPU);
+          // Without a WebGPU adapter p5 falls back to WebGL.
+          assert.instanceOf(myp5._renderer, p5.RendererWebGPU);
+          const testShader = myp5.baseMaterialShader().modify(callback, { myp5 });
+          myp5.noStroke();
+          myp5.shader(testShader);
+          myp5.plane(myp5.width, myp5.height);
+          return [...(await myp5.get(25, 25))].slice(0, 2);
+        };
+        const assertRG = (actual, expected) => {
+          assert.approximately(actual[0], expected[0], 5);
+          assert.approximately(actual[1], expected[1], 5);
+        };
+
+        test('swap two values', async () => {
+          const rg = await renderRG(() => {
+            myp5.getPixelInputs(inputs => {
+              let a = 0.25;
+              let b = 0.75;
+              for (let i = 0; i < 1; i++) {
+                const t = a;
+                a = b;
+                b = t;
+              }
+              inputs.color = [a, b, 0, 1];
+              return inputs;
+            });
+          });
+          // a = 0.75, b = 0.25
+          assertRG(rg, [191, 64]);
+        });
+
+        test('compute a recurrence from the previous values', async () => {
+          const rg = await renderRG(() => {
+            myp5.getPixelInputs(inputs => {
+              let a = 0;
+              let b = 0.0625;
+              for (let i = 0; i < 5; i++) {
+                const t = a + b;
+                a = b;
+                b = t;
+              }
+              inputs.color = [a, b, 0, 1];
+              return inputs;
+            });
+          });
+          // Fibonacci in sixteenths: a = 5/16, b = 8/16
+          assertRG(rg, [80, 128]);
+        });
+
+        test('give the same result whichever order the values are assigned in', async () => {
+          const aFirst = await renderRG(() => {
+            myp5.getPixelInputs(inputs => {
+              let a = 0.2;
+              let b = 0.6;
+              for (let i = 0; i < 2; i++) {
+                const nextA = b * 0.5;
+                const nextB = a + 0.25;
+                a = nextA;
+                b = nextB;
+              }
+              inputs.color = [a, b, 0, 1];
+              return inputs;
+            });
+          });
+          const bFirst = await renderRG(() => {
+            myp5.getPixelInputs(inputs => {
+              let a = 0.2;
+              let b = 0.6;
+              for (let i = 0; i < 2; i++) {
+                const nextB = a + 0.25;
+                const nextA = b * 0.5;
+                b = nextB;
+                a = nextA;
+              }
+              inputs.color = [a, b, 0, 1];
+              return inputs;
+            });
+          });
+          // (0.2, 0.6) -> (0.3, 0.45) -> (0.225, 0.55)
+          assertRG(aFirst, [57, 140]);
+          assertRG(bFirst, [57, 140]);
+        });
+
+        test('keep swapped values when breaking after the swap', async () => {
+          const rg = await renderRG(() => {
+            myp5.getPixelInputs(inputs => {
+              let a = 0.2;
+              let b = 0.6;
+              for (let i = 0; i < 10; i++) {
+                const t = a;
+                a = b;
+                b = t;
+                if (i >= 2) break;
+              }
+              inputs.color = [a, b, 0, 1];
+              return inputs;
+            });
+          });
+          // Three swaps: a = 0.6, b = 0.2
+          assertRG(rg, [153, 51]);
+        });
+
+        test('read outer values from the start of the outer iteration around an inner loop', async () => {
+          const rg = await renderRG(() => {
+            myp5.getPixelInputs(inputs => {
+              let a = 0.1;
+              let b = 0.3;
+              for (let i = 0; i < 2; i++) {
+                for (let j = 0; j < 3; j++) {
+                  const t = a;
+                  a = b;
+                  b = t + 0.05;
+                }
+                const u = a;
+                a = b + 0.1;
+                b = u;
+              }
+              inputs.color = [a, b, 0, 1];
+              return inputs;
+            });
+          });
+          // i = 0: inner gives (0.35, 0.2), then (0.3, 0.35)
+          // i = 1: inner gives (0.4, 0.4), then (0.5, 0.4)
+          assertRG(rg, [128, 102]);
+        });
+
+        test('take the type of a variable that is first assigned in the loop', async () => {
+          const rg = await renderRG(() => {
+            myp5.getPixelInputs(inputs => {
+              let a = 0.1;
+              let last;
+              for (let i = 0; i < 3; i++) {
+                last = a;
+                a = a + 0.1;
+              }
+              const doubled = last * 2;
+              inputs.color = [doubled, a, 0, 1];
+              return inputs;
+            });
+          });
+          // last = 0.3, a = 0.4
+          assertRG(rg, [153, 102]);
+        });
+      });
     });
 
     suite('passing data between shaders', () => {
@@ -2624,6 +2799,66 @@ suite('WebGPU p5.Shader', function () {
             { myp5 }
           );
         }).not.toThrow();
+      });
+    });
+
+    suite('exponentiation operator', () => {
+      test('** gives the same result as pow()', async () => {
+        await myp5.createCanvas(50, 50, myp5.WEBGPU);
+        myp5.pixelDensity(1);
+        const testShader = myp5.baseMaterialShader().modify(
+          () => {
+            myp5.getFinalColor(() => {
+              let v = 0.5;
+              return [v ** 2, 0, 0, 1];
+            });
+          },
+          { myp5 }
+        );
+        myp5.background(0);
+        myp5.noStroke();
+        myp5.shader(testShader);
+        myp5.plane(myp5.width, myp5.height);
+        await myp5.loadPixels();
+        const i = (25 * myp5.width + 25) * 4;
+        assert.approximately(myp5.pixels[i], 64, 5); // 0.5 ** 2 = 0.25 -> ~64
+      });
+
+      test('**= works', async () => {
+        await myp5.createCanvas(50, 50, myp5.WEBGPU);
+        myp5.pixelDensity(1);
+        const testShader = myp5.baseMaterialShader().modify(
+          () => {
+            myp5.getFinalColor(() => {
+              let v = 0.5;
+              v **= 2;
+              return [v, 0, 0, 1];
+            });
+          },
+          { myp5 }
+        );
+        myp5.background(0);
+        myp5.noStroke();
+        myp5.shader(testShader);
+        myp5.plane(myp5.width, myp5.height);
+        await myp5.loadPixels();
+        const i = (25 * myp5.width + 25) * 4;
+        assert.approximately(myp5.pixels[i], 64, 5);
+      });
+
+      test('unsupported operators throw a clear error', async () => {
+        await myp5.createCanvas(5, 5, myp5.WEBGPU);
+        expect(() => {
+          myp5.baseMaterialShader().modify(
+            () => {
+              myp5.getFinalColor(() => {
+                let v = 1;
+                return [v & 1, 0, 0, 1];
+              });
+            },
+            { myp5 }
+          );
+        }).toThrow(/unsupported operator/);
       });
     });
 

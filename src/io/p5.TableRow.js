@@ -347,5 +347,5 @@ function tableRow(p5, fn) {
 export default tableRow;
 
 if (typeof p5 !== 'undefined') {
-  tableRow(p5, p5.prototype);
+  p5.registerAddon(tableRow);
 }

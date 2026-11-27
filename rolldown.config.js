@@ -35,6 +35,7 @@ export default defineConfig([
       {
         file: './lib/p5.js',
         format: 'iife',
+        strict: true,
         name: 'p5',
         banner
       },
@@ -57,6 +58,7 @@ export default defineConfig([
     output: {
       file: './lib/p5.min.js',
       format: 'iife',
+      strict: true,
       name: 'p5',
       banner,
       minify: true
@@ -85,11 +87,13 @@ export default defineConfig([
     output: [
       {
         file: `./lib/p5.${module}.js`,
+        strict: true,
         format: 'iife'
       },
       {
         file: `./lib/p5.${module}.min.js`,
         format: 'iife',
+        strict: true,
         minify: true
       },
       {

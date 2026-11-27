@@ -744,7 +744,10 @@ function material(p5, fn) {
   fn.buildFilterShader = function (callback, scope) {
     return this.baseFilterShader().modify(callback, scope);
   };
-  p5.registerDecorator('p5.prototype.buildFilterShader', markExperimental('p5.strands', p5));
+  p5.registerDecorator(
+    'p5.prototype.buildFilterShader',
+    markExperimental('p5.strands', p5)
+  );
 
   /**
    * Creates a <a href="#/p5.Shader">p5.Shader</a> that colors every pixel of
@@ -1662,7 +1665,10 @@ function material(p5, fn) {
   fn.buildMaterialShader = function (cb, scope) {
     return this.baseMaterialShader().modify(cb, scope);
   };
-  p5.registerDecorator('p5.prototype.buildMaterialShader', markExperimental('p5.strands', p5));
+  p5.registerDecorator(
+    'p5.prototype.buildMaterialShader',
+    markExperimental('p5.strands', p5)
+  );
 
   /**
    * Loads a new shader from a file that can change how fills are drawn. Pass the resulting
@@ -1881,7 +1887,10 @@ function material(p5, fn) {
   fn.buildNormalShader = function (cb, scope) {
     return this.baseNormalShader().modify(cb, scope);
   };
-  p5.registerDecorator('p5.prototype.buildNormalShader', markExperimental('p5.strands', p5));
+  p5.registerDecorator(
+    'p5.prototype.buildNormalShader',
+    markExperimental('p5.strands', p5)
+  );
 
   /**
    * Loads a new shader from a file that can change how fills are drawn, based on the material used
@@ -2046,7 +2055,10 @@ function material(p5, fn) {
   fn.buildColorShader = function (cb, scope) {
     return this.baseColorShader().modify(cb, scope);
   };
-  p5.registerDecorator('p5.prototype.buildColorShader', markExperimental('p5.strands', p5));
+  p5.registerDecorator(
+    'p5.prototype.buildColorShader',
+    markExperimental('p5.strands', p5)
+  );
 
   /**
    * Loads a new shader from a file that can change how fills are drawn, based on the material used
@@ -2304,7 +2316,10 @@ function material(p5, fn) {
   fn.buildStrokeShader = function (cb, scope) {
     return this.baseStrokeShader().modify(cb, scope);
   };
-  p5.registerDecorator('p5.prototype.buildStrokeShader', markExperimental('p5.strands', p5));
+  p5.registerDecorator(
+    'p5.prototype.buildStrokeShader',
+    markExperimental('p5.strands', p5)
+  );
 
   /**
    * Loads a new shader from a file that can change how strokes are drawn. Pass the resulting
@@ -3272,7 +3287,7 @@ function material(p5, fn) {
     }
   };
 
-    const VALID_WRAP_MODES = [
+  const VALID_WRAP_MODES = [
     constants.CLAMP,
     constants.REPEAT,
     constants.MIRROR
@@ -3551,7 +3566,7 @@ function material(p5, fn) {
    *   endShape();
    * }
    */
-    /**
+  /**
    * @method textureWrap
    * @param {Object} modes an object with `x` and `y` properties holding wrap
    *                       modes, as returned by calling `textureWrap()` with
@@ -4451,5 +4466,5 @@ function material(p5, fn) {
 export default material;
 
 if (typeof p5 !== 'undefined') {
-  loading(p5, p5.prototype);
+  p5.registerAddon(material);
 }

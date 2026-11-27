@@ -652,6 +652,8 @@ export function SVGImportAddon(p5, fn, lifecycles) {
 
     visitSVG(node) {
       for (const child of node.children) {
+        // <symbol> is only rendered through <use>, never directly
+        if (child.localName === 'symbol') continue;
         this.visit(child);
       }
     }
@@ -660,6 +662,8 @@ export function SVGImportAddon(p5, fn, lifecycles) {
       this.recorder.enterScope();
 
       for (const child of node.children) {
+        // <symbol> is only rendered through <use>, never directly
+        if (child.localName === 'symbol') continue;
         this.visit(child);
       }
 

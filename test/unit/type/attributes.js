@@ -25,6 +25,26 @@ suite('Typography Attributes', function () {
     });
   });
 
+  suite('textAlign', function () {
+    test('keeps valid horizontal and vertical values', function () {
+      myp5.textAlign(myp5.RIGHT, myp5.BOTTOM);
+      assert.strictEqual(myp5.textAlign().horizontal, myp5.RIGHT);
+      assert.strictEqual(myp5.textAlign().vertical, myp5.BOTTOM);
+    });
+    test('falls back to LEFT for an unknown horizontal value', function () {
+      myp5.textAlign(myp5.RIGHT);
+      myp5.textAlign(myp5.TOP);
+      assert.strictEqual(myp5.textAlign().horizontal, myp5.LEFT);
+      assert.strictEqual(myp5.drawingContext.textAlign, myp5.LEFT);
+    });
+    test('falls back to BASELINE for an unknown vertical value', function () {
+      myp5.textAlign(myp5.LEFT, myp5.TOP);
+      myp5.textAlign(myp5.LEFT, myp5.LEFT);
+      assert.strictEqual(myp5.textAlign().vertical, myp5.BASELINE);
+      assert.strictEqual(myp5.drawingContext.textBaseline, myp5.BASELINE);
+    });
+  });
+
   suite('textSize', function () {
     test('sets and gets the text size', function () {
       myp5.textSize(24);

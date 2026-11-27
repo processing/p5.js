@@ -413,5 +413,5 @@ export default texture;
 export { Texture, MipmapTexture };
 
 if (typeof p5 !== 'undefined') {
-  texture(p5, p5.prototype);
+  p5.registerAddon(texture);
 }

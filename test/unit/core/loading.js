@@ -319,6 +319,37 @@ suite('Loading indicator', function () {
     }
   });
 
+  test('parents loading overlay again when canvas parent changes', function () {
+    let nextFrame;
+    const requestAnimationFrame = vi
+      .spyOn(window, 'requestAnimationFrame')
+      .mockImplementation(callback => {
+        nextFrame = callback;
+        return 1;
+      });
+    const newContainer = document.createElement('div');
+    const p = {
+      canvas,
+      _isSketchLoading: true
+    };
+
+    document.body.appendChild(newContainer);
+
+    try {
+      callCreateCanvas(p);
+      newContainer.appendChild(canvas);
+
+      nextFrame();
+
+      assert.strictEqual(p._loadingOverlay.parentNode, newContainer);
+      assert.strictEqual(p._loadingOverlay.previousSibling, canvas);
+    } finally {
+      lifecycles.postsetup.call(p);
+      newContainer.remove();
+      requestAnimationFrame.mockRestore();
+    }
+  });
+
   test('test multiple indicators for multiple instances', async function () {
     const instance1 = document.createElement('div');
     const instance2 = document.createElement('div');
