@@ -676,5 +676,5 @@ function outputs(p5, fn) {
 export default outputs;
 
 if (typeof p5 !== 'undefined') {
-  outputs(p5, p5.prototype);
+  p5.registerAddon(outputs);
 }

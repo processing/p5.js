@@ -112,5 +112,5 @@ export default matrix;
 export { Matrix };
 
 if (typeof p5 !== 'undefined') {
-  matrix(p5, p5.prototype);
+  p5.registerAddon(matrix);
 }

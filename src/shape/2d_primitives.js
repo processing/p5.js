@@ -1316,5 +1316,5 @@ function primitives(p5, fn) {
 export default primitives;
 
 if (typeof p5 !== 'undefined') {
-  primitives(p5, p5.prototype);
+  p5.registerAddon(primitives);
 }

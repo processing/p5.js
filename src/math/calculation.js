@@ -1605,5 +1605,5 @@ function calculation(p5, fn) {
 export default calculation;
 
 if (typeof p5 !== 'undefined') {
-  calculation(p5, p5.prototype);
+  p5.registerAddon(calculation);
 }

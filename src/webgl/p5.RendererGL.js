@@ -13,7 +13,7 @@ import { Renderer3D } from '../core/p5.Renderer3D';
 import { getStrokeDefs } from './enums';
 import { Shader } from './p5.Shader';
 import { MipmapTexture } from './p5.Texture';
-import { RGB, RGBA } from '../color/creating_reading';
+import { RGB, RGBA } from '../color/color_constants';
 import { Image } from '../image/p5.Image';
 import { glslBackend } from './strands_glslBackend';
 import { getShaderHookTypes } from './shaderHookUtils';
@@ -2209,5 +2209,5 @@ export default rendererGL;
 export { RendererGL };
 
 if (typeof p5 !== 'undefined') {
-  rendererGL(p5, p5.prototype);
+  p5.registerAddon(rendererGL);
 }

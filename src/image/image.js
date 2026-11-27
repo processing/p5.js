@@ -700,5 +700,5 @@ function image(p5, fn) {
 export default image;
 
 if (typeof p5 !== 'undefined') {
-  image(p5, p5.prototype);
+  p5.registerAddon(image);
 }

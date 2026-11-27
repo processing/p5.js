@@ -1528,5 +1528,5 @@ export default loading;
 export { parseMtlData, mtlToPartState, buildMaterialParts };
 
 if (typeof p5 !== 'undefined') {
-  loading(p5, p5.prototype);
+  p5.registerAddon(loading);
 }

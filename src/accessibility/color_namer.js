@@ -715,5 +715,5 @@ function colorNamer(p5, fn) {
 export default colorNamer;
 
 if (typeof p5 !== 'undefined') {
-  colorNamer(p5, p5.prototype);
+  p5.registerAddon(colorNamer);
 }

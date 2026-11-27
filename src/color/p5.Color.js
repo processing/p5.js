@@ -7,14 +7,14 @@
 import {
   RGB,
   RGBP3,
-  HSL,
   HSB,
+  HSL,
   HWB,
   LAB,
   LCH,
   OKLAB,
   OKLCH
-} from './creating_reading';
+} from './color_constants.js';
 
 import {
   ColorSpace,
@@ -1144,5 +1144,5 @@ export default color;
 export { Color };
 
 if (typeof p5 !== 'undefined') {
-  color(p5, p5.prototype);
+  p5.registerAddon(color);
 }

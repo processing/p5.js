@@ -1369,5 +1369,5 @@ export default shader;
 export { Shader };
 
 if (typeof p5 !== 'undefined') {
-  shader(p5, p5.prototype);
+  p5.registerAddon(shader);
 }

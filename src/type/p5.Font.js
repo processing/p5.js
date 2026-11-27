@@ -1631,5 +1631,5 @@ export { sanitizeFontName as _sanitizeFontName };
 export default font;
 
 if (typeof p5 !== 'undefined') {
-  font(p5, p5.prototype);
+  p5.registerAddon(font);
 }
