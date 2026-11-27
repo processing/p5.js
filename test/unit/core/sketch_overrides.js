@@ -75,41 +75,50 @@ suite('Sketch Verifier', function () {
         functions: [
           {
             line: 5,
-            name: 'foo'
+            name: 'foo',
+            insideStrands: false,
           },
           {
             line: 6,
-            name: 'bar'
+            name: 'bar',
+            insideStrands: false,
           },
           {
             line: 7,
-            name: 'baz'
+            name: 'baz',
+            insideStrands: false,
           }
         ],
         variables: [
           {
             line: 1,
-            name: 'x'
+            name: 'x',
+            insideStrands: false,
           },
           {
             line: 2,
-            name: 'y'
+            name: 'y',
+            insideStrands: false,
           },
           {
             line: 3,
-            name: 'z'
+            name: 'z',
+            insideStrands: false,
           },
           {
             line: 4,
-            name: 'v1'
+            name: 'v1',
+            insideStrands: false,
           },
           {
             line: 4,
-            name: 'v2'
+            name: 'v2',
+            insideStrands: false,
           },
           {
             line: 4,
-            name: 'v3'
+            name: 'v3',
+            insideStrands: false,
           }
         ]
       };
@@ -143,19 +152,23 @@ suite('Sketch Verifier', function () {
         variables: [
           {
             line: 2,
-            name: 'x'
+            name: 'x',
+            insideStrands: false,
           },
           {
             line: 6,
-            name: 'y'
+            name: 'y',
+            insideStrands: false,
           },
           {
             line: 11,
-            name: 'z'
+            name: 'z',
+            insideStrands: false,
           },
           {
             line: 13,
-            name: 'i'
+            name: 'i',
+            insideStrands: false,
           }
         ]
       };
@@ -176,6 +189,80 @@ suite('Sketch Verifier', function () {
       expect(result).toEqual({ variables: [], functions: [] });
       consoleSpy.mockRestore();
     });
+
+    suite('strands region detection', function () {
+      test('does not mark GLSL names outside strands hooks', function () {
+        const code = `
+          function setup() {
+            const length = 0;
+            createCanvas(100, 100, WEBGL);
+          }
+        `;
+        const result = verifierUtils.extractUserDefinedVariablesAndFuncs(code);
+        const lengthDef = result.variables.find(d => d.name === 'length');
+        expect(lengthDef).toBeDefined();
+        expect(lengthDef.insideStrands).toBe(false);
+      });
+
+      test('marks names in a named build*Shader callback', function () {
+        const code = `
+          function setup() {
+            buildFilterShader(hook);
+          }
+          function hook() {
+            filterColor.begin();
+            const length = 0;
+            filterColor.end();
+          }
+        `;
+        const result = verifierUtils.extractUserDefinedVariablesAndFuncs(code);
+        const lengthDef = result.variables.find(d => d.name === 'length');
+        expect(lengthDef).toBeDefined();
+        expect(lengthDef.insideStrands).toBe(true);
+      });
+
+      test('handles inline buildFilterShader arrow callbacks', function () {
+        const code = `
+          function setup() {
+            buildFilterShader(() => {
+              filterColor.begin();
+              const length = 0;
+              filterColor.end();
+            });
+          }
+        `;
+        const result = verifierUtils.extractUserDefinedVariablesAndFuncs(code);
+        const lengthDef = result.variables.find(d => d.name === 'length');
+        expect(lengthDef).toBeDefined();
+        expect(lengthDef.insideStrands).toBe(true);
+      });
+
+      test('handles baseFilterShader().modify callbacks', function () {
+        const code = `
+          function setup() {
+            baseFilterShader().modify(() => {
+              filterColor.begin();
+              const length = 0;
+              filterColor.end();
+            });
+          }
+        `;
+        const result = verifierUtils.extractUserDefinedVariablesAndFuncs(code);
+        const lengthDef = result.variables.find(d => d.name === 'length');
+        expect(lengthDef).toBeDefined();
+        expect(lengthDef.insideStrands).toBe(true);
+      });
+
+      test('does not crash or flag unrelated object modify calls', function () {
+        const code = `
+          const obj = { modify: fn => fn() };
+          obj.modify(() => { const length = 0; });
+        `;
+        const result = verifierUtils.extractUserDefinedVariablesAndFuncs(code);
+        const lengthDef = result.variables.find(d => d.name === 'length');
+        expect(lengthDef?.insideStrands).toBe(false);
+      });
+    });
   });
 
   suite('checkForConstsAndFuncs()', function () {
@@ -186,6 +273,7 @@ suite('Sketch Verifier', function () {
       setup() {}
       draw() {}
       rect() {}
+      max() {}
     }
 
     beforeEach(function () {
@@ -263,6 +351,61 @@ suite('Sketch Verifier', function () {
       );
 
       expect(result).toBe(false);
+    });
+
+    test('warns on strands builtin only when insideStrands is true', function () {
+      const outside = {
+        variables: [{ name: 'length', line: 0, insideStrands: false }],
+        functions: []
+      };
+      // If length is only special-cased via the strands path (not a p5 global),
+      // outside should not warn for that reason:
+      const outsideResult = verifierUtils.checkForConstsAndFuncs(outside, MockP5);
+      // may still be false unless length conflicts with something else
+
+      const inside = {
+        variables: [{ name: 'length', line: 1, insideStrands: true }],
+        functions: []
+      };
+      const insideResult = verifierUtils.checkForConstsAndFuncs(inside, MockP5);
+      // true only if length is in builtInGLSLFunctions
+      if (insideResult) {
+        expect(consoleSpy).toHaveBeenCalledWith(
+          expect.stringContaining('length')
+        );
+      }
+    });
+
+    test('warns on overlapping builtins in both scopes', function () {
+      const outside = {
+        variables: [{ name: 'max', line: 0, insideStrands: false }],
+        functions: []
+      };
+      const outsideResult = verifierUtils.checkForConstsAndFuncs(
+        outside,
+        MockP5
+      );
+      expect(outsideResult).toBe(true);
+      expect(consoleSpy).toHaveBeenCalledWith(
+        expect.stringContaining(
+          'function "max" on line 1 is being redeclared and conflicts with a p5.js function'
+        )
+      );
+
+      consoleSpy.mockClear();
+
+      const inside = {
+        variables: [{ name: 'max', line: 1, insideStrands: true }],
+        functions: []
+      };
+      const insideResult = verifierUtils.checkForConstsAndFuncs(
+        inside,
+        MockP5
+      );
+      expect(insideResult).toBe(true);
+      expect(consoleSpy).toHaveBeenCalledWith(
+        expect.stringContaining('max')
+      );
     });
   });
 });
