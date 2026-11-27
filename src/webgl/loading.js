@@ -1219,7 +1219,7 @@ function loading(p5, fn) {
    *   createCanvas(100, 100, WEBGL);
    *
    *   // Create the p5.Geometry object.
-   *   shape = buildGeometry(createShape);
+   *   shape = buildGeometry(createCone);
    *
    *   describe('A white cone drawn on a gray background.');
    * }
@@ -1235,7 +1235,7 @@ function loading(p5, fn) {
    * }
    *
    * // Create p5.Geometry object from a single cone.
-   * function createShape() {
+   * function createCone() {
    *   cone();
    * }
    * ```
@@ -1528,5 +1528,5 @@ export default loading;
 export { parseMtlData, mtlToPartState, buildMaterialParts };
 
 if (typeof p5 !== 'undefined') {
-  loading(p5, p5.prototype);
+  p5.registerAddon(loading);
 }

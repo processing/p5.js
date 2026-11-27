@@ -577,5 +577,5 @@ function attributes(p5, fn) {
 export default attributes;
 
 if (typeof p5 !== 'undefined') {
-  attributes(p5, p5.prototype);
+  p5.registerAddon(attributes);
 }

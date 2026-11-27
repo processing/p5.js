@@ -3,6 +3,7 @@ import rendererWebGPU from '../../../src/webgpu/p5.RendererWebGPU';
 import { vi } from 'vitest';
 
 p5.registerAddon(rendererWebGPU);
+p5.disableWebGLFallback = true;
 
 suite('WebGPU p5.RendererWebGPU', function () {
   let myp5;
@@ -998,10 +999,6 @@ suite('WebGPU p5.RendererWebGPU', function () {
     function bareRenderer() {
       const renderer = Object.create(p5.RendererWebGPU.prototype);
       renderer._pInst = myp5;
-      renderer._webgpuAttributes = {
-        forceFallbackAdapter: false,
-        powerPreference: 'high-performance'
-      };
       renderer.canvas = document.createElement('canvas');
       return renderer;
     }
@@ -1020,6 +1017,21 @@ suite('WebGPU p5.RendererWebGPU', function () {
         }
       };
     }
+
+    test('passes the default adapter options to requestAdapter', async function () {
+      const spy = vi.spyOn(navigator.gpu, 'requestAdapter');
+      try {
+        await myp5.createCanvas(50, 50, myp5.WEBGPU);
+        expect(spy).toHaveBeenCalledWith(
+          expect.objectContaining({
+            forceFallbackAdapter: false,
+            powerPreference: 'high-performance'
+          })
+        );
+      } finally {
+        spy.mockRestore();
+      }
+    });
 
     test('throws a friendly error when WebGPU is not supported', async function () {
       const restore = stubGpu(undefined);

@@ -3940,6 +3940,6 @@ function camera(p5, fn) {
 export default camera;
 export { Camera };
 
-if (typeof p5 !== 'undefined') {
-  camera(p5, p5.prototype);
-}
+// if (typeof p5 !== 'undefined') {
+//   p5.registerAddon(camera);
+// }

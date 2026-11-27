@@ -740,5 +740,5 @@ function utilityFunctions(p5, fn) {
 export default utilityFunctions;
 
 if (typeof p5 !== 'undefined') {
-  utilityFunctions(p5, p5.prototype);
+  p5.registerAddon(utilityFunctions);
 }

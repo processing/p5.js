@@ -21,10 +21,10 @@ function describe(p5, fn) {
    *
    * The second parameter, `display`, is optional and can be `LABEL` or
    * `FALLBACK`. The third parameter, `lang`, is optional and sets the language
-   * of the description for screen readers. However, if only the optional 'lang' 
+   * of the description for screen readers. However, if only the optional 'lang'
    * parameter is passed, it will be treated as the second optional parameter and
    * the default option 'FALLBACK' will be used as the display.
-   * 
+   *
    *
    * Read
    * <a href="/learn/accessible-labels.html">Writing accessible canvas descriptions</a>
@@ -169,17 +169,17 @@ function describe(p5, fn) {
    * The first parameter, `name`, is the name of the element.
    *
    * The second parameter, `text`, is the description of the element.
-   * 
+   *
    * The third parameter, `display`, is optional and can be `LABEL` or
    * `FALLBACK`. The fourth parameter, `lang`, is optional and sets the language
-   * of the description for screen readers. However, if only the optional 'lang' 
+   * of the description for screen readers. However, if only the optional 'lang'
    * parameter is passed, it will be treated as the third optional parameter and
    * the default option 'FALLBACK' will be used as the display.
    *
-   * If `LABEL` is passed, as in `describe('A description.', LABEL)`, 
-   * the description will be visible in a div element next to the canvas. Using 
-   * `LABEL` creates unhelpful duplicates for screen readers. Only use `LABEL` 
-   * during development. If `FALLBACK` is passed, as in `describe('A description.', FALLBACK)`, 
+   * If `LABEL` is passed, as in `describe('A description.', LABEL)`,
+   * the description will be visible in a div element next to the canvas. Using
+   * `LABEL` creates unhelpful duplicates for screen readers. Only use `LABEL`
+   * during development. If `FALLBACK` is passed, as in `describe('A description.', FALLBACK)`,
    * the description will only be visible to screen readers. This is the default mode.
    *
    * Read
@@ -375,7 +375,7 @@ function describe(p5, fn) {
     if (pInst.descriptions.fallback) {
       if (typeof lang === 'string') {
         pInst.descriptions.fallback.setAttribute('lang', lang);
-      } 
+      }
       else {
         pInst.descriptions.fallback.removeAttribute('lang');
       }
@@ -384,7 +384,7 @@ function describe(p5, fn) {
     if (pInst.descriptions.label) {
       if (typeof lang === 'string') {
         pInst.descriptions.label.setAttribute('lang', lang);
-      } 
+      }
       else {
         pInst.descriptions.label.removeAttribute('lang');
       }
@@ -590,5 +590,5 @@ function describe(p5, fn) {
 export default describe;
 
 if (typeof p5 !== 'undefined') {
-  describe(p5, p5.prototype);
+  p5.registerAddon(describe);
 }

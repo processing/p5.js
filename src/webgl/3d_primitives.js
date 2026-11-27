@@ -126,7 +126,7 @@ function primitives3D(p5, fn) {
    *   createCanvas(100, 100, WEBGL);
    *
    *   // Create the p5.Geometry object.
-   *   shape = buildGeometry(createShape);
+   *   shape = buildGeometry(createCone);
    *
    *   describe('A white cone drawn on a gray background.');
    * }
@@ -148,7 +148,7 @@ function primitives3D(p5, fn) {
    * }
    *
    * // Create p5.Geometry object from a single cone.
-   * function createShape() {
+   * function createCone() {
    *   cone();
    * }
    *
@@ -2769,5 +2769,5 @@ function primitives3D(p5, fn) {
 export default primitives3D;
 
 if (typeof p5 !== 'undefined') {
-  primitives3D(p5, p5.prototype);
+  p5.registerAddon(primitives3D);
 }

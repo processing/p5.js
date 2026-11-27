@@ -109,5 +109,5 @@ export default dataArray;
 export { DataArray };
 
 if (typeof p5 !== 'undefined') {
-  dataArray(p5, p5.prototype);
+  p5.registerAddon(dataArray);
 }

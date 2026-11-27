@@ -611,8 +611,8 @@ class Geometry {
    *   background(200);
    *
    *   // Create p5.Geometry objects.
-   *   let geom1 = buildGeometry(createShape);
-   *   let geom2 = buildGeometry(createShape);
+   *   let geom1 = buildGeometry(createPlane);
+   *   let geom2 = buildGeometry(createPlane);
    *
    *   // Flip geom2's U texture coordinates.
    *   geom2.flipU();
@@ -638,7 +638,7 @@ class Geometry {
    *   );
    * }
    *
-   * function createShape() {
+   * function createPlane() {
    *   plane(40);
    * }
    */
@@ -699,8 +699,8 @@ class Geometry {
    *   background(200);
    *
    *   // Create p5.Geometry objects.
-   *   let geom1 = buildGeometry(createShape);
-   *   let geom2 = buildGeometry(createShape);
+   *   let geom1 = buildGeometry(createPlane);
+   *   let geom2 = buildGeometry(createPlane);
    *
    *   // Flip geom2's V texture coordinates.
    *   geom2.flipV();
@@ -726,7 +726,7 @@ class Geometry {
    *   );
    * }
    *
-   * function createShape() {
+   * function createPlane() {
    *   plane(40);
    * }
    */
@@ -826,7 +826,7 @@ class Geometry {
    *   createCanvas(100, 100, WEBGL);
    *
    *   // Create a p5.Geometry object using a callback function.
-   *   myGeometry = new p5.Geometry(1, 1, createShape);
+   *   myGeometry = new p5.Geometry(1, 1, createSquare);
    *
    *   describe('A red square drawn on a gray background.');
    * }
@@ -848,7 +848,7 @@ class Geometry {
    *   model(myGeometry);
    * }
    *
-   * function createShape() {
+   * function createSquare() {
    *   // Create p5.Vector objects to position the vertices.
    *   let v0 = createVector(-40, 0, 0);
    *   let v1 = createVector(0, -40, 0);
@@ -1069,7 +1069,7 @@ class Geometry {
    *   createCanvas(100, 100, WEBGL);
    *
    *   // Create a p5.Geometry object.
-   *   myGeometry = buildGeometry(createShape);
+   *   myGeometry = buildGeometry(createHelix);
    *
    *   // Compute normals while preserving existing vertex connections.
    *   myGeometry.computeNormals(KEEP_CONNECTIONS);
@@ -1096,7 +1096,7 @@ class Geometry {
    *   model(myGeometry);
    * }
    *
-   * function createShape() {
+   * function createHelix() {
    *   // Create a helical shape.
    *   beginShape();
    *   for (let i = 0; i < TWO_PI * 3; i += 0.5) {
@@ -1117,7 +1117,7 @@ class Geometry {
    *   createCanvas(100, 100, WEBGL);
    *
    *   // Create a p5.Geometry object.
-   *   myGeometry = buildGeometry(createShape);
+   *   myGeometry = buildGeometry(createHelix);
    *
    *   // Compute normals using smooth shading.
    *   myGeometry.computeNormals(SMOOTH);
@@ -1144,7 +1144,7 @@ class Geometry {
    *   model(myGeometry);
    * }
    *
-   * function createShape() {
+   * function createHelix() {
    *   // Create a helical shape.
    *   beginShape();
    *   for (let i = 0; i < TWO_PI * 3; i += 0.5) {
@@ -1165,7 +1165,7 @@ class Geometry {
    *   createCanvas(100, 100, WEBGL);
    *
    *   // Create a p5.Geometry object.
-   *   myGeometry = buildGeometry(createShape);
+   *   myGeometry = buildGeometry(createHelix);
    *
    *   // Create an options object.
    *   let options = { roundToPrecision: 5 };
@@ -1195,7 +1195,7 @@ class Geometry {
    *   model(myGeometry);
    * }
    *
-   * function createShape() {
+   * function createHelix() {
    *   // Create a helical shape.
    *   beginShape();
    *   for (let i = 0; i < TWO_PI * 3; i += 0.5) {
@@ -2054,7 +2054,7 @@ function geometry(p5, fn) {
    * 1.
    *
    * The third parameter, `callback`, is also optional. If a function is passed,
-   * as in `new p5.Geometry(24, 16, createShape)`, it will be called once to add
+   * as in `new p5.Geometry(24, 16, createGeometry)`, it will be called once to add
    * vertices to the new 3D shape.
    *
    * @class p5.Geometry
@@ -2103,7 +2103,7 @@ function geometry(p5, fn) {
    *   createCanvas(100, 100, WEBGL);
    *
    *   // Create a p5.Geometry object using a callback function.
-   *   myGeometry = new p5.Geometry(1, 1, createShape);
+   *   myGeometry = new p5.Geometry(1, 1, createTriangle);
    *
    *   describe('A white triangle drawn on a gray background.');
    * }
@@ -2118,7 +2118,7 @@ function geometry(p5, fn) {
    *   model(myGeometry);
    * }
    *
-   * function createShape() {
+   * function createTriangle() {
    *   // Create p5.Vector objects to position the vertices.
    *   let v0 = createVector(-40, 0, 0);
    *   let v1 = createVector(0, -40, 0);
@@ -2144,7 +2144,7 @@ function geometry(p5, fn) {
    *   createCanvas(100, 100, WEBGL);
    *
    *   // Create a p5.Geometry object using a callback function.
-   *   myGeometry = new p5.Geometry(1, 1, createShape);
+   *   myGeometry = new p5.Geometry(1, 1, createTriangle);
    *
    *   describe('A white triangle drawn on a gray background.');
    * }
@@ -2159,7 +2159,7 @@ function geometry(p5, fn) {
    *   model(myGeometry);
    * }
    *
-   * function createShape() {
+   * function createTriangle() {
    *   // Create p5.Vector objects to position the vertices.
    *   let v0 = createVector(-40, 0, 0);
    *   let v1 = createVector(0, -40, 0);
@@ -2194,7 +2194,7 @@ function geometry(p5, fn) {
    *   // Create the p5.Geometry object.
    *   // Set detailX to 48 and detailY to 2.
    *   // >>> try changing them.
-   *   myGeometry = new p5.Geometry(48, 2, createShape);
+   *   myGeometry = new p5.Geometry(48, 2, createMobiusStrip);
    * }
    *
    * function draw() {
@@ -2213,7 +2213,7 @@ function geometry(p5, fn) {
    *   model(myGeometry);
    * }
    *
-   * function createShape() {
+   * function createMobiusStrip() {
    *   // "this" refers to the p5.Geometry object being created.
    *
    *   // Define the Möbius strip with a few parameters.
@@ -2596,8 +2596,8 @@ function geometry(p5, fn) {
    *   background(200);
    *
    *   // Create p5.Geometry objects.
-   *   let geom1 = buildGeometry(createShape);
-   *   let geom2 = buildGeometry(createShape);
+   *   let geom1 = buildGeometry(createPlane);
+   *   let geom2 = buildGeometry(createPlane);
    *
    *   // Left (original).
    *   push();
@@ -2623,7 +2623,7 @@ function geometry(p5, fn) {
    *   );
    * }
    *
-   * function createShape() {
+   * function createPlane() {
    *   plane(40);
    * }
    */
@@ -2640,5 +2640,5 @@ export default geometry;
 export { Geometry };
 
 if (typeof p5 !== 'undefined') {
-  geometry(p5, p5.prototype);
+  p5.registerAddon(geometry);
 }

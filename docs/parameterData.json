@@ -951,6 +951,29 @@
         ]
       ]
     },
+    "color": {
+      "overloads": [
+        [
+          "Number",
+          "Number?"
+        ],
+        [
+          "Number",
+          "Number",
+          "Number",
+          "Number?"
+        ],
+        [
+          "String"
+        ],
+        [
+          "Number[]"
+        ],
+        [
+          "p5.Color"
+        ]
+      ]
+    },
     "removeElements": {
       "overloads": [
         []
@@ -1161,29 +1184,6 @@
         ],
         [
           "Number"
-        ],
-        [
-          "String"
-        ],
-        [
-          "Number[]"
-        ],
-        [
-          "p5.Color"
-        ]
-      ]
-    },
-    "color": {
-      "overloads": [
-        [
-          "Number",
-          "Number?"
-        ],
-        [
-          "Number",
-          "Number",
-          "Number",
-          "Number?"
         ],
         [
           "String"
@@ -1445,6 +1445,13 @@
         ]
       ]
     },
+    "red": {
+      "overloads": [
+        [
+          "p5.Color|Number[]|String"
+        ]
+      ]
+    },
     "loadFilterShader": {
       "overloads": [
         [
@@ -1499,13 +1506,6 @@
         [
           "String|Request",
           "Object?"
-        ]
-      ]
-    },
-    "red": {
-      "overloads": [
-        [
-          "p5.Color|Number[]|String"
         ]
       ]
     },
@@ -1721,6 +1721,13 @@
         ]
       ]
     },
+    "green": {
+      "overloads": [
+        [
+          "p5.Color|Number[]|String"
+        ]
+      ]
+    },
     "debugMode": {
       "overloads": [
         [],
@@ -1850,13 +1857,6 @@
       "overloads": [
         [
           "Number"
-        ]
-      ]
-    },
-    "green": {
-      "overloads": [
-        [
-          "p5.Color|Number[]|String"
         ]
       ]
     },
@@ -2006,6 +2006,13 @@
         ]
       ]
     },
+    "blue": {
+      "overloads": [
+        [
+          "p5.Color|Number[]|String"
+        ]
+      ]
+    },
     "fullscreen": {
       "overloads": [
         [
@@ -2114,13 +2121,6 @@
         ]
       ]
     },
-    "blue": {
-      "overloads": [
-        [
-          "p5.Color|Number[]|String"
-        ]
-      ]
-    },
     "updatePixels": {
       "overloads": [
         [
@@ -2178,6 +2178,13 @@
           "Integer?",
           "Boolean?",
           "Boolean?"
+        ]
+      ]
+    },
+    "alpha": {
+      "overloads": [
+        [
+          "p5.Color|Number[]|String"
         ]
       ]
     },
@@ -2270,13 +2277,6 @@
     "lights": {
       "overloads": [
         []
-      ]
-    },
-    "alpha": {
-      "overloads": [
-        [
-          "p5.Color|Number[]|String"
-        ]
       ]
     },
     "splineTangent": {
@@ -2388,6 +2388,13 @@
         ]
       ]
     },
+    "hue": {
+      "overloads": [
+        [
+          "p5.Color|Number[]|String"
+        ]
+      ]
+    },
     "image": {
       "overloads": [
         [
@@ -2487,13 +2494,6 @@
         ],
         [
           "Object"
-        ]
-      ]
-    },
-    "hue": {
-      "overloads": [
-        [
-          "p5.Color|Number[]|String"
         ]
       ]
     },
@@ -2692,6 +2692,13 @@
         [
           "String",
           "String?"
+        ]
+      ]
+    },
+    "saturation": {
+      "overloads": [
+        [
+          "p5.Color|Number[]|String"
         ]
       ]
     },
@@ -2932,13 +2939,6 @@
         []
       ]
     },
-    "saturation": {
-      "overloads": [
-        [
-          "p5.Color|Number[]|String"
-        ]
-      ]
-    },
     "noLights": {
       "overloads": [
         []
@@ -3058,6 +3058,13 @@
         ]
       ]
     },
+    "brightness": {
+      "overloads": [
+        [
+          "p5.Color|Number[]|String"
+        ]
+      ]
+    },
     "createAudio": {
       "overloads": [
         [
@@ -3092,13 +3099,6 @@
         [
           null,
           "Number"
-        ]
-      ]
-    },
-    "brightness": {
-      "overloads": [
-        [
-          "p5.Color|Number[]|String"
         ]
       ]
     },
@@ -3206,6 +3206,13 @@
         []
       ]
     },
+    "lightness": {
+      "overloads": [
+        [
+          "p5.Color|Number[]|String"
+        ]
+      ]
+    },
     "saveSVG": {
       "overloads": [
         [
@@ -3235,13 +3242,6 @@
     "baseMaterialShader": {
       "overloads": [
         []
-      ]
-    },
-    "lightness": {
-      "overloads": [
-        [
-          "p5.Color|Number[]|String"
-        ]
       ]
     },
     "doubleClicked": {
@@ -3298,6 +3298,20 @@
         []
       ]
     },
+    "lerpColor": {
+      "overloads": [
+        [
+          "p5.Color",
+          "p5.Color",
+          "Number"
+        ],
+        [
+          "p5.Color",
+          "p5.Color",
+          "Object"
+        ]
+      ]
+    },
     "buildNormalShader": {
       "overloads": [
         [
@@ -3326,25 +3340,19 @@
         ]
       ]
     },
+    "paletteLerp": {
+      "overloads": [
+        [
+          "[p5.Color|String|Number|Number[], Number][]",
+          "Number"
+        ]
+      ]
+    },
     "createFileInput": {
       "overloads": [
         [
           "Function",
           "Boolean?"
-        ]
-      ]
-    },
-    "lerpColor": {
-      "overloads": [
-        [
-          "p5.Color",
-          "p5.Color",
-          "Number"
-        ],
-        [
-          "p5.Color",
-          "p5.Color",
-          "Object"
         ]
       ]
     },
@@ -3360,14 +3368,6 @@
     "requestPointerLock": {
       "overloads": [
         []
-      ]
-    },
-    "paletteLerp": {
-      "overloads": [
-        [
-          "[p5.Color|String|Number|Number[], Number][]",
-          "Number"
-        ]
       ]
     },
     "baseNormalShader": {

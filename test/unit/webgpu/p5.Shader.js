@@ -2,6 +2,7 @@ import p5 from '../../../src/app.js';
 import rendererWebGPU from '../../../src/webgpu/p5.RendererWebGPU';
 
 p5.registerAddon(rendererWebGPU);
+p5.disableWebGLFallback = true;
 
 suite('WebGPU p5.Shader', function () {
   var myp5;

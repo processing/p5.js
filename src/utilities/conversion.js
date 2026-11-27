@@ -956,5 +956,5 @@ function conversion(p5, fn) {
 export default conversion;
 
 if (typeof p5 !== 'undefined') {
-  conversion(p5, p5.prototype);
+  p5.registerAddon(conversion);
 }

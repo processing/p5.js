@@ -1179,5 +1179,5 @@ function trigonometry(p5, fn) {
 export default trigonometry;
 
 if (typeof p5 !== 'undefined') {
-  trigonometry(p5, p5.prototype);
+  p5.registerAddon(trigonometry);
 }

@@ -1787,5 +1787,5 @@ function light(p5, fn) {
 export default light;
 
 if (typeof p5 !== 'undefined') {
-  light(p5, p5.prototype);
+  p5.registerAddon(light);
 }
