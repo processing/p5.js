@@ -2373,5 +2373,5 @@ export default element;
 export { Element };
 
 if (typeof p5 !== 'undefined') {
-  element(p5, p5.prototype);
+  p5.registerAddon(element);
 }

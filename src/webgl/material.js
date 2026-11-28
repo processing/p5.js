@@ -744,7 +744,10 @@ function material(p5, fn) {
   fn.buildFilterShader = function (callback, scope) {
     return this.baseFilterShader().modify(callback, scope);
   };
-  p5.registerDecorator('p5.prototype.buildFilterShader', markExperimental('p5.strands', p5));
+  p5.registerDecorator(
+    'p5.prototype.buildFilterShader',
+    markExperimental('p5.strands', p5)
+  );
 
   /**
    * Creates a <a href="#/p5.Shader">p5.Shader</a> object to be used with the
@@ -1573,7 +1576,10 @@ function material(p5, fn) {
   fn.buildMaterialShader = function (cb, scope) {
     return this.baseMaterialShader().modify(cb, scope);
   };
-  p5.registerDecorator('p5.prototype.buildMaterialShader', markExperimental('p5.strands', p5));
+  p5.registerDecorator(
+    'p5.prototype.buildMaterialShader',
+    markExperimental('p5.strands', p5)
+  );
 
   /**
    * Loads a new shader from a file that can change how fills are drawn. Pass the resulting
@@ -1792,7 +1798,10 @@ function material(p5, fn) {
   fn.buildNormalShader = function (cb, scope) {
     return this.baseNormalShader().modify(cb, scope);
   };
-  p5.registerDecorator('p5.prototype.buildNormalShader', markExperimental('p5.strands', p5));
+  p5.registerDecorator(
+    'p5.prototype.buildNormalShader',
+    markExperimental('p5.strands', p5)
+  );
 
   /**
    * Loads a new shader from a file that can change how fills are drawn, based on the material used
@@ -1957,7 +1966,10 @@ function material(p5, fn) {
   fn.buildColorShader = function (cb, scope) {
     return this.baseColorShader().modify(cb, scope);
   };
-  p5.registerDecorator('p5.prototype.buildColorShader', markExperimental('p5.strands', p5));
+  p5.registerDecorator(
+    'p5.prototype.buildColorShader',
+    markExperimental('p5.strands', p5)
+  );
 
   /**
    * Loads a new shader from a file that can change how fills are drawn, based on the material used
@@ -2215,7 +2227,10 @@ function material(p5, fn) {
   fn.buildStrokeShader = function (cb, scope) {
     return this.baseStrokeShader().modify(cb, scope);
   };
-  p5.registerDecorator('p5.prototype.buildStrokeShader', markExperimental('p5.strands', p5));
+  p5.registerDecorator(
+    'p5.prototype.buildStrokeShader',
+    markExperimental('p5.strands', p5)
+  );
 
   /**
    * Loads a new shader from a file that can change how strokes are drawn. Pass the resulting
@@ -3183,6 +3198,28 @@ function material(p5, fn) {
     }
   };
 
+  const VALID_WRAP_MODES = [
+    constants.CLAMP,
+    constants.REPEAT,
+    constants.MIRROR
+  ];
+
+  // Warns once per sketch if a wrap mode isn't one of the three constants.
+  // Non-blocking: the value is still stored, and an unrecognised mode
+  // continues to fall back to CLAMP in the renderer.
+  function warnInvalidWrapMode(pInst, value, paramName) {
+    if (p5.disableFriendlyErrors) return;
+    if (VALID_WRAP_MODES.includes(value)) return;
+    if (pInst._textureWrapWarned) return;
+
+    pInst._textureWrapWarned = true;
+    p5._friendlyError(
+      `textureWrap() expects CLAMP, REPEAT, or MIRROR, but received ` +
+        `${value} for ${paramName}. The texture will fall back to CLAMP.`,
+      'textureWrap'
+    );
+  }
+
   /**
    * Changes the way textures behave when a shape’s uv coordinates go beyond the
    * texture.
@@ -3282,7 +3319,8 @@ function material(p5, fn) {
    * Note: `textureWrap()` can only be used in WebGL mode.
    *
    * Calling `textureWrap()` with no arguments returns an object with the current
-   * mode for x and y directions, as in `{ wrapX: CLAMP, wrapY: REPEAT }`.
+   * mode for x and y directions, as in `{ x: CLAMP, y: REPEAT }`. That object can
+   * be passed straight back into `textureWrap()` to restore both modes.
    *
    * @method textureWrap
    * @param {(CLAMP|REPEAT|MIRROR)} wrapX either CLAMP, REPEAT, or MIRROR
@@ -3441,6 +3479,13 @@ function material(p5, fn) {
    */
   /**
    * @method textureWrap
+   * @param {Object} modes an object with `x` and `y` properties holding wrap
+   *                       modes, as returned by calling `textureWrap()` with
+   *                       no arguments
+   * @chainable
+   */
+  /**
+   * @method textureWrap
    * @return {{x: (CLAMP|REPEAT|MIRROR), y: (CLAMP|REPEAT|MIRROR)}} The current texture wrapping for x and y.
    */
   fn.textureWrap = function (wrapX, wrapY = wrapX) {
@@ -3452,10 +3497,18 @@ function material(p5, fn) {
       };
     }
     // accept what is returned from the getter
-    if (wrapX.hasOwnProperty('x') && wrapX.hasOwnProperty('y')) {
-      wrapX = wrapX.x;
-      wrapY = wrapX.y;
+    if (
+      wrapX !== null &&
+      typeof wrapX === 'object' &&
+      Object.hasOwn(wrapX, 'x') &&
+      Object.hasOwn(wrapX, 'y')
+    ) {
+      ({ x: wrapX, y: wrapY } = wrapX);
     }
+
+    warnInvalidWrapMode(this, wrapX, 'wrapX');
+    warnInvalidWrapMode(this, wrapY, 'wrapY');
+
     this._renderer.states.setValue('textureWrapX', wrapX);
     this._renderer.states.setValue('textureWrapY', wrapY);
 
@@ -4324,5 +4377,5 @@ function material(p5, fn) {
 export default material;
 
 if (typeof p5 !== 'undefined') {
-  loading(p5, p5.prototype);
+  p5.registerAddon(material);
 }

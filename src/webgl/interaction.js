@@ -873,5 +873,5 @@ function interaction(p5, fn) {
 export default interaction;
 
 if (typeof p5 !== 'undefined') {
-  interaction(p5, p5.prototype);
+  p5.registerAddon(interaction);
 }

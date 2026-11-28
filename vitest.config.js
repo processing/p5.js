@@ -8,6 +8,14 @@ const plugins = [
   })
 ];
 
+const hardwareWebGPUArgs = [
+  '--use-angle=vulkan',
+  '--enable-features=Vulkan,VulkanFromANGLE,DefaultANGLEVulkan',
+  '--use-vulkan=native',
+  '--ignore-gpu-blocklist',
+  '--disable-vulkan-surface'
+];
+
 export default defineConfig({
   test: {
     // Emit machine-readable results alongside the terminal output so
@@ -88,9 +96,13 @@ export default defineConfig({
                       '--no-sandbox',
                       '--headless=new',
                       '--enable-unsafe-webgpu',
-                      '--use-vulkan=swiftshader',
-                      '--use-webgpu-adapter=swiftshader',
-                      '--use-angle=vulkan'
+                      ...(process.env.WEBGPU_HARDWARE
+                        ? hardwareWebGPUArgs
+                        : [
+                            '--use-gl=angle',
+                            '--use-angle=gl-egl',
+                            '--use-cmd-decoder=passthrough'
+                          ])
                     ]
                   }
                 : { channel: 'chromium' }

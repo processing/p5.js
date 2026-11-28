@@ -198,6 +198,35 @@ suite('Validate Params', function () {
     });
   });
 
+    suite('validateParams: modes object for textureWrap()', function () {
+    test('textureWrap(): two constants', () => {
+      const result = mockP5Prototype._validate('p5.textureWrap', [
+        constants.REPEAT,
+        constants.MIRROR
+      ]);
+      assert.isTrue(result.success);
+    });
+
+    test('textureWrap(): modes object from the getter', () => {
+      const result = mockP5Prototype._validate('p5.textureWrap', [
+        { x: constants.REPEAT, y: constants.MIRROR }
+      ]);
+      assert.isTrue(result.success);
+    });
+
+    test('textureWrap(): no args', () => {
+      const result = mockP5Prototype._validate('p5.textureWrap', []);
+      assert.isTrue(result.success);
+    });
+
+    test('textureWrap(): invalid constant', () => {
+      const result = mockP5Prototype._validate('p5.textureWrap', [
+        'fake-constant'
+      ]);
+      assert.isFalse(result.success);
+    });
+  });
+
   suite('validateParams: promise where no promise is expected', function () {
     test('image(): promise for first argument', function () {
       const result = mockP5Prototype._validate('p5.image', [

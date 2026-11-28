@@ -2269,5 +2269,5 @@ function transform(p5, fn) {
 export default transform;
 
 if (typeof p5 !== 'undefined') {
-  transform(p5, p5.prototype);
+  p5.registerAddon(transform);
 }

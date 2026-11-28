@@ -129,5 +129,5 @@ function textOutput(p5, fn) {
 export default textOutput;
 
 if (typeof p5 !== 'undefined') {
-  textOutput(p5, p5.prototype);
+  p5.registerAddon(textOutput);
 }

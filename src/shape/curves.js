@@ -1016,5 +1016,5 @@ function curves(p5, fn) {
 export default curves;
 
 if (typeof p5 !== 'undefined') {
-  curves(p5, p5.prototype);
+  p5.registerAddon(curves);
 }

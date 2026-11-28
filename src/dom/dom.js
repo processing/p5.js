@@ -1857,5 +1857,5 @@ function dom(p5, fn) {
 export default dom;
 
 if (typeof p5 !== 'undefined') {
-  dom(p5, p5.prototype);
+  p5.registerAddon(dom);
 }

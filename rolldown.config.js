@@ -21,6 +21,12 @@ const plugins = [
     }
   )
 ];
+// Dependencies stay as plain package imports in dist/, so the bundler of
+// whoever installs p5 can resolve them. gifenc is bundled on purpose.
+const bundledDependencies = ['gifenc'];
+const externalDependencies = Object.keys(pkg.dependencies).filter(
+  dep => !bundledDependencies.includes(dep)
+);
 const banner = `/*! p5.js v${pkg.version} ${new Intl.DateTimeFormat('en-US', { month: 'long', day: 'numeric', year: 'numeric' }).format(new Date())} */`;
 export default defineConfig([
   {
@@ -29,6 +35,7 @@ export default defineConfig([
       {
         file: './lib/p5.js',
         format: 'iife',
+        strict: true,
         name: 'p5',
         banner
       },
@@ -51,6 +58,7 @@ export default defineConfig([
     output: {
       file: './lib/p5.min.js',
       format: 'iife',
+      strict: true,
       name: 'p5',
       banner,
       minify: true
@@ -79,11 +87,13 @@ export default defineConfig([
     output: [
       {
         file: `./lib/p5.${module}.js`,
+        strict: true,
         format: 'iife'
       },
       {
         file: `./lib/p5.${module}.min.js`,
         format: 'iife',
+        strict: true,
         minify: true
       },
       {
@@ -113,7 +123,8 @@ export default defineConfig([
       format: 'es',
       dir: 'dist'
     },
-    external: /node_modules\/(?!gifenc)/,
+    external: id =>
+      externalDependencies.some(dep => id === dep || id.startsWith(`${dep}/`)),
     plugins
   }
 ]);

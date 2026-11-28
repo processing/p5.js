@@ -5,7 +5,7 @@ import { Graphics } from './p5.Graphics';
 import { Image } from '../image/p5.Image';
 import { Element } from '../dom/p5.Element';
 import { MediaElement } from '../dom/p5.MediaElement';
-import { RGBP3 } from '../color/creating_reading';
+import { RGBP3 } from '../color/color_constants';
 import FilterRenderer2D from '../image/filterRenderer2D';
 import { Matrix } from '../math/p5.Matrix';
 import { PrimitiveToPath2DConverter } from '../shape/custom_shapes';
@@ -953,6 +953,9 @@ class Renderer2D extends Renderer {
           break;
         case textCoreConstants.END:
           throw new Error('textBounds: END not yet supported for textAlign');
+        default:
+          adjustedX = x;
+          break;
       }
       lineData[i] = { text: lines[i], x: adjustedX, y: y + i * textLeading };
     }

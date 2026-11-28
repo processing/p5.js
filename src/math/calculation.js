@@ -787,7 +787,7 @@ function calculation(p5, fn) {
    *   let x = map(mouseX, 0, 100, 0, 50);
    *
    *   // Draw the bottom line.
-   *   line(0, 75, 0, x);
+   *   line(0, 75, x, 75);
    * }
    * ```
    *
@@ -1605,5 +1605,5 @@ function calculation(p5, fn) {
 export default calculation;
 
 if (typeof p5 !== 'undefined') {
-  calculation(p5, p5.prototype);
+  p5.registerAddon(calculation);
 }

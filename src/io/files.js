@@ -2137,5 +2137,5 @@ function files(p5, fn) {
 export default files;
 
 if (typeof p5 !== 'undefined') {
-  files(p5, p5.prototype);
+  p5.registerAddon(files);
 }

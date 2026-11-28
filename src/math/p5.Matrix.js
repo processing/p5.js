@@ -104,6 +104,7 @@ function matrix(p5, fn) {
    *   console.log("Transformed Vector:", transformedVector.toString());
    * }
    */
+  Matrix.prototype._friendlyError = p5._friendlyError;
   p5.Matrix = Matrix;
 }
 
@@ -111,5 +112,5 @@ export default matrix;
 export { Matrix };
 
 if (typeof p5 !== 'undefined') {
-  matrix(p5, p5.prototype);
+  p5.registerAddon(matrix);
 }

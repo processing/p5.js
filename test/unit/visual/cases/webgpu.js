@@ -3,6 +3,7 @@ import { visualSuite, visualTest } from '../visualTest';
 import rendererWebGPU from '../../../../src/webgpu/p5.RendererWebGPU';
 
 p5.registerAddon(rendererWebGPU);
+p5.disableWebGLFallback = true;
 
 visualSuite('WebGPU', function () {
   visualSuite('Shaders', function () {
@@ -287,6 +288,33 @@ visualSuite('WebGPU', function () {
       p5.filter(invert);
       await screenshot();
     });
+
+    visualTest(
+      'minifier-style && and || statements act as conditionals',
+      async function (p5, screenshot) {
+        await p5.createCanvas(50, 50, p5.WEBGPU);
+        const shader = p5.baseFilterShader().modify(
+          () => {
+            p5.getColor(inputs => {
+              let value = 0;
+              let red = 0;
+              // Minifiers write `if (cond) action` as `cond && action`
+              inputs.texCoord.x > 0.5 && (value = 0.5);
+              inputs.texCoord.y > 0.5 || (value = value + 0.25);
+              // ...and `if (cond) a; else b` as `cond ? a : b`
+              inputs.texCoord.x > 0.75 && inputs.texCoord.y > 0.75
+                ? (red = 1, value = 0)
+                : (red = value);
+              return [red, value, value, 1];
+            });
+          },
+          { p5 }
+        );
+        p5.background(0);
+        p5.filter(shader);
+        await screenshot();
+      }
+    );
 
     visualTest(
       'filter shaders can sample a texture inside a conditional branch',
