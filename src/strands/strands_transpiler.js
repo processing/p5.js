@@ -302,6 +302,15 @@ function statementContainsStrandsControlFlow(stmt) {
     );
     return match;
   }
+  // A loop with no carried state lowers to a bare strandsFor() call.
+  // Its callback assignments shouldn't be captured by the surrounding block.
+  if (stmt.type === 'ExpressionStatement') {
+    return (
+      stmt.expression?.type === 'CallExpression' &&
+      stmt.expression.callee?.type === 'Identifier' &&
+      stmt.expression.callee.name === '__p5.strandsFor'
+    );
+  }
   return false;
 }
 

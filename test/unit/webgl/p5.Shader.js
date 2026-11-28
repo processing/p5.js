@@ -4295,6 +4295,40 @@ suite('p5.Shader', function () {
         assert.approximately(pixelColor[2], 77, 5);
       });
 
+      test('handle loop with no carried state inside a conditional', () => {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+
+        const testShader = myp5.baseMaterialShader().modify(
+          () => {
+            const condition = myp5.uniformFloat(() => 1.0);
+            myp5.getPixelInputs(inputs => {
+              let color = myp5.float(0.2);
+
+              if (condition > 0.5) {
+                for (let i = 0; i < 2; i++) {
+                  let inner = myp5.float(0.0);
+                  inner = inner + 1.0;
+                }
+                color = color + 0.4;
+              }
+
+              inputs.color = [color, color, color, 1.0];
+              return inputs;
+            });
+          },
+          { myp5 }
+        );
+
+        myp5.noStroke();
+        myp5.shader(testShader);
+        myp5.plane(myp5.width, myp5.height);
+
+        const pixelColor = myp5.get(25, 25);
+        assert.approximately(pixelColor[0], 153, 5);
+        assert.approximately(pixelColor[1], 153, 5);
+        assert.approximately(pixelColor[2], 153, 5);
+      });
+
       test('handle nested for loops', () => {
         myp5.createCanvas(50, 50, myp5.WEBGL);
 
@@ -4323,6 +4357,39 @@ suite('p5.Shader', function () {
         // Should run 6 times: 6 * 0.05 = 0.3
         const pixelColor = myp5.get(25, 25);
         assert.approximately(pixelColor[0], 77, 5); // 0.3 * 255 ≈ 77
+        assert.approximately(pixelColor[1], 77, 5);
+        assert.approximately(pixelColor[2], 77, 5);
+      });
+
+      test('handle nested loops when the inner loop carries no state', () => {
+        myp5.createCanvas(50, 50, myp5.WEBGL);
+
+        const testShader = myp5.baseMaterialShader().modify(
+          () => {
+            myp5.getPixelInputs(inputs => {
+              let total = myp5.float(0.0);
+
+              for (let i = 0; i < 3; i++) {
+                for (let j = 0; j < 2; j++) {
+                  let inner = myp5.float(0.0);
+                  inner = inner + 1.0;
+                }
+                total = total + 0.1;
+              }
+
+              inputs.color = [total, total, total, 1.0];
+              return inputs;
+            });
+          },
+          { myp5 }
+        );
+
+        myp5.noStroke();
+        myp5.shader(testShader);
+        myp5.plane(myp5.width, myp5.height);
+
+        const pixelColor = myp5.get(25, 25);
+        assert.approximately(pixelColor[0], 77, 5);
         assert.approximately(pixelColor[1], 77, 5);
         assert.approximately(pixelColor[2], 77, 5);
       });
